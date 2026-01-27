@@ -32,11 +32,8 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  11. Continuous Improvement:
-    - Suggest process improvements when applicable
-    - Look for opportunities to simplify and optimize code and workflows
-</instructions>
+- |- 11. Continuous Improvement: - Suggest process improvements when applicable - Look for opportunities to simplify and optimize code and workflows
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

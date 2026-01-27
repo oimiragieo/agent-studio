@@ -56,6 +56,7 @@ mol = stjames.Molecule.from_xyz(xyz_string)
 ```
 
 **XYZ format with optional metadata in comment line:**
+
 ```
 N_atoms
 charge=0 multiplicity=1 energy=-76.4 comment
@@ -330,13 +331,13 @@ for i, atom in enumerate(mol.atoms):
 
 ### Atom Attributes
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `element` | str | Element symbol (e.g., "C", "O", "H") |
-| `x` | float | X coordinate (Å) |
-| `y` | float | Y coordinate (Å) |
-| `z` | float | Z coordinate (Å) |
-| `atomic_number` | int | Atomic number |
+| Attribute       | Type  | Description                          |
+| --------------- | ----- | ------------------------------------ |
+| `element`       | str   | Element symbol (e.g., "C", "O", "H") |
+| `x`             | float | X coordinate (Å)                     |
+| `y`             | float | Y coordinate (Å)                     |
+| `z`             | float | Z coordinate (Å)                     |
+| `atomic_number` | int   | Atomic number                        |
 
 ### Getting Coordinates as Array
 
@@ -425,5 +426,6 @@ mol = stjames.Molecule.from_smiles("[O][O]", charge=0, multiplicity=3)
 ```
 
 The validation ensures:
+
 - Number of electrons = sum(atomic_numbers) - charge
 - Multiplicity is compatible with electron count (odd/even)

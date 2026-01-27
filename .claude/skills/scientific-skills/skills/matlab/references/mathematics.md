@@ -1,6 +1,7 @@
 # Mathematics Reference
 
 ## Table of Contents
+
 1. [Linear Algebra](#linear-algebra)
 2. [Elementary Math](#elementary-math)
 3. [Calculus and Integration](#calculus-and-integration)

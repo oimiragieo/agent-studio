@@ -15,6 +15,7 @@ The **Bootloader** (`CLAUDE.md`) immediately activates. You should see the `[ROU
 **Router-First Protocol:**
 
 The Router is the entry point for ALL user interactions. It:
+
 1. **Checks TaskList()** first to see pending work
 2. **Analyzes** your request (intent, complexity, domain, risk)
 3. **Selects** the best agent(s) for the job
@@ -27,7 +28,6 @@ The Router is the entry point for ALL user interactions. It:
 You don't need to manually pick agents. Just describe your task naturally:
 
 - **"I want to build a new dashboard."**
-
   - Router -> **Planner** (Generates architecture)
   - Planner -> **Architect** (Selects stack)
   - Architect -> **Developer** (Writes code)
@@ -75,6 +75,7 @@ Phases: Explore → Plan → Review → Consolidate
 4. **Consolidate Phase**: Planner incorporates feedback into final plan
 
 **Tasks that trigger multi-agent planning:**
+
 - New features
 - External integrations
 - Authentication/authorization changes
@@ -89,7 +90,6 @@ This ensures no single agent makes critical decisions alone.
 The framework creates new agents automatically when needed:
 
 - **"I need a UX review of my iOS app"**
-
   - Router detects no UX agent exists
   - Routes to `agent-creator`
   - Creates `ios-ux-reviewer` agent in `.claude/agents/domain/`
@@ -105,7 +105,6 @@ The framework creates new agents automatically when needed:
 Request new tools or MCP server integrations:
 
 - **"Add the Slack MCP server so I can send messages"**
-
   - Router routes to `skill-creator`
   - Converts MCP server to skill
   - **Auto-assigns to relevant agents** (e.g., incident-responder)
@@ -120,6 +119,7 @@ Request new tools or MCP server integrations:
 The framework automatically manages skill-agent relationships:
 
 **When creating a new skill:**
+
 ```
 Creating skill: tdd-advanced
 ✅ Created .claude/skills/tdd-advanced/SKILL.md
@@ -131,6 +131,7 @@ Creating skill: tdd-advanced
 ```
 
 **When creating a new agent:**
+
 ```
 Creating agent: api-specialist
 🔍 Searching for matching skills...
@@ -142,11 +143,13 @@ Creating agent: api-specialist
 ```
 
 **When updating an agent's skills:**
+
 - Frontmatter `skills:` list is updated
 - Workflow "Step 0: Load Skills" section is updated with correct paths
 - Both locations stay in sync automatically
 
 **When merging skills:**
+
 - Old skill references in agents are replaced with new merged skill
 - Workflow skill paths are updated automatically
 - Use `--auto-update` flag to apply changes immediately
@@ -157,12 +160,12 @@ The framework maintains persistent memory across sessions.
 
 **Memory Files:**
 
-| File                | Purpose                            |
-| ------------------- | ---------------------------------- |
-| `learnings.md`      | Patterns, solutions, preferences   |
-| `decisions.md`      | Architecture Decision Records      |
-| `issues.md`         | Known issues and blockers          |
-| `active_context.md` | Scratchpad for ongoing work        |
+| File                | Purpose                          |
+| ------------------- | -------------------------------- |
+| `learnings.md`      | Patterns, solutions, preferences |
+| `decisions.md`      | Architecture Decision Records    |
+| `issues.md`         | Known issues and blockers        |
+| `active_context.md` | Scratchpad for ongoing work      |
 
 **Context Directories:**
 
@@ -190,28 +193,28 @@ Skills provide specialized capabilities. Invoke skills using the `Skill()` tool:
 
 ```javascript
 // Agents invoke skills with the Skill tool
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
-Skill({ skill: "diagram-generator" });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
+Skill({ skill: 'diagram-generator' });
 ```
 
 **Important:** Reading skill files alone does not apply them. Agents must use the `Skill()` tool to load AND apply skill instructions.
 
 **Common Skills:**
 
-| Skill | Purpose | Invoke With |
-|-------|---------|-------------|
-| `tdd` | Test-Driven Development workflow | `Skill({ skill: "tdd" })` |
-| `debugging` | 4-phase systematic debugging | `Skill({ skill: "debugging" })` |
-| `verification-before-completion` | Evidence-based completion | `Skill({ skill: "verification-before-completion" })` |
-| `diagram-generator` | Generate architecture diagrams | `Skill({ skill: "diagram-generator" })` |
-| `doc-generator` | Generate documentation | `Skill({ skill: "doc-generator" })` |
-| `k8s-manifest-generator` | Kubernetes manifests | `Skill({ skill: "k8s-manifest-generator" })` |
-| `helm-chart-scaffolding` | Helm charts | `Skill({ skill: "helm-chart-scaffolding" })` |
-| `gitops-workflow` | GitOps setup | `Skill({ skill: "gitops-workflow" })` |
-| `brainstorming` | Socratic design refinement | `Skill({ skill: "brainstorming" })` |
-| `writing-plans` | Create bite-sized tasks | `Skill({ skill: "writing-plans" })` |
-| `executing-plans` | Execute plans in batches | `Skill({ skill: "executing-plans" })` |
+| Skill                            | Purpose                          | Invoke With                                          |
+| -------------------------------- | -------------------------------- | ---------------------------------------------------- |
+| `tdd`                            | Test-Driven Development workflow | `Skill({ skill: "tdd" })`                            |
+| `debugging`                      | 4-phase systematic debugging     | `Skill({ skill: "debugging" })`                      |
+| `verification-before-completion` | Evidence-based completion        | `Skill({ skill: "verification-before-completion" })` |
+| `diagram-generator`              | Generate architecture diagrams   | `Skill({ skill: "diagram-generator" })`              |
+| `doc-generator`                  | Generate documentation           | `Skill({ skill: "doc-generator" })`                  |
+| `k8s-manifest-generator`         | Kubernetes manifests             | `Skill({ skill: "k8s-manifest-generator" })`         |
+| `helm-chart-scaffolding`         | Helm charts                      | `Skill({ skill: "helm-chart-scaffolding" })`         |
+| `gitops-workflow`                | GitOps setup                     | `Skill({ skill: "gitops-workflow" })`                |
+| `brainstorming`                  | Socratic design refinement       | `Skill({ skill: "brainstorming" })`                  |
+| `writing-plans`                  | Create bite-sized tasks          | `Skill({ skill: "writing-plans" })`                  |
+| `executing-plans`                | Execute plans in batches         | `Skill({ skill: "executing-plans" })`                |
 
 ### 9. Language-Specific Expertise
 
@@ -219,43 +222,44 @@ The framework includes domain agents for deep language and framework expertise.
 
 **Language Pro Agents:**
 
-| Agent | Expertise | Trigger |
-|-------|-----------|---------|
-| `python-pro` | Python 3.12+, async, FastAPI, Django, data science | "Python", "async", "FastAPI" |
-| `rust-pro` | Rust 1.75+, tokio, memory safety, systems programming | "Rust", "tokio", "memory safety" |
-| `golang-pro` | Go 1.21+, generics, concurrency, cloud-native | "Go", "golang", "goroutines" |
-| `typescript-pro` | Advanced types, strict mode, enterprise patterns | "TypeScript", "strict mode", "types" |
-| `fastapi-pro` | FastAPI 0.100+, async SQLAlchemy, microservices | "FastAPI", "SQLAlchemy", "async" |
-| `java-pro` | Java/Spring Boot, enterprise Java | "Java", "Spring Boot" |
-| `php-pro` | PHP/Laravel, web applications | "PHP", "Laravel" |
-| `nodejs-pro` | Node.js/Express/NestJS, backend | "Node.js", "Express", "NestJS" |
+| Agent            | Expertise                                             | Trigger                              |
+| ---------------- | ----------------------------------------------------- | ------------------------------------ |
+| `python-pro`     | Python 3.12+, async, FastAPI, Django, data science    | "Python", "async", "FastAPI"         |
+| `rust-pro`       | Rust 1.75+, tokio, memory safety, systems programming | "Rust", "tokio", "memory safety"     |
+| `golang-pro`     | Go 1.21+, generics, concurrency, cloud-native         | "Go", "golang", "goroutines"         |
+| `typescript-pro` | Advanced types, strict mode, enterprise patterns      | "TypeScript", "strict mode", "types" |
+| `fastapi-pro`    | FastAPI 0.100+, async SQLAlchemy, microservices       | "FastAPI", "SQLAlchemy", "async"     |
+| `java-pro`       | Java/Spring Boot, enterprise Java                     | "Java", "Spring Boot"                |
+| `php-pro`        | PHP/Laravel, web applications                         | "PHP", "Laravel"                     |
+| `nodejs-pro`     | Node.js/Express/NestJS, backend                       | "Node.js", "Express", "NestJS"       |
 
 **Framework Experts:**
 
-| Agent | Expertise | Trigger |
-|-------|-----------|---------|
-| `nextjs-pro` | Next.js App Router, server components | "Next.js", "App Router" |
-| `sveltekit-expert` | SvelteKit/Svelte 5, reactive UI | "SvelteKit", "Svelte" |
-| `frontend-pro` | React, Vue, Angular, frontend patterns | "React", "Vue", "frontend" |
-| `graphql-pro` | GraphQL APIs, schema design | "GraphQL", "schema" |
+| Agent              | Expertise                              | Trigger                    |
+| ------------------ | -------------------------------------- | -------------------------- |
+| `nextjs-pro`       | Next.js App Router, server components  | "Next.js", "App Router"    |
+| `sveltekit-expert` | SvelteKit/Svelte 5, reactive UI        | "SvelteKit", "Svelte"      |
+| `frontend-pro`     | React, Vue, Angular, frontend patterns | "React", "Vue", "frontend" |
+| `graphql-pro`      | GraphQL APIs, schema design            | "GraphQL", "schema"        |
 
 **Mobile/Desktop Experts:**
 
-| Agent | Expertise | Trigger |
-|-------|-----------|---------|
-| `ios-pro` | iOS/Swift, UIKit, SwiftUI | "iOS", "Swift", "SwiftUI" |
-| `expo-mobile-developer` | Expo/React Native, cross-platform | "Expo", "React Native" |
-| `tauri-desktop-developer` | Tauri desktop apps, Rust+Web | "Tauri", "desktop app" |
-| `mobile-ux-reviewer` | Mobile UX review, accessibility | "mobile UX", "accessibility" |
+| Agent                     | Expertise                         | Trigger                      |
+| ------------------------- | --------------------------------- | ---------------------------- |
+| `ios-pro`                 | iOS/Swift, UIKit, SwiftUI         | "iOS", "Swift", "SwiftUI"    |
+| `expo-mobile-developer`   | Expo/React Native, cross-platform | "Expo", "React Native"       |
+| `tauri-desktop-developer` | Tauri desktop apps, Rust+Web      | "Tauri", "desktop app"       |
+| `mobile-ux-reviewer`      | Mobile UX review, accessibility   | "mobile UX", "accessibility" |
 
 **Data & Product:**
 
-| Agent | Expertise | Trigger |
-|-------|-----------|---------|
-| `data-engineer` | Data engineering, ETL, pipelines | "ETL", "data pipeline", "engineering" |
-| `pm` | Product management, roadmaps, PRDs | "product", "roadmap", "requirements" |
+| Agent           | Expertise                          | Trigger                               |
+| --------------- | ---------------------------------- | ------------------------------------- |
+| `data-engineer` | Data engineering, ETL, pipelines   | "ETL", "data pipeline", "engineering" |
+| `pm`            | Product management, roadmaps, PRDs | "product", "roadmap", "requirements"  |
 
 **Usage**: Just mention the language or framework:
+
 - "Help me optimize this Python async code" → `python-pro`
 - "Review my Rust error handling" → `rust-pro`
 - "Design a Next.js app with server components" → `nextjs-pro`
@@ -270,6 +274,7 @@ Generate comprehensive architecture documentation using the C4 model:
 ```
 
 **The C4 workflow uses 4 specialized agents:**
+
 1. `c4-context` - System context (users, external systems)
 2. `c4-container` - Container diagram (applications, databases)
 3. `c4-component` - Component diagram (modules, services)
@@ -300,6 +305,7 @@ The DevOps agent includes comprehensive Kubernetes skills:
 The framework supports Context-Driven Development (CDD) methodology:
 
 **CDD Skills:**
+
 - `context-driven-development` - Project context management
 - `track-management` - Feature/bug/refactor tracks
 - `workflow-patterns` - TDD task implementation patterns
@@ -314,6 +320,7 @@ The framework supports Context-Driven Development (CDD) methodology:
 ```
 
 The workflow:
+
 1. **Project Discovery** - Analyze existing codebase
 2. **Product Definition** - Interactive requirements gathering
 3. **Tech Stack Configuration** - Document technology choices
@@ -322,6 +329,7 @@ The workflow:
 6. **Finalization** - Generate context artifacts
 
 **Context Artifacts** (created in `.claude/context/`):
+
 - `product.md` - Product vision and goals
 - `product-guidelines.md` - Product rules and constraints
 - `tech-stack.md` - Technology stack documentation
@@ -329,6 +337,7 @@ The workflow:
 - `tracks.md` - Track registry
 
 **Track Structure** (`.claude/context/tracks/{track-id}/`):
+
 - `spec.md` - Feature specification
 - `plan.md` - Implementation plan with tasks
 - `metadata.json` - Track metadata (status, dates, commits)
@@ -338,31 +347,37 @@ The workflow:
 The framework includes patterns from the Superpowers methodology:
 
 **Foundation Skills:**
+
 - `tdd` - Enhanced with Iron Laws, rationalization tables, red flags
 - `debugging` - 4-phase systematic debugging (Root Cause → Pattern → Hypothesis → Implementation)
 - `verification-before-completion` - Gate Function: evidence before claims
 
 **Workflow Skills:**
+
 - `brainstorming` - Socratic design refinement
 - `writing-plans` - Bite-sized tasks (2-5 min each) with complete code
 - `executing-plans` - Batch execution with review checkpoints
 - `subagent-driven-development` - Fresh subagent per task with two-stage review
 
 **Git Workflow:**
+
 - `using-git-worktrees` - Isolated workspace creation
 - `finishing-a-development-branch` - Structured merge/PR completion
 
 **Advanced Skills:**
+
 - `dispatching-parallel-agents` - Concurrent investigation
 - `writing-skills` - TDD for documentation
 - `skill-discovery` - How agents discover and use skills
 
 **Code Review:**
+
 - `code-reviewer` agent - Two-stage review (spec compliance THEN code quality)
 - `requesting-code-review` skill - Dispatch reviewer
 - `receiving-code-review` skill - Process feedback with technical pushback
 
 **Key Patterns:**
+
 - **Iron Laws** - Inviolable rules (e.g., "NO CODE WITHOUT TEST FIRST")
 - **Rationalization Tables** - Pre-emptive excuse countering
 - **Red Flags Lists** - Self-check triggers that force STOP
@@ -370,6 +385,7 @@ The framework includes patterns from the Superpowers methodology:
 - **Two-Stage Review** - Spec compliance must pass before quality review
 
 **Usage:**
+
 ```bash
 # Test-driven development
 Skill({ skill: "tdd" });
@@ -487,6 +503,7 @@ node .claude/tools/doctor.mjs --verbose
 ```
 
 This checks:
+
 - Required directories exist
 - Required files (CLAUDE.md, settings.json, config.yaml) exist
 - Agents have valid frontmatter
@@ -541,8 +558,8 @@ This checks:
 
 ## Environment Variables
 
-| Variable          | Purpose                                        | Values                    |
-| ----------------- | ---------------------------------------------- | ------------------------- |
-| `TDD_ENFORCEMENT` | TDD hook behavior                              | `warn`, `block`, `off`    |
-| `VERBOSE`         | Enable verbose output in hooks                 | `1` or unset              |
-| `DEBUG`           | Enable debug logging                           | `1` or unset              |
+| Variable          | Purpose                        | Values                 |
+| ----------------- | ------------------------------ | ---------------------- |
+| `TDD_ENFORCEMENT` | TDD hook behavior              | `warn`, `block`, `off` |
+| `VERBOSE`         | Enable verbose output in hooks | `1` or unset           |
+| `DEBUG`           | Enable debug logging           | `1` or unset           |

@@ -39,7 +39,7 @@ When reviewing or writing code, apply these guidelines:
   - V=1 concise
   - V=2 simple
   - V=3 verbose, DRY with extracted functions
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

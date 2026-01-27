@@ -7,18 +7,20 @@ Competing risks occur when subjects can experience one of several mutually exclu
 ### Examples of Competing Risks
 
 **Medical Research:**
+
 - Death from cancer vs. death from cardiovascular disease vs. death from other causes
 - Relapse vs. death without relapse in cancer studies
 - Different types of infections in transplant patients
 
 **Other Applications:**
+
 - Job termination: retirement vs. resignation vs. termination for cause
 - Equipment failure: different failure modes
 - Customer churn: different reasons for leaving
 
 ### Key Concept: Cumulative Incidence Function (CIF)
 
-The **Cumulative Incidence Function (CIF)** represents the probability of experiencing a specific event type by time *t*, accounting for the presence of competing risks.
+The **Cumulative Incidence Function (CIF)** represents the probability of experiencing a specific event type by time _t_, accounting for the presence of competing risks.
 
 **CIF_k(t) = P(T ≤ t, event type = k)**
 
@@ -27,12 +29,14 @@ This differs from the Kaplan-Meier estimator, which would overestimate event pro
 ## When to Use Competing Risks Analysis
 
 **Use competing risks when:**
+
 - Multiple mutually exclusive event types exist
 - Occurrence of one event prevents others
 - Need to estimate probability of specific event types
 - Want to understand how covariates affect different event types
 
 **Don't use when:**
+
 - Only one event type of interest (standard survival analysis)
 - Events are not mutually exclusive (use recurrent events methods)
 - Competing events are extremely rare (can treat as censoring)
@@ -216,6 +220,7 @@ print(cox_event2.coef_)
 ```
 
 **Interpretation:**
+
 - Separate model for each competing event
 - Coefficients show effect on cause-specific hazard for that event type
 - A covariate may increase risk for one event type but decrease for another
@@ -358,12 +363,14 @@ print("\n" + "=" * 60)
 ### Choosing Between Cause-Specific and Sub-distribution Models
 
 **Cause-Specific Hazard Models:**
+
 - Easier to interpret
 - Direct effect on hazard rate
 - Better for understanding etiology
 - Can fit with scikit-survival
 
 **Fine-Gray Sub-distribution Models:**
+
 - Models cumulative incidence directly
 - Better for prediction and risk stratification
 - More appropriate for clinical decision-making
@@ -372,24 +379,29 @@ print("\n" + "=" * 60)
 ### Common Mistakes
 
 **Mistake 1**: Using Kaplan-Meier to estimate event-specific probabilities
+
 - **Wrong**: Kaplan-Meier for event type 1, treating type 2 as censored
 - **Correct**: Cumulative incidence function accounting for competing risks
 
 **Mistake 2**: Ignoring competing risks when they're substantial
+
 - If competing event rate > 10-20%, should use competing risks methods
 
 **Mistake 3**: Confusing cause-specific and sub-distribution hazards
+
 - They answer different questions
 - Use appropriate model for your research question
 
 ## Summary
 
 **Key Functions:**
+
 - `cumulative_incidence_competing_risks`: Estimate CIF for each event type
 - Fit separate Cox models for cause-specific hazards
 - Use stratified analysis to compare groups
 
 **Best Practices:**
+
 1. Always plot cumulative incidence functions
 2. Report both event-specific and overall incidence
 3. Use cause-specific models in scikit-survival

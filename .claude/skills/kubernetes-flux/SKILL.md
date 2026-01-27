@@ -287,6 +287,7 @@ kubectl port-forward svc/<name> 8080:80 -n <namespace>
 ### Blocked Operations
 
 The following are dangerous and require confirmation:
+
 - `kubectl delete` commands
 - Destructive exec commands (rm, dd, mkfs)
 - Scale to 0 replicas in production
@@ -297,13 +298,13 @@ Secret values are always masked. Only metadata shown.
 
 ## Error Handling
 
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `kubectl not found` | Not installed | Install kubectl |
-| `Unable to connect` | Cluster unreachable | Check network/VPN |
-| `Forbidden` | RBAC permissions | Request permissions |
-| `NotFound` | Resource missing | Verify name/namespace |
-| `context deadline exceeded` | Timeout | Check cluster health |
+| Error                       | Cause               | Fix                   |
+| --------------------------- | ------------------- | --------------------- |
+| `kubectl not found`         | Not installed       | Install kubectl       |
+| `Unable to connect`         | Cluster unreachable | Check network/VPN     |
+| `Forbidden`                 | RBAC permissions    | Request permissions   |
+| `NotFound`                  | Resource missing    | Verify name/namespace |
+| `context deadline exceeded` | Timeout             | Check cluster health  |
 
 ## Related
 
@@ -313,6 +314,7 @@ Secret values are always masked. Only metadata shown.
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

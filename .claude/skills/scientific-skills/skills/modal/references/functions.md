@@ -55,6 +55,7 @@ def main():
 ### Ephemeral Apps
 
 Run temporarily:
+
 ```bash
 modal run script.py
 ```
@@ -62,6 +63,7 @@ modal run script.py
 ### Deployed Apps
 
 Deploy persistently:
+
 ```bash
 modal deploy script.py
 ```
@@ -98,6 +100,7 @@ def train_model():
 ```
 
 Invoke with:
+
 ```bash
 modal run script.py::app.train_model
 ```
@@ -113,6 +116,7 @@ def main(foo: int, bar: str):
 ```
 
 Run with:
+
 ```bash
 modal run script.py --foo 1 --bar "hello"
 ```
@@ -268,6 +272,7 @@ def g():
 ```
 
 Run specific function:
+
 ```bash
 modal run script.py::app.f
 modal run script.py::app.g

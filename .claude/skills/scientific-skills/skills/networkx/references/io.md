@@ -3,6 +3,7 @@
 ## Reading Graphs from Files
 
 ### Adjacency List Format
+
 ```python
 # Read adjacency list (simple text format)
 G = nx.read_adjlist('graph.adjlist')
@@ -18,6 +19,7 @@ nx.write_adjlist(G, 'graph.adjlist')
 ```
 
 Example adjacency list format:
+
 ```
 # node neighbors
 0 1 2
@@ -28,6 +30,7 @@ Example adjacency list format:
 ```
 
 ### Edge List Format
+
 ```python
 # Read edge list
 G = nx.read_edgelist('graph.edgelist')
@@ -48,6 +51,7 @@ nx.write_weighted_edgelist(G, 'weighted.edgelist')
 ```
 
 Example edge list format:
+
 ```
 # source target
 0 1
@@ -57,6 +61,7 @@ Example edge list format:
 ```
 
 Example weighted edge list:
+
 ```
 # source target weight
 0 1 0.5
@@ -65,6 +70,7 @@ Example weighted edge list:
 ```
 
 ### GML (Graph Modelling Language)
+
 ```python
 # Read GML (preserves all attributes)
 G = nx.read_gml('graph.gml')
@@ -74,6 +80,7 @@ nx.write_gml(G, 'graph.gml')
 ```
 
 ### GraphML Format
+
 ```python
 # Read GraphML (XML-based format)
 G = nx.read_graphml('graph.graphml')
@@ -86,6 +93,7 @@ nx.write_graphml(G, 'graph.graphml', encoding='utf-8')
 ```
 
 ### GEXF (Graph Exchange XML Format)
+
 ```python
 # Read GEXF
 G = nx.read_gexf('graph.gexf')
@@ -95,6 +103,7 @@ nx.write_gexf(G, 'graph.gexf')
 ```
 
 ### Pajek Format
+
 ```python
 # Read Pajek .net files
 G = nx.read_pajek('graph.net')
@@ -104,6 +113,7 @@ nx.write_pajek(G, 'graph.net')
 ```
 
 ### LEDA Format
+
 ```python
 # Read LEDA format
 G = nx.read_leda('graph.leda')
@@ -115,6 +125,7 @@ nx.write_leda(G, 'graph.leda')
 ## Working with Pandas
 
 ### From Pandas DataFrame
+
 ```python
 import pandas as pd
 
@@ -145,6 +156,7 @@ G = nx.from_pandas_edgelist(df,
 ```
 
 ### To Pandas DataFrame
+
 ```python
 # Convert graph to edge list DataFrame
 df = nx.to_pandas_edgelist(G)
@@ -154,6 +166,7 @@ df = nx.to_pandas_edgelist(G, source='node1', target='node2')
 ```
 
 ### Adjacency Matrix with Pandas
+
 ```python
 # Create DataFrame from adjacency matrix
 df = nx.to_pandas_adjacency(G, dtype=int)
@@ -168,6 +181,7 @@ G = nx.from_pandas_adjacency(df, create_using=nx.DiGraph())
 ## NumPy and SciPy Integration
 
 ### Adjacency Matrix
+
 ```python
 import numpy as np
 
@@ -186,6 +200,7 @@ G = nx.from_numpy_array(A, create_using=nx.DiGraph())
 ```
 
 ### Sparse Matrix (SciPy)
+
 ```python
 from scipy import sparse
 
@@ -202,6 +217,7 @@ G = nx.from_scipy_sparse_array(A)
 ## JSON Format
 
 ### Node-Link Format
+
 ```python
 import json
 
@@ -217,6 +233,7 @@ G = nx.node_link_graph(data)
 ```
 
 ### Adjacency Data Format
+
 ```python
 # To adjacency format
 data = nx.adjacency_data(G)
@@ -230,6 +247,7 @@ G = nx.adjacency_graph(data)
 ```
 
 ### Tree Data Format
+
 ```python
 # For tree graphs
 data = nx.tree_data(G, root=0)
@@ -245,6 +263,7 @@ G = nx.tree_graph(data)
 ## Pickle Format
 
 ### Binary Pickle
+
 ```python
 import pickle
 
@@ -264,6 +283,7 @@ G = nx.read_gpickle('graph.gpickle')
 ## CSV Files
 
 ### Custom CSV Reading
+
 ```python
 import csv
 
@@ -285,6 +305,7 @@ with open('edges.csv', 'w', newline='') as f:
 ## Database Integration
 
 ### SQL Databases
+
 ```python
 import sqlite3
 import pandas as pd
@@ -305,6 +326,7 @@ conn.close()
 ## Graph Formats for Visualization
 
 ### DOT Format (Graphviz)
+
 ```python
 # Write DOT file for Graphviz
 nx.drawing.nx_pydot.write_dot(G, 'graph.dot')
@@ -321,6 +343,7 @@ pydot_graph.write_png('graph.png')
 ## Cytoscape Integration
 
 ### Cytoscape JSON
+
 ```python
 # Export for Cytoscape
 data = nx.cytoscape_data(G)
@@ -336,6 +359,7 @@ G = nx.cytoscape_graph(data)
 ## Specialized Formats
 
 ### Matrix Market Format
+
 ```python
 from scipy.io import mmread, mmwrite
 
@@ -349,6 +373,7 @@ mmwrite('graph.mtx', A)
 ```
 
 ### Shapefile (for Geographic Networks)
+
 ```python
 # Requires pyshp library
 # Read geographic network from shapefile
@@ -363,33 +388,43 @@ nx.write_shp(G, 'network')
 ### Choose Based on Requirements
 
 **Adjacency List** - Simple, human-readable, no attributes
+
 - Best for: Simple unweighted graphs, quick viewing
 
 **Edge List** - Simple, supports weights, human-readable
+
 - Best for: Weighted graphs, importing/exporting data
 
 **GML/GraphML** - Full attribute preservation, XML-based
+
 - Best for: Complete graph serialization with all metadata
 
 **JSON** - Web-friendly, JavaScript integration
+
 - Best for: Web applications, d3.js visualizations
 
 **Pickle** - Fast, preserves Python objects, binary
+
 - Best for: Python-only storage, complex attributes
 
 **Pandas** - Data analysis integration, DataFrame operations
+
 - Best for: Data processing pipelines, statistical analysis
 
 **NumPy/SciPy** - Numerical computation, sparse matrices
+
 - Best for: Matrix operations, scientific computing
 
 **DOT** - Visualization, Graphviz integration
+
 - Best for: Creating visual diagrams
 
 ## Performance Considerations
 
 ### Large Graphs
+
 For large graphs, consider:
+
 ```python
 # Use compressed formats
 import gzip
@@ -407,7 +442,9 @@ A = nx.to_scipy_sparse_array(G, format='csr')  # Memory efficient
 ```
 
 ### Incremental Loading
+
 For very large graphs:
+
 ```python
 # Load graph incrementally from edge list
 G = nx.Graph()
@@ -424,6 +461,7 @@ with open('huge_graph.edgelist') as f:
 ## Error Handling
 
 ### Robust File Reading
+
 ```python
 try:
     G = nx.read_graphml('graph.graphml')

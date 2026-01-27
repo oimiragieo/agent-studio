@@ -60,22 +60,27 @@ Score each dimension 1-10:
 ## Dimension Scores
 
 ### Completeness: 8/10
+
 - Has objectives, steps, and timeline
 - Missing risk assessment section
 
 ### Feasibility: 7/10
+
 - Most steps are achievable
 - Step 3 timeline is aggressive
 
 ### Risk Mitigation: 5/10
+
 - Only 1 risk identified
 - No mitigation strategies
 
 ### Agent Coverage: 9/10
+
 - All steps have assigned agents
 - Good agent-task matching
 
 ### Integration: 8/10
+
 - Uses existing APIs
 - Minor compatibility concerns
 ```
@@ -96,14 +101,17 @@ Provide actionable improvements:
 ## Recommendations
 
 ### High Priority
+
 1. Add risk assessment section with 3-5 risks
 2. Include mitigation strategies for each risk
 
 ### Medium Priority
+
 3. Extend Step 3 timeline by 2 days
 4. Add fallback plan for external API dependency
 
 ### Low Priority
+
 5. Add success metrics for each step
 ```
 
@@ -111,11 +119,11 @@ Provide actionable improvements:
 
 Apply minimum score thresholds:
 
-| Task Type | Minimum Score |
-|-----------|---------------|
-| Standard | 7/10 |
-| Enterprise | 8/10 |
-| Critical | 9/10 |
+| Task Type  | Minimum Score |
+| ---------- | ------------- |
+| Standard   | 7/10          |
+| Enterprise | 8/10          |
+| Critical   | 9/10          |
 
 ```markdown
 ## Decision
@@ -154,6 +162,7 @@ Rate this plan for user authentication implementation
 ## Plan Rating: User Authentication
 
 ### Scores
+
 - Completeness: 8/10 - Good structure, missing tests section
 - Feasibility: 9/10 - Realistic timeline and approach
 - Risk Mitigation: 6/10 - Only 1 risk identified
@@ -163,6 +172,7 @@ Rate this plan for user authentication implementation
 ### Overall: 8.0/10 ✅ PASS
 
 ### Top Recommendations
+
 1. Add risk section with security and dependency risks
 2. Include test plan for each authentication flow
 3. Add rollback procedure for failed deployment
@@ -172,6 +182,7 @@ Rate this plan for user authentication implementation
 </examples>
 
 ## Rules
+
 - Always use consistent rubric dimensions
 - Provide specific, actionable recommendations
 - Document score justifications
@@ -179,11 +190,13 @@ Rate this plan for user authentication implementation
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

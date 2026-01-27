@@ -24,22 +24,22 @@ node swarm-coordination.cjs help
 
 ## Commands
 
-| Command    | Description |
-|------------|-------------|
-| `run`      | Execute the skill (default) |
+| Command    | Description                      |
+| ---------- | -------------------------------- |
+| `run`      | Execute the skill (default)      |
 | `validate` | Validate inputs before execution |
-| `help`     | Show help message |
+| `help`     | Show help message                |
 
 ## Options
 
-| Option | Description |
-|--------|-------------|
-| `--input <file>` | Input file path |
-| `--output <file>` | Output file path |
+| Option            | Description               |
+| ----------------- | ------------------------- |
+| `--input <file>`  | Input file path           |
+| `--output <file>` | Output file path          |
 | `--config <file>` | Configuration file (JSON) |
-| `--json` | Output results as JSON |
-| `--verbose` | Verbose output |
-| `--help` | Show help message |
+| `--json`          | Output results as JSON    |
+| `--verbose`       | Verbose output            |
+| `--help`          | Show help message         |
 
 ## Integration
 
@@ -50,7 +50,7 @@ const { execSync } = require('child_process');
 
 // Run the tool
 const result = execSync('node .claude/tools/swarm-coordination/swarm-coordination.cjs run --json', {
-  encoding: 'utf-8'
+  encoding: 'utf-8',
 });
 const data = JSON.parse(result);
 ```

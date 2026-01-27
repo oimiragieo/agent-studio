@@ -7,6 +7,7 @@ SOAP (Subjective, Objective, Assessment, Plan) is the standard format for progre
 ### Purpose and Use
 
 **When to use SOAP notes:**
+
 - Daily progress notes in hospital
 - Outpatient visit documentation
 - Subspecialty consultations
@@ -14,6 +15,7 @@ SOAP (Subjective, Objective, Assessment, Plan) is the standard format for progre
 - Documenting response to treatment
 
 **Benefits:**
+
 - Standardized structure
 - Organized clinical reasoning
 - Facilitates communication
@@ -27,6 +29,7 @@ SOAP (Subjective, Objective, Assessment, Plan) is the standard format for progre
 **Definition:** Information reported by the patient (symptoms, concerns, history)
 
 **Elements to include:**
+
 - Chief complaint or reason for visit
 - History of present illness (HPI)
 - Review of systems (ROS) relevant to visit
@@ -36,6 +39,7 @@ SOAP (Subjective, Objective, Assessment, Plan) is the standard format for progre
 - Patient concerns or questions
 
 **HPI Elements (use OPQRST for pain/symptoms):**
+
 - **O**nset: When did it start? Sudden or gradual?
 - **P**rovocation/Palliation: What makes it better or worse?
 - **Q**uality: What does it feel like? (sharp, dull, burning, etc.)
@@ -44,15 +48,18 @@ SOAP (Subjective, Objective, Assessment, Plan) is the standard format for progre
 - **T**iming: Constant or intermittent? Duration? Frequency?
 
 **Associated symptoms:**
+
 - Other symptoms occurring with primary complaint
 - Pertinent negatives (absence of expected symptoms)
 
 **Response to treatment:**
+
 - Medications taken and effect
 - Prior interventions and outcomes
 - Compliance with treatment plan
 
 **Example Subjective section:**
+
 ```
 S: Patient reports persistent cough for 5 days, productive of yellow sputum. Associated
 with fever to 101.5°F, measured at home yesterday. Denies shortness of breath, chest
@@ -68,6 +75,7 @@ travel or sick contacts.
 **Elements to include:**
 
 **Vital Signs:**
+
 - Temperature (°F or °C)
 - Blood pressure (mmHg)
 - Heart rate (bpm)
@@ -77,6 +85,7 @@ travel or sick contacts.
 - Pain score if applicable
 
 **General Appearance:**
+
 - Overall appearance (well, ill, distressed)
 - Age appropriateness
 - Nutritional status
@@ -84,11 +93,13 @@ travel or sick contacts.
 - Affect and behavior
 
 **Physical Examination by System:**
+
 - Organized head-to-toe or by systems
 - Relevant findings for presenting complaint
 - Include pertinent positives and negatives
 
 **Standard examination systems:**
+
 1. **HEENT** (Head, Eyes, Ears, Nose, Throat)
 2. **Neck** (thyroid, lymph nodes, JVD, carotids)
 3. **Cardiovascular** (heart sounds, murmurs, peripheral pulses, edema)
@@ -100,11 +111,13 @@ travel or sick contacts.
 9. **Psychiatric** (mood, affect, thought process/content)
 
 **Laboratory and Imaging Results:**
+
 - Relevant test results
 - Include reference ranges for abnormal values
 - Note timing of tests relative to visit
 
 **Example Objective section:**
+
 ```
 O: Vitals: T 100.8°F, BP 128/82, HR 92, RR 18, SpO2 96% on room air
 General: Alert, mild respiratory distress, appears mildly ill
@@ -131,6 +144,7 @@ Chest X-ray: Right lower lobe consolidation consistent with pneumonia
 **Definition:** Clinical impression, diagnosis, and evaluation of patient status
 
 **Elements to include:**
+
 - Primary diagnosis or problem
 - Secondary diagnoses or problems
 - Differential diagnosis if uncertain
@@ -139,21 +153,23 @@ Chest X-ray: Right lower lobe consolidation consistent with pneumonia
 - Complications or new problems
 
 **Format:**
+
 - Problem list (numbered)
 - Each problem with brief assessment
 - Include ICD-10 codes when appropriate for billing
 
 **Example Assessment section:**
+
 ```
-A: 
+A:
 1. Community-acquired pneumonia (CAP), right lower lobe (J18.1)
    - Moderate severity (CURB-65 score 1)
    - Appropriate for outpatient management
    - Minimal improvement on azithromycin, likely bacterial etiology
-   
+
 2. Dehydration, mild (E86.0)
    - Secondary to decreased PO intake
-   
+
 3. Type 2 diabetes mellitus (E11.9)
    - Well-controlled, continue home medications
 ```
@@ -163,6 +179,7 @@ A:
 **Definition:** Diagnostic and therapeutic interventions
 
 **Elements to include:**
+
 - Diagnostic plan (further testing, imaging, referrals)
 - Therapeutic plan (medications, procedures, therapies)
 - Patient education and counseling
@@ -171,6 +188,7 @@ A:
 - Return precautions (when to seek urgent care)
 
 **Medication documentation:**
+
 - Drug name (generic preferred)
 - Dose and route
 - Frequency
@@ -178,10 +196,12 @@ A:
 - Indication
 
 **Plan organization:**
+
 - By problem (matches assessment)
 - By intervention type (diagnostics, therapeutics, education)
 
 **Example Plan section:**
+
 ```
 P:
 1. Community-acquired pneumonia:
@@ -190,16 +210,16 @@ P:
    - Discontinue azithromycin
    - Start amoxicillin-clavulanate 875/125 mg PO BID x 7 days
    - Supportive care: adequate hydration, rest, acetaminophen for fever
-   Education: 
+   Education:
    - Explained bacterial pneumonia diagnosis and antibiotic change
    - Discussed expected improvement within 48-72 hours
    - Return precautions: worsening dyspnea, high fever >103°F, confusion
    Follow-up: Phone call in 48 hours to assess response, clinic visit in 1 week
-   
+
 2. Dehydration:
    - Encourage PO fluids, goal 2 liters/day
    - Sports drinks or electrolyte solutions acceptable
-   
+
 3. Type 2 diabetes:
    - Continue metformin 1000 mg PO BID
    - Home glucose monitoring
@@ -211,6 +231,7 @@ Patient verbalized understanding and agreement with plan.
 ### SOAP Note Best Practices
 
 **Documentation standards:**
+
 - Write legibly if handwritten
 - Use standard abbreviations only
 - Date and time each entry
@@ -220,12 +241,14 @@ Patient verbalized understanding and agreement with plan.
 - Review and update problem list
 
 **Billing considerations:**
+
 - Document medical necessity
 - Match documentation to billing level
 - Include required elements for E/M coding
 - Document time for time-based billing
 
 **Legal considerations:**
+
 - Document facts, not opinions or judgment
 - Quote patient when relevant
 - Document non-compliance objectively
@@ -257,6 +280,7 @@ Patient verbalized understanding and agreement with plan.
 **Definition:** Brief statement of why patient is seeking care
 
 **Format:**
+
 - One sentence
 - Use patient's own words (in quotes)
 - Example: CC: "I can't catch my breath"
@@ -266,6 +290,7 @@ Patient verbalized understanding and agreement with plan.
 **Purpose:** Detailed chronological narrative of current problem
 
 **Required elements (for billing):**
+
 - Location
 - Quality
 - Severity
@@ -276,6 +301,7 @@ Patient verbalized understanding and agreement with plan.
 - Associated signs/symptoms
 
 **Structure:**
+
 - Opening statement (demographics, presenting problem)
 - Chronological description
 - Symptom characterization
@@ -283,6 +309,7 @@ Patient verbalized understanding and agreement with plan.
 - What prompted presentation now
 
 **Example:**
+
 ```
 HPI: Mr. Smith is a 65-year-old man with history of CHF (EF 35%) who presents with
 3 days of progressive dyspnea on exertion. Patient reports dyspnea now occurs with
@@ -296,6 +323,7 @@ at home. Presented to ED today when dyspnea worsened and developed while at rest
 #### Past Medical History (PMH)
 
 **Include:**
+
 - Chronic medical conditions
 - Previous hospitalizations
 - Major illnesses
@@ -303,6 +331,7 @@ at home. Presented to ED today when dyspnea worsened and developed while at rest
 - Childhood illnesses (if relevant)
 
 **Format:**
+
 ```
 PMH:
 1. Heart failure with reduced ejection fraction (2018), EF 35% on echo 6 months ago
@@ -316,11 +345,13 @@ PMH:
 #### Past Surgical History (PSH)
 
 **Include:**
+
 - All surgeries and procedures
 - Dates (year acceptable if exact date unknown)
 - Complications if any
 
 **Format:**
+
 ```
 PSH:
 1. CABG x4 (2019), complicated by post-op atrial fibrillation
@@ -331,6 +362,7 @@ PSH:
 #### Medications
 
 **Documentation:**
+
 - Generic name preferred
 - Dose, route, frequency
 - Indication if not obvious
@@ -339,6 +371,7 @@ PSH:
 - Note if patient unable to provide list
 
 **Format:**
+
 ```
 Medications:
 1. Furosemide 40 mg PO daily (ran out 2 days ago)
@@ -354,12 +387,14 @@ Medications:
 #### Allergies
 
 **Document:**
+
 - Drug allergies with reaction
 - Food allergies
 - Environmental allergies
 - NKDA if no known allergies
 
 **Format:**
+
 ```
 Allergies:
 1. Penicillin → anaphylaxis (childhood)
@@ -370,12 +405,14 @@ Allergies:
 #### Family History (FH)
 
 **Include:**
+
 - First-degree relatives (parents, siblings, children)
 - Age and health status or age at death and cause
 - Relevant hereditary conditions
 - Family history of presenting condition if relevant
 
 **Format:**
+
 ```
 Family History:
 Father: CAD, MI age 58, alive age 85
@@ -388,6 +425,7 @@ Children: 2 sons, both healthy
 #### Social History (SH)
 
 **Include:**
+
 - Tobacco use (current, former, never; pack-years if applicable)
 - Alcohol use (drinks per week, CAGE questions if indicated)
 - Illicit drug use (current, former, never; type and route)
@@ -400,6 +438,7 @@ Children: 2 sons, both healthy
 - Functional status
 
 **Format:**
+
 ```
 Social History:
 Tobacco: Former smoker, quit 10 years ago (30 pack-year history)
@@ -418,11 +457,13 @@ Functional status: Independent in ADLs at baseline
 **Purpose:** Systematic screening for symptoms by body system
 
 **Requirements:**
+
 - Minimum 10 systems for comprehensive exam
 - Pertinent positives and negatives
 - "All other systems reviewed and negative" acceptable if documented
 
 **Systems:**
+
 1. **Constitutional**: Fever, chills, night sweats, weight change, fatigue
 2. **Eyes**: Vision changes, pain, discharge
 3. **ENT**: Hearing loss, tinnitus, sinus problems, sore throat
@@ -439,6 +480,7 @@ Functional status: Independent in ADLs at baseline
 14. **Allergic/Immunologic**: Seasonal allergies, frequent infections
 
 **Format:**
+
 ```
 ROS:
 Constitutional: Denies fever, chills. Reports fatigue and weight gain (8 lbs).
@@ -452,11 +494,13 @@ All other systems reviewed and negative.
 #### Physical Examination
 
 **General organization:**
+
 - Vital signs first
 - General appearance
 - Systematic examination head-to-toe
 
 **Vital signs:**
+
 ```
 Vitals: T 98.2°F, BP 142/88, HR 105, RR 24, SpO2 88% on room air → 95% on 2L NC
 Height: 5'10", Weight: 195 lbs (baseline 187 lbs), BMI 28
@@ -467,6 +511,7 @@ Height: 5'10", Weight: 195 lbs (baseline 187 lbs), BMI 28
 **General:** Well-developed, obese man in moderate respiratory distress, sitting upright in bed
 
 **HEENT:**
+
 - Head: Normocephalic, atraumatic
 - Eyes: PERRLA, EOMI, no scleral icterus
 - Ears: TMs clear bilaterally
@@ -476,18 +521,21 @@ Height: 5'10", Weight: 195 lbs (baseline 187 lbs), BMI 28
 **Neck:** Supple, no lymphadenopathy, JVP elevated to 12 cm, no thyromegaly
 
 **Cardiovascular:**
+
 - Inspection: No visible PMI
 - Palpation: PMI laterally displaced
 - Auscultation: Tachycardic regular rhythm, S3 gallop present, 2/6 holosystolic murmur at apex radiating to axilla
 - Peripheral pulses: 2+ radial, 1+ dorsalis pedis bilaterally
 
 **Pulmonary:**
+
 - Inspection: Increased work of breathing, using accessory muscles
 - Palpation: Tactile fremitus symmetric
 - Percussion: Dullness to percussion at bilateral bases
 - Auscultation: Bilateral crackles halfway up lung fields, no wheezes
 
 **Abdomen:**
+
 - Inspection: Obese, no distention
 - Auscultation: Normoactive bowel sounds
 - Percussion: Tympanic
@@ -498,6 +546,7 @@ Height: 5'10", Weight: 195 lbs (baseline 187 lbs), BMI 28
 **Skin:** Warm and dry, no rashes
 
 **Neurological:**
+
 - Mental status: Alert and oriented to person, place, time
 - Cranial nerves: II-XII intact
 - Motor: 5/5 strength all extremities
@@ -511,12 +560,14 @@ Height: 5'10", Weight: 195 lbs (baseline 187 lbs), BMI 28
 #### Laboratory and Imaging
 
 **Include:**
+
 - All relevant labs with reference ranges
 - Imaging studies with key findings
 - ECG findings
 - Other diagnostic tests
 
 **Example:**
+
 ```
 Laboratory Data:
 CBC: WBC 8.5, Hgb 11.2 (L), Hct 34%, Plt 245
@@ -536,6 +587,7 @@ ECG: Sinus tachycardia at 105 bpm, left ventricular hypertrophy, no acute ST-T c
 **Format:** Problem-based with numbered problem list
 
 **Example:**
+
 ```
 Assessment and Plan:
 
@@ -598,6 +650,7 @@ Disposition: Admit to telemetry floor
 ### Timing
 
 **Requirements:**
+
 - Complete within 30 days of discharge (CMS)
 - Many hospitals require within 24-48 hours
 - Available at time of follow-up appointment
@@ -622,6 +675,7 @@ Principal reason for hospitalization
 **Format:** Numbered list, prioritized
 
 **Example:**
+
 ```
 Discharge Diagnoses:
 1. Acute decompensated heart failure
@@ -635,6 +689,7 @@ Discharge Diagnoses:
 #### Hospital Course
 
 **Content:**
+
 - Chronological narrative or problem-based
 - Key events and interventions
 - Response to treatment
@@ -644,6 +699,7 @@ Discharge Diagnoses:
 - Significant test results
 
 **Example (brief):**
+
 ```
 Hospital Course:
 Mr. Smith was admitted with acute decompensated heart failure in the setting of
@@ -666,12 +722,14 @@ Procedures:
 #### Discharge Medications
 
 **Format:**
+
 - Complete list with instructions
 - **NEW** medications highlighted
 - **CHANGED** medications noted
 - **DISCONTINUED** medications listed
 
 **Example:**
+
 ```
 Discharge Medications:
 1. Furosemide 60 mg PO daily [INCREASED from 40 mg]
@@ -701,12 +759,14 @@ Home with self-care
 #### Follow-up Plans
 
 **Include:**
+
 - Appointments scheduled
 - Recommended follow-up timing
 - Pending tests or studies at discharge
 - Referrals made
 
 **Example:**
+
 ```
 Follow-up:
 1. Cardiology appointment with Dr. Jones on [date] at [time]
@@ -718,6 +778,7 @@ Follow-up:
 #### Patient Instructions
 
 **Include:**
+
 - Activity restrictions
 - Dietary restrictions
 - Wound care (if applicable)
@@ -726,6 +787,7 @@ Follow-up:
 - Return precautions
 
 **Example:**
+
 ```
 Patient Instructions:
 1. Weigh yourself daily every morning, call doctor if gain >2 lbs in 1 day or >5 lbs
@@ -741,4 +803,3 @@ Patient Instructions:
 ---
 
 This reference provides comprehensive standards for patient clinical documentation including SOAP notes, H&P, and discharge summaries. Use these guidelines to ensure complete, accurate, and compliant clinical documentation.
-

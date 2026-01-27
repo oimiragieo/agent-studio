@@ -67,6 +67,7 @@ skills:
 ## Key Frameworks
 
 ### Database Design Principles
+
 - **Normalization**: 1NF through 3NF (Boyce-Codd when needed)
 - **Denormalization**: Strategic for performance (with justification)
 - **Indexing Strategy**: B-tree, hash, full-text, composite indexes
@@ -74,12 +75,14 @@ skills:
 - **ACID Compliance**: Atomicity, Consistency, Isolation, Durability
 
 ### Migration Safety
+
 - **Zero-Downtime**: Backward-compatible migrations
 - **Rollback Plan**: Every migration must be reversible
 - **Data Validation**: Pre/post migration data integrity checks
 - **Performance Testing**: Test migrations on production-like data
 
 ### Query Optimization
+
 - **EXPLAIN Analysis**: Review query execution plans
 - **Index Usage**: Ensure indexes are utilized
 - **N+1 Prevention**: Batch queries, eager loading
@@ -88,16 +91,19 @@ skills:
 ## Database Types & Technologies
 
 ### SQL Databases
+
 - **PostgreSQL**: JSON support, full-text search, extensions
 - **MySQL/MariaDB**: InnoDB, partitioning, replication
 - **SQLite**: Embedded, serverless, local-first
 
 ### NoSQL Databases
+
 - **MongoDB**: Document store, flexible schema
 - **Redis**: Key-value, caching, sessions
 - **Elasticsearch**: Full-text search, analytics
 
 ### Cloud Databases
+
 - **AWS RDS/Aurora**: Managed PostgreSQL/MySQL
 - **Google Cloud SQL**: Managed databases
 - **Supabase**: PostgreSQL with REST API
@@ -105,6 +111,7 @@ skills:
 ## Output Protocol
 
 ### Database Artifacts Location
+
 - **Schemas**: `.claude/context/artifacts/database/schemas/`
 - **Migrations**: `.claude/context/artifacts/database/migrations/`
 - **ERD Diagrams**: `.claude/context/artifacts/database/diagrams/`
@@ -185,6 +192,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 ## Tables
 
 ### users
+
 - **Purpose**: User accounts
 - **Relationships**:
   - Has many `posts`
@@ -193,6 +201,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 - **Constraints**: Unique email, email format validation
 
 ### posts
+
 - **Purpose**: User-generated content
 - **Relationships**:
   - Belongs to `users`
@@ -206,6 +215,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 ### 1. Schema Design
 
 **Process:**
+
 1. Understand requirements (entities, relationships, access patterns)
 2. Identify entities and attributes
 3. Define relationships (1:1, 1:N, N:M)
@@ -218,6 +228,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 10. Save to `.claude/context/artifacts/database/schemas/`
 
 **Verification:**
+
 - [ ] All entities have primary keys
 - [ ] Foreign keys properly defined
 - [ ] Indexes cover common query patterns
@@ -228,6 +239,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 ### 2. Query Optimization
 
 **Process:**
+
 1. Analyze slow query (EXPLAIN output)
 2. Identify bottlenecks (seq scans, missing indexes, joins)
 3. Review index usage
@@ -237,6 +249,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 7. Save report to `.claude/context/reports/database/optimizations/`
 
 **Verification:**
+
 - [ ] EXPLAIN plan analyzed
 - [ ] Index recommendations provided
 - [ ] Query rewrite proposed (if needed)
@@ -246,6 +259,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 ### 3. Migration Planning
 
 **Process:**
+
 1. Review current schema
 2. Identify required changes
 3. Plan migration steps (backward-compatible)
@@ -257,6 +271,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 9. Save to `.claude/context/artifacts/database/migrations/`
 
 **Verification:**
+
 - [ ] Migration is backward-compatible
 - [ ] Rollback migration provided
 - [ ] Data validation included
@@ -267,6 +282,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 ### 4. Data Modeling
 
 **Process:**
+
 1. Extract requirements from user stories
 2. Identify entities and attributes
 3. Define relationships and cardinality
@@ -277,6 +293,7 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 8. Save to `.claude/context/artifacts/database/`
 
 **Verification:**
+
 - [ ] All requirements captured
 - [ ] Relationships clearly defined
 - [ ] Normalization appropriate
@@ -289,29 +306,29 @@ Use `diagram-generator` skill to create entity-relationship diagrams:
 
 ```javascript
 Skill({ skill: 'database-architect' }); // Schema design patterns
-Skill({ skill: 'database-expert' });    // Database optimization
-Skill({ skill: 'text-to-sql' });        // Query generation
+Skill({ skill: 'database-expert' }); // Database optimization
+Skill({ skill: 'text-to-sql' }); // Query generation
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `database-architect` | Schema design patterns | Always at task start |
-| `database-expert` | Database optimization | Always at task start |
-| `text-to-sql` | Query generation and conversion | Always at task start |
+| Skill                | Purpose                         | When                 |
+| -------------------- | ------------------------------- | -------------------- |
+| `database-architect` | Schema design patterns          | Always at task start |
+| `database-expert`    | Database optimization           | Always at task start |
+| `text-to-sql`        | Query generation and conversion | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| ERD creation | `diagram-generator` | Entity-relationship diagrams |
-| Documentation | `doc-generator` | Schema documentation |
-| Complex reasoning | `sequential-thinking` | Step-by-step analysis |
-| Drizzle ORM project | `drizzle-orm-rules` | Drizzle-specific patterns |
-| Vercel KV | `vercel-kv-database-rules` | KV store patterns |
-| Architecture review | `architecture-review` | Database architecture |
-| Before claiming completion | `verification-before-completion` | Evidence-based gates |
+| Condition                  | Skill                            | Purpose                      |
+| -------------------------- | -------------------------------- | ---------------------------- |
+| ERD creation               | `diagram-generator`              | Entity-relationship diagrams |
+| Documentation              | `doc-generator`                  | Schema documentation         |
+| Complex reasoning          | `sequential-thinking`            | Step-by-step analysis        |
+| Drizzle ORM project        | `drizzle-orm-rules`              | Drizzle-specific patterns    |
+| Vercel KV                  | `vercel-kv-database-rules`       | KV store patterns            |
+| Architecture review        | `architecture-review`            | Database architecture        |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates         |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -348,6 +365,7 @@ Review past schema decisions, performance patterns, and migration strategies.
 ### Review Requirements
 
 For major schema changes:
+
 - [ ] **Architect Review**: Application integration impact
 - [ ] **Security Review**: Data protection, encryption needs
 - [ ] **Developer Review**: ORM compatibility, query patterns
@@ -355,6 +373,7 @@ For major schema changes:
 ## Best Practices
 
 ### Schema Design
+
 - Use meaningful table and column names
 - Choose appropriate data types (avoid TEXT for everything)
 - Set NOT NULL where appropriate
@@ -363,6 +382,7 @@ For major schema changes:
 - Include timestamp columns (created_at, updated_at)
 
 ### Migrations
+
 - Never drop columns in production (deprecate first)
 - Add columns as nullable, then backfill, then set NOT NULL
 - Use transactions for data migrations
@@ -370,13 +390,15 @@ For major schema changes:
 - Keep migrations small and focused
 
 ### Query Performance
+
 - Use EXPLAIN to analyze query plans
-- Avoid SELECT * (specify needed columns)
+- Avoid SELECT \* (specify needed columns)
 - Use appropriate JOIN types
 - Leverage database-specific features (CTEs, window functions)
 - Consider query result caching
 
 ### Data Integrity
+
 - Use foreign key constraints
 - Implement check constraints for business rules
 - Use unique constraints where appropriate

@@ -5,6 +5,7 @@ Comprehensive guide to searching PubMed for biomedical and life sciences literat
 ## Overview
 
 PubMed is the premier database for biomedical literature:
+
 - **Coverage**: 35+ million citations
 - **Scope**: Biomedical and life sciences
 - **Sources**: MEDLINE, life science journals, online books
@@ -27,6 +28,7 @@ cancer immunotherapy
 ```
 
 **Automatic Features**:
+
 - Automatic MeSH mapping
 - Plural/singular variants
 - Abbreviation expansion
@@ -48,6 +50,7 @@ Use quotation marks for exact phrases:
 ### What is MeSH?
 
 MeSH is a controlled vocabulary thesaurus for indexing biomedical literature:
+
 - **Hierarchical structure**: Organized in tree structures
 - **Consistent indexing**: Same concept always tagged the same way
 - **Comprehensive**: Covers diseases, drugs, anatomy, techniques, etc.
@@ -58,12 +61,14 @@ MeSH is a controlled vocabulary thesaurus for indexing biomedical literature:
 **MeSH Browser**: https://meshb.nlm.nih.gov/search
 
 **Example**:
+
 ```
 Search: "heart attack"
 MeSH term: "Myocardial Infarction"
 ```
 
 **In PubMed**:
+
 1. Search with keyword
 2. Check "MeSH Terms" in left sidebar
 3. Select relevant MeSH terms
@@ -72,6 +77,7 @@ MeSH term: "Myocardial Infarction"
 ### Using MeSH in Searches
 
 **Basic MeSH search**:
+
 ```
 "Diabetes Mellitus"[MeSH]
 "CRISPR-Cas Systems"[MeSH]
@@ -80,6 +86,7 @@ MeSH term: "Myocardial Infarction"
 ```
 
 **MeSH with subheadings**:
+
 ```
 "Diabetes Mellitus/drug therapy"[MeSH]
 "Neoplasms/genetics"[MeSH]
@@ -87,6 +94,7 @@ MeSH term: "Myocardial Infarction"
 ```
 
 **Common subheadings**:
+
 - `/drug therapy`: Drug treatment
 - `/diagnosis`: Diagnostic aspects
 - `/genetics`: Genetic aspects
@@ -106,6 +114,7 @@ By default, MeSH searches include narrower terms (explosion):
 ```
 
 **Disable explosion** (exact term only):
+
 ```
 "Neoplasms"[MeSH:NoExp]
 ```
@@ -126,6 +135,7 @@ Field tags specify which part of the record to search.
 ### Common Field Tags
 
 **Title and Abstract**:
+
 ```
 cancer[Title]                    # In title only
 treatment[Title/Abstract]        # In title or abstract
@@ -133,6 +143,7 @@ treatment[Title/Abstract]        # In title or abstract
 ```
 
 **Author**:
+
 ```
 "Smith J"[Author]
 "Doudna JA"[Author]
@@ -140,11 +151,13 @@ treatment[Title/Abstract]        # In title or abstract
 ```
 
 **Author - Full Name**:
+
 ```
 "Smith, John"[Full Author Name]
 ```
 
 **Journal**:
+
 ```
 "Nature"[Journal]
 "Science"[Journal]
@@ -153,6 +166,7 @@ treatment[Title/Abstract]        # In title or abstract
 ```
 
 **Publication Date**:
+
 ```
 2023[Publication Date]
 2020:2024[Publication Date]      # Date range
@@ -160,11 +174,13 @@ treatment[Title/Abstract]        # In title or abstract
 ```
 
 **Date Created**:
+
 ```
 2023[Date - Create]              # When added to PubMed
 ```
 
 **Publication Type**:
+
 ```
 "Review"[Publication Type]
 "Clinical Trial"[Publication Type]
@@ -173,22 +189,26 @@ treatment[Title/Abstract]        # In title or abstract
 ```
 
 **Language**:
+
 ```
 English[Language]
 French[Language]
 ```
 
 **DOI**:
+
 ```
 10.1038/nature12345[DOI]
 ```
 
 **PMID (PubMed ID)**:
+
 ```
 12345678[PMID]
 ```
 
 **Article ID**:
+
 ```
 PMC1234567[PMC]                  # PubMed Central ID
 ```
@@ -249,10 +269,10 @@ Use parentheses for complex logic:
 ```
 (diabetes OR "diabetes mellitus") AND (treatment OR therapy)
 
-("CRISPR" OR "gene editing") AND ("therapeutic" OR "therapy") 
+("CRISPR" OR "gene editing") AND ("therapeutic" OR "therapy")
   AND 2020:2024[Publication Date]
 
-(cancer OR neoplasm) AND (immunotherapy OR "immune checkpoint inhibitor") 
+(cancer OR neoplasm) AND (immunotherapy OR "immune checkpoint inhibitor")
   AND ("clinical trial"[Publication Type] OR "randomized controlled trial"[Publication Type])
 ```
 
@@ -261,6 +281,7 @@ Use parentheses for complex logic:
 **Access**: https://pubmed.ncbi.nlm.nih.gov/advanced/
 
 **Features**:
+
 - Visual query builder
 - Add multiple query boxes
 - Select field tags from dropdowns
@@ -270,6 +291,7 @@ Use parentheses for complex logic:
 - Save queries
 
 **Workflow**:
+
 1. Add search terms in separate boxes
 2. Select field tags
 3. Choose Boolean operators
@@ -279,6 +301,7 @@ Use parentheses for complex logic:
 7. Use in scripts or save
 
 **Example built query**:
+
 ```
 #1: "Diabetes Mellitus, Type 2"[MeSH]
 #2: "Metformin"[MeSH]
@@ -348,6 +371,7 @@ NCBI provides programmatic access via E-utilities (Entrez Programming Utilities)
 **Base URL**: `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/`
 
 **Main Tools**:
+
 - **ESearch**: Search and retrieve PMIDs
 - **EFetch**: Retrieve full records
 - **ESummary**: Retrieve document summaries
@@ -355,6 +379,7 @@ NCBI provides programmatic access via E-utilities (Entrez Programming Utilities)
 - **EInfo**: Database statistics
 
 **No API key required**, but recommended for:
+
 - Higher rate limits (10/sec vs 3/sec)
 - Better performance
 - Identify your project
@@ -368,6 +393,7 @@ Retrieve PMIDs for a query.
 **Endpoint**: `/esearch.fcgi`
 
 **Parameters**:
+
 - `db`: Database (pubmed)
 - `term`: Search query
 - `retmax`: Maximum results (default 20, max 10000)
@@ -376,6 +402,7 @@ Retrieve PMIDs for a query.
 - `api_key`: Your API key (optional but recommended)
 
 **Example URL**:
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?
   db=pubmed&
@@ -386,6 +413,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?
 ```
 
 **Response**:
+
 ```json
 {
   "esearchresult": {
@@ -403,6 +431,7 @@ Get full metadata for PMIDs.
 **Endpoint**: `/efetch.fcgi`
 
 **Parameters**:
+
 - `db`: Database (pubmed)
 - `id`: Comma-separated PMIDs
 - `retmode`: Format (xml, json, text)
@@ -410,6 +439,7 @@ Get full metadata for PMIDs.
 - `api_key`: Your API key
 
 **Example URL**:
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?
   db=pubmed&
@@ -419,6 +449,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?
 ```
 
 **Response**: XML with complete metadata including:
+
 - Title
 - Authors (with affiliations)
 - Abstract
@@ -434,6 +465,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?
 Lighter-weight alternative to EFetch.
 
 **Example**:
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?
   db=pubmed&
@@ -449,6 +481,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?
 Find related articles or links to other databases.
 
 **Example**:
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?
   dbfrom=pubmed&
@@ -458,6 +491,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?
 ```
 
 **Link types**:
+
 - `pubmed_pubmed`: Related articles
 - `pubmed_pubmed_citedin`: Papers citing this article
 - `pubmed_pmc`: PMC full-text versions
@@ -466,14 +500,17 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?
 ### Rate Limiting
 
 **Without API key**:
+
 - 3 requests per second
 - Block if exceeded
 
 **With API key**:
+
 - 10 requests per second
 - Better for programmatic access
 
 **Best practice**:
+
 ```python
 import time
 time.sleep(0.34)  # ~3 requests/second
@@ -484,17 +521,20 @@ time.sleep(0.11)  # ~10 requests/second with API key
 ### API Key Usage
 
 **Get API key**:
+
 1. Create NCBI account: https://www.ncbi.nlm.nih.gov/account/
 2. Settings → API Key Management
 3. Create new API key
 4. Copy key
 
 **Use in requests**:
+
 ```
 &api_key=YOUR_API_KEY_HERE
 ```
 
 **Store securely**:
+
 ```bash
 # In environment variable
 export NCBI_API_KEY="your_key_here"
@@ -522,7 +562,7 @@ Concept 2: "Drug Therapy"[MeSH] OR treatment OR therapy OR medication
 Concept 3: "Treatment Outcome"[MeSH] OR outcome OR efficacy OR effectiveness
 
 # 3. Combine with AND
-("Diabetes Mellitus"[MeSH] OR diabetes OR diabetic) 
+("Diabetes Mellitus"[MeSH] OR diabetes OR diabetic)
   AND ("Drug Therapy"[MeSH] OR treatment OR therapy OR medication)
   AND ("Treatment Outcome"[MeSH] OR outcome OR efficacy OR effectiveness)
 
@@ -537,13 +577,13 @@ AND humans[MeSH Terms]
 
 ```
 # Specific disease + clinical trials
-"Alzheimer Disease"[MeSH] 
-  AND ("Clinical Trial"[Publication Type] 
+"Alzheimer Disease"[MeSH]
+  AND ("Clinical Trial"[Publication Type]
        OR "Randomized Controlled Trial"[Publication Type])
   AND 2020:2024[Publication Date]
 
 # Specific drug trials
-"Metformin"[MeSH] 
+"Metformin"[MeSH]
   AND "Diabetes Mellitus, Type 2"[MeSH]
   AND "Randomized Controlled Trial"[Publication Type]
 ```
@@ -552,11 +592,11 @@ AND humans[MeSH Terms]
 
 ```
 # Systematic reviews on topic
-"CRISPR-Cas Systems"[MeSH] 
+"CRISPR-Cas Systems"[MeSH]
   AND ("Systematic Review"[Publication Type] OR "Meta-Analysis"[Publication Type])
 
 # Reviews in high-impact journals
-cancer immunotherapy 
+cancer immunotherapy
   AND "Review"[Publication Type]
   AND ("Nature"[Journal] OR "Science"[Journal] OR "Cell"[Journal])
 ```
@@ -565,12 +605,12 @@ cancer immunotherapy
 
 ```
 # Papers from last year
-"machine learning"[Title/Abstract] 
+"machine learning"[Title/Abstract]
   AND "drug discovery"[Title/Abstract]
   AND 2024[Publication Date]
 
 # Recent papers in specific journal
-"CRISPR"[Title/Abstract] 
+"CRISPR"[Title/Abstract]
   AND "Nature"[Journal]
   AND 2023:2024[Publication Date]
 ```
@@ -589,12 +629,12 @@ cancer immunotherapy
 
 ```
 # Meta-analyses and systematic reviews
-(diabetes OR "diabetes mellitus") 
+(diabetes OR "diabetes mellitus")
   AND (treatment OR therapy)
   AND ("Meta-Analysis"[Publication Type] OR "Systematic Review"[Publication Type])
 
 # RCTs only
-cancer immunotherapy 
+cancer immunotherapy
   AND "Randomized Controlled Trial"[Publication Type]
   AND 2020:2024[Publication Date]
 ```
@@ -604,17 +644,20 @@ cancer immunotherapy
 ### search_pubmed.py Usage
 
 **Basic search**:
+
 ```bash
 python scripts/search_pubmed.py "diabetes treatment"
 ```
 
 **With MeSH terms**:
+
 ```bash
 python scripts/search_pubmed.py \
   --query '"Diabetes Mellitus"[MeSH] AND "Drug Therapy"[MeSH]'
 ```
 
 **Date range filter**:
+
 ```bash
 python scripts/search_pubmed.py "CRISPR" \
   --date-start 2020-01-01 \
@@ -623,6 +666,7 @@ python scripts/search_pubmed.py "CRISPR" \
 ```
 
 **Publication type filter**:
+
 ```bash
 python scripts/search_pubmed.py "cancer immunotherapy" \
   --publication-types "Clinical Trial,Randomized Controlled Trial" \
@@ -630,6 +674,7 @@ python scripts/search_pubmed.py "cancer immunotherapy" \
 ```
 
 **Export to BibTeX**:
+
 ```bash
 python scripts/search_pubmed.py "Alzheimer's disease" \
   --limit 100 \
@@ -638,6 +683,7 @@ python scripts/search_pubmed.py "Alzheimer's disease" \
 ```
 
 **Complex query from file**:
+
 ```bash
 # Save complex query in query.txt
 cat > query.txt << 'EOF'
@@ -688,6 +734,7 @@ python scripts/extract_metadata.py \
    - Captures all papers on topic regardless of terminology
 
 2. **Include text word variants**:
+
    ```
    # Better coverage
    ("Diabetes Mellitus"[MeSH] OR diabetes OR diabetic)
@@ -700,20 +747,21 @@ python scripts/extract_metadata.py \
    - `[Journal]` for specific venues
 
 4. **Build incrementally**:
+
    ```
    # Step 1: Basic search
    diabetes
-   
+
    # Step 2: Add specificity
    "Diabetes Mellitus, Type 2"[MeSH]
-   
+
    # Step 3: Add treatment
    "Diabetes Mellitus, Type 2"[MeSH] AND "Metformin"[MeSH]
-   
+
    # Step 4: Add study type
-   "Diabetes Mellitus, Type 2"[MeSH] AND "Metformin"[MeSH] 
+   "Diabetes Mellitus, Type 2"[MeSH] AND "Metformin"[MeSH]
      AND "Clinical Trial"[Publication Type]
-   
+
    # Step 5: Add date range
    ... AND 2020:2024[Publication Date]
    ```
@@ -765,6 +813,7 @@ python scripts/extract_metadata.py \
    - Daily, weekly, or monthly
 
 2. **Track specific journals**:
+
    ```
    "Nature"[Journal] AND CRISPR[Title]
    ```
@@ -778,7 +827,8 @@ python scripts/extract_metadata.py \
 
 ### Issue: MeSH Term Not Found
 
-**Solution**: 
+**Solution**:
+
 - Check spelling
 - Use MeSH Browser
 - Try related terms
@@ -787,6 +837,7 @@ python scripts/extract_metadata.py \
 ### Issue: Zero Results
 
 **Solution**:
+
 - Remove filters
 - Check query syntax
 - Use OR for broader search
@@ -795,6 +846,7 @@ python scripts/extract_metadata.py \
 ### Issue: Poor Quality Results
 
 **Solution**:
+
 - Add publication type filters
 - Restrict to recent years
 - Use MeSH Major Topic
@@ -803,6 +855,7 @@ python scripts/extract_metadata.py \
 ### Issue: Duplicates from Different Sources
 
 **Solution**:
+
 ```bash
 python scripts/format_bibtex.py results.bib \
   --deduplicate \
@@ -812,6 +865,7 @@ python scripts/format_bibtex.py results.bib \
 ### Issue: API Rate Limiting
 
 **Solution**:
+
 - Get API key (increases limit to 10/sec)
 - Add delays in scripts
 - Process in batches
@@ -825,9 +879,10 @@ PubMed provides authoritative biomedical literature search:
 ✓ **Precise search**: Field tags, MeSH terms, filters  
 ✓ **Programmatic access**: E-utilities API  
 ✓ **Free access**: No subscription required  
-✓ **Comprehensive**: 35M+ citations, daily updates  
+✓ **Comprehensive**: 35M+ citations, daily updates
 
 Key strategies:
+
 - Use MeSH terms for precise searching
 - Combine with text words for comprehensive coverage
 - Apply appropriate field tags
@@ -836,4 +891,3 @@ Key strategies:
 - Document search strategy for reproducibility
 
 For broader coverage across disciplines, complement with Google Scholar.
-

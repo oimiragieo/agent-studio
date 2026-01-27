@@ -30,13 +30,13 @@ Medical journals prioritize **clinical relevance**, **patient outcomes**, and **
 
 ### Tone Characteristics
 
-| Characteristic | Description |
-|---------------|-------------|
-| **Evidence-focused** | Appropriate hedging based on study design |
+| Characteristic       | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| **Evidence-focused** | Appropriate hedging based on study design      |
 | **Patient-centered** | Focus on patient outcomes, not just biomarkers |
-| **Clinical** | Emphasize practical applicability |
-| **Precise** | Exact numbers, confidence intervals, NNT |
-| **Measured** | Claims match evidence strength |
+| **Clinical**         | Emphasize practical applicability              |
+| **Precise**          | Exact numbers, confidence intervals, NNT       |
+| **Measured**         | Claims match evidence strength                 |
 
 ### Voice
 
@@ -57,53 +57,53 @@ Most major medical journals require **structured abstracts** with labeled sectio
 ```
 Background: [Why this study was needed - 1-2 sentences]
 
-Methods: [Study design, setting, participants, intervention, 
+Methods: [Study design, setting, participants, intervention,
 main outcomes - 2-4 sentences]
 
-Results: [Primary and key secondary outcomes with statistics - 
+Results: [Primary and key secondary outcomes with statistics -
 3-5 sentences]
 
-Conclusions: [Clinical implications, with appropriate hedging - 
+Conclusions: [Clinical implications, with appropriate hedging -
 1-2 sentences]
 ```
 
 ### Word Limits by Journal
 
 | Journal | Abstract Limit |
-|---------|---------------|
-| NEJM | 250 words |
-| Lancet | 300 words |
-| JAMA | 350 words |
-| BMJ | 300 words |
-| Annals | 325 words |
+| ------- | -------------- |
+| NEJM    | 250 words      |
+| Lancet  | 300 words      |
+| JAMA    | 350 words      |
+| BMJ     | 300 words      |
+| Annals  | 325 words      |
 
 ### Example Structured Abstract (NEJM Style)
 
 ```
 BACKGROUND
-Type 2 diabetes is associated with increased cardiovascular risk, but 
-the effects of intensive glucose control on cardiovascular outcomes 
+Type 2 diabetes is associated with increased cardiovascular risk, but
+the effects of intensive glucose control on cardiovascular outcomes
 remain uncertain.
 
 METHODS
-We randomly assigned 10,251 patients with type 2 diabetes and established 
-cardiovascular disease to receive intensive glucose-lowering therapy 
-(target HbA1c <6.0%) or standard therapy (target HbA1c 7.0-7.9%). The 
-primary outcome was a composite of nonfatal myocardial infarction, 
+We randomly assigned 10,251 patients with type 2 diabetes and established
+cardiovascular disease to receive intensive glucose-lowering therapy
+(target HbA1c <6.0%) or standard therapy (target HbA1c 7.0-7.9%). The
+primary outcome was a composite of nonfatal myocardial infarction,
 nonfatal stroke, or death from cardiovascular causes.
 
 RESULTS
-After a median follow-up of 3.5 years, the primary outcome occurred in 
-352 patients (6.9%) in the intensive-therapy group and in 371 patients 
-(7.2%) in the standard-therapy group (hazard ratio, 0.90; 95% CI, 0.78 
-to 1.04; P=0.16). Severe hypoglycemia was more common with intensive 
-therapy (3.1% vs. 1.0%; P<0.001). All-cause mortality was similar 
+After a median follow-up of 3.5 years, the primary outcome occurred in
+352 patients (6.9%) in the intensive-therapy group and in 371 patients
+(7.2%) in the standard-therapy group (hazard ratio, 0.90; 95% CI, 0.78
+to 1.04; P=0.16). Severe hypoglycemia was more common with intensive
+therapy (3.1% vs. 1.0%; P<0.001). All-cause mortality was similar
 between groups (5.0% vs. 4.8%; hazard ratio, 1.04; 95% CI, 0.87 to 1.24).
 
 CONCLUSIONS
-In patients with type 2 diabetes and established cardiovascular disease, 
-intensive glucose lowering did not significantly reduce major 
-cardiovascular events compared with standard therapy and was associated 
+In patients with type 2 diabetes and established cardiovascular disease,
+intensive glucose lowering did not significantly reduce major
+cardiovascular events compared with standard therapy and was associated
 with increased severe hypoglycemia.
 ```
 
@@ -117,16 +117,16 @@ with increased severe hypoglycemia.
 
 ### Language by Study Design
 
-| Study Design | Appropriate Language |
-|-------------|---------------------|
-| **Meta-analysis of RCTs** | "Treatment X reduces mortality..." |
-| **Large RCT** | "Treatment X reduced mortality in this trial..." |
-| **Small RCT** | "Treatment X was associated with reduced mortality..." |
-| **Cohort study** | "Treatment X was associated with lower mortality..." |
-| **Case-control** | "Treatment X was associated with reduced odds of death..." |
-| **Cross-sectional** | "Treatment X use was associated with lower mortality..." |
-| **Case series** | "These cases suggest that treatment X may..." |
-| **Case report** | "This case illustrates that treatment X can..." |
+| Study Design              | Appropriate Language                                       |
+| ------------------------- | ---------------------------------------------------------- |
+| **Meta-analysis of RCTs** | "Treatment X reduces mortality..."                         |
+| **Large RCT**             | "Treatment X reduced mortality in this trial..."           |
+| **Small RCT**             | "Treatment X was associated with reduced mortality..."     |
+| **Cohort study**          | "Treatment X was associated with lower mortality..."       |
+| **Case-control**          | "Treatment X was associated with reduced odds of death..." |
+| **Cross-sectional**       | "Treatment X use was associated with lower mortality..."   |
+| **Case series**           | "These cases suggest that treatment X may..."              |
+| **Case report**           | "This case illustrates that treatment X can..."            |
 
 ### Causal Language Rules
 
@@ -138,11 +138,11 @@ with increased severe hypoglycemia.
 
 ### Hedging Phrases
 
-| Certainty Level | Phrases |
-|----------------|---------|
-| **High** | "demonstrates," "shows," "confirms" |
-| **Moderate** | "suggests," "indicates," "supports" |
-| **Low** | "may," "might," "could potentially" |
+| Certainty Level | Phrases                                        |
+| --------------- | ---------------------------------------------- |
+| **High**        | "demonstrates," "shows," "confirms"            |
+| **Moderate**    | "suggests," "indicates," "supports"            |
+| **Low**         | "may," "might," "could potentially"            |
 | **Speculative** | "it is possible that," "one interpretation is" |
 
 ---
@@ -176,7 +176,7 @@ with increased severe hypoglycemia.
 Include NNT for clinically important outcomes:
 
 ```
-"The intervention prevented one additional death for every 40 patients 
+"The intervention prevented one additional death for every 40 patients
 treated (NNT=40; 95% CI, 28 to 67)."
 ```
 
@@ -192,32 +192,35 @@ treated (NNT=40; 95% CI, 28 to 67)."
 ### Paragraph Structure
 
 **Paragraph 1: Clinical Problem**
+
 - Burden of disease (incidence, prevalence, mortality)
 - Impact on patients and healthcare system
 - Why this matters clinically
 
 ```
-"Type 2 diabetes affects more than 450 million adults worldwide and is 
-a leading cause of cardiovascular disease, renal failure, and premature 
-death. Despite advances in glucose-lowering therapies, patients with 
-diabetes continue to face a two- to four-fold increased risk of 
+"Type 2 diabetes affects more than 450 million adults worldwide and is
+a leading cause of cardiovascular disease, renal failure, and premature
+death. Despite advances in glucose-lowering therapies, patients with
+diabetes continue to face a two- to four-fold increased risk of
 cardiovascular events compared with the general population."
 ```
 
 **Paragraph 2: Current Knowledge and Limitations**
+
 - What treatments/approaches exist
 - What evidence gaps remain
 - Why more research was needed
 
 **Paragraph 3: Rationale and Objectives**
+
 - Why this study was conducted
 - Clear statement of objectives/hypothesis
 - Primary outcome stated
 
 ```
-"We therefore conducted a randomized, controlled trial to evaluate 
-whether intensive glucose-lowering therapy, compared with standard 
-therapy, would reduce major cardiovascular events in patients with 
+"We therefore conducted a randomized, controlled trial to evaluate
+whether intensive glucose-lowering therapy, compared with standard
+therapy, would reduce major cardiovascular events in patients with
 type 2 diabetes and established cardiovascular disease."
 ```
 
@@ -249,14 +252,17 @@ METHODS
 ### Key Elements
 
 **Eligibility Criteria**
+
 - List inclusion and exclusion criteria explicitly
 - Be specific (age ranges, disease definitions, lab values)
 
 **Primary Outcome**
+
 - Define precisely, including timing of assessment
 - State how it was measured
 
 **Statistical Analysis**
+
 - Pre-specified analysis plan
 - Handling of missing data
 - Subgroup analyses (pre-specified vs. exploratory)
@@ -264,12 +270,12 @@ METHODS
 ### Example Methods Paragraph
 
 ```
-We enrolled adults aged 40 years or older with type 2 diabetes (defined 
-as HbA1c ≥6.5% or use of glucose-lowering medication) and established 
-cardiovascular disease (previous myocardial infarction, stroke, or 
-revascularization procedure). Patients were excluded if they had an 
-HbA1c level below 7.5% or above 11.0%, estimated glomerular filtration 
-rate below 30 ml per minute per 1.73 m² of body-surface area, or a 
+We enrolled adults aged 40 years or older with type 2 diabetes (defined
+as HbA1c ≥6.5% or use of glucose-lowering medication) and established
+cardiovascular disease (previous myocardial infarction, stroke, or
+revascularization procedure). Patients were excluded if they had an
+HbA1c level below 7.5% or above 11.0%, estimated glomerular filtration
+rate below 30 ml per minute per 1.73 m² of body-surface area, or a
 cardiovascular event within the past 30 days.
 ```
 
@@ -280,40 +286,45 @@ cardiovascular event within the past 30 days.
 ### Structure
 
 **Opening: Participant Flow**
+
 - Screening, enrollment, randomization, follow-up, analysis
 - Reference CONSORT flow diagram
 
 **Baseline Characteristics**
+
 - Table 1: Baseline demographics and clinical characteristics
 - Note any imbalances
 
 **Primary Outcome**
+
 - Report first and prominently
 - Include point estimate, CI, P-value
 - State clinical significance
 
 **Secondary Outcomes**
+
 - Report all pre-specified secondary outcomes
 - Be cautious about multiple comparisons
 
 **Adverse Events**
+
 - Report serious adverse events systematically
 - Include deaths, hospitalizations, SAEs by category
 
 ### Example Results Paragraph
 
 ```
-Of 12,537 patients assessed for eligibility, 10,251 underwent 
-randomization: 5,128 were assigned to intensive therapy and 5,123 to 
-standard therapy (Figure 1). Baseline characteristics were similar 
-between groups (Table 1). Median follow-up was 3.5 years (interquartile 
+Of 12,537 patients assessed for eligibility, 10,251 underwent
+randomization: 5,128 were assigned to intensive therapy and 5,123 to
+standard therapy (Figure 1). Baseline characteristics were similar
+between groups (Table 1). Median follow-up was 3.5 years (interquartile
 range, 2.8 to 4.2), with vital status available for 99.2% of patients.
 
 The primary outcome occurred in 352 patients (6.9%) in the intensive-
-therapy group and 371 patients (7.2%) in the standard-therapy group 
-(hazard ratio, 0.90; 95% confidence interval [CI], 0.78 to 1.04; 
-P=0.16). The absolute difference was 0.3 percentage points (95% CI, 
--0.7 to 1.4). Results were consistent across pre-specified subgroups 
+therapy group and 371 patients (7.2%) in the standard-therapy group
+(hazard ratio, 0.90; 95% confidence interval [CI], 0.78 to 1.04;
+P=0.16). The absolute difference was 0.3 percentage points (95% CI,
+-0.7 to 1.4). Results were consistent across pre-specified subgroups
 (Figure 3).
 ```
 
@@ -324,25 +335,30 @@ P=0.16). The absolute difference was 0.3 percentage points (95% CI,
 ### Structure
 
 **Paragraph 1: Summary of Main Findings**
+
 - Restate primary outcome result
 - State whether hypothesis was supported
 
 **Paragraphs 2-3: Interpretation and Context**
+
 - How do findings compare with prior evidence?
 - What mechanisms might explain findings?
 - Clinical interpretation
 
 **Paragraph 4: Strengths**
+
 - Study design features
 - Generalizability
 - Completeness of follow-up
 
 **Paragraph 5: Limitations**
+
 - Be specific and thoughtful
 - Discuss how limitations might affect interpretation
 - Avoid generic statements
 
 **Final Paragraph: Conclusions and Implications**
+
 - Clinical implications
 - Policy implications
 - Future research needs
@@ -350,14 +366,14 @@ P=0.16). The absolute difference was 0.3 percentage points (95% CI,
 ### Example Limitations Paragraph
 
 ```
-Our study has several limitations. First, despite randomization, we 
-cannot exclude residual confounding from unmeasured factors. Second, 
-the open-label design may have introduced bias in outcome assessment 
-for subjective endpoints, though the primary outcome of death was 
-objective. Third, our findings may not generalize to patients without 
-established cardiovascular disease or to healthcare settings with 
-different resources. Fourth, the 3.5-year follow-up may have been 
-insufficient to detect cardiovascular benefits that emerge over 
+Our study has several limitations. First, despite randomization, we
+cannot exclude residual confounding from unmeasured factors. Second,
+the open-label design may have introduced bias in outcome assessment
+for subjective endpoints, though the primary outcome of death was
+objective. Third, our findings may not generalize to patients without
+established cardiovascular disease or to healthcare settings with
+different resources. Fourth, the 3.5-year follow-up may have been
+insufficient to detect cardiovascular benefits that emerge over
 longer periods.
 ```
 
@@ -412,6 +428,7 @@ longer periods.
 ### CONSORT (RCTs)
 
 **25-item checklist** including:
+
 - Trial design, randomization, blinding
 - Participant flow (diagram required)
 - All outcomes with effect sizes and CIs
@@ -420,6 +437,7 @@ longer periods.
 ### STROBE (Observational)
 
 **22-item checklist** for:
+
 - Cohort, case-control, cross-sectional studies
 - Setting, participants, variables, data sources
 - Bias assessment, sensitivity analyses
@@ -427,6 +445,7 @@ longer periods.
 ### PRISMA (Systematic Reviews)
 
 **27-item checklist** including:
+
 - Search strategy
 - Study selection process (diagram)
 - Risk of bias assessment
@@ -443,6 +462,7 @@ longer periods.
 ### Table 1: Baseline Characteristics
 
 Standard format:
+
 ```
                               Intensive Therapy  Standard Therapy
                                   (N=5128)          (N=5123)
@@ -457,6 +477,7 @@ Prior MI — no. (%)              2435 (47.5)       2411 (47.1)
 ### CONSORT Flow Diagram
 
 Required for RCTs:
+
 ```
 Assessed for eligibility (n=12,537)
     │
@@ -479,6 +500,7 @@ Randomized (n=10,251)
 ### Kaplan-Meier Curves
 
 Standard presentation:
+
 - Survival curves with shaded confidence bands
 - Number at risk table below
 - Hazard ratio with 95% CI
@@ -502,6 +524,7 @@ Standard presentation:
 ## Pre-Submission Checklist
 
 ### Required Elements
+
 - [ ] Structured abstract (journal-specific format)
 - [ ] Trial registration number (for RCTs)
 - [ ] Ethics committee approval statement
@@ -509,17 +532,20 @@ Standard presentation:
 - [ ] CONSORT/STROBE checklist completed
 
 ### Statistical Reporting
+
 - [ ] Primary outcome reported with CI and P-value
 - [ ] Absolute and relative measures included
 - [ ] All pre-specified outcomes reported
 - [ ] NNT calculated for significant clinical outcomes
 
 ### Evidence Language
+
 - [ ] Claims match study design
 - [ ] Appropriate hedging used
 - [ ] Causal language only for RCTs
 
 ### Clinical Relevance
+
 - [ ] Clinical implications stated
 - [ ] Patient-centered outcomes emphasized
 - [ ] Generalizability discussed
@@ -532,4 +558,3 @@ Standard presentation:
 - `journals_formatting.md` - Technical formatting requirements
 - `reviewer_expectations.md` - What medical reviewers seek
 - Reporting guideline resources: consort-statement.org, strobe-statement.org
-

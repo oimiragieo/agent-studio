@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

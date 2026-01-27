@@ -29,13 +29,13 @@ Nature and Science are the world's premier multidisciplinary scientific journals
 
 ### Tone Characteristics
 
-| Characteristic | Description |
-|---------------|-------------|
-| **Accessible** | Avoid jargon; explain technical concepts |
-| **Engaging** | Hook the reader; tell a story |
-| **Significant** | Emphasize why this matters broadly |
-| **Confident** | State findings clearly (with appropriate hedging) |
-| **Active** | Use active voice; first person acceptable |
+| Characteristic  | Description                                       |
+| --------------- | ------------------------------------------------- |
+| **Accessible**  | Avoid jargon; explain technical concepts          |
+| **Engaging**    | Hook the reader; tell a story                     |
+| **Significant** | Emphasize why this matters broadly                |
+| **Confident**   | State findings clearly (with appropriate hedging) |
+| **Active**      | Use active voice; first person acceptable         |
 
 ### Voice
 
@@ -68,26 +68,28 @@ Write as flowing prose covering:
 ### Example Abstract (Nature Style)
 
 ```
-The origins of multicellular life remain one of biology's greatest mysteries. 
-How individual cells first cooperated to form complex organisms has been 
-difficult to study because the transition occurred over 600 million years ago. 
-Here we show that the unicellular alga Chlamydomonas reinhardtii can evolve 
-simple multicellular structures within 750 generations when exposed to 
-predation pressure. Using experimental evolution with the predator Paramecium, 
-we observed the emergence of stable multicellular clusters in 5 of 10 
-replicate populations. Genomic analysis revealed that mutations in just two 
-genes—encoding cell adhesion proteins—were sufficient to trigger this 
-transition. These results demonstrate that the evolution of multicellularity 
-may require fewer genetic changes than previously thought, providing insight 
+The origins of multicellular life remain one of biology's greatest mysteries.
+How individual cells first cooperated to form complex organisms has been
+difficult to study because the transition occurred over 600 million years ago.
+Here we show that the unicellular alga Chlamydomonas reinhardtii can evolve
+simple multicellular structures within 750 generations when exposed to
+predation pressure. Using experimental evolution with the predator Paramecium,
+we observed the emergence of stable multicellular clusters in 5 of 10
+replicate populations. Genomic analysis revealed that mutations in just two
+genes—encoding cell adhesion proteins—were sufficient to trigger this
+transition. These results demonstrate that the evolution of multicellularity
+may require fewer genetic changes than previously thought, providing insight
 into one of life's major transitions.
 ```
 
 ### What NOT to Write
 
 ❌ **Too technical**:
+
 > "Using CRISPR-Cas9-mediated knockout of the CAD1 gene (encoding cadherin-1) in C. reinhardtii strain CC-125, we demonstrated that loss of CAD1 function combined with overexpression of FLA10 under control of the HSP70A/RBCS2 tandem promoter..."
 
 ❌ **Too vague**:
+
 > "We studied how cells can form groups. Our results are interesting and may have implications for understanding evolution."
 
 ---
@@ -102,56 +104,60 @@ into one of life's major transitions.
 ### Paragraph-by-Paragraph Guide
 
 **Paragraph 1: The Big Picture**
+
 - Open with a broad, engaging statement about the field
 - Establish why this area matters to science/society
 - Accessible to any scientist
 
 ```
 Example:
-"The ability to predict protein structure from sequence alone has been a grand 
-challenge of biology for over 50 years. Accurate predictions would transform 
-drug discovery, enable understanding of disease mechanisms, and illuminate the 
+"The ability to predict protein structure from sequence alone has been a grand
+challenge of biology for over 50 years. Accurate predictions would transform
+drug discovery, enable understanding of disease mechanisms, and illuminate the
 fundamental rules governing molecular self-assembly."
 ```
 
 **Paragraph 2-3: What We Know**
+
 - Review key prior work (selectively, not exhaustively)
 - Build toward the gap you'll address
 - Keep citations focused on essential papers
 
 ```
 Example:
-"Significant progress has been made through template-based methods that 
-leverage known structures of homologous proteins. However, for the estimated 
-30% of proteins without detectable homologs, prediction accuracy has remained 
-limited. Deep learning approaches have shown promise, achieving improved 
-accuracy on benchmark datasets, yet still fall short of experimental accuracy 
+"Significant progress has been made through template-based methods that
+leverage known structures of homologous proteins. However, for the estimated
+30% of proteins without detectable homologs, prediction accuracy has remained
+limited. Deep learning approaches have shown promise, achieving improved
+accuracy on benchmark datasets, yet still fall short of experimental accuracy
 for many protein families."
 ```
 
 **Paragraph 4: The Gap**
+
 - Clearly state what remains unknown or unresolved
 - Frame this as an important problem
 
 ```
 Example:
-"Despite these advances, the fundamental question remains: can we predict 
-protein structure with experimental-level accuracy for proteins across all 
-of sequence space? This capability would democratize structural biology and 
+"Despite these advances, the fundamental question remains: can we predict
+protein structure with experimental-level accuracy for proteins across all
+of sequence space? This capability would democratize structural biology and
 enable rapid characterization of newly discovered proteins."
 ```
 
 **Final Paragraph: This Paper**
+
 - State what you did and preview key findings
 - Signal the significance of your contribution
 
 ```
 Example:
-"Here we present AlphaFold2, a neural network architecture that predicts 
-protein structure with atomic-level accuracy. In the CASP14 blind assessment, 
-AlphaFold2 achieved a median GDT score of 92.4, matching experimental 
-accuracy for most targets. We show that this system can be applied to predict 
-structures across entire proteomes, opening new avenues for understanding 
+"Here we present AlphaFold2, a neural network architecture that predicts
+protein structure with atomic-level accuracy. In the CASP14 blind assessment,
+AlphaFold2 achieved a median GDT score of 92.4, matching experimental
+accuracy for most targets. We show that this system can be applied to predict
+structures across entire proteomes, opening new avenues for understanding
 protein function at scale."
 ```
 
@@ -173,9 +179,11 @@ protein function at scale."
 Organize by **finding**, not by the chronological order of experiments:
 
 ❌ **Experiment-driven** (avoid):
+
 > "We first performed experiment A. Next, we did experiment B. Then we conducted experiment C."
 
 ✅ **Finding-driven** (preferred):
+
 > "We discovered that X. To understand the mechanism, we found that Y. This led us to test whether Z, confirming our hypothesis."
 
 ### Results Writing Style
@@ -188,12 +196,12 @@ Organize by **finding**, not by the chronological order of experiments:
 ### Example Results Paragraph
 
 ```
-To test whether protein X is required for cell division, we generated 
-knockout cell lines using CRISPR-Cas9 (Fig. 1a). Cells lacking protein X 
-showed a 73% reduction in division rate compared to controls (P < 0.001, 
-n = 6 biological replicates; Fig. 1b). Live-cell imaging revealed that 
-knockout cells arrested in metaphase, with 84% showing abnormal spindle 
-morphology (Fig. 1c,d). These results demonstrate that protein X is 
+To test whether protein X is required for cell division, we generated
+knockout cell lines using CRISPR-Cas9 (Fig. 1a). Cells lacking protein X
+showed a 73% reduction in division rate compared to controls (P < 0.001,
+n = 6 biological replicates; Fig. 1b). Live-cell imaging revealed that
+knockout cells arrested in metaphase, with 84% showing abnormal spindle
+morphology (Fig. 1c,d). These results demonstrate that protein X is
 essential for proper spindle assembly and cell division.
 ```
 
@@ -211,24 +219,29 @@ Use descriptive subheadings that convey findings:
 ### Structure (4-6 paragraphs)
 
 **Paragraph 1: Summary of Key Findings**
+
 - Restate main findings (don't repeat Results verbatim)
 - State whether hypotheses were supported
 
 **Paragraphs 2-3: Interpretation and Context**
+
 - What do the findings mean?
 - How do they relate to prior work?
 - What mechanisms might explain the results?
 
 **Paragraph 4: Broader Implications**
+
 - Why does this matter beyond your specific system?
 - Connections to other fields
 - Potential applications
 
 **Paragraph 5: Limitations**
+
 - Acknowledge limitations honestly
 - Be specific, not generic
 
 **Final Paragraph: Conclusions and Future**
+
 - Big-picture take-home message
 - Brief mention of future directions
 
@@ -285,10 +298,10 @@ Nature values **conceptual figures** alongside data:
 
 ```
 Figure 1 | Protein X controls cell division through spindle assembly.
-a, Schematic of the experimental approach. b, Quantification of cell 
-division rate in control (grey) and knockout (blue) cells. Data are 
-mean ± s.e.m., n = 6 biological replicates. ***P < 0.001, two-tailed 
-t-test. c,d, Representative images of spindle morphology in control (c) 
+a, Schematic of the experimental approach. b, Quantification of cell
+division rate in control (grey) and knockout (blue) cells. Data are
+mean ± s.e.m., n = 6 biological replicates. ***P < 0.001, two-tailed
+t-test. c,d, Representative images of spindle morphology in control (c)
 and knockout (d) cells. Scale bars, 10 μm.
 ```
 
@@ -304,10 +317,10 @@ and knockout (d) cells. Scale bars, 10 μm.
 ### Reference Format
 
 ```
-1. Watson, J. D. & Crick, F. H. C. Molecular structure of nucleic acids. 
+1. Watson, J. D. & Crick, F. H. C. Molecular structure of nucleic acids.
    Nature 171, 737–738 (1953).
 
-2. Smith, A. B., Jones, C. D. & Williams, E. F. Discovery of protein X. 
+2. Smith, A. B., Jones, C. D. & Williams, E. F. Discovery of protein X.
    Science 380, 123–130 (2023).
 ```
 
@@ -324,14 +337,14 @@ and knockout (d) cells. Scale bars, 10 μm.
 
 ### Word Choice
 
-| Avoid | Prefer |
-|-------|--------|
-| utilize | use |
-| methodology | method |
-| in order to | to |
-| a large number of | many |
-| at this point in time | now |
-| has the ability to | can |
+| Avoid                          | Prefer            |
+| ------------------------------ | ----------------- |
+| utilize                        | use               |
+| methodology                    | method            |
+| in order to                    | to                |
+| a large number of              | many              |
+| at this point in time          | now               |
+| has the ability to             | can               |
 | it is interesting to note that | [delete entirely] |
 
 ### Sentence Structure
@@ -350,14 +363,14 @@ and knockout (d) cells. Scale bars, 10 μm.
 
 ## Comparison: Nature vs. Science
 
-| Feature | Nature | Science |
-|---------|--------|---------|
-| Abstract length | 150-200 words | ≤125 words |
-| Citation style | Numbered superscript | Numbered parentheses (1, 2) |
-| Article titles in refs | Yes | No (in main refs) |
-| Methods placement | End of paper or supplement | Supplement |
-| Significance statement | No | No |
-| Open access option | Yes | Yes |
+| Feature                | Nature                     | Science                     |
+| ---------------------- | -------------------------- | --------------------------- |
+| Abstract length        | 150-200 words              | ≤125 words                  |
+| Citation style         | Numbered superscript       | Numbered parentheses (1, 2) |
+| Article titles in refs | Yes                        | No (in main refs)           |
+| Methods placement      | End of paper or supplement | Supplement                  |
+| Significance statement | No                         | No                          |
+| Open access option     | Yes                        | Yes                         |
 
 ---
 
@@ -376,6 +389,7 @@ and knockout (d) cells. Scale bars, 10 μm.
 ## Pre-Submission Checklist
 
 ### Content
+
 - [ ] Significance to broad audience clear in first paragraph
 - [ ] Non-specialist can understand the abstract
 - [ ] Story-driven results (not experiment-by-experiment)
@@ -383,12 +397,14 @@ and knockout (d) cells. Scale bars, 10 μm.
 - [ ] Limitations acknowledged specifically
 
 ### Style
+
 - [ ] Active voice predominates
 - [ ] Jargon minimized or explained
 - [ ] Sentences vary in length
 - [ ] Paragraphs have clear topic sentences
 
 ### Technical
+
 - [ ] Figures are high resolution
 - [ ] Citations in correct format
 - [ ] Word count within limits
@@ -402,4 +418,3 @@ and knockout (d) cells. Scale bars, 10 μm.
 - `venue_writing_styles.md` - Master style overview
 - `journals_formatting.md` - Technical formatting requirements
 - `reviewer_expectations.md` - What Nature/Science reviewers seek
-

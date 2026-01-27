@@ -7,35 +7,42 @@ Aeon provides neural network architectures specifically designed for time series
 ### Convolutional Networks
 
 **FCNNetwork** - Fully Convolutional Network
+
 - Three convolutional blocks with batch normalization
 - Global average pooling for dimensionality reduction
 - **Use when**: Need simple yet effective CNN baseline
 
 **ResNetNetwork** - Residual Network
+
 - Residual blocks with skip connections
 - Prevents vanishing gradients in deep networks
 - **Use when**: Deep networks needed, training stability important
 
 **InceptionNetwork** - Inception Modules
+
 - Multi-scale feature extraction with parallel convolutions
 - Different kernel sizes capture patterns at various scales
 - **Use when**: Patterns exist at multiple temporal scales
 
 **TimeCNNNetwork** - Standard CNN
+
 - Basic convolutional architecture
 - **Use when**: Simple CNN sufficient, interpretability valued
 
 **DisjointCNNNetwork** - Separate Pathways
+
 - Disjoint convolutional pathways
 - **Use when**: Different feature extraction strategies needed
 
 **DCNNNetwork** - Dilated CNN
+
 - Dilated convolutions for large receptive fields
 - **Use when**: Long-range dependencies without many layers
 
 ### Recurrent Networks
 
 **RecurrentNetwork** - RNN/LSTM/GRU
+
 - Configurable cell type (RNN, LSTM, GRU)
 - Sequential modeling of temporal dependencies
 - **Use when**: Sequential dependencies critical, variable-length series
@@ -43,6 +50,7 @@ Aeon provides neural network architectures specifically designed for time series
 ### Temporal Convolutional Network
 
 **TCNNetwork** - Temporal Convolutional Network
+
 - Dilated causal convolutions
 - Large receptive field without recurrence
 - **Use when**: Long sequences, need parallelizable architecture
@@ -50,6 +58,7 @@ Aeon provides neural network architectures specifically designed for time series
 ### Multi-Layer Perceptron
 
 **MLPNetwork** - Basic Feedforward
+
 - Simple fully-connected layers
 - Flattens time series before processing
 - **Use when**: Baseline needed, computational limits, or simple patterns
@@ -61,41 +70,50 @@ Networks designed for representation learning and clustering.
 ### Autoencoder Variants
 
 **EncoderNetwork** - Generic Encoder
+
 - Flexible encoder structure
 - **Use when**: Custom encoding needed
 
 **AEFCNNetwork** - FCN-based Autoencoder
+
 - Fully convolutional encoder-decoder
 - **Use when**: Need convolutional representation learning
 
 **AEResNetNetwork** - ResNet Autoencoder
+
 - Residual blocks in encoder-decoder
 - **Use when**: Deep autoencoding with skip connections
 
 **AEDCNNNetwork** - Dilated CNN Autoencoder
+
 - Dilated convolutions for compression
 - **Use when**: Need large receptive field in autoencoder
 
 **AEDRNNNetwork** - Dilated RNN Autoencoder
+
 - Dilated recurrent connections
 - **Use when**: Sequential patterns with long-range dependencies
 
 **AEBiGRUNetwork** - Bidirectional GRU
+
 - Bidirectional recurrent encoding
 - **Use when**: Context from both directions helpful
 
 **AEAttentionBiGRUNetwork** - Attention + BiGRU
+
 - Attention mechanism on BiGRU outputs
 - **Use when**: Need to focus on important time steps
 
 ## Specialized Architectures
 
 **LITENetwork** - Lightweight Inception Time Ensemble
+
 - Efficient inception-based architecture
 - LITEMV variant for multivariate series
 - **Use when**: Need efficiency with strong performance
 
 **DeepARNetwork** - Probabilistic Forecasting
+
 - Autoregressive RNN for forecasting
 - Produces probabilistic predictions
 - **Use when**: Need forecast uncertainty quantification
@@ -268,6 +286,7 @@ grid.fit(X_train, y_train)
 ### 5. Regularization
 
 Prevent overfitting:
+
 - Use dropout (if network supports)
 - Early stopping
 - Data augmentation (if available)

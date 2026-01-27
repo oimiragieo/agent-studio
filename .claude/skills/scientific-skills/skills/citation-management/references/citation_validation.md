@@ -5,6 +5,7 @@ Comprehensive guide to validating citation accuracy, completeness, and formattin
 ## Overview
 
 Citation validation ensures:
+
 - All citations are accurate and complete
 - DOIs resolve correctly
 - Required fields are present
@@ -13,6 +14,7 @@ Citation validation ensures:
 - Links are accessible
 
 Validation should be performed:
+
 - After extracting metadata
 - Before manuscript submission
 - After manual edits to BibTeX files
@@ -27,6 +29,7 @@ Validation should be performed:
 #### What to Check
 
 **DOI format**:
+
 ```
 Valid:   10.1038/s41586-021-03819-2
 Valid:   10.1126/science.aam9317
@@ -35,11 +38,13 @@ Invalid: doi:10.1038/... (should omit "doi:" prefix in BibTeX)
 ```
 
 **DOI resolution**:
+
 - DOI should resolve via https://doi.org/
 - Should redirect to actual article
 - Should not return 404 or error
 
 **Metadata consistency**:
+
 - CrossRef metadata should match BibTeX
 - Author names should align
 - Title should match
@@ -48,17 +53,20 @@ Invalid: doi:10.1038/... (should omit "doi:" prefix in BibTeX)
 #### How to Validate
 
 **Manual check**:
+
 1. Copy DOI from BibTeX
 2. Visit https://doi.org/10.1038/nature12345
 3. Verify it redirects to correct article
 4. Check metadata matches
 
 **Automated check** (recommended):
+
 ```bash
 python scripts/validate_citations.py references.bib --check-dois
 ```
 
 **Process**:
+
 1. Extract all DOIs from BibTeX file
 2. Query doi.org resolver for each
 3. Query CrossRef API for metadata
@@ -68,16 +76,19 @@ python scripts/validate_citations.py references.bib --check-dois
 #### Common Issues
 
 **Broken DOIs**:
+
 - Typos in DOI
 - Publisher changed DOI (rare)
 - Article retracted
 - Solution: Find correct DOI from publisher site
 
 **Mismatched metadata**:
+
 - BibTeX has old/incorrect information
 - Solution: Re-extract metadata from CrossRef
 
 **Missing DOIs**:
+
 - Older articles may not have DOIs
 - Acceptable for pre-2000 publications
 - Add URL or PMID instead
@@ -89,6 +100,7 @@ python scripts/validate_citations.py references.bib --check-dois
 #### Required by Entry Type
 
 **@article**:
+
 ```bibtex
 author   % REQUIRED
 title    % REQUIRED
@@ -100,6 +112,7 @@ doi      % Highly recommended for modern papers
 ```
 
 **@book**:
+
 ```bibtex
 author OR editor  % REQUIRED (at least one)
 title            % REQUIRED
@@ -109,6 +122,7 @@ isbn             % Recommended
 ```
 
 **@inproceedings**:
+
 ```bibtex
 author     % REQUIRED
 title      % REQUIRED
@@ -118,6 +132,7 @@ pages      % Recommended
 ```
 
 **@incollection** (book chapter):
+
 ```bibtex
 author     % REQUIRED
 title      % REQUIRED (chapter title)
@@ -129,6 +144,7 @@ pages      % Recommended
 ```
 
 **@phdthesis**:
+
 ```bibtex
 author  % REQUIRED
 title   % REQUIRED
@@ -137,6 +153,7 @@ year    % REQUIRED
 ```
 
 **@misc** (preprints, datasets, etc.):
+
 ```bibtex
 author  % REQUIRED
 title   % REQUIRED
@@ -152,6 +169,7 @@ python scripts/validate_citations.py references.bib --check-required-fields
 ```
 
 **Output**:
+
 ```
 Error: Entry 'Smith2024' missing required field 'journal'
 Error: Entry 'Doe2023' missing required field 'year'
@@ -165,11 +183,13 @@ Warning: Entry 'Jones2022' missing recommended field 'volume'
 #### Proper Format
 
 **Recommended BibTeX format**:
+
 ```bibtex
 author = {Last1, First1 and Last2, First2 and Last3, First3}
 ```
 
 **Examples**:
+
 ```bibtex
 % Correct
 author = {Smith, John}
@@ -190,22 +210,26 @@ author = {Smith J, Doe J}  % Missing commas
 #### Special Cases
 
 **Suffixes (Jr., III, etc.)**:
+
 ```bibtex
 author = {King, Jr., Martin Luther}
 ```
 
 **Multiple surnames (hyphenated)**:
+
 ```bibtex
 author = {Smith-Jones, Mary}
 ```
 
 **Van, von, de, etc.**:
+
 ```bibtex
 author = {van der Waals, Johannes}
 author = {de Broglie, Louis}
 ```
 
 **Organizations as authors**:
+
 ```bibtex
 author = {{World Health Organization}}
 % Double braces treat as single author
@@ -214,11 +238,13 @@ author = {{World Health Organization}}
 #### Validation Checks
 
 **Automated validation**:
+
 ```bash
 python scripts/validate_citations.py references.bib --check-authors
 ```
 
 **Checks for**:
+
 - Proper separator (and, not &, ; , etc.)
 - Comma placement
 - Empty author fields
@@ -231,6 +257,7 @@ python scripts/validate_citations.py references.bib --check-authors
 #### Year Validation
 
 **Valid years**:
+
 ```bibtex
 year = {2024}    % Current/recent
 year = {1953}    % Watson & Crick DNA structure (historical)
@@ -238,6 +265,7 @@ year = {1665}    % Hooke's Micrographia (very old)
 ```
 
 **Invalid years**:
+
 ```bibtex
 year = {24}      % Two digits (ambiguous)
 year = {202}     % Typo
@@ -246,6 +274,7 @@ year = {0}       % Obviously wrong
 ```
 
 **Check**:
+
 - Four digits
 - Reasonable range (1600-current+1)
 - Not all zeros
@@ -260,6 +289,7 @@ number = {S1}       % Supplement issue (valid)
 ```
 
 **Invalid**:
+
 ```bibtex
 volume = {Vol. 123}  % Should be just number
 number = {Issue 3}   % Should be just number
@@ -268,6 +298,7 @@ number = {Issue 3}   % Should be just number
 #### Page Range Validation
 
 **Correct format**:
+
 ```bibtex
 pages = {123--145}    % En-dash (two hyphens)
 pages = {e0123456}    % PLOS-style article ID
@@ -275,6 +306,7 @@ pages = {123}         % Single page
 ```
 
 **Incorrect format**:
+
 ```bibtex
 pages = {123-145}     % Single hyphen (use --)
 pages = {pp. 123-145} % Remove "pp."
@@ -284,18 +316,21 @@ pages = {123–145}     % Unicode en-dash (may cause issues)
 #### URL Validation
 
 **Check**:
+
 - URLs are accessible (return 200 status)
 - HTTPS when available
 - No obvious typos
 - Permanent links (not temporary)
 
 **Valid**:
+
 ```bibtex
 url = {https://www.nature.com/articles/nature12345}
 url = {https://arxiv.org/abs/2103.14030}
 ```
 
 **Questionable**:
+
 ```bibtex
 url = {http://...}  % HTTP instead of HTTPS
 url = {file:///...} % Local file path
@@ -309,6 +344,7 @@ url = {bit.ly/...}  % URL shortener (not permanent)
 #### Types of Duplicates
 
 **Exact duplicates** (same DOI):
+
 ```bibtex
 @article{Smith2024a,
   doi = {10.1038/nature12345},
@@ -322,6 +358,7 @@ url = {bit.ly/...}  % URL shortener (not permanent)
 ```
 
 **Near duplicates** (similar title/authors):
+
 ```bibtex
 @article{Smith2024,
   title = {Machine Learning for Drug Discovery},
@@ -335,6 +372,7 @@ url = {bit.ly/...}  % URL shortener (not permanent)
 ```
 
 **Preprint + Published**:
+
 ```bibtex
 @misc{Smith2023arxiv,
   title = {AlphaFold Results},
@@ -353,24 +391,29 @@ url = {bit.ly/...}  % URL shortener (not permanent)
 #### Detection Methods
 
 **By DOI** (most reliable):
+
 - Same DOI = exact duplicate
 - Keep one, remove other
 
 **By title similarity**:
+
 - Normalize: lowercase, remove punctuation
 - Calculate similarity (e.g., Levenshtein distance)
 - Flag if >90% similar
 
 **By author-year-title**:
+
 - Same first author + year + similar title
 - Likely duplicate
 
 **Automated detection**:
+
 ```bash
 python scripts/validate_citations.py references.bib --check-duplicates
 ```
 
 **Output**:
+
 ```
 Warning: Possible duplicate entries:
   - Smith2024a (DOI: 10.1038/nature12345)
@@ -385,6 +428,7 @@ Warning: Possible duplicate entries:
 #### Common Syntax Errors
 
 **Missing commas**:
+
 ```bibtex
 @article{Smith2024,
   author = {Smith, John}   % Missing comma!
@@ -395,6 +439,7 @@ Warning: Possible duplicate entries:
 ```
 
 **Unbalanced braces**:
+
 ```bibtex
 title = {Title with {Protected} Text  % Missing closing brace
 % Should be:
@@ -402,6 +447,7 @@ title = {Title with {Protected} Text}
 ```
 
 **Missing closing brace for entry**:
+
 ```bibtex
 @article{Smith2024,
   author = {Smith, John},
@@ -412,6 +458,7 @@ title = {Title with {Protected} Text}
 ```
 
 **Invalid characters in keys**:
+
 ```bibtex
 @article{Smith&Doe2024,  % & not allowed in key
   ...
@@ -425,6 +472,7 @@ title = {Title with {Protected} Text}
 #### BibTeX Syntax Rules
 
 **Entry structure**:
+
 ```bibtex
 @TYPE{citationkey,
   field1 = {value1},
@@ -435,17 +483,20 @@ title = {Title with {Protected} Text}
 ```
 
 **Citation keys**:
-- Alphanumeric and some punctuation (-, _, ., :)
+
+- Alphanumeric and some punctuation (-, \_, ., :)
 - No spaces
 - Case-sensitive
 - Unique within file
 
 **Field values**:
+
 - Enclosed in {braces} or "quotes"
 - Braces preferred for complex text
 - Numbers can be unquoted: `year = 2024`
 
 **Special characters**:
+
 - `{` and `}` for grouping
 - `\` for LaTeX commands
 - Protect capitalization: `{AlphaFold}`
@@ -458,6 +509,7 @@ python scripts/validate_citations.py references.bib --check-syntax
 ```
 
 **Checks**:
+
 - Valid BibTeX structure
 - Balanced braces
 - Proper commas
@@ -475,6 +527,7 @@ python scripts/validate_citations.py references.bib
 ```
 
 **Checks all**:
+
 - DOI resolution
 - Required fields
 - Author formatting
@@ -525,17 +578,20 @@ Examine validation report:
 ### Step 3: Fix Issues
 
 **High-priority** (errors):
+
 1. Add missing required fields
 2. Fix broken DOIs
 3. Remove duplicates
 4. Correct syntax errors
 
 **Medium-priority** (warnings):
+
 1. Add recommended fields
 2. Improve author formatting
 3. Fix page ranges
 
 **Low-priority**:
+
 1. Standardize formatting
 2. Add URLs for accessibility
 
@@ -550,6 +606,7 @@ python scripts/validate_citations.py references.bib \
 ```
 
 **Auto-fix can**:
+
 - Fix page range format (- to --)
 - Remove "pp." from pages
 - Standardize author separators
@@ -557,6 +614,7 @@ python scripts/validate_citations.py references.bib \
 - Normalize field order
 
 **Auto-fix cannot**:
+
 - Add missing information
 - Find correct DOIs
 - Determine which duplicate to keep
@@ -565,6 +623,7 @@ python scripts/validate_citations.py references.bib \
 ### Step 5: Manual Review
 
 Review auto-fixed file:
+
 ```bash
 # Check what changed
 diff references.bib fixed_references.bib
@@ -582,6 +641,7 @@ python scripts/validate_citations.py fixed_references.bib --verbose
 ```
 
 Should show:
+
 ```
 ✓ All DOIs valid
 ✓ All required fields present
@@ -595,34 +655,40 @@ Should show:
 Use this checklist before final submission:
 
 ### DOI Validation
+
 - [ ] All DOIs resolve correctly
 - [ ] Metadata matches between BibTeX and CrossRef
 - [ ] No broken or invalid DOIs
 
 ### Completeness
+
 - [ ] All entries have required fields
 - [ ] Modern papers (2000+) have DOIs
 - [ ] Authors properly formatted
 - [ ] Journals/conferences properly named
 
 ### Consistency
+
 - [ ] Years are 4-digit numbers
 - [ ] Page ranges use -- not -
 - [ ] Volume/number are numeric
 - [ ] URLs are accessible
 
 ### Duplicates
+
 - [ ] No entries with same DOI
 - [ ] No near-duplicate titles
 - [ ] Preprints updated to published versions
 
 ### Formatting
+
 - [ ] Valid BibTeX syntax
 - [ ] Balanced braces
 - [ ] Proper commas
 - [ ] Unique citation keys
 
 ### Final Checks
+
 - [ ] Bibliography compiles without errors
 - [ ] All citations in text appear in bibliography
 - [ ] All bibliography entries cited in text
@@ -647,6 +713,7 @@ python scripts/validate_citations.py refs.bib --strict
 ### 2. Use Automated Tools
 
 Don't validate manually - use scripts:
+
 - Faster
 - More comprehensive
 - Catches errors humans miss
@@ -673,6 +740,7 @@ mv references_fixed.bib references.bib
 ### 4. Fix High-Priority First
 
 **Priority order**:
+
 1. Syntax errors (prevent compilation)
 2. Missing required fields (incomplete citations)
 3. Broken DOIs (broken links)
@@ -699,6 +767,7 @@ For entries that can't be fixed:
 ### 6. Validate Against Journal Requirements
 
 Different journals have different requirements:
+
 - Citation style (numbered, author-year)
 - Abbreviations (journal names)
 - Maximum reference count
@@ -713,11 +782,13 @@ Check journal author guidelines!
 **Problem**: BibTeX says 2023, CrossRef says 2024.
 
 **Cause**:
+
 - Online-first vs print publication
 - Correction/update
 - Extraction error
 
 **Solution**:
+
 1. Check actual article
 2. Use more recent/accurate date
 3. Update BibTeX entry
@@ -728,11 +799,13 @@ Check journal author guidelines!
 **Problem**: LaTeX compilation fails on special characters.
 
 **Cause**:
+
 - Accented characters (é, ü, ñ)
 - Chemical formulas (H₂O)
 - Math symbols (α, β, ±)
 
 **Solution**:
+
 ```bibtex
 % Use LaTeX commands
 author = {M{\"u}ller, Hans}  % Müller
@@ -745,11 +818,13 @@ title = {Study of H\textsubscript{2}O}  % H₂O
 **Problem**: Extracted metadata missing fields.
 
 **Cause**:
+
 - Source doesn't provide all metadata
 - Extraction error
 - Incomplete record
 
 **Solution**:
+
 1. Check original article
 2. Manually add missing fields
 3. Use alternative source (PubMed vs CrossRef)
@@ -759,11 +834,13 @@ title = {Study of H\textsubscript{2}O}  % H₂O
 **Problem**: Same paper appears twice, not detected.
 
 **Cause**:
+
 - Different DOIs (should be rare)
 - Different titles (abbreviated, typo)
 - Different citation keys
 
 **Solution**:
+
 - Manual search for author + year
 - Check for similar titles
 - Remove manually
@@ -776,19 +853,20 @@ Validation ensures citation quality:
 ✓ **Completeness**: All required fields present  
 ✓ **Consistency**: Proper formatting throughout  
 ✓ **No duplicates**: Each paper cited once  
-✓ **Valid syntax**: BibTeX compiles without errors  
+✓ **Valid syntax**: BibTeX compiles without errors
 
 **Always validate** before final submission!
 
 Use automated tools:
+
 ```bash
 python scripts/validate_citations.py references.bib
 ```
 
 Follow workflow:
+
 1. Extract metadata
 2. Validate
 3. Fix errors
 4. Re-validate
 5. Submit
-

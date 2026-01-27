@@ -202,6 +202,7 @@ Training logs include:
 ### Terminal Dashboard
 
 PufferLib provides a real-time terminal dashboard showing:
+
 - Training progress
 - Current SPS
 - Episode statistics

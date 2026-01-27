@@ -1,6 +1,7 @@
 # Graphics and Visualization Reference
 
 ## Table of Contents
+
 1. [2D Plotting](#2d-plotting)
 2. [3D Plotting](#3d-plotting)
 3. [Specialized Plots](#specialized-plots)

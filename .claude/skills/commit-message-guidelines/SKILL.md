@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Keep the commit message concise and within 60 characters.
 - Ensure the commit message is ready to be pasted into the terminal without further editing.
 - Provide the full command to commit, not just the message.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

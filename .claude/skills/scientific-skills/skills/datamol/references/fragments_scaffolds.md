@@ -7,7 +7,9 @@ Scaffolds represent the core structure of molecules, useful for identifying stru
 ### Murcko Scaffolds
 
 #### `dm.to_scaffold_murcko(mol)`
+
 Extract Bemis-Murcko scaffold (molecular framework).
+
 - **Method**: Removes side chains, retaining ring systems and linkers
 - **Returns**: Molecule object representing the scaffold
 - **Use case**: Identify core structures across compound series
@@ -20,6 +22,7 @@ Extract Bemis-Murcko scaffold (molecular framework).
   ```
 
 **Workflow for scaffold analysis**:
+
 ```python
 # Extract scaffolds from compound library
 scaffolds = [dm.to_scaffold_murcko(mol) for mol in mols]
@@ -34,13 +37,16 @@ most_common = scaffold_counts.most_common(10)
 ### Fuzzy Scaffolds
 
 #### `dm.scaffold.fuzzy_scaffolding(mol, ...)`
+
 Generate fuzzy scaffolds with enforceable groups that must appear in the core.
+
 - **Purpose**: More flexible scaffold definition allowing specified functional groups
 - **Use case**: Custom scaffold definitions beyond Murcko rules
 
 ### Applications
 
 **Scaffold-based splitting** (for ML model validation):
+
 ```python
 # Group compounds by scaffold
 scaffold_to_mols = {}
@@ -54,6 +60,7 @@ for mol, scaffold in zip(mols, scaffolds):
 ```
 
 **SAR analysis**:
+
 ```python
 # Group by scaffold and analyze activity
 for scaffold_smi, molecules in scaffold_to_mols.items():
@@ -70,7 +77,9 @@ Molecular fragmentation breaks molecules into smaller pieces based on chemical r
 ### BRICS Fragmentation
 
 #### `dm.fragment.brics(mol, ...)`
+
 Fragment molecule using BRICS (Breaking Retrosynthetically Interesting Chemical Substructures).
+
 - **Method**: Dissects based on 16 chemically meaningful bond types
 - **Consideration**: Considers chemical environment and surrounding substructures
 - **Returns**: Set of fragment SMILES strings
@@ -86,7 +95,9 @@ Fragment molecule using BRICS (Breaking Retrosynthetically Interesting Chemical 
 ### RECAP Fragmentation
 
 #### `dm.fragment.recap(mol, ...)`
+
 Fragment molecule using RECAP (Retrosynthetic Combinatorial Analysis Procedure).
+
 - **Method**: Dissects based on 11 predefined bond types
 - **Rules**:
   - Leaves alkyl groups smaller than 5 carbons intact
@@ -102,7 +113,9 @@ Fragment molecule using RECAP (Retrosynthetic Combinatorial Analysis Procedure).
 ### MMPA Fragmentation
 
 #### `dm.fragment.mmpa_frag(mol, ...)`
+
 Fragment for Matched Molecular Pair Analysis.
+
 - **Purpose**: Generate fragments suitable for identifying molecular pairs
 - **Use case**: Analyzing how small structural changes affect properties
 - **Example**:
@@ -113,11 +126,11 @@ Fragment for Matched Molecular Pair Analysis.
 
 ### Comparison of Methods
 
-| Method | Bond Types | Preserves Cycles | Best For |
-|--------|-----------|------------------|----------|
-| BRICS  | 16        | Yes              | Retrosynthetic analysis, fragment recombination |
-| RECAP  | 11        | Yes              | Combinatorial library design |
-| MMPA   | Variable  | Depends          | Structure-activity relationship analysis |
+| Method | Bond Types | Preserves Cycles | Best For                                        |
+| ------ | ---------- | ---------------- | ----------------------------------------------- |
+| BRICS  | 16         | Yes              | Retrosynthetic analysis, fragment recombination |
+| RECAP  | 11         | Yes              | Combinatorial library design                    |
+| MMPA   | Variable   | Depends          | Structure-activity relationship analysis        |
 
 ### Fragmentation Workflow
 

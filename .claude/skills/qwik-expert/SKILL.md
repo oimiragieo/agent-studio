@@ -57,13 +57,13 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 - Recommended folder structure:
-  
+
   src/
-    components/
-    routes/
-    global.css
-    root.tsx
-    entry.ssr.tsx
+  components/
+  routes/
+  global.css
+  root.tsx
+  entry.ssr.tsx
   public/
   tailwind.config.js
   postcss.config.js
@@ -101,21 +101,20 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 - Use the following folder structure:
-  
+
   src/
-    components/
-    routes/
-    global.css
-    root.tsx
-    entry.ssr.tsx
+  components/
+  routes/
+  global.css
+  root.tsx
+  entry.ssr.tsx
   public/
   vite.config.ts
   tsconfig.json
 
 ### qwik js general preferences
 
-When reviewing or writing code, apply these 
-
+When reviewing or writing code, apply these
 
 </instructions>
 
@@ -130,12 +129,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- qwik-expert
 
+- qwik-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

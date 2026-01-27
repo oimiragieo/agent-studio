@@ -55,18 +55,18 @@ A one-sentence summary of the paper.
 
 ### Tone Characteristics
 
-| Characteristic | Description |
-|---------------|-------------|
-| **Technical** | Appropriate jargon for the field |
-| **Mechanistic** | Focus on how and why, not just what |
+| Characteristic    | Description                          |
+| ----------------- | ------------------------------------ |
+| **Technical**     | Appropriate jargon for the field     |
+| **Mechanistic**   | Focus on how and why, not just what  |
 | **Comprehensive** | Thorough exploration of the question |
-| **Data-rich** | Extensive experimental support |
-| **Precise** | Exact terminology and quantification |
+| **Data-rich**     | Extensive experimental support       |
+| **Precise**       | Exact terminology and quantification |
 
 ### Voice
 
 - **First person ("we") acceptable**: "We demonstrate that..."
-- **Active voice encouraged**: "We identified..." 
+- **Active voice encouraged**: "We identified..."
 - **Confident but measured**: Strong claims require strong evidence
 
 ---
@@ -90,16 +90,16 @@ A one-sentence summary of the paper.
 ### Example Summary (Cell Style)
 
 ```
-Cellular senescence is a stress response that arrests proliferation and 
-promotes tissue remodeling, but the mechanisms controlling senescent cell 
-fate remain unclear. Here, we identify the transcription factor FOXO4 as a 
-critical regulator of senescent cell viability. FOXO4 is highly expressed 
-in senescent cells and sequesters p53 away from mitochondria, preventing 
-apoptosis. Using a cell-penetrating peptide that disrupts FOXO4-p53 
-interaction, we selectively induce senescent cell apoptosis in vitro and 
-in vivo. Administration of this peptide to aged mice restores fitness, fur 
-density, and renal function. These findings reveal FOXO4-p53 as a senescence 
-vulnerability and establish proof-of-concept for targeted senolytic 
+Cellular senescence is a stress response that arrests proliferation and
+promotes tissue remodeling, but the mechanisms controlling senescent cell
+fate remain unclear. Here, we identify the transcription factor FOXO4 as a
+critical regulator of senescent cell viability. FOXO4 is highly expressed
+in senescent cells and sequesters p53 away from mitochondria, preventing
+apoptosis. Using a cell-penetrating peptide that disrupts FOXO4-p53
+interaction, we selectively induce senescent cell apoptosis in vitro and
+in vivo. Administration of this peptide to aged mice restores fitness, fur
+density, and renal function. These findings reveal FOXO4-p53 as a senescence
+vulnerability and establish proof-of-concept for targeted senolytic
 interventions in aging.
 ```
 
@@ -133,10 +133,10 @@ Typical Graphical Abstract Components:
 ### Example Description (for schematic generation)
 
 ```
-"Graphical abstract showing: Left panel - normal cells with FOXO4 (blue) 
-and p53 (green) separate. Center panel - senescent cells with FOXO4 
-binding p53, preventing apoptosis. Right panel - FOXO4 peptide disrupts 
-interaction, allowing p53 to reach mitochondria, triggering apoptosis. 
+"Graphical abstract showing: Left panel - normal cells with FOXO4 (blue)
+and p53 (green) separate. Center panel - senescent cells with FOXO4
+binding p53, preventing apoptosis. Right panel - FOXO4 peptide disrupts
+interaction, allowing p53 to reach mitochondria, triggering apoptosis.
 Arrow at bottom showing aged mouse → treatment → rejuvenated mouse."
 ```
 
@@ -185,9 +185,9 @@ Arrow at bottom showing aged mouse → treatment → rejuvenated mouse."
 ### Example eTOC Blurb
 
 ```
-Baar et al. identify FOXO4 as a vulnerability of senescent cells and 
-develop a peptide that induces targeted apoptosis of senescent cells. 
-Treatment of aged mice with this senolytic peptide restores fitness 
+Baar et al. identify FOXO4 as a vulnerability of senescent cells and
+develop a peptide that induces targeted apoptosis of senescent cells.
+Treatment of aged mice with this senolytic peptide restores fitness
 and organ function.
 ```
 
@@ -204,26 +204,31 @@ and organ function.
 ### Paragraph-by-Paragraph Guide
 
 **Paragraph 1: Biological Context**
+
 - Establish the biological process or system
 - Why is this important to understand?
 - Set up the key players and mechanisms
 
 **Paragraphs 2-3: State of the Field**
+
 - Detailed review of relevant prior work
 - Establish what is known mechanistically
 - More comprehensive than Nature/Science
 
 **Paragraph 4: The Gap**
+
 - What remains unknown or controversial?
 - Why is this a critical question?
 - What has prevented progress?
 
 **Paragraph 5: Your Approach**
+
 - How did you tackle this question?
 - What techniques/systems did you use?
 - Why was your approach appropriate?
 
 **Final Paragraph: Key Findings Preview**
+
 - Brief statement of what you discovered
 - How does this advance the field?
 - Set up the structure of results
@@ -231,15 +236,15 @@ and organ function.
 ### Example Introduction Paragraph
 
 ```
-Cellular senescence is characterized by stable cell-cycle arrest, profound 
-chromatin alterations, and a complex secretory phenotype known as the 
-senescence-associated secretory phenotype (SASP) (Coppé et al., 2008; 
-Rodier and Campisi, 2011). Senescent cells accumulate with age and at 
-sites of pathology, where they can drive tissue dysfunction through 
-SASP-mediated inflammation and disruption of tissue architecture (van 
-Deursen, 2014). The targeted elimination of senescent cells—senolysis—has 
-emerged as a promising therapeutic strategy, with genetic and pharmacological 
-approaches demonstrating benefits in mouse models of aging and age-related 
+Cellular senescence is characterized by stable cell-cycle arrest, profound
+chromatin alterations, and a complex secretory phenotype known as the
+senescence-associated secretory phenotype (SASP) (Coppé et al., 2008;
+Rodier and Campisi, 2011). Senescent cells accumulate with age and at
+sites of pathology, where they can drive tissue dysfunction through
+SASP-mediated inflammation and disruption of tissue architecture (van
+Deursen, 2014). The targeted elimination of senescent cells—senolysis—has
+emerged as a promising therapeutic strategy, with genetic and pharmacological
+approaches demonstrating benefits in mouse models of aging and age-related
 disease (Baker et al., 2011, 2016; Chang et al., 2016).
 ```
 
@@ -254,7 +259,7 @@ Cell papers typically have **5-8 results sections**, each with a descriptive sub
 ```
 Results
 ├── Section 1: Discovery of the phenomenon
-├── Section 2: Characterization of the mechanism  
+├── Section 2: Characterization of the mechanism
 ├── Section 3: Identification of molecular players
 ├── Section 4: Functional validation
 ├── Section 5: In vivo confirmation
@@ -279,16 +284,16 @@ Cell uses **declarative subheadings** stating the finding:
 ### Example Results Paragraph
 
 ```
-To identify transcription factors regulating senescent cell viability, we 
-performed RNA sequencing on proliferating and senescent human fibroblasts 
-(IMR90 cells induced to senesce by replicative exhaustion, ionizing 
-radiation, or oncogene-induced senescence). Differential expression 
-analysis revealed 47 transcription factors significantly upregulated 
-across all senescence modalities (FDR < 0.05, fold change > 2; Figure 1A 
-and Table S1). Among these, FOXO4 showed the highest and most consistent 
-upregulation (12.3 ± 2.1-fold; Figure 1B), a finding we confirmed by 
-quantitative RT-PCR (Figure 1C) and immunoblot analysis (Figure 1D). 
-Immunofluorescence microscopy revealed nuclear FOXO4 accumulation in 
+To identify transcription factors regulating senescent cell viability, we
+performed RNA sequencing on proliferating and senescent human fibroblasts
+(IMR90 cells induced to senesce by replicative exhaustion, ionizing
+radiation, or oncogene-induced senescence). Differential expression
+analysis revealed 47 transcription factors significantly upregulated
+across all senescence modalities (FDR < 0.05, fold change > 2; Figure 1A
+and Table S1). Among these, FOXO4 showed the highest and most consistent
+upregulation (12.3 ± 2.1-fold; Figure 1B), a finding we confirmed by
+quantitative RT-PCR (Figure 1C) and immunoblot analysis (Figure 1D).
+Immunofluorescence microscopy revealed nuclear FOXO4 accumulation in
 senescent but not proliferating cells (Figure 1E,F).
 ```
 
@@ -301,27 +306,33 @@ senescent but not proliferating cells (Figure 1E,F).
 Cell discussions are **thorough and mechanistic**:
 
 **Paragraph 1: Summary**
+
 - Restate key findings
 - Synthesize the main message
 
 **Paragraphs 2-4: Mechanistic Interpretation**
+
 - Deep dive into how your findings fit with known biology
 - Propose models
 - Discuss molecular mechanisms in detail
 
 **Paragraph 5: Comparison with Literature**
+
 - How do your findings relate to prior work?
 - Resolve apparent contradictions
 
 **Paragraph 6: Implications and Applications**
+
 - Therapeutic implications
 - Broader significance
 
 **Paragraph 7: Limitations**
+
 - Honest assessment
 - Open questions remaining
 
 **Final Paragraph: Conclusions**
+
 - Big-picture take-home message
 - Future directions
 
@@ -354,14 +365,14 @@ QUANTIFICATION AND STATISTICAL ANALYSIS
 
 Cell requires a comprehensive table of all key resources:
 
-| REAGENT or RESOURCE | SOURCE | IDENTIFIER |
-|---------------------|--------|------------|
-| Antibodies | | |
-| Rabbit anti-FOXO4 | Abcam | Cat#ab12345 |
-| Chemicals | | |
-| Doxorubicin | Sigma-Aldrich | Cat#D1515 |
-| Cell Lines | | |
-| IMR90 | ATCC | CCL-186 |
+| REAGENT or RESOURCE | SOURCE        | IDENTIFIER  |
+| ------------------- | ------------- | ----------- |
+| Antibodies          |               |             |
+| Rabbit anti-FOXO4   | Abcam         | Cat#ab12345 |
+| Chemicals           |               |             |
+| Doxorubicin         | Sigma-Aldrich | Cat#D1515   |
+| Cell Lines          |               |             |
+| IMR90               | ATCC          | CCL-186     |
 
 ---
 
@@ -385,18 +396,18 @@ Panels labeled with lowercase letters: **(A)**, **(B)**, **(C)**
 ```
 Figure 3. FOXO4 Sequesters p53 in the Nucleus of Senescent Cells
 
-(A) Immunofluorescence microscopy of p53 (green) and FOXO4 (red) in 
-proliferating (left) and senescent (right) IMR90 cells. DAPI (blue) 
+(A) Immunofluorescence microscopy of p53 (green) and FOXO4 (red) in
+proliferating (left) and senescent (right) IMR90 cells. DAPI (blue)
 marks nuclei. Scale bar, 10 μm.
 
-(B) Quantification of nuclear p53 intensity in proliferating versus 
-senescent cells. Data represent mean ± SEM; n = 3 biological replicates, 
+(B) Quantification of nuclear p53 intensity in proliferating versus
+senescent cells. Data represent mean ± SEM; n = 3 biological replicates,
 >100 cells per condition. ***p < 0.001, two-tailed Student's t test.
 
-(C and D) Co-immunoprecipitation of FOXO4 and p53 in proliferating (C) 
+(C and D) Co-immunoprecipitation of FOXO4 and p53 in proliferating (C)
 and senescent (D) cell lysates. IgG, immunoglobulin G control.
 
-(E) Proximity ligation assay for FOXO4-p53 interaction. Red dots indicate 
+(E) Proximity ligation assay for FOXO4-p53 interaction. Red dots indicate
 interaction events. Scale bar, 10 μm.
 
 (F) Model of FOXO4-mediated p53 sequestration in senescent cells.
@@ -418,9 +429,9 @@ See also Figure S3 and Table S2.
 ### Reference Format
 
 ```
-Baker, D.J., Wijshake, T., Tchkonia, T., LeBrasseur, N.K., Childs, B.G., 
-van de Sluis, B., Kirkland, J.L., and van Deursen, J.M. (2011). Clearance 
-of p16Ink4a-positive senescent cells delays ageing-associated disorders. 
+Baker, D.J., Wijshake, T., Tchkonia, T., LeBrasseur, N.K., Childs, B.G.,
+van de Sluis, B., Kirkland, J.L., and van Deursen, J.M. (2011). Clearance
+of p16Ink4a-positive senescent cells delays ageing-associated disorders.
 Nature 479, 232–236.
 ```
 
@@ -428,14 +439,14 @@ Nature 479, 232–236.
 
 ## Cell Press Journal Comparison
 
-| Journal | Focus | Article Length | Figures |
-|---------|-------|---------------|---------|
-| **Cell** | Breakthrough biology | Long | 7-8 main + ED |
-| **Neuron** | Neuroscience | Long | 6-8 main |
-| **Immunity** | Immunology | Medium-Long | 6-7 main |
-| **Molecular Cell** | Molecular mechanisms | Medium | 5-7 main |
-| **Developmental Cell** | Development | Medium | 5-7 main |
-| **Cell Reports** | Solid science | Medium | 4-6 main |
+| Journal                | Focus                | Article Length | Figures       |
+| ---------------------- | -------------------- | -------------- | ------------- |
+| **Cell**               | Breakthrough biology | Long           | 7-8 main + ED |
+| **Neuron**             | Neuroscience         | Long           | 6-8 main      |
+| **Immunity**           | Immunology           | Medium-Long    | 6-7 main      |
+| **Molecular Cell**     | Molecular mechanisms | Medium         | 5-7 main      |
+| **Developmental Cell** | Development          | Medium         | 5-7 main      |
+| **Cell Reports**       | Solid science        | Medium         | 4-6 main      |
 
 ---
 
@@ -454,6 +465,7 @@ Nature 479, 232–236.
 ## Pre-Submission Checklist
 
 ### Required Elements
+
 - [ ] Graphical abstract (square format)
 - [ ] Highlights (3-4 bullets, ≤85 characters each)
 - [ ] eTOC blurb (30-50 words)
@@ -461,6 +473,7 @@ Nature 479, 232–236.
 - [ ] Key Resources Table
 
 ### Content
+
 - [ ] Mechanistic depth throughout
 - [ ] Multiple complementary approaches
 - [ ] In vivo validation (if applicable)
@@ -468,6 +481,7 @@ Nature 479, 232–236.
 - [ ] Comprehensive figure panels
 
 ### Style
+
 - [ ] Technical precision in terminology
 - [ ] Author-year citations
 - [ ] Figure legends complete and standalone
@@ -480,4 +494,3 @@ Nature 479, 232–236.
 - `venue_writing_styles.md` - Master style overview
 - `journals_formatting.md` - Technical formatting requirements
 - `nature_science_style.md` - Comparison with Nature/Science style
-

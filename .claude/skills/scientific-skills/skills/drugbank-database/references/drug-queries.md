@@ -1,11 +1,13 @@
 # Drug Information Queries
 
 ## Overview
+
 DrugBank provides comprehensive drug information with 200+ data fields per entry including chemical properties, pharmacology, mechanisms of action, and clinical data.
 
 ## Database Contents
 
 ### Drug Categories
+
 - **FDA-Approved Small Molecules**: ~2,037 drugs
 - **Biotech/Biologic Drugs**: ~241 entries
 - **Nutraceuticals**: ~96 compounds
@@ -13,6 +15,7 @@ DrugBank provides comprehensive drug information with 200+ data fields per entry
 - **Withdrawn/Discontinued**: Historical drugs with safety data
 
 ### Data Fields (200+ per entry)
+
 - **Identifiers**: DrugBank ID, CAS number, UNII, PubChem CID
 - **Names**: Generic, brand, synonyms, IUPAC
 - **Chemical**: Structure (SMILES, InChI), formula, molecular weight
@@ -27,6 +30,7 @@ DrugBank provides comprehensive drug information with 200+ data fields per entry
 ## XML Structure Navigation
 
 ### Basic XML Structure
+
 ```xml
 <drugbank>
   <drug type="small molecule" created="..." updated="...">
@@ -55,7 +59,9 @@ DrugBank provides comprehensive drug information with 200+ data fields per entry
 ```
 
 ### Namespaces
+
 DrugBank XML uses namespaces. Handle them properly:
+
 ```python
 import xml.etree.ElementTree as ET
 
@@ -70,6 +76,7 @@ drugs = root.findall('db:drug', ns)
 ## Query by Drug Identifier
 
 ### Query by DrugBank ID
+
 ```python
 from drugbank_downloader import get_drugbank_root
 
@@ -92,6 +99,7 @@ if drug:
 ```
 
 ### Query by Name
+
 ```python
 def get_drug_by_name(drug_name):
     """Find drug by name (case-insensitive)"""
@@ -116,6 +124,7 @@ drug = get_drug_by_name('Aspirin')
 ```
 
 ### Query by CAS Number
+
 ```python
 def get_drug_by_cas(cas_number):
     """Find drug by CAS registry number"""
@@ -132,6 +141,7 @@ def get_drug_by_cas(cas_number):
 ## Extract Specific Information
 
 ### Basic Drug Information
+
 ```python
 def extract_basic_info(drug):
     """Extract essential drug information"""
@@ -153,6 +163,7 @@ def get_text_safe(element):
 ```
 
 ### Chemical Properties
+
 ```python
 def extract_chemical_properties(drug):
     """Extract chemical structure and properties"""
@@ -191,6 +202,7 @@ def extract_chemical_properties(drug):
 ```
 
 ### Pharmacology Information
+
 ```python
 def extract_pharmacology(drug):
     """Extract pharmacological information"""
@@ -213,6 +225,7 @@ def extract_pharmacology(drug):
 ```
 
 ### External Identifiers
+
 ```python
 def extract_external_identifiers(drug):
     """Extract cross-references to other databases"""
@@ -244,6 +257,7 @@ def extract_external_identifiers(drug):
 ## Building Drug Datasets
 
 ### Create Drug Dictionary
+
 ```python
 def build_drug_database():
     """Build searchable dictionary of all drugs"""
@@ -274,6 +288,7 @@ print(f"Total drugs: {len(drugs)}")
 ```
 
 ### Export to DataFrame
+
 ```python
 import pandas as pd
 
@@ -304,6 +319,7 @@ df.to_csv('drugbank_drugs.csv', index=False)
 ```
 
 ### Filter by Drug Type
+
 ```python
 def filter_by_type(drug_type='small molecule'):
     """Get drugs of specific type"""
@@ -325,6 +341,7 @@ biotech_drugs = filter_by_type('biotech')
 ```
 
 ### Search by Keyword
+
 ```python
 def search_drugs_by_keyword(keyword, field='indication'):
     """Search drugs by keyword in specific field"""
@@ -355,6 +372,7 @@ cancer_drugs = search_drugs_by_keyword('cancer', 'indication')
 ## Performance Optimization
 
 ### Indexing for Faster Queries
+
 ```python
 def build_indexes():
     """Build indexes for faster lookups"""

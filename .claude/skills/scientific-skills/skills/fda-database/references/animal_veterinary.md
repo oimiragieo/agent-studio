@@ -17,6 +17,7 @@ The FDA animal and veterinary databases provide access to information about adve
 **Data Source**: FDA Center for Veterinary Medicine (CVM) Adverse Event Reporting System
 
 **Key Fields**:
+
 - `unique_aer_id_number` - Unique adverse event report identifier
 - `report_id` - Report ID number
 - `receiver.organization` - Organization receiving report
@@ -68,6 +69,7 @@ The FDA animal and veterinary databases provide access to information about adve
 - `duration.value` - Duration value
 
 **Common Animal Species**:
+
 - Dog (Canis lupus familiaris)
 - Cat (Felis catus)
 - Horse (Equus caballus)
@@ -79,6 +81,7 @@ The FDA animal and veterinary databases provide access to information about adve
 - And many others
 
 **Common Use Cases**:
+
 - Veterinary pharmacovigilance
 - Product safety monitoring
 - Adverse event trend analysis
@@ -87,6 +90,7 @@ The FDA animal and veterinary databases provide access to information about adve
 - Breed predisposition studies
 
 **Example Queries**:
+
 ```python
 import requests
 
@@ -169,6 +173,7 @@ The Veterinary Dictionary for Drug Related Affairs (VeDDRA) is a standardized in
 - International harmonization
 
 **VeDDRA Term Structure**:
+
 - Terms are organized hierarchically
 - Each term has a unique code
 - Terms are species-appropriate
@@ -359,6 +364,7 @@ def compare_drug_safety(drug_list, species, api_key):
 ## Reporting Sources
 
 Animal drug adverse event reports come from:
+
 - **Veterinarians** - Professional medical observations
 - **Animal owners** - Direct observations and concerns
 - **Pharmaceutical companies** - Required post-market surveillance

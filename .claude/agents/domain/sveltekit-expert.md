@@ -70,42 +70,49 @@ context_files:
 ## Technology Stack Expertise
 
 ### Core Technologies
+
 - **Svelte 5**: Runes, snippets, effects, derived state
 - **SvelteKit**: File-based routing, server-side rendering, adapters
 - **TypeScript**: Type-safe development
 - **Vite**: Fast build tool and dev server
 
 ### State Management
+
 - **Svelte 5 Runes**: Built-in reactive state ($state, $derived, $effect)
 - **Context API**: Component tree state sharing
 - **Stores**: Writable, readable, derived stores (Svelte 4 compatibility)
 - **Page/Layout Data**: Server-side state management
 
 ### Form & Validation
+
 - **SvelteKit Form Actions**: Progressive enhancement
 - **Zod**: Runtime type validation
 - **Superforms**: Advanced form handling
 - **Svelte Actions**: Custom form directives
 
 ### Styling Solutions
+
 - **Tailwind CSS**: Utility-first CSS
 - **CSS/SCSS**: Component-scoped styles
 - **PostCSS**: CSS transformations
 - **UI Libraries**: Skeleton UI, shadcn-svelte, Melt UI
 
 ### Testing Tools
+
 - **Vitest**: Fast unit testing
 - **Testing Library**: Component testing
 - **Playwright**: E2E testing
 - **MSW**: API mocking
 
 ### Backend Integration
+
 - **Prisma**: Type-safe database ORM
 - **Drizzle**: Lightweight ORM
 - **Lucia**: Authentication library
 - **tRPC-SvelteKit**: End-to-end type safety
 
 ### Deployment Adapters
+
 - **adapter-auto**: Automatic adapter selection
 - **adapter-vercel**: Vercel deployment
 - **adapter-netlify**: Netlify deployment
@@ -115,6 +122,7 @@ context_files:
 ## Key Frameworks & Patterns
 
 ### Svelte 5 Runes Pattern
+
 ```svelte
 <script lang="ts">
   import { onMount } from 'svelte';
@@ -158,6 +166,7 @@ context_files:
 ```
 
 ### SvelteKit Route Structure
+
 ```
 src/routes/
 ├── +page.svelte              # Home page component
@@ -176,6 +185,7 @@ src/routes/
 ```
 
 ### Form Actions Pattern
+
 ```svelte
 <!-- src/routes/login/+page.svelte -->
 <script lang="ts">
@@ -261,6 +271,7 @@ export const actions: Actions = {
 ```
 
 ### Load Function Pattern
+
 ```typescript
 // src/routes/blog/[slug]/+page.server.ts
 import { error } from '@sveltejs/kit';
@@ -292,6 +303,7 @@ export const load: PageServerLoad = async ({ params, depends }) => {
 ```
 
 ### SEO & Meta Tags Pattern
+
 ```svelte
 <!-- src/routes/blog/[slug]/+page.svelte -->
 <script lang="ts">
@@ -343,6 +355,7 @@ export const load: PageServerLoad = async ({ params, depends }) => {
 ```
 
 ### Component Composition with Snippets
+
 ```svelte
 <script lang="ts">
   import type { Snippet } from 'svelte';
@@ -380,6 +393,7 @@ export const load: PageServerLoad = async ({ params, depends }) => {
 ## Output Protocol
 
 ### SvelteKit Artifacts Location
+
 - **Routes**: `src/routes/`
 - **Components**: `src/lib/components/`
 - **Utilities**: `src/lib/utils/`
@@ -469,6 +483,7 @@ test.describe('Login', () => {
 ### 1. Build SvelteKit Route with Form
 
 **Process (TDD Approach):**
+
 1. **Red**: Write failing E2E test for route
 2. **Green**: Create route file structure (+page.svelte, +page.server.ts)
 3. **Refactor**: Implement load function for data fetching
@@ -480,6 +495,7 @@ test.describe('Login', () => {
 9. Test accessibility
 
 **Verification:**
+
 - [ ] E2E tests passing
 - [ ] Form works without JavaScript
 - [ ] Validation working
@@ -490,6 +506,7 @@ test.describe('Login', () => {
 ### 2. Create Reactive Component with Runes
 
 **Process:**
+
 1. Design component API (props, events)
 2. Write failing component test
 3. Implement component with $state and $derived
@@ -500,6 +517,7 @@ test.describe('Login', () => {
 8. Document component usage
 
 **Verification:**
+
 - [ ] Component tests passing
 - [ ] Reactivity working correctly
 - [ ] Props typed correctly
@@ -510,6 +528,7 @@ test.describe('Login', () => {
 ### 3. Implement Authentication
 
 **Process:**
+
 1. Set up authentication library (Lucia)
 2. Create login/register routes with TDD
 3. Implement form actions for auth
@@ -520,6 +539,7 @@ test.describe('Login', () => {
 8. Document auth flow
 
 **Verification:**
+
 - [ ] Login/register working
 - [ ] Sessions persisting
 - [ ] Protected routes secured
@@ -530,6 +550,7 @@ test.describe('Login', () => {
 ### 4. Optimize SEO
 
 **Process:**
+
 1. Audit current SEO (meta tags, structured data)
 2. Add dynamic meta tags to routes
 3. Implement Open Graph tags
@@ -540,6 +561,7 @@ test.describe('Login', () => {
 8. Document SEO strategy
 
 **Verification:**
+
 - [ ] Meta tags on all pages
 - [ ] Open Graph working
 - [ ] Structured data valid
@@ -550,6 +572,7 @@ test.describe('Login', () => {
 ### 5. Set Up API Routes
 
 **Process:**
+
 1. Design API endpoints with TDD
 2. Create +server.ts files
 3. Implement request handlers (GET, POST, etc.)
@@ -560,6 +583,7 @@ test.describe('Login', () => {
 8. Document endpoints
 
 **Verification:**
+
 - [ ] API tests passing
 - [ ] Validation working
 - [ ] Auth checks in place
@@ -578,21 +602,21 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `svelte-expert` | Svelte and SvelteKit patterns | Always at task start |
-| `typescript-expert` | TypeScript best practices | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                       | When                 |
+| -------------------------------- | ----------------------------- | -------------------- |
+| `svelte-expert`                  | Svelte and SvelteKit patterns | Always at task start |
+| `typescript-expert`              | TypeScript best practices     | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle      | Always at task start |
+| `verification-before-completion` | Quality gates                 | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Form handling | `form-and-actions-in-sveltekit` | Form actions patterns |
-| SEO work | `seo-and-meta-tags-in-sveltekit` | SEO optimization |
-| Styling work | `styling-expert` | CSS best practices |
-| i18n requirements | `paraglide-js-internationalization-i18n` | Internationalization |
+| Condition         | Skill                                    | Purpose               |
+| ----------------- | ---------------------------------------- | --------------------- |
+| Form handling     | `form-and-actions-in-sveltekit`          | Form actions patterns |
+| SEO work          | `seo-and-meta-tags-in-sveltekit`         | SEO optimization      |
+| Styling work      | `styling-expert`                         | CSS best practices    |
+| i18n requirements | `paraglide-js-internationalization-i18n` | Internationalization  |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -629,6 +653,7 @@ Review past architectural decisions, performance patterns, and SvelteKit best pr
 ### Review Requirements
 
 For major features:
+
 - [ ] **Backend Review**: API integration and data contracts
 - [ ] **Security Review**: Authentication and authorization
 - [ ] **QA Review**: Test coverage and accessibility
@@ -636,6 +661,7 @@ For major features:
 ## Best Practices
 
 ### Svelte 5 Runes
+
 - Use $state for reactive local state
 - Use $derived for computed values
 - Use $effect for side effects (sparingly)
@@ -644,6 +670,7 @@ For major features:
 - Clean up effects properly with return function
 
 ### SvelteKit Routing
+
 - Use file-based routing structure
 - Leverage load functions for data fetching
 - Implement proper error boundaries
@@ -652,6 +679,7 @@ For major features:
 - Use depends() for cache invalidation
 
 ### Forms & Validation
+
 - Progressive enhancement (works without JS)
 - Validate on client and server
 - Use Zod for type-safe validation
@@ -660,6 +688,7 @@ For major features:
 - Use form actions for mutations
 
 ### SEO
+
 - Dynamic meta tags on every page
 - Implement Open Graph tags
 - Add Twitter Card tags
@@ -668,6 +697,7 @@ For major features:
 - Optimize for Core Web Vitals
 
 ### Performance
+
 - Leverage SSR for initial load
 - Use streaming for large data
 - Implement code splitting
@@ -677,6 +707,7 @@ For major features:
 - Cache data appropriately
 
 ### Accessibility
+
 - Semantic HTML elements
 - Proper heading hierarchy
 - Keyboard navigation support
@@ -685,6 +716,7 @@ For major features:
 - Test with screen readers
 
 ### Testing
+
 - Unit test components in isolation
 - Integration test user flows
 - E2E test critical paths

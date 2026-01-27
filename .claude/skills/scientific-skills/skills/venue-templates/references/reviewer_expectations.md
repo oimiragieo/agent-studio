@@ -9,6 +9,7 @@ Understanding what reviewers look for at different venues is essential for craft
 ## Overview
 
 Reviewers at different venues prioritize different aspects. Understanding these priorities helps you:
+
 1. Frame your contribution appropriately
 2. Anticipate likely criticisms
 3. Prepare effective rebuttals
@@ -20,13 +21,13 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Broad significance** | Critical | Impact beyond the specific subfield |
-| **Novelty** | Critical | First to show this or major advance |
-| **Technical rigor** | High | Sound methodology, appropriate controls |
-| **Clarity** | High | Accessible to non-specialists |
-| **Completeness** | Moderate | Thorough but not exhaustive |
+| Priority               | Weight   | Description                             |
+| ---------------------- | -------- | --------------------------------------- |
+| **Broad significance** | Critical | Impact beyond the specific subfield     |
+| **Novelty**            | Critical | First to show this or major advance     |
+| **Technical rigor**    | High     | Sound methodology, appropriate controls |
+| **Clarity**            | High     | Accessible to non-specialists           |
+| **Completeness**       | Moderate | Thorough but not exhaustive             |
 
 ### Review Process
 
@@ -38,12 +39,14 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 ### What Gets a Paper Rejected
 
 **At Editorial Stage**:
+
 - Findings not significant enough for broad audience
 - Incremental advance over prior work
 - Too specialized for the journal
 - Topic doesn't fit current editorial interests
 
 **At Review Stage**:
+
 - Claims not supported by data
 - Missing critical controls
 - Alternative interpretations not addressed
@@ -54,6 +57,7 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 ### How to Address Nature/Science Reviewers
 
 **In the paper**:
+
 - Lead with significance in the first paragraph
 - Explain why findings matter broadly
 - Include controls for all major claims
@@ -61,6 +65,7 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 - Include conceptual figures
 
 **In rebuttal**:
+
 - Address every point (even minor ones)
 - Provide new data when requested
 - Acknowledge valid criticisms gracefully
@@ -78,13 +83,13 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Clinical relevance** | Critical | Will this change practice? |
-| **Methodological rigor** | Critical | CONSORT/STROBE compliance |
-| **Patient outcomes** | Critical | Focus on what matters to patients |
-| **Statistical validity** | High | Appropriate analysis, power |
-| **Generalizability** | High | Applicability to broader populations |
+| Priority                 | Weight   | Description                          |
+| ------------------------ | -------- | ------------------------------------ |
+| **Clinical relevance**   | Critical | Will this change practice?           |
+| **Methodological rigor** | Critical | CONSORT/STROBE compliance            |
+| **Patient outcomes**     | Critical | Focus on what matters to patients    |
+| **Statistical validity** | High     | Appropriate analysis, power          |
+| **Generalizability**     | High     | Applicability to broader populations |
 
 ### Review Process
 
@@ -96,6 +101,7 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 ### What Gets a Paper Rejected
 
 **Major Issues**:
+
 - Underpowered study
 - Inappropriate control/comparator
 - Confounding not addressed
@@ -104,6 +110,7 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 - Claims exceed evidence
 
 **Moderate Issues**:
+
 - Unclear generalizability
 - Missing subgroup analyses
 - Incomplete CONSORT/STROBE reporting
@@ -121,13 +128,13 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Mechanistic insight** | Critical | How does this work? |
-| **Depth of investigation** | Critical | Multiple approaches, comprehensive |
-| **Biological significance** | High | Importance for the field |
-| **Technical rigor** | High | Quantification, statistics, replication |
-| **Novelty** | Moderate-High | New findings, not just confirmation |
+| Priority                    | Weight        | Description                             |
+| --------------------------- | ------------- | --------------------------------------- |
+| **Mechanistic insight**     | Critical      | How does this work?                     |
+| **Depth of investigation**  | Critical      | Multiple approaches, comprehensive      |
+| **Biological significance** | High          | Importance for the field                |
+| **Technical rigor**         | High          | Quantification, statistics, replication |
+| **Novelty**                 | Moderate-High | New findings, not just confirmation     |
 
 ### Review Process
 
@@ -156,14 +163,14 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Novelty** | Critical | New method, insight, or perspective |
-| **Technical soundness** | Critical | Correct implementation, fair comparisons |
-| **Significance** | High | Advances the field |
-| **Experimental rigor** | High | Strong baselines, proper ablations |
-| **Reproducibility** | Moderate-High | Can others replicate? |
-| **Clarity** | Moderate | Well-written and organized |
+| Priority                | Weight        | Description                              |
+| ----------------------- | ------------- | ---------------------------------------- |
+| **Novelty**             | Critical      | New method, insight, or perspective      |
+| **Technical soundness** | Critical      | Correct implementation, fair comparisons |
+| **Significance**        | High          | Advances the field                       |
+| **Experimental rigor**  | High          | Strong baselines, proper ablations       |
+| **Reproducibility**     | Moderate-High | Can others replicate?                    |
+| **Clarity**             | Moderate      | Well-written and organized               |
 
 ### Review Process
 
@@ -177,17 +184,18 @@ Reviewers at different venues prioritize different aspects. Understanding these 
 
 Typical NeurIPS/ICML scoring:
 
-| Dimension | Score Range | What's Evaluated |
-|-----------|-------------|------------------|
-| **Soundness** | 1-4 | Technical correctness |
-| **Contribution** | 1-4 | Significance of results |
-| **Presentation** | 1-4 | Clarity and organization |
-| **Overall** | 1-10 | Holistic assessment |
-| **Confidence** | 1-5 | Reviewer expertise |
+| Dimension        | Score Range | What's Evaluated         |
+| ---------------- | ----------- | ------------------------ |
+| **Soundness**    | 1-4         | Technical correctness    |
+| **Contribution** | 1-4         | Significance of results  |
+| **Presentation** | 1-4         | Clarity and organization |
+| **Overall**      | 1-10        | Holistic assessment      |
+| **Confidence**   | 1-5         | Reviewer expertise       |
 
 ### What Gets a Paper Rejected
 
 **Critical Issues**:
+
 - Weak baselines or unfair comparisons
 - Missing ablation studies
 - Results not significantly better than SOTA
@@ -195,6 +203,7 @@ Typical NeurIPS/ICML scoring:
 - Overclaiming without evidence
 
 **Moderate Issues**:
+
 - Limited novelty over prior work
 - Narrow evaluation (few datasets/tasks)
 - Missing reproducibility details
@@ -221,29 +230,30 @@ Typical NeurIPS/ICML scoring:
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Contribution to HCI** | Critical | New design, insight, or method |
-| **User-centered approach** | High | Focus on human needs |
-| **Appropriate evaluation** | High | Matches claims and contribution |
-| **Design rationale** | Moderate-High | Justified design decisions |
-| **Implications** | Moderate | Guidance for future work |
+| Priority                   | Weight        | Description                     |
+| -------------------------- | ------------- | ------------------------------- |
+| **Contribution to HCI**    | Critical      | New design, insight, or method  |
+| **User-centered approach** | High          | Focus on human needs            |
+| **Appropriate evaluation** | High          | Matches claims and contribution |
+| **Design rationale**       | Moderate-High | Justified design decisions      |
+| **Implications**           | Moderate      | Guidance for future work        |
 
 ### Contribution Types
 
 CHI explicitly categorizes contributions:
 
-| Type | What Reviewers Expect |
-|------|----------------------|
-| **Empirical** | Rigorous user study, clear findings |
-| **Artifact** | Novel system/tool, evaluation of use |
-| **Methodological** | New research method, validation |
-| **Theoretical** | Conceptual framework, intellectual contribution |
-| **Survey** | Comprehensive, well-organized coverage |
+| Type               | What Reviewers Expect                           |
+| ------------------ | ----------------------------------------------- |
+| **Empirical**      | Rigorous user study, clear findings             |
+| **Artifact**       | Novel system/tool, evaluation of use            |
+| **Methodological** | New research method, validation                 |
+| **Theoretical**    | Conceptual framework, intellectual contribution |
+| **Survey**         | Comprehensive, well-organized coverage          |
 
 ### What Gets a Paper Rejected
 
 **Critical Issues**:
+
 - Mismatch between claims and evaluation
 - Insufficient participants for conclusions
 - Missing ethical considerations (no IRB)
@@ -251,6 +261,7 @@ CHI explicitly categorizes contributions:
 - Limited contribution to HCI community
 
 **Moderate Issues**:
+
 - Weak design rationale
 - Limited generalizability
 - Missing related work in HCI
@@ -268,17 +279,18 @@ CHI explicitly categorizes contributions:
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Task performance** | High | SOTA or competitive results |
-| **Analysis quality** | High | Error analysis, insights |
-| **Methodology** | High | Sound approach, fair comparisons |
-| **Reproducibility** | High | Full details provided |
-| **Novelty** | Moderate-High | New approach or insight |
+| Priority             | Weight        | Description                      |
+| -------------------- | ------------- | -------------------------------- |
+| **Task performance** | High          | SOTA or competitive results      |
+| **Analysis quality** | High          | Error analysis, insights         |
+| **Methodology**      | High          | Sound approach, fair comparisons |
+| **Reproducibility**  | High          | Full details provided            |
+| **Novelty**          | Moderate-High | New approach or insight          |
 
 ### ACL Rolling Review (ARR)
 
 Since 2022, ACL venues use a shared review system:
+
 - Reviews transfer between venues
 - Action editors manage papers
 - Commitment to specific venue after review
@@ -286,6 +298,7 @@ Since 2022, ACL venues use a shared review system:
 ### Responsible NLP Checklist
 
 Reviewers check for:
+
 - Limitations section (required)
 - Risks and ethical considerations
 - Compute/carbon footprint
@@ -304,13 +317,13 @@ Reviewers check for:
 
 ### What Reviewers Look For
 
-| Priority | Weight | Description |
-|----------|--------|-------------|
-| **Scalability** | High | Handles large datasets |
-| **Practical impact** | High | Real-world applicability |
-| **Experimental rigor** | High | Comprehensive evaluation |
-| **Technical novelty** | Moderate-High | New method or application |
-| **Reproducibility** | Moderate | Code/data availability |
+| Priority               | Weight        | Description               |
+| ---------------------- | ------------- | ------------------------- |
+| **Scalability**        | High          | Handles large datasets    |
+| **Practical impact**   | High          | Real-world applicability  |
+| **Experimental rigor** | High          | Comprehensive evaluation  |
+| **Technical novelty**  | Moderate-High | New method or application |
+| **Reproducibility**    | Moderate      | Code/data availability    |
 
 ### What Impresses KDD Reviewers
 
@@ -352,12 +365,12 @@ Reviewers check for:
 ### Rebuttal Template
 
 ```
-We thank the reviewers for their constructive feedback. We address 
+We thank the reviewers for their constructive feedback. We address
 the main concerns below:
 
 **R1/R2 Concern: [Shared concern from multiple reviewers]**
 
-[Your response with specific actions taken and references to where 
+[Your response with specific actions taken and references to where
 changes are made in the revised manuscript]
 
 **R1-1: [Specific point]**
@@ -380,6 +393,7 @@ We have also made the following additional improvements:
 Before submitting, review your paper as a reviewer would:
 
 ### All Venues
+
 - [ ] Are claims supported by evidence?
 - [ ] Are baselines appropriate and recent?
 - [ ] Is the contribution clearly stated?
@@ -387,21 +401,25 @@ Before submitting, review your paper as a reviewer would:
 - [ ] Is reproducibility information complete?
 
 ### High-Impact Journals
+
 - [ ] Is significance clear to a non-specialist?
 - [ ] Are figures accessible and clear?
 - [ ] Are controls adequate for claims?
 
 ### Medical Journals
+
 - [ ] Is CONSORT/STROBE compliance complete?
 - [ ] Are absolute numbers reported?
 - [ ] Is clinical relevance clear?
 
 ### ML Conferences
+
 - [ ] Are ablations comprehensive?
 - [ ] Are comparisons fair?
 - [ ] Is reproducibility information complete?
 
 ### HCI Conferences
+
 - [ ] Is the user-centered perspective clear?
 - [ ] Is the evaluation appropriate for claims?
 - [ ] Are design implications actionable?
@@ -414,4 +432,3 @@ Before submitting, review your paper as a reviewer would:
 - `nature_science_style.md` - Nature/Science detailed guide
 - `ml_conference_style.md` - ML conference detailed guide
 - `medical_journal_styles.md` - Medical journal detailed guide
-

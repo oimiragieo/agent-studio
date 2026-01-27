@@ -5,6 +5,7 @@ Combine multiple AnnData objects along either observations or variables axis.
 ## Basic Concatenation
 
 ### Concatenate along observations (stack cells/samples)
+
 ```python
 import anndata as ad
 import numpy as np
@@ -21,6 +22,7 @@ print(adata_combined.shape)  # (450, 50)
 ```
 
 ### Concatenate along variables (stack genes/features)
+
 ```python
 # Create objects with same observations, different variables
 adata1 = ad.AnnData(X=np.random.rand(100, 50))
@@ -36,6 +38,7 @@ print(adata_combined.shape)  # (100, 150)
 ## Join Types
 
 ### Inner join (intersection)
+
 Keep only variables/observations present in all objects.
 
 ```python
@@ -57,6 +60,7 @@ print(adata_inner.n_vars)  # 40 genes (overlap)
 ```
 
 ### Outer join (union)
+
 Keep all variables/observations, filling missing values.
 
 ```python
@@ -70,6 +74,7 @@ print(adata_outer.n_vars)  # 70 genes (union)
 ```
 
 ### Fill values for outer joins
+
 ```python
 # Specify fill value for missing data
 adata_filled = ad.concat([adata1, adata2], join='outer', fill_value=0)
@@ -78,6 +83,7 @@ adata_filled = ad.concat([adata1, adata2], join='outer', fill_value=0)
 ## Tracking Data Sources
 
 ### Add batch labels
+
 ```python
 # Label which object each observation came from
 adata_combined = ad.concat(
@@ -93,6 +99,7 @@ print(adata_combined.obs['batch'].value_counts())
 ```
 
 ### Automatic batch labels
+
 ```python
 # If keys not provided, uses integer indices
 adata_combined = ad.concat(
@@ -107,6 +114,7 @@ adata_combined = ad.concat(
 Control how metadata from different objects is combined using the `merge` parameter.
 
 ### merge=None (default for observations)
+
 Exclude metadata on non-concatenation axis.
 
 ```python
@@ -119,6 +127,7 @@ adata_combined = ad.concat([adata1, adata2], merge=None)
 ```
 
 ### merge='same'
+
 Keep metadata that is identical across all objects.
 
 ```python
@@ -132,6 +141,7 @@ adata_combined = ad.concat([adata1, adata2], merge='same')
 ```
 
 ### merge='unique'
+
 Keep metadata columns where each key has exactly one value.
 
 ```python
@@ -143,6 +153,7 @@ adata_combined = ad.concat([adata1, adata2], merge='unique')
 ```
 
 ### merge='first'
+
 Take values from the first object containing each key.
 
 ```python
@@ -154,6 +165,7 @@ adata_combined = ad.concat([adata1, adata2], merge='first')
 ```
 
 ### merge='only'
+
 Keep metadata that appears in only one object.
 
 ```python
@@ -167,6 +179,7 @@ adata_combined = ad.concat([adata1, adata2], merge='only')
 ## Handling Index Conflicts
 
 ### Make indices unique
+
 ```python
 import pandas as pd
 
@@ -215,6 +228,7 @@ print(adata_combined.layers.keys())
 ## Concatenating Multi-dimensional Annotations
 
 ### obsm/varm
+
 ```python
 # Objects with embeddings
 adata1.obsm['X_pca'] = np.random.rand(100, 50)
@@ -226,6 +240,7 @@ print(adata_combined.obsm['X_pca'].shape)  # (250, 50)
 ```
 
 ### obsp/varp (pairwise annotations)
+
 ```python
 from scipy.sparse import csr_matrix
 
@@ -281,6 +296,7 @@ adata = collection.to_adata()
 ```
 
 ### Working with AnnCollection
+
 ```python
 # Subset without loading data
 subset = collection[collection.obs['cell_type'] == 'T cell']
@@ -314,6 +330,7 @@ adata = ad.read_h5ad('combined.h5ad', backed='r')
 ## Common Concatenation Patterns
 
 ### Combine technical replicates
+
 ```python
 # Multiple runs of the same samples
 replicates = [adata_run1, adata_run2, adata_run3]
@@ -326,6 +343,7 @@ adata_combined = ad.concat(
 ```
 
 ### Combine batches from experiment
+
 ```python
 # Different experimental batches
 batches = [adata_batch1, adata_batch2, adata_batch3]
@@ -340,6 +358,7 @@ adata_combined = ad.concat(
 ```
 
 ### Merge multi-modal data
+
 ```python
 # Different measurement modalities (e.g., RNA + protein)
 adata_rna = ad.AnnData(X=np.random.rand(100, 2000))
@@ -355,6 +374,7 @@ adata_multimodal.var['modality'] = ['RNA'] * 2000 + ['protein'] * 50
 ## Best Practices
 
 1. **Check compatibility before concatenating**
+
 ```python
 # Verify shapes are compatible
 print([adata.n_vars for adata in [adata1, adata2, adata3]])
@@ -364,18 +384,21 @@ print([set(adata.var_names) for adata in [adata1, adata2, adata3]])
 ```
 
 2. **Use appropriate join type**
+
 - `inner`: When you need the same features across all samples (most stringent)
 - `outer`: When you want to preserve all features (most inclusive)
 
 3. **Track data sources**
-Always use `label` and `keys` to track which observations came from which dataset.
+   Always use `label` and `keys` to track which observations came from which dataset.
 
 4. **Consider memory usage**
+
 - For large datasets, use `AnnCollection` or `concat_on_disk`
 - Consider backed mode for the result
 
 5. **Handle batch effects**
-Concatenation combines data but doesn't correct for batch effects. Apply batch correction after concatenation:
+   Concatenation combines data but doesn't correct for batch effects. Apply batch correction after concatenation:
+
 ```python
 # After concatenation, apply batch correction
 import scanpy as sc
@@ -383,6 +406,7 @@ sc.pp.combat(adata_combined, key='batch')
 ```
 
 6. **Validate results**
+
 ```python
 # Check dimensions
 print(adata_combined.shape)

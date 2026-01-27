@@ -7,6 +7,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 1. P-Value Misuse and Misinterpretation
 
 **Common Problems:**
+
 - P-hacking (selective reporting of significant results)
 - Multiple testing without correction (familywise error rate inflation)
 - Interpreting non-significance as proof of no effect
@@ -15,6 +16,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Confusing statistical significance with biological/clinical significance
 
 **How to Identify:**
+
 - Suspiciously high proportion of p-values just below 0.05
 - Many tests performed but no correction mentioned
 - Statements like "no difference was found" from non-significant results
@@ -22,6 +24,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Language suggesting p-values indicate strength of effect
 
 **What to Recommend:**
+
 - Report effect sizes with confidence intervals
 - Apply appropriate multiple testing corrections (Bonferroni, FDR, Holm-Bonferroni)
 - Interpret non-significance cautiously (lack of evidence ≠ evidence of lack)
@@ -31,6 +34,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 2. Inappropriate Statistical Tests
 
 **Common Problems:**
+
 - Using parametric tests when assumptions are violated (non-normal data, unequal variances)
 - Analyzing paired data with unpaired tests
 - Using t-tests for multiple groups instead of ANOVA with post-hoc tests
@@ -39,6 +43,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Using correlation when regression is more appropriate
 
 **How to Identify:**
+
 - No mention of assumption checking
 - Small sample sizes with parametric tests
 - Multiple pairwise t-tests instead of ANOVA
@@ -46,6 +51,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Time-series data analyzed without accounting for repeated measures
 
 **What to Recommend:**
+
 - Check assumptions explicitly (normality tests, Q-Q plots)
 - Use non-parametric alternatives when appropriate
 - Apply proper corrections for multiple comparisons after ANOVA
@@ -55,6 +61,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 3. Sample Size and Power Issues
 
 **Common Problems:**
+
 - No sample size justification or power calculation
 - Underpowered studies claiming "no effect"
 - Post-hoc power calculations (which are uninformative)
@@ -62,6 +69,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Unequal group sizes without justification
 
 **How to Identify:**
+
 - Small sample sizes (n<30 per group for typical designs)
 - No mention of power analysis in methods
 - Statements about post-hoc power
@@ -69,6 +77,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Claims of "no effect" with large p-values and small n
 
 **What to Recommend:**
+
 - Conduct a priori power analysis based on expected effect size
 - Report achieved power or precision (confidence interval width)
 - Acknowledge when studies are underpowered
@@ -78,6 +87,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 4. Missing Data Problems
 
 **Common Problems:**
+
 - Complete case analysis without justification (listwise deletion)
 - Not reporting extent or pattern of missingness
 - Assuming data are missing completely at random (MCAR) without testing
@@ -85,6 +95,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Not performing sensitivity analyses
 
 **How to Identify:**
+
 - Different n values across analyses without explanation
 - No discussion of missing data
 - Participants "excluded from analysis"
@@ -92,6 +103,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - No sensitivity analyses comparing complete vs. imputed data
 
 **What to Recommend:**
+
 - Report extent and patterns of missingness
 - Test MCAR assumption (Little's test)
 - Use appropriate methods (multiple imputation, maximum likelihood)
@@ -101,6 +113,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 5. Circular Analysis and Double-Dipping
 
 **Common Problems:**
+
 - Using the same data for selection and inference
 - Defining ROIs based on contrast then testing that contrast in same ROI
 - Selecting outliers then testing for differences
@@ -108,6 +121,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - HARKing (Hypothesizing After Results are Known)
 
 **How to Identify:**
+
 - ROIs or features selected based on results
 - Unexpected subgroup analyses
 - Post-hoc analyses not clearly labeled as exploratory
@@ -115,6 +129,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Introduction that perfectly predicts findings
 
 **What to Recommend:**
+
 - Use independent datasets for selection and testing
 - Pre-register analyses and hypotheses
 - Clearly distinguish confirmatory vs. exploratory analyses
@@ -124,18 +139,21 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 6. Pseudoreplication
 
 **Common Problems:**
+
 - Technical replicates treated as biological replicates
 - Multiple measurements from same subject treated as independent
 - Clustered data analyzed without accounting for clustering
 - Non-independence in spatial or temporal data
 
 **How to Identify:**
+
 - n defined as number of measurements rather than biological units
 - Multiple cells from same animal counted as independent
 - Repeated measures not acknowledged
 - No mention of random effects or clustering
 
 **What to Recommend:**
+
 - Define n as biological replicates (animals, patients, independent samples)
 - Use mixed-effects models for nested or clustered data
 - Account for repeated measures explicitly
@@ -147,6 +165,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 7. Lack of Appropriate Controls
 
 **Common Problems:**
+
 - Missing negative controls
 - Missing positive controls for validation
 - No vehicle controls for drug studies
@@ -154,12 +173,14 @@ This document catalogs frequent issues encountered during peer review, organized
 - No batch controls
 
 **How to Identify:**
+
 - Methods section lists only experimental groups
 - No mention of controls in figures
 - Unclear baseline or reference condition
 - Cross-batch comparisons without controls
 
 **What to Recommend:**
+
 - Include negative controls to assess specificity
 - Include positive controls to validate methods
 - Use vehicle controls matched to experimental treatment
@@ -169,6 +190,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 8. Confounding Variables
 
 **Common Problems:**
+
 - Systematic differences between groups besides intervention
 - Batch effects not controlled or corrected
 - Order effects in sequential experiments
@@ -176,6 +198,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Experimenter effects not blinded
 
 **How to Identify:**
+
 - Groups differ in multiple characteristics
 - Samples processed in different batches by group
 - No randomization of sample order
@@ -183,6 +206,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Baseline characteristics differ between groups
 
 **What to Recommend:**
+
 - Randomize experimental units to conditions
 - Block on known confounders
 - Randomize sample processing order
@@ -193,6 +217,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 9. Insufficient Replication
 
 **Common Problems:**
+
 - Single experiment without replication
 - Technical replicates mistaken for biological replication
 - Small n justified by "typical for the field"
@@ -200,6 +225,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Cherry-picking representative examples
 
 **How to Identify:**
+
 - Methods state "experiment performed once"
 - n=3 with no justification
 - "Representative image shown"
@@ -207,6 +233,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - No validation in independent dataset
 
 **What to Recommend:**
+
 - Perform independent biological replicates (typically ≥3)
 - Validate key findings in independent cohorts
 - Report all replicates, not just representative examples
@@ -218,6 +245,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 10. Insufficient Methodological Detail
 
 **Common Problems:**
+
 - Methods not described in sufficient detail for replication
 - Key reagents not specified (vendor, catalog number)
 - Software versions and parameters not reported
@@ -225,6 +253,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Cell line authentication not verified
 
 **How to Identify:**
+
 - Vague descriptions ("standard protocols were used")
 - No information on reagent sources
 - Generic software mentioned without versions
@@ -232,6 +261,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Cell lines not authenticated
 
 **What to Recommend:**
+
 - Provide detailed protocols or cite specific protocols
 - Include reagent vendors, catalog numbers, lot numbers
 - Report software versions and all parameters
@@ -242,6 +272,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 11. Data and Code Availability
 
 **Common Problems:**
+
 - No data availability statement
 - "Data available upon request" (often unfulfilled)
 - No code provided for computational analyses
@@ -249,6 +280,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - No clear documentation
 
 **How to Identify:**
+
 - Missing data availability statement
 - No repository accession numbers
 - Computational methods with no code
@@ -256,6 +288,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - No README or documentation
 
 **What to Recommend:**
+
 - Deposit raw data in appropriate repositories (GEO, SRA, Dryad, Zenodo)
 - Share analysis code on GitHub or similar
 - Provide clear documentation and README files
@@ -266,6 +299,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 12. Lack of Method Validation
 
 **Common Problems:**
+
 - New methods not compared to gold standard
 - Assays not validated for specificity, sensitivity, linearity
 - No spike-in controls
@@ -273,6 +307,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Detection limits not established
 
 **How to Identify:**
+
 - Novel assays presented without validation
 - No comparison to existing methods
 - No positive/negative controls shown
@@ -280,6 +315,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - No standard curves or controls
 
 **What to Recommend:**
+
 - Validate new methods against established approaches
 - Show specificity (knockdown/knockout controls)
 - Demonstrate linearity and dynamic range
@@ -292,6 +328,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 13. Overstatement of Results
 
 **Common Problems:**
+
 - Causal language for correlational data
 - Mechanistic claims without mechanistic evidence
 - Extrapolating beyond data (species, conditions, populations)
@@ -299,6 +336,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Overgeneralizing from limited samples
 
 **How to Identify:**
+
 - "X causes Y" from observational data
 - Mechanism proposed without direct testing
 - Mouse data presented as relevant to humans without caveats
@@ -306,6 +344,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Broad claims from narrow samples
 
 **What to Recommend:**
+
 - Use appropriate language ("associated with" vs. "caused by")
 - Distinguish correlation from causation
 - Acknowledge limitations of model systems
@@ -316,6 +355,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 14. Cherry-Picking and Selective Reporting
 
 **Common Problems:**
+
 - Reporting only significant results
 - Showing "representative" images that may not be typical
 - Excluding outliers without justification
@@ -323,6 +363,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Switching between different statistical approaches
 
 **How to Identify:**
+
 - All reported results are significant
 - "Representative of 3 experiments" with no quantification
 - Data exclusions mentioned in results but not methods
@@ -330,6 +371,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Multiple analysis approaches with only one reported
 
 **What to Recommend:**
+
 - Report all planned analyses regardless of outcome
 - Quantify and show variability across replicates
 - Pre-specify outlier exclusion criteria
@@ -340,6 +382,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 15. Ignoring Alternative Explanations
 
 **Common Problems:**
+
 - Preferred explanation presented without considering alternatives
 - Contradictory evidence dismissed without discussion
 - Off-target effects not considered
@@ -347,6 +390,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Limitations section minimal or absent
 
 **How to Identify:**
+
 - Single interpretation presented as fact
 - Prior contradictory findings not cited or discussed
 - No consideration of alternative mechanisms
@@ -354,6 +398,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Specificity assumed without controls
 
 **What to Recommend:**
+
 - Discuss alternative explanations
 - Address contradictory findings from literature
 - Include appropriate specificity controls
@@ -365,6 +410,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 16. Inappropriate Data Visualization
 
 **Common Problems:**
+
 - Bar graphs for continuous data (hiding distributions)
 - No error bars or error bars not defined
 - Truncated y-axes exaggerating differences
@@ -373,6 +419,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Colors not colorblind-friendly
 
 **How to Identify:**
+
 - Bar graphs with few data points
 - Unclear what error bars represent (SD, SEM, CI?)
 - Y-axis doesn't start at zero for ratio/percentage data
@@ -381,6 +428,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Red-green color schemes
 
 **What to Recommend:**
+
 - Show individual data points with scatter/box/violin plots
 - Always define error bars (SD, SEM, 95% CI)
 - Start y-axis at zero or indicate breaks clearly
@@ -392,6 +440,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 17. Image Manipulation Concerns
 
 **Common Problems:**
+
 - Excessive contrast/brightness adjustment
 - Spliced gels or images without indication
 - Duplicated images or panels
@@ -400,6 +449,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Over-processed microscopy images
 
 **How to Identify:**
+
 - Suspicious patterns or discontinuities
 - Very high contrast with no background
 - Similar features in different panels
@@ -408,6 +458,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Loss of detail suggesting over-processing
 
 **What to Recommend:**
+
 - Apply adjustments uniformly across images
 - Indicate spliced gels with dividing lines
 - Show full, uncropped images in supplementary materials
@@ -420,6 +471,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 18. Poorly Defined Hypotheses and Outcomes
 
 **Common Problems:**
+
 - No clear hypothesis stated
 - Primary outcome not specified
 - Multiple outcomes without correction
@@ -427,6 +479,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Fishing expeditions presented as hypothesis-driven
 
 **How to Identify:**
+
 - Introduction doesn't state clear testable hypothesis
 - Multiple outcomes with unclear hierarchy
 - Outcomes in results don't match those in methods
@@ -434,6 +487,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Many tests with no multiple testing correction
 
 **What to Recommend:**
+
 - State clear, testable hypotheses
 - Designate primary and secondary outcomes a priori
 - Pre-register studies when possible
@@ -444,6 +498,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 19. Baseline Imbalance and Selection Bias
 
 **Common Problems:**
+
 - Groups differ at baseline
 - Selection criteria applied differentially
 - Healthy volunteer bias
@@ -451,6 +506,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Indication bias in observational studies
 
 **How to Identify:**
+
 - Table 1 shows significant baseline differences
 - Inclusion criteria different between groups
 - Response rate <50% with no analysis
@@ -458,6 +514,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Groups self-selected rather than randomized
 
 **What to Recommend:**
+
 - Report baseline characteristics in Table 1
 - Use randomization to ensure balance
 - Adjust for baseline differences in analysis
@@ -468,6 +525,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 20. Temporal and Batch Effects
 
 **Common Problems:**
+
 - Samples processed in batches by condition
 - Temporal trends not accounted for
 - Instrument drift over time
@@ -475,6 +533,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Reagent lot changes between groups
 
 **How to Identify:**
+
 - All treatment samples processed on same day
 - Controls from different time period
 - No mention of batch or time effects
@@ -482,6 +541,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Long study duration with no temporal analysis
 
 **What to Recommend:**
+
 - Randomize samples across batches/time
 - Include batch as covariate in analysis
 - Perform batch correction (ComBat, limma)
@@ -494,6 +554,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 21. Incomplete Statistical Reporting
 
 **Common Problems:**
+
 - Test statistics not reported
 - Degrees of freedom missing
 - Exact p-values replaced with inequalities (p<0.05)
@@ -502,6 +563,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Sample sizes not reported per group
 
 **How to Identify:**
+
 - Only p-values given with no test statistics
 - p-values reported as p<0.05 rather than exact values
 - No measures of uncertainty
@@ -509,6 +571,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - n reported for total but not per group
 
 **What to Recommend:**
+
 - Report complete test statistics (t, F, χ², etc. with df)
 - Report exact p-values (except p<0.001)
 - Include 95% confidence intervals
@@ -519,6 +582,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ### 22. Methods-Results Mismatch
 
 **Common Problems:**
+
 - Methods describe analyses not performed
 - Results include analyses not described in methods
 - Different sample sizes in methods vs. results
@@ -526,6 +590,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Statistical methods don't match what was done
 
 **How to Identify:**
+
 - Analyses in results without methodological description
 - Methods describe experiments not in results
 - Numbers don't match between sections
@@ -533,6 +598,7 @@ This document catalogs frequent issues encountered during peer review, organized
 - Different software mentioned than used
 
 **What to Recommend:**
+
 - Ensure complete concordance between methods and results
 - Describe all analyses performed in methods
 - Remove methodological descriptions of experiments not performed
@@ -542,6 +608,7 @@ This document catalogs frequent issues encountered during peer review, organized
 ## How to Use This Reference
 
 When reviewing manuscripts:
+
 1. Read through methods and results systematically
 2. Check for common issues in each category
 3. Note specific problems with evidence

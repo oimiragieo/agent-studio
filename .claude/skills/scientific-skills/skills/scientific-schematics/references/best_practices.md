@@ -9,6 +9,7 @@ This guide provides publication standards, accessibility guidelines, and best pr
 ### 1. File Format Requirements
 
 **Vector Formats (Preferred)**
+
 - **PDF**: Universal acceptance, preserves quality, works with LaTeX
   - Use for: Line drawings, flowcharts, block diagrams, circuit diagrams
   - Advantages: Scalable, small file size, embeds fonts
@@ -25,6 +26,7 @@ This guide provides publication standards, accessibility guidelines, and best pr
   - Not all journals accept SVG
 
 **Raster Formats (When Necessary)**
+
 - **TIFF**: Professional standard for raster graphics
   - Use for: Microscopy images, photographs combined with diagrams
   - Minimum 300 DPI at final print size
@@ -36,6 +38,7 @@ This guide provides publication standards, accessibility guidelines, and best pr
   - Supports transparency
 
 **Never Use**
+
 - **JPEG**: Lossy compression creates artifacts in diagrams
 - **GIF**: Limited colors, inappropriate for scientific figures
 - **BMP**: Uncompressed, unnecessarily large files
@@ -43,16 +46,19 @@ This guide provides publication standards, accessibility guidelines, and best pr
 ### 2. Resolution Requirements
 
 **Vector Graphics**
+
 - Infinite resolution (scalable)
 - **Recommended**: Always use vector when possible
 
 **Raster Graphics (when vector not possible)**
+
 - **Publication quality**: 300-600 DPI
 - **Line art**: 600-1200 DPI
 - **Web/screen**: 150 DPI acceptable
 - **Never**: Below 300 DPI for print
 
 **Calculating DPI**
+
 ```
 DPI = pixels / (inches at final size)
 
@@ -65,6 +71,7 @@ DPI = 2400 / 8 = 300 ✓ (acceptable)
 ### 3. Size and Dimensions
 
 **Journal-Specific Column Widths**
+
 - **Nature**: Single column 89 mm (3.5 in), Double 183 mm (7.2 in)
 - **Science**: Single column 55 mm (2.17 in), Double 120 mm (4.72 in)
 - **Cell**: Single column 85 mm (3.35 in), Double 178 mm (7 in)
@@ -72,6 +79,7 @@ DPI = 2400 / 8 = 300 ✓ (acceptable)
 - **IEEE**: Single column 3.5 in, Double 7.16 in
 
 **Best Practices**
+
 - Design at final print size (avoid scaling)
 - Use journal templates when available
 - Allow margins for cropping
@@ -80,11 +88,13 @@ DPI = 2400 / 8 = 300 ✓ (acceptable)
 ### 4. Typography Standards
 
 **Font Selection**
+
 - **Recommended**: Arial, Helvetica, Calibri (sans-serif)
 - **Acceptable**: Times New Roman (serif) for mathematics-heavy
 - **Avoid**: Decorative fonts, script fonts, system fonts that may not embed
 
 **Font Sizes (at final print size)**
+
 - **Minimum**: 6-7 pt (journal dependent)
 - **Axis labels**: 8-9 pt
 - **Figure labels**: 10-12 pt
@@ -92,6 +102,7 @@ DPI = 2400 / 8 = 300 ✓ (acceptable)
 - **Main text**: Should match manuscript body text
 
 **Text Clarity**
+
 - Use sentence case: "Time (seconds)" not "TIME (SECONDS)"
 - Include units in parentheses: "Temperature (°C)"
 - Spell out abbreviations in figure caption
@@ -100,12 +111,14 @@ DPI = 2400 / 8 = 300 ✓ (acceptable)
 ### 5. Line Weights and Strokes
 
 **Recommended Line Widths**
+
 - **Diagram outlines**: 0.5-1.0 pt
 - **Connection lines/arrows**: 1.0-2.0 pt
 - **Emphasis elements**: 2.0-3.0 pt
 - **Minimum visible**: 0.25 pt at final size
 
 **Consistency**
+
 - Use same line weight for similar elements
 - Vary line weight to show hierarchy
 - Avoid hairline rules (too thin to print reliably)
@@ -130,11 +143,13 @@ Black:      #000000 (  0,   0,   0)
 ```
 
 **Alternative: ColorBrewer Palettes**
+
 - **Qualitative**: Set2, Paired, Dark2
 - **Sequential**: Blues, Greens, Oranges (avoid Reds/Greens together)
 - **Diverging**: RdBu (Red-Blue), PuOr (Purple-Orange)
 
 **Colors to Avoid Together**
+
 - Red-Green combinations (8% of males cannot distinguish)
 - Blue-Purple combinations
 - Yellow-Light green combinations
@@ -144,6 +159,7 @@ Black:      #000000 (  0,   0,   0)
 Don't rely on color alone. Use multiple visual channels:
 
 **Shape + Color**
+
 ```
 Circle + Blue   = Condition A
 Square + Orange = Condition B
@@ -151,6 +167,7 @@ Triangle + Green = Condition C
 ```
 
 **Line Style + Color**
+
 ```
 Solid + Blue = Treatment 1
 Dashed + Orange = Treatment 2
@@ -158,6 +175,7 @@ Dotted + Green = Control
 ```
 
 **Pattern Fill + Color**
+
 ```
 Solid fill + Blue = Group A
 Diagonal stripes + Orange = Group B
@@ -169,6 +187,7 @@ Cross-hatch + Green = Group C
 **Test Requirement**: All diagrams must be interpretable in grayscale
 
 **Strategies**
+
 - Use different shades (light, medium, dark)
 - Add patterns or textures to filled areas
 - Vary line styles (solid, dashed, dotted)
@@ -176,6 +195,7 @@ Cross-hatch + Green = Group C
 - Include text annotations
 
 **Grayscale Test**
+
 ```bash
 # Convert to grayscale to test
 convert diagram.pdf -colorspace gray diagram_gray.pdf
@@ -184,11 +204,13 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### 4. Contrast Requirements
 
 **Minimum Contrast Ratios (WCAG Guidelines)**
+
 - **Normal text**: 4.5:1
 - **Large text** (≥18pt): 3:1
 - **Graphical elements**: 3:1
 
 **High Contrast Practices**
+
 - Dark text on light background (or vice versa)
 - Avoid low-contrast color pairs (yellow on white, light gray on white)
 - Use black or dark gray for critical text
@@ -197,6 +219,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### 5. Alternative Text and Descriptions
 
 **Figure Captions Must Include**
+
 - Description of diagram type
 - All abbreviations spelled out
 - Explanation of symbols and colors
@@ -212,12 +235,14 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### 1. Simplicity and Clarity
 
 **Occam's Razor for Diagrams**
+
 - Remove every element that doesn't add information
 - Simplify complex relationships
 - Break complex diagrams into multiple panels
 - Use consistent layouts across related figures
 
 **Visual Hierarchy**
+
 - Most important elements: Largest, darkest, central
 - Supporting elements: Smaller, lighter, peripheral
 - Annotations: Minimal, clear labels only
@@ -225,12 +250,14 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### 2. Consistency
 
 **Within a Figure**
+
 - Same shape/color represents same concept
 - Consistent arrow styles for same relationships
 - Uniform spacing and alignment
 - Matching font sizes for similar elements
 
 **Across Figures in a Paper**
+
 - Reuse color schemes
 - Maintain consistent node styles
 - Use same notation system
@@ -239,18 +266,21 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### 3. Professional Appearance
 
 **Alignment**
+
 - Use grids for node placement
 - Align nodes horizontally or vertically
 - Evenly space elements
 - Center labels within shapes
 
 **White Space**
+
 - Don't overcrowd diagrams
 - Leave breathing room around elements
 - Use white space to group related items
 - Margins around entire diagram
 
 **Polish**
+
 - No jagged lines or misaligned elements
 - Smooth curves and precise angles
 - Clean connection points
@@ -261,7 +291,8 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### Pitfall 1: Overcomplicated Diagrams
 
 **Problem**: Too much information in one diagram
-**Solution**: 
+**Solution**:
+
 - Split into multiple panels (A, B, C)
 - Create overview + detailed diagrams
 - Move details to supplementary figures
@@ -271,6 +302,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 
 **Problem**: Different styles for same elements across figures
 **Solution**:
+
 - Create and use style templates
 - Use the same color palette throughout
 - Document your style choices
@@ -279,6 +311,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 
 **Problem**: Labels overlap elements or are hard to read
 **Solution**:
+
 - Place labels outside shapes when possible
 - Use leader lines for distant labels
 - Rotate text only when necessary
@@ -288,6 +321,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 
 **Problem**: Text too small to read at final print size
 **Solution**:
+
 - Design at final size from the start
 - Test print at final size
 - Minimum 7-8 pt font
@@ -297,6 +331,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 
 **Problem**: Unclear what arrows represent or where they point
 **Solution**:
+
 - Use different arrow styles for different meanings
 - Add labels to arrows
 - Include legend for arrow types
@@ -306,6 +341,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 
 **Problem**: Too many colors, confusing or inaccessible
 **Solution**:
+
 - Limit to 3-5 colors maximum
 - Use color purposefully (categories, emphasis)
 - Stick to colorblind-safe palette
@@ -316,6 +352,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### Before Submission
 
 **Technical Requirements**
+
 - [ ] Correct file format (PDF/EPS preferred for diagrams)
 - [ ] Sufficient resolution (vector or 300+ DPI)
 - [ ] Appropriate size (matches journal column width)
@@ -323,6 +360,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - [ ] No compression artifacts
 
 **Accessibility**
+
 - [ ] Colorblind-safe palette used
 - [ ] Works in grayscale (tested)
 - [ ] Text minimum 7-8 pt at final size
@@ -330,6 +368,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - [ ] Redundant encoding (not color alone)
 
 **Design Quality**
+
 - [ ] Elements aligned properly
 - [ ] Consistent spacing and layout
 - [ ] No overlapping text or elements
@@ -337,6 +376,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - [ ] Professional appearance
 
 **Content**
+
 - [ ] All elements labeled
 - [ ] Abbreviations defined
 - [ ] Units included where relevant
@@ -344,6 +384,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - [ ] Caption comprehensive
 
 **Consistency**
+
 - [ ] Matches other figures in style
 - [ ] Same notation as text
 - [ ] Consistent with journal guidelines
@@ -354,6 +395,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### Nature
 
 **Figure Requirements**
+
 - **Size**: 89 mm (single) or 183 mm (double column)
 - **Format**: PDF, EPS, or high-res TIFF
 - **Fonts**: Sans-serif preferred
@@ -361,6 +403,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - **Resolution**: 300 DPI minimum for raster
 
 **Style Notes**
+
 - Panel labels: lowercase bold (a, b, c)
 - Simple, clean design
 - Minimal colors
@@ -369,6 +412,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### Science
 
 **Figure Requirements**
+
 - **Size**: 55 mm (single) or 120 mm (double column)
 - **Format**: PDF, EPS, TIFF, or JPEG (high quality)
 - **Resolution**: 300 DPI for photos, 600 DPI for line art
@@ -376,6 +420,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - **Fonts**: 6-7 pt minimum
 
 **Style Notes**
+
 - Panel labels: capital bold (A, B, C)
 - High contrast
 - Readable at small size
@@ -383,6 +428,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### Cell
 
 **Figure Requirements**
+
 - **Size**: 85 mm (single) or 178 mm (double column)
 - **Format**: PDF preferred, TIFF, EPS acceptable
 - **Resolution**: 300 DPI minimum
@@ -390,6 +436,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - **Line weight**: 0.5 pt minimum
 
 **Style Notes**
+
 - Clean, professional
 - Color or grayscale
 - Panel labels capital (A, B, C)
@@ -397,6 +444,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 ### IEEE
 
 **Figure Requirements**
+
 - **Size**: 3.5 in (single) or 7.16 in (double column)
 - **Format**: PDF, EPS (vector preferred)
 - **Resolution**: 600 DPI for line art, 300 DPI for halftone
@@ -404,6 +452,7 @@ convert diagram.pdf -colorspace gray diagram_gray.pdf
 - **Color**: Grayscale in print, color in digital
 
 **Style Notes**
+
 - Follow IEEE Graphics Manual
 - Standard symbols for circuits
 - Technical precision
@@ -431,7 +480,7 @@ plt.rcParams['font.size'] = 8
 plt.rcParams['pdf.fonttype'] = 42  # TrueType fonts in PDF
 
 # Save with proper DPI and cropping
-fig.savefig('diagram.pdf', dpi=300, bbox_inches='tight', 
+fig.savefig('diagram.pdf', dpi=300, bbox_inches='tight',
             pad_inches=0.1, transparent=False)
 fig.savefig('diagram.png', dpi=300, bbox_inches='tight')
 ```
@@ -463,12 +512,14 @@ inkscape diagram.svg --export-pdf=diagram.pdf
 ## Version Control Best Practices
 
 **Keep Source Files**
+
 - Save original .tex, .py, or .svg files
 - Use descriptive filenames with versions
 - Document color palette and style choices
 - Include README with regeneration instructions
 
 **Directory Structure**
+
 ```
 figures/
 ├── source/          # Editable source files
@@ -485,6 +536,7 @@ figures/
 ```
 
 **Git Tracking**
+
 - Track source files (.tex, .py)
 - Consider .gitignore for generated PDFs (large files)
 - Use releases/tags for submission versions
@@ -495,18 +547,21 @@ figures/
 ### Pre-Submission Tests
 
 **Visual Tests**
+
 1. **Print test**: Print at final size, check readability
 2. **Grayscale test**: Convert to grayscale, verify interpretability
 3. **Zoom test**: View at 400% and 25% to check scalability
 4. **Screen test**: View on different devices (phone, tablet, desktop)
 
 **Technical Tests**
+
 1. **Font embedding**: Check PDF properties
 2. **Resolution check**: Verify DPI meets requirements
 3. **File size**: Ensure under journal limits
 4. **Format compliance**: Verify accepted format
 
 **Accessibility Tests**
+
 1. **Colorblind simulation**: Use tools like Color Oracle
 2. **Contrast checker**: WCAG contrast ratio tools
 3. **Screen reader**: Test alt text (for web figures)
@@ -514,11 +569,13 @@ figures/
 ### Tools for Testing
 
 **Colorblind Simulation**
+
 - Color Oracle (free, cross-platform)
 - Coblis (Color Blindness Simulator)
 - Photoshop/GIMP colorblind preview modes
 
 **PDF Inspection**
+
 ```bash
 # Check PDF properties
 pdfinfo diagram.pdf
@@ -531,6 +588,7 @@ identify -verbose diagram.pdf
 ```
 
 **Contrast Checking**
+
 - WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
 - Colorable: https://colorable.jxnblk.com/
 
@@ -556,4 +614,3 @@ identify -verbose diagram.pdf
 - **ColorBrewer**: https://colorbrewer2.org/
 
 Following these best practices ensures your diagrams meet publication standards and effectively communicate to all readers, regardless of colorblindness or viewing conditions.
-

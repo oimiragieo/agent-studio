@@ -22,7 +22,7 @@ streaming: supported
 > This skill has been merged into `writing-skills`. Please use `writing-skills` instead.
 >
 > ```javascript
-> Skill({ skill: "writing-skills" })
+> Skill({ skill: 'writing-skills' });
 > ```
 >
 > The writing style guidelines from this skill are now available in the "Writing Style Guidelines" section of `writing-skills`.
@@ -32,10 +32,11 @@ streaming: supported
 For writing style guidelines (voice, tone, banned words, punctuation), use:
 
 ```javascript
-Skill({ skill: "writing-skills" })
+Skill({ skill: 'writing-skills' });
 ```
 
 The `writing-skills` skill now includes:
+
 1. TDD methodology for creating skills
 2. Writing style guidelines (merged from this skill)
 3. Claude Search Optimization (CSO)
@@ -46,6 +47,7 @@ The `writing-skills` skill now includes:
 The original writing guidelines have been preserved in `writing-skills` under the "Writing Style Guidelines" section.
 
 Key content migrated:
+
 - Voice and tone guidelines
 - Specificity and evidence rules
 - Banned words and phrases
@@ -55,6 +57,7 @@ Key content migrated:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -5,13 +5,16 @@ This reference provides a concise overview of commonly used Zarr functions, para
 ## Array Creation Functions
 
 ### `zarr.zeros()` / `zarr.ones()` / `zarr.empty()`
+
 ```python
 zarr.zeros(shape, chunks=None, dtype='f8', store=None, compressor='default',
            fill_value=0, order='C', filters=None)
 ```
+
 Create arrays filled with zeros, ones, or empty (uninitialized) values.
 
 **Key parameters:**
+
 - `shape`: Tuple defining array dimensions (e.g., `(1000, 1000)`)
 - `chunks`: Tuple defining chunk dimensions (e.g., `(100, 100)`), or `None` for no chunking
 - `dtype`: NumPy data type (e.g., `'f4'`, `'i8'`, `'bool'`)
@@ -19,19 +22,24 @@ Create arrays filled with zeros, ones, or empty (uninitialized) values.
 - `compressor`: Compression codec or `None` for no compression
 
 ### `zarr.create_array()` / `zarr.create()`
+
 ```python
 zarr.create_array(store, shape, chunks, dtype='f8', compressor='default',
                   fill_value=0, order='C', filters=None, overwrite=False)
 ```
+
 Create a new array with explicit control over all parameters.
 
 ### `zarr.array()`
+
 ```python
 zarr.array(data, chunks=None, dtype=None, compressor='default', store=None)
 ```
+
 Create array from existing data (NumPy array, list, etc.).
 
 **Example:**
+
 ```python
 import numpy as np
 data = np.random.random((1000, 1000))
@@ -39,13 +47,16 @@ z = zarr.array(data, chunks=(100, 100), store='data.zarr')
 ```
 
 ### `zarr.open_array()` / `zarr.open()`
+
 ```python
 zarr.open_array(store, mode='a', shape=None, chunks=None, dtype=None,
                 compressor='default', fill_value=0)
 ```
+
 Open existing array or create new one.
 
 **Mode options:**
+
 - `'r'`: Read-only
 - `'r+'`: Read-write, file must exist
 - `'a'`: Read-write, create if doesn't exist (default)
@@ -55,6 +66,7 @@ Open existing array or create new one.
 ## Storage Classes
 
 ### LocalStore (Default)
+
 ```python
 from zarr.storage import LocalStore
 
@@ -63,6 +75,7 @@ z = zarr.open_array(store=store, mode='w', shape=(1000, 1000), chunks=(100, 100)
 ```
 
 ### MemoryStore
+
 ```python
 from zarr.storage import MemoryStore
 
@@ -71,6 +84,7 @@ z = zarr.open_array(store=store, mode='w', shape=(1000, 1000), chunks=(100, 100)
 ```
 
 ### ZipStore
+
 ```python
 from zarr.storage import ZipStore
 
@@ -88,6 +102,7 @@ store.close()
 ```
 
 ### Cloud Storage (S3/GCS)
+
 ```python
 # S3
 import s3fs
@@ -103,6 +118,7 @@ store = gcsfs.GCSMap(root='bucket/path/data.zarr', gcs=gcs)
 ## Compression Codecs
 
 ### Blosc Codec (Default)
+
 ```python
 from zarr.codecs.blosc import BloscCodec
 
@@ -117,6 +133,7 @@ z = zarr.create_array(store='data.zarr', shape=(1000, 1000), chunks=(100, 100),
 ```
 
 **Blosc compressor characteristics:**
+
 - `'lz4'`: Fastest compression, lower ratio
 - `'zstd'`: Balanced (default), good ratio and speed
 - `'zlib'`: Good compatibility, moderate performance
@@ -125,6 +142,7 @@ z = zarr.create_array(store='data.zarr', shape=(1000, 1000), chunks=(100, 100),
 - `'blosclz'`: Blosc's default
 
 ### Other Codecs
+
 ```python
 from zarr.codecs import GzipCodec, ZstdCodec, BytesCodec
 
@@ -141,6 +159,7 @@ BytesCodec()
 ## Array Indexing and Selection
 
 ### Basic Indexing (NumPy-style)
+
 ```python
 z = zarr.zeros((1000, 1000), chunks=(100, 100))
 
@@ -156,6 +175,7 @@ z[10:20, 50:60] = np.random.random((10, 10))
 ```
 
 ### Advanced Indexing
+
 ```python
 # Coordinate indexing (point selection)
 z.vindex[[0, 5, 10], [2, 8, 15]]  # Specific coordinates
@@ -171,6 +191,7 @@ z.blocks[0:2, 0:2]  # First four chunks
 ## Groups and Hierarchies
 
 ### Creating Groups
+
 ```python
 # Create root group
 root = zarr.group(store='data.zarr')
@@ -188,6 +209,7 @@ arr2 = root['group1/data']
 ```
 
 ### Group Methods
+
 ```python
 root = zarr.group('data.zarr')
 
@@ -207,6 +229,7 @@ print(list(root.arrays()))
 ## Array Attributes and Metadata
 
 ### Working with Attributes
+
 ```python
 z = zarr.zeros((1000, 1000), chunks=(100, 100))
 
@@ -231,6 +254,7 @@ del z.attrs['tags']
 ## Array Properties and Methods
 
 ### Properties
+
 ```python
 z = zarr.zeros((1000, 1000), chunks=(100, 100), dtype='f4')
 
@@ -245,6 +269,7 @@ z.cdata_shape    # Shape in terms of chunks: (10, 10)
 ```
 
 ### Methods
+
 ```python
 # Information
 print(z.info)  # Detailed information about array
@@ -263,6 +288,7 @@ z2 = z.copy(store='new_location.zarr')
 ## Chunking Guidelines
 
 ### Chunk Size Calculation
+
 ```python
 # For float32 (4 bytes per element):
 # 1 MB = 262,144 elements
@@ -277,26 +303,31 @@ z2 = z.copy(store='new_location.zarr')
 ### Chunking Strategies by Access Pattern
 
 **Time series (sequential access along first dimension):**
+
 ```python
 chunks=(1, 720, 1440)  # One time step per chunk
 ```
 
 **Row-wise access:**
+
 ```python
 chunks=(10, 10000)  # Small rows, span columns
 ```
 
 **Column-wise access:**
+
 ```python
 chunks=(10000, 10)  # Span rows, small columns
 ```
 
 **Random access:**
+
 ```python
 chunks=(500, 500)  # Balanced square chunks
 ```
 
 **3D volumetric data:**
+
 ```python
 chunks=(64, 64, 64)  # Cubic chunks for isotropic access
 ```
@@ -304,6 +335,7 @@ chunks=(64, 64, 64)  # Cubic chunks for isotropic access
 ## Integration APIs
 
 ### NumPy Integration
+
 ```python
 import numpy as np
 
@@ -319,6 +351,7 @@ arr = z[:]  # Loads entire array into memory
 ```
 
 ### Dask Integration
+
 ```python
 import dask.array as da
 
@@ -334,6 +367,7 @@ da.to_zarr(large_array, 'output.zarr')
 ```
 
 ### Xarray Integration
+
 ```python
 import xarray as xr
 
@@ -358,6 +392,7 @@ ds.to_zarr('climate.zarr')
 ## Parallel Computing
 
 ### Synchronizers
+
 ```python
 from zarr import ThreadSynchronizer, ProcessSynchronizer
 
@@ -371,6 +406,7 @@ z = zarr.open_array('data.zarr', mode='r+', synchronizer=sync)
 ```
 
 **Note:** Synchronization only needed for:
+
 - Concurrent writes that may span chunk boundaries
 - Not needed for reads (always safe)
 - Not needed if each process writes to separate chunks
@@ -386,11 +422,13 @@ root = zarr.open_consolidated('data.zarr')
 ```
 
 **Benefits:**
+
 - Reduces I/O from N operations to 1
 - Critical for cloud storage (reduces latency)
 - Speeds up hierarchy traversal
 
 **Cautions:**
+
 - Can become stale if data updates
 - Re-consolidate after modifications
 - Not for frequently-updated datasets
@@ -398,6 +436,7 @@ root = zarr.open_consolidated('data.zarr')
 ## Common Patterns
 
 ### Time Series with Growing Data
+
 ```python
 # Start with empty first dimension
 z = zarr.open('timeseries.zarr', mode='a',
@@ -411,6 +450,7 @@ for new_timestep in data_stream:
 ```
 
 ### Processing Large Arrays in Chunks
+
 ```python
 z = zarr.open('large_data.zarr', mode='r')
 
@@ -422,6 +462,7 @@ for i in range(0, z.shape[0], 1000):
 ```
 
 ### Format Conversion Pipeline
+
 ```python
 # HDF5 → Zarr
 import h5py
@@ -491,10 +532,12 @@ print(f"Chunk grid: {z.cdata_shape}")
 ## Version Compatibility
 
 Zarr-Python version 3.x supports both:
+
 - **Zarr v2 format**: Legacy format, widely compatible
 - **Zarr v3 format**: New format with sharding, improved metadata
 
 Check format version:
+
 ```python
 # Zarr automatically detects format version
 z = zarr.open('data.zarr', mode='r')

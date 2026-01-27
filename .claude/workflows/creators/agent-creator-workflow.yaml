@@ -78,30 +78,26 @@ phases:
         action: exa_search
         handler: exaSearch
         description: Research agent role and responsibilities
-        query: {{name}} agent role responsibilities tasks
+        query: '{{name}} agent role responsibilities tasks'
         required: true
-
       - id: research_keywords
         action: exa_search
         handler: exaSearch
         description: Research common keywords and terminology
-        query: {{name}} common keywords phrases terminology
+        query: '{{name}} common keywords phrases terminology'
         required: true
-
       - id: research_patterns
         action: exa_search
         handler: exaSearch
         description: Research best practices and patterns
-        query: {{name}} best practices patterns
+        query: '{{name}} best practices patterns'
         required: true
-
       - id: generate_research_report
         action: write
         handler: writeResearchReport
         description: Generate and save research report
         path: .claude/context/artifacts/research-reports/agent-keywords-{{name}}.md
         template: research-report
-
     gates:
       - type: research
         minQueries: 3

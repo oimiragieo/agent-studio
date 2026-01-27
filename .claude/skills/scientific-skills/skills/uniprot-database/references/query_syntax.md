@@ -5,12 +5,14 @@ Comprehensive guide to UniProt search query syntax for constructing complex sear
 ## Basic Syntax
 
 ### Simple Queries
+
 ```
 insulin
 kinase
 ```
 
 ### Field-Specific Searches
+
 ```
 gene:BRCA1
 accession:P12345
@@ -21,6 +23,7 @@ protein_name:kinase
 ## Boolean Operators
 
 ### AND (both terms must be present)
+
 ```
 insulin AND diabetes
 kinase AND human
@@ -28,18 +31,21 @@ gene:BRCA1 AND reviewed:true
 ```
 
 ### OR (either term can be present)
+
 ```
 diabetes OR insulin
 (cancer OR tumor) AND human
 ```
 
 ### NOT (exclude terms)
+
 ```
 kinase NOT human
 protein_name:kinase NOT organism_name:mouse
 ```
 
 ### Grouping with Parentheses
+
 ```
 (diabetes OR insulin) AND reviewed:true
 (gene:BRCA1 OR gene:BRCA2) AND organism_id:9606
@@ -48,12 +54,14 @@ protein_name:kinase NOT organism_name:mouse
 ## Common Search Fields
 
 ### Identification
+
 - `accession:P12345` - UniProt accession number
 - `id:INSR_HUMAN` - Entry name
 - `gene:BRCA1` - Gene name
 - `gene_exact:BRCA1` - Exact gene name match
 
 ### Organism/Taxonomy
+
 - `organism_name:human` - Organism name
 - `organism_name:"Homo sapiens"` - Exact organism name (use quotes for multi-word)
 - `organism_id:9606` - NCBI taxonomy ID
@@ -61,24 +69,28 @@ protein_name:kinase NOT organism_name:mouse
 - `taxonomy_name:"Homo sapiens"` - Taxonomy name
 
 ### Protein Information
+
 - `protein_name:insulin` - Protein name
 - `protein_name:"insulin receptor"` - Exact protein name
 - `reviewed:true` - Only Swiss-Prot (reviewed) entries
 - `reviewed:false` - Only TrEMBL (unreviewed) entries
 
 ### Sequence Properties
+
 - `length:[100 TO 500]` - Sequence length range
 - `mass:[50000 TO 100000]` - Molecular mass in Daltons
 - `sequence:MVLSPADKTNVK` - Exact sequence match
 - `fragment:false` - Exclude fragment sequences
 
 ### Gene Ontology (GO)
+
 - `go:0005515` - GO term ID (0005515 = protein binding)
 - `go_f:* ` - Any molecular function
 - `go_p:*` - Any biological process
 - `go_c:*` - Any cellular component
 
 ### Annotations
+
 - `annotation:(type:signal)` - Has signal peptide annotation
 - `annotation:(type:transmem)` - Has transmembrane region
 - `cc_function:*` - Has function comment
@@ -86,12 +98,14 @@ protein_name:kinase NOT organism_name:mouse
 - `ft_domain:*` - Has domain feature
 
 ### Database Cross-References
+
 - `xref:pdb` - Has PDB structure
 - `xref:ensembl` - Has Ensembl reference
 - `database:pdb` - Same as xref
 - `database:(type:pdb)` - Alternative syntax
 
 ### Protein Families and Domains
+
 - `family:"protein kinase"` - Protein family
 - `keyword:"Protein kinase"` - Keyword annotation
 - `cc_similarity:*` - Has similarity comment
@@ -99,6 +113,7 @@ protein_name:kinase NOT organism_name:mouse
 ## Range Queries
 
 ### Numeric Ranges
+
 ```
 length:[100 TO 500]          # Between 100 and 500
 mass:[* TO 50000]            # Less than or equal to 50000
@@ -106,6 +121,7 @@ created:[2023-01-01 TO *]   # Created after Jan 1, 2023
 ```
 
 ### Date Ranges
+
 ```
 created:[2023-01-01 TO 2023-12-31]
 modified:[2024-01-01 TO *]
@@ -114,11 +130,13 @@ modified:[2024-01-01 TO *]
 ## Wildcards
 
 ### Single Character (?)
+
 ```
 gene:BRCA?      # Matches BRCA1, BRCA2, etc.
 ```
 
-### Multiple Characters (*)
+### Multiple Characters (\*)
+
 ```
 gene:BRCA*      # Matches BRCA1, BRCA2, BRCA1P1, etc.
 protein_name:kinase*
@@ -128,6 +146,7 @@ organism_name:Homo*
 ## Advanced Searches
 
 ### Existence Queries
+
 ```
 cc_function:*              # Has any function annotation
 ft_domain:*                # Has any domain feature
@@ -135,6 +154,7 @@ xref:pdb                   # Has PDB structure
 ```
 
 ### Combined Complex Queries
+
 ```
 # Human reviewed kinases with PDB structure
 (protein_name:kinase OR family:kinase) AND organism_id:9606 AND reviewed:true AND xref:pdb
@@ -152,6 +172,7 @@ organism_id:9606 AND modified:[2024-01-01 TO *] AND reviewed:true
 ## Field-Specific Examples
 
 ### Protein Names
+
 ```
 protein_name:"insulin receptor"    # Exact phrase
 protein_name:insulin*              # Starts with insulin
@@ -160,6 +181,7 @@ alternative_name:insulin           # Alternative names only
 ```
 
 ### Genes
+
 ```
 gene:BRCA1                        # Gene symbol
 gene_exact:BRCA1                  # Exact gene match
@@ -168,6 +190,7 @@ orfName:BRCA1                     # ORF name
 ```
 
 ### Organisms
+
 ```
 organism_name:human               # Common name
 organism_name:"Homo sapiens"      # Scientific name
@@ -176,6 +199,7 @@ lineage:primates                  # Taxonomic lineage
 ```
 
 ### Features
+
 ```
 ft_signal:*                       # Signal peptide
 ft_transmem:*                     # Transmembrane region
@@ -184,7 +208,8 @@ ft_binding:*                      # Binding site
 ft_site:*                         # Any site
 ```
 
-### Comments (cc_)
+### Comments (cc\_)
+
 ```
 cc_function:*                     # Function description
 cc_catalytic_activity:*           # Catalytic activity
@@ -218,6 +243,7 @@ cc_disease:cancer                 # Disease association
 ## Query Validation
 
 Test queries using:
+
 - **Web interface**: https://www.uniprot.org/uniprotkb
 - **API**: https://rest.uniprot.org/uniprotkb/search?query=YOUR_QUERY
 - **API documentation**: https://www.uniprot.org/help/query-fields
@@ -225,26 +251,31 @@ Test queries using:
 ## Common Patterns
 
 ### Find well-characterized proteins
+
 ```
 reviewed:true AND xref:pdb AND cc_function:*
 ```
 
 ### Find disease-associated proteins
+
 ```
 cc_disease:* AND organism_id:9606 AND reviewed:true
 ```
 
 ### Find proteins with experimental evidence
+
 ```
 existence:"Evidence at protein level" AND reviewed:true
 ```
 
 ### Find secreted proteins
+
 ```
 cc_subcellular_location:secreted AND reviewed:true
 ```
 
 ### Find drug targets
+
 ```
 keyword:"Pharmaceutical" OR keyword:"Drug target"
 ```

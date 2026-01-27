@@ -13,12 +13,14 @@ PathML includes state-of-the-art pre-trained models for nucleus analysis:
 **HoVer-Net** (Horizontal and Vertical Network) performs simultaneous nucleus instance segmentation and classification.
 
 **Architecture:**
+
 - Encoder-decoder structure with three prediction branches:
   - **Nuclear Pixel (NP)** - Binary segmentation of nuclear regions
   - **Horizontal-Vertical (HV)** - Distance maps to nucleus centroids
   - **Classification (NC)** - Nucleus type classification
 
 **Nucleus types:**
+
 1. Epithelial
 2. Inflammatory
 3. Connective/Soft tissue
@@ -26,6 +28,7 @@ PathML includes state-of-the-art pre-trained models for nucleus analysis:
 5. Background
 
 **Usage:**
+
 ```python
 from pathml.ml import HoVerNet
 import torch
@@ -55,6 +58,7 @@ with torch.no_grad():
 ```
 
 **Post-processing:**
+
 ```python
 from pathml.ml import hovernet_postprocess
 
@@ -74,6 +78,7 @@ instance_map, type_map = hovernet_postprocess(
 **HACTNet** (Hierarchical Cell-Type Network) performs hierarchical nucleus classification with uncertainty quantification.
 
 **Features:**
+
 - Hierarchical classification (coarse to fine-grained types)
 - Uncertainty estimation for predictions
 - Improved performance on imbalanced datasets
@@ -102,6 +107,7 @@ uncertainty = output['uncertainty']  # Prediction confidence
 PathML provides PyTorch-compatible dataset classes:
 
 **TileDataset:**
+
 ```python
 from pathml.ml import TileDataset
 from pathml.core import SlideDataset
@@ -118,6 +124,7 @@ image, label = tile_dataset[0]
 ```
 
 **DataModule Integration:**
+
 ```python
 from pathml.ml import PathMLDataModule
 
@@ -691,26 +698,31 @@ train_for_n_epochs(model, train_loader, optimizer, num_epochs=50)
 ## Common Issues and Solutions
 
 **Issue: Poor segmentation at nucleus boundaries**
+
 - Use HV maps (horizontal-vertical) to separate touching nuclei
 - Increase weight of HV loss term
 - Apply morphological post-processing
 
 **Issue: Misclassification of similar cell types**
+
 - Increase classification loss weight
 - Add hierarchical classification (HACTNet)
 - Augment training data for confused classes
 
 **Issue: Training unstable or not converging**
+
 - Reduce learning rate
 - Use gradient clipping: `torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)`
 - Check for data preprocessing issues
 
 **Issue: Out of memory during training**
+
 - Reduce batch size
 - Use gradient accumulation
 - Enable mixed precision training: `torch.cuda.amp`
 
 **Issue: Model overfits to training data**
+
 - Increase data augmentation
 - Add dropout layers
 - Reduce model capacity

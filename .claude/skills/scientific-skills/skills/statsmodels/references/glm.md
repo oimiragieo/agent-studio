@@ -5,6 +5,7 @@ This document provides comprehensive guidance on generalized linear models in st
 ## Overview
 
 GLMs extend linear regression to non-normal response distributions through:
+
 1. **Distribution family**: Specifies the conditional distribution of the response
 2. **Link function**: Transforms the linear predictor to the scale of the mean
 3. **Variance function**: Relates variance to the mean
@@ -26,11 +27,13 @@ GLMs extend linear regression to non-normal response distributions through:
 For binary outcomes (0/1) or proportions (k/n).
 
 **When to use:**
+
 - Binary classification
 - Success/failure outcomes
 - Proportions or rates
 
 **Common links:**
+
 - Logit (default): log(μ/(1-μ))
 - Probit: Φ⁻¹(μ)
 - Log: log(μ)
@@ -55,6 +58,7 @@ predictions = (probs > 0.5).astype(int)
 ```
 
 **Interpretation:**
+
 ```python
 import numpy as np
 
@@ -70,11 +74,13 @@ print("Odds ratios:", odds_ratios)
 For count data (non-negative integers).
 
 **When to use:**
+
 - Count outcomes (number of events)
 - Rare events
 - Rate modeling (with offset)
 
 **Common links:**
+
 - Log (default): log(μ)
 - Identity: μ
 - Sqrt: √μ
@@ -97,6 +103,7 @@ print("Rate ratios:", rate_ratios)
 ```
 
 **Overdispersion check:**
+
 ```python
 # Deviance / df should be ~1 for Poisson
 overdispersion = results.deviance / results.df_resid
@@ -112,6 +119,7 @@ if overdispersion > 1.5:
 For overdispersed count data.
 
 **When to use:**
+
 - Count data with variance > mean
 - Excess zeros or large variance
 - Poisson model shows overdispersion
@@ -134,11 +142,13 @@ print(f"Dispersion parameter alpha: {nb_results.params[-1]}")
 Equivalent to OLS but fit via IRLS (Iteratively Reweighted Least Squares).
 
 **When to use:**
+
 - Want GLM framework for consistency
 - Need robust standard errors
 - Comparing with other GLMs
 
 **Common links:**
+
 - Identity (default): μ
 - Log: log(μ)
 - Inverse: 1/μ
@@ -158,11 +168,13 @@ print("Parameters close:", np.allclose(results.params, ols_results.params))
 For positive continuous data, often right-skewed.
 
 **When to use:**
+
 - Positive outcomes (insurance claims, survival times)
 - Right-skewed distributions
 - Variance proportional to mean²
 
 **Common links:**
+
 - Inverse (default): 1/μ
 - Log: log(μ)
 - Identity: μ
@@ -186,11 +198,13 @@ effects = np.exp(results.params)
 For positive continuous data with specific variance structure.
 
 **When to use:**
+
 - Positive skewed outcomes
 - Variance proportional to mean³
 - Alternative to Gamma
 
 **Common links:**
+
 - Inverse squared (default): 1/μ²
 - Log: log(μ)
 
@@ -204,11 +218,13 @@ results = model.fit()
 Flexible family covering multiple distributions.
 
 **When to use:**
+
 - Insurance claims (mixture of zeros and continuous)
 - Semi-continuous data
 - Need flexible variance function
 
 **Special cases (power parameter p):**
+
 - p=0: Normal
 - p=1: Poisson
 - p=2: Gamma
@@ -262,6 +278,7 @@ link = families.links.Power(power=2)
 ### Choosing Link Functions
 
 **Canonical links** (default for each family):
+
 - Binomial → Logit
 - Poisson → Log
 - Gamma → Inverse
@@ -269,6 +286,7 @@ link = families.links.Power(power=2)
 - Inverse Gaussian → Inverse squared
 
 **When to use non-canonical:**
+
 - **Log link with Binomial**: Risk ratios instead of odds ratios
 - **Identity link**: Direct additive effects (when sensible)
 - **Probit vs Logit**: Similar results, preference based on field

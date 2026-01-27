@@ -47,20 +47,23 @@ clinical-decision-support/
 ## Example Use Cases
 
 ### Create a Patient Cohort Analysis
+
 ```
-> Analyze a cohort of 45 NSCLC patients stratified by PD-L1 expression 
+> Analyze a cohort of 45 NSCLC patients stratified by PD-L1 expression
   (<1%, 1-49%, ≥50%) including ORR, PFS, and OS outcomes
 ```
 
 ### Generate Treatment Recommendations
+
 ```
-> Create evidence-based treatment recommendations for HER2-positive 
+> Create evidence-based treatment recommendations for HER2-positive
   metastatic breast cancer with GRADE methodology
 ```
 
 ### Build Clinical Pathway
+
 ```
-> Generate a clinical decision algorithm for acute chest pain 
+> Generate a clinical decision algorithm for acute chest pain
   management with TIMI risk score
 ```
 
@@ -76,12 +79,14 @@ clinical-decision-support/
 ## Dependencies
 
 Python scripts require:
+
 - `pandas`, `numpy`, `scipy`: Data analysis and statistics
 - `lifelines`: Survival analysis (Kaplan-Meier, Cox regression)
 - `matplotlib`: Visualization
 - `pyyaml` (optional): YAML input for decision trees
 
 Install with:
+
 ```bash
 pip install pandas numpy scipy lifelines matplotlib pyyaml
 ```
@@ -113,6 +118,7 @@ pip install pandas numpy scipy lifelines matplotlib pyyaml
 ## Integration
 
 Integrates with existing skills:
+
 - **scientific-writing**: Citation management, statistical reporting
 - **clinical-reports**: Medical terminology, HIPAA compliance
 - **scientific-schematics**: TikZ flowcharts
@@ -126,4 +132,3 @@ Last Updated: November 5, 2024
 ## Questions or Feedback
 
 This skill was designed for pharmaceutical and clinical research professionals creating clinical decision support documents. For questions about usage or suggestions for improvements, contact the Scientific Writer development team.
-

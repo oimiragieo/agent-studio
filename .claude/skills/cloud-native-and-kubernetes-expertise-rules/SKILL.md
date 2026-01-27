@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Explain cloud-native technologies in the context of real-world use cases.
 - Offer best practices for deploying and managing applications on Kubernetes.
 - Stay informed about the latest trends and developments in the cloud-native ecosystem.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -9,7 +9,7 @@ Verify that ALL of the following identifiers have been removed or altered:
 - [ ] **2. Geographic subdivisions smaller than state**
   - No street addresses
   - No cities (unless >20,000 population and part of ZIP can be kept if >20,000)
-  - No counties  
+  - No counties
   - First 3 digits of ZIP code acceptable only if geographic unit >20,000 people
   - All other portions of ZIP codes removed
 
@@ -188,7 +188,7 @@ The informed consent form must include:
 - [ ] May allow retention of some data elements
 - [ ] Requires statistical expertise
 
-**Method used:** [ ] Safe Harbor  [ ] Expert Determination
+**Method used:** [ ] Safe Harbor [ ] Expert Determination
 
 ---
 
@@ -204,6 +204,7 @@ The informed consent form must include:
 ### Exceptions to Minimum Necessary
 
 Minimum necessary does NOT apply to:
+
 - Treatment purposes (providers may need full information)
 - Patient-authorized disclosures
 - Disclosures required by law
@@ -216,6 +217,7 @@ Minimum necessary does NOT apply to:
 ### When Authorization Required
 
 Authorization needed for:
+
 - [ ] Research (unless IRB waiver granted)
 - [ ] Marketing purposes
 - [ ] Sale of PHI
@@ -243,6 +245,7 @@ If authorization required, it must include:
 ### Limited Data Set Option
 
 A limited data set removes 16 of 18 identifiers but may retain:
+
 - [ ] Dates (admission, discharge, service, birth, death)
 - [ ] Geographic information (city, state, ZIP code)
 
@@ -303,6 +306,7 @@ A limited data set removes 16 of 18 identifiers but may retain:
 ### Breach Notification Content
 
 Notification must include:
+
 - [ ] Description of breach
 - [ ] Types of information involved
 - [ ] Steps individuals should take
@@ -359,28 +363,31 @@ Notification must include:
 
 ## Final Compliance Verification
 
-**Reviewed by:** ____________________  
-**Date:** ____________________  
-**Signature:** ____________________
+**Reviewed by:** **\*\*\*\***\_\_\_\_**\*\*\*\***  
+**Date:** **\*\*\*\***\_\_\_\_**\*\*\*\***  
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
-**Compliance Status:** [ ] Compliant  [ ] Needs revision  [ ] Not compliant
+**Compliance Status:** [ ] Compliant [ ] Needs revision [ ] Not compliant
 
 **Issues identified:**
+
 1. [Issue]
 2. [Issue]
 
 **Corrective actions:**
+
 1. [Action]
 2. [Action]
 
-**Re-review required:** [ ] Yes  [ ] No  
-**Re-review date:** ____________________
+**Re-review required:** [ ] Yes [ ] No  
+**Re-review date:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
 ---
 
 ## Documentation to Maintain
 
 Keep on file:
+
 - [ ] Signed patient consent (if applicable)
 - [ ] IRB approval (if research)
 - [ ] HIPAA waiver (if applicable)
@@ -391,5 +398,3 @@ Keep on file:
 - [ ] Audit logs
 
 **Retention period:** Minimum 6 years per HIPAA requirement
-
-

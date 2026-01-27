@@ -35,6 +35,7 @@ When reviewing or writing code, apply these guidelines for publishing packages a
 ## NPM Package Publishing
 
 ### Package.json Configuration
+
 Essential fields for npm packages:
 
 ```json
@@ -52,11 +53,7 @@ Essential fields for npm packages:
       "types": "./dist/index.d.ts"
     }
   },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
+  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
     "build": "tsc && rollup -c",
     "test": "jest",
@@ -85,6 +82,7 @@ Essential fields for npm packages:
 ### Publishing Workflow
 
 **Manual Publishing:**
+
 ```bash
 # Login to npm
 npm login
@@ -98,6 +96,7 @@ npm publish --access public
 ```
 
 **Automated Publishing with CI/CD:**
+
 ```yaml
 # GitHub Actions workflow
 name: Publish to NPM
@@ -141,6 +140,7 @@ jobs:
 ```
 
 **NPM Token Setup:**
+
 - Use Granular Access Tokens (classic tokens are deprecated)
 - Set appropriate scopes and expiration
 - Store as `NPM_TOKEN` in GitHub Secrets
@@ -166,6 +166,7 @@ git push origin main --tags
 ### What to Exclude
 
 Create `.npmignore`:
+
 ```
 src/
 tests/
@@ -181,6 +182,7 @@ Or use `files` in package.json (recommended).
 ## Chrome Extension Publishing
 
 ### Manifest Validation
+
 Ensure manifest.json meets store requirements:
 
 ```json
@@ -205,12 +207,14 @@ Ensure manifest.json meets store requirements:
 ### Chrome Web Store Submission
 
 **Preparation:**
+
 1. Create high-quality icons (16x16, 48x48, 128x128)
 2. Prepare promotional images (1280x800 or 640x400)
 3. Write clear description and privacy policy
 4. Test on multiple Chrome versions
 
 **Submission Process:**
+
 ```bash
 # Build production version
 npm run build
@@ -223,6 +227,7 @@ cd dist && zip -r ../extension.zip . && cd ..
 ```
 
 **Publishing Checklist:**
+
 - [ ] Valid manifest.json (no errors in chrome://extensions)
 - [ ] All permissions justified in description
 - [ ] Privacy policy URL (required if collecting data)
@@ -231,6 +236,7 @@ cd dist && zip -r ../extension.zip . && cd ..
 - [ ] Pricing and distribution settings
 
 ### Extension Update Process
+
 ```json
 {
   "version": "1.0.1",
@@ -245,12 +251,14 @@ Chrome auto-updates extensions within 5 hours of publishing.
 ### App Store Connect Preparation
 
 **Required Assets:**
+
 - App icons (1024x1024 for App Store)
 - Screenshots for all device sizes
 - Privacy policy URL
 - Support URL
 
 **Info.plist Requirements:**
+
 ```xml
 <key>CFBundleShortVersionString</key>
 <string>1.0.0</string>
@@ -264,6 +272,7 @@ Chrome auto-updates extensions within 5 hours of publishing.
 ```
 
 **Submission via Xcode or Transporter:**
+
 ```bash
 # Using xcrun altool (deprecated, use App Store Connect API)
 xcrun altool --upload-app -f app.ipa -u username -p app-specific-password
@@ -272,6 +281,7 @@ xcrun altool --upload-app -f app.ipa -u username -p app-specific-password
 ```
 
 **Review Checklist:**
+
 - [ ] No placeholder content
 - [ ] All features functional
 - [ ] No crashes or major bugs
@@ -284,6 +294,7 @@ xcrun altool --upload-app -f app.ipa -u username -p app-specific-password
 ### Play Console Requirements
 
 **AAB (Android App Bundle) preferred over APK:**
+
 ```bash
 # Build release AAB
 ./gradlew bundleRelease
@@ -294,6 +305,7 @@ jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
 ```
 
 **Store Listing Requirements:**
+
 - App name (max 30 characters)
 - Short description (max 80 characters)
 - Full description (max 4000 characters)
@@ -302,12 +314,14 @@ jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
 - Privacy policy URL
 
 **Release Tracks:**
+
 - **Internal testing** - Up to 100 testers, instant updates
 - **Closed testing** - Up to 100,000 testers, review required
 - **Open testing** - Public, review required
 - **Production** - Full release, review required
 
 ### Automated Play Store Publishing
+
 ```yaml
 # Example with Expo EAS
 eas submit --platform android --latest
@@ -316,6 +330,7 @@ eas submit --platform android --latest
 ## Release Notes Best Practices
 
 ### NPM Package Changelog
+
 Follow Keep a Changelog format:
 
 ```markdown
@@ -324,25 +339,31 @@ Follow Keep a Changelog format:
 ## [1.2.0] - 2025-01-24
 
 ### Added
+
 - New feature X for improved performance
 - Support for TypeScript 5.0
 
 ### Changed
+
 - Updated dependency Y to v3.0
 
 ### Fixed
+
 - Bug causing crash on mobile devices
 
 ### Deprecated
+
 - Function Z will be removed in v2.0
 
 ## [1.1.0] - 2025-01-10
+
 ...
 ```
 
 ### App Store Release Notes
 
 **iOS (App Store Connect):**
+
 ```
 What's New in Version 1.2.0
 
@@ -353,6 +374,7 @@ What's New in Version 1.2.0
 ```
 
 **Android (Play Console):**
+
 ```
 Version 1.2.0 - January 24, 2025
 
@@ -373,6 +395,7 @@ Fixes:
 ### Consistent Versioning Across Platforms
 
 **Package.json:**
+
 ```json
 {
   "version": "1.2.0"
@@ -380,6 +403,7 @@ Fixes:
 ```
 
 **Expo app.json:**
+
 ```json
 {
   "expo": {
@@ -395,12 +419,14 @@ Fixes:
 ```
 
 **Git Tags:**
+
 ```bash
 git tag v1.2.0
 git push origin v1.2.0
 ```
 
 ### Pre-release Versions
+
 ```bash
 # NPM
 npm publish --tag beta
@@ -415,6 +441,7 @@ eas build --profile preview
 ### Pre-publish Checklist
 
 **NPM:**
+
 - [ ] Tests pass (`npm test`)
 - [ ] Build successful (`npm run build`)
 - [ ] No security vulnerabilities (`npm audit`)
@@ -424,6 +451,7 @@ eas build --profile preview
 - [ ] Test local installation (`npm pack`)
 
 **Chrome Extension:**
+
 - [ ] No console errors
 - [ ] Works in incognito mode
 - [ ] All permissions necessary
@@ -431,6 +459,7 @@ eas build --profile preview
 - [ ] Screenshots current
 
 **Mobile Apps:**
+
 - [ ] Tested on multiple devices
 - [ ] No crashes in production build
 - [ ] Deep links working
@@ -451,6 +480,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

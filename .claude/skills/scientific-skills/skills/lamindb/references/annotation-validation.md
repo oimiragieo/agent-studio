@@ -387,6 +387,7 @@ df["cell_type"] = df["cell_type"].map(lambda x: mapping.get(x, x))
 ### Common Issues and Solutions
 
 **Issue: Column not in schema**
+
 ```python
 # Solution 1: Rename column
 df = df.rename(columns={"old_name": "feature_name"})
@@ -397,6 +398,7 @@ schema.features.add(new_feature)
 ```
 
 **Issue: Invalid values**
+
 ```python
 # Solution 1: Standardize
 curator.cat.standardize("column_name")
@@ -409,6 +411,7 @@ curator.cat.add_ontology("column_name", bt.Registry)
 ```
 
 **Issue: Data type mismatch**
+
 ```python
 # Solution 1: Convert data type
 df["column"] = df["column"].astype(int)

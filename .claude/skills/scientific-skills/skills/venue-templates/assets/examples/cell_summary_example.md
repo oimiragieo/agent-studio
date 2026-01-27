@@ -9,20 +9,20 @@ Examples of Cell Press-specific elements including Summary (abstract), Highlight
 ### Summary (150 words max)
 
 ```
-Cellular senescence is a stress response that prevents damaged cell 
+Cellular senescence is a stress response that prevents damaged cell
 proliferation but can drive tissue dysfunction through the senescence-
-associated secretory phenotype (SASP). How senescent cells resist 
-apoptosis despite expressing pro-apoptotic p53 has remained unclear. 
-Here, we identify FOXO4 as a pivotal mediator of senescent cell viability. 
-FOXO4 is highly expressed in senescent cells and directly interacts with 
-p53, retaining it in the nucleus and preventing p53-mediated apoptosis. 
-A cell-permeable peptide that disrupts FOXO4-p53 interaction selectively 
-induces p53 nuclear exclusion and apoptosis in senescent cells without 
-affecting proliferating cells. In vivo, this FOXO4 peptide neutralizes 
-doxorubicin-induced senescent cells and restores fitness, fur density, 
-and renal function in naturally aged mice. These findings establish 
-FOXO4-mediated p53 sequestration as a senescence-specific survival 
-pathway and demonstrate the therapeutic potential of targeted senescent 
+associated secretory phenotype (SASP). How senescent cells resist
+apoptosis despite expressing pro-apoptotic p53 has remained unclear.
+Here, we identify FOXO4 as a pivotal mediator of senescent cell viability.
+FOXO4 is highly expressed in senescent cells and directly interacts with
+p53, retaining it in the nucleus and preventing p53-mediated apoptosis.
+A cell-permeable peptide that disrupts FOXO4-p53 interaction selectively
+induces p53 nuclear exclusion and apoptosis in senescent cells without
+affecting proliferating cells. In vivo, this FOXO4 peptide neutralizes
+doxorubicin-induced senescent cells and restores fitness, fur density,
+and renal function in naturally aged mice. These findings establish
+FOXO4-mediated p53 sequestration as a senescence-specific survival
+pathway and demonstrate the therapeutic potential of targeted senescent
 cell elimination.
 ```
 
@@ -41,16 +41,16 @@ cell elimination.
 ### eTOC Blurb (30-50 words)
 
 ```
-Baar et al. identify FOXO4 as a critical mediator of senescent cell survival 
-through p53 sequestration. A peptide disrupting FOXO4-p53 interaction 
-selectively eliminates senescent cells and restores tissue function in 
+Baar et al. identify FOXO4 as a critical mediator of senescent cell survival
+through p53 sequestration. A peptide disrupting FOXO4-p53 interaction
+selectively eliminates senescent cells and restores tissue function in
 aged mice, establishing proof-of-concept for targeted senolytic therapy.
 ```
 
 ### In Brief (1 sentence)
 
 ```
-A FOXO4-targeting peptide selectively eliminates senescent cells by 
+A FOXO4-targeting peptide selectively eliminates senescent cells by
 releasing p53, restoring tissue function in aged mice.
 ```
 
@@ -61,22 +61,22 @@ releasing p53, restoring tissue function in aged mice.
 ### Summary (150 words max)
 
 ```
-The three-dimensional organization of chromosomes within the nucleus 
-influences gene expression, DNA replication, and genome stability. 
-Phase separation has emerged as a potential mechanism for organizing 
-nuclear contents, but whether condensates can shape chromosome 
-structure in vivo remains unknown. Here, we show that the transcriptional 
-coactivator BRD4 forms liquid-like condensates at super-enhancers that 
-organize associated chromatin into hub structures. Optogenetic induction 
-of BRD4 condensates is sufficient to remodel chromosome topology and 
-activate transcription within minutes. Conversely, disruption of BRD4 
-condensates with the small molecule JQ1 dissolves chromatin hubs and 
-rapidly silences super-enhancer-controlled genes. Single-molecule 
-tracking reveals that condensate formation increases the local 
-concentration of transcription machinery 100-fold, explaining the 
-transcriptional potency of super-enhancers. These results establish 
-phase separation as a mechanism for chromatin organization and 
-transcriptional control with implications for understanding and 
+The three-dimensional organization of chromosomes within the nucleus
+influences gene expression, DNA replication, and genome stability.
+Phase separation has emerged as a potential mechanism for organizing
+nuclear contents, but whether condensates can shape chromosome
+structure in vivo remains unknown. Here, we show that the transcriptional
+coactivator BRD4 forms liquid-like condensates at super-enhancers that
+organize associated chromatin into hub structures. Optogenetic induction
+of BRD4 condensates is sufficient to remodel chromosome topology and
+activate transcription within minutes. Conversely, disruption of BRD4
+condensates with the small molecule JQ1 dissolves chromatin hubs and
+rapidly silences super-enhancer-controlled genes. Single-molecule
+tracking reveals that condensate formation increases the local
+concentration of transcription machinery 100-fold, explaining the
+transcriptional potency of super-enhancers. These results establish
+phase separation as a mechanism for chromatin organization and
+transcriptional control with implications for understanding and
 targeting oncogenic super-enhancers.
 ```
 
@@ -95,10 +95,10 @@ targeting oncogenic super-enhancers.
 ### eTOC Blurb
 
 ```
-Sabari et al. demonstrate that BRD4 forms phase-separated condensates 
-at super-enhancers that organize chromatin into hub structures and 
-concentrate transcription machinery. Optogenetic manipulation reveals 
-that condensate formation directly drives chromatin remodeling and 
+Sabari et al. demonstrate that BRD4 forms phase-separated condensates
+at super-enhancers that organize chromatin into hub structures and
+concentrate transcription machinery. Optogenetic manipulation reveals
+that condensate formation directly drives chromatin remodeling and
 transcriptional activation.
 ```
 
@@ -109,21 +109,21 @@ transcriptional activation.
 ### Summary (150 words max)
 
 ```
-Immune cells undergo dramatic metabolic reprogramming upon activation, 
-switching from oxidative phosphorylation to aerobic glycolysis. This 
-metabolic shift is thought to support the biosynthetic demands of 
-rapid proliferation, but whether specific metabolites directly regulate 
-immune cell function remains largely unexplored. Here, we show that 
-the glycolytic metabolite phosphoenolpyruvate (PEP) sustains T cell 
-receptor signaling by inhibiting sarco/endoplasmic reticulum Ca²⁺-ATPase 
-(SERCA) activity. PEP accumulates in activated T cells and directly 
-binds SERCA, preventing calcium reuptake and prolonging store-operated 
-calcium entry. Genetic or pharmacological enhancement of PEP levels 
-augments T cell effector function and anti-tumor immunity in vivo. 
-Conversely, tumor-derived lactate suppresses PEP levels and impairs 
-T cell calcium signaling, contributing to tumor immune evasion. These 
-findings reveal an unexpected signaling role for a glycolytic 
-intermediate and suggest metabolic strategies to enhance T cell 
+Immune cells undergo dramatic metabolic reprogramming upon activation,
+switching from oxidative phosphorylation to aerobic glycolysis. This
+metabolic shift is thought to support the biosynthetic demands of
+rapid proliferation, but whether specific metabolites directly regulate
+immune cell function remains largely unexplored. Here, we show that
+the glycolytic metabolite phosphoenolpyruvate (PEP) sustains T cell
+receptor signaling by inhibiting sarco/endoplasmic reticulum Ca²⁺-ATPase
+(SERCA) activity. PEP accumulates in activated T cells and directly
+binds SERCA, preventing calcium reuptake and prolonging store-operated
+calcium entry. Genetic or pharmacological enhancement of PEP levels
+augments T cell effector function and anti-tumor immunity in vivo.
+Conversely, tumor-derived lactate suppresses PEP levels and impairs
+T cell calcium signaling, contributing to tumor immune evasion. These
+findings reveal an unexpected signaling role for a glycolytic
+intermediate and suggest metabolic strategies to enhance T cell
 responses in cancer immunotherapy.
 ```
 
@@ -142,9 +142,9 @@ responses in cancer immunotherapy.
 ### eTOC Blurb
 
 ```
-Ho et al. discover that the glycolytic metabolite phosphoenolpyruvate 
-directly regulates T cell calcium signaling by inhibiting SERCA. This 
-metabolic-signaling link is exploited by tumors through lactate 
+Ho et al. discover that the glycolytic metabolite phosphoenolpyruvate
+directly regulates T cell calcium signaling by inhibiting SERCA. This
+metabolic-signaling link is exploited by tumors through lactate
 secretion and offers new targets for cancer immunotherapy.
 ```
 
@@ -157,21 +157,21 @@ secretion and offers new targets for cancer immunotherapy.
 ```
 "Graphical abstract for Cell paper on FOXO4 and senescence:
 
-Left panel: Senescent cell (enlarged, irregular shape) with FOXO4 (blue 
-oval) binding p53 (green oval) in nucleus, preventing apoptosis. Label: 
+Left panel: Senescent cell (enlarged, irregular shape) with FOXO4 (blue
+oval) binding p53 (green oval) in nucleus, preventing apoptosis. Label:
 'FOXO4 sequesters p53 → Senescent cell survival'
 
-Center panel: Same senescent cell with FOXO4 peptide (red wedge) 
-disrupting FOXO4-p53 interaction. p53 moves to mitochondria (orange 
+Center panel: Same senescent cell with FOXO4 peptide (red wedge)
+disrupting FOXO4-p53 interaction. p53 moves to mitochondria (orange
 organelles). Label: 'FOXO4 peptide disrupts interaction'
 
-Right panel: Senescent cell undergoing apoptosis (fragmenting). Label: 
+Right panel: Senescent cell undergoing apoptosis (fragmenting). Label:
 'Selective senescent cell death'
 
-Bottom: Aged mouse (grey, hunched) → Treatment arrow → Rejuvenated mouse 
+Bottom: Aged mouse (grey, hunched) → Treatment arrow → Rejuvenated mouse
 (brown, active). Label: 'Restored fitness in aged mice'
 
-Color scheme: Blue for FOXO4, green for p53, red for peptide, grey 
+Color scheme: Blue for FOXO4, green for p53, red for peptide, grey
 background for cells."
 ```
 
@@ -180,17 +180,17 @@ background for cells."
 ```
 "Graphical abstract for Cell paper on BRD4 condensates:
 
-Top row: Diagram showing BRD4 molecules (purple dots) clustering at 
-super-enhancer (yellow region on DNA strand), forming condensate 
-(purple droplet). Transcription factors (orange, green, blue small 
+Top row: Diagram showing BRD4 molecules (purple dots) clustering at
+super-enhancer (yellow region on DNA strand), forming condensate
+(purple droplet). Transcription factors (orange, green, blue small
 circles) accumulate inside condensate.
 
-Middle: Chromatin fibers (grey) being pulled into hub structure around 
+Middle: Chromatin fibers (grey) being pulled into hub structure around
 condensate. Arrow showing '100× local concentration increase'
 
-Bottom: Two panels - Left shows 'JQ1' treatment dissolving condensate 
-and chromatin hub dispersing. Right shows 'Optogenetic activation' 
-creating new condensate with chromatin reorganization. Gene expression 
+Bottom: Two panels - Left shows 'JQ1' treatment dissolving condensate
+and chromatin hub dispersing. Right shows 'Optogenetic activation'
+creating new condensate with chromatin reorganization. Gene expression
 indicators (up arrow, down arrow) for each condition."
 ```
 
@@ -244,4 +244,3 @@ Use this to check your highlights:
 
 - `cell_press_style.md` - Comprehensive Cell Press writing guide
 - `nature_abstract_examples.md` - Compare with Nature abstract style
-

@@ -70,6 +70,7 @@ CREATE INDEX idx_users_created ON users(created_at DESC);     -- Ordering
 ```
 
 **Index Guidelines**:
+
 - Index columns used in WHERE, JOIN, ORDER BY
 - Consider composite indexes for multi-column queries
 - Avoid over-indexing (slows writes)
@@ -87,6 +88,7 @@ migrations/
 ```
 
 **Migration Best Practices**:
+
 - Always include up and down migrations
 - Test migrations on production-like data
 - Plan for zero-downtime migrations
@@ -161,6 +163,7 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 </examples>
 
 ## Rules
+
 - Always justify denormalization with performance data
 - Include rollback strategy for all migrations
 - Document relationships and constraints
@@ -168,11 +171,13 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

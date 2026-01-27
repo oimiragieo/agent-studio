@@ -465,13 +465,13 @@ diagnose_sampling(idata, var_names=['alpha', 'beta', 'sigma'])
 
 ### Common Fixes
 
-| Problem | Solution |
-|---------|----------|
-| Divergences | Increase `target_accept=0.95`, use non-centered parameterization |
-| Low ESS | Sample more draws, reparameterize to reduce correlation |
-| High R-hat | Run longer chains, check for multimodality, improve initialization |
-| Slow sampling | Use ADVI initialization, reparameterize, reduce model complexity |
-| Biased posterior | Check prior predictive, ensure likelihood is correct |
+| Problem          | Solution                                                           |
+| ---------------- | ------------------------------------------------------------------ |
+| Divergences      | Increase `target_accept=0.95`, use non-centered parameterization   |
+| Low ESS          | Sample more draws, reparameterize to reduce correlation            |
+| High R-hat       | Run longer chains, check for multimodality, improve initialization |
+| Slow sampling    | Use ADVI initialization, reparameterize, reduce model complexity   |
+| Biased posterior | Check prior predictive, ensure likelihood is correct               |
 
 ## Using Named Dimensions (dims)
 

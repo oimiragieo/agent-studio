@@ -3,6 +3,7 @@
 ## Research Question Formulation
 
 ### Is the Question Well-Formed?
+
 - [ ] **Specific:** Clearly defined variables and relationships
 - [ ] **Answerable:** Can be addressed with available methods
 - [ ] **Relevant:** Addresses a gap in knowledge or practical need
@@ -10,6 +11,7 @@
 - [ ] **Falsifiable:** Can be proven wrong if incorrect
 
 ### Have You Reviewed the Literature?
+
 - [ ] Identified what's already known
 - [ ] Found gaps or contradictions to address
 - [ ] Learned from methodological successes and failures
@@ -19,12 +21,14 @@
 ## Hypothesis Development
 
 ### Is Your Hypothesis Testable?
+
 - [ ] Makes specific, quantifiable predictions
 - [ ] Variables are operationally defined
 - [ ] Specifies direction/nature of expected relationships
 - [ ] Can be falsified by potential observations
 
 ### Types of Hypotheses
+
 - [ ] **Null hypothesis (H₀):** No effect/relationship exists
 - [ ] **Alternative hypothesis (H₁):** Effect/relationship exists
 - [ ] **Directional vs. non-directional:** One-tailed vs. two-tailed tests
@@ -34,6 +38,7 @@
 ### What Type of Study is Appropriate?
 
 **Experimental (Intervention) Studies:**
+
 - [ ] **Randomized Controlled Trial (RCT):** Gold standard for causation
 - [ ] **Quasi-experimental:** Non-random assignment but manipulation
 - [ ] **Within-subjects:** Same participants in all conditions
@@ -42,12 +47,14 @@
 - [ ] **Crossover:** Participants receive multiple interventions sequentially
 
 **Observational Studies:**
+
 - [ ] **Cohort:** Follow groups over time
 - [ ] **Case-control:** Compare those with/without outcome
 - [ ] **Cross-sectional:** Snapshot at one time point
 - [ ] **Ecological:** Population-level data
 
 **Consider:**
+
 - [ ] Can you randomly assign participants?
 - [ ] Can you manipulate the independent variable?
 - [ ] Is the outcome rare (favor case-control) or common?
@@ -57,12 +64,14 @@
 ## Variables
 
 ### Independent Variables (Manipulated/Predictor)
+
 - [ ] Clearly defined and operationalized
 - [ ] Appropriate levels/categories chosen
 - [ ] Manipulation is sufficient to test hypothesis
 - [ ] Manipulation check planned (if applicable)
 
 ### Dependent Variables (Outcome/Response)
+
 - [ ] Directly measures the construct of interest
 - [ ] Validated and reliable measurement
 - [ ] Sensitive enough to detect expected effects
@@ -70,6 +79,7 @@
 - [ ] Primary outcome clearly designated
 
 ### Control Variables
+
 - [ ] **Confounding variables identified:**
   - Variables that affect both IV and DV
   - Alternative explanations for findings
@@ -82,6 +92,7 @@
   - Blinding
 
 ### Extraneous Variables
+
 - [ ] Potential sources of noise identified
 - [ ] Standardized procedures to minimize
 - [ ] Environmental factors controlled
@@ -90,12 +101,14 @@
 ## Sampling
 
 ### Population Definition
+
 - [ ] **Target population:** Who you want to generalize to
 - [ ] **Accessible population:** Who you can actually sample from
 - [ ] **Sample:** Who actually participates
 - [ ] Difference between these documented
 
 ### Sampling Method
+
 - [ ] **Probability sampling (preferred for generalizability):**
   - Simple random sampling
   - Stratified sampling
@@ -108,6 +121,7 @@
   - Quota sampling
 
 ### Sample Size
+
 - [ ] **A priori power analysis conducted**
   - Expected effect size (from literature or pilot)
   - Desired power (typically .80 or .90)
@@ -118,6 +132,7 @@
 - [ ] Practical constraints acknowledged
 
 ### Inclusion/Exclusion Criteria
+
 - [ ] Clearly defined and justified
 - [ ] Not overly restrictive (limits generalizability)
 - [ ] Based on theoretical or practical considerations
@@ -127,6 +142,7 @@
 ## Blinding and Randomization
 
 ### Randomization
+
 - [ ] **What is randomized:**
   - Participant assignment to conditions
   - Order of conditions (within-subjects)
@@ -147,6 +163,7 @@
   - Report any significant differences
 
 ### Blinding
+
 - [ ] **Single-blind:** Participants don't know group assignment
 - [ ] **Double-blind:** Participants and researchers don't know
 - [ ] **Triple-blind:** Participants, researchers, and data analysts don't know
@@ -161,6 +178,7 @@
 ## Control Groups and Conditions
 
 ### What Type of Control?
+
 - [ ] **No treatment control:** Natural course of condition
 - [ ] **Placebo control:** Inert treatment for comparison
 - [ ] **Active control:** Standard treatment comparison
@@ -168,6 +186,7 @@
 - [ ] **Attention control:** Matches contact time without active ingredient
 
 ### Multiple Conditions
+
 - [ ] Factorial designs for multiple factors
 - [ ] Dose-response relationship assessment
 - [ ] Mechanism testing with component analyses
@@ -175,6 +194,7 @@
 ## Procedures
 
 ### Protocol Development
+
 - [ ] **Detailed, written protocol:**
   - Step-by-step procedures
   - Scripts for standardized instructions
@@ -185,6 +205,7 @@
 - [ ] Compliance monitoring planned
 
 ### Standardization
+
 - [ ] Same instructions for all participants
 - [ ] Same equipment and materials
 - [ ] Same environment/setting when possible
@@ -192,6 +213,7 @@
 - [ ] Deviations from protocol documented
 
 ### Data Collection
+
 - [ ] **When collected:**
   - Baseline measurements
   - Post-intervention
@@ -208,6 +230,7 @@
 ## Measurement
 
 ### Validity
+
 - [ ] **Face validity:** Appears to measure construct
 - [ ] **Content validity:** Covers all aspects of construct
 - [ ] **Criterion validity:** Correlates with gold standard
@@ -218,12 +241,14 @@
   - Discriminant validity (doesn't correlate with unrelated measures)
 
 ### Reliability
+
 - [ ] **Test-retest:** Consistent over time
 - [ ] **Internal consistency:** Items measure same construct (Cronbach's α)
 - [ ] **Inter-rater reliability:** Agreement between raters (Cohen's κ, ICC)
 - [ ] **Parallel forms:** Alternative versions consistent
 
 ### Measurement Considerations
+
 - [ ] Objective measures preferred when possible
 - [ ] Validated instruments used when available
 - [ ] Multiple measures of key constructs
@@ -236,30 +261,35 @@
 ## Bias Minimization
 
 ### Selection Bias
+
 - [ ] Random sampling when possible
 - [ ] Clearly defined eligibility criteria
 - [ ] Document who declines and why
 - [ ] Minimize self-selection
 
 ### Performance Bias
+
 - [ ] Standardized protocols
 - [ ] Blinding of providers
 - [ ] Monitor protocol adherence
 - [ ] Document deviations
 
 ### Detection Bias
+
 - [ ] Blinding of outcome assessors
 - [ ] Objective measures when possible
 - [ ] Standardized assessment procedures
 - [ ] Multiple raters with reliability checks
 
 ### Attrition Bias
+
 - [ ] Strategies to minimize dropout
 - [ ] Track reasons for dropout
 - [ ] Compare dropouts to completers
 - [ ] Intention-to-treat analysis planned
 
 ### Reporting Bias
+
 - [ ] Preregister study and analysis plan
 - [ ] Designate primary vs. secondary outcomes
 - [ ] Commit to reporting all outcomes
@@ -268,6 +298,7 @@
 ## Data Management
 
 ### Data Collection
+
 - [ ] Data collection forms designed and tested
 - [ ] REDCap, Qualtrics, or similar platforms
 - [ ] Range checks and validation rules
@@ -275,6 +306,7 @@
 - [ ] Secure storage (HIPAA/GDPR compliant if needed)
 
 ### Data Quality
+
 - [ ] Real-time data validation
 - [ ] Regular quality checks
 - [ ] Missing data patterns monitored
@@ -282,6 +314,7 @@
 - [ ] Protocol deviations documented
 
 ### Data Security
+
 - [ ] De-identification procedures
 - [ ] Access controls
 - [ ] Audit trails
@@ -290,6 +323,7 @@
 ## Statistical Analysis Planning
 
 ### Analysis Plan (Prespecify Before Data Collection)
+
 - [ ] **Primary analysis:**
   - Statistical test(s) specified
   - Hypothesis clearly stated
@@ -303,12 +337,14 @@
   - Primary outcome protects from inflation
 
 ### Assumptions
+
 - [ ] Assumptions of statistical tests identified
 - [ ] Plan to check assumptions
 - [ ] Backup non-parametric alternatives
 - [ ] Transformation options considered
 
 ### Missing Data
+
 - [ ] Anticipated amount of missingness
 - [ ] Missing data mechanism (MCAR, MAR, MNAR)
 - [ ] Handling strategy:
@@ -318,11 +354,13 @@
 - [ ] Sensitivity analyses planned
 
 ### Effect Sizes
+
 - [ ] Appropriate effect size measures identified
 - [ ] Will be reported alongside p-values
 - [ ] Confidence intervals planned
 
 ### Statistical Software
+
 - [ ] Software selected (R, SPSS, Stata, Python, etc.)
 - [ ] Version documented
 - [ ] Analysis scripts prepared in advance
@@ -331,11 +369,13 @@
 ## Ethical Considerations
 
 ### Ethical Approval
+
 - [ ] IRB/Ethics committee approval obtained
 - [ ] Study registered (ClinicalTrials.gov, etc.) if applicable
 - [ ] Protocol follows Declaration of Helsinki or equivalent
 
 ### Informed Consent
+
 - [ ] Voluntary participation
 - [ ] Comprehensible explanation
 - [ ] Risks and benefits disclosed
@@ -344,12 +384,14 @@
 - [ ] Compensation disclosed
 
 ### Risk-Benefit Analysis
+
 - [ ] Potential benefits outweigh risks
 - [ ] Risks minimized
 - [ ] Vulnerable populations protected
 - [ ] Data safety monitoring (if high risk)
 
 ### Confidentiality
+
 - [ ] Data de-identified
 - [ ] Secure storage
 - [ ] Limited access
@@ -358,6 +400,7 @@
 ## Validity Threats
 
 ### Internal Validity (Causation)
+
 - [ ] **History:** External events between measurements
 - [ ] **Maturation:** Changes in participants over time
 - [ ] **Testing:** Effects of repeated measurement
@@ -368,6 +411,7 @@
 - [ ] **Diffusion:** Control group receives treatment elements
 
 ### External Validity (Generalizability)
+
 - [ ] Sample representative of population
 - [ ] Setting realistic/natural
 - [ ] Treatment typical of real-world implementation
@@ -375,12 +419,14 @@
 - [ ] Time frame appropriate
 
 ### Construct Validity (Measurement)
+
 - [ ] Measures actually tap intended constructs
 - [ ] Operations match theoretical definitions
 - [ ] No confounding of constructs
 - [ ] Adequate coverage of construct
 
 ### Statistical Conclusion Validity
+
 - [ ] Adequate statistical power
 - [ ] Assumptions met
 - [ ] Appropriate tests used
@@ -390,12 +436,14 @@
 ## Reporting and Transparency
 
 ### Preregistration
+
 - [ ] Study preregistered (OSF, ClinicalTrials.gov, AsPredicted)
 - [ ] Hypotheses stated a priori
 - [ ] Analysis plan documented
 - [ ] Distinguishes confirmatory from exploratory
 
 ### Reporting Guidelines
+
 - [ ] **RCTs:** CONSORT checklist
 - [ ] **Observational studies:** STROBE checklist
 - [ ] **Systematic reviews:** PRISMA checklist
@@ -404,6 +452,7 @@
 - [ ] **Case reports:** CARE guidelines
 
 ### Transparency
+
 - [ ] All measures reported
 - [ ] All manipulations disclosed
 - [ ] Sample size determination explained
@@ -413,6 +462,7 @@
 - [ ] Conflicts of interest disclosed
 
 ### Open Science
+
 - [ ] Data sharing planned (when ethical)
 - [ ] Analysis code shared
 - [ ] Materials available
@@ -422,6 +472,7 @@
 ## Post-Study Considerations
 
 ### Data Analysis
+
 - [ ] Follow preregistered plan
 - [ ] Clearly label deviations and exploratory analyses
 - [ ] Check assumptions
@@ -429,6 +480,7 @@
 - [ ] Report effect sizes and CIs, not just p-values
 
 ### Interpretation
+
 - [ ] Conclusions supported by data
 - [ ] Limitations acknowledged
 - [ ] Alternative explanations considered
@@ -436,6 +488,7 @@
 - [ ] Clinical/practical significance addressed
 
 ### Dissemination
+
 - [ ] Publish regardless of results (reduce publication bias)
 - [ ] Present at conferences
 - [ ] Share findings with participants (when appropriate)
@@ -443,6 +496,7 @@
 - [ ] Plain language summaries
 
 ### Next Steps
+
 - [ ] Replication needed?
 - [ ] Follow-up studies identified
 - [ ] Mechanism studies planned
@@ -486,6 +540,7 @@
 ## Remember
 
 **Good experimental design is about:**
+
 - Asking clear questions
 - Minimizing bias
 - Maximizing validity

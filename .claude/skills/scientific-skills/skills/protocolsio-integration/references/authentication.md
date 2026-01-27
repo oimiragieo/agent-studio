@@ -37,12 +37,14 @@ GET https://protocols.io/api/v3/oauth/authorize
 ```
 
 **Parameters:**
+
 - `client_id` (required): Your application's client ID
 - `redirect_uri` (required): URL to redirect users after authorization
 - `response_type` (required): Set to "code"
 - `state` (optional but recommended): Random string to prevent CSRF attacks
 
 **Example:**
+
 ```
 https://protocols.io/api/v3/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&state=RANDOM_STRING
 ```
@@ -56,6 +58,7 @@ POST https://protocols.io/api/v3/oauth/token
 ```
 
 **Parameters:**
+
 - `grant_type`: Set to "authorization_code"
 - `code`: The authorization code received
 - `client_id`: Your application's client ID
@@ -63,6 +66,7 @@ POST https://protocols.io/api/v3/oauth/token
 - `redirect_uri`: Must match the redirect_uri used in Step 1
 
 **Response includes:**
+
 - `access_token`: The OAuth access token to use for API requests
 - `token_type`: "Bearer"
 - `expires_in`: Token lifetime in seconds (typically 1 year)
@@ -77,6 +81,7 @@ POST https://protocols.io/api/v3/oauth/token
 ```
 
 **Parameters:**
+
 - `grant_type`: Set to "refresh_token"
 - `refresh_token`: The refresh token received in Step 2
 - `client_id`: Your application's client ID

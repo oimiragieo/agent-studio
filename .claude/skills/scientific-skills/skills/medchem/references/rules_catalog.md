@@ -22,17 +22,20 @@ Comprehensive catalog of all available medicinal chemistry rules, structural ale
 **Purpose:** Predict oral bioavailability
 
 **Criteria:**
+
 - Molecular Weight ≤ 500 Da
 - LogP ≤ 5
 - Hydrogen Bond Donors ≤ 5
 - Hydrogen Bond Acceptors ≤ 10
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_five(mol)
 ```
 
 **Notes:**
+
 - One of the most widely used filters in drug discovery
 - About 90% of orally active drugs comply with these rules
 - Exceptions exist, especially for natural products and antibiotics
@@ -46,15 +49,18 @@ mc.rules.basic_rules.rule_of_five(mol)
 **Purpose:** Additional criteria for oral bioavailability
 
 **Criteria:**
+
 - Rotatable Bonds ≤ 10
 - Topological Polar Surface Area (TPSA) ≤ 140 Ų
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_veber(mol)
 ```
 
 **Notes:**
+
 - Complements Rule of Five
 - TPSA correlates with cell permeability
 - Rotatable bonds affect molecular flexibility
@@ -66,11 +72,13 @@ mc.rules.basic_rules.rule_of_veber(mol)
 **Purpose:** Combined drug-likeness assessment
 
 **Criteria:**
+
 - Passes Rule of Five
 - Passes Veber rules
 - Does not contain PAINS substructures
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_drug(mol)
 ```
@@ -84,12 +92,14 @@ mc.rules.basic_rules.rule_of_drug(mol)
 **Purpose:** Filter out compounds unlikely to be drugs
 
 **Criteria:**
+
 - Molecular Weight: 200-500 Da
 - LogP: -5 to 5
 - Hydrogen Bond Donors: 0-5
 - Hydrogen Bond Acceptors: 0-10
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_reos(mol)
 ```
@@ -103,15 +113,18 @@ mc.rules.basic_rules.rule_of_reos(mol)
 **Purpose:** Balance lipophilicity and molecular weight
 
 **Criteria:**
+
 - 200 ≤ MW ≤ 50 × LogP + 400
 - LogP: -2 to 5
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.golden_triangle(mol)
 ```
 
 **Notes:**
+
 - Defines optimal physicochemical space
 - Visual representation resembles a triangle on MW vs LogP plot
 
@@ -126,12 +139,14 @@ mc.rules.basic_rules.golden_triangle(mol)
 **Purpose:** Identify lead-like compounds for optimization
 
 **Criteria:**
+
 - Molecular Weight: 200-350 Da
 - LogP: -2 to 4
 - Rotatable Bonds ≤ 7
 - Number of Rings ≤ 4
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_oprea(mol)
 ```
@@ -145,11 +160,13 @@ mc.rules.basic_rules.rule_of_oprea(mol)
 **Purpose:** Permissive lead-like criteria
 
 **Criteria:**
+
 - Molecular Weight: 250-450 Da
 - LogP: -3 to 4
 - Rotatable Bonds ≤ 10
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_leadlike_soft(mol)
 ```
@@ -161,12 +178,14 @@ mc.rules.basic_rules.rule_of_leadlike_soft(mol)
 **Purpose:** Restrictive lead-like criteria
 
 **Criteria:**
+
 - Molecular Weight: 200-350 Da
 - LogP: -2 to 3.5
 - Rotatable Bonds ≤ 7
 - Number of Rings: 1-3
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_leadlike_strict(mol)
 ```
@@ -182,6 +201,7 @@ mc.rules.basic_rules.rule_of_leadlike_strict(mol)
 **Purpose:** Screen fragment libraries for fragment-based drug discovery
 
 **Criteria:**
+
 - Molecular Weight ≤ 300 Da
 - LogP ≤ 3
 - Hydrogen Bond Donors ≤ 3
@@ -190,11 +210,13 @@ mc.rules.basic_rules.rule_of_leadlike_strict(mol)
 - Polar Surface Area ≤ 60 Ų
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_three(mol)
 ```
 
 **Notes:**
+
 - Fragments are grown into leads during optimization
 - Lower complexity allows more starting points
 
@@ -207,17 +229,20 @@ mc.rules.basic_rules.rule_of_three(mol)
 **Purpose:** Central nervous system drug-likeness
 
 **Criteria:**
+
 - Molecular Weight ≤ 450 Da
 - LogP: -1 to 5
 - Hydrogen Bond Donors ≤ 2
 - TPSA ≤ 90 Ų
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.rule_of_cns(mol)
 ```
 
 **Rationale:**
+
 - Blood-brain barrier penetration requires specific properties
 - Lower TPSA and HBD count improve BBB permeability
 - Tight constraints reflect CNS challenges
@@ -233,6 +258,7 @@ mc.rules.basic_rules.rule_of_cns(mol)
 **Purpose:** Identify compounds that interfere with assays
 
 **Categories:**
+
 - Catechols
 - Quinones
 - Rhodanines
@@ -241,12 +267,14 @@ mc.rules.basic_rules.rule_of_cns(mol)
 - Michael acceptors (specific patterns)
 
 **Usage:**
+
 ```python
 mc.rules.basic_rules.pains_filter(mol)
 # Returns True if NO PAINS found
 ```
 
 **Notes:**
+
 - PAINS compounds show activity in multiple assays through non-specific mechanisms
 - Common false positives in screening campaigns
 - Should be deprioritized in lead selection
@@ -260,6 +288,7 @@ mc.rules.basic_rules.pains_filter(mol)
 **Purpose:** Flag common problematic structural patterns
 
 **Alert Categories:**
+
 1. **Reactive Groups**
    - Epoxides
    - Aziridines
@@ -281,12 +310,14 @@ mc.rules.basic_rules.pains_filter(mol)
    - Certain heterocycles
 
 **Usage:**
+
 ```python
 alert_filter = mc.structural.CommonAlertsFilters()
 has_alerts, details = alert_filter.check_mol(mol)
 ```
 
 **Return Format:**
+
 ```python
 {
     "has_alerts": True,
@@ -304,11 +335,13 @@ has_alerts, details = alert_filter.check_mol(mol)
 **Purpose:** Industrial medicinal chemistry filtering rules
 
 **Features:**
+
 - Proprietary filter set developed from Novartis experience
 - Balances drug-likeness with practical medicinal chemistry
 - Includes both structural alerts and property filters
 
 **Usage:**
+
 ```python
 nibr_filter = mc.structural.NIBRFilters()
 results = nibr_filter(mols=mol_list, n_jobs=-1)
@@ -327,6 +360,7 @@ results = nibr_filter(mols=mol_list, n_jobs=-1)
 **Purpose:** Identify assay interference and problematic functionalities
 
 **Mechanism:**
+
 - Each matched pattern adds demerits
 - Molecules with >100 demerits are rejected
 - Some patterns add 10-50 demerits, others add 100+ (instant rejection)
@@ -348,12 +382,14 @@ results = nibr_filter(mols=mol_list, n_jobs=-1)
    - Context-dependent issues
 
 **Usage:**
+
 ```python
 lilly_filter = mc.structural.LillyDemeritsFilters()
 results = lilly_filter(mols=mol_list, n_jobs=-1)
 ```
 
 **Return Format:**
+
 ```python
 {
     "demerits": 35,
@@ -374,12 +410,14 @@ results = lilly_filter(mols=mol_list, n_jobs=-1)
 **Purpose:** Identify kinase hinge-binding motifs
 
 **Common Patterns:**
+
 - Aminopyridines
 - Aminopyrimidines
 - Indazoles
 - Benzimidazoles
 
 **Usage:**
+
 ```python
 group = mc.groups.ChemicalGroup(groups=["hinge_binders"])
 has_hinge = group.has_match(mol_list)
@@ -394,11 +432,13 @@ has_hinge = group.has_match(mol_list)
 **Purpose:** Identify phosphate-binding groups
 
 **Common Patterns:**
+
 - Basic amines in specific geometries
 - Guanidinium groups
 - Arginine mimetics
 
 **Usage:**
+
 ```python
 group = mc.groups.ChemicalGroup(groups=["phosphate_binders"])
 ```
@@ -412,17 +452,20 @@ group = mc.groups.ChemicalGroup(groups=["phosphate_binders"])
 **Purpose:** Identify electrophilic Michael acceptor groups
 
 **Common Patterns:**
+
 - α,β-Unsaturated carbonyls
 - α,β-Unsaturated nitriles
 - Vinyl sulfones
 - Acrylamides
 
 **Usage:**
+
 ```python
 group = mc.groups.ChemicalGroup(groups=["michael_acceptors"])
 ```
 
 **Notes:**
+
 - Can be desirable for covalent inhibitors
 - Often flagged as reactive alerts in screening
 
@@ -433,6 +476,7 @@ group = mc.groups.ChemicalGroup(groups=["michael_acceptors"])
 **Purpose:** Identify generally reactive functionalities
 
 **Common Patterns:**
+
 - Epoxides
 - Aziridines
 - Acyl halides
@@ -440,6 +484,7 @@ group = mc.groups.ChemicalGroup(groups=["michael_acceptors"])
 - Sulfonyl chlorides
 
 **Usage:**
+
 ```python
 group = mc.groups.ChemicalGroup(groups=["reactive_groups"])
 ```
@@ -469,6 +514,7 @@ group = mc.groups.ChemicalGroup(
 ### Initial Screening (High-Throughput)
 
 Recommended filters:
+
 - Rule of Five
 - PAINS filter
 - Common Alerts (permissive settings)
@@ -483,6 +529,7 @@ alert_filter = mc.structural.CommonAlertsFilters()
 ### Hit-to-Lead
 
 Recommended filters:
+
 - Rule of Oprea or Leadlike (soft)
 - NIBR filters
 - Lilly Demerits
@@ -498,6 +545,7 @@ lilly_filter = mc.structural.LillyDemeritsFilters()
 ### Lead Optimization
 
 Recommended filters:
+
 - Rule of Drug
 - Leadlike (strict)
 - Full structural alert analysis
@@ -514,6 +562,7 @@ complexity_filter = mc.complexity.ComplexityFilter(max_complexity=400)
 ### CNS Targets
 
 Recommended filters:
+
 - Rule of CNS
 - Reduced PAINS criteria (CNS-focused)
 - BBB permeability constraints
@@ -532,6 +581,7 @@ constraints = mc.constraints.Constraints(
 ### Fragment-Based Drug Discovery
 
 Recommended filters:
+
 - Rule of Three
 - Minimal complexity
 - Basic reactive group check

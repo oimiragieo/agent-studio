@@ -7,12 +7,15 @@ Jobs are the fundamental execution units on DNAnexus. When an applet or app runs
 ## Job Types
 
 ### Origin Jobs
+
 Initially created by users or automated systems.
 
 ### Master Jobs
+
 Result from directly launching an executable (app/applet).
 
 ### Child Jobs
+
 Spawned by parent jobs for parallel processing or sub-workflows.
 
 ## Running Jobs
@@ -20,6 +23,7 @@ Spawned by parent jobs for parallel processing or sub-workflows.
 ### Running an Applet
 
 **Basic execution**:
+
 ```python
 import dxpy
 
@@ -33,6 +37,7 @@ print(f"Job ID: {job.get_id()}")
 ```
 
 **Using command line**:
+
 ```bash
 dx run applet-xxxx -i input1=file-yyyy -i input2="value"
 ```
@@ -75,6 +80,7 @@ print(f"Job state: {state}")
 ```
 
 **Using command line**:
+
 ```bash
 dx watch job-xxxx
 ```
@@ -128,11 +134,13 @@ job2 = dxpy.DXApplet("applet-2").run({
 ### Viewing Logs
 
 **Command line**:
+
 ```bash
 dx watch job-xxxx --get-streams
 ```
 
 **Programmatically**:
+
 ```python
 import sys
 
@@ -246,6 +254,7 @@ outputs = analysis.describe()["output"]
 ```
 
 **Using command line**:
+
 ```bash
 dx run workflow-xxxx -i stage-1.input=file-yyyy
 ```
@@ -255,6 +264,7 @@ dx run workflow-xxxx -i stage-1.input=file-yyyy
 ### Workspace Context
 
 Jobs run in a workspace project with cloned input data:
+
 - Jobs require `CONTRIBUTE` permission to workspace
 - Jobs need `VIEW` access to source projects
 - All charges accumulate to the originating project
@@ -262,6 +272,7 @@ Jobs run in a workspace project with cloned input data:
 ### Data Requirements
 
 Jobs cannot start until:
+
 1. All input data objects are in `closed` state
 2. Required permissions are available
 3. Resources are allocated
@@ -275,6 +286,7 @@ Created → Waiting on Input → Runnable → Running → Done/Failed
 ```
 
 **States**:
+
 - `idle`: Job created but not yet queued
 - `waiting_on_input`: Waiting for input data objects to close
 - `runnable`: Ready to run, waiting for resources
@@ -316,6 +328,7 @@ job.terminate()
 ```
 
 **Using command line**:
+
 ```bash
 dx terminate job-xxxx
 ```
@@ -335,6 +348,7 @@ job = dxpy.DXApplet("applet-xxxx").run(
 ```
 
 Common instance types:
+
 - `mem1_ssd1_v2_x4` - 4 cores, standard memory
 - `mem2_ssd1_v2_x8` - 8 cores, high memory
 - `mem3_ssd1_v2_x16` - 16 cores, very high memory

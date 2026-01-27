@@ -6,7 +6,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const HOOK_PATH = path.join(__dirname, '..', '.claude', 'hooks', 'safety', 'validate-skill-invocation.cjs');
+const HOOK_PATH = path.join(
+  __dirname,
+  '..',
+  '.claude',
+  'hooks',
+  'safety',
+  'validate-skill-invocation.cjs'
+);
 
 /**
  * Helper to run the hook with stdin input
@@ -14,19 +21,23 @@ const HOOK_PATH = path.join(__dirname, '..', '.claude', 'hooks', 'safety', 'vali
  * @returns {Promise<{code: number, stdout: string, stderr: string}>}
  */
 async function runHook(input) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const proc = spawn('node', [HOOK_PATH], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env }
+      env: { ...process.env },
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (chunk) => { stdout += chunk; });
-    proc.stderr.on('data', (chunk) => { stderr += chunk; });
+    proc.stdout.on('data', chunk => {
+      stdout += chunk;
+    });
+    proc.stderr.on('data', chunk => {
+      stderr += chunk;
+    });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({ code, stdout, stderr });
     });
 
@@ -46,7 +57,7 @@ describe('validate-skill-invocation hook', () => {
   test('exits 0 for non-Read tool calls', async () => {
     const result = await runHook({
       tool_name: 'Bash',
-      tool_input: { command: 'ls' }
+      tool_input: { command: 'ls' },
     });
     assert.strictEqual(result.code, 0, 'Should exit 0 for non-Read tools');
   });
@@ -54,7 +65,7 @@ describe('validate-skill-invocation hook', () => {
   test('exits 0 for Read calls to non-skill files', async () => {
     const result = await runHook({
       tool_name: 'Read',
-      tool_input: { file_path: '/some/path/to/file.js' }
+      tool_input: { file_path: '/some/path/to/file.js' },
     });
     assert.strictEqual(result.code, 0, 'Should exit 0 for regular file reads');
   });
@@ -62,7 +73,7 @@ describe('validate-skill-invocation hook', () => {
   test('exits 0 with warning for Read calls to SKILL.md files', async () => {
     const result = await runHook({
       tool_name: 'Read',
-      tool_input: { file_path: '.claude/skills/tdd/SKILL.md' }
+      tool_input: { file_path: '.claude/skills/tdd/SKILL.md' },
     });
 
     // Should exit 0 (warning, not block)
@@ -81,23 +92,29 @@ describe('validate-skill-invocation hook', () => {
   test('extracts skill name correctly from Windows-style paths', async () => {
     const result = await runHook({
       tool_name: 'Read',
-      tool_input: { file_path: 'C:\\projects\\.claude\\skills\\debugging\\SKILL.md' }
+      tool_input: { file_path: 'C:\\projects\\.claude\\skills\\debugging\\SKILL.md' },
     });
 
     assert.strictEqual(result.code, 0);
     const parsed = JSON.parse(result.stdout.trim());
-    assert.ok(parsed.message.includes('debugging'), 'Should extract debugging skill name from Windows path');
+    assert.ok(
+      parsed.message.includes('debugging'),
+      'Should extract debugging skill name from Windows path'
+    );
   });
 
   test('extracts skill name correctly from Unix-style paths', async () => {
     const result = await runHook({
       tool_name: 'Read',
-      tool_input: { file_path: '/home/user/.claude/skills/security-architect/SKILL.md' }
+      tool_input: { file_path: '/home/user/.claude/skills/security-architect/SKILL.md' },
     });
 
     assert.strictEqual(result.code, 0);
     const parsed = JSON.parse(result.stdout.trim());
-    assert.ok(parsed.message.includes('security-architect'), 'Should extract skill name from Unix path');
+    assert.ok(
+      parsed.message.includes('security-architect'),
+      'Should extract skill name from Unix path'
+    );
   });
 });
 
@@ -117,7 +134,7 @@ describe('validate-skill-invocation exports', () => {
     // Non-skill file
     const result1 = mod.validate({
       tool: 'Read',
-      parameters: { file_path: '/some/file.js' }
+      parameters: { file_path: '/some/file.js' },
     });
     assert.strictEqual(result1.valid, true);
     assert.strictEqual(result1.warning, undefined);
@@ -125,7 +142,7 @@ describe('validate-skill-invocation exports', () => {
     // Skill file
     const result2 = mod.validate({
       tool: 'Read',
-      parameters: { file_path: '.claude/skills/tdd/SKILL.md' }
+      parameters: { file_path: '.claude/skills/tdd/SKILL.md' },
     });
     assert.strictEqual(result2.valid, true);
     assert.ok(result2.warning, 'Should have warning for skill file');

@@ -17,6 +17,7 @@ The FDA food databases provide access to information about food products, includ
 **Data Source**: CAERS (CFSAN Adverse Event Reporting System)
 
 **Key Fields**:
+
 - `date_started` - When adverse event began
 - `date_created` - When report was created
 - `report_number` - Unique report identifier
@@ -32,6 +33,7 @@ The FDA food databases provide access to information about food products, includ
 - `products.role` - Product role (Suspect, Concomitant)
 
 **Product Categories (industry_name)**:
+
 - Bakery Products/Dough/Mixes/Icing
 - Beverages (coffee, tea, soft drinks, etc.)
 - Dietary Supplements
@@ -41,6 +43,7 @@ The FDA food databases provide access to information about food products, includ
 - Many others
 
 **Common Use Cases**:
+
 - Food safety surveillance
 - Dietary supplement monitoring
 - Adverse event trend analysis
@@ -48,6 +51,7 @@ The FDA food databases provide access to information about food products, includ
 - Consumer complaint tracking
 
 **Example Queries**:
+
 ```python
 import requests
 
@@ -102,6 +106,7 @@ params = {
 **Data Source**: FDA Enforcement Reports
 
 **Key Fields**:
+
 - `status` - Current status (Ongoing, Completed, Terminated)
 - `recall_number` - Unique recall identifier
 - `classification` - Class I, II, or III
@@ -120,11 +125,13 @@ params = {
 - `initial_firm_notification` - How firm was notified
 
 **Classification Levels**:
+
 - **Class I**: Dangerous or defective products that could cause serious health problems or death (e.g., undeclared allergens with severe risk, botulism contamination)
 - **Class II**: Products that might cause temporary health problems or pose slight threat (e.g., minor allergen issues, quality defects)
 - **Class III**: Products unlikely to cause adverse health reactions but violate FDA regulations (e.g., labeling errors, quality issues)
 
 **Common Recall Reasons**:
+
 - Undeclared allergens (milk, eggs, peanuts, tree nuts, soy, wheat, fish, shellfish, sesame)
 - Microbial contamination (Listeria, Salmonella, E. coli, etc.)
 - Foreign material contamination (metal, plastic, glass)
@@ -133,6 +140,7 @@ params = {
 - Chemical contamination
 
 **Common Use Cases**:
+
 - Food safety monitoring
 - Supply chain risk management
 - Allergen tracking
@@ -140,6 +148,7 @@ params = {
 - Consumer safety alerts
 
 **Example Queries**:
+
 ```python
 # Find all Class I food recalls (most serious)
 params = {
@@ -353,6 +362,7 @@ def get_recent_recalls_by_state(state_code, api_key, days=7):
 ## Common Allergens to Monitor
 
 The FDA recognizes 9 major food allergens that must be declared:
+
 1. Milk
 2. Eggs
 3. Fish

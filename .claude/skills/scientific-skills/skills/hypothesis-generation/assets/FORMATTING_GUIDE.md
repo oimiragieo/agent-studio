@@ -20,6 +20,7 @@ This guide provides quick reference for using the hypothesis generation LaTeX te
 ```
 
 **Compilation:** Use XeLaTeX or LuaLaTeX for best results
+
 ```bash
 xelatex your_document.tex
 bibtex your_document
@@ -30,6 +31,7 @@ xelatex your_document.tex
 ## Color Scheme Reference
 
 ### Hypothesis Colors
+
 - **Hypothesis 1**: Deep Blue (RGB: 0, 102, 153) - Use for first hypothesis
 - **Hypothesis 2**: Forest Green (RGB: 0, 128, 96) - Use for second hypothesis
 - **Hypothesis 3**: Royal Purple (RGB: 102, 51, 153) - Use for third hypothesis
@@ -37,6 +39,7 @@ xelatex your_document.tex
 - **Hypothesis 5**: Burnt Orange (RGB: 204, 85, 0) - Use for fifth hypothesis (if needed)
 
 ### Utility Colors
+
 - **Predictions**: Amber (RGB: 255, 191, 0) - For testable predictions
 - **Evidence**: Light Blue (RGB: 102, 178, 204) - For supporting evidence
 - **Comparisons**: Steel Gray (RGB: 108, 117, 125) - For critical comparisons
@@ -62,13 +65,13 @@ xelatex your_document.tex
 \begin{hypothesisbox1}[Hypothesis 1: Title]
   \textbf{Mechanistic Explanation:}
   [2-3 paragraphs explaining HOW and WHY]
-  
+
   \textbf{Key Supporting Evidence:}
   \begin{itemize}
     \item Evidence point 1 \citep{ref1}
     \item Evidence point 2 \citep{ref2}
   \end{itemize}
-  
+
   \textbf{Core Assumptions:}
   \begin{enumerate}
     \item Assumption 1
@@ -82,6 +85,7 @@ xelatex your_document.tex
 **Use for:** Presenting each competing hypothesis with its mechanism, evidence, and assumptions
 
 **Best practices for 4-page main text:**
+
 - Keep mechanistic explanations to 1-2 brief paragraphs only (6-10 sentences max)
 - Include 2-3 most essential evidence points with citations
 - List 1-2 most critical assumptions
@@ -108,6 +112,7 @@ xelatex your_document.tex
 **Use for:** Testable predictions derived from each hypothesis
 
 **Best practices for 4-page main text:**
+
 - Make predictions specific and quantitative when possible
 - Clearly state conditions under which prediction should hold
 - Always specify falsification criteria
@@ -127,6 +132,7 @@ xelatex your_document.tex
 **Use for:** Highlighting key supporting evidence or literature synthesis
 
 **Best practices:**
+
 - Use sparingly in main text (detailed evidence goes in Appendix A)
 - Include citations for all evidence
 - Focus on most compelling evidence
@@ -139,10 +145,10 @@ xelatex your_document.tex
 \begin{comparisonbox}[H1 vs. H2: Key Distinction]
   \textbf{Fundamental Difference:}
   [Description of core difference]
-  
+
   \textbf{Discriminating Experiment:}
   [Description of experiment]
-  
+
   \textbf{Outcome Interpretation:}
   \begin{itemize}
     \item \textbf{If [Result A]:} H1 supported
@@ -154,6 +160,7 @@ xelatex your_document.tex
 **Use for:** Explaining how to distinguish between competing hypotheses
 
 **Best practices:**
+
 - Focus on fundamental mechanistic differences
 - Propose clear, feasible discriminating experiments
 - Specify concrete outcome interpretations
@@ -172,6 +179,7 @@ xelatex your_document.tex
 **Use for:** Highlighting important limitations or challenges
 
 **Best practices:**
+
 - Use when limitations are particularly important
 - Be honest about challenges
 - Suggest how limitations might be addressed
@@ -210,6 +218,7 @@ xelatex your_document.tex
 ### Appendices (Comprehensive, Detailed)
 
 **Appendix A: Comprehensive Literature Review**
+
 - Detailed background (extensive citations)
 - Current understanding
 - Evidence for each hypothesis (detailed)
@@ -218,6 +227,7 @@ xelatex your_document.tex
 - **Target: 40-60+ citations**
 
 **Appendix B: Detailed Experimental Designs**
+
 - Full protocols for each hypothesis
 - Methods, controls, sample sizes
 - Statistical approaches
@@ -225,35 +235,41 @@ xelatex your_document.tex
 - Timeline and resource requirements
 
 **Appendix C: Quality Assessment**
+
 - Detailed evaluation tables
 - Strengths and weaknesses analysis
 - Comparative scoring
 - Recommendations
 
 **Appendix D: Supplementary Evidence**
+
 - Analogous mechanisms
 - Preliminary data
 - Theoretical frameworks
 - Historical context
 
 **References**
+
 - **Target: 50+ total references**
 
 ## Citation Best Practices
 
 ### In Main Text
+
 - Cite 15-20 key papers
 - Use `\citep{author2023}` for parenthetical citations
 - Use `\citet{author2023}` for textual citations
 - Focus on most important/recent evidence
 
 ### In Appendices
+
 - Cite 40-60+ papers total
 - Comprehensive coverage of relevant literature
 - Include reviews, primary research, theoretical papers
 - Cite every claim and piece of evidence
 
 ### Citation Density Guidelines
+
 - Main hypothesis boxes: 2-3 citations per box (most essential only)
 - Main text total: 10-15 citations maximum (keep concise)
 - Appendix A literature sections: 8-15 citations per subsection
@@ -283,6 +299,7 @@ Data row 2 & Data \\
 ```
 
 **Best practices:**
+
 - Use `\tableheadercolor` for header rows
 - Alternate `\tablerowcolor` for tables >3 rows
 - Keep tables readable (not too wide)
@@ -381,6 +398,7 @@ Data row 2 & Data \\
 ## Spacing and Layout
 
 ### Vertical Spacing
+
 - `\vspace{0.3cm}` - Between elements within boxes
 - `\vspace{0.5cm}` - Between major sections or boxes
 - `\vspace{1cm}` - After title, before main content
@@ -392,6 +410,7 @@ Data row 2 & Data \\
 LaTeX boxes (tcolorbox environments) do not automatically break across pages. Content that exceeds the remaining page space will overflow and cause formatting issues. Follow these guidelines:
 
 1. **Strategic Page Breaks Before Long Boxes:**
+
 ```latex
 \newpage  % Start on fresh page if box will be long
 \begin{hypothesisbox1}[Hypothesis 1: Title]
@@ -417,24 +436,25 @@ LaTeX boxes (tcolorbox environments) do not automatically break across pages. Co
    - Each comparison box: 0.4-0.6 pages max
 
 5. **Breaking Up Long Content:**
+
    ```latex
    % GOOD: Concise main text with page break
    \newpage
    \begin{hypothesisbox1}[Hypothesis 1: Brief Title]
    \textbf{Mechanistic Explanation:}
    Brief overview in 1-2 paragraphs (6-10 sentences).
-   
+
    \textbf{Key Supporting Evidence:}
    \begin{itemize}
      \item Evidence 1 \citep{ref1}
      \item Evidence 2 \citep{ref2}
    \end{itemize}
-   
+
    \textbf{Core Assumptions:}
    \begin{enumerate}
      \item Assumption 1
    \end{enumerate}
-   
+
    See Appendix A for detailed mechanism and comprehensive evidence.
    \end{hypothesisbox1}
    ```
@@ -456,7 +476,9 @@ LaTeX boxes (tcolorbox environments) do not automatically break across pages. Co
    - `\clearpage` - Force new page and flush floats (use before appendices)
 
 ### Section Spacing
+
 Already handled by style package, but you can adjust:
+
 ```latex
 \vspace{0.5cm}  % Add extra space if needed
 ```
@@ -466,14 +488,18 @@ Already handled by style package, but you can adjust:
 ### Common Issues
 
 **Issue: "File hypothesis_generation.sty not found"**
+
 - Solution: Ensure the .sty file is in the same directory as your .tex file, or in your LaTeX path
 
 **Issue: Boxes don't have colors**
+
 - Solution: Compile with XeLaTeX or LuaLaTeX, not pdfLaTeX
 - Command: `xelatex yourfile.tex`
 
 **Issue: Citations show as [?]**
+
 - Solution: Run bibtex after first xelatex compilation
+
 ```bash
 xelatex yourfile.tex
 bibtex yourfile
@@ -482,16 +508,20 @@ xelatex yourfile.tex
 ```
 
 **Issue: Fonts not found**
+
 - Solution: Comment out font lines in the .sty file if custom fonts aren't installed
 - Lines to comment: `\setmainfont{...}` and `\setsansfont{...}`
 
 **Issue: Box titles overlap with content**
+
 - Solution: Add more vertical space with `\vspace{0.3cm}` after titles
 
 **Issue: Tables too wide**
+
 - Solution: Use `\small` or `\footnotesize` before tabular, or use `p{width}` column specs
 
 **Issue: Content overflowing off the page**
+
 - **Cause:** Boxes (tcolorbox environments) are too long to fit on remaining page space
 - **Solution 1:** Add `\newpage` before the box to start it on a fresh page
 - **Solution 2:** Reduce box content - move detailed information to appendices
@@ -499,6 +529,7 @@ xelatex yourfile.tex
 - **Prevention:** Keep each hypothesis box to 0.4-0.6 pages maximum; use `\newpage` liberally before boxes with substantial content
 
 **Issue: Main text exceeds 4 pages**
+
 - **Cause:** Boxes contain too much detailed information
 - **Solution:** Aggressively move content to appendices - main text boxes should contain only:
   - Brief mechanistic overview (1-2 paragraphs)
@@ -509,6 +540,7 @@ xelatex yourfile.tex
 ### Package Requirements
 
 Ensure these packages are installed:
+
 - `tcolorbox` (with `most` option)
 - `xcolor`
 - `fontspec` (for XeLaTeX/LuaLaTeX)
@@ -519,6 +551,7 @@ Ensure these packages are installed:
 - `natbib`
 
 Install missing packages:
+
 ```bash
 # For TeX Live
 tlmgr install tcolorbox xcolor fontspec fancyhdr titlesec enumitem booktabs natbib
@@ -657,6 +690,7 @@ Detailed literature review here.
 ```
 
 **Key Points:**
+
 - `\newpage` used before each hypothesis box to ensure they start on fresh pages
 - This prevents content overflow issues
 - Main text boxes kept concise (1-2 paragraphs + bullet points)
@@ -669,4 +703,3 @@ Detailed literature review here.
 - See `references/hypothesis_quality_criteria.md` for evaluation framework
 - See `references/experimental_design_patterns.md` for design guidance
 - See treatment-plans skill for additional LaTeX styling examples
-

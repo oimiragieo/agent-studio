@@ -38,7 +38,7 @@ When reviewing or writing code, apply these guidelines:
 - Optimize Livewire components for performance, avoiding unnecessary re-renders.
 - Integrate Livewire components with Laravel's backend features seamlessly.
 - Implement lazy loading for Livewire components when appropriate.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

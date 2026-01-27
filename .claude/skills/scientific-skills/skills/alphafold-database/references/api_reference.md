@@ -32,14 +32,17 @@ https://alphafold.ebi.ac.uk/api/
 **Description:** Retrieve AlphaFold prediction metadata for a given UniProt accession.
 
 **Parameters:**
+
 - `uniprot_id` (required): UniProt accession (e.g., "P00520")
 
 **Example Request:**
+
 ```bash
 curl https://alphafold.ebi.ac.uk/api/prediction/P00520
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -66,6 +69,7 @@ curl https://alphafold.ebi.ac.uk/api/prediction/P00520
 ```
 
 **Response Fields:**
+
 - `entryId`: AlphaFold internal identifier (format: AF-{uniprot}-F{fragment})
 - `gene`: Gene symbol
 - `uniprotAccession`: UniProt accession
@@ -89,6 +93,7 @@ AlphaFold is integrated into the 3D-Beacons network for federated structure acce
 **Endpoint:** `https://www.ebi.ac.uk/pdbe/pdbe-kb/3dbeacons/api/uniprot/summary/{uniprot_id}.json`
 
 **Example:**
+
 ```python
 import requests
 
@@ -113,11 +118,13 @@ alphafold_structures = [
 All AlphaFold files are accessible via direct URLs without authentication.
 
 **URL Pattern:**
+
 ```
 https://alphafold.ebi.ac.uk/files/{alphafold_id}-{file_type}_{version}.{extension}
 ```
 
 **Components:**
+
 - `{alphafold_id}`: Entry identifier (e.g., "AF-P00520-F1")
 - `{file_type}`: Type of file (see below)
 - `{version}`: Database version (e.g., "v4")
@@ -128,27 +135,33 @@ https://alphafold.ebi.ac.uk/files/{alphafold_id}-{file_type}_{version}.{extensio
 #### 1. Model Coordinates
 
 **mmCIF Format (Recommended):**
+
 ```
 https://alphafold.ebi.ac.uk/files/AF-P00520-F1-model_v4.cif
 ```
+
 - Standard crystallographic format
 - Contains full metadata
 - Supports large structures
 - File size: Variable (100KB - 10MB typical)
 
 **Binary CIF Format:**
+
 ```
 https://alphafold.ebi.ac.uk/files/AF-P00520-F1-model_v4.bcif
 ```
+
 - Compressed binary version of mmCIF
 - Smaller file size (~70% reduction)
 - Faster parsing
 - Requires specialized parser
 
 **PDB Format (Legacy):**
+
 ```
 https://alphafold.ebi.ac.uk/files/AF-P00520-F1-model_v4.pdb
 ```
+
 - Traditional PDB text format
 - Limited to 99,999 atoms
 - Widely supported by older tools
@@ -157,11 +170,13 @@ https://alphafold.ebi.ac.uk/files/AF-P00520-F1-model_v4.pdb
 #### 2. Confidence Metrics
 
 **Per-Residue Confidence (JSON):**
+
 ```
 https://alphafold.ebi.ac.uk/files/AF-P00520-F1-confidence_v4.json
 ```
 
 **Structure:**
+
 ```json
 {
   "confidenceScore": [87.5, 91.2, 93.8, ...],
@@ -170,6 +185,7 @@ https://alphafold.ebi.ac.uk/files/AF-P00520-F1-confidence_v4.json
 ```
 
 **Fields:**
+
 - `confidenceScore`: Array of pLDDT values (0-100) for each residue
 - `confidenceCategory`: Categorical classification (very_low, low, high, very_high)
 
@@ -180,6 +196,7 @@ https://alphafold.ebi.ac.uk/files/AF-P00520-F1-predicted_aligned_error_v4.json
 ```
 
 **Structure:**
+
 ```json
 {
   "distance": [[0, 2.3, 4.5, ...], [2.3, 0, 3.1, ...], ...],
@@ -188,6 +205,7 @@ https://alphafold.ebi.ac.uk/files/AF-P00520-F1-predicted_aligned_error_v4.json
 ```
 
 **Fields:**
+
 - `distance`: N×N matrix of PAE values in Ångströms
 - `max_predicted_aligned_error`: Maximum PAE value in the matrix
 
@@ -196,6 +214,7 @@ https://alphafold.ebi.ac.uk/files/AF-P00520-F1-predicted_aligned_error_v4.json
 ```
 https://alphafold.ebi.ac.uk/files/AF-P00520-F1-predicted_aligned_error_v4.png
 ```
+
 - Pre-rendered PAE heatmap
 - Useful for quick visual assessment
 - Resolution: Variable based on protein size
@@ -213,6 +232,7 @@ For downloading multiple files efficiently, use concurrent downloads with proper
 AlphaFold mmCIF files contain:
 
 **Key Data Categories:**
+
 - `_entry`: Entry-level metadata
 - `_struct`: Structure title and description
 - `_entity`: Molecular entity information
@@ -220,6 +240,7 @@ AlphaFold mmCIF files contain:
 - `_pdbx_struct_assembly`: Biological assembly info
 
 **Important Fields in `_atom_site`:**
+
 - `group_PDB`: "ATOM" for all records
 - `id`: Atom serial number
 - `label_atom_id`: Atom name (e.g., "CA", "N", "C")
@@ -236,21 +257,22 @@ AlphaFold stores per-residue confidence (pLDDT) in the B-factor field. This allo
 ```json
 {
   "confidenceScore": [
-    87.5,   // Residue 1 pLDDT
-    91.2,   // Residue 2 pLDDT
-    93.8    // Residue 3 pLDDT
+    87.5, // Residue 1 pLDDT
+    91.2, // Residue 2 pLDDT
+    93.8 // Residue 3 pLDDT
     // ... one value per residue
   ],
   "confidenceCategory": [
-    "high",      // Residue 1 category
+    "high", // Residue 1 category
     "very_high", // Residue 2 category
-    "very_high"  // Residue 3 category
+    "very_high" // Residue 3 category
     // ... one category per residue
   ]
 }
 ```
 
 **Confidence Categories:**
+
 - `very_high`: pLDDT > 90
 - `high`: 70 < pLDDT ≤ 90
 - `low`: 50 < pLDDT ≤ 70
@@ -271,6 +293,7 @@ AlphaFold stores per-residue confidence (pLDDT) in the B-factor field. This allo
 ```
 
 **Interpretation:**
+
 - `distance[i][j]`: Expected position error (Ångströms) of residue j if the predicted and true structures were aligned on residue i
 - Lower values indicate more confident relative positioning
 - Diagonal is always 0 (residue aligned to itself)
@@ -287,6 +310,7 @@ AlphaFold DB is hosted on Google Cloud Platform for bulk access.
 **Bucket:** `gs://public-datasets-deepmind-alphafold-v4`
 
 **Directory Structure:**
+
 ```
 gs://public-datasets-deepmind-alphafold-v4/
 ├── accession_ids.csv              # Index of all entries (13.5 GB)
@@ -325,17 +349,17 @@ AlphaFold metadata is available in BigQuery for SQL-based queries.
 
 ### Key Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `entryId` | STRING | AlphaFold entry ID |
-| `uniprotAccession` | STRING | UniProt accession |
-| `gene` | STRING | Gene symbol |
-| `organismScientificName` | STRING | Species scientific name |
-| `taxId` | INTEGER | NCBI taxonomy ID |
-| `globalMetricValue` | FLOAT | Overall quality metric |
-| `fractionPlddtVeryHigh` | FLOAT | Fraction with pLDDT ≥ 90 |
-| `isReviewed` | BOOLEAN | Swiss-Prot reviewed status |
-| `sequenceLength` | INTEGER | Protein sequence length |
+| Field                    | Type    | Description                |
+| ------------------------ | ------- | -------------------------- |
+| `entryId`                | STRING  | AlphaFold entry ID         |
+| `uniprotAccession`       | STRING  | UniProt accession          |
+| `gene`                   | STRING  | Gene symbol                |
+| `organismScientificName` | STRING  | Species scientific name    |
+| `taxId`                  | INTEGER | NCBI taxonomy ID           |
+| `globalMetricValue`      | FLOAT   | Overall quality metric     |
+| `fractionPlddtVeryHigh`  | FLOAT   | Fraction with pLDDT ≥ 90   |
+| `isReviewed`             | BOOLEAN | Swiss-Prot reviewed status |
+| `sequenceLength`         | INTEGER | Protein sequence length    |
 
 ### Example Query
 
@@ -380,13 +404,13 @@ Always specify and track database versions in your code (current: v4).
 
 ### Common HTTP Status Codes
 
-| Code | Meaning | Action |
-|------|---------|--------|
-| 200 | Success | Process response normally |
-| 404 | Not Found | No AlphaFold prediction for this UniProt ID |
-| 429 | Too Many Requests | Implement rate limiting and retry with backoff |
-| 500 | Server Error | Retry with exponential backoff |
-| 503 | Service Unavailable | Wait and retry later |
+| Code | Meaning             | Action                                         |
+| ---- | ------------------- | ---------------------------------------------- |
+| 200  | Success             | Process response normally                      |
+| 404  | Not Found           | No AlphaFold prediction for this UniProt ID    |
+| 429  | Too Many Requests   | Implement rate limiting and retry with backoff |
+| 500  | Server Error        | Retry with exponential backoff                 |
+| 503  | Service Unavailable | Wait and retry later                           |
 
 ---
 

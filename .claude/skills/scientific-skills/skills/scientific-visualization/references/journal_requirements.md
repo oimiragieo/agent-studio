@@ -7,6 +7,7 @@ Different journals have specific technical requirements for figures. This refere
 ## Nature Portfolio (Nature, Nature Methods, etc.)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: PDF, EPS, AI (preferred for graphs)
   - Raster: TIFF, PNG (for images)
@@ -31,6 +32,7 @@ Different journals have specific technical requirements for figures. This refere
   - Embed all fonts in PDF/EPS
 
 ### Nature Specific Guidelines
+
 - Panel labels: a, b, c (lowercase, bold) in top-left corner
 - Scale bars required for microscopy images
 - Gel images: Include molecular weight markers
@@ -39,12 +41,14 @@ Different journals have specific technical requirements for figures. This refere
 - Source data: Required for all graphs
 
 ### File Naming
+
 Format: `FirstAuthorLastName_FigureNumber.ext`
 Example: `Smith_Fig1.pdf`
 
 ## Science (AAAS)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: EPS, PDF (preferred)
   - Raster: TIFF
@@ -69,6 +73,7 @@ Example: `Smith_Fig1.pdf`
   - Consistent across all figures
 
 ### Science Specific Guidelines
+
 - Panel labels: (A), (B), (C) in parentheses
 - Minimal text within figures (details in caption)
 - High contrast for web and print
@@ -76,12 +81,14 @@ Example: `Smith_Fig1.pdf`
 - Avoid excessive whitespace
 
 ### File Naming
+
 Format: `Manuscript#_Fig#.ext`
 Example: `abn1234_Fig1.eps`
 
 ## Cell Press (Cell, Neuron, Molecular Cell, etc.)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: PDF, EPS (preferred for graphs/diagrams)
   - Raster: TIFF (for photographs)
@@ -104,6 +111,7 @@ Example: `abn1234_Fig1.eps`
   - 6-8 pt for tick labels
 
 ### Cell Press Specific Guidelines
+
 - Panel labels: (A), (B), (C) or A, B, C in top-left
 - Related panels should match in size
 - Scale bars mandatory for microscopy
@@ -114,6 +122,7 @@ Example: `abn1234_Fig1.eps`
 ## PLOS (Public Library of Science)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: EPS, PDF (preferred)
   - Raster: TIFF, PNG
@@ -136,6 +145,7 @@ Example: `abn1234_Fig1.eps`
   - 8-12 pt for labels at final size
 
 ### PLOS Specific Guidelines
+
 - Figures should be understandable without caption
 - Color required only if adding information
 - All figures convertible to grayscale
@@ -146,6 +156,7 @@ Example: `abn1234_Fig1.eps`
 ## ACS (American Chemical Society)
 
 ### Technical Specifications
+
 - **File formats**:
   - Preferred: TIFF, PDF, EPS
   - Application files: AI, CDX (ChemDraw), CDL
@@ -167,6 +178,7 @@ Example: `abn1234_Fig1.eps`
   - Consistent sizing across figures
 
 ### ACS Specific Guidelines
+
 - Chemical structures: Use ChemDraw or equivalent
 - Atom labels: 10-12 pt
 - Bond thickness: 2 pt
@@ -176,6 +188,7 @@ Example: `abn1234_Fig1.eps`
 ## Elsevier Journals (varies by journal)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: EPS, PDF
   - Raster: TIFF, JPEG (only for photographs)
@@ -196,6 +209,7 @@ Example: `abn1234_Fig1.eps`
   - Minimum 6 pt at final size
 
 ### Elsevier Specific Guidelines
+
 - Check individual journal guidelines (highly variable)
 - Some journals charge for color in print
 - Panel labels typically (A), (B), (C) or A, B, C
@@ -204,6 +218,7 @@ Example: `abn1234_Fig1.eps`
 ## IEEE (Engineering/Computer Science)
 
 ### Technical Specifications
+
 - **File formats**:
   - Vector: PDF, EPS (preferred)
   - Raster: TIFF, PNG
@@ -223,6 +238,7 @@ Example: `abn1234_Fig1.eps`
   - Minimum 8-10 pt at final size
 
 ### IEEE Specific Guidelines
+
 - Figures should be readable in black and white
 - Color figures incur no charge (online publication)
 - Panel labels: (a), (b), (c) in lowercase
@@ -232,6 +248,7 @@ Example: `abn1234_Fig1.eps`
 ## BMC (BioMed Central) - Open Access
 
 ### Technical Specifications
+
 - **File formats**:
   - Any standard format accepted
   - Preferred: TIFF, PDF, EPS, PNG
@@ -250,6 +267,7 @@ Example: `abn1234_Fig1.eps`
   - Embedded and readable
 
 ### BMC Specific Guidelines
+
 - Open access: CC-BY license required
 - Figure files uploaded separately
 - Panel labels as appropriate for field
@@ -259,6 +277,7 @@ Example: `abn1234_Fig1.eps`
 ## Common Requirements Across Journals
 
 ### Universal Best Practices
+
 1. **Never use JPEG for graphs/plots**: Compression artifacts
 2. **Embed all fonts**: In PDF/EPS files
 3. **Layer structure**: Flatten images (merge layers in Photoshop)
@@ -268,6 +287,7 @@ Example: `abn1234_Fig1.eps`
 7. **File size**: Balance quality with reasonable file sizes (typically <10 MB per figure)
 
 ### Submitting Figures
+
 - **Initial submission**: Lower resolution often acceptable (for review)
 - **Revision/acceptance**: High-resolution required
 - **Separate files**: Each figure as separate file
@@ -276,17 +296,18 @@ Example: `abn1234_Fig1.eps`
 
 ## Quick Reference Table
 
-| Publisher | Single Column | Double Column | Min DPI (photos) | Min DPI (line art) | Preferred Format |
-|-----------|---------------|---------------|------------------|-------------------|------------------|
-| Nature | 89 mm | 183 mm | 300 | 1000 | EPS, PDF |
-| Science | 5.5 cm | 17.5 cm | 300 | 1000 | EPS, PDF |
-| Cell Press | 85 mm | 178 mm | 300 | 1000 | EPS, PDF |
-| PLOS | 8.3 cm | 17.3 cm | 300 | 600 | EPS, TIFF |
-| ACS | 3.25 in | 7 in | 300 | 600 | TIFF, EPS |
+| Publisher  | Single Column | Double Column | Min DPI (photos) | Min DPI (line art) | Preferred Format |
+| ---------- | ------------- | ------------- | ---------------- | ------------------ | ---------------- |
+| Nature     | 89 mm         | 183 mm        | 300              | 1000               | EPS, PDF         |
+| Science    | 5.5 cm        | 17.5 cm       | 300              | 1000               | EPS, PDF         |
+| Cell Press | 85 mm         | 178 mm        | 300              | 1000               | EPS, PDF         |
+| PLOS       | 8.3 cm        | 17.3 cm       | 300              | 600                | EPS, TIFF        |
+| ACS        | 3.25 in       | 7 in          | 300              | 600                | TIFF, EPS        |
 
 ## Checking Requirements
 
 ### Before Submission Checklist
+
 1. Read journal's author guidelines (figure section)
 2. Check file format requirements
 3. Verify resolution requirements
@@ -299,6 +320,7 @@ Example: `abn1234_Fig1.eps`
 10. Check file size limits
 
 ### Useful Tools
+
 - **ImageJ/Fiji**: Check/adjust DPI
 - **Adobe Acrobat**: Verify embedded fonts, check PDF properties
 - **GIMP**: Free alternative to Photoshop for raster editing

@@ -110,6 +110,7 @@ centers = clusterer.cluster_centers_
 ## Distance Metrics
 
 Compatible distance metrics include:
+
 - Euclidean, Manhattan, Minkowski (lock-step)
 - DTW, DDTW, WDTW (elastic with alignment)
 - ERP, EDR, LCSS (edit-based)
@@ -118,6 +119,7 @@ Compatible distance metrics include:
 ## Evaluation
 
 Use clustering metrics from sklearn or aeon benchmarking:
+
 - Silhouette score
 - Davies-Bouldin index
 - Calinski-Harabasz index

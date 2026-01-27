@@ -51,24 +51,28 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Confirm that evolution is actually needed before investing time.
 
 **Entry Conditions**:
+
 - User requests new capability
 - Router detects no matching agent/skill
 - Pattern analyzer suggests evolution
 - Evolution state is `idle`
 
 **Actions**:
+
 1. Update evolution state to `evaluating`
 2. Check if similar artifact exists (Glob/Grep)
 3. Read skill catalog for existing solutions
 4. Document the gap using structured thinking
 
 **Exit Conditions** (ALL required):
+
 - Gap clearly identified and documented
 - No existing artifact meets the need (verified with Glob/Grep)
 - Request is within ecosystem scope (not external integration)
 - Evolution state updated to `EVALUATING`
 
 **Failure Mode**:
+
 - If existing solution found: ABORT with recommendation to use existing artifact
 
 ### Phase V: Validate (Gate 2)
@@ -76,16 +80,19 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Ensure no conflicts with existing ecosystem artifacts.
 
 **Entry Conditions**:
+
 - Phase 1 gates passed
 - Evolution state is `EVALUATING` with `gatePassed: true`
 
 **Actions**:
+
 1. Update evolution state to `validating`
 2. Check naming conflicts (Grep across agents/, skills/, workflows/)
 3. Check capability overlaps (read similar artifacts)
 4. Verify naming conventions (`[a-z][a-z0-9-]*` pattern)
 
 **Exit Conditions** (ALL required):
+
 - No naming conflicts with existing artifacts
 - No capability conflicts that would cause routing ambiguity
 - Name follows ecosystem conventions
@@ -93,15 +100,16 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 
 **Naming Conventions**:
 
-| Artifact | Convention | Example | Regex |
-|----------|------------|---------|-------|
-| Agent | `<domain>-<role>` | `mobile-ux-reviewer` | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
-| Skill | `<verb>-<object>` or `<domain>` | `code-analyzer`, `tdd` | `^[a-z]+(-[a-z]+)*$` |
-| Workflow | `<process>-workflow` | `feature-development-workflow` | `^[a-z]+-workflow$` |
-| Hook | `<trigger>-<action>` | `pre-commit-validator` | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
-| Schema | `<artifact>-schema` | `agent-schema` | `^[a-z]+-schema$` |
+| Artifact | Convention                      | Example                        | Regex                       |
+| -------- | ------------------------------- | ------------------------------ | --------------------------- |
+| Agent    | `<domain>-<role>`               | `mobile-ux-reviewer`           | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
+| Skill    | `<verb>-<object>` or `<domain>` | `code-analyzer`, `tdd`         | `^[a-z]+(-[a-z]+)*$`        |
+| Workflow | `<process>-workflow`            | `feature-development-workflow` | `^[a-z]+-workflow$`         |
+| Hook     | `<trigger>-<action>`            | `pre-commit-validator`         | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
+| Schema   | `<artifact>-schema`             | `agent-schema`                 | `^[a-z]+-schema$`           |
 
 **Failure Mode**:
+
 - If naming conflict: ABORT or propose alternative name
 - If capability conflict: ABORT and recommend enhancing existing artifact
 
@@ -113,10 +121,12 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Research best practices before creating anything.
 
 **Entry Conditions**:
+
 - Phase 2 gates passed
 - Evolution state is `VALIDATING` with `gatePassed: true`
 
 **Actions**:
+
 1. Update evolution state to `obtaining`
 2. Invoke `research-synthesis` skill (MANDATORY)
 3. Execute minimum 3 research queries (Exa/WebSearch)
@@ -125,16 +135,17 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 
 **Research Protocol**:
 
-| Query # | Purpose | Example |
-|---------|---------|---------|
-| 1 | Best practices for artifact type in domain | "GraphQL schema validation best practices 2025" |
-| 2 | Implementation patterns and real-world examples | "GraphQL schema validator implementation patterns" |
-| 3 | Claude/AI agent specific patterns | "AI agent GraphQL review automation" |
-| 4+ | Additional domain-specific research | Custom queries as needed |
+| Query # | Purpose                                         | Example                                            |
+| ------- | ----------------------------------------------- | -------------------------------------------------- |
+| 1       | Best practices for artifact type in domain      | "GraphQL schema validation best practices 2025"    |
+| 2       | Implementation patterns and real-world examples | "GraphQL schema validator implementation patterns" |
+| 3       | Claude/AI agent specific patterns               | "AI agent GraphQL review automation"               |
+| 4+      | Additional domain-specific research             | Custom queries as needed                           |
 
 **Research Report Location**: `.claude/context/artifacts/research-reports/<artifact-name>-research.md`
 
 **Exit Conditions** (ALL required):
+
 - Minimum 3 research queries executed (with evidence in report)
 - Minimum 3 external sources consulted (URLs documented)
 - Existing codebase patterns documented (2+ similar artifacts analyzed)
@@ -143,6 +154,7 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 - Risk assessment completed with mitigations
 
 **Failure Mode**:
+
 - CANNOT PROCEED without completing research
 - Hook `research-enforcement.cjs` blocks Phase 4 entry
 
@@ -151,11 +163,13 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Create the artifact using appropriate creator skill.
 
 **Entry Conditions**:
+
 - Phase 3 gates passed
 - Research report exists at correct location
 - Evolution state is `OBTAINING` with `gatePassed: true`
 
 **Actions**:
+
 1. Update evolution state to `locking`
 2. Invoke appropriate creator skill:
    - Agent: `Skill({ skill: "agent-creator" })`
@@ -169,16 +183,17 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 
 **Artifact Locations**:
 
-| Artifact | Location Pattern |
-|----------|------------------|
-| Agent | `.claude/agents/<category>/<name>.md` |
-| Skill | `.claude/skills/<name>/SKILL.md` |
+| Artifact | Location Pattern                         |
+| -------- | ---------------------------------------- |
+| Agent    | `.claude/agents/<category>/<name>.md`    |
+| Skill    | `.claude/skills/<name>/SKILL.md`         |
 | Workflow | `.claude/workflows/<category>/<name>.md` |
-| Hook | `.claude/hooks/<category>/<name>.cjs` |
-| Schema | `.claude/schemas/<name>.json` |
-| Template | `.claude/templates/<name>.md` |
+| Hook     | `.claude/hooks/<category>/<name>.cjs`    |
+| Schema   | `.claude/schemas/<name>.json`            |
+| Template | `.claude/templates/<name>.md`            |
 
 **Exit Conditions** (ALL required):
+
 - Artifact file created at correct location
 - YAML frontmatter passes schema validation
 - All required fields present
@@ -187,6 +202,7 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 - Task Progress Protocol section present in body (for agents)
 
 **Failure Mode**:
+
 - If schema validation fails: RETRY with fixes (max 3 retries)
 - If required fields missing: RETRY with additions
 - Maximum 3 retries before ABORT
@@ -196,11 +212,13 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Quality assurance before deployment.
 
 **Entry Conditions**:
+
 - Phase 4 gates passed
 - Artifact exists and is schema-valid
 - Evolution state is `LOCKING` with `gatePassed: true`
 
 **Actions**:
+
 1. Update evolution state to `verifying`
 2. Read the created artifact
 3. Check for placeholder content (TODO, TBD, FIXME, etc.)
@@ -210,17 +228,18 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 
 **Verification Checklist**:
 
-| Check | Criteria | Failure Action |
-|-------|----------|----------------|
-| Placeholders | No TODO, TBD, FIXME, etc. | Return to LOCK |
-| Task Progress Protocol | Complete with Iron Laws | Return to LOCK |
-| Memory Protocol | All sections present | Return to LOCK |
-| Assigned Skills | All exist in `.claude/skills/` | Return to LOCK or remove skill |
-| Referenced Tools | All are valid Claude tools | Return to LOCK |
-| Examples | Complete and executable | Return to LOCK |
-| Documentation | Explains when/why to use | Return to LOCK |
+| Check                  | Criteria                       | Failure Action                 |
+| ---------------------- | ------------------------------ | ------------------------------ |
+| Placeholders           | No TODO, TBD, FIXME, etc.      | Return to LOCK                 |
+| Task Progress Protocol | Complete with Iron Laws        | Return to LOCK                 |
+| Memory Protocol        | All sections present           | Return to LOCK                 |
+| Assigned Skills        | All exist in `.claude/skills/` | Return to LOCK or remove skill |
+| Referenced Tools       | All are valid Claude tools     | Return to LOCK                 |
+| Examples               | Complete and executable        | Return to LOCK                 |
+| Documentation          | Explains when/why to use       | Return to LOCK                 |
 
 **Exit Conditions** (ALL required):
+
 - All sections complete (no placeholders)
 - Task Progress Protocol complete with Iron Laws
 - Memory Protocol complete with file paths
@@ -230,6 +249,7 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 - Documentation is comprehensive
 
 **Failure Mode**:
+
 - If quality issues found: RETURN to LOCK for fixes
 - Maximum 5 fix iterations before ABORT
 
@@ -238,11 +258,13 @@ The EVOLVE workflow is a locked-in, state machine-based process that MUST be fol
 **Purpose**: Deploy artifact to ecosystem and register for discovery.
 
 **Entry Conditions**:
+
 - Phase 5 gates passed
 - Artifact verified and quality-approved
 - Evolution state is `VERIFYING` with `gatePassed: true`
 
 **Actions**:
+
 1. Update evolution state to `enabling`
 2. Update CLAUDE.md routing table (for agents)
 3. Update skill catalog (for skills)
@@ -264,6 +286,7 @@ grep "<workflow-name>" .claude/CLAUDE.md || echo "FAILED: Not in workflow table"
 ```
 
 **Exit Conditions** (ALL required):
+
 - CLAUDE.md routing table updated (if agent)
 - Skill catalog updated (if skill)
 - Workflow table updated (if workflow)
@@ -272,6 +295,7 @@ grep "<workflow-name>" .claude/CLAUDE.md || echo "FAILED: Not in workflow table"
 - Artifact is discoverable by Router (grep verification passes)
 
 **Failure Mode**:
+
 - If CLAUDE.md update fails: ROLLBACK and retry
 - If verification fails: Fix registration and re-verify
 - Never leave artifact unregistered (invisible to Router)
@@ -299,6 +323,7 @@ Phase O (Obtain Research) is MANDATORY and cannot be skipped. This phase ensures
 ## Research Queries
 
 ### Query 1: <Query Description>
+
 - **Query**: "Best practices for X in domain Y"
 - **Source**: <URL or documentation source>
 - **Key Findings**:
@@ -307,40 +332,48 @@ Phase O (Obtain Research) is MANDATORY and cannot be skipped. This phase ensures
   - Finding 3
 
 ### Query 2: <Query Description>
+
 ...
 
 ### Query 3: <Query Description>
+
 ...
 
 ## Codebase Pattern Analysis
 
 ### Similar Artifact 1: <Name>
+
 - **Location**: `.claude/agents/domain/similar-agent.md`
 - **Patterns Observed**:
   - Pattern 1
   - Pattern 2
 
 ### Similar Artifact 2: <Name>
+
 ...
 
 ## Design Decisions
 
 ### Decision 1: <Decision Title>
+
 - **Rationale**: Why this decision was made
 - **Source**: Research query/source that informed this decision
 - **Alternatives Considered**: Alternative approaches and why they were rejected
 
 ### Decision 2: <Decision Title>
+
 ...
 
 ## Risk Assessment
 
 ### Risk 1: <Risk Description>
+
 - **Severity**: Critical|High|Medium|Low
 - **Mitigation**: How this risk will be mitigated
 - **Source**: Where this risk pattern was identified
 
 ### Risk 2: <Risk Description>
+
 ...
 
 ## Recommendations
@@ -379,6 +412,7 @@ These rules are INVIOLABLE. Violations break the workflow.
 **Enforcement**: `research-enforcement.cjs` hook blocks artifact creation without research report.
 
 **Rationale**:
+
 - "I already know" is NOT valid - execute the queries
 - Minimum 3 queries, 3 sources, research report required
 - Design decisions must have documented rationale AND source
@@ -392,13 +426,14 @@ These rules are INVIOLABLE. Violations break the workflow.
 **Enforcement**: Phase E (Enable) gates verify grep results.
 
 **Registration Requirements**:
+
 - Agents: CLAUDE.md routing table (Section 3)
 - Skills: skill-catalog.md
 - Workflows: CLAUDE.md workflow table (Section 8.6)
 
 ### Law 4: RESEARCH MUST USE EXTERNAL SOURCES
 
-**Rule**: Research phase must use mcp__Exa__ or WebSearch tools for external sources.
+**Rule**: Research phase must use mcp**Exa** or WebSearch tools for external sources.
 
 **Why**: Codebase-only research creates echo chambers and misses industry best practices.
 
@@ -413,6 +448,7 @@ These rules are INVIOLABLE. Violations break the workflow.
 **Enforcement**: Phase L (Lock) gates verify schema validation passes.
 
 **Schemas**:
+
 - Agents: `.claude/schemas/agent-schema.json`
 - Skills: `.claude/schemas/skill-schema.json`
 - Workflows: `.claude/schemas/workflow-schema.json`
@@ -429,14 +465,14 @@ These rules are INVIOLABLE. Violations break the workflow.
 
 Hooks enforce the EVOLVE workflow by blocking violations at different phases.
 
-| Hook | Phase | Trigger | Purpose |
-|------|-------|---------|---------|
-| `evolution-trigger-detector.cjs` | IDLE→EVALUATE | PostToolUse | Detects evolution keywords, initiates workflow |
-| `conflict-detector.cjs` | VALIDATE | PreToolUse | Blocks if naming/capability conflict |
-| `research-enforcement.cjs` | OBTAIN→LOCK | PreToolUse(Write/Edit) | Blocks creation without research report |
-| `evolution-state-guard.cjs` | ALL | PreToolUse | Enforces state machine, prevents skipping |
-| `quality-gate-validator.cjs` | VERIFY | PreToolUse | Blocks incomplete/placeholder artifacts |
-| `evolution-audit.cjs` | ENABLE | PostToolUse | Logs all evolutions, verifies registration |
+| Hook                             | Phase         | Trigger                | Purpose                                        |
+| -------------------------------- | ------------- | ---------------------- | ---------------------------------------------- |
+| `evolution-trigger-detector.cjs` | IDLE→EVALUATE | PostToolUse            | Detects evolution keywords, initiates workflow |
+| `conflict-detector.cjs`          | VALIDATE      | PreToolUse             | Blocks if naming/capability conflict           |
+| `research-enforcement.cjs`       | OBTAIN→LOCK   | PreToolUse(Write/Edit) | Blocks creation without research report        |
+| `evolution-state-guard.cjs`      | ALL           | PreToolUse             | Enforces state machine, prevents skipping      |
+| `quality-gate-validator.cjs`     | VERIFY        | PreToolUse             | Blocks incomplete/placeholder artifacts        |
+| `evolution-audit.cjs`            | ENABLE        | PostToolUse            | Logs all evolutions, verifies registration     |
 
 ### Hook: research-enforcement.cjs
 
@@ -445,6 +481,7 @@ Hooks enforce the EVOLVE workflow by blocking violations at different phases.
 **Trigger**: PreToolUse (Write/Edit) for artifact files
 
 **Logic**:
+
 1. Check if creating artifact file (paths: `.claude/agents/`, `.claude/skills/`, `.claude/workflows/`)
 2. Read evolution state from `evolution-state.json`
 3. Verify state is `locking` and research report exists
@@ -459,6 +496,7 @@ Hooks enforce the EVOLVE workflow by blocking violations at different phases.
 **Trigger**: PreToolUse (Write/Edit) for `evolution-state.json`
 
 **Logic**:
+
 1. Parse new state from Write/Edit input
 2. Verify transition is valid (e.g., `validating` can only go to `obtaining` or `aborted`)
 3. Block invalid transitions
@@ -472,6 +510,7 @@ Hooks enforce the EVOLVE workflow by blocking violations at different phases.
 **Trigger**: PostToolUse (after evolution completes)
 
 **Logic**:
+
 1. Detect when evolution state transitions to `idle` with completed evolution in history
 2. Verify artifact is registered (grep CLAUDE.md or skill catalog)
 3. Log evolution details to audit trail
@@ -502,17 +541,17 @@ stateDiagram-v2
 
 ### States
 
-| State | Description | Valid Actions |
-|-------|-------------|---------------|
-| `idle` | No evolution in progress | Start new evolution |
-| `evaluating` | Checking if evolution is needed | Analyze gap, check existing artifacts |
-| `validating` | Checking for conflicts | Verify naming, check capability overlap |
-| `obtaining` | Researching best practices (MANDATORY) | Execute queries, analyze codebase |
-| `locking` | Creating the artifact | Invoke creator skill, validate schema |
-| `verifying` | Quality assurance | Check completeness, verify protocols |
-| `enabling` | Deploying to ecosystem | Update routing, catalogs, memory |
-| `aborted` | Evolution cancelled | Document reason, recommend alternative |
-| `blocked` | Gate failed, awaiting resolution | Fix blocker, retry phase |
+| State        | Description                            | Valid Actions                           |
+| ------------ | -------------------------------------- | --------------------------------------- |
+| `idle`       | No evolution in progress               | Start new evolution                     |
+| `evaluating` | Checking if evolution is needed        | Analyze gap, check existing artifacts   |
+| `validating` | Checking for conflicts                 | Verify naming, check capability overlap |
+| `obtaining`  | Researching best practices (MANDATORY) | Execute queries, analyze codebase       |
+| `locking`    | Creating the artifact                  | Invoke creator skill, validate schema   |
+| `verifying`  | Quality assurance                      | Check completeness, verify protocols    |
+| `enabling`   | Deploying to ecosystem                 | Update routing, catalogs, memory        |
+| `aborted`    | Evolution cancelled                    | Document reason, recommend alternative  |
+| `blocked`    | Gate failed, awaiting resolution       | Fix blocker, retry phase                |
 
 ### State File Structure
 
@@ -532,13 +571,8 @@ stateDiagram-v2
       "description": "Agent for reviewing GraphQL schemas",
       "trigger": "User requested GraphQL review capability",
       "createdAt": "2026-01-25T10:00:00.000Z",
-      "filesCreated": [
-        ".claude/agents/domain/graphql-schema-reviewer.md"
-      ],
-      "filesModified": [
-        ".claude/CLAUDE.md",
-        ".claude/context/memory/learnings.md"
-      ],
+      "filesCreated": [".claude/agents/domain/graphql-schema-reviewer.md"],
+      "filesModified": [".claude/CLAUDE.md", ".claude/context/memory/learnings.md"],
       "researchSources": 5,
       "duration": 1800000,
       "success": true
@@ -568,6 +602,7 @@ When Router detects no matching agent for a request, it spawns the evolution-orc
 **User Request**: "I need an agent to review GraphQL schemas"
 
 **Router Analysis**:
+
 ```
 [ROUTER] Analyzing: "I need an agent to review GraphQL schemas"
 - Intent: Capability gap
@@ -580,12 +615,24 @@ When Router detects no matching agent for a request, it spawns the evolution-orc
 ```
 
 **Router Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'evolution-orchestrator',
   model: 'opus', // Use opus for evolution (complex reasoning)
   description: 'Creating new graphql-schema-reviewer agent',
-  allowed_tools: ['Read', 'Write', 'Edit', 'Bash', 'Task', 'Skill', 'mcp__Exa__*', 'WebSearch', 'TaskUpdate', 'TaskList'],
+  allowed_tools: [
+    'Read',
+    'Write',
+    'Edit',
+    'Bash',
+    'Task',
+    'Skill',
+    'mcp__Exa__*',
+    'WebSearch',
+    'TaskUpdate',
+    'TaskList',
+  ],
   prompt: `You are the EVOLUTION-ORCHESTRATOR agent.
 
 ## PROJECT CONTEXT (CRITICAL)
@@ -605,7 +652,7 @@ Create agent for: "GraphQL schema review"
 1. Read .claude/context/memory/learnings.md first
 2. Update evolution-state.json at every phase transition
 3. Record decisions to .claude/context/memory/decisions.md
-`
+`,
 });
 ```
 
@@ -681,6 +728,7 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 **Symptom**: Evolution state shows `blocked` with `blockedReason: "Naming conflict: agent 'data-scientist' already exists"`
 
 **Solution**:
+
 1. Read evolution state: `Read(".claude/context/evolution-state.json")`
 2. Check `blockedReason` and `recommendedAction`
 3. Options:
@@ -694,6 +742,7 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 **Symptom**: Hook `research-enforcement.cjs` blocks artifact creation with error: `"BLOCKED: Research report incomplete - only 2 queries executed"`
 
 **Solution**:
+
 1. Return to Phase O (Obtain)
 2. Execute additional research queries until minimum 3 met
 3. Update research report with new findings
@@ -704,6 +753,7 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 **Symptom**: Phase L (Lock) fails with: `"Schema validation failed: Missing required field 'tools'"`
 
 **Solution**:
+
 1. Read artifact file
 2. Add missing required field
 3. Re-run schema validation
@@ -715,6 +765,7 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 **Symptom**: Phase E (Enable) verification fails: `"grep '<agent-name>' .claude/CLAUDE.md" returns no results`
 
 **Solution**:
+
 1. Manually update CLAUDE.md routing table
 2. Add entry: `| <request-type> | \`<agent-name>\` | \`.claude/agents/<category>/<agent-name>.md\` |`
 3. Verify with grep: `grep "<agent-name>" .claude/CLAUDE.md`
@@ -725,6 +776,7 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 **Symptom**: Context reset during evolution, state file not updated
 
 **Solution**:
+
 1. Read evolution state: `Read(".claude/context/evolution-state.json")`
 2. Check last phase completed (`currentEvolution.phase`)
 3. Resume from last phase:
@@ -788,11 +840,13 @@ Auto-start includes security safeguards:
 ### When to Use Auto-Start
 
 **Use when:**
+
 - Rapidly prototyping new capabilities
 - Iterating on ecosystem design
 - Exploring new domains with many unknown agents needed
 
 **Don't use when:**
+
 - In production environments
 - When manual review of evolutions is required
 - Working with security-critical artifacts

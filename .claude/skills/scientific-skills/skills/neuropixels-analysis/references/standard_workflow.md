@@ -239,13 +239,13 @@ print(metrics.head())
 
 ### Key Metrics Explained
 
-| Metric | Good Value | Description |
-|--------|------------|-------------|
-| `snr` | > 5 | Signal-to-noise ratio |
-| `isi_violations_ratio` | < 0.01 | Refractory period violations |
-| `presence_ratio` | > 0.9 | Fraction of recording with spikes |
-| `amplitude_cutoff` | < 0.1 | Estimated missed spikes |
-| `firing_rate` | > 0.1 Hz | Average firing rate |
+| Metric                 | Good Value | Description                       |
+| ---------------------- | ---------- | --------------------------------- |
+| `snr`                  | > 5        | Signal-to-noise ratio             |
+| `isi_violations_ratio` | < 0.01     | Refractory period violations      |
+| `presence_ratio`       | > 0.9      | Fraction of recording with spikes |
+| `amplitude_cutoff`     | < 0.1      | Estimated missed spikes           |
+| `firing_rate`          | > 0.1 Hz   | Average firing rate               |
 
 ## 7. Curation
 

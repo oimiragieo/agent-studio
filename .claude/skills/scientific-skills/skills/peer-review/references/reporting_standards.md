@@ -5,8 +5,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Clinical Trials and Medical Research
 
 ### CONSORT (Consolidated Standards of Reporting Trials)
+
 **Purpose:** Randomized controlled trials (RCTs)
 **Key Requirements:**
+
 - Trial design, participants, and interventions clearly described
 - Primary and secondary outcomes specified
 - Sample size calculation and statistical methods
@@ -20,8 +22,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 **Reference:** http://www.consort-statement.org/
 
 ### STROBE (Strengthening the Reporting of Observational Studies in Epidemiology)
+
 **Purpose:** Observational studies (cohort, case-control, cross-sectional)
 **Key Requirements:**
+
 - Study design clearly stated
 - Setting, eligibility criteria, and participant sources
 - Variables clearly defined
@@ -36,8 +40,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 **Reference:** https://www.strobe-statement.org/
 
 ### PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses)
+
 **Purpose:** Systematic reviews and meta-analyses
 **Key Requirements:**
+
 - Protocol registration
 - Systematic search strategy across multiple databases
 - Inclusion/exclusion criteria
@@ -53,8 +59,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 **Reference:** http://www.prisma-statement.org/
 
 ### SPIRIT (Standard Protocol Items: Recommendations for Interventional Trials)
+
 **Purpose:** Clinical trial protocols
 **Key Requirements:**
+
 - Administrative information (title, registration, funding)
 - Introduction (rationale, objectives)
 - Methods (design, participants, interventions, outcomes, sample size)
@@ -64,8 +72,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 **Reference:** https://www.spirit-statement.org/
 
 ### CARE (CAse REport guidelines)
+
 **Purpose:** Case reports
 **Key Requirements:**
+
 - Patient information and demographics
 - Clinical findings
 - Timeline of events
@@ -80,8 +90,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Animal Research
 
 ### ARRIVE (Animal Research: Reporting of In Vivo Experiments)
+
 **Purpose:** Studies involving animal research
 **Key Requirements:**
+
 - Title indicates study involves animals
 - Abstract provides accurate summary
 - Background and objectives clearly stated
@@ -102,8 +114,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Genomics and Molecular Biology
 
 ### MIAME (Minimum Information About a Microarray Experiment)
+
 **Purpose:** Microarray experiments
 **Key Requirements:**
+
 - Experimental design clearly described
 - Array design information
 - Samples (origin, preparation, labeling)
@@ -116,8 +130,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 **Reference:** http://fged.org/projects/miame/
 
 ### MINSEQE (Minimum Information about a high-throughput Nucleotide Sequencing Experiment)
+
 **Purpose:** High-throughput sequencing (RNA-seq, ChIP-seq, etc.)
 **Key Requirements:**
+
 - Experimental design and biological context
 - Sample information (source, preparation, QC)
 - Library preparation (protocol, adapters, size selection)
@@ -128,8 +144,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 - Processed data and analysis code availability
 
 ### MIGS/MIMS (Minimum Information about a Genome/Metagenome Sequence)
+
 **Purpose:** Genome and metagenome sequencing
 **Key Requirements:**
+
 - Sample origin and environmental context
 - Sequencing methods and coverage
 - Assembly methods and quality metrics
@@ -142,8 +160,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Structural Biology
 
 ### PDB (Protein Data Bank) Deposition Requirements
+
 **Purpose:** Macromolecular structure determination
 **Key Requirements:**
+
 - Atomic coordinates deposited
 - Structure factors for X-ray structures
 - Restraints and experimental data for NMR
@@ -158,8 +178,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Proteomics and Mass Spectrometry
 
 ### MIAPE (Minimum Information About a Proteomics Experiment)
+
 **Purpose:** Proteomics experiments
 **Key Requirements:**
+
 - Sample processing and fractionation
 - Separation methods (2D gel, LC)
 - Mass spectrometry parameters (instrument, acquisition)
@@ -174,8 +196,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Neuroscience
 
 ### COBIDAS (Committee on Best Practices in Data Analysis and Sharing)
+
 **Purpose:** MRI and fMRI studies
 **Key Requirements:**
+
 - Scanner and sequence parameters
 - Preprocessing pipeline details
 - Software versions and parameters
@@ -189,8 +213,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Flow Cytometry
 
 ### MIFlowCyt (Minimum Information about a Flow Cytometry Experiment)
+
 **Purpose:** Flow cytometry experiments
 **Key Requirements:**
+
 - Experimental overview and purpose
 - Sample characteristics and preparation
 - Instrument information and settings
@@ -205,8 +231,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Ecology and Environmental Science
 
 ### MIAPPE (Minimum Information About a Plant Phenotyping Experiment)
+
 **Purpose:** Plant phenotyping studies
 **Key Requirements:**
+
 - Investigation and study metadata
 - Biological material information
 - Environmental parameters
@@ -219,8 +247,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Chemistry and Chemical Biology
 
 ### MIRIBEL (Minimum Information Reporting in Bio-Nano Experimental Literature)
+
 **Purpose:** Nanomaterial characterization
 **Key Requirements:**
+
 - Nanomaterial composition and structure
 - Size, shape, and morphology characterization
 - Surface chemistry and functionalization
@@ -231,8 +261,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## Quality Assessment and Bias
 
 ### CAMARADES (Collaborative Approach to Meta-Analysis and Review of Animal Data from Experimental Studies)
+
 **Purpose:** Quality assessment for animal studies in systematic reviews
 **Key Items:**
+
 - Publication in peer-reviewed journal
 - Statement of temperature control
 - Randomization to treatment
@@ -245,8 +277,10 @@ This document catalogs major reporting standards and guidelines across scientifi
 - Study pre-registration
 
 ### SYRCLE's Risk of Bias Tool
+
 **Purpose:** Assessing risk of bias in animal intervention studies
 **Domains:**
+
 - Selection bias (sequence generation, baseline characteristics, allocation concealment)
 - Performance bias (random housing, blinding of personnel)
 - Detection bias (random outcome assessment, blinding of assessors)
@@ -257,6 +291,7 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## General Principles Across Guidelines
 
 ### Common Requirements
+
 1. **Transparency:** All methods, materials, and analyses fully described
 2. **Reproducibility:** Sufficient detail for independent replication
 3. **Data Availability:** Raw data and analysis code shared or deposited
@@ -267,6 +302,7 @@ This document catalogs major reporting standards and guidelines across scientifi
 8. **Completeness:** All outcomes reported, including negative results
 
 ### Red Flags for Non-Compliance
+
 - Methods section lacks critical details
 - No mention of following reporting guidelines
 - Data availability statement missing or vague
@@ -280,6 +316,7 @@ This document catalogs major reporting standards and guidelines across scientifi
 ## How to Use This Reference
 
 When reviewing a manuscript:
+
 1. Identify the study type and discipline
 2. Find the relevant reporting guideline(s)
 3. Check if authors mention following the guideline

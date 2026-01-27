@@ -7,6 +7,7 @@ A LightningDataModule is a reusable, shareable class that encapsulates all data 
 ## Core Problem It Solves
 
 In traditional PyTorch workflows, data handling is fragmented across multiple files, making it difficult to answer questions like:
+
 - "What splits did you use?"
 - "What transforms were applied?"
 - "How was the data prepared?"
@@ -26,9 +27,11 @@ A DataModule organizes data handling into five phases:
 ## Main Methods
 
 ### `prepare_data()`
+
 Downloads and processes data. Runs only once on a single process (not distributed).
 
 **Use for:**
+
 - Downloading datasets
 - Tokenizing text
 - Saving processed data to disk
@@ -36,6 +39,7 @@ Downloads and processes data. Runs only once on a single process (not distribute
 **Important:** Do not set state here (e.g., self.x = y). State is not transferred to other processes.
 
 **Example:**
+
 ```python
 def prepare_data(self):
     # Download data (runs once)
@@ -46,18 +50,22 @@ def prepare_data(self):
 ```
 
 ### `setup(stage)`
+
 Creates datasets and applies transforms. Runs on every process in distributed training.
 
 **Parameters:**
+
 - `stage` - 'fit', 'validate', 'test', or 'predict'
 
 **Use for:**
+
 - Creating train/val/test splits
 - Building Dataset objects
 - Applying transforms
 - Setting state (self.train_dataset = ...)
 
 **Example:**
+
 ```python
 def setup(self, stage):
     if stage == 'fit':
@@ -74,9 +82,11 @@ def setup(self, stage):
 ```
 
 ### `train_dataloader()`
+
 Returns the training DataLoader.
 
 **Example:**
+
 ```python
 def train_dataloader(self):
     return DataLoader(
@@ -89,9 +99,11 @@ def train_dataloader(self):
 ```
 
 ### `val_dataloader()`
+
 Returns the validation DataLoader(s).
 
 **Example:**
+
 ```python
 def val_dataloader(self):
     return DataLoader(
@@ -104,9 +116,11 @@ def val_dataloader(self):
 ```
 
 ### `test_dataloader()`
+
 Returns the test DataLoader(s).
 
 **Example:**
+
 ```python
 def test_dataloader(self):
     return DataLoader(
@@ -118,9 +132,11 @@ def test_dataloader(self):
 ```
 
 ### `predict_dataloader()`
+
 Returns the prediction DataLoader(s).
 
 **Example:**
+
 ```python
 def predict_dataloader(self):
     return DataLoader(
@@ -272,9 +288,11 @@ for batch in train_loader:
 ## Additional Hooks
 
 ### `transfer_batch_to_device(batch, device, dataloader_idx)`
+
 Custom logic for moving batches to devices.
 
 **Example:**
+
 ```python
 def transfer_batch_to_device(self, batch, device, dataloader_idx):
     # Custom transfer logic
@@ -284,9 +302,11 @@ def transfer_batch_to_device(self, batch, device, dataloader_idx):
 ```
 
 ### `on_before_batch_transfer(batch, dataloader_idx)`
+
 Augment or modify batch before transferring to device (runs on CPU).
 
 **Example:**
+
 ```python
 def on_before_batch_transfer(self, batch, dataloader_idx):
     # Apply CPU-based augmentations
@@ -295,9 +315,11 @@ def on_before_batch_transfer(self, batch, dataloader_idx):
 ```
 
 ### `on_after_batch_transfer(batch, dataloader_idx)`
+
 Augment or modify batch after transferring to device (runs on GPU).
 
 **Example:**
+
 ```python
 def on_after_batch_transfer(self, batch, dataloader_idx):
     # Apply GPU-based augmentations
@@ -306,9 +328,11 @@ def on_after_batch_transfer(self, batch, dataloader_idx):
 ```
 
 ### `state_dict()` / `load_state_dict(state_dict)`
+
 Save and restore DataModule state for checkpointing.
 
 **Example:**
+
 ```python
 def state_dict(self):
     return {"current_fold": self.current_fold}
@@ -318,9 +342,11 @@ def load_state_dict(self, state_dict):
 ```
 
 ### `teardown(stage)`
+
 Cleanup operations after training/testing/prediction.
 
 **Example:**
+
 ```python
 def teardown(self, stage):
     # Clean up resources
@@ -420,10 +446,12 @@ class MyDataModule(L.LightningDataModule):
 ## Best Practices
 
 ### 1. Separate prepare_data and setup
+
 - `prepare_data()` - Downloads/processes (single process, no state)
 - `setup()` - Creates datasets (every process, set state)
 
 ### 2. Use stage Parameter
+
 Check the stage in `setup()` to avoid unnecessary work:
 
 ```python
@@ -438,6 +466,7 @@ def setup(self, stage):
 ```
 
 ### 3. Pin Memory for GPU Training
+
 Enable `pin_memory=True` in DataLoaders for faster GPU transfer:
 
 ```python
@@ -446,6 +475,7 @@ def train_dataloader(self):
 ```
 
 ### 4. Use Persistent Workers
+
 Prevent worker restarts between epochs:
 
 ```python
@@ -458,6 +488,7 @@ def train_dataloader(self):
 ```
 
 ### 5. Avoid Shuffle in Validation/Test
+
 Never shuffle validation or test data:
 
 ```python
@@ -466,6 +497,7 @@ def val_dataloader(self):
 ```
 
 ### 6. Make DataModules Reusable
+
 Accept configuration parameters in `__init__`:
 
 ```python
@@ -476,6 +508,7 @@ class MyDataModule(L.LightningDataModule):
 ```
 
 ### 7. Document Data Structure
+
 Add docstrings explaining data format and expectations:
 
 ```python
@@ -497,13 +530,16 @@ class MyDataModule(L.LightningDataModule):
 ## Common Pitfalls
 
 ### 1. Setting State in prepare_data
+
 **Wrong:**
+
 ```python
 def prepare_data(self):
     self.dataset = load_data()  # State not transferred to other processes!
 ```
 
 **Correct:**
+
 ```python
 def prepare_data(self):
     download_data()  # Only download, no state
@@ -513,7 +549,9 @@ def setup(self, stage):
 ```
 
 ### 2. Not Using stage Parameter
+
 **Inefficient:**
+
 ```python
 def setup(self, stage):
     self.train_dataset = load_train()
@@ -522,6 +560,7 @@ def setup(self, stage):
 ```
 
 **Efficient:**
+
 ```python
 def setup(self, stage):
     if stage == 'fit':
@@ -532,13 +571,16 @@ def setup(self, stage):
 ```
 
 ### 3. Forgetting to Return DataLoaders
+
 **Wrong:**
+
 ```python
 def train_dataloader(self):
     DataLoader(self.train_dataset, ...)  # Forgot return!
 ```
 
 **Correct:**
+
 ```python
 def train_dataloader(self):
     return DataLoader(self.train_dataset, ...)

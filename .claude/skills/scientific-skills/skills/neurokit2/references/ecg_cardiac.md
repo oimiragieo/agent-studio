@@ -15,6 +15,7 @@ signals, info = nk.ecg_process(ecg_signal, sampling_rate=1000, method='neurokit'
 ```
 
 **Pipeline steps:**
+
 1. Signal cleaning (noise removal)
 2. R-peak detection
 3. Heart rate calculation
@@ -23,10 +24,12 @@ signals, info = nk.ecg_process(ecg_signal, sampling_rate=1000, method='neurokit'
 6. Cardiac phase determination
 
 **Returns:**
+
 - `signals`: DataFrame with cleaned ECG, peaks, rate, quality, cardiac phases
 - `info`: Dictionary with R-peak locations and processing parameters
 
 **Common methods:**
+
 - `'neurokit'` (default): Comprehensive NeuroKit2 pipeline
 - `'biosppy'`: BioSPPy-based processing
 - `'pantompkins1985'`: Pan-Tompkins algorithm
@@ -43,6 +46,7 @@ cleaned_ecg = nk.ecg_clean(ecg_signal, sampling_rate=1000, method='neurokit')
 ```
 
 **Methods:**
+
 - `'neurokit'`: High-pass Butterworth filter (0.5 Hz) + powerline filtering
 - `'biosppy'`: FIR filtering between 0.67-45 Hz
 - `'pantompkins1985'`: Band-pass 5-15 Hz + derivative-based
@@ -51,6 +55,7 @@ cleaned_ecg = nk.ecg_clean(ecg_signal, sampling_rate=1000, method='neurokit')
 - `'engzeemod2012'`: FIR band-pass 0.5-40 Hz
 
 **Key parameters:**
+
 - `powerline`: Remove 50 or 60 Hz powerline noise (default: 50)
 
 ### ecg_peaks()
@@ -62,6 +67,7 @@ peaks_dict, info = nk.ecg_peaks(cleaned_ecg, sampling_rate=1000, method='neuroki
 ```
 
 **Available methods (13+ algorithms):**
+
 - `'neurokit'`: Hybrid approach optimized for reliability
 - `'pantompkins1985'`: Classic Pan-Tompkins algorithm
 - `'hamilton2002'`: Hamilton's adaptive threshold
@@ -74,10 +80,12 @@ peaks_dict, info = nk.ecg_peaks(cleaned_ecg, sampling_rate=1000, method='neuroki
 
 **Artifact correction:**
 Set `correct_artifacts=True` to apply Lipponen & Tarvainen (2019) correction:
+
 - Detects ectopic beats, long/short intervals, missed beats
 - Uses threshold-based detection with configurable parameters
 
 **Returns:**
+
 - Dictionary with `'ECG_R_Peaks'` key containing peak indices
 
 ### ecg_delineate()
@@ -89,11 +97,13 @@ waves, waves_peak = nk.ecg_delineate(cleaned_ecg, rpeaks, sampling_rate=1000, me
 ```
 
 **Methods:**
+
 - `'dwt'` (default): Discrete wavelet transform-based detection
 - `'peak'`: Simple peak detection around R-peaks
 - `'cwt'`: Continuous wavelet transform (Martinez et al., 2004)
 
 **Detected components:**
+
 - P waves: `ECG_P_Peaks`, `ECG_P_Onsets`, `ECG_P_Offsets`
 - Q waves: `ECG_Q_Peaks`
 - S waves: `ECG_S_Peaks`
@@ -101,6 +111,7 @@ waves, waves_peak = nk.ecg_delineate(cleaned_ecg, rpeaks, sampling_rate=1000, me
 - QRS complex: onsets and offsets
 
 **Returns:**
+
 - `waves`: Dictionary with all wave indices
 - `waves_peak`: Dictionary with peak amplitudes
 
@@ -113,12 +124,14 @@ quality = nk.ecg_quality(ecg_signal, rpeaks=None, sampling_rate=1000, method='av
 ```
 
 **Methods:**
+
 - `'averageQRS'` (default): Template matching correlation (Zhao & Zhang, 2018)
   - Returns quality scores 0-1 for each heartbeat
   - Threshold: >0.6 = good quality
 - `'zhao2018'`: Multi-index approach using kurtosis, power spectrum distribution
 
 **Use cases:**
+
 - Identify low-quality signal segments
 - Filter out noisy heartbeats before analysis
 - Validate R-peak detection accuracy
@@ -134,6 +147,7 @@ analysis = nk.ecg_analyze(signals, sampling_rate=1000, method='auto')
 ```
 
 **Mode selection:**
+
 - Duration < 10 seconds → event-related analysis
 - Duration ≥ 10 seconds → interval-related analysis
 
@@ -149,6 +163,7 @@ results = nk.ecg_eventrelated(epochs)
 ```
 
 **Computed metrics:**
+
 - `ECG_Rate_Baseline`: Mean heart rate before stimulus
 - `ECG_Rate_Min/Max`: Minimum/maximum heart rate during epoch
 - `ECG_Phase_Atrial/Ventricular`: Cardiac phase at stimulus onset
@@ -166,6 +181,7 @@ results = nk.ecg_intervalrelated(signals, sampling_rate=1000)
 ```
 
 **Computed metrics:**
+
 - `ECG_Rate_Mean`: Average heart rate over interval
 - Comprehensive HRV metrics (delegates to `hrv()` function)
   - Time domain: SDNN, RMSSD, pNN50, etc.
@@ -173,6 +189,7 @@ results = nk.ecg_intervalrelated(signals, sampling_rate=1000)
   - Nonlinear: Poincaré, entropy, fractal measures
 
 **Minimum duration:**
+
 - Basic rate: Any duration
 - HRV frequency metrics: ≥60 seconds recommended, 1-5 minutes optimal
 
@@ -187,11 +204,13 @@ heart_rate = nk.ecg_rate(peaks, sampling_rate=1000, desired_length=None)
 ```
 
 **Method:**
+
 - Calculates inter-beat intervals (IBIs) between consecutive R-peaks
 - Converts to beats per minute (BPM): 60 / IBI
 - Interpolates to match signal length if `desired_length` specified
 
 **Returns:**
+
 - Array of instantaneous heart rate values
 
 ### ecg_phase()
@@ -203,11 +222,13 @@ cardiac_phase = nk.ecg_phase(ecg_cleaned, rpeaks, delineate_info)
 ```
 
 **Phases computed:**
+
 - `ECG_Phase_Atrial`: Atrial systole (1) vs. diastole (0)
 - `ECG_Phase_Ventricular`: Ventricular systole (1) vs. diastole (0)
 - `ECG_Phase_Completion_Atrial/Ventricular`: Percentage of phase completion (0-1)
 
 **Use case:**
+
 - Cardiac-locked stimulus presentation
 - Psychophysiology experiments timing events to cardiac cycle
 
@@ -220,6 +241,7 @@ heartbeats = nk.ecg_segment(ecg_cleaned, rpeaks, sampling_rate=1000)
 ```
 
 **Returns:**
+
 - Dictionary of epochs, each containing one heartbeat
 - Centered on R-peak with configurable pre/post windows
 - Useful for beat-to-beat morphology comparison
@@ -233,6 +255,7 @@ corrected_ecg, is_inverted = nk.ecg_invert(ecg_signal, sampling_rate=1000)
 ```
 
 **Method:**
+
 - Analyzes QRS complex polarity
 - Flips signal if predominantly negative
 - Returns corrected signal and inversion status
@@ -246,11 +269,13 @@ edr_signal = nk.ecg_rsp(ecg_cleaned, sampling_rate=1000, method='vangent2019')
 ```
 
 **Methods:**
+
 - `'vangent2019'`: Bandpass filtering 0.1-0.4 Hz
 - `'charlton2016'`: Bandpass 0.15-0.4 Hz
 - `'soni2019'`: Bandpass 0.08-0.5 Hz
 
 **Use case:**
+
 - Estimate respiration when direct respiratory signal unavailable
 - Multi-modal physiological analysis
 
@@ -265,6 +290,7 @@ synthetic_ecg = nk.ecg_simulate(duration=10, sampling_rate=1000, heart_rate=70, 
 ```
 
 **Methods:**
+
 - `'ecgsyn'`: Realistic dynamical model (McSharry et al., 2003)
   - Simulates P-QRS-T complex morphology
   - Physiologically plausible waveforms
@@ -273,6 +299,7 @@ synthetic_ecg = nk.ecg_simulate(duration=10, sampling_rate=1000, heart_rate=70, 
   - Less realistic but computationally efficient
 
 **Key parameters:**
+
 - `heart_rate`: Average BPM (default: 70)
 - `heart_rate_std`: Heart rate variability magnitude (default: 1)
 - `noise`: Gaussian noise level (default: 0.01)
@@ -287,6 +314,7 @@ nk.ecg_plot(signals, info)
 ```
 
 **Displays:**
+
 - Raw and cleaned ECG signals
 - Detected R-peaks overlaid
 - Heart rate trace
@@ -295,11 +323,13 @@ nk.ecg_plot(signals, info)
 ## ECG-Specific Considerations
 
 ### Sampling Rate Recommendations
+
 - **Minimum**: 250 Hz for basic R-peak detection
 - **Recommended**: 500-1000 Hz for waveform delineation
 - **High-resolution**: 2000+ Hz for detailed morphology analysis
 
 ### Signal Duration Requirements
+
 - **R-peak detection**: Any duration (≥2 beats minimum)
 - **Basic heart rate**: ≥10 seconds
 - **HRV time domain**: ≥60 seconds
@@ -309,17 +339,20 @@ nk.ecg_plot(signals, info)
 ### Common Issues and Solutions
 
 **Poor R-peak detection:**
+
 - Try different methods: `method='pantompkins1985'` often robust
 - Ensure adequate sampling rate (≥250 Hz)
 - Check for inverted ECG: use `ecg_invert()`
 - Apply artifact correction: `correct_artifacts=True`
 
 **Noisy signal:**
+
 - Use appropriate cleaning method for noise type
 - Adjust powerline frequency if outside US/Europe
 - Consider signal quality assessment before analysis
 
 **Missing waveform components:**
+
 - Increase sampling rate (≥500 Hz for delineation)
 - Try different delineation methods (`'dwt'`, `'peak'`, `'cwt'`)
 - Verify signal quality with `ecg_quality()`
@@ -327,6 +360,7 @@ nk.ecg_plot(signals, info)
 ## Integration with Other Signals
 
 ### ECG + RSP: Respiratory Sinus Arrhythmia
+
 ```python
 # Process both signals
 ecg_signals, ecg_info = nk.ecg_process(ecg, sampling_rate=1000)
@@ -337,6 +371,7 @@ rsa = nk.hrv_rsa(ecg_info['ECG_R_Peaks'], rsp_signals['RSP_Clean'], sampling_rat
 ```
 
 ### Multi-modal Integration
+
 ```python
 # Process multiple signals at once
 bio_signals, bio_info = nk.bio_process(

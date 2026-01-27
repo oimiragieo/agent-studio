@@ -9,6 +9,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 ### Oncology Guidelines
 
 **NCCN (National Comprehensive Cancer Network)**
+
 - **Scope**: 60+ cancer types, supportive care guidelines
 - **Update Frequency**: Continuous (online), 1-3 updates per year per guideline
 - **Evidence Categories**:
@@ -20,6 +21,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 - **Application**: US-focused, most widely used in clinical practice
 
 **ASCO (American Society of Clinical Oncology)**
+
 - **Scope**: Evidence-based clinical practice guidelines
 - **Methodology**: Systematic review, GRADE-style evidence tables
 - **Endorsements**: Often endorses NCCN, ESMO, or other guidelines
@@ -28,6 +30,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 - **Quality**: Rigorous methodology, peer-reviewed publication
 
 **ESMO (European Society for Medical Oncology)**
+
 - **Scope**: European guidelines for cancer management
 - **Evidence Levels**:
   - **I**: Evidence from at least one large RCT or meta-analysis
@@ -46,6 +49,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 ### Cardiovascular Guidelines
 
 **AHA/ACC (American Heart Association / American College of Cardiology)**
+
 - **Scope**: Cardiovascular disease prevention, diagnosis, management
 - **Class of Recommendation (COR)**:
   - **Class I**: Strong recommendation - should be performed/administered
@@ -62,6 +66,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 - **Example**: "Statin therapy is recommended for adults with LDL-C ≥190 mg/dL (Class I, LOE A)"
 
 **ESC (European Society of Cardiology)**
+
 - **Scope**: European cardiovascular guidelines
 - **Class of Recommendation**:
   - **I**: Recommended or indicated
@@ -72,19 +77,23 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 ### Other Specialties
 
 **IDSA (Infectious Diseases Society of America)**
+
 - Antimicrobial guidelines, infection management
 - GRADE methodology
 - Strong vs weak recommendations
 
 **ATS/ERS (American Thoracic Society / European Respiratory Society)**
+
 - Respiratory disease management
 - GRADE methodology
 
 **ACR (American College of Rheumatology)**
+
 - Rheumatic disease guidelines
 - Conditionally recommended vs strongly recommended
 
 **KDIGO (Kidney Disease: Improving Global Outcomes)**
+
 - Chronic kidney disease, dialysis, transplant
 - GRADE-based recommendations
 
@@ -101,6 +110,7 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 ### Factors Decreasing Quality (Downgrade)
 
 **Risk of Bias** (-1 or -2 levels)
+
 - Lack of allocation concealment
 - Lack of blinding
 - Incomplete outcome data
@@ -108,24 +118,28 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 - Other sources of bias
 
 **Inconsistency** (-1 or -2 levels)
+
 - Unexplained heterogeneity in results across studies
 - Wide variation in effect estimates
 - Non-overlapping confidence intervals
 - High I² statistic in meta-analysis (>50-75%)
 
 **Indirectness** (-1 or -2 levels)
+
 - Different population than target (younger patients in trials, applying to elderly)
 - Different intervention (higher dose in trial than used in practice)
 - Different comparator (placebo in trial, comparing to active treatment)
 - Surrogate outcomes (PFS) when interested in survival (OS)
 
 **Imprecision** (-1 or -2 levels)
+
 - Wide confidence intervals crossing threshold of benefit/harm
 - Small sample size, few events
 - Optimal information size (OIS) not met
 - Rule of thumb: <300 events for continuous outcomes, <200 events for dichotomous
 
 **Publication Bias** (-1 level)
+
 - Funnel plot asymmetry (if ≥10 studies)
 - Known unpublished studies with negative results
 - Selective outcome reporting
@@ -134,21 +148,25 @@ Evidence synthesis involves systematically reviewing, analyzing, and integrating
 ### Factors Increasing Quality (Upgrade - Observational Only)
 
 **Large Magnitude of Effect** (+1 or +2 levels)
+
 - +1: RR >2 or <0.5 (moderate effect)
 - +2: RR >5 or <0.2 (large effect)
 - No plausible confounders would reduce effect
 
 **Dose-Response Gradient** (+1 level)
+
 - Clear dose-response or duration-response relationship
 - Strengthens causal inference
 
 **All Plausible Confounders Would Reduce Effect** (+1 level)
+
 - Observed effect despite confounders biasing toward null
 - Rare, requires careful justification
 
 ### Final Quality Rating
 
 After adjustments, assign final quality:
+
 - **High (⊕⊕⊕⊕)**: Very confident in effect estimate
 - **Moderate (⊕⊕⊕○)**: Moderately confident; true effect likely close to estimate
 - **Low (⊕⊕○○)**: Limited confidence; true effect may be substantially different
@@ -159,6 +177,7 @@ After adjustments, assign final quality:
 ### PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses)
 
 **Search Strategy**
+
 - **Databases**: PubMed/MEDLINE, Embase, Cochrane Library, Web of Science
 - **Search Terms**: PICO (Population, Intervention, Comparator, Outcome)
 - **Date Range**: Typically last 10-20 years or comprehensive
@@ -166,6 +185,7 @@ After adjustments, assign final quality:
 - **Grey Literature**: Conference abstracts, trial registries, unpublished data
 
 **Study Selection**
+
 ```
 PRISMA Flow Diagram:
 
@@ -187,6 +207,7 @@ Studies included in meta-analysis (n=24)          - Wrong intervention (n=35)
 ```
 
 **Data Extraction**
+
 - Study characteristics: Design, sample size, population, intervention
 - Results: Outcomes, effect sizes, confidence intervals, p-values
 - Quality assessment: Risk of bias tool (Cochrane RoB 2.0 for RCTs)
@@ -195,12 +216,14 @@ Studies included in meta-analysis (n=24)          - Wrong intervention (n=35)
 ### Meta-Analysis Methods
 
 **Fixed-Effect Model**
+
 - **Assumption**: Single true effect size shared by all studies
 - **Weighting**: By inverse variance (larger studies have more weight)
 - **Application**: When heterogeneity is low (I² <25%)
 - **Interpretation**: Estimate of common effect across studies
 
 **Random-Effects Model**
+
 - **Assumption**: True effect varies across studies (distribution of effects)
 - **Weighting**: By inverse variance + between-study variance
 - **Application**: When heterogeneity moderate to high (I² ≥25%)
@@ -210,6 +233,7 @@ Studies included in meta-analysis (n=24)          - Wrong intervention (n=35)
 **Heterogeneity Assessment**
 
 **I² Statistic**
+
 - Percentage of variability due to heterogeneity rather than chance
 - I² = 0-25%: Low heterogeneity
 - I² = 25-50%: Moderate heterogeneity
@@ -217,20 +241,24 @@ Studies included in meta-analysis (n=24)          - Wrong intervention (n=35)
 - I² = 75-100%: Considerable heterogeneity
 
 **Q Test (Cochran's Q)**
+
 - Test for heterogeneity
 - p<0.10 suggests significant heterogeneity (liberal threshold)
 - Low power when few studies, use I² as primary measure
 
 **Tau² (τ²)**
+
 - Estimate of between-study variance
 - Used in random-effects weighting
 
 **Subgroup Analysis**
+
 - Explore sources of heterogeneity
 - Pre-specified subgroups: Disease stage, biomarker status, treatment regimen
 - Test for interaction between subgroups
 
 **Forest Plot Interpretation**
+
 ```
 Study               n     HR (95% CI)          Weight
 ─────────────────────────────────────────────────────────────
@@ -251,6 +279,7 @@ Heterogeneity: I²=42%, p=0.16
 ### Concordance Checking
 
 **Multi-Guideline Comparison**
+
 ```
 Recommendation: First-line treatment for advanced NSCLC, PD-L1 ≥50%
 
@@ -266,6 +295,7 @@ Alternative: Pembrolizumab + chemotherapy also Category 1/I-A recommended.
 ```
 
 **Discordance Resolution**
+
 - Identify differences and reasons (geography, cost, access, evidence interpretation)
 - Note date of each guideline (newer may incorporate recent trials)
 - Consider regional applicability
@@ -274,17 +304,20 @@ Alternative: Pembrolizumab + chemotherapy also Category 1/I-A recommended.
 ### Regulatory Approval Landscape
 
 **FDA Approvals**
+
 - Track indication-specific approvals
 - Accelerated approval vs full approval
 - Post-marketing requirements
 - Contraindications and warnings
 
 **EMA (European Medicines Agency)**
+
 - May differ from FDA in approved indications
 - Conditional marketing authorization
 - Additional monitoring (black triangle)
 
 **Regional Variations**
+
 - Health Technology Assessment (HTA) agencies
 - NICE (UK): Cost-effectiveness analysis, QALY thresholds
 - CADTH (Canada): Therapeutic review and recommendations
@@ -295,24 +328,28 @@ Alternative: Pembrolizumab + chemotherapy also Category 1/I-A recommended.
 ### Sources of RWE
 
 **Electronic Health Records (EHR)**
+
 - Clinical data from routine practice
 - Large patient numbers
 - Heterogeneous populations (more generalizable than RCTs)
 - Limitations: Missing data, inconsistent documentation, selection bias
 
 **Claims Databases**
+
 - Administrative claims for billing/reimbursement
 - Large scale (millions of patients)
 - Outcomes: Mortality, hospitalizations, procedures
 - Limitations: Lack clinical detail (labs, imaging, biomarkers)
 
 **Cancer Registries**
+
 - **SEER (Surveillance, Epidemiology, and End Results)**: US cancer registry
 - **NCDB (National Cancer Database)**: Hospital registry data
 - Population-level survival, treatment patterns
 - Limited treatment detail, no toxicity data
 
 **Prospective Cohorts**
+
 - Framingham Heart Study, Nurses' Health Study
 - Long-term follow-up, rich covariate data
 - Expensive, time-consuming
@@ -320,29 +357,34 @@ Alternative: Pembrolizumab + chemotherapy also Category 1/I-A recommended.
 ### RWE Applications
 
 **Comparative Effectiveness**
+
 - Compare treatments in real-world settings (less strict eligibility than RCTs)
 - Complement RCT data with broader populations
 - Example: Effectiveness of immunotherapy in elderly, poor PS patients excluded from trials
 
 **Safety Signal Detection**
+
 - Rare adverse events not detected in trials
 - Long-term toxicities
 - Drug-drug interactions in polypharmacy
 - Postmarketing surveillance
 
 **Treatment Patterns and Access**
+
 - Guideline adherence in community practice
 - Time to treatment initiation
 - Disparities in care delivery
 - Off-label use prevalence
 
 **Limitations of RWE**
+
 - **Confounding by indication**: Sicker patients receive more aggressive treatment
 - **Immortal time bias**: Time between events affecting survival estimates
 - **Missing data**: Incomplete or inconsistent data collection
 - **Causality**: Association does not prove causation without randomization
 
 **Strengthening RWE**
+
 - **Propensity score matching**: Balance baseline characteristics between groups
 - **Multivariable adjustment**: Adjust for measured confounders in Cox model
 - **Sensitivity analyses**: Test robustness to unmeasured confounding
@@ -353,11 +395,13 @@ Alternative: Pembrolizumab + chemotherapy also Category 1/I-A recommended.
 ### Binary Outcomes (Response Rate, Event Rate)
 
 **Effect Measures**
+
 - **Risk Ratio (RR)**: Ratio of event probabilities
 - **Odds Ratio (OR)**: Ratio of odds (less intuitive)
 - **Risk Difference (RD)**: Absolute difference in event rates
 
 **Example Calculation**
+
 ```
 Study 1:
 - Treatment A: 30/100 responded (30%)
@@ -368,6 +412,7 @@ Study 1:
 ```
 
 **Pooling Methods**
+
 - **Mantel-Haenszel**: Common fixed-effect method
 - **DerSimonian-Laird**: Random-effects method
 - **Peto**: For rare events (event rate <1%)
@@ -375,12 +420,14 @@ Study 1:
 ### Time-to-Event Outcomes (Survival, PFS)
 
 **Hazard Ratio Pooling**
+
 - Extract HR and 95% CI (or log(HR) and SE) from each study
 - Weight by inverse variance
 - Pool using generic inverse variance method
 - Report pooled HR with 95% CI, heterogeneity statistics
 
 **When HR Not Reported**
+
 - Extract from Kaplan-Meier curves (Parmar method, digitizing software)
 - Calculate from log-rank p-value and event counts
 - Request from study authors
@@ -388,11 +435,13 @@ Study 1:
 ### Continuous Outcomes (Quality of Life, Lab Values)
 
 **Standardized Mean Difference (SMD)**
+
 - Application: Different scales used across studies
 - SMD = (Mean₁ - Mean₂) / Pooled SD
 - Interpretation: Cohen's d effect size (0.2 small, 0.5 medium, 0.8 large)
 
 **Mean Difference (MD)**
+
 - Application: Same scale/unit used across studies
 - MD = Mean₁ - Mean₂
 - More directly interpretable than SMD
@@ -404,23 +453,27 @@ Study 1:
 Compare multiple treatments simultaneously when no head-to-head trials exist
 
 **Example Scenario**
+
 - Drug A vs placebo (Trial 1)
-- Drug B vs placebo (Trial 2)  
+- Drug B vs placebo (Trial 2)
 - Drug C vs Drug A (Trial 3)
 - **Question**: How does Drug B compare to Drug C? (no direct comparison)
 
 ### Methods
 
 **Fixed-Effect Network Meta-Analysis**
+
 - Assumes consistency (transitivity): A vs B effect = (A vs C effect) - (B vs C effect)
 - Provides indirect comparison estimates
 - Ranks treatments by P-score or SUCRA
 
 **Random-Effects Network Meta-Analysis**
+
 - Allows heterogeneity between studies
 - More conservative estimates
 
 **Consistency Checking**
+
 - Compare direct vs indirect evidence for same comparison
 - Node-splitting analysis
 - Loop consistency (if closed loops in network)
@@ -437,12 +490,14 @@ Compare multiple treatments simultaneously when no head-to-head trials exist
 ### Constructing Evidence Summary Tables
 
 **PICO Framework**
+
 - **P (Population)**: Patient characteristics, disease stage, biomarker status
 - **I (Intervention)**: Treatment regimen, dose, schedule
 - **C (Comparator)**: Control arm (placebo, standard of care)
 - **O (Outcomes)**: Primary and secondary endpoints
 
 **Evidence Table Template**
+
 ```
 Study         Design  n    Population      Intervention vs Comparator   Outcome            Result                Quality
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -451,7 +506,7 @@ Smith 2020    RCT     450  Advanced NSCLC  Drug A 10mg vs               Median P
                                                                         HR (95% CI)        0.48 (0.36-0.64)
                                                                         p-value            p<0.001
 
-                                                                        ORR                65% vs 35%            
+                                                                        ORR                65% vs 35%
                                                                         Grade 3-4 AEs      42% vs 38%
 
 Jones 2021    RCT     380  Advanced NSCLC  Drug A 10mg vs               Median PFS         10 vs 5.5 months      High
@@ -465,23 +520,27 @@ Pooled Effect                                                          Pooled HR
 ### Evidence to Decision Framework
 
 **Benefits and Harms**
+
 - Magnitude of desirable effects (ORR, PFS, OS improvement)
 - Magnitude of undesirable effects (toxicity, quality of life impact)
 - Balance of benefits and harms
 - Net benefit calculation
 
 **Values and Preferences**
+
 - How do patients value outcomes? (survival vs quality of life)
 - Variability in patient values
 - Shared decision-making importance
 
 **Resource Considerations**
+
 - Cost of intervention
 - Cost-effectiveness ($/QALY)
 - Budget impact
 - Equity and access
 
 **Feasibility and Acceptability**
+
 - Is treatment available in practice settings?
 - Route of administration feasible? (oral vs IV vs subcutaneous)
 - Monitoring requirements realistic?
@@ -492,6 +551,7 @@ Pooled Effect                                                          Pooled HR
 ### Synthesizing Multiple Guidelines
 
 **Concordant Recommendations**
+
 ```
 Clinical Question: Treatment for HER2+ metastatic breast cancer, first-line
 
@@ -511,16 +571,17 @@ ASCO 2020 Endorsement:
 Synthesis:
   Strong consensus for pertuzumab + trastuzumab + taxane as first-line standard.
   Evidence: CLEOPATRA trial (Swain 2015): median OS 56.5 vs 40.8 months (HR 0.68, p<0.001)
-  
+
 Recommendation:
-  Pertuzumab 840 mg IV loading then 420 mg + trastuzumab 8 mg/kg loading then 6 mg/kg 
+  Pertuzumab 840 mg IV loading then 420 mg + trastuzumab 8 mg/kg loading then 6 mg/kg
   + docetaxel 75 mg/m² every 3 weeks until progression.
-  
+
   Strength: Strong (GRADE 1A)
   Evidence: High-quality, multiple RCTs, guideline concordance
 ```
 
 **Discordant Recommendations**
+
 ```
 Clinical Question: Adjuvant osimertinib for resected EGFR+ NSCLC
 
@@ -539,7 +600,7 @@ NICE (UK) 2022:
 Synthesis:
   Efficacy demonstrated in phase 3 trial (ADAURA), FDA/EMA approved.
   Guideline discordance based on cost-effectiveness, not clinical efficacy.
-  
+
   US practice: NCCN Category 1, widely adopted
   European/UK: Variable adoption based on national HTA decisions
 
@@ -553,6 +614,7 @@ Recommendation Context-Dependent:
 ### RCT Quality Assessment (Cochrane Risk of Bias 2.0)
 
 **Domains**
+
 1. **Bias from randomization process**: Sequence generation, allocation concealment
 2. **Bias from deviations from intended interventions**: Blinding, protocol adherence
 3. **Bias from missing outcome data**: Attrition, intention-to-treat analysis
@@ -566,20 +628,24 @@ Recommendation Context-Dependent:
 ### Observational Study Quality (Newcastle-Ottawa Scale)
 
 **Selection (max 4 stars)**
+
 - Representativeness of exposed cohort
 - Selection of non-exposed cohort
 - Ascertainment of exposure
 - Outcome not present at start
 
 **Comparability (max 2 stars)**
+
 - Comparability of cohorts (design/analysis adjustment for confounders)
 
 **Outcome (max 3 stars)**
+
 - Assessment of outcome
 - Follow-up duration adequate
 - Adequacy of follow-up (low attrition)
 
 **Total Score**: 0-9 stars
+
 - **High quality**: 7-9 stars
 - **Moderate quality**: 4-6 stars
 - **Low quality**: 0-3 stars
@@ -589,6 +655,7 @@ Recommendation Context-Dependent:
 ### Recommendation Development Process
 
 **Step 1: PICO Question Formulation**
+
 ```
 Example PICO:
 P - Population: Adults with type 2 diabetes and cardiovascular disease
@@ -598,12 +665,14 @@ O - Outcomes: Major adverse cardiovascular events (3P-MACE), hospitalization for
 ```
 
 **Step 2: Systematic Evidence Review**
+
 - Identify all relevant studies
 - Assess quality using standardized tools
 - Extract outcome data
 - Synthesize findings (narrative or meta-analysis)
 
 **Step 3: GRADE Evidence Rating**
+
 - Start at high (RCTs) or low (observational)
 - Downgrade for risk of bias, inconsistency, indirectness, imprecision, publication bias
 - Upgrade for large effect, dose-response, confounders reducing effect (observational only)
@@ -612,27 +681,30 @@ O - Outcomes: Major adverse cardiovascular events (3P-MACE), hospitalization for
 **Step 4: Recommendation Strength Determination**
 
 **Strong Recommendation (Grade 1)**
+
 - Desirable effects clearly outweigh undesirable effects
 - High or moderate quality evidence
 - Little variability in patient values
 - Intervention cost-effective
 
 **Conditional Recommendation (Grade 2)**
+
 - Trade-offs: Desirable and undesirable effects closely balanced
 - Low or very low quality evidence
 - Substantial variability in patient values/preferences
 - Uncertain cost-effectiveness
 
 **Step 5: Wording the Recommendation**
+
 ```
 Strong: "We recommend..."
-  Example: "We recommend SGLT2 inhibitor therapy for adults with type 2 diabetes and 
-  established cardiovascular disease to reduce risk of hospitalization for heart failure 
+  Example: "We recommend SGLT2 inhibitor therapy for adults with type 2 diabetes and
+  established cardiovascular disease to reduce risk of hospitalization for heart failure
   and cardiovascular death (Strong recommendation, high-quality evidence - GRADE 1A)."
 
 Conditional: "We suggest..."
-  Example: "We suggest considering GLP-1 receptor agonist therapy for adults with type 2 
-  diabetes and CKD to reduce risk of kidney disease progression (Conditional recommendation, 
+  Example: "We suggest considering GLP-1 receptor agonist therapy for adults with type 2
+  diabetes and CKD to reduce risk of kidney disease progression (Conditional recommendation,
   moderate-quality evidence - GRADE 2B)."
 ```
 
@@ -641,24 +713,28 @@ Conditional: "We suggest..."
 ### Early-Phase Trial Data
 
 **Phase 1 Trials**
+
 - Purpose: Dose-finding, safety
 - Outcomes: Maximum tolerated dose (MTD), dose-limiting toxicities (DLTs), pharmacokinetics
 - Evidence level: Very low (expert opinion, case series)
 - Clinical application: Investigational only, clinical trial enrollment
 
 **Phase 2 Trials**
+
 - Purpose: Preliminary efficacy signal
 - Design: Single-arm (ORR primary endpoint) or randomized (PFS comparison)
 - Evidence level: Low to moderate
 - Clinical application: May support off-label use in refractory settings, clinical trial enrollment preferred
 
 **Phase 3 Trials**
+
 - Purpose: Confirmatory efficacy and safety
 - Design: Randomized controlled trial, OS or PFS primary endpoint
 - Evidence level: High (if well-designed and executed)
 - Clinical application: Regulatory approval basis, guideline recommendations
 
 **Phase 4 Trials**
+
 - Purpose: Post-marketing surveillance, additional indications
 - Evidence level: Variable (depends on design)
 - Clinical application: Safety monitoring, expanded usage
@@ -666,12 +742,14 @@ Conditional: "We suggest..."
 ### Breakthrough Therapy Designation
 
 **FDA Fast-Track Programs**
+
 - **Breakthrough Therapy**: Preliminary evidence of substantial improvement over existing therapy
 - **Accelerated Approval**: Approval based on surrogate endpoint (PFS, ORR)
   - Post-marketing requirement: Confirmatory OS trial
 - **Priority Review**: Shortened FDA review time (6 vs 10 months)
 
 **Implications for Guidelines**
+
 - May receive NCCN Category 2A before phase 3 data mature
 - Upgrade to Category 1 when confirmatory data published
 - Monitor for post-market confirmatory trial results
@@ -679,6 +757,7 @@ Conditional: "We suggest..."
 ### Updating Recommendations
 
 **Triggers for Update**
+
 - New phase 3 trial results (major journal publication)
 - FDA/EMA approval for new indication or agent
 - Guideline update from NCCN, ASCO, ESMO
@@ -686,6 +765,7 @@ Conditional: "We suggest..."
 - Meta-analysis changing effect estimates
 
 **Rapid Update Process**
+
 - Critical appraisal of new evidence
 - Assess impact on current recommendations
 - Revise evidence grade and recommendation strength if needed
@@ -697,16 +777,19 @@ Conditional: "We suggest..."
 ### Identifying Potential Bias
 
 **Study Sponsorship**
+
 - **Industry-sponsored**: May favor sponsor's product (publication bias, outcome selection)
 - **Academic**: May favor investigator's hypothesis
 - **Independent**: Government funding (NIH, PCORI)
 
 **Author Conflicts of Interest**
+
 - Consulting fees, research funding, stock ownership
 - Disclosure statements required by journals
 - ICMJE Form for Disclosure of Potential COI
 
 **Mitigating Bias**
+
 - Register trials prospectively (ClinicalTrials.gov)
 - Pre-specify primary endpoint and analysis plan
 - Independent data monitoring committee (IDMC)
@@ -716,16 +799,19 @@ Conditional: "We suggest..."
 ### Transparency in Evidence Synthesis
 
 **Pre-Registration**
+
 - PROSPERO for systematic reviews
 - Pre-specify PICO, search strategy, outcomes, analysis plan
 - Prevents post-hoc changes to avoid negative findings
 
 **Reporting Checklists**
+
 - PRISMA for systematic reviews/meta-analyses
 - CONSORT for RCTs
 - STROBE for observational studies
 
 **Data Availability**
+
 - Individual patient data (IPD) sharing increases transparency
 - Repositories: ClinicalTrials.gov results database, journal supplements
 
@@ -737,7 +823,7 @@ Conditional: "We suggest..."
 EVIDENCE SYNTHESIS: Osimertinib for EGFR-Mutated NSCLC
 
 Clinical Question:
-Should adults with treatment-naïve advanced NSCLC harboring EGFR exon 19 deletion 
+Should adults with treatment-naïve advanced NSCLC harboring EGFR exon 19 deletion
 or L858R mutation receive osimertinib versus first-generation EGFR TKIs?
 
 Evidence Review:
@@ -785,9 +871,9 @@ GRADE Assessment:
   Cost: Higher cost than first-gen TKIs, but widely accessible in developed countries
 
 FINAL RECOMMENDATION:
-  Osimertinib 80 mg PO daily is recommended as first-line therapy for adults with 
+  Osimertinib 80 mg PO daily is recommended as first-line therapy for adults with
   advanced NSCLC harboring EGFR exon 19 deletion or L858R mutation.
-  
+
   Strength: STRONG (Grade 1)
   Quality of Evidence: HIGH (⊕⊕⊕⊕)
   GRADE: 1A
@@ -798,12 +884,14 @@ FINAL RECOMMENDATION:
 ### Literature Surveillance
 
 **Automated Alerts**
+
 - PubMed My NCBI (save searches, email alerts)
 - Google Scholar alerts for specific topics
 - Journal table of contents alerts (NEJM, Lancet, JCO)
 - Guideline update notifications (NCCN, ASCO, ESMO email lists)
 
 **Conference Monitoring**
+
 - ASCO Annual Meeting (June)
 - ESMO Congress (September)
 - ASH Annual Meeting (December, hematology)
@@ -811,6 +899,7 @@ FINAL RECOMMENDATION:
 - Plenary and press releases for practice-changing trials
 
 **Trial Results Databases**
+
 - ClinicalTrials.gov results database
 - FDA approval letters and reviews
 - EMA European public assessment reports (EPARs)
@@ -818,6 +907,7 @@ FINAL RECOMMENDATION:
 ### Critical Appraisal Workflow
 
 **Weekly Review**
+
 1. Screen new publications (title/abstract)
 2. Full-text review of relevant studies
 3. Quality assessment using checklists
@@ -825,6 +915,7 @@ FINAL RECOMMENDATION:
 5. Assess impact on current recommendations
 
 **Monthly Synthesis**
+
 1. Review accumulated evidence
 2. Identify practice-changing findings
 3. Update evidence tables
@@ -832,9 +923,9 @@ FINAL RECOMMENDATION:
 5. Disseminate updates to clinical teams
 
 **Annual Comprehensive Review**
+
 1. Systematic review of guideline updates
 2. Re-assess all recommendations
 3. Incorporate year's evidence
 4. Major version release
 5. Continuing education activities
-

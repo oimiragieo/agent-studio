@@ -65,11 +65,11 @@ output_dir.mkdir(exist_ok=True)
 
 for paper in papers_dir.glob("*.pdf"):
     result = md.convert(str(paper))
-    
+
     # Save with original filename
     output_file = output_dir / f"{paper.stem}.md"
     output_file.write_text(result.text_content)
-    
+
     print(f"Converted: {paper.name}")
 ```
 
@@ -204,10 +204,10 @@ for file in files_to_convert:
     try:
         result = md.convert(file)
         output = Path(file).stem + ".md"
-        
+
         with open(output, "w") as f:
             f.write(result.text_content)
-        
+
         print(f"✓ {file} -> {output}")
     except Exception as e:
         print(f"✗ Error converting {file}: {e}")
@@ -223,18 +223,18 @@ from concurrent.futures import ThreadPoolExecutor
 def convert_file(filepath):
     md = MarkItDown()
     result = md.convert(filepath)
-    
+
     output = Path(filepath).stem + ".md"
     with open(output, "w") as f:
         f.write(result.text_content)
-    
+
     return filepath, output
 
 files = list(Path("documents/").glob("*.pdf"))
 
 with ThreadPoolExecutor(max_workers=4) as executor:
     results = executor.map(convert_file, [str(f) for f in files])
-    
+
     for input_file, output_file in results:
         print(f"Converted: {input_file} -> {output_file}")
 ```
@@ -259,11 +259,11 @@ catalog = []
 
 for paper in papers_dir.glob("*.pdf"):
     result = md.convert(str(paper))
-    
+
     # Save Markdown
     md_file = output_dir / f"{paper.stem}.md"
     md_file.write_text(result.text_content)
-    
+
     # Store metadata
     catalog.append({
         "title": result.title or paper.stem,
@@ -347,21 +347,21 @@ def safe_convert(filepath):
     try:
         result = md.convert(filepath)
         output = Path(filepath).stem + ".md"
-        
+
         with open(output, "w") as f:
             f.write(result.text_content)
-        
+
         logger.info(f"Successfully converted {filepath}")
         return True
-    
+
     except FileNotFoundError:
         logger.error(f"File not found: {filepath}")
         return False
-    
+
     except ValueError as e:
         logger.error(f"Invalid file format for {filepath}: {e}")
         return False
-    
+
     except Exception as e:
         logger.error(f"Unexpected error converting {filepath}: {e}")
         return False
@@ -386,7 +386,7 @@ md = MarkItDown()
 
 def convert_with_metadata(filepath):
     result = md.convert(filepath)
-    
+
     # Extract metadata from content
     metadata = {
         "file": filepath,
@@ -395,12 +395,12 @@ def convert_with_metadata(filepath):
         "word_count": len(result.text_content.split()),
         "char_count": len(result.text_content)
     }
-    
+
     # Try to find author
     author_match = re.search(r'(?:Author|By):\s*(.+?)(?:\n|$)', result.text_content)
     if author_match:
         metadata["author"] = author_match.group(1).strip()
-    
+
     # Create formatted output
     output = f"""---
 title: {metadata['title']}
@@ -412,7 +412,7 @@ words: {metadata['word_count']}
 
 {result.text_content}
 """
-    
+
     return output, metadata
 
 # Use it
@@ -431,33 +431,32 @@ md = MarkItDown()
 def process_by_format(filepath):
     path = Path(filepath)
     result = md.convert(filepath)
-    
+
     if path.suffix == '.pdf':
         # Add PDF-specific metadata
         output = f"# PDF Document: {path.stem}\n\n"
         output += result.text_content
-    
+
     elif path.suffix == '.xlsx':
         # Add table count
         table_count = result.text_content.count('|---')
         output = f"# Excel Data: {path.stem}\n\n"
         output += f"**Tables**: {table_count}\n\n"
         output += result.text_content
-    
+
     elif path.suffix == '.pptx':
         # Add slide count
         slide_count = result.text_content.count('## Slide')
         output = f"# Presentation: {path.stem}\n\n"
         output += f"**Slides**: {slide_count}\n\n"
         output += result.text_content
-    
+
     else:
         output = result.text_content
-    
+
     return output
 
 # Use it
 content = process_by_format("presentation.pptx")
 print(content)
 ```
-

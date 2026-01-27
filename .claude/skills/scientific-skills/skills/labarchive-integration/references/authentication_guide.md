@@ -5,6 +5,7 @@
 ### 1. Enterprise License
 
 API access requires an Enterprise LabArchives license. Contact your LabArchives administrator or sales@labarchives.com to:
+
 - Verify your institution has Enterprise access
 - Request API access enablement for your account
 - Obtain institutional API credentials
@@ -14,10 +15,12 @@ API access requires an Enterprise LabArchives license. Contact your LabArchives 
 You need two sets of credentials:
 
 #### Institutional API Credentials (from LabArchives administrator)
+
 - **Access Key ID**: Institution-level identifier
 - **Access Password**: Institution-level secret
 
 #### User Authentication Credentials (self-configured)
+
 - **Email**: Your LabArchives account email (e.g., researcher@university.edu)
 - **External Applications Password**: Set in your LabArchives account settings
 
@@ -70,11 +73,11 @@ export LABARCHIVES_USER_PASSWORD="your_external_app_password"
 
 Select the correct regional API endpoint for your institution:
 
-| Region | Endpoint | Use if your LabArchives URL is |
-|--------|----------|--------------------------------|
-| US/International | `https://api.labarchives.com/api` | `mynotebook.labarchives.com` |
-| Australia | `https://auapi.labarchives.com/api` | `aunotebook.labarchives.com` |
-| UK | `https://ukapi.labarchives.com/api` | `uknotebook.labarchives.com` |
+| Region           | Endpoint                            | Use if your LabArchives URL is |
+| ---------------- | ----------------------------------- | ------------------------------ |
+| US/International | `https://api.labarchives.com/api`   | `mynotebook.labarchives.com`   |
+| Australia        | `https://auapi.labarchives.com/api` | `aunotebook.labarchives.com`   |
+| UK               | `https://ukapi.labarchives.com/api` | `uknotebook.labarchives.com`   |
 
 Using the wrong regional endpoint will result in authentication failures even with correct credentials.
 

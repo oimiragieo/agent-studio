@@ -5,6 +5,7 @@ Comprehensive guide to searching Google Scholar for academic papers, including a
 ## Overview
 
 Google Scholar provides the most comprehensive coverage of academic literature across all disciplines:
+
 - **Coverage**: 100+ million scholarly documents
 - **Scope**: All academic disciplines
 - **Content types**: Journal articles, books, theses, conference papers, preprints, patents, court opinions
@@ -25,6 +26,7 @@ quantum computing algorithms
 ```
 
 **Tips**:
+
 - Use specific technical terms
 - Include key acronyms and abbreviations
 - Start broad, then refine
@@ -42,6 +44,7 @@ Use quotation marks to search for exact phrases:
 ```
 
 **When to use**:
+
 - Technical terms that must appear together
 - Proper names
 - Specific methodologies
@@ -60,11 +63,13 @@ author:Church synthetic biology
 ```
 
 **Variations**:
+
 - Single last name: `author:Smith`
 - Full name in quotes: `author:"Jane Smith"`
 - Author + topic: `author:Doudna CRISPR`
 
 **Tips**:
+
 - Authors may publish under different name variations
 - Try with and without middle initials
 - Consider name changes (marriage, etc.)
@@ -81,6 +86,7 @@ intitle:review climate change
 ```
 
 **Use cases**:
+
 - Finding papers specifically about a topic
 - More precise than full-text search
 - Reduces irrelevant results
@@ -98,6 +104,7 @@ source:"Journal of Machine Learning Research"
 ```
 
 **Applications**:
+
 - Track publications in top-tier venues
 - Find papers in specialized journals
 - Identify conference-specific work
@@ -115,6 +122,7 @@ deep learning -tutorial -review
 ```
 
 **Common exclusions**:
+
 - `-survey`: Exclude survey papers
 - `-review`: Exclude review articles
 - `-patent`: Exclude patents
@@ -133,6 +141,7 @@ CRISPR OR "gene editing"
 ```
 
 **Best practices**:
+
 - OR must be uppercase
 - Combine synonyms
 - Include acronyms and spelled-out versions
@@ -140,7 +149,7 @@ CRISPR OR "gene editing"
 
 ### Wildcard Search
 
-Use asterisk (*) as wildcard for unknown words:
+Use asterisk (\*) as wildcard for unknown words:
 
 ```
 "machine * learning"
@@ -157,16 +166,19 @@ Use asterisk (*) as wildcard for unknown words:
 Filter by publication year:
 
 **Using interface**:
+
 - Click "Since [year]" on left sidebar
 - Select custom range
 
 **Using search operators**:
+
 ```
 # Not directly in search query
 # Use interface or URL parameters
 ```
 
 **In script**:
+
 ```bash
 python scripts/search_google_scholar.py "quantum computing" \
   --year-start 2020 \
@@ -176,17 +188,20 @@ python scripts/search_google_scholar.py "quantum computing" \
 ### Sorting Options
 
 **By relevance** (default):
+
 - Google's algorithm determines relevance
 - Considers citations, author reputation, publication venue
 - Generally good for most searches
 
 **By date**:
+
 - Most recent papers first
 - Good for fast-moving fields
 - May miss highly cited older papers
 - Click "Sort by date" in interface
 
 **By citation count** (via script):
+
 ```bash
 python scripts/search_google_scholar.py "transformers" \
   --sort-by citations \
@@ -196,6 +211,7 @@ python scripts/search_google_scholar.py "transformers" \
 ### Language Filtering
 
 **In interface**:
+
 - Settings → Languages
 - Select preferred languages
 
@@ -213,6 +229,7 @@ Identify highly influential papers in a field:
 4. **Check publication dates** for foundational vs recent work
 
 **Example**:
+
 ```
 "generative adversarial networks"
 # Sort by citations
@@ -229,6 +246,7 @@ Stay current with latest research:
 4. **Set up alerts** for ongoing tracking
 
 **Example**:
+
 ```bash
 python scripts/search_google_scholar.py "AlphaFold protein structure" \
   --year-start 2023 \
@@ -247,6 +265,7 @@ intitle:survey "natural language processing"
 ```
 
 **Indicators**:
+
 - "review", "survey", "perspective" in title
 - Often highly cited
 - Published in review journals (Nature Reviews, Trends, etc.)
@@ -255,18 +274,21 @@ intitle:survey "natural language processing"
 ### Citation Chain Search
 
 **Forward citations** (papers citing a key paper):
+
 1. Find seminal paper
 2. Click "Cited by X"
 3. See all papers that cite it
 4. Identify how field has developed
 
 **Backward citations** (references in a key paper):
+
 1. Find recent review or important paper
 2. Check its reference list
 3. Identify foundational work
 4. Trace development of ideas
 
 **Example workflow**:
+
 ```
 # Find original transformer paper
 "Attention is all you need" author:Vaswani
@@ -288,11 +310,13 @@ For thorough coverage (e.g., systematic reviews):
    - US vs UK spelling
 
 2. **Use OR operators**:
+
    ```
    ("machine learning" OR "deep learning" OR "neural networks")
    ```
 
 3. **Combine multiple concepts**:
+
    ```
    ("machine learning" OR "deep learning") ("drug discovery" OR "drug development")
    ```
@@ -314,6 +338,7 @@ For thorough coverage (e.g., systematic reviews):
 ### From Google Scholar Results Page
 
 Each result shows:
+
 - **Title**: Paper title (linked to full text if available)
 - **Authors**: Author list (often truncated)
 - **Source**: Journal/conference, year, publisher
@@ -324,16 +349,19 @@ Each result shows:
 ### Export Options
 
 **Manual export**:
+
 1. Click "Cite" under paper
 2. Select BibTeX format
 3. Copy citation
 
 **Limitations**:
+
 - One paper at a time
 - Manual process
 - Time-consuming for many papers
 
 **Automated export** (using script):
+
 ```bash
 # Search and export to BibTeX
 python scripts/search_google_scholar.py "quantum computing" \
@@ -345,6 +373,7 @@ python scripts/search_google_scholar.py "quantum computing" \
 ### Metadata Available
 
 From Google Scholar you can typically extract:
+
 - Title
 - Authors (may be incomplete)
 - Year
@@ -354,6 +383,7 @@ From Google Scholar you can typically extract:
 - Link to PDF (when available)
 
 **Note**: Metadata quality varies:
+
 - Some fields may be missing
 - Author names may be incomplete
 - Need to verify with DOI lookup for accuracy
@@ -365,11 +395,13 @@ From Google Scholar you can typically extract:
 Google Scholar has rate limiting to prevent automated scraping:
 
 **Symptoms of rate limiting**:
+
 - CAPTCHA challenges
 - Temporary IP blocks
 - 429 "Too Many Requests" errors
 
 **Best practices**:
+
 1. **Add delays between requests**: 2-5 seconds minimum
 2. **Limit query volume**: Don't search hundreds of queries rapidly
 3. **Use scholarly library**: Handles rate limiting automatically
@@ -377,6 +409,7 @@ Google Scholar has rate limiting to prevent automated scraping:
 5. **Consider proxies**: For large-scale searches (use ethically)
 
 **In our scripts**:
+
 ```python
 # Automatic rate limiting built in
 time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
@@ -385,6 +418,7 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
 ### Ethical Considerations
 
 **DO**:
+
 - Respect rate limits
 - Use reasonable delays
 - Cache results (don't re-query)
@@ -392,6 +426,7 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
 - Attribute data properly
 
 **DON'T**:
+
 - Scrape aggressively
 - Use multiple IPs to bypass limits
 - Violate terms of service
@@ -401,12 +436,14 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
 ### Institutional Access
 
 **Benefits of institutional access**:
+
 - Access to full-text PDFs through library subscriptions
 - Better download capabilities
 - Integration with library systems
 - Link resolver to full text
 
 **Setup**:
+
 - Google Scholar → Settings → Library links
 - Add your institution
 - Links appear in search results
@@ -416,10 +453,11 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
 ### Search Optimization
 
 1. **Start simple, then refine**:
+
    ```
    # Too specific initially
    intitle:"deep learning" intitle:review source:Nature 2023..2024
-   
+
    # Better approach
    deep learning review
    # Review results
@@ -439,10 +477,11 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
    - Try common misspellings if few results
 
 4. **Combine operators strategically**:
+
    ```
    # Good combination
    author:Church intitle:"synthetic biology" 2015..2024
-   
+
    # Find reviews by specific author on topic in recent years
    ```
 
@@ -488,11 +527,12 @@ time.sleep(random.uniform(3, 7))  # Random delay 3-7 seconds
    - Add labels and notes
 
 4. **Export systematically**:
+
    ```bash
    # Save search results for later analysis
    python scripts/search_google_scholar.py "your topic" \
      --output topic_papers.json
-   
+
    # Can re-process later without re-searching
    python scripts/extract_metadata.py \
      --input topic_papers.json \
@@ -529,6 +569,7 @@ machine learning
 ```
 
 **In script**:
+
 ```bash
 python scripts/search_google_scholar.py "topic" \
   --open-access-only \
@@ -538,6 +579,7 @@ python scripts/search_google_scholar.py "topic" \
 ### Tracking Research Impact
 
 **For a specific paper**:
+
 1. Find the paper
 2. Click "Cited by X"
 3. Analyze citing papers:
@@ -546,12 +588,14 @@ python scripts/search_google_scholar.py "topic" \
    - Recent vs older citations?
 
 **For an author**:
+
 1. Search `author:LastName`
 2. Check h-index and i10-index
 3. View citation history graph
 4. Identify most influential papers
 
 **For a topic**:
+
 1. Search topic
 2. Sort by citations
 3. Identify seminal papers (highly cited, older)
@@ -579,6 +623,7 @@ source:biorxiv CRISPR
 **Problem**: Search returns 100,000+ results, overwhelming.
 
 **Solutions**:
+
 1. Add more specific terms
 2. Use `intitle:` to search only titles
 3. Filter by recent years
@@ -590,6 +635,7 @@ source:biorxiv CRISPR
 **Problem**: Search returns 0-10 results, suspiciously few.
 
 **Solutions**:
+
 1. Remove restrictive operators
 2. Try synonyms and related terms
 3. Check spelling
@@ -601,6 +647,7 @@ source:biorxiv CRISPR
 **Problem**: Results don't match intent.
 
 **Solutions**:
+
 1. Use exact phrases with quotes
 2. Add more specific context terms
 3. Use `intitle:` for title-only search
@@ -612,6 +659,7 @@ source:biorxiv CRISPR
 **Problem**: Google Scholar shows CAPTCHA or blocks access.
 
 **Solutions**:
+
 1. Wait several minutes before continuing
 2. Reduce query frequency
 3. Use longer delays in scripts (5-10 seconds)
@@ -623,6 +671,7 @@ source:biorxiv CRISPR
 **Problem**: Author names, year, or venue missing from results.
 
 **Solutions**:
+
 1. Click through to see full details
 2. Check "All versions" for better metadata
 3. Look up by DOI if available
@@ -634,6 +683,7 @@ source:biorxiv CRISPR
 **Problem**: Same paper appears multiple times.
 
 **Solutions**:
+
 1. Click "All X versions" to see consolidated view
 2. Choose version with best metadata
 3. Use deduplication in post-processing:
@@ -648,11 +698,13 @@ source:biorxiv CRISPR
 ### search_google_scholar.py Usage
 
 **Basic search**:
+
 ```bash
 python scripts/search_google_scholar.py "machine learning drug discovery"
 ```
 
 **With year filter**:
+
 ```bash
 python scripts/search_google_scholar.py "CRISPR" \
   --year-start 2020 \
@@ -661,6 +713,7 @@ python scripts/search_google_scholar.py "CRISPR" \
 ```
 
 **Sort by citations**:
+
 ```bash
 python scripts/search_google_scholar.py "transformers" \
   --sort-by citations \
@@ -668,6 +721,7 @@ python scripts/search_google_scholar.py "transformers" \
 ```
 
 **Export to BibTeX**:
+
 ```bash
 python scripts/search_google_scholar.py "quantum computing" \
   --format bibtex \
@@ -675,6 +729,7 @@ python scripts/search_google_scholar.py "quantum computing" \
 ```
 
 **Export to JSON for later processing**:
+
 ```bash
 python scripts/search_google_scholar.py "topic" \
   --format json \
@@ -711,9 +766,10 @@ Google Scholar is the most comprehensive academic search engine, providing:
 ✓ **Free access**: No account or subscription required  
 ✓ **Citation tracking**: "Cited by" for impact analysis  
 ✓ **Multiple formats**: Articles, books, theses, patents  
-✓ **Full-text search**: Not just abstracts  
+✓ **Full-text search**: Not just abstracts
 
 Key strategies:
+
 - Use advanced operators for precision
 - Combine author, title, source searches
 - Track citations for impact
@@ -722,4 +778,3 @@ Key strategies:
 - Verify metadata with CrossRef/PubMed
 
 For biomedical research, complement with PubMed for MeSH terms and curated metadata.
-

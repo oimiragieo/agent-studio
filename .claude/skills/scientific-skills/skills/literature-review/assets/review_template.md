@@ -31,6 +31,7 @@
 [Clearly define the scope of the review and state the specific objectives. What questions will this review address?]
 
 **Primary Research Questions:**
+
 1. [Research question 1]
 2. [Research question 2]
 3. [Research question 3]
@@ -55,8 +56,9 @@
 **Supplementary:** [Citation chaining, grey literature, trial registries]
 
 **Search String Example:**
+
 ```
-("CRISPR"[Title/Abstract] OR "Cas9"[Title/Abstract]) AND 
+("CRISPR"[Title/Abstract] OR "Cas9"[Title/Abstract]) AND
 ("disease"[MeSH Terms]) AND ("2015/01/01"[Date] : "2024/12/31"[Date])
 ```
 
@@ -73,6 +75,7 @@
 ### 2.4 Inclusion and Exclusion Criteria
 
 **Inclusion Criteria:**
+
 - [Criterion 1: e.g., Published between 2015-2024]
 - [Criterion 2: e.g., Peer-reviewed articles and preprints]
 - [Criterion 3: e.g., English language]
@@ -80,6 +83,7 @@
 - [Criterion 5: e.g., Original research or systematic reviews]
 
 **Exclusion Criteria:**
+
 - [Criterion 1: e.g., Case reports with n<5]
 - [Criterion 2: e.g., Conference abstracts without full text]
 - [Criterion 3: e.g., Editorials and commentaries]
@@ -93,8 +97,9 @@
 **Inter-rater reliability:** [Cohen's kappa = X]
 
 **PRISMA Flow:**
+
 ```
-Records identified: n=[X] → Deduplicated: n=[Y] → 
+Records identified: n=[X] → Deduplicated: n=[Y] →
 Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 ```
 
@@ -141,9 +146,9 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 
 ### 3.3 Study Characteristics
 
-| Study | Year | Design | Sample Size | Key Methods | Main Findings | Quality |
-|-------|------|--------|-------------|-------------|---------------|---------|
-| First Author et al. | 2023 | [Type] | n=[X] | [Methods] | [Brief findings] | [Low/Mod/High RoB] |
+| Study               | Year | Design | Sample Size | Key Methods | Main Findings    | Quality            |
+| ------------------- | ---- | ------ | ----------- | ----------- | ---------------- | ------------------ |
+| First Author et al. | 2023 | [Type] | n=[X]       | [Methods]   | [Brief findings] | [Low/Mod/High RoB] |
 
 **Quality:** Low RoB: n=X ([%]); Moderate: n=Y ([%]); High: n=Z ([%])
 
@@ -199,6 +204,7 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 **Mechanisms:** [Potential explanations for observed patterns]
 
 **Implications for:**
+
 - **Practice:** [Actionable recommendations]
 - **Policy:** [If relevant]
 - **Research:** [Theoretical, methodological, priority directions]
@@ -208,6 +214,7 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 **Strengths:** [Comprehensive search, rigorous methods, large evidence base, transparency]
 
 **Limitations:**
+
 - Search/selection: [Language bias, database coverage, grey literature, publication bias]
 - Methodological: [Heterogeneity, study quality]
 - Temporal: [Rapid evolution, search cutoff date]
@@ -221,6 +228,7 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 ### 4.5 Future Research
 
 **Priority questions:**
+
 1. [Question] - Rationale, suggested approach, expected impact
 2. [Question] - Rationale, suggested approach, expected impact
 3. [Question] - Rationale, suggested approach, expected impact
@@ -245,20 +253,25 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 ## 6. Declarations
 
 ### Author Contributions
+
 [CRediT taxonomy: Author 1 - Conceptualization, Methodology, Writing; Author 2 - Analysis, Review; etc.]
 
 ### Funding
+
 [Grant details with numbers] OR [No funding received]
 
 ### Conflicts of Interest
+
 [Author-specific declarations] OR [None]
 
 ### Data Availability
+
 **Protocol:** [PROSPERO/OSF ID or "Not registered"]  
 **Data/Code:** [Repository URL/DOI or "Available upon request"]  
 **Materials:** [Search strategies (Appendix A), PRISMA checklist (Appendix B), extraction form (Appendix E)]
 
 ### Acknowledgments
+
 [Contributors not meeting authorship criteria, librarians, patient involvement]
 
 ---
@@ -269,9 +282,9 @@ Title/abstract screened: n=[Y] → Full-text assessed: n=[Z] → Included: n=[N]
 
 **Format examples:**
 
-APA: Author, A. A., & Author, B. B. (Year). Title. *Journal*, *volume*(issue), pages. https://doi.org/xx.xxxx
+APA: Author, A. A., & Author, B. B. (Year). Title. _Journal_, _volume_(issue), pages. https://doi.org/xx.xxxx
 
-Nature: Author, A. A. & Author, B. B. Title. *J. Name* **volume**, pages (year).
+Nature: Author, A. A. & Author, B. B. Title. _J. Name_ **volume**, pages (year).
 
 Vancouver: Author AA, Author BB. Title. J Abbrev. Year;volume(issue):pages. doi:xx.xxxx
 
@@ -286,6 +299,7 @@ Vancouver: Author AA, Author BB. Title. J Abbrev. Year;volume(issue):pages. doi:
 ### Appendix A: Search Strings
 
 **PubMed** (Date: YYYY-MM-DD; Results: n)
+
 ```
 [Complete search string with operators and MeSH terms]
 ```
@@ -294,19 +308,19 @@ Vancouver: Author AA, Author BB. Title. J Abbrev. Year;volume(issue):pages. doi:
 
 ### Appendix B: PRISMA Checklist
 
-| Section | Item | Reported? | Page |
-|---------|------|-----------|------|
-| Title | Identify as systematic review | Yes/No | # |
-| Abstract | Structured summary | Yes/No | # |
-| Methods | Eligibility, sources, search, selection, data, quality | Yes/No | # |
-| Results | Selection, characteristics, risk of bias, syntheses | Yes/No | # |
-| Discussion | Interpretation, limitations, conclusions | Yes/No | # |
-| Other | Registration, support, conflicts, availability | Yes/No | # |
+| Section    | Item                                                   | Reported? | Page |
+| ---------- | ------------------------------------------------------ | --------- | ---- |
+| Title      | Identify as systematic review                          | Yes/No    | #    |
+| Abstract   | Structured summary                                     | Yes/No    | #    |
+| Methods    | Eligibility, sources, search, selection, data, quality | Yes/No    | #    |
+| Results    | Selection, characteristics, risk of bias, syntheses    | Yes/No    | #    |
+| Discussion | Interpretation, limitations, conclusions               | Yes/No    | #    |
+| Other      | Registration, support, conflicts, availability         | Yes/No    | #    |
 
 ### Appendix C: Excluded Studies
 
-| Study | Year | Reason | Category |
-|-------|------|--------|----------|
+| Study         | Year | Reason   | Category                               |
+| ------------- | ---- | -------- | -------------------------------------- |
 | Author et al. | Year | [Reason] | [Wrong population/outcome/design/etc.] |
 
 **Summary:** Wrong population (n=X), Wrong outcome (n=Y), etc.
@@ -315,10 +329,10 @@ Vancouver: Author AA, Author BB. Title. J Abbrev. Year;volume(issue):pages. doi:
 
 **Tool:** [Cochrane RoB 2.0 / ROBINS-I / Newcastle-Ottawa / etc.]
 
-| Study | Domain 1 | Domain 2 | Domain 3 | Overall |
-|-------|----------|----------|----------|---------|
-| Study 1 | Low | Low | Some concerns | Low |
-| Study 2 | [Score] | [Score] | [Score] | [Overall] |
+| Study   | Domain 1 | Domain 2 | Domain 3      | Overall   |
+| ------- | -------- | -------- | ------------- | --------- |
+| Study 1 | Low      | Low      | Some concerns | Low       |
+| Study 2 | [Score]  | [Score]  | [Score]       | [Overall] |
 
 ### Appendix E: Data Extraction Form
 
@@ -344,9 +358,9 @@ FUNDING/COI: _____
 
 ### Appendix G: Author Contacts
 
-| Study | Contact Date | Response | Data Received |
-|-------|--------------|----------|---------------|
-| Author et al. | YYYY-MM-DD | Yes/No | Yes/No/Partial |
+| Study         | Contact Date | Response | Data Received  |
+| ------------- | ------------ | -------- | -------------- |
+| Author et al. | YYYY-MM-DD   | Yes/No   | Yes/No/Partial |
 
 ---
 
@@ -368,6 +382,7 @@ FUNDING/COI: _____
 **Version:** [1.0] | **Last updated:** [Date]
 
 **Quality checks:**
+
 - [ ] Citations verified with verify_citations.py
 - [ ] PRISMA checklist completed
 - [ ] Search reproducible
@@ -380,12 +395,14 @@ FUNDING/COI: _____
 ## Usage Notes
 
 **Review type adaptations:**
+
 - Systematic Review: Use all sections
 - Meta-Analysis: Include sections 3.6, Appendix F
 - Narrative Review: May omit some methodology detail
 - Scoping Review: Follow PRISMA-ScR, may omit quality assessment
 
 **Key principles:**
+
 1. Remove all [bracketed placeholders]
 2. Follow PRISMA 2020 guidelines
 3. Pre-register when feasible (PROSPERO/OSF)
@@ -395,6 +412,7 @@ FUNDING/COI: _____
 7. Make data/code openly available
 
 **Common pitfalls to avoid:**
+
 - Don't list studies - synthesize them
 - Don't cherry-pick results
 - Don't ignore limitations
@@ -402,6 +420,7 @@ FUNDING/COI: _____
 - Don't skip publication bias assessment
 
 **Resources:**
+
 - PRISMA 2020: http://prisma-statement.org/
 - PROSPERO: https://www.crd.york.ac.uk/prospero/
 - Cochrane Handbook: https://training.cochrane.org/handbook

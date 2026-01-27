@@ -9,6 +9,7 @@
 **This workflow IS the router. Updates to CLAUDE.md Section 1-3 should reference this workflow as the authoritative source.**
 
 **Verification:**
+
 ```bash
 grep "router-decision" .claude\CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 ```
@@ -68,6 +69,7 @@ Glob('.claude/workflows/**/*.md');
 ```
 
 **Decision**:
+
 - **Duplicate found**: Inform user, ask if they want to enhance existing artifact or create new one
 - **No duplicate**: Proceed to Step 1
 
@@ -82,6 +84,7 @@ TaskList();
 ```
 
 **Decision**:
+
 - **Pending tasks exist**: Check if user request relates to existing tasks
   - If related: Spawn agent with task ID reference
   - If unrelated: Continue to Step 2
@@ -95,54 +98,55 @@ TaskList();
 
 ### 2.1 Intent Classification
 
-| Intent | Indicators | Example |
-|--------|-----------|---------|
-| **Bug fix** | "fix", "bug", "error", "broken", "not working" | "Fix the login bug" |
-| **New feature** | "add", "create", "implement", "new feature" | "Add payment processing" |
-| **Refactor** | "refactor", "restructure", "clean up", "improve" | "Refactor auth module" |
-| **Investigation** | "why", "how", "investigate", "debug", "analyze" | "Why is the API slow?" |
-| **Documentation** | "document", "docs", "explain", "README" | "Document the API" |
-| **Testing** | "test", "QA", "validate", "verify" | "Test the checkout flow" |
-| **Deployment** | "deploy", "ship", "release", "production" | "Deploy to production" |
-| **Architecture** | "design", "architecture", "structure", "plan" | "Design the new service" |
-| **Security** | "security", "auth", "vulnerability", "CVE" | "Review security of API" |
-| **Code review** | "review", "PR", "pull request", "feedback" | "Review this PR" |
+| Intent                | Indicators                                        | Example                  |
+| --------------------- | ------------------------------------------------- | ------------------------ |
+| **Bug fix**           | "fix", "bug", "error", "broken", "not working"    | "Fix the login bug"      |
+| **New feature**       | "add", "create", "implement", "new feature"       | "Add payment processing" |
+| **Refactor**          | "refactor", "restructure", "clean up", "improve"  | "Refactor auth module"   |
+| **Investigation**     | "why", "how", "investigate", "debug", "analyze"   | "Why is the API slow?"   |
+| **Documentation**     | "document", "docs", "explain", "README"           | "Document the API"       |
+| **Testing**           | "test", "QA", "validate", "verify"                | "Test the checkout flow" |
+| **Deployment**        | "deploy", "ship", "release", "production"         | "Deploy to production"   |
+| **Architecture**      | "design", "architecture", "structure", "plan"     | "Design the new service" |
+| **Security**          | "security", "auth", "vulnerability", "CVE"        | "Review security of API" |
+| **Code review**       | "review", "PR", "pull request", "feedback"        | "Review this PR"         |
 | **Artifact creation** | "create agent", "create skill", "create workflow" | "Create mobile UX agent" |
 
 ### 2.2 Complexity Classification
 
-| Complexity | Indicators | Agent Strategy |
-|-----------|-----------|---------------|
-| **Trivial** | Single file, <10 lines, no dependencies | Single agent, haiku model |
-| **Low** | Single module, clear scope, minimal dependencies | Single agent, sonnet model |
-| **Medium** | Multiple modules, some unknowns, moderate dependencies | Single or parallel agents, sonnet model |
-| **High** | Cross-cutting, many unknowns, complex dependencies | Multi-phase workflow, sonnet/opus models |
-| **Epic** | Architectural change, system-wide impact, risk | Full orchestration workflow, opus model |
+| Complexity  | Indicators                                             | Agent Strategy                           |
+| ----------- | ------------------------------------------------------ | ---------------------------------------- |
+| **Trivial** | Single file, <10 lines, no dependencies                | Single agent, haiku model                |
+| **Low**     | Single module, clear scope, minimal dependencies       | Single agent, sonnet model               |
+| **Medium**  | Multiple modules, some unknowns, moderate dependencies | Single or parallel agents, sonnet model  |
+| **High**    | Cross-cutting, many unknowns, complex dependencies     | Multi-phase workflow, sonnet/opus models |
+| **Epic**    | Architectural change, system-wide impact, risk         | Full orchestration workflow, opus model  |
 
 ### 2.3 Domain Classification
 
-| Domain | Indicators | Target Agent(s) |
-|--------|-----------|----------------|
-| **Frontend** | "UI", "React", "Vue", "frontend", "component" | frontend-pro, react-expert, vue-expert |
-| **Backend** | "API", "server", "backend", "database", "service" | developer, python-pro, golang-pro, nodejs-pro |
-| **Mobile** | "iOS", "Android", "mobile", "app", "native" | ios-pro, expo-mobile-developer, flutter-expert |
-| **Data** | "ETL", "pipeline", "analytics", "data processing" | data-engineer, database-architect |
-| **Infrastructure** | "Docker", "K8s", "AWS", "infrastructure", "CI/CD" | devops, container-expert, terraform-infra |
-| **Security** | "auth", "security", "encryption", "vulnerability" | security-architect, auth-security-expert |
-| **Product** | "feature", "requirements", "roadmap", "strategy" | pm, planner |
-| **Documentation** | "docs", "README", "guide", "documentation" | technical-writer, doc-generator |
-| **Architecture** | "design", "architecture", "C4", "system design" | architect, c4-* agents |
+| Domain             | Indicators                                        | Target Agent(s)                                |
+| ------------------ | ------------------------------------------------- | ---------------------------------------------- |
+| **Frontend**       | "UI", "React", "Vue", "frontend", "component"     | frontend-pro, react-expert, vue-expert         |
+| **Backend**        | "API", "server", "backend", "database", "service" | developer, python-pro, golang-pro, nodejs-pro  |
+| **Mobile**         | "iOS", "Android", "mobile", "app", "native"       | ios-pro, expo-mobile-developer, flutter-expert |
+| **Data**           | "ETL", "pipeline", "analytics", "data processing" | data-engineer, database-architect              |
+| **Infrastructure** | "Docker", "K8s", "AWS", "infrastructure", "CI/CD" | devops, container-expert, terraform-infra      |
+| **Security**       | "auth", "security", "encryption", "vulnerability" | security-architect, auth-security-expert       |
+| **Product**        | "feature", "requirements", "roadmap", "strategy"  | pm, planner                                    |
+| **Documentation**  | "docs", "README", "guide", "documentation"        | technical-writer, doc-generator                |
+| **Architecture**   | "design", "architecture", "C4", "system design"   | architect, c4-\* agents                        |
 
 ### 2.4 Risk Classification
 
-| Risk Level | Indicators | Required Review |
-|-----------|-----------|----------------|
-| **Low** | Read-only, documentation, tests | None |
-| **Medium** | Code changes, refactoring, new features | Architect review recommended |
-| **High** | Auth, payments, data migration, architecture | Architect + Security review MANDATORY |
+| Risk Level   | Indicators                                           | Required Review                        |
+| ------------ | ---------------------------------------------------- | -------------------------------------- |
+| **Low**      | Read-only, documentation, tests                      | None                                   |
+| **Medium**   | Code changes, refactoring, new features              | Architect review recommended           |
+| **High**     | Auth, payments, data migration, architecture         | Architect + Security review MANDATORY  |
 | **Critical** | Production deployment, security fixes, data deletion | Multi-agent review + user confirmation |
 
 **Output of Step 2**:
+
 ```
 [ROUTER] 🔍 Request Classification:
 - Intent: {intent}
@@ -193,6 +197,7 @@ Integrate external codebase: {user request}
 ### Question 1: Am I about to use a blacklisted tool?
 
 **Blacklisted Tools** (Router NEVER uses directly):
+
 - `Edit` - Code/config modification
 - `Write` - File creation
 - `Bash` (implementation) - Running builds, tests, scripts (except read-only git status/log)
@@ -202,24 +207,28 @@ Integrate external codebase: {user request}
 - `mcp__*` - Any MCP tool usage
 
 **Decision**:
+
 - **YES**: STOP. Spawn appropriate agent (see Step 6). DO NOT PROCEED.
 - **NO**: Continue to Question 2.
 
 ### Question 2: Is this a multi-step task requiring code/config changes?
 
 **Multi-step indicators**:
+
 - More than one distinct action required
 - Code or config modifications needed
 - Dependencies between steps
 - Requires file creation/editing
 
 **Decision**:
+
 - **YES**: STOP. Spawn appropriate agent(s) (see Step 6). DO NOT PROCEED.
 - **NO**: Continue to Question 3.
 
 ### Question 3: Am I about to write, edit, or execute code?
 
 **Execution indicators**:
+
 - Running tests
 - Building code
 - Deploying services
@@ -227,18 +236,21 @@ Integrate external codebase: {user request}
 - Creating artifacts
 
 **Decision**:
+
 - **YES**: STOP. Spawn developer or appropriate agent. DO NOT PROCEED.
 - **NO**: Continue to Question 4.
 
 ### Question 4: Am I exploring the codebase (searching, analyzing files)?
 
 **Exploration indicators**:
+
 - Need to search for files (Glob)
 - Need to search code (Grep)
 - Need to read multiple files to understand structure
 - Need to analyze dependencies
 
 **Decision**:
+
 - **YES**: STOP. Spawn architect or developer agent. DO NOT PROCEED.
 - **NO**: Proceed to Step 5 (Valid Router Actions).
 
@@ -247,6 +259,7 @@ Integrate external codebase: {user request}
 ### Self-Check Failure = Router Violation
 
 **Violations indicate Router malfunction:**
+
 1. First violation: Self-correct immediately, spawn correct agent
 2. Pattern of violations: Router is fundamentally broken
 
@@ -256,15 +269,15 @@ Integrate external codebase: {user request}
 
 ### 5.1 Whitelisted Tools
 
-| Tool | Allowed Purpose | Example |
-|------|-----------------|---------|
-| `TaskList()` | Check existing work | Check for pending tasks |
-| `TaskCreate()` | Create new tasks | Break down complex work |
-| `TaskUpdate()` | Update task status/metadata | Mark task as spawned |
-| `TaskGet()` | Get task details | Fetch task for spawning |
-| `Task()` | **SPAWN AGENTS** (primary function) | Delegate work to specialist |
-| `Read()` | Read routing files ONLY | `.claude/agents/*.md`, `.claude/CLAUDE.md`, `.claude/workflows/*.md` |
-| `AskUserQuestion()` | Clarify requirements | Ambiguous requests |
+| Tool                | Allowed Purpose                     | Example                                                              |
+| ------------------- | ----------------------------------- | -------------------------------------------------------------------- |
+| `TaskList()`        | Check existing work                 | Check for pending tasks                                              |
+| `TaskCreate()`      | Create new tasks                    | Break down complex work                                              |
+| `TaskUpdate()`      | Update task status/metadata         | Mark task as spawned                                                 |
+| `TaskGet()`         | Get task details                    | Fetch task for spawning                                              |
+| `Task()`            | **SPAWN AGENTS** (primary function) | Delegate work to specialist                                          |
+| `Read()`            | Read routing files ONLY             | `.claude/agents/*.md`, `.claude/CLAUDE.md`, `.claude/workflows/*.md` |
+| `AskUserQuestion()` | Clarify requirements                | Ambiguous requests                                                   |
 
 **The ONLY exception for Bash**: `git status -s` or `git log --oneline -5` for read-only context.
 
@@ -281,6 +294,7 @@ Integrate external codebase: {user request}
 ### 5.3 Violation Detection Patterns
 
 **If you find yourself:**
+
 - Typing `Edit`, `Write`, `Glob`, `Grep`, or `Bash` (for implementation)
 - Analyzing code beyond routing decisions
 - Making changes instead of delegating
@@ -294,96 +308,96 @@ Integrate external codebase: {user request}
 
 ### Core Development Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Bug fixes, coding | `developer` | `.claude/agents/core/developer.md` |
-| New features, planning | `planner` | `.claude/agents/core/planner.md` |
-| System design | `architect` | `.claude/agents/core/architect.md` |
-| Testing, QA | `qa` | `.claude/agents/core/qa.md` |
-| Documentation | `technical-writer` | `.claude/agents/core/technical-writer.md` |
-| Product management | `pm` | `.claude/agents/core/pm.md` |
-| Context compression | `context-compressor` | `.claude/agents/core/context-compressor.md` |
+| Request Type           | Agent                | File                                        |
+| ---------------------- | -------------------- | ------------------------------------------- |
+| Bug fixes, coding      | `developer`          | `.claude/agents/core/developer.md`          |
+| New features, planning | `planner`            | `.claude/agents/core/planner.md`            |
+| System design          | `architect`          | `.claude/agents/core/architect.md`          |
+| Testing, QA            | `qa`                 | `.claude/agents/core/qa.md`                 |
+| Documentation          | `technical-writer`   | `.claude/agents/core/technical-writer.md`   |
+| Product management     | `pm`                 | `.claude/agents/core/pm.md`                 |
+| Context compression    | `context-compressor` | `.claude/agents/core/context-compressor.md` |
 
 ### Specialized Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Code review, PR review | `code-reviewer` | `.claude/agents/specialized/code-reviewer.md` |
-| Security review | `security-architect` | `.claude/agents/specialized/security-architect.md` |
-| Infrastructure | `devops` | `.claude/agents/specialized/devops.md` |
-| Debugging | `devops-troubleshooter` | `.claude/agents/specialized/devops-troubleshooter.md` |
-| Incidents | `incident-responder` | `.claude/agents/specialized/incident-responder.md` |
-| Database design | `database-architect` | `.claude/agents/specialized/database-architect.md` |
-| C4 System Context | `c4-context` | `.claude/agents/specialized/c4-context.md` |
-| C4 Containers | `c4-container` | `.claude/agents/specialized/c4-container.md` |
-| C4 Components | `c4-component` | `.claude/agents/specialized/c4-component.md` |
-| C4 Code level | `c4-code` | `.claude/agents/specialized/c4-code.md` |
-| Context-driven dev | `conductor-validator` | `.claude/agents/specialized/conductor-validator.md` |
-| Reverse engineering | `reverse-engineer` | `.claude/agents/specialized/reverse-engineer.md` |
+| Request Type           | Agent                   | File                                                  |
+| ---------------------- | ----------------------- | ----------------------------------------------------- |
+| Code review, PR review | `code-reviewer`         | `.claude/agents/specialized/code-reviewer.md`         |
+| Security review        | `security-architect`    | `.claude/agents/specialized/security-architect.md`    |
+| Infrastructure         | `devops`                | `.claude/agents/specialized/devops.md`                |
+| Debugging              | `devops-troubleshooter` | `.claude/agents/specialized/devops-troubleshooter.md` |
+| Incidents              | `incident-responder`    | `.claude/agents/specialized/incident-responder.md`    |
+| Database design        | `database-architect`    | `.claude/agents/specialized/database-architect.md`    |
+| C4 System Context      | `c4-context`            | `.claude/agents/specialized/c4-context.md`            |
+| C4 Containers          | `c4-container`          | `.claude/agents/specialized/c4-container.md`          |
+| C4 Components          | `c4-component`          | `.claude/agents/specialized/c4-component.md`          |
+| C4 Code level          | `c4-code`               | `.claude/agents/specialized/c4-code.md`               |
+| Context-driven dev     | `conductor-validator`   | `.claude/agents/specialized/conductor-validator.md`   |
+| Reverse engineering    | `reverse-engineer`      | `.claude/agents/specialized/reverse-engineer.md`      |
 
 ### Domain Expert Agents (Language-Specific)
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Python expert | `python-pro` | `.claude/agents/domain/python-pro.md` |
-| Rust expert | `rust-pro` | `.claude/agents/domain/rust-pro.md` |
-| Go expert | `golang-pro` | `.claude/agents/domain/golang-pro.md` |
-| TypeScript expert | `typescript-pro` | `.claude/agents/domain/typescript-pro.md` |
-| FastAPI expert | `fastapi-pro` | `.claude/agents/domain/fastapi-pro.md` |
-| Java/Spring Boot | `java-pro` | `.claude/agents/domain/java-pro.md` |
-| PHP/Laravel | `php-pro` | `.claude/agents/domain/php-pro.md` |
-| Node.js/Express/NestJS | `nodejs-pro` | `.claude/agents/domain/nodejs-pro.md` |
+| Request Type           | Agent            | File                                      |
+| ---------------------- | ---------------- | ----------------------------------------- |
+| Python expert          | `python-pro`     | `.claude/agents/domain/python-pro.md`     |
+| Rust expert            | `rust-pro`       | `.claude/agents/domain/rust-pro.md`       |
+| Go expert              | `golang-pro`     | `.claude/agents/domain/golang-pro.md`     |
+| TypeScript expert      | `typescript-pro` | `.claude/agents/domain/typescript-pro.md` |
+| FastAPI expert         | `fastapi-pro`    | `.claude/agents/domain/fastapi-pro.md`    |
+| Java/Spring Boot       | `java-pro`       | `.claude/agents/domain/java-pro.md`       |
+| PHP/Laravel            | `php-pro`        | `.claude/agents/domain/php-pro.md`        |
+| Node.js/Express/NestJS | `nodejs-pro`     | `.claude/agents/domain/nodejs-pro.md`     |
 
 ### Domain Expert Agents (Framework-Specific)
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Frontend/React/Vue | `frontend-pro` | `.claude/agents/domain/frontend-pro.md` |
-| Next.js App Router | `nextjs-pro` | `.claude/agents/domain/nextjs-pro.md` |
+| Request Type       | Agent              | File                                        |
+| ------------------ | ------------------ | ------------------------------------------- |
+| Frontend/React/Vue | `frontend-pro`     | `.claude/agents/domain/frontend-pro.md`     |
+| Next.js App Router | `nextjs-pro`       | `.claude/agents/domain/nextjs-pro.md`       |
 | SvelteKit/Svelte 5 | `sveltekit-expert` | `.claude/agents/domain/sveltekit-expert.md` |
-| GraphQL APIs | `graphql-pro` | `.claude/agents/domain/graphql-pro.md` |
+| GraphQL APIs       | `graphql-pro`      | `.claude/agents/domain/graphql-pro.md`      |
 
 ### Domain Expert Agents (Mobile/Desktop)
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| iOS/Swift development | `ios-pro` | `.claude/agents/domain/ios-pro.md` |
-| Expo/React Native | `expo-mobile-developer` | `.claude/agents/domain/expo-mobile-developer.md` |
-| Tauri desktop apps | `tauri-desktop-developer` | `.claude/agents/domain/tauri-desktop-developer.md` |
-| Mobile UX review | `mobile-ux-reviewer` | `.claude/agents/domain/mobile-ux-reviewer.md` |
+| Request Type          | Agent                     | File                                               |
+| --------------------- | ------------------------- | -------------------------------------------------- |
+| iOS/Swift development | `ios-pro`                 | `.claude/agents/domain/ios-pro.md`                 |
+| Expo/React Native     | `expo-mobile-developer`   | `.claude/agents/domain/expo-mobile-developer.md`   |
+| Tauri desktop apps    | `tauri-desktop-developer` | `.claude/agents/domain/tauri-desktop-developer.md` |
+| Mobile UX review      | `mobile-ux-reviewer`      | `.claude/agents/domain/mobile-ux-reviewer.md`      |
 
 ### Domain Expert Agents (Data & Product)
 
-| Request Type | Agent | File |
-|--------------|-------|------|
+| Request Type         | Agent           | File                                     |
+| -------------------- | --------------- | ---------------------------------------- |
 | Data engineering/ETL | `data-engineer` | `.claude/agents/domain/data-engineer.md` |
 
 ### Orchestrator Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
+| Request Type          | Agent                 | File                                                  |
+| --------------------- | --------------------- | ----------------------------------------------------- |
 | Project orchestration | `master-orchestrator` | `.claude/agents/orchestrators/master-orchestrator.md` |
-| Swarm coordination | `swarm-coordinator` | `.claude/agents/orchestrators/swarm-coordinator.md` |
+| Swarm coordination    | `swarm-coordinator`   | `.claude/agents/orchestrators/swarm-coordinator.md`   |
 
 ### Creator Agents (Self-Evolution)
 
-| Request Type | Agent | Skill |
-|--------------|-------|-------|
-| **No matching agent** | `agent-creator` | `.claude/skills/agent-creator/SKILL.md` |
-| **New tool/capability** | `skill-creator` | `.claude/skills/skill-creator/SKILL.md` |
-| **New workflow** | `workflow-creator` | `.claude/skills/workflow-creator/SKILL.md` |
-| **New hook** | `hook-creator` | `.claude/skills/hook-creator/SKILL.md` |
-| **New template** | `template-creator` | `.claude/skills/template-creator/SKILL.md` |
-| **New schema** | `schema-creator` | `.claude/skills/schema-creator/SKILL.md` |
+| Request Type            | Agent              | Skill                                      |
+| ----------------------- | ------------------ | ------------------------------------------ |
+| **No matching agent**   | `agent-creator`    | `.claude/skills/agent-creator/SKILL.md`    |
+| **New tool/capability** | `skill-creator`    | `.claude/skills/skill-creator/SKILL.md`    |
+| **New workflow**        | `workflow-creator` | `.claude/skills/workflow-creator/SKILL.md` |
+| **New hook**            | `hook-creator`     | `.claude/skills/hook-creator/SKILL.md`     |
+| **New template**        | `template-creator` | `.claude/skills/template-creator/SKILL.md` |
+| **New schema**          | `schema-creator`   | `.claude/skills/schema-creator/SKILL.md`   |
 
 ### Multi-Agent Workflows (Complex Orchestration)
 
-| Request Type | Workflow | Path |
-|--------------|----------|------|
+| Request Type                   | Workflow                     | Path                                                           |
+| ------------------------------ | ---------------------------- | -------------------------------------------------------------- |
 | End-to-end feature development | Feature Development Workflow | `.claude/workflows/enterprise/feature-development-workflow.md` |
-| C4 architecture documentation | C4 Architecture Workflow | `.claude/workflows/enterprise/c4-architecture-workflow.md` |
-| CDD project setup | Conductor Setup Workflow | `.claude/workflows/conductor-setup-workflow.md` |
-| Production incidents | Incident Response Workflow | `.claude/workflows/operations/incident-response.md` |
+| C4 architecture documentation  | C4 Architecture Workflow     | `.claude/workflows/enterprise/c4-architecture-workflow.md`     |
+| CDD project setup              | Conductor Setup Workflow     | `.claude/workflows/conductor-setup-workflow.md`                |
+| Production incidents           | Incident Response Workflow   | `.claude/workflows/operations/incident-response.md`            |
 
 ## Step 7: Spawn Decision (Single vs Parallel vs Phased)
 
@@ -499,14 +513,14 @@ Review payment feature design for security best practices.
 
 **Use Planning Orchestration Matrix to determine phases:**
 
-| Task Type | Phase 1 | Phase 2 | Phase 3 (Review) | Phase 4 |
-|-----------|---------|---------|------------------|---------|
-| **New feature** | Explore | Planner | Architect + Security | Consolidate |
-| **Codebase integration** | Explore (parallel) | Planner | Architect + Security | Consolidate |
-| **Architecture change** | Explore | Architect | Security | Implement |
-| **External API** | Explore | Planner | Architect + Security | Consolidate |
-| **Auth/Security change** | Explore | Planner | Security (mandatory) | Consolidate |
-| **Database migration** | Explore | Planner | Architect | Implement |
+| Task Type                | Phase 1            | Phase 2   | Phase 3 (Review)     | Phase 4     |
+| ------------------------ | ------------------ | --------- | -------------------- | ----------- |
+| **New feature**          | Explore            | Planner   | Architect + Security | Consolidate |
+| **Codebase integration** | Explore (parallel) | Planner   | Architect + Security | Consolidate |
+| **Architecture change**  | Explore            | Architect | Security             | Implement   |
+| **External API**         | Explore            | Planner   | Architect + Security | Consolidate |
+| **Auth/Security change** | Explore            | Planner   | Security (mandatory) | Consolidate |
+| **Database migration**   | Explore            | Planner   | Architect            | Implement   |
 
 #### Phase 1: Exploration (Gather Context)
 
@@ -708,11 +722,11 @@ Run full test suite and report results.
 
 **Optimize cost and capability:**
 
-| Model | Use For | Cost | When to Use |
-|-------|---------|------|-------------|
-| `haiku` | Simple validation, quick fixes, trivial tasks | Low | Complexity: Trivial |
-| `sonnet` | Standard agent work (DEFAULT) | Medium | Complexity: Low to Medium |
-| `opus` | Complex reasoning, architecture, security | High | Complexity: High to Epic, Risk: High to Critical |
+| Model    | Use For                                       | Cost   | When to Use                                      |
+| -------- | --------------------------------------------- | ------ | ------------------------------------------------ |
+| `haiku`  | Simple validation, quick fixes, trivial tasks | Low    | Complexity: Trivial                              |
+| `sonnet` | Standard agent work (DEFAULT)                 | Medium | Complexity: Low to Medium                        |
+| `opus`   | Complex reasoning, architecture, security     | High   | Complexity: High to Epic, Risk: High to Critical |
 
 ```javascript
 // Example: Use haiku for quick syntax check
@@ -766,28 +780,28 @@ TaskList();
 
 ### WHITELIST (Router MAY use)
 
-| Tool | Allowed Purpose |
-|------|-----------------|
-| `TaskList()` | Check existing work |
-| `TaskCreate()` | Create new tasks |
-| `TaskUpdate()` | Update task status/metadata |
-| `Task()` | **SPAWN AGENTS** (primary function) |
-| `TaskGet()` | Get task details |
-| `Read()` | **ONLY** for `.claude/agents/*.md`, `.claude/CLAUDE.md`, `.claude/workflows/*.md` |
-| `AskUserQuestion()` | Clarify requirements before routing |
-| `Bash` | **ONLY** for `git status -s` or `git log --oneline -5` (read-only) |
+| Tool                | Allowed Purpose                                                                   |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `TaskList()`        | Check existing work                                                               |
+| `TaskCreate()`      | Create new tasks                                                                  |
+| `TaskUpdate()`      | Update task status/metadata                                                       |
+| `Task()`            | **SPAWN AGENTS** (primary function)                                               |
+| `TaskGet()`         | Get task details                                                                  |
+| `Read()`            | **ONLY** for `.claude/agents/*.md`, `.claude/CLAUDE.md`, `.claude/workflows/*.md` |
+| `AskUserQuestion()` | Clarify requirements before routing                                               |
+| `Bash`              | **ONLY** for `git status -s` or `git log --oneline -5` (read-only)                |
 
 ### BLACKLIST (Router NEVER uses)
 
-| Tool | Why Blacklisted | Spawn Instead |
-|------|-----------------|---------------|
-| `Edit` | Code/config modification | `developer`, `devops` |
-| `Write` | File creation | `developer`, `technical-writer` |
-| `Bash` (implementation) | Running builds, tests, scripts | `developer`, `qa`, `devops` |
-| `Glob` | Codebase exploration | `architect`, `developer` |
-| `Grep` | Code search/analysis | `architect`, `developer` |
-| `WebSearch` | External research | `planner`, domain expert |
-| `mcp__*` | Any MCP tool usage | Appropriate specialist |
+| Tool                    | Why Blacklisted                | Spawn Instead                   |
+| ----------------------- | ------------------------------ | ------------------------------- |
+| `Edit`                  | Code/config modification       | `developer`, `devops`           |
+| `Write`                 | File creation                  | `developer`, `technical-writer` |
+| `Bash` (implementation) | Running builds, tests, scripts | `developer`, `qa`, `devops`     |
+| `Glob`                  | Codebase exploration           | `architect`, `developer`        |
+| `Grep`                  | Code search/analysis           | `architect`, `developer`        |
+| `WebSearch`             | External research              | `planner`, domain expert        |
+| `mcp__*`                | Any MCP tool usage             | Appropriate specialist          |
 
 ## Violation Detection Examples
 
@@ -816,25 +830,30 @@ TaskList();
 ## Error Recovery
 
 ### If Step 1 finds conflicting tasks:
+
 1. Ask user which task takes priority
 2. Update task metadata to mark conflicts
 3. Proceed with routing decision
 
 ### If Step 2 classification is ambiguous:
+
 1. Use `AskUserQuestion()` to clarify intent
 2. Re-run classification with additional context
 
 ### If Step 4 self-check fails (violation detected):
+
 1. STOP immediately
 2. Identify correct agent to spawn
 3. Spawn agent, do NOT execute work directly
 
 ### If Step 6 finds no matching agent:
+
 1. Check `.claude/agents/domain/` for specialized agents
 2. If still no match, spawn `agent-creator` to create new agent
 3. After agent created, spawn new agent to handle original request
 
 ### If Step 7 spawn fails:
+
 1. Check agent file exists
 2. Verify PROJECT_ROOT path is correct
 3. Ensure Task() call includes all required fields
@@ -843,6 +862,7 @@ TaskList();
 ### If Task() Call Has Syntax Errors
 
 **Common Syntax Errors:**
+
 1. Missing required field: `subagent_type`
 2. Missing required field: `description`
 3. Missing required field: `prompt`
@@ -852,13 +872,14 @@ TaskList();
 **Recovery Steps:**
 
 1. **Check all required fields present:**
+
    ```javascript
    Task({
-     subagent_type: 'general-purpose',  // REQUIRED
-     description: 'Brief description',   // REQUIRED
-     prompt: '...',                       // REQUIRED
-     model: 'sonnet',                     // optional
-     run_in_background: false            // optional
+     subagent_type: 'general-purpose', // REQUIRED
+     description: 'Brief description', // REQUIRED
+     prompt: '...', // REQUIRED
+     model: 'sonnet', // optional
+     run_in_background: false, // optional
    });
    ```
 
@@ -876,6 +897,7 @@ TaskList();
 4. **Retry with corrected Task() call**
 
 **Example Fix:**
+
 ```javascript
 // BROKEN (missing required fields):
 Task({ prompt: 'Do something' });
@@ -892,7 +914,7 @@ PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Task
 Do something specific.
-`
+`,
 });
 ```
 

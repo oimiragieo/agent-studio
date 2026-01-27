@@ -7,18 +7,23 @@ DNAnexus provides comprehensive data management capabilities for files, records,
 ## Data Object Types
 
 ### Files
+
 Binary or text data stored on the platform.
 
 ### Records
+
 Structured data objects with arbitrary JSON details and metadata.
 
 ### Databases
+
 Structured database objects for relational data.
 
 ### Applets and Apps
+
 Executable programs (covered in app-development.md).
 
 ### Workflows
+
 Multi-step analysis pipelines.
 
 ## Data Object Lifecycle
@@ -26,11 +31,13 @@ Multi-step analysis pipelines.
 ### States
 
 **Open State**: Data can be modified
+
 - Files: Contents can be written
 - Records: Details can be updated
 - Applets: Created in closed state by default
 
 **Closed State**: Data becomes immutable
+
 - File contents are fixed
 - Metadata fields are locked (types, details, links, visibility)
 - Objects are ready for sharing and analysis
@@ -42,12 +49,14 @@ Create (open) → Modify → Close (immutable)
 ```
 
 Most objects start open and require explicit closure:
+
 ```python
 # Close a file
 file_obj.close()
 ```
 
 Some objects can be created and closed in one operation:
+
 ```python
 # Create closed record
 record = dxpy.new_dxrecord(details={...}, close=True)
@@ -58,6 +67,7 @@ record = dxpy.new_dxrecord(details={...}, close=True)
 ### Uploading Files
 
 **From local file**:
+
 ```python
 import dxpy
 
@@ -67,6 +77,7 @@ print(f"Uploaded: {file_obj.get_id()}")
 ```
 
 **With metadata**:
+
 ```python
 file_obj = dxpy.upload_local_file(
     "data.txt",
@@ -79,6 +90,7 @@ file_obj = dxpy.upload_local_file(
 ```
 
 **Streaming upload**:
+
 ```python
 # For large files or generated data
 file_obj = dxpy.new_dxfile(project="project-xxxx", name="output.txt")
@@ -90,6 +102,7 @@ file_obj.close()
 ### Downloading Files
 
 **To local file**:
+
 ```python
 # Download by ID
 dxpy.download_dxfile("file-xxxx", "local_output.txt")
@@ -100,6 +113,7 @@ dxpy.download_dxfile(file_obj.get_id(), "local_output.txt")
 ```
 
 **Read file contents**:
+
 ```python
 file_obj = dxpy.DXFile("file-xxxx")
 with file_obj.open_file() as f:
@@ -107,6 +121,7 @@ with file_obj.open_file() as f:
 ```
 
 **Download to specific directory**:
+
 ```python
 dxpy.download_dxfile("file-xxxx", "/path/to/directory/filename.txt")
 ```
@@ -114,6 +129,7 @@ dxpy.download_dxfile("file-xxxx", "/path/to/directory/filename.txt")
 ### File Metadata
 
 **Get file information**:
+
 ```python
 file_obj = dxpy.DXFile("file-xxxx")
 describe = file_obj.describe()
@@ -125,6 +141,7 @@ print(f"Created: {describe['created']}")
 ```
 
 **Update file metadata**:
+
 ```python
 file_obj.set_properties({"experiment": "exp1", "version": "v2"})
 file_obj.add_tags(["validated", "published"])
@@ -181,6 +198,7 @@ record.close()
 ### Finding Data Objects
 
 **Search by name**:
+
 ```python
 results = dxpy.find_data_objects(
     name="*.fastq",
@@ -193,6 +211,7 @@ for result in results:
 ```
 
 **Search by properties**:
+
 ```python
 results = dxpy.find_data_objects(
     classname="file",
@@ -202,6 +221,7 @@ results = dxpy.find_data_objects(
 ```
 
 **Search by type**:
+
 ```python
 # Find all records of specific type
 results = dxpy.find_data_objects(
@@ -212,6 +232,7 @@ results = dxpy.find_data_objects(
 ```
 
 **Search with state filter**:
+
 ```python
 # Find only closed files
 results = dxpy.find_data_objects(

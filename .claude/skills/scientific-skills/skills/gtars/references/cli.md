@@ -171,7 +171,9 @@ gtars scoring batch --fragments-dir ./by_cluster/ --reference reference.bed --ou
 ## Input/Output Formats
 
 ### BED Format
+
 Standard 3-column or extended BED format:
+
 ```
 chr1    1000    2000
 chr1    3000    4000
@@ -179,7 +181,9 @@ chr2    5000    6000
 ```
 
 ### Fragment Format (TSV)
+
 Tab-separated format for single-cell fragments:
+
 ```
 chr1    1000    2000    BARCODE1
 chr1    3000    4000    BARCODE2
@@ -187,7 +191,9 @@ chr2    5000    6000    BARCODE1
 ```
 
 ### WIG Format
+
 Wiggle format for coverage tracks:
+
 ```
 fixedStep chrom=chr1 start=1000 step=10
 12

@@ -1,6 +1,7 @@
 # Data Import and Export Reference
 
 ## Table of Contents
+
 1. [Text and CSV Files](#text-and-csv-files)
 2. [Spreadsheets](#spreadsheets)
 3. [MAT Files](#mat-files)

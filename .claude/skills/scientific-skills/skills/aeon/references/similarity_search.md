@@ -7,18 +7,21 @@ Aeon provides tools for finding similar patterns within and across time series, 
 Find most similar subsequences within a time series.
 
 ### MASS Algorithm
+
 - `MassSNN` - Mueen's Algorithm for Similarity Search
   - Fast normalized cross-correlation for similarity
   - Computes distance profile efficiently
   - **Use when**: Need exact nearest neighbor distances, large series
 
 ### STOMP-Based Motif Discovery
+
 - `StompMotif` - Discovers recurring patterns (motifs)
   - Finds top-k most similar subsequence pairs
   - Based on matrix profile computation
   - **Use when**: Want to discover repeated patterns
 
 ### Brute Force Baseline
+
 - `DummySNN` - Exhaustive distance computation
   - Computes all pairwise distances
   - **Use when**: Small series, need exact baseline
@@ -28,6 +31,7 @@ Find most similar subsequences within a time series.
 Find similar time series across collections.
 
 ### Approximate Nearest Neighbors (ANN)
+
 - `RandomProjectionIndexANN` - Locality-sensitive hashing
   - Uses random projections with cosine similarity
   - Builds index for fast approximate search
@@ -131,6 +135,7 @@ discord_idx = np.argmax(profile)
 ## Use Cases
 
 ### Pattern Matching
+
 Find where a pattern occurs in a long series:
 
 ```python
@@ -141,6 +146,7 @@ occurrences = np.where(distances < threshold)[0]
 ```
 
 ### Motif Discovery
+
 Identify recurring patterns:
 
 ```python
@@ -150,6 +156,7 @@ motifs = motif_finder.fit_predict(activity_data)
 ```
 
 ### Time Series Retrieval
+
 Find similar time series in database:
 
 ```python

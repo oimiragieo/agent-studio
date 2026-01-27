@@ -95,7 +95,6 @@ Key Principles
 
 - Write concise, techni
 
-
 </instructions>
 
 <examples>
@@ -109,12 +108,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- astro-expert
 
+- astro-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

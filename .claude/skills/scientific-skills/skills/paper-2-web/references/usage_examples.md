@@ -38,6 +38,7 @@ ls -R output/neurips2025_paper/
 ```
 
 **Output**:
+
 - Interactive website showcasing research
 - 4'×3' conference poster (print-ready)
 - 12-minute presentation video
@@ -68,6 +69,7 @@ cd output/genomics_web/website/
 ```
 
 **Tips**:
+
 - Include links to bioRxiv DOI
 - Add GitHub repository links
 - Include data availability section
@@ -98,6 +100,7 @@ python pipeline_light.py \
 ```
 
 **Output**:
+
 - 5-minute video abstract
 - Focus on visual results
 - Clear, accessible narration
@@ -136,6 +139,7 @@ python pipeline_all.py \
 ```
 
 **Best Practice**:
+
 - Use consistent naming conventions
 - Process overnight for large batches
 - Review each website for accuracy
@@ -170,6 +174,7 @@ python pipeline_all.py \
 ```
 
 **Digital Enhancements**:
+
 - PDF with embedded hyperlinks
 - High-resolution PNG for virtual platform
 - Separate PDF with video links for download
@@ -201,6 +206,7 @@ python pipeline_light.py \
 ```
 
 **Social Media Optimization**:
+
 - Square format (1:1) for Instagram
 - Horizontal format (16:9) for Twitter/LinkedIn
 - Vertical format (9:16) for TikTok/Stories
@@ -295,6 +301,7 @@ mkdir -p input/001_twitter_post/
 ```
 
 **Generated Output**:
+
 - Short, engaging summary
 - Key figure highlights
 - Hashtag recommendations
@@ -313,6 +320,7 @@ mkdir -p input/xhs_genomics/
 ```
 
 **Generated Output**:
+
 - Chinese language content
 - Platform-appropriate formatting
 - Visual-first presentation
@@ -326,6 +334,7 @@ mkdir -p input/xhs_genomics/
 
 **Challenge**: Processing time and content selection
 **Solution**:
+
 ```bash
 # Option 1: Focus on key sections
 # Edit LaTeX to comment out less critical sections
@@ -344,6 +353,7 @@ mkdir -p input/xhs_genomics/
 
 **Challenge**: Equations may not render perfectly
 **Solution**:
+
 - Use LaTeX input (not PDF) for best equation handling
 - Review generated content for equation accuracy
 - Manually adjust complex equations if needed
@@ -355,6 +365,7 @@ mkdir -p input/xhs_genomics/
 
 **Challenge**: Paper doesn't follow standard IMRAD format
 **Solution**:
+
 - Provide custom section guidance in paper metadata
 - Review generated structure and adjust
 - Use more powerful model (GPT-4.1) for better adaptation
@@ -366,6 +377,7 @@ mkdir -p input/xhs_genomics/
 
 **Challenge**: Reducing costs while maintaining quality
 **Solution**:
+
 ```bash
 # Use GPT-3.5-turbo for simple papers
 python pipeline_all.py \
@@ -385,6 +397,7 @@ python pipeline_all.py \
 
 **Challenge**: Need outputs quickly
 **Solution**:
+
 ```bash
 # Parallel processing if multiple papers
 # Use faster models (GPT-3.5-turbo)
@@ -399,6 +412,7 @@ python pipeline_light.py \
 ```
 
 **Priority Order**:
+
 1. Website (fastest, most versatile)
 2. Poster (moderate speed, print deadline)
 3. Video (slowest, can be generated later)
@@ -408,6 +422,7 @@ python pipeline_light.py \
 ## Quality Optimization Tips
 
 ### For Best Website Results
+
 1. Use LaTeX input with all assets
 2. Include high-resolution figures
 3. Ensure paper has clear section structure
@@ -415,6 +430,7 @@ python pipeline_light.py \
 5. Review and test all interactive elements
 
 ### For Best Poster Results
+
 1. Provide high-resolution figures (300+ DPI)
 2. Specify exact poster dimensions needed
 3. Include institution branding information
@@ -422,6 +438,7 @@ python pipeline_light.py \
 5. Test print small preview before full poster
 
 ### For Best Video Results
+
 1. Use LaTeX for clearest content extraction
 2. Specify target duration appropriately
 3. Review script before video generation
@@ -429,6 +446,7 @@ python pipeline_light.py \
 5. Test audio quality and pacing
 
 ### For Best Overall Results
+
 1. Start with clean, well-organized LaTeX source
 2. Use GPT-4 or GPT-4.1 for highest quality
 3. Review all outputs before finalizing

@@ -32,10 +32,10 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- Utilize chrome.* APIs effectively (e.g., chrome.tabs, chrome.storage, chrome.runtime)
+- Utilize chrome.\* APIs effectively (e.g., chrome.tabs, chrome.storage, chrome.runtime)
 - Implement proper error handling for all API calls
 - Use chrome.alarms for scheduling tasks instead of setInterval
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

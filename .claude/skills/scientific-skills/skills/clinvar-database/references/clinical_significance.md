@@ -22,13 +22,13 @@ ClinVar represents three distinct types of variant classifications:
 
 These are the five core terms recommended by the American College of Medical Genetics and Genomics (ACMG) and Association for Molecular Pathology (AMP):
 
-| Term | Abbreviation | Meaning | Probability |
-|------|--------------|---------|-------------|
-| **Pathogenic** | P | Variant causes disease | ~99% |
-| **Likely Pathogenic** | LP | Variant likely causes disease | ~90% |
-| **Uncertain Significance** | VUS | Insufficient evidence to classify | N/A |
-| **Likely Benign** | LB | Variant likely does not cause disease | ~90% non-pathogenic |
-| **Benign** | B | Variant does not cause disease | ~99% non-pathogenic |
+| Term                       | Abbreviation | Meaning                               | Probability         |
+| -------------------------- | ------------ | ------------------------------------- | ------------------- |
+| **Pathogenic**             | P            | Variant causes disease                | ~99%                |
+| **Likely Pathogenic**      | LP           | Variant likely causes disease         | ~90%                |
+| **Uncertain Significance** | VUS          | Insufficient evidence to classify     | N/A                 |
+| **Likely Benign**          | LB           | Variant likely does not cause disease | ~90% non-pathogenic |
+| **Benign**                 | B            | Variant does not cause disease        | ~99% non-pathogenic |
 
 ### Low-Penetrance and Risk Allele Terms
 
@@ -63,37 +63,37 @@ Each variant is classified independently. Two "Likely Pathogenic" variants in tr
 
 Based on guidelines from the Association for Molecular Pathology (AMP), American Society of Clinical Oncology (ASCO), and College of American Pathologists (CAP):
 
-| Tier | Meaning |
-|------|---------|
-| **Tier I - Strong** | Variants with strong clinical significance - FDA-approved therapies or professional guidelines |
-| **Tier II - Potential** | Variants with potential clinical actionability - emerging evidence |
-| **Tier III - Uncertain** | Variants of unknown clinical significance |
-| **Tier IV - Benign/Likely Benign** | Variants with no therapeutic implications |
+| Tier                               | Meaning                                                                                        |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Tier I - Strong**                | Variants with strong clinical significance - FDA-approved therapies or professional guidelines |
+| **Tier II - Potential**            | Variants with potential clinical actionability - emerging evidence                             |
+| **Tier III - Uncertain**           | Variants of unknown clinical significance                                                      |
+| **Tier IV - Benign/Likely Benign** | Variants with no therapeutic implications                                                      |
 
 ### Oncogenicity (ClinGen/CGC/VICC)
 
 Based on standards from ClinGen, Cancer Genomics Consortium (CGC), and Variant Interpretation for Cancer Consortium (VICC):
 
-| Term | Meaning |
-|------|---------|
-| **Oncogenic** | Variant drives cancer development |
-| **Likely Oncogenic** | Variant probably drives cancer development |
-| **Uncertain Significance** | Insufficient evidence for oncogenicity |
-| **Likely Benign** | Variant probably does not drive cancer |
-| **Benign** | Variant does not drive cancer |
+| Term                       | Meaning                                    |
+| -------------------------- | ------------------------------------------ |
+| **Oncogenic**              | Variant drives cancer development          |
+| **Likely Oncogenic**       | Variant probably drives cancer development |
+| **Uncertain Significance** | Insufficient evidence for oncogenicity     |
+| **Likely Benign**          | Variant probably does not drive cancer     |
+| **Benign**                 | Variant does not drive cancer              |
 
 ## Review Status and Star Ratings
 
 ClinVar assigns review status ratings to indicate the strength of evidence behind classifications:
 
-| Stars | Review Status | Description | Weight |
-|-------|---------------|-------------|--------|
-| ★★★★ | **Practice Guideline** | Reviewed by expert panel with published guidelines | Highest |
-| ★★★ | **Expert Panel Review** | Reviewed by expert panel (e.g., ClinGen) | High |
-| ★★ | **Multiple Submitters, No Conflicts** | ≥2 submitters with same classification | Moderate |
-| ★ | **Criteria Provided, Single Submitter** | One submitter with supporting evidence | Standard |
-| ☆ | **No Assertion Criteria** | Classification without documented criteria | Lowest |
-| ☆ | **No Assertion Provided** | No classification submitted | None |
+| Stars | Review Status                           | Description                                        | Weight   |
+| ----- | --------------------------------------- | -------------------------------------------------- | -------- |
+| ★★★★  | **Practice Guideline**                  | Reviewed by expert panel with published guidelines | Highest  |
+| ★★★   | **Expert Panel Review**                 | Reviewed by expert panel (e.g., ClinGen)           | High     |
+| ★★    | **Multiple Submitters, No Conflicts**   | ≥2 submitters with same classification             | Moderate |
+| ★     | **Criteria Provided, Single Submitter** | One submitter with supporting evidence             | Standard |
+| ☆     | **No Assertion Criteria**               | Classification without documented criteria         | Lowest   |
+| ☆     | **No Assertion Provided**               | No classification submitted                        | None     |
 
 ### What the Stars Mean
 
@@ -108,6 +108,7 @@ ClinVar assigns review status ratings to indicate the strength of evidence behin
 ### What Constitutes a Conflict?
 
 As of June 2022, conflicts are reported between:
+
 - Pathogenic/likely pathogenic **vs.** Uncertain significance
 - Pathogenic/likely pathogenic **vs.** Benign/likely benign
 - Uncertain significance **vs.** Benign/likely benign
@@ -115,6 +116,7 @@ As of June 2022, conflicts are reported between:
 ### Conflict Resolution
 
 When conflicts exist, ClinVar reports:
+
 - **"Conflicting interpretations of pathogenicity"** - Disagreement on clinical significance
 - Individual submissions are displayed so users can evaluate evidence
 - Higher review status (more stars) carries more weight
@@ -123,6 +125,7 @@ When conflicts exist, ClinVar reports:
 ### Handling Conflicts in Research
 
 When encountering conflicts:
+
 1. Check the review status (star rating) of each interpretation
 2. Examine the evidence and criteria provided by each submitter
 3. Consider the date of submission (more recent may reflect new data)
@@ -134,12 +137,16 @@ When encountering conflicts:
 ClinVar calculates an aggregate classification when multiple submitters provide interpretations:
 
 ### No Conflicts
+
 When all submitters agree (within the same category):
+
 - Display: Single classification term
 - Confidence: Higher with more submitters
 
 ### With Conflicts
+
 When submitters disagree:
+
 - Display: "Conflicting interpretations of pathogenicity"
 - Details: All individual submissions shown
 - Resolution: Users must evaluate evidence themselves
@@ -166,6 +173,7 @@ When submitters disagree:
 ### Red Flags
 
 Be cautious with variants that have:
+
 - Zero or one star rating
 - Conflicting interpretations without resolution
 - Classification as VUS (uncertain significance)
@@ -197,6 +205,7 @@ CFTR[gene] AND pathogenic[CLNSIG] NOT conflicting[RVSTAT]
 ### Why Classifications Change
 
 Variants may be reclassified due to:
+
 - New functional studies
 - Additional population data (e.g., gnomAD)
 - Updated ACMG guidelines

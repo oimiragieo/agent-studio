@@ -5,39 +5,48 @@
 NetworkX supports four main graph classes:
 
 ### Graph (Undirected)
+
 ```python
 import networkx as nx
 G = nx.Graph()
 ```
+
 - Undirected graphs with single edges between nodes
 - No parallel edges allowed
 - Edges are bidirectional
 
 ### DiGraph (Directed)
+
 ```python
 G = nx.DiGraph()
 ```
+
 - Directed graphs with one-way connections
 - Edge direction matters: (u, v) ≠ (v, u)
 - Used for modeling directed relationships
 
 ### MultiGraph (Undirected Multi-edge)
+
 ```python
 G = nx.MultiGraph()
 ```
+
 - Allows multiple edges between same node pairs
 - Useful for modeling multiple relationships
 
 ### MultiDiGraph (Directed Multi-edge)
+
 ```python
 G = nx.MultiDiGraph()
 ```
+
 - Directed graph with multiple edges between nodes
 - Combines features of DiGraph and MultiGraph
 
 ## Creating and Adding Nodes
 
 ### Single Node Addition
+
 ```python
 G.add_node(1)
 G.add_node("protein_A")
@@ -45,12 +54,14 @@ G.add_node((x, y))  # Nodes can be any hashable type
 ```
 
 ### Bulk Node Addition
+
 ```python
 G.add_nodes_from([2, 3, 4])
 G.add_nodes_from(range(100, 110))
 ```
 
 ### Nodes with Attributes
+
 ```python
 G.add_node(1, time='5pm', color='red')
 G.add_nodes_from([
@@ -60,6 +71,7 @@ G.add_nodes_from([
 ```
 
 ### Important Node Properties
+
 - Nodes can be any hashable Python object: strings, tuples, numbers, custom objects
 - Node attributes stored as key-value pairs
 - Use meaningful node identifiers for clarity
@@ -67,18 +79,21 @@ G.add_nodes_from([
 ## Creating and Adding Edges
 
 ### Single Edge Addition
+
 ```python
 G.add_edge(1, 2)
 G.add_edge('gene_A', 'gene_B')
 ```
 
 ### Bulk Edge Addition
+
 ```python
 G.add_edges_from([(1, 2), (1, 3), (2, 4)])
 G.add_edges_from(edge_list)
 ```
 
 ### Edges with Attributes
+
 ```python
 G.add_edge(1, 2, weight=4.7, relation='interacts')
 G.add_edges_from([
@@ -88,6 +103,7 @@ G.add_edges_from([
 ```
 
 ### Adding from Edge List with Attributes
+
 ```python
 # From pandas DataFrame
 import pandas as pd
@@ -98,6 +114,7 @@ G = nx.from_pandas_edgelist(df, 'source', 'target', edge_attr='weight')
 ## Examining Graph Structure
 
 ### Basic Properties
+
 ```python
 # Get collections
 G.nodes              # NodeView of all nodes
@@ -116,6 +133,7 @@ list(G.degree())    # List of (node, degree) pairs
 ```
 
 ### Checking Existence
+
 ```python
 # Check if node exists
 1 in G              # Returns True/False
@@ -126,6 +144,7 @@ G.has_edge(1, 2)
 ```
 
 ### Accessing Neighbors
+
 ```python
 # Get neighbors of node 1
 list(G.neighbors(1))
@@ -137,6 +156,7 @@ list(G.successors(1))    # Outgoing edges
 ```
 
 ### Iterating Over Elements
+
 ```python
 # Iterate over nodes
 for node in G.nodes:
@@ -157,6 +177,7 @@ for u, v, attrs in G.edges(data=True):
 ## Modifying Graphs
 
 ### Removing Elements
+
 ```python
 # Remove single node (also removes incident edges)
 G.remove_node(1)
@@ -170,6 +191,7 @@ G.remove_edges_from([(1, 2), (2, 3)])
 ```
 
 ### Clearing Graph
+
 ```python
 G.clear()           # Remove all nodes and edges
 G.clear_edges()     # Remove only edges, keep nodes
@@ -178,6 +200,7 @@ G.clear_edges()     # Remove only edges, keep nodes
 ## Attributes and Metadata
 
 ### Graph-Level Attributes
+
 ```python
 G.graph['name'] = 'Social Network'
 G.graph['date'] = '2025-01-15'
@@ -185,6 +208,7 @@ print(G.graph)
 ```
 
 ### Node Attributes
+
 ```python
 # Set at creation
 G.add_node(1, time='5pm', weight=0.5)
@@ -200,6 +224,7 @@ nx.get_node_attributes(G, 'color')
 ```
 
 ### Edge Attributes
+
 ```python
 # Set at creation
 G.add_edge(1, 2, weight=4.7, color='red')
@@ -218,6 +243,7 @@ nx.get_edge_attributes(G, 'weight')
 ## Subgraphs and Views
 
 ### Subgraph Creation
+
 ```python
 # Create subgraph from node list
 nodes_subset = [1, 2, 3, 4]
@@ -232,6 +258,7 @@ H = G.edge_subgraph(edge_subset)
 ```
 
 ### Graph Views
+
 ```python
 # Reverse view (for directed graphs)
 G_reversed = G.reverse()
@@ -244,6 +271,7 @@ G_directed = G.to_directed()
 ## Graph Information and Diagnostics
 
 ### Basic Information
+
 ```python
 print(nx.info(G))   # Summary of graph structure
 
@@ -258,6 +286,7 @@ G.is_multigraph()
 ```
 
 ### Connectivity Checks
+
 ```python
 # For undirected graphs
 nx.is_connected(G)
@@ -271,13 +300,17 @@ nx.is_weakly_connected(G)
 ## Important Considerations
 
 ### Floating Point Precision
+
 Once graphs contain floating point numbers, all results are inherently approximate due to precision limitations. Small arithmetic errors can affect algorithm outcomes, particularly in minimum/maximum computations.
 
 ### Memory Considerations
+
 Each time a script starts, graph data must be loaded into memory. For large datasets, this can cause performance issues. Consider:
+
 - Using efficient data formats (pickle for Python objects)
 - Loading only necessary subgraphs
 - Using graph databases for very large networks
 
 ### Node and Edge Removal Behavior
+
 When a node is removed, all edges incident with that node are automatically removed as well.

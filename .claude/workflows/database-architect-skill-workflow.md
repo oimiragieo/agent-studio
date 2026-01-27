@@ -32,14 +32,14 @@ This workflow coordinates multiple agents to deliver:
 
 ## When to Use
 
-| Scenario | Complexity | This Workflow? |
-|----------|------------|----------------|
-| New application database | High | Yes |
-| Major schema refactoring | High | Yes |
-| Performance optimization | Medium | Yes |
-| Adding new tables/relations | Medium | Yes |
-| Simple column addition | Low | No (use developer directly) |
-| Index-only changes | Low | No (use developer directly) |
+| Scenario                    | Complexity | This Workflow?              |
+| --------------------------- | ---------- | --------------------------- |
+| New application database    | High       | Yes                         |
+| Major schema refactoring    | High       | Yes                         |
+| Performance optimization    | Medium     | Yes                         |
+| Adding new tables/relations | Medium     | Yes                         |
+| Simple column addition      | Low        | No (use developer directly) |
+| Index-only changes          | Low        | No (use developer directly) |
 
 ## Configuration Options
 
@@ -230,6 +230,7 @@ Review data security requirements for: $PROJECT_NAME
 ```
 
 **Expected Output**:
+
 - Logical data model with normalized schema
 - ERD diagram
 - Security requirements and encryption strategy
@@ -516,6 +517,7 @@ Set up migration deployment pipeline for: $PROJECT_NAME
 ```
 
 **Expected Output**:
+
 - Comprehensive rollback runbook
 - CI/CD pipeline for safe migration deployment
 
@@ -664,40 +666,45 @@ Test database migrations for: $PROJECT_NAME
 Upon workflow completion, the following artifacts will be available:
 
 ### Documentation
-| Artifact | Location |
-|----------|----------|
-| Requirements | `.claude/context/plans/database-$PROJECT_NAME-requirements.md` |
-| Current Analysis | `.claude/context/reports/database-$PROJECT_NAME-current-analysis.md` |
+
+| Artifact              | Location                                                                  |
+| --------------------- | ------------------------------------------------------------------------- |
+| Requirements          | `.claude/context/plans/database-$PROJECT_NAME-requirements.md`            |
+| Current Analysis      | `.claude/context/reports/database-$PROJECT_NAME-current-analysis.md`      |
 | Security Requirements | `.claude/context/reports/database-$PROJECT_NAME-security-requirements.md` |
-| Query Optimization | `.claude/context/reports/database-$PROJECT_NAME-query-optimization.md` |
-| Migration Test Report | `.claude/context/reports/database-$PROJECT_NAME-migration-tests.md` |
+| Query Optimization    | `.claude/context/reports/database-$PROJECT_NAME-query-optimization.md`    |
+| Migration Test Report | `.claude/context/reports/database-$PROJECT_NAME-migration-tests.md`       |
 
 ### Schema Artifacts
-| Artifact | Location |
-|----------|----------|
-| SQL Schema | `.claude/context/artifacts/database/schemas/$PROJECT_NAME-schema.sql` |
-| ERD Diagram | `.claude/context/artifacts/database/diagrams/$PROJECT_NAME-erd.md` |
+
+| Artifact             | Location                                                               |
+| -------------------- | ---------------------------------------------------------------------- |
+| SQL Schema           | `.claude/context/artifacts/database/schemas/$PROJECT_NAME-schema.sql`  |
+| ERD Diagram          | `.claude/context/artifacts/database/diagrams/$PROJECT_NAME-erd.md`     |
 | Schema Documentation | `.claude/context/artifacts/database/docs/$PROJECT_NAME-schema-docs.md` |
 
 ### Migration Artifacts
-| Artifact | Location |
-|----------|----------|
-| Migration Scripts | `.claude/context/artifacts/database/migrations/$PROJECT_NAME/` |
-| Rollback Runbook | `.claude/context/runbooks/database-$PROJECT_NAME-rollback.md` |
+
+| Artifact           | Location                                                                             |
+| ------------------ | ------------------------------------------------------------------------------------ |
+| Migration Scripts  | `.claude/context/artifacts/database/migrations/$PROJECT_NAME/`                       |
+| Rollback Runbook   | `.claude/context/runbooks/database-$PROJECT_NAME-rollback.md`                        |
 | Migration Pipeline | `.claude/context/artifacts/database/pipelines/$PROJECT_NAME-migration-pipeline.yaml` |
 
 ### Testing Artifacts
-| Artifact | Location |
-|----------|----------|
-| Schema Tests | `.claude/context/artifacts/database/tests/$PROJECT_NAME/` |
-| Test Data Generators | `.claude/context/artifacts/database/seeds/$PROJECT_NAME/` |
-| Benchmarks | `.claude/context/artifacts/database/benchmarks/$PROJECT_NAME/` |
+
+| Artifact             | Location                                                       |
+| -------------------- | -------------------------------------------------------------- |
+| Schema Tests         | `.claude/context/artifacts/database/tests/$PROJECT_NAME/`      |
+| Test Data Generators | `.claude/context/artifacts/database/seeds/$PROJECT_NAME/`      |
+| Benchmarks           | `.claude/context/artifacts/database/benchmarks/$PROJECT_NAME/` |
 
 ---
 
 ## Rollback Procedures
 
 ### Pre-Migration Checklist
+
 - [ ] Full database backup completed
 - [ ] Backup verified (test restore)
 - [ ] Rollback scripts tested on staging
@@ -707,13 +714,13 @@ Upon workflow completion, the following artifacts will be available:
 
 ### Rollback Decision Matrix
 
-| Scenario | Action | Time Estimate |
-|----------|--------|---------------|
-| Migration script error | Execute DOWN migration | < 5 min |
-| Data integrity violation | Restore from backup | 15-60 min |
-| Performance degradation | Execute DOWN migration | < 5 min |
-| Application incompatibility | Execute DOWN migration + app rollback | 10-30 min |
-| Unknown data corruption | Restore from backup | 15-60 min |
+| Scenario                    | Action                                | Time Estimate |
+| --------------------------- | ------------------------------------- | ------------- |
+| Migration script error      | Execute DOWN migration                | < 5 min       |
+| Data integrity violation    | Restore from backup                   | 15-60 min     |
+| Performance degradation     | Execute DOWN migration                | < 5 min       |
+| Application incompatibility | Execute DOWN migration + app rollback | 10-30 min     |
+| Unknown data corruption     | Restore from backup                   | 15-60 min     |
 
 ### Emergency Rollback Steps
 
@@ -807,21 +814,21 @@ Ensure parallel spawning where indicated (Phase 2.1, Phase 4.2).
 
 ## Agent-Skill Mapping Reference
 
-| Phase | Agent | Required Skills |
-|-------|-------|-----------------|
-| 1.1 Requirements | planner | brainstorming |
-| 1.2 Current Analysis | database-architect | database-expert, sequential-thinking |
-| 2.1 Logical Model | database-architect | database-expert, diagram-generator, sequential-thinking |
-| 2.1 Security Review | security-architect | security-architect |
-| 2.2 Physical Schema | database-architect | database-expert, doc-generator |
-| 3.1 Query Optimization | database-architect | database-expert, text-to-sql, sequential-thinking |
-| 3.2 Benchmarking | developer | database-expert, tdd |
-| 4.1 Migration Scripts | database-architect | database-expert, sequential-thinking |
-| 4.2 Rollback Docs | database-architect | database-expert, doc-generator |
-| 4.2 Deploy Pipeline | devops | cicd-expert |
-| 5.1 Schema Tests | qa | tdd |
-| 5.2 Test Data | developer | database-expert, tdd |
-| 5.3 Migration Tests | qa | tdd |
+| Phase                  | Agent              | Required Skills                                         |
+| ---------------------- | ------------------ | ------------------------------------------------------- |
+| 1.1 Requirements       | planner            | brainstorming                                           |
+| 1.2 Current Analysis   | database-architect | database-expert, sequential-thinking                    |
+| 2.1 Logical Model      | database-architect | database-expert, diagram-generator, sequential-thinking |
+| 2.1 Security Review    | security-architect | security-architect                                      |
+| 2.2 Physical Schema    | database-architect | database-expert, doc-generator                          |
+| 3.1 Query Optimization | database-architect | database-expert, text-to-sql, sequential-thinking       |
+| 3.2 Benchmarking       | developer          | database-expert, tdd                                    |
+| 4.1 Migration Scripts  | database-architect | database-expert, sequential-thinking                    |
+| 4.2 Rollback Docs      | database-architect | database-expert, doc-generator                          |
+| 4.2 Deploy Pipeline    | devops             | cicd-expert                                             |
+| 5.1 Schema Tests       | qa                 | tdd                                                     |
+| 5.2 Test Data          | developer          | database-expert, tdd                                    |
+| 5.3 Migration Tests    | qa                 | tdd                                                     |
 
 ---
 

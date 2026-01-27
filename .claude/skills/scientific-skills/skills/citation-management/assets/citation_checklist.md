@@ -81,6 +81,7 @@ python scripts/format_bibtex.py references.bib \
 ```
 
 **What this does**:
+
 - Removes duplicates
 - Standardizes formatting
 - Fixes common issues (page ranges, DOI format, etc.)
@@ -96,6 +97,7 @@ python scripts/validate_citations.py clean_references.bib \
 ```
 
 **What this does**:
+
 - Checks required fields
 - Verifies DOIs resolve
 - Detects duplicates
@@ -109,6 +111,7 @@ cat validation_report.json
 ```
 
 **Address any**:
+
 - **Errors**: Must fix (missing fields, broken DOIs, syntax errors)
 - **Warnings**: Should fix (missing recommended fields, formatting issues)
 - **Duplicates**: Remove or consolidate
@@ -136,24 +139,28 @@ For your most important citations, manually verify:
 ### Common Issues to Watch For
 
 **Missing Information**:
+
 - [ ] No DOI for papers published after 2000
 - [ ] Missing volume or page numbers for journal articles
 - [ ] Missing publisher for books
 - [ ] Missing conference location for proceedings
 
 **Formatting Errors**:
+
 - [ ] Single hyphen in page ranges (123-145 → 123--145)
 - [ ] Ampersands in author lists (Smith & Jones → Smith and Jones)
 - [ ] Unprotected acronyms in titles (DNA → {DNA})
 - [ ] DOI includes URL prefix (https://doi.org/10.xxx → 10.xxx)
 
 **Metadata Mismatches**:
+
 - [ ] Author names differ from publication
 - [ ] Year is online-first instead of print publication
 - [ ] Journal name abbreviated when it should be full
 - [ ] Volume/issue numbers swapped
 
 **Duplicates**:
+
 - [ ] Same paper cited with different citation keys
 - [ ] Preprint and published version both cited
 - [ ] Conference paper and journal version both cited
@@ -363,12 +370,14 @@ python scripts/format_bibtex.py references.bib \
 ## Summary
 
 **Minimum Requirements**:
+
 1. Run `format_bibtex.py --deduplicate`
 2. Run `validate_citations.py`
 3. Fix all errors
 4. Compile successfully
 
 **Recommended**:
+
 1. Format, deduplicate, and sort
 2. Validate with `--check-dois`
 3. Fix all errors and warnings
@@ -376,6 +385,7 @@ python scripts/format_bibtex.py references.bib \
 5. Re-validate after fixes
 
 **Best Practice**:
+
 1. Validate throughout research process
 2. Use automated tools consistently
 3. Keep bibliography clean and organized
@@ -383,4 +393,3 @@ python scripts/format_bibtex.py references.bib \
 5. Final validation 1-3 days before submission
 
 **Remember**: Citation errors reflect poorly on your scholarship. Taking time to ensure accuracy is worthwhile!
-

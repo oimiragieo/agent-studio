@@ -3,6 +3,7 @@
 This document provides detailed step-by-step workflows for common PyDESeq2 analysis patterns.
 
 ## Table of Contents
+
 1. [Complete Differential Expression Analysis](#complete-differential-expression-analysis)
 2. [Data Loading and Preparation](#data-loading-and-preparation)
 3. [Single-Factor Analysis](#single-factor-analysis)
@@ -16,14 +17,17 @@ This document provides detailed step-by-step workflows for common PyDESeq2 analy
 ## Complete Differential Expression Analysis
 
 ### Overview
+
 A standard PyDESeq2 analysis consists of 12 main steps across two phases:
 
 **Phase 1: Read Counts Modeling (Steps 1-7)**
+
 - Normalization and dispersion estimation
 - Log fold-change fitting
 - Outlier detection
 
 **Phase 2: Statistical Analysis (Steps 8-12)**
+
 - Wald testing
 - Multiple testing correction
 - Optional LFC shrinkage
@@ -101,12 +105,14 @@ metadata = pd.read_csv("metadata.csv", index_col=0)
 ### Loading from Other Formats
 
 **From TSV:**
+
 ```python
 counts_df = pd.read_csv("counts.tsv", sep="\t", index_col=0).T
 metadata = pd.read_csv("metadata.tsv", sep="\t", index_col=0)
 ```
 
 **From saved pickle:**
+
 ```python
 import pickle
 
@@ -118,6 +124,7 @@ with open("metadata.pkl", "rb") as f:
 ```
 
 **From AnnData:**
+
 ```python
 import anndata as ad
 
@@ -133,6 +140,7 @@ metadata = adata.obs
 ### Data Filtering
 
 **Filter genes with low counts:**
+
 ```python
 # Remove genes with fewer than 10 total reads
 genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= 10]
@@ -140,6 +148,7 @@ counts_df = counts_df[genes_to_keep]
 ```
 
 **Filter samples with missing metadata:**
+
 ```python
 # Remove samples where 'condition' column is NA
 samples_to_keep = ~metadata.condition.isna()
@@ -148,6 +157,7 @@ metadata = metadata.loc[samples_to_keep]
 ```
 
 **Filter by multiple criteria:**
+
 ```python
 # Keep only samples that meet all criteria
 mask = (
@@ -162,6 +172,7 @@ metadata = metadata.loc[mask]
 ### Data Validation
 
 **Check data structure:**
+
 ```python
 print(f"Counts shape: {counts_df.shape}")  # Should be (samples, genes)
 print(f"Metadata shape: {metadata.shape}")  # Should be (samples, variables)
@@ -300,6 +311,7 @@ dds.deseq2()
 ### Saving Results
 
 **Export as CSV:**
+
 ```python
 # Save statistical results
 ds.results_df.to_csv("deseq2_results.csv")
@@ -314,6 +326,7 @@ sorted_results.to_csv("sorted_results.csv")
 ```
 
 **Save DeseqDataSet:**
+
 ```python
 import pickle
 
@@ -323,6 +336,7 @@ with open("dds_result.pkl", "wb") as f:
 ```
 
 **Load saved results:**
+
 ```python
 # Load results
 results = pd.read_csv("deseq2_results.csv", index_col=0)
@@ -335,6 +349,7 @@ with open("dds_result.pkl", "rb") as f:
 ### Basic Visualization
 
 **Volcano plot:**
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
@@ -361,6 +376,7 @@ plt.savefig("volcano_plot.png", dpi=300)
 ```
 
 **MA plot:**
+
 ```python
 plt.figure(figsize=(10, 6))
 plt.scatter(
@@ -384,6 +400,7 @@ plt.savefig("ma_plot.png", dpi=300)
 ### 1. Data Preprocessing Checklist
 
 Before running PyDESeq2:
+
 - ✓ Ensure counts are non-negative integers
 - ✓ Verify samples × genes orientation
 - ✓ Check that sample names match between counts and metadata
@@ -394,6 +411,7 @@ Before running PyDESeq2:
 ### 2. Design Formula Best Practices
 
 **Order matters:** Put adjustment variables before the variable of interest
+
 ```python
 # Correct: control for batch, test condition
 design = "~batch + condition"
@@ -403,6 +421,7 @@ design = "~condition + batch"
 ```
 
 **Use categorical for discrete variables:**
+
 ```python
 # Ensure proper data types
 metadata["condition"] = metadata["condition"].astype("category")
@@ -412,6 +431,7 @@ metadata["batch"] = metadata["batch"].astype("category")
 ### 3. Statistical Testing Guidelines
 
 **Set appropriate alpha:**
+
 ```python
 # Standard significance threshold
 ds = DeseqStats(dds, alpha=0.05)
@@ -421,6 +441,7 @@ ds = DeseqStats(dds, alpha=0.01)
 ```
 
 **Use independent filtering:**
+
 ```python
 # Recommended: filter low-power tests
 ds = DeseqStats(dds, independent_filter=True)
@@ -432,11 +453,13 @@ ds = DeseqStats(dds, independent_filter=False)
 ### 4. LFC Shrinkage
 
 **When to use:**
+
 - For visualization (volcano plots, heatmaps)
 - For ranking genes by effect size
 - When prioritizing genes for follow-up
 
 **When NOT to use:**
+
 - For reporting statistical significance (use unshrunken p-values)
 - For gene set enrichment analysis (typically uses unshrunken values)
 
@@ -450,6 +473,7 @@ ds.results_df.to_csv("results_shrunken.csv")
 ### 5. Memory Management
 
 For large datasets:
+
 ```python
 # Use parallel processing
 dds = DeseqDataSet(
@@ -470,11 +494,13 @@ dds = DeseqDataSet(
 ### Error: Index mismatch between counts and metadata
 
 **Problem:** Sample names don't match
+
 ```
 KeyError: Sample names in counts and metadata don't match
 ```
 
 **Solution:**
+
 ```python
 # Check indices
 print("Counts samples:", counts_df.index.tolist())
@@ -489,11 +515,13 @@ metadata = metadata.loc[common_samples]
 ### Error: All genes have zero counts
 
 **Problem:** Data might need transposition
+
 ```
 ValueError: All genes have zero total counts
 ```
 
 **Solution:**
+
 ```python
 # Check data orientation
 print(f"Counts shape: {counts_df.shape}")
@@ -508,6 +536,7 @@ if counts_df.shape[1] < counts_df.shape[0]:
 **Problem:** Too many low-count genes removed
 
 **Check:**
+
 ```python
 # See distribution of gene counts
 print(counts_df.sum(axis=0).describe())
@@ -521,6 +550,7 @@ plt.show()
 ```
 
 **Adjust filtering if needed:**
+
 ```python
 # Try lower threshold
 genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= 5]
@@ -531,6 +561,7 @@ genes_to_keep = counts_df.columns[counts_df.sum(axis=0) >= 5]
 **Problem:** Confounded design (e.g., all treated samples in one batch)
 
 **Solution:**
+
 ```python
 # Check design confounding
 print(pd.crosstab(metadata.condition, metadata.batch))
@@ -544,12 +575,14 @@ design = "~condition + batch + condition:batch"  # Add interaction
 ### Issue: No significant genes found
 
 **Possible causes:**
+
 1. Small effect sizes
 2. High biological variability
 3. Insufficient sample size
 4. Technical issues (batch effects, outliers)
 
 **Diagnostics:**
+
 ```python
 # Check dispersion estimates
 import matplotlib.pyplot as plt
@@ -570,6 +603,7 @@ print(top_genes)
 ### Memory errors on large datasets
 
 **Solutions:**
+
 ```python
 # 1. Use fewer CPUs (paradoxically can help)
 dds = DeseqDataSet(..., n_cpus=1)

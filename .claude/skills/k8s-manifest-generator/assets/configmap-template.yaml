@@ -1,5 +1,4 @@
 # Kubernetes ConfigMap Templates
-
 ---
 # Template 1: Simple Key-Value Configuration
 apiVersion: v1
@@ -12,12 +11,12 @@ metadata:
     app.kubernetes.io/instance: <instance-name>
 data:
   # Simple key-value pairs
-  APP_ENV: "production"
-  LOG_LEVEL: "info"
-  DATABASE_HOST: "db.example.com"
-  DATABASE_PORT: "5432"
-  CACHE_TTL: "3600"
-  MAX_CONNECTIONS: "100"
+  APP_ENV: 'production'
+  LOG_LEVEL: 'info'
+  DATABASE_HOST: 'db.example.com'
+  DATABASE_PORT: '5432'
+  CACHE_TTL: '3600'
+  MAX_CONNECTIONS: '100'
 
 ---
 # Template 2: Configuration File
@@ -159,14 +158,14 @@ metadata:
     app.kubernetes.io/name: <app-name>
     environment: production
 data:
-  APP_ENV: "production"
-  LOG_LEVEL: "warn"
-  DEBUG: "false"
-  RATE_LIMIT: "1000"
-  CACHE_TTL: "3600"
-  DATABASE_POOL_SIZE: "50"
-  FEATURE_FLAG_NEW_UI: "true"
-  FEATURE_FLAG_BETA: "false"
+  APP_ENV: 'production'
+  LOG_LEVEL: 'warn'
+  DEBUG: 'false'
+  RATE_LIMIT: '1000'
+  CACHE_TTL: '3600'
+  DATABASE_POOL_SIZE: '50'
+  FEATURE_FLAG_NEW_UI: 'true'
+  FEATURE_FLAG_BETA: 'false'
 
 ---
 # Template 6: Script Configuration

@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Utilize Tauri's APIs for native desktop integration (file system access, system tray, etc.).
 - Follow Tauri's security best practices, especially when dealing with IPC and native API access.
 - Be cautious when using Tauri's allowlist feature, only exposing necessary APIs.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

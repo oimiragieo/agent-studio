@@ -67,17 +67,21 @@ Only after Stage 1 passes, review for quality:
 ## Issue Categorization
 
 **Critical (Must Fix)**
+
 - Bugs, security issues, data loss risks, broken functionality
 - Spec violations that break requirements
 
 **Important (Should Fix)**
+
 - Architecture problems, missing features, poor error handling, test gaps
 - Partial spec deviations
 
 **Minor (Nice to Have)**
+
 - Code style, optimization opportunities, documentation improvements
 
 **For each issue, provide:**
+
 - File:line reference
 - What's wrong
 - Why it matters
@@ -98,25 +102,31 @@ Only after Stage 1 passes, review for quality:
 **Requirements Met:** [Yes/No/Partial]
 
 **Deviations:**
+
 - [List any deviations from spec]
 
 ### Stage 2: Code Quality (if Stage 1 passed)
 
 ### Strengths
+
 [What's well done? Be specific with file:line references]
 
 ### Issues
 
 #### Critical (Must Fix)
+
 [...]
 
 #### Important (Should Fix)
+
 [...]
 
 #### Minor (Nice to Have)
+
 [...]
 
 ### Recommendations
+
 [Improvements for code quality, architecture, or process]
 
 ### Assessment
@@ -129,6 +139,7 @@ Only after Stage 1 passes, review for quality:
 ## Critical Rules
 
 **DO:**
+
 - Complete Stage 1 before Stage 2
 - Categorize by actual severity (not everything is Critical)
 - Be specific (file:line, not vague)
@@ -137,6 +148,7 @@ Only after Stage 1 passes, review for quality:
 - Give clear verdict
 
 **DON'T:**
+
 - Say "looks good" without checking
 - Mark nitpicks as Critical
 - Give feedback on code you didn't review
@@ -149,27 +161,27 @@ Only after Stage 1 passes, review for quality:
 **Use the Skill tool to invoke skills, not just read them:**
 
 ```javascript
-Skill({ skill: 'code-analyzer' });    // Static analysis and metrics
+Skill({ skill: 'code-analyzer' }); // Static analysis and metrics
 Skill({ skill: 'code-quality-expert' }); // Best practices review
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `code-analyzer` | Static analysis and metrics | Always at review start |
-| `code-quality-expert` | Code quality patterns | Always at review start |
-| `tdd` | Test coverage assessment | Always at review start |
+| Skill                 | Purpose                     | When                   |
+| --------------------- | --------------------------- | ---------------------- |
+| `code-analyzer`       | Static analysis and metrics | Always at review start |
+| `code-quality-expert` | Code quality patterns       | Always at review start |
+| `tdd`                 | Test coverage assessment    | Always at review start |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Security-sensitive code | `security-architect` | Threat modeling and OWASP analysis |
-| Performance concerns | `debugging` | Systematic performance analysis |
-| Before claiming completion | `verification-before-completion` | Evidence-based completion gates |
-| Code review collaboration | `receiving-code-review` | Process code review feedback |
-| Requesting review | `requesting-code-review` | Dispatch review requests |
+| Condition                  | Skill                            | Purpose                            |
+| -------------------------- | -------------------------------- | ---------------------------------- |
+| Security-sensitive code    | `security-architect`             | Threat modeling and OWASP analysis |
+| Performance concerns       | `debugging`                      | Systematic performance analysis    |
+| Before claiming completion | `verification-before-completion` | Evidence-based completion gates    |
+| Code review collaboration  | `receiving-code-review`          | Process code review feedback       |
+| Requesting review          | `requesting-code-review`         | Dispatch review requests           |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 

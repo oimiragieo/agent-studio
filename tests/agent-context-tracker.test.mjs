@@ -11,8 +11,20 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const TRACKER_PATH = path.join(PROJECT_ROOT, '.claude', 'hooks', 'routing', 'agent-context-tracker.cjs');
-const ROUTER_STATE_PATH = path.join(PROJECT_ROOT, '.claude', 'hooks', 'routing', 'router-state.cjs');
+const TRACKER_PATH = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'hooks',
+  'routing',
+  'agent-context-tracker.cjs'
+);
+const ROUTER_STATE_PATH = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'hooks',
+  'routing',
+  'router-state.cjs'
+);
 const STATE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'runtime', 'router-state.json');
 
 // Helper to run the tracker with specific input
@@ -185,7 +197,8 @@ describe('agent-context-tracker SECURITY detection', () => {
       tool_input: {
         subagent_type: 'general-purpose',
         description: 'Some task',
-        prompt: 'You are SECURITY-ARCHITECT. Read .claude/agents/specialized/security-architect.md...',
+        prompt:
+          'You are SECURITY-ARCHITECT. Read .claude/agents/specialized/security-architect.md...',
       },
     };
 

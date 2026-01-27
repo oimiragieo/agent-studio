@@ -5,6 +5,7 @@
 ### The Surv Object
 
 Survival data in scikit-survival is represented using structured arrays with two fields:
+
 - **event**: Boolean indicating whether the event occurred (True) or was censored (False)
 - **time**: Time to event or censoring
 
@@ -22,15 +23,18 @@ print(y.dtype)  # [('event', '?'), ('time', '<f8')]
 ### Types of Censoring
 
 **Right Censoring** (most common):
+
 - Subject didn't experience event by end of study
 - Subject lost to follow-up
 - Subject withdrew from study
 
 **Left Censoring**:
+
 - Event occurred before observation began
 - Rare in practice
 
 **Interval Censoring**:
+
 - Event occurred in a known time interval
 - Requires specialized methods
 
@@ -151,6 +155,7 @@ X_encoded = pd.get_dummies(X, drop_first=True)
 ### Standardization
 
 Standardization is important for:
+
 - Cox models with regularization
 - SVMs
 - Models sensitive to feature scales
@@ -442,6 +447,7 @@ print(f"  Median time: {np.median(y_test['time']):.2f}")
 ## Working with Time-Varying Covariates
 
 Note: scikit-survival doesn't directly support time-varying covariates. For such data, consider:
+
 1. Time-stratified analysis
 2. Landmarking approach
 3. Using other packages (e.g., lifelines)

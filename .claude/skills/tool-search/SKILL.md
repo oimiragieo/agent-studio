@@ -353,6 +353,7 @@ node .claude/tools/tool_search.mjs --query "testing"
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

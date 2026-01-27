@@ -11,6 +11,6 @@
 
 ## 8.5 WORKFLOW ENHANCEMENT SKILLS
 
-| Skill | When to Use |
-|-------|-------------|
-| tdd | Testing workflows |
+| Skill | When to Use       |
+| ----- | ----------------- |
+| tdd   | Testing workflows |

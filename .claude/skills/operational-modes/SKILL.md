@@ -41,30 +41,35 @@ Operational modes help agents self-regulate their behavior based on the current 
 **Purpose**: Analysis and planning without making changes.
 
 **Characteristics**:
+
 - Read-only operations
 - Focus on understanding the codebase
 - Create plans and strategies
 - Identify affected components
 
 **Allowed Tools**:
+
 - `Read` - Read files
 - `Glob` - Find files
 - `Grep` - Search content
 - `Bash` - Read-only commands (ls, cat, git status, git log)
 
 **Excluded Tools**:
+
 - `Write` - No file creation
 - `Edit` - No file modification
 - `Bash` - No commands that modify state
 - `NotebookEdit` - No notebook changes
 
 **When to Use**:
+
 - Starting work on unfamiliar tasks
 - Analyzing complex bugs
 - Planning architectural changes
 - Understanding dependencies before refactoring
 
 **Example Prompt**:
+
 ```
 You are operating in PLANNING MODE.
 
@@ -86,12 +91,14 @@ Do NOT:
 **Purpose**: Full implementation capability.
 
 **Characteristics**:
+
 - Full write access
 - Implementation focus
 - Test-driven when appropriate
 - Follows established patterns
 
 **Allowed Tools**:
+
 - All read tools
 - `Write` - Create files
 - `Edit` - Modify files
@@ -99,15 +106,18 @@ Do NOT:
 - `NotebookEdit` - Modify notebooks
 
 **Excluded Tools**:
+
 - Destructive bash commands (rm -rf, git reset --hard, etc.)
 
 **When to Use**:
+
 - After planning is complete
 - When implementation path is clear
 - For well-defined tasks
 - During test-driven development
 
 **Example Prompt**:
+
 ```
 You are operating in EDITING MODE.
 
@@ -128,28 +138,33 @@ Guidelines:
 **Purpose**: User-guided development with frequent checkpoints.
 
 **Characteristics**:
+
 - Pause for user approval before major changes
 - Explain options before proceeding
 - Smaller, incremental changes
 - More user involvement
 
 **Allowed Tools**:
+
 - All tools available
 - Frequent use of AskUserQuestion
 
 **Behavior**:
+
 - Explain what you're about to do before doing it
 - Present options when multiple approaches exist
 - Ask for confirmation before significant changes
 - Provide clear progress updates
 
 **When to Use**:
+
 - Learning user preferences
 - High-risk changes
 - Unclear requirements
 - When user wants to stay involved
 
 **Example Prompt**:
+
 ```
 You are operating in INTERACTIVE MODE.
 
@@ -168,26 +183,31 @@ Always keep the user informed and in control.
 **Purpose**: Single-task execution without follow-up.
 
 **Characteristics**:
+
 - Optimized for quick, focused tasks
 - Minimal interaction
 - Complete task fully before stopping
 - No iterative refinement expected
 
 **Allowed Tools**:
+
 - All tools as appropriate
 
 **Behavior**:
+
 - Understand the complete task upfront
 - Execute fully
 - Provide comprehensive summary at end
 
 **When to Use**:
+
 - Simple, well-defined tasks
 - Automation scripts
 - Batch operations
 - When user won't be monitoring
 
 **Example Prompt**:
+
 ```
 You are operating in ONE-SHOT MODE.
 
@@ -205,6 +225,7 @@ Do not expect follow-up interaction.
 ### Planning -> Editing
 
 Transition when:
+
 - Plan is complete
 - User has approved approach
 - All unknowns are resolved
@@ -213,6 +234,7 @@ Transition when:
 ## Mode Transition: Planning -> Editing
 
 **Planning Summary**:
+
 - Analyzed: [files/components]
 - Plan: [brief description]
 - Affected: [components list]
@@ -226,6 +248,7 @@ Transitioning to EDITING MODE.
 ### Editing -> Planning
 
 Transition when:
+
 - Unexpected complexity discovered
 - Scope expansion needed
 - Architectural questions arise
@@ -242,6 +265,7 @@ Returning to PLANNING MODE for analysis.
 ### Any -> Interactive
 
 Transition when:
+
 - User requests involvement
 - High-risk decision point
 - Multiple valid approaches
@@ -251,6 +275,7 @@ Transition when:
 
 **Reason**: Multiple valid approaches identified
 **Options**:
+
 1. Approach A - [pros/cons]
 2. Approach B - [pros/cons]
 
@@ -263,14 +288,14 @@ When using tasks, note the current mode:
 
 ```javascript
 TaskCreate({
-  subject: "Implement user validation",
-  description: "...",
-  metadata: { mode: "editing" }
+  subject: 'Implement user validation',
+  description: '...',
+  metadata: { mode: 'editing' },
 });
 
 TaskUpdate({
-  taskId: "1",
-  metadata: { mode: "planning", reason: "Need architectural review" }
+  taskId: '1',
+  metadata: { mode: 'planning', reason: 'Need architectural review' },
 });
 ```
 
@@ -279,16 +304,19 @@ TaskUpdate({
 Before changing modes, verify:
 
 **Entering Planning Mode**:
+
 - [ ] Task requires analysis
 - [ ] Don't have enough information to proceed
 - [ ] Complex decision points ahead
 
 **Entering Editing Mode**:
+
 - [ ] Plan is complete
 - [ ] Approach is decided
 - [ ] User has approved (if required)
 
 **Entering Interactive Mode**:
+
 - [ ] User involvement needed
 - [ ] Multiple options to present
 - [ ] High-risk or unclear situation
@@ -300,6 +328,7 @@ Before changing modes, verify:
 **Scenario**: User asks "Refactor the authentication system"
 
 **Agent Response**:
+
 ```
 This is a significant task. I'll start in PLANNING MODE.
 
@@ -329,6 +358,7 @@ Before proceeding to EDITING MODE:
 
 Awaiting your input before transitioning modes.
 ```
+
 </usage_example>
 </examples>
 
@@ -346,6 +376,7 @@ Awaiting your input before transitioning modes.
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

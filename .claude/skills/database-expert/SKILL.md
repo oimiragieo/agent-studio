@@ -46,6 +46,7 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 When interacting with databases:
+
 - Use prepared statements to prevent SQL injection.
 - Handle database errors gracefully.
 - Consider using an ORM for complex queries and data modeling.
@@ -98,7 +99,6 @@ When reviewing or writing code, apply these guidelines:
 
 When reviewing or writing code,
 
-
 </instructions>
 
 <examples>
@@ -112,12 +112,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- database-expert
 
+- database-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

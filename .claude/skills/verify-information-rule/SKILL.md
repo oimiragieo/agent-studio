@@ -33,7 +33,7 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 - Always verify information before presenting it. Do not make assumptions or speculate without clear evidence.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -46,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

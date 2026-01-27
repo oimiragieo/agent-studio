@@ -8,19 +8,20 @@ This document contains patterns for detecting API routes and endpoints across di
 
 ## Supported Frameworks
 
-| Framework | Language | Detection Method |
-|-----------|----------|------------------|
-| FastAPI | Python | Decorator patterns |
-| Flask | Python | Decorator patterns |
-| Django | Python | urls.py file patterns |
-| Express | Node.js | Method chain patterns |
-| Next.js | TypeScript | File-based routing |
-| Gin, Echo, Chi, Fiber | Go | Method chain patterns |
-| Axum, Actix | Rust | Route builder patterns |
+| Framework             | Language   | Detection Method       |
+| --------------------- | ---------- | ---------------------- |
+| FastAPI               | Python     | Decorator patterns     |
+| Flask                 | Python     | Decorator patterns     |
+| Django                | Python     | urls.py file patterns  |
+| Express               | Node.js    | Method chain patterns  |
+| Next.js               | TypeScript | File-based routing     |
+| Gin, Echo, Chi, Fiber | Go         | Method chain patterns  |
+| Axum, Actix           | Rust       | Route builder patterns |
 
 ## Directories to Exclude
 
 Always skip these directories when scanning for routes:
+
 ```
 node_modules, .venv, venv, __pycache__, .git
 ```
@@ -28,34 +29,42 @@ node_modules, .venv, venv, __pycache__, .git
 ## FastAPI Routes
 
 ### File Pattern
+
 All `.py` files (excluding excluded directories).
 
 ### Decorator Patterns
 
 **Standard method decorators:**
+
 ```regex
 @(?:app|router)\.(get|post|put|delete|patch)\(["\']([^"\']+)["\']
 ```
 
 Matches:
+
 - `@app.get("/users")`
 - `@router.post("/auth/login")`
 - `@app.delete("/users/{id}")`
 
 **API route decorator:**
+
 ```regex
 @(?:app|router)\.api_route\(["\']([^"\']+)["\'][^)]*methods\s*=\s*\[([^\]]+)\]
 ```
 
 Matches:
+
 - `@app.api_route("/multi", methods=["GET", "POST"])`
 
 ### Auth Detection
+
 Check route definition line for auth indicators:
+
 - `Depends` in the line
 - `require` (case-insensitive) in the line
 
 ### Example
+
 ```python
 @router.get("/users/{id}", dependencies=[Depends(require_auth)])
 async def get_user(id: int):
@@ -69,14 +78,17 @@ async def login(credentials: Credentials):
 ## Flask Routes
 
 ### File Pattern
+
 All `.py` files.
 
 ### Route Pattern
+
 ```regex
 @(?:app|bp|blueprint)\.route\(["\']([^"\']+)["\'](?:[^)]*methods\s*=\s*\[([^\]]+)\])?
 ```
 
 Matches:
+
 - `@app.route("/users")`
 - `@bp.route("/auth", methods=["GET", "POST"])`
 - `@blueprint.route("/api/data", methods=["POST"])`
@@ -84,11 +96,14 @@ Matches:
 **Default method:** GET (if methods not specified)
 
 ### Auth Detection
+
 Check decorator section (from previous `@` to match end) for:
+
 - `login_required`
 - `require` (case-insensitive)
 
 ### Example
+
 ```python
 @app.route("/users")
 def list_users():
@@ -103,15 +118,18 @@ def admin_panel():
 ## Django Routes
 
 ### File Pattern
+
 `**/urls.py` files.
 
 ### URL Patterns
+
 ```regex
 path\(["\']([^"\']+)["\']
 re_path\([r]?["\']([^"\']+)["\']
 ```
 
 Matches:
+
 - `path('users/<int:id>/', views.user_detail)`
 - `re_path(r'^api/v\d+/', include(api_urls))`
 
@@ -120,6 +138,7 @@ Matches:
 **Path normalization:** Add leading `/` if not present.
 
 ### Example
+
 ```python
 urlpatterns = [
     path('users/', views.user_list),
@@ -131,15 +150,18 @@ urlpatterns = [
 ## Express Routes
 
 ### File Patterns
+
 - All `.js` files
 - All `.ts` files
 
 ### Route Pattern
+
 ```regex
 (?:app|router)\.(get|post|put|delete|patch|use)\(["\']([^"\']+)["\']
 ```
 
 Matches:
+
 - `app.get('/users', handler)`
 - `router.post('/auth', authMiddleware, login)`
 - `app.delete('/users/:id', deleteUser)`
@@ -147,13 +169,16 @@ Matches:
 **Skip:** `.use()` calls (middleware, not routes)
 
 ### Auth Detection
+
 Check route line for keywords:
+
 - `auth`
 - `authenticate`
 - `protect`
 - `require`
 
 ### Example
+
 ```javascript
 app.get('/users', listUsers);
 app.post('/users', authMiddleware, createUser);
@@ -168,11 +193,13 @@ router.delete('/users/:id', requireAuth, deleteUser);
 `app/**/route.{ts,js,tsx,jsx}`
 
 **Route Path Conversion:**
+
 1. Get relative path from `app/` to route file's parent
 2. Replace `\` with `/`
 3. Convert `[id]` to `:id` for dynamic segments
 
 **Method Detection:**
+
 ```regex
 export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH)
 ```
@@ -183,6 +210,7 @@ export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH)
 `pages/api/**/*.{ts,js,tsx,jsx}`
 
 **Route Path Conversion:**
+
 1. Get relative path from `pages/api/`
 2. Remove file extension
 3. Prepend `/api/`
@@ -193,6 +221,7 @@ export\s+(?:async\s+)?function\s+(GET|POST|PUT|DELETE|PATCH)
 ### Examples
 
 **App Router:**
+
 ```typescript
 // app/api/users/[id]/route.ts
 // Route: /api/users/:id
@@ -207,6 +236,7 @@ export async function DELETE(request: Request) {
 ```
 
 **Pages Router:**
+
 ```typescript
 // pages/api/users/[id].ts
 // Route: /api/users/:id
@@ -221,20 +251,24 @@ export default function handler(req, res) {
 ## Go Routes (Gin, Echo, Chi, Fiber)
 
 ### File Pattern
+
 All `.go` files.
 
 ### Route Pattern
+
 ```regex
 (?:r|e|app|router)\.(GET|POST|PUT|DELETE|PATCH|Get|Post|Put|Delete|Patch)\(["\']([^"\']+)["\']
 ```
 
 Matches:
+
 - `r.GET("/users", listUsers)` (Gin)
 - `e.POST("/auth", loginHandler)` (Echo)
 - `app.Get("/users/:id", getUser)` (Fiber)
 - `r.Get("/users/{id}", getUser)` (Chi)
 
 ### Example
+
 ```go
 // Gin
 r.GET("/users", listUsers)
@@ -252,20 +286,24 @@ r.Put("/users/{id}", updateUser)
 ## Rust Routes (Axum, Actix)
 
 ### File Pattern
+
 All `.rs` files.
 
 ### Route Patterns
 
 **Axum:**
+
 ```regex
 \.route\(["\']([^"\']+)["\'],\s*(get|post|put|delete|patch)
 ```
 
 Matches:
+
 - `.route("/users", get(list_users))`
 - `.route("/users/:id", delete(delete_user))`
 
 **Actix:**
+
 ```regex
 web::(get|post|put|delete|patch)\(\)
 ```
@@ -273,6 +311,7 @@ web::(get|post|put|delete|patch)\(\)
 Note: Actix pattern captures method but not path directly.
 
 ### Example
+
 ```rust
 // Axum
 let app = Router::new()
@@ -325,6 +364,7 @@ When using these patterns with project-analyzer skill:
 ## Memory Protocol (MANDATORY)
 
 **After using these patterns:**
+
 - Record new route patterns in `.claude/context/memory/learnings.md`
 - Document detection edge cases in `.claude/context/memory/issues.md`
 

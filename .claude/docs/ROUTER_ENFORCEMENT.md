@@ -55,6 +55,7 @@ Layer 5: BLOCKING Enforcement (task-create-guard.cjs)
 ```
 
 **Behavior**:
+
 - Runs BEFORE router-enforcer.cjs (saves complexity for next hook)
 - Does NOT classify complexity itself (router-enforcer.cjs does that)
 - Provides state persistence across hook invocations
@@ -71,11 +72,16 @@ Layer 5: BLOCKING Enforcement (task-create-guard.cjs)
 const COMPLEXITY_INDICATORS = {
   EPIC: ['migrate', 'refactor entire', 'rewrite', 'redesign'],
   HIGH: [
-    'integrate', 'authentication', 'security', 'database schema',
-    'payment', 'multi-step', 'architecture'
+    'integrate',
+    'authentication',
+    'security',
+    'database schema',
+    'payment',
+    'multi-step',
+    'architecture',
   ],
   MEDIUM: ['feature', 'add', 'update', 'enhance'],
-  LOW: ['fix', 'bug', 'typo', 'update doc']
+  LOW: ['fix', 'bug', 'typo', 'update doc'],
 };
 ```
 
@@ -103,8 +109,7 @@ Recommended agents:
 **Detection Logic**:
 
 ```javascript
-if (taskPrompt.includes('You are PLANNER') ||
-    taskPrompt.includes('You are the PLANNER')) {
+if (taskPrompt.includes('You are PLANNER') || taskPrompt.includes('You are the PLANNER')) {
   await saveRouterState({ plannerSpawned: true });
 }
 
@@ -127,9 +132,7 @@ if (taskPrompt.includes('You are SECURITY-ARCHITECT')) {
 const state = await loadRouterState();
 
 // HIGH/EPIC complexity + no PLANNER = BLOCK
-if ((state.complexity === 'HIGH' || state.complexity === 'EPIC') &&
-    !state.plannerSpawned) {
-
+if ((state.complexity === 'HIGH' || state.complexity === 'EPIC') && !state.plannerSpawned) {
   console.error(`
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║ ❌ BLOCKED: TaskCreate for ${state.complexity} complexity without PLANNER ║
@@ -152,6 +155,7 @@ if ((state.complexity === 'HIGH' || state.complexity === 'EPIC') &&
 **Configuration**: Controlled by `PLANNER_FIRST_ENFORCEMENT` environment variable
 
 **Allowed Scenarios**:
+
 - LOW/MEDIUM complexity (Router may create tasks directly)
 - HIGH/EPIC complexity + PLANNER spawned (proper delegation)
 - Disabled via environment variable
@@ -194,10 +198,12 @@ If ANY YES → STOP. Spawn an agent instead.
 **TaskCreate Restriction**:
 
 Router may use TaskCreate ONLY for:
+
 - Trivial/Low complexity tasks (single-file, single-operation)
 - Tasks created BY a spawned PLANNER agent
 
 Router must NOT use TaskCreate for:
+
 - High/Epic complexity tasks (spawn PLANNER first)
 - Implementation tasks (spawn DEVELOPER)
 - Security-sensitive tasks (spawn SECURITY-ARCHITECT)
@@ -219,11 +225,11 @@ PLANNER_FIRST_ENFORCEMENT=off claude
 
 **Modes**:
 
-| Mode | Behavior | Use Case |
-|------|----------|----------|
-| `block` (default) | Exit 1, prevents TaskCreate | Production, strict enforcement |
-| `warn` | Exit 0, prints warning | Development, debugging |
-| `off` | Disabled, advisory hooks only | Emergency override |
+| Mode              | Behavior                      | Use Case                       |
+| ----------------- | ----------------------------- | ------------------------------ |
+| `block` (default) | Exit 1, prevents TaskCreate   | Production, strict enforcement |
+| `warn`            | Exit 0, prints warning        | Development, debugging         |
+| `off`             | Disabled, advisory hooks only | Emergency override             |
 
 ## Enforcement Flow
 
@@ -263,6 +269,7 @@ Claude Router Decision Point:
 ### Example 1: Multi-Step Task Violation
 
 **Wrong**:
+
 ```
 User: "Add authentication to the app"
 Router: TaskCreate({ subject: "Add auth", description: "Implement JWT auth" })
@@ -270,6 +277,7 @@ Router: TaskCreate({ subject: "Add auth", description: "Implement JWT auth" })
 ```
 
 **Correct**:
+
 ```
 User: "Add authentication to the app"
 Router: [ROUTER] Analyzing: Multi-step, security-sensitive
@@ -280,6 +288,7 @@ Router: [ROUTER] Analyzing: Multi-step, security-sensitive
 ### Example 2: Security Check Violation
 
 **Wrong**:
+
 ```
 User: "Update the user authentication logic"
 Router: Task({ prompt: "You are DEVELOPER. Update auth..." })
@@ -287,6 +296,7 @@ Router: Task({ prompt: "You are DEVELOPER. Update auth..." })
 ```
 
 **Correct**:
+
 ```
 User: "Update the user authentication logic"
 Router: [ROUTER] Security-sensitive change detected
@@ -298,6 +308,7 @@ Router: [ROUTER] Security-sensitive change detected
 ### Example 3: Tool Check Violation
 
 **Wrong**:
+
 ```
 User: "What TypeScript files are in the project?"
 Router: Glob({ pattern: "**/*.ts" })
@@ -305,6 +316,7 @@ Router: Glob({ pattern: "**/*.ts" })
 ```
 
 **Correct**:
+
 ```
 User: "What TypeScript files are in the project?"
 Router: Task({ prompt: "You are DEVELOPER. List all TypeScript files..." })
@@ -313,14 +325,14 @@ Router: Task({ prompt: "You are DEVELOPER. List all TypeScript files..." })
 
 ## Related Files
 
-| File | Purpose | Hook Type |
-|------|---------|-----------|
-| `.claude/hooks/routing/router-state.cjs` | State persistence | UserPromptSubmit |
-| `.claude/hooks/routing/router-enforcer.cjs` | Complexity classification | UserPromptSubmit |
-| `.claude/hooks/safety/agent-context-tracker.cjs` | Spawn tracking | PreToolUse (Task) |
-| `.claude/hooks/safety/task-create-guard.cjs` | TaskCreate blocking | PreToolUse (TaskCreate) |
-| `CLAUDE.md` Section 1.2 | Self-check protocol | Documentation |
-| `.claude/workflows/core/router-decision.md` | Complete routing workflow | Workflow |
+| File                                             | Purpose                   | Hook Type               |
+| ------------------------------------------------ | ------------------------- | ----------------------- |
+| `.claude/hooks/routing/router-state.cjs`         | State persistence         | UserPromptSubmit        |
+| `.claude/hooks/routing/router-enforcer.cjs`      | Complexity classification | UserPromptSubmit        |
+| `.claude/hooks/safety/agent-context-tracker.cjs` | Spawn tracking            | PreToolUse (Task)       |
+| `.claude/hooks/safety/task-create-guard.cjs`     | TaskCreate blocking       | PreToolUse (TaskCreate) |
+| `CLAUDE.md` Section 1.2                          | Self-check protocol       | Documentation           |
+| `.claude/workflows/core/router-decision.md`      | Complete routing workflow | Workflow                |
 
 ## Testing
 

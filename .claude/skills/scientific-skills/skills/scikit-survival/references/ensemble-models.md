@@ -111,6 +111,7 @@ Gradient boosting builds an ensemble by sequentially adding weak learners that c
 Uses regression trees as base learners. Can capture complex non-linear relationships.
 
 **When to Use:**
+
 - Need to model complex non-linear relationships
 - Want high predictive performance
 - Have sufficient data to avoid overfitting
@@ -121,6 +122,7 @@ Uses regression trees as base learners. Can capture complex non-linear relations
 Uses component-wise least squares as base learners. Produces linear models with automatic feature selection.
 
 **When to Use:**
+
 - Want interpretable linear model
 - Need automatic feature selection (like Lasso)
 - Have high-dimensional data
@@ -133,6 +135,7 @@ Uses component-wise least squares as base learners. Produces linear models with 
 Maintains proportional hazards framework but replaces linear model with additive ensemble model.
 
 **Appropriate for:**
+
 - Standard survival analysis settings
 - When proportional hazards is reasonable
 - Most use cases
@@ -142,6 +145,7 @@ Maintains proportional hazards framework but replaces linear model with additive
 Assumes features accelerate or decelerate survival time by a constant factor. Loss function: **(1/n) Σ ω_i (log y_i - f(x_i))²**
 
 **Appropriate for:**
+
 - AFT framework preferred over proportional hazards
 - Want to model time directly
 - Need to interpret effects on survival time
@@ -313,14 +317,15 @@ est.fit(X, y)
 
 ## Model Comparison
 
-| Model | Complexity | Interpretability | Performance | Speed |
-|-------|-----------|------------------|-------------|-------|
-| Random Survival Forest | Medium | Low | High | Medium |
-| GradientBoostingSurvivalAnalysis | High | Low | Highest | Slow |
-| ComponentwiseGradientBoostingSurvivalAnalysis | Low | High | Medium | Fast |
-| ExtraSurvivalTrees | Medium | Low | Medium-High | Fast |
+| Model                                         | Complexity | Interpretability | Performance | Speed  |
+| --------------------------------------------- | ---------- | ---------------- | ----------- | ------ |
+| Random Survival Forest                        | Medium     | Low              | High        | Medium |
+| GradientBoostingSurvivalAnalysis              | High       | Low              | Highest     | Slow   |
+| ComponentwiseGradientBoostingSurvivalAnalysis | Low        | High             | Medium      | Fast   |
+| ExtraSurvivalTrees                            | Medium     | Low              | Medium-High | Fast   |
 
 **General Recommendations:**
+
 - **Best overall performance**: GradientBoostingSurvivalAnalysis with tuning
 - **Best balance**: RandomSurvivalForest
 - **Best interpretability**: ComponentwiseGradientBoostingSurvivalAnalysis

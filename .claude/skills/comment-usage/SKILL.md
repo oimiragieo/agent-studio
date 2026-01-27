@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Don't comment on obvious things. Excessive or unclear comments can clutter the codebase and become outdated.
 - Use comments to convey the "why" behind specific actions or explain unusual behavior and potential pitfalls.
 - Provide meaningful information about the function's behavior and explain unusual behavior and potential pitfalls.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

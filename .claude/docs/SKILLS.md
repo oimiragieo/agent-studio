@@ -29,9 +29,9 @@ Skill({ skill: 'debugging' });
 Skill({ skill: 'plan-generator' });
 
 // For sub-skills, use full path (REQUIRED)
-Skill({ skill: 'scientific-skills/rdkit' });           // Cheminformatics
-Skill({ skill: 'scientific-skills/scanpy' });          // Single-cell analysis
-Skill({ skill: 'scientific-skills/biopython' });       // Bioinformatics
+Skill({ skill: 'scientific-skills/rdkit' }); // Cheminformatics
+Skill({ skill: 'scientific-skills/scanpy' }); // Single-cell analysis
+Skill({ skill: 'scientific-skills/biopython' }); // Bioinformatics
 ```
 
 ### Incorrect Usage
@@ -50,6 +50,7 @@ Skills are dynamically discovered from the skill catalog.
 ### Finding Skills
 
 1. **Read the skill catalog:**
+
    ```bash
    cat .claude/context/artifacts/skill-catalog.md
    ```
@@ -75,10 +76,10 @@ Skills are dynamically discovered from the skill catalog.
 
 To reduce duplication and improve maintenance, several skills have been merged:
 
-| Deprecated Skill | Replacement | Status | Compatibility |
-|------------------|-------------|--------|---------------|
-| `testing-expert` | `tdd` | Merged | Alias preserved - both work |
-| `writing` | `writing-skills` | Merged | Alias preserved - both work |
+| Deprecated Skill | Replacement      | Status | Compatibility               |
+| ---------------- | ---------------- | ------ | --------------------------- |
+| `testing-expert` | `tdd`            | Merged | Alias preserved - both work |
+| `writing`        | `writing-skills` | Merged | Alias preserved - both work |
 
 **What this means:**
 
@@ -91,12 +92,12 @@ To reduce duplication and improve maintenance, several skills have been merged:
 
 ```javascript
 // Old (still works)
-Skill({ skill: "testing-expert" });
-Skill({ skill: "writing" });
+Skill({ skill: 'testing-expert' });
+Skill({ skill: 'writing' });
 
 // Recommended (use consolidated versions)
-Skill({ skill: "tdd" });
-Skill({ skill: "writing-skills" });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'writing-skills' });
 ```
 
 **Content Migration:**
@@ -110,12 +111,12 @@ Skill({ skill: "writing-skills" });
 
 Essential development workflow skills.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `tdd` | Test-Driven Development with Iron Laws | `Skill({ skill: 'tdd' });` |
-| `debugging` | Systematic 4-phase debugging | `Skill({ skill: 'debugging' });` |
-| `testing-expert` | Unit tests, E2E, integration | `Skill({ skill: 'testing-expert' });` |
-| `code-quality-expert` | Clean code and refactoring | `Skill({ skill: 'code-quality-expert' });` |
+| Skill                 | Description                            | Invocation                                 |
+| --------------------- | -------------------------------------- | ------------------------------------------ |
+| `tdd`                 | Test-Driven Development with Iron Laws | `Skill({ skill: 'tdd' });`                 |
+| `debugging`           | Systematic 4-phase debugging           | `Skill({ skill: 'debugging' });`           |
+| `testing-expert`      | Unit tests, E2E, integration           | `Skill({ skill: 'testing-expert' });`      |
+| `code-quality-expert` | Clean code and refactoring             | `Skill({ skill: 'code-quality-expert' });` |
 
 **Use when:** Writing production code, fixing bugs, improving code quality.
 
@@ -123,12 +124,12 @@ Essential development workflow skills.
 
 Design and planning skills.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `plan-generator` | Creates structured plans | `Skill({ skill: 'plan-generator' });` |
-| `architecture-review` | Design validation | `Skill({ skill: 'architecture-review' });` |
-| `diagram-generator` | Architecture diagrams | `Skill({ skill: 'diagram-generator' });` |
-| `brainstorming` | Socratic design refinement | `Skill({ skill: 'brainstorming' });` |
+| Skill                 | Description                | Invocation                                 |
+| --------------------- | -------------------------- | ------------------------------------------ |
+| `plan-generator`      | Creates structured plans   | `Skill({ skill: 'plan-generator' });`      |
+| `architecture-review` | Design validation          | `Skill({ skill: 'architecture-review' });` |
+| `diagram-generator`   | Architecture diagrams      | `Skill({ skill: 'diagram-generator' });`   |
+| `brainstorming`       | Socratic design refinement | `Skill({ skill: 'brainstorming' });`       |
 
 **Use when:** Designing features, reviewing architecture, creating diagrams.
 
@@ -136,11 +137,11 @@ Design and planning skills.
 
 Security analysis and validation.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `security-architect` | OWASP Top 10, threat modeling | `Skill({ skill: 'security-architect' });` |
-| `auth-security-expert` | OAuth 2.1, JWT, encryption | `Skill({ skill: 'auth-security-expert' });` |
-| `memory-forensics` | Memory acquisition and analysis | `Skill({ skill: 'memory-forensics' });` |
+| Skill                  | Description                     | Invocation                                  |
+| ---------------------- | ------------------------------- | ------------------------------------------- |
+| `security-architect`   | OWASP Top 10, threat modeling   | `Skill({ skill: 'security-architect' });`   |
+| `auth-security-expert` | OAuth 2.1, JWT, encryption      | `Skill({ skill: 'auth-security-expert' });` |
+| `memory-forensics`     | Memory acquisition and analysis | `Skill({ skill: 'memory-forensics' });`     |
 
 **Use when:** Implementing authentication, reviewing security, analyzing vulnerabilities.
 
@@ -148,12 +149,12 @@ Security analysis and validation.
 
 Language-specific expertise.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `python-backend-expert` | Django, FastAPI, Flask | `Skill({ skill: 'python-backend-expert' });` |
-| `typescript-expert` | TypeScript patterns and types | `Skill({ skill: 'typescript-expert' });` |
-| `rust-pro` | Rust programming | `Skill({ skill: 'rust-pro' });` |
-| `golang-pro` | Go programming | `Skill({ skill: 'golang-pro' });` |
+| Skill                   | Description                   | Invocation                                   |
+| ----------------------- | ----------------------------- | -------------------------------------------- |
+| `python-backend-expert` | Django, FastAPI, Flask        | `Skill({ skill: 'python-backend-expert' });` |
+| `typescript-expert`     | TypeScript patterns and types | `Skill({ skill: 'typescript-expert' });`     |
+| `rust-pro`              | Rust programming              | `Skill({ skill: 'rust-pro' });`              |
+| `golang-pro`            | Go programming                | `Skill({ skill: 'golang-pro' });`            |
 
 **Use when:** Writing or reviewing code in a specific language.
 
@@ -161,12 +162,12 @@ Language-specific expertise.
 
 Framework-specific expertise.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `react-expert` | React 19, hooks, state management | `Skill({ skill: 'react-expert' });` |
-| `nextjs-expert` | Next.js App Router | `Skill({ skill: 'nextjs-expert' });` |
-| `fastapi-pro` | FastAPI best practices | `Skill({ skill: 'fastapi-pro' });` |
-| `svelte-expert` | Svelte and SvelteKit | `Skill({ skill: 'svelte-expert' });` |
+| Skill           | Description                       | Invocation                           |
+| --------------- | --------------------------------- | ------------------------------------ |
+| `react-expert`  | React 19, hooks, state management | `Skill({ skill: 'react-expert' });`  |
+| `nextjs-expert` | Next.js App Router                | `Skill({ skill: 'nextjs-expert' });` |
+| `fastapi-pro`   | FastAPI best practices            | `Skill({ skill: 'fastapi-pro' });`   |
+| `svelte-expert` | Svelte and SvelteKit              | `Skill({ skill: 'svelte-expert' });` |
 
 **Use when:** Building applications with specific frameworks.
 
@@ -174,11 +175,11 @@ Framework-specific expertise.
 
 Cloud, containers, and infrastructure.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `aws-cloud-ops` | CloudWatch, S3, Lambda | `Skill({ skill: 'aws-cloud-ops' });` |
-| `docker-compose` | Docker orchestration | `Skill({ skill: 'docker-compose' });` |
-| `kubernetes-flux` | Kubernetes with Flux | `Skill({ skill: 'kubernetes-flux' });` |
+| Skill             | Description                    | Invocation                             |
+| ----------------- | ------------------------------ | -------------------------------------- |
+| `aws-cloud-ops`   | CloudWatch, S3, Lambda         | `Skill({ skill: 'aws-cloud-ops' });`   |
+| `docker-compose`  | Docker orchestration           | `Skill({ skill: 'docker-compose' });`  |
+| `kubernetes-flux` | Kubernetes with Flux           | `Skill({ skill: 'kubernetes-flux' });` |
 | `terraform-infra` | Terraform with safety controls | `Skill({ skill: 'terraform-infra' });` |
 
 **Use when:** Deploying infrastructure, managing containers, setting up CI/CD.
@@ -193,51 +194,54 @@ Comprehensive scientific research toolkit for biology, chemistry, medicine, data
 
 ```javascript
 // Invoke the main skill catalog
-Skill({ skill: "scientific-skills" });
+Skill({ skill: 'scientific-skills' });
 
 // Invoke specific sub-skills using full path (REQUIRED)
-Skill({ skill: "scientific-skills/rdkit" });           // Cheminformatics
-Skill({ skill: "scientific-skills/scanpy" });          // Single-cell analysis
-Skill({ skill: "scientific-skills/biopython" });       // Bioinformatics
-Skill({ skill: "scientific-skills/chembl-database" }); // ChEMBL database
+Skill({ skill: 'scientific-skills/rdkit' }); // Cheminformatics
+Skill({ skill: 'scientific-skills/scanpy' }); // Single-cell analysis
+Skill({ skill: 'scientific-skills/biopython' }); // Bioinformatics
+Skill({ skill: 'scientific-skills/chembl-database' }); // ChEMBL database
 ```
 
 #### Sub-Skill Categories
 
-| Category | Count | Key Skills |
-|----------|-------|------------|
-| Scientific Databases | 28+ | `pubchem-database`, `chembl-database`, `uniprot-database`, `pdb-database` |
-| Python Analysis Libraries | 55+ | `rdkit`, `scanpy`, `biopython`, `pytorch-lightning` |
-| Bioinformatics & Genomics | 10+ | `gget`, `pysam`, `deeptools`, `pydeseq2` |
-| Cheminformatics & Drug Discovery | 7+ | `datamol`, `molfeat`, `diffdock`, `torchdrug` |
-| Scientific Communication | 10+ | `literature-review`, `scientific-writing`, `hypothesis-generation` |
-| Clinical & Medical | 5+ | `clinical-decision-support`, `pyhealth`, `pydicom` |
-| Laboratory & Integration | 5+ | `benchling-integration`, `dnanexus-integration`, `pylabrobot` |
-| Machine Learning & AI | 15+ | `pytorch-lightning`, `transformers`, `scikit-learn`, `shap` |
-| Document Processing | 4 | `docx`, `pdf`, `pptx`, `xlsx` |
+| Category                         | Count | Key Skills                                                                |
+| -------------------------------- | ----- | ------------------------------------------------------------------------- |
+| Scientific Databases             | 28+   | `pubchem-database`, `chembl-database`, `uniprot-database`, `pdb-database` |
+| Python Analysis Libraries        | 55+   | `rdkit`, `scanpy`, `biopython`, `pytorch-lightning`                       |
+| Bioinformatics & Genomics        | 10+   | `gget`, `pysam`, `deeptools`, `pydeseq2`                                  |
+| Cheminformatics & Drug Discovery | 7+    | `datamol`, `molfeat`, `diffdock`, `torchdrug`                             |
+| Scientific Communication         | 10+   | `literature-review`, `scientific-writing`, `hypothesis-generation`        |
+| Clinical & Medical               | 5+    | `clinical-decision-support`, `pyhealth`, `pydicom`                        |
+| Laboratory & Integration         | 5+    | `benchling-integration`, `dnanexus-integration`, `pylabrobot`             |
+| Machine Learning & AI            | 15+   | `pytorch-lightning`, `transformers`, `scikit-learn`, `shap`               |
+| Document Processing              | 4     | `docx`, `pdf`, `pptx`, `xlsx`                                             |
 
 #### Example Workflows
 
 **Drug Discovery Pipeline:**
+
 ```javascript
-Skill({ skill: "scientific-skills/chembl-database" });
-Skill({ skill: "scientific-skills/rdkit" });
-Skill({ skill: "scientific-skills/datamol" });
-Skill({ skill: "scientific-skills/diffdock" });
+Skill({ skill: 'scientific-skills/chembl-database' });
+Skill({ skill: 'scientific-skills/rdkit' });
+Skill({ skill: 'scientific-skills/datamol' });
+Skill({ skill: 'scientific-skills/diffdock' });
 ```
 
 **Single-Cell Analysis:**
+
 ```javascript
-Skill({ skill: "scientific-skills/scanpy" });
-Skill({ skill: "scientific-skills/anndata" });
-Skill({ skill: "scientific-skills/cellxgene-census" });
+Skill({ skill: 'scientific-skills/scanpy' });
+Skill({ skill: 'scientific-skills/anndata' });
+Skill({ skill: 'scientific-skills/cellxgene-census' });
 ```
 
 **Literature Review:**
+
 ```javascript
-Skill({ skill: "scientific-skills/literature-review" });
-Skill({ skill: "scientific-skills/pubmed-database" });
-Skill({ skill: "scientific-skills/citation-management" });
+Skill({ skill: 'scientific-skills/literature-review' });
+Skill({ skill: 'scientific-skills/pubmed-database' });
+Skill({ skill: 'scientific-skills/citation-management' });
 ```
 
 **Use when:** Conducting scientific research, analyzing biological data, drug discovery.
@@ -246,14 +250,14 @@ Skill({ skill: "scientific-skills/citation-management" });
 
 Framework self-evolution tools.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `agent-creator` | Creates specialized AI agents | `Skill({ skill: 'agent-creator' });` |
-| `skill-creator` | Creates and converts skills | `Skill({ skill: 'skill-creator' });` |
+| Skill              | Description                   | Invocation                              |
+| ------------------ | ----------------------------- | --------------------------------------- |
+| `agent-creator`    | Creates specialized AI agents | `Skill({ skill: 'agent-creator' });`    |
+| `skill-creator`    | Creates and converts skills   | `Skill({ skill: 'skill-creator' });`    |
 | `workflow-creator` | Creates multi-agent workflows | `Skill({ skill: 'workflow-creator' });` |
-| `hook-creator` | Creates validation hooks | `Skill({ skill: 'hook-creator' });` |
-| `template-creator` | Creates templates | `Skill({ skill: 'template-creator' });` |
-| `schema-creator` | Creates JSON Schemas | `Skill({ skill: 'schema-creator' });` |
+| `hook-creator`     | Creates validation hooks      | `Skill({ skill: 'hook-creator' });`     |
+| `template-creator` | Creates templates             | `Skill({ skill: 'template-creator' });` |
+| `schema-creator`   | Creates JSON Schemas          | `Skill({ skill: 'schema-creator' });`   |
 
 **Use when:** Extending the framework with new agents, skills, workflows, or schemas.
 
@@ -263,12 +267,12 @@ See [CLAUDE.md Section 4.1](../CLAUDE.md) for the complete Creator Ecosystem doc
 
 Documentation generation and writing.
 
-| Skill | Description | Invocation |
-|-------|-------------|------------|
-| `doc-generator` | Comprehensive documentation | `Skill({ skill: 'doc-generator' });` |
-| `writing` | Writing guidelines | `Skill({ skill: 'writing' });` |
-| `writing-skills` | TDD for documentation | `Skill({ skill: 'writing-skills' });` |
-| `readme` | README generation | `Skill({ skill: 'readme' });` |
+| Skill            | Description                 | Invocation                            |
+| ---------------- | --------------------------- | ------------------------------------- |
+| `doc-generator`  | Comprehensive documentation | `Skill({ skill: 'doc-generator' });`  |
+| `writing`        | Writing guidelines          | `Skill({ skill: 'writing' });`        |
+| `writing-skills` | TDD for documentation       | `Skill({ skill: 'writing-skills' });` |
+| `readme`         | README generation           | `Skill({ skill: 'readme' });`         |
 
 **Use when:** Creating API docs, user guides, README files.
 
@@ -377,14 +381,14 @@ node .claude/skills/skill-creator/scripts/create.cjs \
 
 The framework includes a self-evolution system where skills can create other artifacts.
 
-| Creator | Creates | Output Location |
-|---------|---------|-----------------|
-| `agent-creator` | Agents | `.claude/agents/` |
-| `skill-creator` | Skills | `.claude/skills/` |
-| `workflow-creator` | Workflows | `.claude/workflows/` |
-| `hook-creator` | Hooks | `.claude/hooks/` |
-| `template-creator` | Templates | `.claude/templates/` |
-| `schema-creator` | JSON Schemas | `.claude/schemas/` |
+| Creator            | Creates      | Output Location      |
+| ------------------ | ------------ | -------------------- |
+| `agent-creator`    | Agents       | `.claude/agents/`    |
+| `skill-creator`    | Skills       | `.claude/skills/`    |
+| `workflow-creator` | Workflows    | `.claude/workflows/` |
+| `hook-creator`     | Hooks        | `.claude/hooks/`     |
+| `template-creator` | Templates    | `.claude/templates/` |
+| `schema-creator`   | JSON Schemas | `.claude/schemas/`   |
 
 **Example chain:**
 
@@ -423,6 +427,7 @@ skills:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files:
+
 - `.claude/skills/tdd/SKILL.md`
 - `.claude/skills/debugging/SKILL.md`
 - `.claude/skills/git-expert/SKILL.md`
@@ -445,17 +450,19 @@ The skill catalog is the source of truth for skill discovery.
 
 ## Quick Reference by Category
 
-| Category | Count | Key Skills |
-|----------|-------|------------|
-| Core Development | 10 | tdd, debugging, testing-expert |
-| Planning & Architecture | 6 | plan-generator, architecture-review |
+| Category                | Count | Key Skills                          |
+| ----------------------- | ----- | ----------------------------------- |
+| Core Development        | 10    | tdd, debugging, testing-expert      |
+| Planning & Architecture | 6     | plan-generator, architecture-review |
+
 ...
 
 ## Core Development
 
-| Skill | Description | Tools |
-|-------|-------------|-------|
+| Skill | Description             | Tools                   |
+| ----- | ----------------------- | ----------------------- |
 | `tdd` | Test-Driven Development | Read, Write, Edit, Bash |
+
 ...
 ```
 
@@ -560,14 +567,17 @@ Agents invoke skills as part of their workflow:
 ## Developer Agent Workflow
 
 ### Step 1: Invoke TDD Skill
+
 Skill({ skill: 'tdd' });
 
 ### Step 2: Implement with Tests
+
 - Write failing test
 - Implement minimal code
 - Verify green
 
 ### Step 3: Code Quality Check
+
 Skill({ skill: 'code-quality-expert' });
 ```
 

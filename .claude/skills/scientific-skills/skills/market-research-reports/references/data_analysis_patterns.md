@@ -11,6 +11,7 @@ Templates and frameworks for conducting rigorous market analysis.
 **Total Addressable Market (TAM)** represents the total revenue opportunity if 100% market share was achieved.
 
 #### Top-Down Approach
+
 ```
 TAM = Total Industry Revenue (from market research reports)
 
@@ -20,6 +21,7 @@ Example:
 ```
 
 #### Bottom-Up Approach
+
 ```
 TAM = Number of Potential Customers × Average Revenue per Customer
 
@@ -57,6 +59,7 @@ Example:
 ### Growth Rate Calculation
 
 #### CAGR (Compound Annual Growth Rate)
+
 ```
 CAGR = (End Value / Start Value)^(1/n) - 1
 
@@ -70,6 +73,7 @@ Example:
 ```
 
 #### Year-over-Year Growth
+
 ```
 YoY Growth = (Current Year - Previous Year) / Previous Year × 100
 
@@ -161,13 +165,13 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 
 ### Five Forces Summary Table
 
-| Force | Rating | Key Drivers | Implications |
-|-------|--------|-------------|--------------|
-| New Entrants | [H/M/L] | [Top factors] | [Strategic impact] |
+| Force          | Rating  | Key Drivers   | Implications       |
+| -------------- | ------- | ------------- | ------------------ |
+| New Entrants   | [H/M/L] | [Top factors] | [Strategic impact] |
 | Supplier Power | [H/M/L] | [Top factors] | [Strategic impact] |
-| Buyer Power | [H/M/L] | [Top factors] | [Strategic impact] |
-| Substitutes | [H/M/L] | [Top factors] | [Strategic impact] |
-| Rivalry | [H/M/L] | [Top factors] | [Strategic impact] |
+| Buyer Power    | [H/M/L] | [Top factors] | [Strategic impact] |
+| Substitutes    | [H/M/L] | [Top factors] | [Strategic impact] |
+| Rivalry        | [H/M/L] | [Top factors] | [Strategic impact] |
 
 **Overall Industry Attractiveness:** [ATTRACTIVE / MODERATE / UNATTRACTIVE]
 
@@ -179,78 +183,78 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 
 #### Political Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| Government stability | | ↑ ↓ → | H/M/L | Short/Med/Long |
-| Trade policies | | ↑ ↓ → | H/M/L | |
-| Tax regulations | | ↑ ↓ → | H/M/L | |
-| Government support | | ↑ ↓ → | H/M/L | |
-| Political relations | | ↑ ↓ → | H/M/L | |
+| Factor               | Current State | Trend | Impact | Time Horizon   |
+| -------------------- | ------------- | ----- | ------ | -------------- |
+| Government stability |               | ↑ ↓ → | H/M/L  | Short/Med/Long |
+| Trade policies       |               | ↑ ↓ → | H/M/L  |                |
+| Tax regulations      |               | ↑ ↓ → | H/M/L  |                |
+| Government support   |               | ↑ ↓ → | H/M/L  |                |
+| Political relations  |               | ↑ ↓ → | H/M/L  |                |
 
 **Key Political Implications:** [Summary]
 
 #### Economic Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| GDP growth | X.X% | ↑ ↓ → | H/M/L | |
-| Interest rates | X.X% | ↑ ↓ → | H/M/L | |
-| Inflation | X.X% | ↑ ↓ → | H/M/L | |
-| Exchange rates | | ↑ ↓ → | H/M/L | |
-| Consumer spending | | ↑ ↓ → | H/M/L | |
-| Unemployment | X.X% | ↑ ↓ → | H/M/L | |
+| Factor            | Current State | Trend | Impact | Time Horizon |
+| ----------------- | ------------- | ----- | ------ | ------------ |
+| GDP growth        | X.X%          | ↑ ↓ → | H/M/L  |              |
+| Interest rates    | X.X%          | ↑ ↓ → | H/M/L  |              |
+| Inflation         | X.X%          | ↑ ↓ → | H/M/L  |              |
+| Exchange rates    |               | ↑ ↓ → | H/M/L  |              |
+| Consumer spending |               | ↑ ↓ → | H/M/L  |              |
+| Unemployment      | X.X%          | ↑ ↓ → | H/M/L  |              |
 
 **Key Economic Implications:** [Summary]
 
 #### Social Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| Demographics | | ↑ ↓ → | H/M/L | |
-| Cultural attitudes | | ↑ ↓ → | H/M/L | |
-| Consumer behavior | | ↑ ↓ → | H/M/L | |
-| Education levels | | ↑ ↓ → | H/M/L | |
-| Health consciousness | | ↑ ↓ → | H/M/L | |
-| Work-life balance | | ↑ ↓ → | H/M/L | |
+| Factor               | Current State | Trend | Impact | Time Horizon |
+| -------------------- | ------------- | ----- | ------ | ------------ |
+| Demographics         |               | ↑ ↓ → | H/M/L  |              |
+| Cultural attitudes   |               | ↑ ↓ → | H/M/L  |              |
+| Consumer behavior    |               | ↑ ↓ → | H/M/L  |              |
+| Education levels     |               | ↑ ↓ → | H/M/L  |              |
+| Health consciousness |               | ↑ ↓ → | H/M/L  |              |
+| Work-life balance    |               | ↑ ↓ → | H/M/L  |              |
 
 **Key Social Implications:** [Summary]
 
 #### Technological Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| R&D activity | | ↑ ↓ → | H/M/L | |
-| Technology adoption | | ↑ ↓ → | H/M/L | |
-| Automation | | ↑ ↓ → | H/M/L | |
-| Digital infrastructure | | ↑ ↓ → | H/M/L | |
-| Innovation rate | | ↑ ↓ → | H/M/L | |
-| Disruptive tech | | ↑ ↓ → | H/M/L | |
+| Factor                 | Current State | Trend | Impact | Time Horizon |
+| ---------------------- | ------------- | ----- | ------ | ------------ |
+| R&D activity           |               | ↑ ↓ → | H/M/L  |              |
+| Technology adoption    |               | ↑ ↓ → | H/M/L  |              |
+| Automation             |               | ↑ ↓ → | H/M/L  |              |
+| Digital infrastructure |               | ↑ ↓ → | H/M/L  |              |
+| Innovation rate        |               | ↑ ↓ → | H/M/L  |              |
+| Disruptive tech        |               | ↑ ↓ → | H/M/L  |              |
 
 **Key Technological Implications:** [Summary]
 
 #### Legal Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| Industry regulations | | ↑ ↓ → | H/M/L | |
-| Data protection | | ↑ ↓ → | H/M/L | |
-| Employment law | | ↑ ↓ → | H/M/L | |
-| Consumer protection | | ↑ ↓ → | H/M/L | |
-| IP rights | | ↑ ↓ → | H/M/L | |
-| Antitrust | | ↑ ↓ → | H/M/L | |
+| Factor               | Current State | Trend | Impact | Time Horizon |
+| -------------------- | ------------- | ----- | ------ | ------------ |
+| Industry regulations |               | ↑ ↓ → | H/M/L  |              |
+| Data protection      |               | ↑ ↓ → | H/M/L  |              |
+| Employment law       |               | ↑ ↓ → | H/M/L  |              |
+| Consumer protection  |               | ↑ ↓ → | H/M/L  |              |
+| IP rights            |               | ↑ ↓ → | H/M/L  |              |
+| Antitrust            |               | ↑ ↓ → | H/M/L  |              |
 
 **Key Legal Implications:** [Summary]
 
 #### Environmental Factors
 
-| Factor | Current State | Trend | Impact | Time Horizon |
-|--------|---------------|-------|--------|--------------|
-| Climate change | | ↑ ↓ → | H/M/L | |
-| Sustainability reqs | | ↑ ↓ → | H/M/L | |
-| Resource availability | | ↑ ↓ → | H/M/L | |
-| Waste management | | ↑ ↓ → | H/M/L | |
-| Carbon regulations | | ↑ ↓ → | H/M/L | |
-| Environmental awareness | | ↑ ↓ → | H/M/L | |
+| Factor                  | Current State | Trend | Impact | Time Horizon |
+| ----------------------- | ------------- | ----- | ------ | ------------ |
+| Climate change          |               | ↑ ↓ → | H/M/L  |              |
+| Sustainability reqs     |               | ↑ ↓ → | H/M/L  |              |
+| Resource availability   |               | ↑ ↓ → | H/M/L  |              |
+| Waste management        |               | ↑ ↓ → | H/M/L  |              |
+| Carbon regulations      |               | ↑ ↓ → | H/M/L  |              |
+| Environmental awareness |               | ↑ ↓ → | H/M/L  |              |
 
 **Key Environmental Implications:** [Summary]
 
@@ -261,17 +265,19 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 ### Framework Template
 
 #### Strengths (Internal, Positive)
-| Strength | Evidence | Strategic Value |
-|----------|----------|-----------------|
-| [Strength 1] | [Data/proof] | High/Med/Low |
-| [Strength 2] | [Data/proof] | High/Med/Low |
-| [Strength 3] | [Data/proof] | High/Med/Low |
+
+| Strength     | Evidence     | Strategic Value |
+| ------------ | ------------ | --------------- |
+| [Strength 1] | [Data/proof] | High/Med/Low    |
+| [Strength 2] | [Data/proof] | High/Med/Low    |
+| [Strength 3] | [Data/proof] | High/Med/Low    |
 
 **Core Strengths Summary:** [2-3 sentence synthesis]
 
 #### Weaknesses (Internal, Negative)
-| Weakness | Evidence | Severity |
-|----------|----------|----------|
+
+| Weakness     | Evidence     | Severity                |
+| ------------ | ------------ | ----------------------- |
 | [Weakness 1] | [Data/proof] | Critical/Moderate/Minor |
 | [Weakness 2] | [Data/proof] | Critical/Moderate/Minor |
 | [Weakness 3] | [Data/proof] | Critical/Moderate/Minor |
@@ -279,8 +285,9 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 **Key Vulnerabilities Summary:** [2-3 sentence synthesis]
 
 #### Opportunities (External, Positive)
-| Opportunity | Size/Potential | Timeframe |
-|-------------|----------------|-----------|
+
+| Opportunity     | Size/Potential    | Timeframe      |
+| --------------- | ----------------- | -------------- |
 | [Opportunity 1] | $X / High/Med/Low | Short/Med/Long |
 | [Opportunity 2] | $X / High/Med/Low | Short/Med/Long |
 | [Opportunity 3] | $X / High/Med/Low | Short/Med/Long |
@@ -288,8 +295,9 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 **Priority Opportunities Summary:** [2-3 sentence synthesis]
 
 #### Threats (External, Negative)
-| Threat | Likelihood | Impact |
-|--------|------------|--------|
+
+| Threat     | Likelihood   | Impact       |
+| ---------- | ------------ | ------------ |
 | [Threat 1] | High/Med/Low | High/Med/Low |
 | [Threat 2] | High/Med/Low | High/Med/Low |
 | [Threat 3] | High/Med/Low | High/Med/Low |
@@ -298,10 +306,10 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 
 ### SWOT Strategy Matrix
 
-| | **Strengths** | **Weaknesses** |
-|---|---------------|----------------|
+|                   | **Strengths**                                              | **Weaknesses**                                                   |
+| ----------------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
 | **Opportunities** | **SO Strategies** (use strengths to capture opportunities) | **WO Strategies** (overcome weaknesses to capture opportunities) |
-| **Threats** | **ST Strategies** (use strengths to mitigate threats) | **WT Strategies** (minimize weaknesses and avoid threats) |
+| **Threats**       | **ST Strategies** (use strengths to mitigate threats)      | **WT Strategies** (minimize weaknesses and avoid threats)        |
 
 ---
 
@@ -310,34 +318,35 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 ### Framework Template
 
 **Axes:**
+
 - X-axis: Relative Market Share (High → Low, logarithmic scale)
 - Y-axis: Market Growth Rate (High → Low, typically 10% as midpoint)
 
 ### Quadrant Definitions
 
-| Quadrant | Growth | Share | Characteristics | Strategy |
-|----------|--------|-------|-----------------|----------|
-| **Stars** | High | High | Market leaders in growing markets | Invest to maintain position |
-| **Cash Cows** | Low | High | Market leaders in mature markets | Harvest for cash flow |
-| **Question Marks** | High | Low | Small share in growing markets | Invest selectively or divest |
-| **Dogs** | Low | Low | Small share in mature markets | Divest or minimize investment |
+| Quadrant           | Growth | Share | Characteristics                   | Strategy                      |
+| ------------------ | ------ | ----- | --------------------------------- | ----------------------------- |
+| **Stars**          | High   | High  | Market leaders in growing markets | Invest to maintain position   |
+| **Cash Cows**      | Low    | High  | Market leaders in mature markets  | Harvest for cash flow         |
+| **Question Marks** | High   | Low   | Small share in growing markets    | Invest selectively or divest  |
+| **Dogs**           | Low    | Low   | Small share in mature markets     | Divest or minimize investment |
 
 ### Product/Business Unit Analysis
 
-| Product/BU | Market Growth | Relative Share | Quadrant | Recommended Strategy |
-|------------|---------------|----------------|----------|---------------------|
-| [Product A] | X.X% | X.X | Star/Cow/QM/Dog | [Strategy] |
-| [Product B] | X.X% | X.X | Star/Cow/QM/Dog | [Strategy] |
-| [Product C] | X.X% | X.X | Star/Cow/QM/Dog | [Strategy] |
+| Product/BU  | Market Growth | Relative Share | Quadrant        | Recommended Strategy |
+| ----------- | ------------- | -------------- | --------------- | -------------------- |
+| [Product A] | X.X%          | X.X            | Star/Cow/QM/Dog | [Strategy]           |
+| [Product B] | X.X%          | X.X            | Star/Cow/QM/Dog | [Strategy]           |
+| [Product C] | X.X%          | X.X            | Star/Cow/QM/Dog | [Strategy]           |
 
 ### Portfolio Balance Assessment
 
-| Quadrant | Number of Products | Revenue % | Investment Priority |
-|----------|-------------------|-----------|---------------------|
-| Stars | X | X% | High |
-| Cash Cows | X | X% | Maintain |
-| Question Marks | X | X% | Selective |
-| Dogs | X | X% | Low/Divest |
+| Quadrant       | Number of Products | Revenue % | Investment Priority |
+| -------------- | ------------------ | --------- | ------------------- |
+| Stars          | X                  | X%        | High                |
+| Cash Cows      | X                  | X%        | Maintain            |
+| Question Marks | X                  | X%        | Selective           |
+| Dogs           | X                  | X%        | Low/Divest          |
 
 ---
 
@@ -347,22 +356,22 @@ For each force, assess: **HIGH**, **MEDIUM**, or **LOW**
 
 #### Primary Activities
 
-| Activity | Description | Value Created | Cost | Competitive Position |
-|----------|-------------|---------------|------|---------------------|
-| **Inbound Logistics** | Receiving, storing, inventory | | $X | Strong/Average/Weak |
-| **Operations** | Manufacturing, assembly | | $X | Strong/Average/Weak |
-| **Outbound Logistics** | Distribution, delivery | | $X | Strong/Average/Weak |
-| **Marketing & Sales** | Promotion, sales force | | $X | Strong/Average/Weak |
-| **Service** | Installation, support, repair | | $X | Strong/Average/Weak |
+| Activity               | Description                   | Value Created | Cost | Competitive Position |
+| ---------------------- | ----------------------------- | ------------- | ---- | -------------------- |
+| **Inbound Logistics**  | Receiving, storing, inventory |               | $X   | Strong/Average/Weak  |
+| **Operations**         | Manufacturing, assembly       |               | $X   | Strong/Average/Weak  |
+| **Outbound Logistics** | Distribution, delivery        |               | $X   | Strong/Average/Weak  |
+| **Marketing & Sales**  | Promotion, sales force        |               | $X   | Strong/Average/Weak  |
+| **Service**            | Installation, support, repair |               | $X   | Strong/Average/Weak  |
 
 #### Support Activities
 
-| Activity | Description | Value Created | Cost | Competitive Position |
-|----------|-------------|---------------|------|---------------------|
-| **Infrastructure** | Management, finance, legal | | $X | Strong/Average/Weak |
-| **HR Management** | Recruiting, training, comp | | $X | Strong/Average/Weak |
-| **Technology Dev** | R&D, process improvement | | $X | Strong/Average/Weak |
-| **Procurement** | Purchasing, supplier mgmt | | $X | Strong/Average/Weak |
+| Activity           | Description                | Value Created | Cost | Competitive Position |
+| ------------------ | -------------------------- | ------------- | ---- | -------------------- |
+| **Infrastructure** | Management, finance, legal |               | $X   | Strong/Average/Weak  |
+| **HR Management**  | Recruiting, training, comp |               | $X   | Strong/Average/Weak  |
+| **Technology Dev** | R&D, process improvement   |               | $X   | Strong/Average/Weak  |
+| **Procurement**    | Purchasing, supplier mgmt  |               | $X   | Strong/Average/Weak  |
 
 ### Value Chain Margin Analysis
 
@@ -379,9 +388,9 @@ Total Revenue:           $XXX
 
 ### Competitive Comparison
 
-| Activity | Company | Industry Avg | Best-in-Class | Gap |
-|----------|---------|--------------|---------------|-----|
-| [Activity] | X% | Y% | Z% | +/-X% |
+| Activity   | Company | Industry Avg | Best-in-Class | Gap   |
+| ---------- | ------- | ------------ | ------------- | ----- |
+| [Activity] | X%      | Y%           | Z%            | +/-X% |
 
 ---
 
@@ -392,6 +401,7 @@ Total Revenue:           $XXX
 #### Positioning Dimensions
 
 Common positioning dimension pairs:
+
 - Price vs. Quality
 - Market Focus (Niche vs. Broad)
 - Solution Type (Product vs. Platform)
@@ -401,19 +411,19 @@ Common positioning dimension pairs:
 
 #### Competitor Mapping
 
-| Competitor | Dimension 1 Score (1-10) | Dimension 2 Score (1-10) | Market Share | Notes |
-|------------|-------------------------|-------------------------|--------------|-------|
-| Company A | X | X | X% | [Position description] |
-| Company B | X | X | X% | [Position description] |
-| Company C | X | X | X% | [Position description] |
+| Competitor | Dimension 1 Score (1-10) | Dimension 2 Score (1-10) | Market Share | Notes                  |
+| ---------- | ------------------------ | ------------------------ | ------------ | ---------------------- |
+| Company A  | X                        | X                        | X%           | [Position description] |
+| Company B  | X                        | X                        | X%           | [Position description] |
+| Company C  | X                        | X                        | X%           | [Position description] |
 
 #### Strategic Group Identification
 
 | Strategic Group | Companies | Characteristics | Market Share |
-|-----------------|-----------|-----------------|--------------|
-| Group 1: [Name] | A, B, C | [Description] | X% |
-| Group 2: [Name] | D, E | [Description] | X% |
-| Group 3: [Name] | F, G, H | [Description] | X% |
+| --------------- | --------- | --------------- | ------------ |
+| Group 1: [Name] | A, B, C   | [Description]   | X%           |
+| Group 2: [Name] | D, E      | [Description]   | X%           |
+| Group 3: [Name] | F, G, H   | [Description]   | X%           |
 
 ---
 
@@ -422,6 +432,7 @@ Common positioning dimension pairs:
 ### Risk Identification
 
 #### Risk Categories
+
 1. **Market Risks**: Demand changes, price pressure, market shifts
 2. **Competitive Risks**: New entrants, competitor moves, disruption
 3. **Regulatory Risks**: New regulations, compliance requirements
@@ -432,21 +443,22 @@ Common positioning dimension pairs:
 
 ### Risk Assessment Matrix
 
-| Risk ID | Risk Description | Category | Probability | Impact | Score | Priority |
-|---------|------------------|----------|-------------|--------|-------|----------|
-| R1 | [Description] | Market | 1-5 | 1-5 | P×I | H/M/L |
-| R2 | [Description] | Competitive | 1-5 | 1-5 | P×I | H/M/L |
+| Risk ID | Risk Description | Category    | Probability | Impact | Score | Priority |
+| ------- | ---------------- | ----------- | ----------- | ------ | ----- | -------- |
+| R1      | [Description]    | Market      | 1-5         | 1-5    | P×I   | H/M/L    |
+| R2      | [Description]    | Competitive | 1-5         | 1-5    | P×I   | H/M/L    |
 
 **Scoring Guide:**
+
 - Probability: 1=Very Unlikely, 2=Unlikely, 3=Possible, 4=Likely, 5=Very Likely
 - Impact: 1=Minimal, 2=Minor, 3=Moderate, 4=Major, 5=Severe
 - Priority: Score 15-25=High, 8-14=Medium, 1-7=Low
 
 ### Risk Mitigation Planning
 
-| Risk ID | Risk | Mitigation Strategy | Owner | Timeline | Cost |
-|---------|------|---------------------|-------|----------|------|
-| R1 | [Risk] | [Prevention + Response] | [Name] | [Date] | $X |
+| Risk ID | Risk   | Mitigation Strategy     | Owner  | Timeline | Cost |
+| ------- | ------ | ----------------------- | ------ | -------- | ---- |
+| R1      | [Risk] | [Prevention + Response] | [Name] | [Date]   | $X   |
 
 ---
 
@@ -464,31 +476,32 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 
 ### Scenario Analysis Template
 
-| Metric | Conservative | Base Case | Optimistic |
-|--------|--------------|-----------|------------|
-| Market Growth | X% | Y% | Z% |
-| Market Share | X% | Y% | Z% |
-| Pricing | $X | $Y | $Z |
-| Gross Margin | X% | Y% | Z% |
-| **Revenue Y5** | $X | $Y | $Z |
-| **EBITDA Y5** | $X | $Y | $Z |
+| Metric         | Conservative | Base Case | Optimistic |
+| -------------- | ------------ | --------- | ---------- |
+| Market Growth  | X%           | Y%        | Z%         |
+| Market Share   | X%           | Y%        | Z%         |
+| Pricing        | $X           | $Y        | $Z         |
+| Gross Margin   | X%           | Y%        | Z%         |
+| **Revenue Y5** | $X           | $Y        | $Z         |
+| **EBITDA Y5**  | $X           | $Y        | $Z         |
 
 ### Key Financial Metrics
 
-| Metric | Formula | Target |
-|--------|---------|--------|
-| Gross Margin | (Revenue - COGS) / Revenue | X% |
-| EBITDA Margin | EBITDA / Revenue | X% |
-| Customer Acquisition Cost | Sales & Marketing / New Customers | $X |
-| Lifetime Value | ARPU × Gross Margin × Lifetime | $X |
-| LTV/CAC Ratio | LTV / CAC | >3x |
-| Payback Period | CAC / (ARPU × Gross Margin × 12) | <X months |
+| Metric                    | Formula                           | Target    |
+| ------------------------- | --------------------------------- | --------- |
+| Gross Margin              | (Revenue - COGS) / Revenue        | X%        |
+| EBITDA Margin             | EBITDA / Revenue                  | X%        |
+| Customer Acquisition Cost | Sales & Marketing / New Customers | $X        |
+| Lifetime Value            | ARPU × Gross Margin × Lifetime    | $X        |
+| LTV/CAC Ratio             | LTV / CAC                         | >3x       |
+| Payback Period            | CAC / (ARPU × Gross Margin × 12)  | <X months |
 
 ---
 
 ## Data Collection Checklist
 
 ### Market Size Data
+
 - [ ] Current market size (with year and source)
 - [ ] Historical market size (5-10 years)
 - [ ] Market growth projections (5-10 years)
@@ -497,6 +510,7 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 - [ ] Segment breakdown
 
 ### Competitive Data
+
 - [ ] Market share by company (top 10)
 - [ ] Revenue by competitor
 - [ ] Growth rates by competitor
@@ -505,6 +519,7 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 - [ ] Product/service offerings
 
 ### Customer Data
+
 - [ ] Customer segments and sizes
 - [ ] Segment growth rates
 - [ ] Average deal size by segment
@@ -513,6 +528,7 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 - [ ] Churn rates
 
 ### Industry Data
+
 - [ ] Key industry trends
 - [ ] Regulatory developments
 - [ ] Technology trends
@@ -524,12 +540,14 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 ## Research Sources
 
 ### Primary Research
+
 - Customer interviews
 - Expert interviews
 - Surveys
 - Focus groups
 
 ### Secondary Research
+
 - Market research reports (Gartner, Forrester, IDC, McKinsey)
 - Industry associations
 - Government statistics
@@ -541,6 +559,7 @@ Revenue = Customers × Revenue per Customer × Retention Rate
 - News articles
 
 ### Data Validation
+
 - Cross-reference multiple sources
 - Check date currency (prefer <2 years old)
 - Verify methodology

@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Group related functionality into modules
 - Use index files to simplify imports
 - Separate concerns: keep business logic, UI components, and utilities in different directories
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

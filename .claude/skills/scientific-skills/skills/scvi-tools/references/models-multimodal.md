@@ -7,6 +7,7 @@ This document covers models for joint analysis of multiple data modalities in sc
 **Purpose**: Joint analysis of CITE-seq data (simultaneous RNA and protein measurements from same cells).
 
 **Key Features**:
+
 - Jointly models gene expression and protein abundance
 - Learns shared low-dimensional representations
 - Enables protein imputation from RNA data
@@ -14,6 +15,7 @@ This document covers models for joint analysis of multiple data modalities in sc
 - Handles batch effects in both RNA and protein layers
 
 **When to Use**:
+
 - Analyzing CITE-seq or REAP-seq data
 - Joint RNA + surface protein measurements
 - Imputing missing proteins
@@ -21,11 +23,13 @@ This document covers models for joint analysis of multiple data modalities in sc
 - Multi-batch CITE-seq integration
 
 **Data Requirements**:
+
 - AnnData with gene expression in `.X` or a layer
 - Protein measurements in `.obsm["protein_expression"]`
 - Same cells measured for both modalities
 
 **Basic Usage**:
+
 ```python
 import scvi
 
@@ -60,6 +64,7 @@ protein_de = model.differential_expression(
 ```
 
 **Key Parameters**:
+
 - `n_latent`: Latent space dimensionality (default: 20)
 - `n_layers_encoder`: Number of encoder layers (default: 1)
 - `n_layers_decoder`: Number of decoder layers (default: 1)
@@ -69,6 +74,7 @@ protein_de = model.differential_expression(
 **Advanced Features**:
 
 **Protein Imputation**:
+
 ```python
 # Impute missing proteins for RNA-only cells
 # (useful for mapping RNA-seq to CITE-seq reference)
@@ -80,6 +86,7 @@ imputed_proteins = model.get_normalized_expression(
 ```
 
 **Denoising**:
+
 ```python
 # Get denoised counts for both modalities
 denoised_rna = model.get_normalized_expression(n_samples=25)
@@ -90,6 +97,7 @@ denoised_protein = model.get_normalized_expression(
 ```
 
 **Best Practices**:
+
 1. Use empirical protein background prior for datasets with ambient protein
 2. Consider protein-specific dispersion for heterogeneous protein data
 3. Use joint latent space for clustering (better than RNA alone)
@@ -101,6 +109,7 @@ denoised_protein = model.get_normalized_expression(
 **Purpose**: Integration of paired and unpaired multi-omic data (e.g., RNA + ATAC, paired and unpaired cells).
 
 **Key Features**:
+
 - Handles paired data (same cells) and unpaired data (different cells)
 - Integrates multiple modalities: RNA, ATAC, proteins, etc.
 - Missing modality imputation
@@ -108,12 +117,14 @@ denoised_protein = model.get_normalized_expression(
 - Flexible integration strategy
 
 **When to Use**:
+
 - 10x Multiome data (paired RNA + ATAC)
 - Integrating separate RNA-seq and ATAC-seq experiments
 - Some cells with both modalities, some with only one
 - Cross-modality imputation tasks
 
 **Data Requirements**:
+
 - AnnData with multiple modalities
 - Modality indicators (which measurements each cell has)
 - Can handle:
@@ -122,6 +133,7 @@ denoised_protein = model.get_normalized_expression(
   - Completely unpaired datasets
 
 **Basic Usage**:
+
 ```python
 # Prepare data with modality information
 # adata.X should contain all features (genes + peaks)
@@ -152,6 +164,7 @@ atac_normalized = model.get_accessibility_estimates()
 ```
 
 **Key Parameters**:
+
 - `n_genes`: Number of gene features
 - `n_regions`: Number of accessibility regions
 - `n_latent`: Latent dimensionality (default: 20)
@@ -159,6 +172,7 @@ atac_normalized = model.get_accessibility_estimates()
 **Integration Scenarios**:
 
 **Scenario 1: Fully Paired (10x Multiome)**:
+
 ```python
 # All cells have both RNA and ATAC
 # Single modality key: "paired"
@@ -166,12 +180,14 @@ adata.obs["modality"] = "paired"
 ```
 
 **Scenario 2: Partially Paired**:
+
 ```python
 # Some cells have both, some RNA-only, some ATAC-only
 adata.obs["modality"] = ["RNA+ATAC", "RNA", "ATAC", ...]
 ```
 
 **Scenario 3: Completely Unpaired**:
+
 ```python
 # Separate RNA and ATAC experiments
 adata.obs["modality"] = ["RNA"] * n_rna + ["ATAC"] * n_atac
@@ -180,6 +196,7 @@ adata.obs["modality"] = ["RNA"] * n_rna + ["ATAC"] * n_atac
 **Advanced Use Cases**:
 
 **Cross-Modality Prediction**:
+
 ```python
 # Predict peaks from gene expression
 accessibility_from_rna = model.get_accessibility_estimates(
@@ -193,6 +210,7 @@ expression_from_atac = model.get_normalized_expression(
 ```
 
 **Modality-Specific Analysis**:
+
 ```python
 # Separate analysis per modality
 rna_subset = adata[adata.obs["modality"].str.contains("RNA")]
@@ -204,6 +222,7 @@ atac_subset = adata[adata.obs["modality"].str.contains("ATAC")]
 **Purpose**: Multi-sample analysis accounting for sample-specific and shared variation.
 
 **Key Features**:
+
 - Simultaneously analyzes multiple samples/conditions
 - Decomposes variation into:
   - Shared variation (common across samples)
@@ -212,6 +231,7 @@ atac_subset = adata[adata.obs["modality"].str.contains("ATAC")]
 - Identifies sample-specific cell states
 
 **When to Use**:
+
 - Comparing multiple biological samples or conditions
 - Identifying sample-specific vs. shared cell states
 - Disease vs. healthy sample comparisons
@@ -219,6 +239,7 @@ atac_subset = adata[adata.obs["modality"].str.contains("ATAC")]
 - Multi-donor studies
 
 **Basic Usage**:
+
 ```python
 scvi.model.MRVI.setup_anndata(
     adata,
@@ -239,11 +260,13 @@ sample_distances = model.get_sample_distances()
 ```
 
 **Key Parameters**:
+
 - `n_latent`: Dimensionality of shared latent space
 - `n_latent_sample`: Dimensionality of sample-specific space
 - `sample_key`: Column defining biological samples
 
 **Analysis Workflow**:
+
 ```python
 # 1. Identify shared cell types across samples
 sc.pp.neighbors(adata, use_rep="X_MrVI_shared")
@@ -265,6 +288,7 @@ de_results = model.differential_expression(
 ```
 
 **Use Cases**:
+
 - **Multi-donor studies**: Separate donor effects from cell type variation
 - **Disease studies**: Identify disease-specific vs. shared biology
 - **Time series**: Separate temporal from stable variation
@@ -273,19 +297,25 @@ de_results = model.differential_expression(
 ## totalVI vs. MultiVI vs. MrVI: When to Use Which?
 
 ### totalVI
+
 **Use for**: CITE-seq (RNA + protein, same cells)
+
 - Paired measurements
 - Single modality type per feature
 - Focus: protein imputation, joint analysis
 
 ### MultiVI
+
 **Use for**: Multiple modalities (RNA + ATAC, etc.)
+
 - Paired, unpaired, or mixed
 - Different feature types
 - Focus: cross-modality integration and imputation
 
 ### MrVI
+
 **Use for**: Multi-sample RNA-seq
+
 - Single modality (RNA)
 - Multiple biological samples
 - Focus: sample-level variation decomposition
@@ -293,18 +323,21 @@ de_results = model.differential_expression(
 ## Integration Best Practices
 
 ### For CITE-seq (totalVI)
+
 1. **Quality control proteins**: Remove low-quality antibodies
 2. **Background subtraction**: Use empirical background prior
 3. **Joint clustering**: Use joint latent space, not RNA alone
 4. **Validation**: Check known markers in both modalities
 
 ### For Multiome/Multi-modal (MultiVI)
+
 1. **Feature filtering**: Filter genes and peaks independently
 2. **Balance modalities**: Ensure reasonable representation of each
 3. **Modality weights**: Consider if one modality dominates
 4. **Imputation validation**: Validate imputed values carefully
 
 ### For Multi-sample (MrVI)
+
 1. **Sample definition**: Carefully define biological samples
 2. **Sample size**: Need sufficient cells per sample
 3. **Covariate handling**: Properly account for batch vs. sample

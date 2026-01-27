@@ -7,6 +7,7 @@ The Trainer automates training workflows after organizing PyTorch code into a Li
 ## Core Purpose
 
 The Trainer manages:
+
 - Automatically enabling/disabling gradients
 - Running training, validation, and test dataloaders
 - Calling callbacks at appropriate times
@@ -18,15 +19,18 @@ The Trainer manages:
 ## Main Methods
 
 ### `fit(model, train_dataloaders=None, val_dataloaders=None, datamodule=None)`
+
 Runs the full training routine including optional validation.
 
 **Parameters:**
+
 - `model` - LightningModule to train
 - `train_dataloaders` - Training DataLoader(s)
 - `val_dataloaders` - Optional validation DataLoader(s)
 - `datamodule` - Optional LightningDataModule (replaces dataloaders)
 
 **Examples:**
+
 ```python
 # With DataLoaders
 trainer = L.Trainer(max_epochs=10)
@@ -40,27 +44,33 @@ trainer.fit(model, train_loader, ckpt_path="checkpoint.ckpt")
 ```
 
 ### `validate(model=None, dataloaders=None, datamodule=None)`
+
 Run validation loop without training.
 
 **Example:**
+
 ```python
 trainer = L.Trainer()
 trainer.validate(model, val_loader)
 ```
 
 ### `test(model=None, dataloaders=None, datamodule=None)`
+
 Run test loop. Only use before publishing results.
 
 **Example:**
+
 ```python
 trainer = L.Trainer()
 trainer.test(model, test_loader)
 ```
 
 ### `predict(model=None, dataloaders=None, datamodule=None)`
+
 Run inference on data and return predictions.
 
 **Example:**
+
 ```python
 trainer = L.Trainer()
 predictions = trainer.predict(model, predict_loader)
@@ -71,6 +81,7 @@ predictions = trainer.predict(model, predict_loader)
 ### Training Duration
 
 #### `max_epochs` (int)
+
 Maximum number of epochs to train. Default: 1000
 
 ```python
@@ -78,6 +89,7 @@ trainer = L.Trainer(max_epochs=100)
 ```
 
 #### `min_epochs` (int)
+
 Minimum number of epochs to train. Default: None
 
 ```python
@@ -85,6 +97,7 @@ trainer = L.Trainer(min_epochs=10, max_epochs=100)
 ```
 
 #### `max_steps` (int)
+
 Maximum number of optimizer steps. Overrides max_epochs. Default: -1 (unlimited)
 
 ```python
@@ -92,6 +105,7 @@ trainer = L.Trainer(max_steps=10000)
 ```
 
 #### `max_time` (str or dict)
+
 Maximum training time. Useful for time-limited clusters.
 
 ```python
@@ -105,6 +119,7 @@ trainer = L.Trainer(max_time={"days": 1, "hours": 6})
 ### Hardware Configuration
 
 #### `accelerator` (str or Accelerator)
+
 Hardware to use: "cpu", "gpu", "tpu", "ipu", "hpu", "mps", or "auto". Default: "auto"
 
 ```python
@@ -113,6 +128,7 @@ trainer = L.Trainer(accelerator="auto")  # Auto-detect available hardware
 ```
 
 #### `devices` (int, list, or str)
+
 Number or list of device indices to use.
 
 ```python
@@ -130,6 +146,7 @@ trainer = L.Trainer(devices=4, accelerator="cpu")
 ```
 
 #### `strategy` (str or Strategy)
+
 Distributed training strategy: "ddp", "ddp_spawn", "fsdp", "deepspeed", etc. Default: "auto"
 
 ```python
@@ -144,6 +161,7 @@ trainer = L.Trainer(strategy="deepspeed_stage_2", accelerator="gpu", devices=4)
 ```
 
 #### `precision` (str or int)
+
 Floating point precision: "32-true", "16-mixed", "bf16-mixed", "64-true", etc.
 
 ```python
@@ -160,6 +178,7 @@ trainer = L.Trainer(precision="32-true")
 ### Optimization Configuration
 
 #### `gradient_clip_val` (float)
+
 Gradient clipping value. Default: None
 
 ```python
@@ -168,6 +187,7 @@ trainer = L.Trainer(gradient_clip_val=0.5)
 ```
 
 #### `gradient_clip_algorithm` (str)
+
 Gradient clipping algorithm: "norm" or "value". Default: "norm"
 
 ```python
@@ -175,6 +195,7 @@ trainer = L.Trainer(gradient_clip_val=0.5, gradient_clip_algorithm="norm")
 ```
 
 #### `accumulate_grad_batches` (int or dict)
+
 Accumulate gradients over N batches before optimizer step.
 
 ```python
@@ -188,6 +209,7 @@ trainer = L.Trainer(accumulate_grad_batches={0: 4, 5: 2, 10: 1})
 ### Validation Configuration
 
 #### `check_val_every_n_epoch` (int)
+
 Run validation every N epochs. Default: 1
 
 ```python
@@ -195,6 +217,7 @@ trainer = L.Trainer(check_val_every_n_epoch=10)
 ```
 
 #### `val_check_interval` (int or float)
+
 How often to check validation within a training epoch.
 
 ```python
@@ -206,6 +229,7 @@ trainer = L.Trainer(val_check_interval=100)
 ```
 
 #### `limit_val_batches` (int or float)
+
 Limit validation batches.
 
 ```python
@@ -220,6 +244,7 @@ trainer = L.Trainer(limit_val_batches=0)
 ```
 
 #### `num_sanity_val_steps` (int)
+
 Number of validation batches to run before training starts. Default: 2
 
 ```python
@@ -233,6 +258,7 @@ trainer = L.Trainer(num_sanity_val_steps=5)
 ### Logging and Progress
 
 #### `logger` (Logger or list or bool)
+
 Logger(s) to use for experiment tracking.
 
 ```python
@@ -251,6 +277,7 @@ trainer = L.Trainer(logger=False)
 ```
 
 #### `log_every_n_steps` (int)
+
 How often to log within training steps. Default: 50
 
 ```python
@@ -258,6 +285,7 @@ trainer = L.Trainer(log_every_n_steps=10)
 ```
 
 #### `enable_progress_bar` (bool)
+
 Show progress bar. Default: True
 
 ```python
@@ -267,6 +295,7 @@ trainer = L.Trainer(enable_progress_bar=False)
 ### Callbacks
 
 #### `callbacks` (list)
+
 List of callbacks to use during training.
 
 ```python
@@ -290,6 +319,7 @@ trainer = L.Trainer(callbacks=[checkpoint_callback, early_stop_callback])
 ### Checkpointing
 
 #### `default_root_dir` (str)
+
 Default directory for logs and checkpoints. Default: current working directory
 
 ```python
@@ -297,6 +327,7 @@ trainer = L.Trainer(default_root_dir="./experiments/")
 ```
 
 #### `enable_checkpointing` (bool)
+
 Enable automatic checkpointing. Default: True
 
 ```python
@@ -306,6 +337,7 @@ trainer = L.Trainer(enable_checkpointing=True)
 ### Debugging
 
 #### `fast_dev_run` (bool or int)
+
 Run a single batch (or N batches) through train/val/test for debugging.
 
 ```python
@@ -317,6 +349,7 @@ trainer = L.Trainer(fast_dev_run=5)
 ```
 
 #### `limit_train_batches` (int or float)
+
 Limit training batches.
 
 ```python
@@ -328,6 +361,7 @@ trainer = L.Trainer(limit_train_batches=100)
 ```
 
 #### `limit_test_batches` (int or float)
+
 Limit test batches.
 
 ```python
@@ -335,6 +369,7 @@ trainer = L.Trainer(limit_test_batches=0.5)
 ```
 
 #### `overfit_batches` (int or float)
+
 Overfit on a subset of data for debugging.
 
 ```python
@@ -346,6 +381,7 @@ trainer = L.Trainer(overfit_batches=0.01)
 ```
 
 #### `detect_anomaly` (bool)
+
 Enable PyTorch anomaly detection for debugging NaNs. Default: False
 
 ```python
@@ -355,6 +391,7 @@ trainer = L.Trainer(detect_anomaly=True)
 ### Reproducibility
 
 #### `deterministic` (bool or str)
+
 Control deterministic behavior. Default: False
 
 ```python
@@ -371,6 +408,7 @@ trainer = L.Trainer(deterministic="warn")
 ```
 
 #### `benchmark` (bool)
+
 Enable cudnn benchmarking for performance. Default: False
 
 ```python
@@ -380,6 +418,7 @@ trainer = L.Trainer(benchmark=True)
 ### Miscellaneous
 
 #### `enable_model_summary` (bool)
+
 Print model summary before training. Default: True
 
 ```python
@@ -387,6 +426,7 @@ trainer = L.Trainer(enable_model_summary=False)
 ```
 
 #### `inference_mode` (bool)
+
 Use torch.inference_mode() instead of torch.no_grad() for validation/test. Default: True
 
 ```python
@@ -394,6 +434,7 @@ trainer = L.Trainer(inference_mode=True)
 ```
 
 #### `profiler` (str or Profiler)
+
 Profile code for performance optimization. Options: "simple", "advanced", or custom Profiler.
 
 ```python
@@ -407,6 +448,7 @@ trainer = L.Trainer(profiler="advanced")
 ## Common Configurations
 
 ### Basic Training
+
 ```python
 trainer = L.Trainer(
     max_epochs=100,
@@ -417,6 +459,7 @@ trainer.fit(model, train_loader, val_loader)
 ```
 
 ### Multi-GPU Training
+
 ```python
 trainer = L.Trainer(
     max_epochs=100,
@@ -429,6 +472,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 ### Production Training with Checkpoints
+
 ```python
 from lightning.pytorch.callbacks import ModelCheckpoint, EarlyStopping, LearningRateMonitor
 
@@ -464,6 +508,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 ### Debug Configuration
+
 ```python
 trainer = L.Trainer(
     fast_dev_run=True,          # Run 1 batch
@@ -476,6 +521,7 @@ trainer.fit(model, train_loader, val_loader)
 ```
 
 ### Research Configuration (Reproducibility)
+
 ```python
 import lightning as L
 
@@ -493,6 +539,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 ### Time-Limited Training (Cluster)
+
 ```python
 trainer = L.Trainer(
     max_time={"hours": 23, "minutes": 30},  # SLURM time limit
@@ -506,6 +553,7 @@ trainer.fit(model, datamodule=dm, ckpt_path="last.ckpt")
 ```
 
 ### Large Model Training (FSDP)
+
 ```python
 from lightning.pytorch.strategies import FSDPStrategy
 
@@ -526,6 +574,7 @@ trainer.fit(model, datamodule=dm)
 ## Resuming Training
 
 ### From Checkpoint
+
 ```python
 # Resume from specific checkpoint
 trainer.fit(model, datamodule=dm, ckpt_path="epoch=10-val_loss=0.23.ckpt")
@@ -535,6 +584,7 @@ trainer.fit(model, datamodule=dm, ckpt_path="last.ckpt")
 ```
 
 ### Finding Last Checkpoint
+
 ```python
 from lightning.pytorch.callbacks import ModelCheckpoint
 
@@ -569,20 +619,21 @@ class MyModel(L.LightningModule):
 
 ## Trainer Attributes
 
-| Attribute | Description |
-|-----------|-------------|
-| `trainer.current_epoch` | Current epoch (0-indexed) |
-| `trainer.global_step` | Total optimizer steps |
-| `trainer.max_epochs` | Maximum epochs configured |
-| `trainer.max_steps` | Maximum steps configured |
-| `trainer.callbacks` | List of callbacks |
-| `trainer.logger` | Logger instance |
-| `trainer.strategy` | Training strategy |
+| Attribute                            | Description                        |
+| ------------------------------------ | ---------------------------------- |
+| `trainer.current_epoch`              | Current epoch (0-indexed)          |
+| `trainer.global_step`                | Total optimizer steps              |
+| `trainer.max_epochs`                 | Maximum epochs configured          |
+| `trainer.max_steps`                  | Maximum steps configured           |
+| `trainer.callbacks`                  | List of callbacks                  |
+| `trainer.logger`                     | Logger instance                    |
+| `trainer.strategy`                   | Training strategy                  |
 | `trainer.estimated_stepping_batches` | Estimated total steps for training |
 
 ## Best Practices
 
 ### 1. Start with Fast Dev Run
+
 Always test with `fast_dev_run=True` before full training:
 
 ```python
@@ -591,6 +642,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 ### 2. Use Gradient Clipping
+
 Prevent gradient explosions:
 
 ```python
@@ -598,6 +650,7 @@ trainer = L.Trainer(gradient_clip_val=1.0, gradient_clip_algorithm="norm")
 ```
 
 ### 3. Enable Mixed Precision
+
 Speed up training on modern GPUs:
 
 ```python
@@ -605,6 +658,7 @@ trainer = L.Trainer(precision="16-mixed")  # or "bf16-mixed" for A100+
 ```
 
 ### 4. Save Checkpoints Properly
+
 Always save the last checkpoint for resuming:
 
 ```python
@@ -616,6 +670,7 @@ checkpoint_callback = ModelCheckpoint(
 ```
 
 ### 5. Monitor Learning Rate
+
 Track LR changes with LearningRateMonitor:
 
 ```python
@@ -625,6 +680,7 @@ trainer = L.Trainer(callbacks=[LearningRateMonitor(logging_interval="step")])
 ```
 
 ### 6. Use DataModule for Reproducibility
+
 Encapsulate data logic in a DataModule:
 
 ```python
@@ -633,6 +689,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 ### 7. Set Deterministic for Research
+
 Ensure reproducibility for publications:
 
 ```python

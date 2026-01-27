@@ -1,6 +1,7 @@
 # Quantum Chemistry with PennyLane
 
 ## Table of Contents
+
 1. [Molecular Hamiltonians](#molecular-hamiltonians)
 2. [Variational Quantum Eigensolver (VQE)](#variational-quantum-eigensolver-vqe)
 3. [Molecular Structure](#molecular-structure)

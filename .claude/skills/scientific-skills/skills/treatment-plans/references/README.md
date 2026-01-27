@@ -56,6 +56,7 @@ python generate_template.py --type general_medical --output diabetes_plan.tex
 ```
 
 Available template types:
+
 - `one_page` (PREFERRED - use for most cases)
 - `general_medical`
 - `rehabilitation`
@@ -92,6 +93,7 @@ python timeline_generator.py --plan my_treatment_plan.tex --output timeline.pdf
 All templates include these essential sections:
 
 ### 1. Patient Information (De-identified)
+
 - Demographics and relevant medical background
 - Active conditions and comorbidities
 - Current medications and allergies
@@ -99,6 +101,7 @@ All templates include these essential sections:
 - HIPAA-compliant de-identification
 
 ### 2. Diagnosis and Assessment Summary
+
 - Primary diagnosis (ICD-10 coded)
 - Secondary diagnoses
 - Severity classification
@@ -108,11 +111,13 @@ All templates include these essential sections:
 ### 3. Treatment Goals (SMART Format)
 
 **Short-term goals** (1-3 months):
+
 - Specific, measurable outcomes
 - Realistic targets with defined timeframes
 - Patient-centered priorities
 
 **Long-term goals** (6-12 months):
+
 - Disease control targets
 - Functional improvement objectives
 - Quality of life enhancement
@@ -125,36 +130,42 @@ All templates include these essential sections:
 - **Procedural**: Planned procedures, specialist referrals, diagnostic testing
 
 ### 5. Timeline and Schedule
+
 - Treatment phases with timeframes
 - Appointment frequency
 - Milestone assessments
 - Expected treatment duration
 
 ### 6. Monitoring Parameters
+
 - Clinical outcomes to track
 - Assessment tools and scales
 - Monitoring frequency
 - Intervention thresholds
 
 ### 7. Expected Outcomes
+
 - Primary outcome measures
 - Success criteria
 - Timeline for improvement
 - Long-term prognosis
 
 ### 8. Follow-up Plan
+
 - Scheduled appointments
 - Communication protocols
 - Emergency procedures
 - Transition planning
 
 ### 9. Patient Education
+
 - Condition understanding
 - Self-management skills
 - Warning signs
 - Resources and support
 
 ### 10. Risk Mitigation
+
 - Adverse effect management
 - Safety monitoring
 - Emergency action plans
@@ -251,6 +262,7 @@ All treatment plans use SMART criteria for goal-setting:
 ### Examples
 
 **Good SMART Goals**:
+
 - Reduce HbA1c from 8.5% to <7% within 3 months
 - Walk independently 150 feet with assistive device by 8 weeks
 - Decrease PHQ-9 depression score from 18 to <10 in 8 weeks
@@ -258,6 +270,7 @@ All treatment plans use SMART criteria for goal-setting:
 - Reduce pain from 7/10 to ≤4/10 within 6 weeks
 
 **Poor Goals** (not SMART):
+
 - "Feel better" (not specific or measurable)
 - "Improve diabetes" (not specific or time-bound)
 - "Get stronger" (not measurable)
@@ -299,55 +312,63 @@ All treatment plans use SMART criteria for goal-setting:
 ## Best Practices
 
 ### Patient-Centered Care
+
 ✓ Involve patients in goal-setting and decision-making  
 ✓ Respect cultural beliefs and language preferences  
 ✓ Address health literacy with appropriate language  
 ✓ Align plan with patient values and life circumstances  
-✓ Support patient activation and self-management  
+✓ Support patient activation and self-management
 
 ### Evidence-Based Practice
+
 ✓ Follow current clinical practice guidelines  
 ✓ Use interventions with proven efficacy  
 ✓ Incorporate quality measures (HEDIS, CMS)  
 ✓ Avoid low-value or ineffective interventions  
-✓ Update plans based on emerging evidence  
+✓ Update plans based on emerging evidence
 
 ### Regulatory Compliance
+
 ✓ De-identify per HIPAA Safe Harbor method (18 identifiers)  
 ✓ Document medical necessity for billing support  
 ✓ Include informed consent documentation  
 ✓ Sign and date all treatment plans  
-✓ Maintain professional documentation standards  
+✓ Maintain professional documentation standards
 
 ### Quality Documentation
+
 ✓ Complete all required sections  
 ✓ Use clear, professional medical language  
 ✓ Include specific, measurable goals  
 ✓ Specify exact medications (dose, route, frequency)  
 ✓ Define monitoring parameters and frequency  
-✓ Address safety and risk mitigation  
+✓ Address safety and risk mitigation
 
 ### Care Coordination
+
 ✓ Communicate plan to entire care team  
 ✓ Define roles and responsibilities  
 ✓ Coordinate across care settings  
 ✓ Integrate specialist recommendations  
-✓ Plan for care transitions  
+✓ Plan for care transitions
 
 ## Integration with Other Skills
 
 ### Clinical Reports
+
 - **SOAP Notes**: Document treatment plan implementation and progress
 - **H&P Documents**: Initial assessment informs treatment planning
 - **Discharge Summaries**: Summarize treatment plan execution
 - **Progress Notes**: Track goal achievement and plan modifications
 
 ### Scientific Writing
+
 - **Citation Management**: Reference clinical practice guidelines
 - **Literature Review**: Understand evidence base for interventions
 - **Research Lookup**: Find current treatment recommendations
 
 ### Research
+
 - **Research Grants**: Treatment protocols for clinical trials
 - **Clinical Trial Reports**: Document trial interventions
 
@@ -356,6 +377,7 @@ All treatment plans use SMART criteria for goal-setting:
 Treatment plans should align with evidence-based guidelines:
 
 ### General Medicine
+
 - American Diabetes Association (ADA) Standards of Care
 - ACC/AHA Cardiovascular Guidelines
 - GOLD COPD Guidelines
@@ -363,24 +385,28 @@ Treatment plans should align with evidence-based guidelines:
 - KDIGO Chronic Kidney Disease Guidelines
 
 ### Rehabilitation
+
 - APTA Physical Therapy Clinical Practice Guidelines
 - AOTA Occupational Therapy Practice Guidelines
 - AHA/AACVPR Cardiac Rehabilitation Guidelines
 - Stroke Rehabilitation Best Practices
 
 ### Mental Health
+
 - APA (American Psychiatric Association) Practice Guidelines
 - VA/DoD Clinical Practice Guidelines for Mental Health
 - NICE Guidelines (UK)
 - Evidence-based psychotherapy protocols (CBT, DBT, ACT)
 
 ### Pain Management
+
 - CDC Opioid Prescribing Guidelines
 - AAPM (American Academy of Pain Medicine) Guidelines
 - WHO Analgesic Ladder
 - Multimodal Analgesia Best Practices
 
 ### Perioperative Care
+
 - ERAS (Enhanced Recovery After Surgery) Society Guidelines
 - ASA Perioperative Guidelines
 - SCIP (Surgical Care Improvement Project) Measures
@@ -388,6 +414,7 @@ Treatment plans should align with evidence-based guidelines:
 ## Professional Standards
 
 ### Documentation Requirements
+
 - Complete and accurate patient information
 - Clear diagnosis with appropriate ICD-10 coding
 - Evidence-based interventions
@@ -396,7 +423,9 @@ Treatment plans should align with evidence-based guidelines:
 - Provider signature, credentials, and date
 
 ### Medical Necessity
+
 Treatment plans must demonstrate:
+
 - Medical appropriateness of interventions
 - Alignment with diagnosis and severity
 - Evidence supporting treatment choices
@@ -404,6 +433,7 @@ Treatment plans must demonstrate:
 - Frequency and duration justification
 
 ### Legal Considerations
+
 - Informed consent documentation
 - Patient understanding and agreement
 - Risk disclosure and mitigation
@@ -442,6 +472,7 @@ Treatment plans must demonstrate:
 ### How do I choose the right template?
 
 Match the template to your primary clinical focus:
+
 - **Chronic medical conditions** → general_medical or chronic_disease
 - **Post-surgery or injury** → rehabilitation or perioperative
 - **Psychiatric conditions** → mental_health
@@ -473,6 +504,7 @@ Yes! Templates are designed to be customized. Modify sections, add specialty-spe
 ### What if validation scripts find issues?
 
 Review the specific issues identified, consult reference files for guidance, and revise the plan accordingly. Common issues include:
+
 - Missing required sections
 - Goals not meeting SMART criteria
 - Insufficient monitoring parameters
@@ -485,4 +517,3 @@ Part of the Claude Scientific Writer project. See main LICENSE file.
 ---
 
 For detailed documentation, see `SKILL.md`. For issues or questions, consult the comprehensive reference files in the `references/` directory.
-

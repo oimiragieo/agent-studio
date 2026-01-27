@@ -15,6 +15,7 @@ pip install --upgrade gget
 ### Genomic Reference Databases
 
 #### Ensembl
+
 - **Used by:** gget ref, gget search, gget info, gget seq
 - **Description:** Comprehensive genome database with annotations for vertebrate and invertebrate species
 - **Update frequency:** Regular releases (numbered); new releases approximately every 3 months
@@ -26,6 +27,7 @@ pip install --upgrade gget
   - Shortcuts available for common species ('human', 'mouse')
 
 #### UCSC Genome Browser
+
 - **Used by:** gget blat
 - **Description:** Genome browser database with BLAT alignment tool
 - **Update frequency:** Regular updates with new assemblies
@@ -38,6 +40,7 @@ pip install --upgrade gget
 ### Protein & Structure Databases
 
 #### UniProt
+
 - **Used by:** gget info, gget seq (amino acid sequences), gget elm
 - **Description:** Universal Protein Resource, comprehensive protein sequence and functional information
 - **Update frequency:** Regular releases (weekly for Swiss-Prot, monthly for TrEMBL)
@@ -48,6 +51,7 @@ pip install --upgrade gget
   - TrEMBL: automatically annotated
 
 #### NCBI (National Center for Biotechnology Information)
+
 - **Used by:** gget info, gget bgee (for non-Ensembl species)
 - **Description:** Gene and protein databases with extensive cross-references
 - **Update frequency:** Continuous updates
@@ -56,6 +60,7 @@ pip install --upgrade gget
 - **Databases:** Gene, Protein, RefSeq
 
 #### RCSB PDB (Protein Data Bank)
+
 - **Used by:** gget pdb
 - **Description:** Repository of 3D structural data for proteins and nucleic acids
 - **Update frequency:** Weekly updates
@@ -66,6 +71,7 @@ pip install --upgrade gget
   - Includes metadata about experiments and publications
 
 #### ELM (Eukaryotic Linear Motif)
+
 - **Used by:** gget elm
 - **Description:** Database of functional sites in eukaryotic proteins
 - **Update frequency:** Periodic updates
@@ -78,6 +84,7 @@ pip install --upgrade gget
 ### Sequence Similarity Databases
 
 #### BLAST Databases (NCBI)
+
 - **Used by:** gget blast
 - **Description:** Pre-formatted databases for BLAST searches
 - **Update frequency:** Regular updates
@@ -92,6 +99,7 @@ pip install --upgrade gget
 ### Expression & Correlation Databases
 
 #### ARCHS4
+
 - **Used by:** gget archs4
 - **Description:** Massive mining of publicly available RNA-seq data
 - **Update frequency:** Periodic updates with new samples
@@ -104,6 +112,7 @@ pip install --upgrade gget
 - **Citation:** Lachmann et al., Nature Communications, 2018
 
 #### CZ CELLxGENE Discover
+
 - **Used by:** gget cellxgene
 - **Description:** Single-cell RNA-seq data from multiple studies
 - **Update frequency:** Continuous additions of new datasets
@@ -119,6 +128,7 @@ pip install --upgrade gget
   - May not support latest Python versions
 
 #### Bgee
+
 - **Used by:** gget bgee
 - **Description:** Gene expression and orthology database
 - **Update frequency:** Regular releases
@@ -132,6 +142,7 @@ pip install --upgrade gget
 ### Functional & Pathway Databases
 
 #### Enrichr / modEnrichr
+
 - **Used by:** gget enrichr
 - **Description:** Gene set enrichment analysis web service
 - **Update frequency:** Regular updates to underlying databases
@@ -150,6 +161,7 @@ pip install --upgrade gget
 ### Disease & Drug Databases
 
 #### Open Targets
+
 - **Used by:** gget opentargets
 - **Description:** Integrative platform for disease-target associations
 - **Update frequency:** Regular releases (quarterly)
@@ -165,6 +177,7 @@ pip install --upgrade gget
   - Protein-protein interactions
 
 #### cBioPortal
+
 - **Used by:** gget cbio
 - **Description:** Cancer genomics data portal
 - **Update frequency:** Continuous addition of new studies
@@ -179,6 +192,7 @@ pip install --upgrade gget
   - Multiple cancer types and studies available
 
 #### COSMIC (Catalogue Of Somatic Mutations In Cancer)
+
 - **Used by:** gget cosmic
 - **Description:** Comprehensive cancer mutation database
 - **Update frequency:** Regular releases
@@ -198,6 +212,7 @@ pip install --upgrade gget
 ### AI & Prediction Services
 
 #### AlphaFold2 (DeepMind)
+
 - **Used by:** gget alphafold
 - **Description:** Deep learning model for protein structure prediction
 - **Model version:** Simplified version for local execution
@@ -210,6 +225,7 @@ pip install --upgrade gget
   - Python version-specific requirements
 
 #### OpenAI API
+
 - **Used by:** gget gpt
 - **Description:** Large language model API
 - **Update frequency:** New models released periodically
@@ -223,9 +239,11 @@ pip install --upgrade gget
 ## Data Consistency & Reproducibility
 
 ### Version Control
+
 To ensure reproducibility in analyses:
 
 1. **Specify database versions/releases:**
+
    ```python
    # Use specific Ensembl release
    gget.ref("homo_sapiens", release=110)
@@ -235,6 +253,7 @@ To ensure reproducibility in analyses:
    ```
 
 2. **Document gget version:**
+
    ```python
    import gget
    print(gget.__version__)
@@ -266,26 +285,31 @@ To ensure reproducibility in analyses:
 ## Database-Specific Best Practices
 
 ### Ensembl
+
 - Use species shortcuts ('human', 'mouse') for convenience
 - Specify release numbers for reproducibility
 - Check available species with `gget ref --list_species`
 
 ### UniProt
+
 - UniProt IDs are more stable than gene names
 - Swiss-Prot annotations are manually curated and more reliable
 - Use PDB flag in gget info only when needed (increases runtime)
 
 ### BLAST/BLAT
+
 - Start with default parameters, then optimize
 - Use specialized databases (swissprot, refseq_protein) for focused searches
 - Consider E-value cutoffs based on query length
 
 ### Expression Databases
+
 - Gene symbols are case-sensitive in CELLxGENE
 - ARCHS4 correlation data is based on co-expression patterns
 - Consider tissue-specificity when interpreting results
 
 ### Cancer Databases
+
 - cBioPortal: cache data locally for repeated analyses
 - COSMIC: download appropriate database subset for your needs
 - Respect license agreements for commercial use

@@ -11,6 +11,7 @@ The main class for differential expression analysis that handles data processing
 **Purpose:** Implements dispersion and log fold-change (LFC) estimation for RNA-seq count data.
 
 **Initialization Parameters:**
+
 - `counts`: pandas DataFrame of shape (samples × genes) containing non-negative integer read counts
 - `metadata`: pandas DataFrame of shape (samples × variables) with sample annotations
 - `design`: str, Wilkinson formula specifying the statistical model (e.g., "~condition", "~group + condition")
@@ -21,9 +22,11 @@ The main class for differential expression analysis that handles data processing
 **Key Methods:**
 
 #### `deseq2()`
+
 Run the complete DESeq2 pipeline for normalization and dispersion/LFC fitting.
 
 **Steps performed:**
+
 1. Compute normalization factors (size factors)
 2. Fit genewise dispersions
 3. Fit dispersion trend curve
@@ -36,15 +39,18 @@ Run the complete DESeq2 pipeline for normalization and dispersion/LFC fitting.
 **Returns:** None (modifies object in-place)
 
 #### `to_picklable_anndata()`
+
 Convert the DeseqDataSet to an AnnData object that can be saved with pickle.
 
 **Returns:** AnnData object with:
+
 - `X`: count data matrix
 - `obs`: sample-level metadata (1D)
 - `var`: gene-level metadata (1D)
 - `varm`: gene-level multi-dimensional data (e.g., LFC estimates)
 
 **Usage:**
+
 ```python
 import pickle
 with open("result_adata.pkl", "wb") as f:
@@ -52,6 +58,7 @@ with open("result_adata.pkl", "wb") as f:
 ```
 
 **Attributes (after running deseq2()):**
+
 - `layers`: dict containing various matrices (normalized counts, etc.)
 - `varm`: dict containing gene-level results (log fold changes, dispersions, etc.)
 - `obsm`: dict containing sample-level information
@@ -66,6 +73,7 @@ Class for performing statistical tests and computing p-values for differential e
 **Purpose:** Facilitates PyDESeq2 statistical tests using Wald tests and optional LFC shrinkage.
 
 **Initialization Parameters:**
+
 - `dds`: DeseqDataSet object that has been processed with `deseq2()`
 - `contrast`: list or None, specifies the contrast for testing
   - Format: `[variable, test_level, reference_level]`
@@ -80,9 +88,11 @@ Class for performing statistical tests and computing p-values for differential e
 **Key Methods:**
 
 #### `summary()`
+
 Run Wald tests and compute p-values and adjusted p-values.
 
 **Steps performed:**
+
 1. Run Wald statistical tests for specified contrast
 2. Optional Cook's distance filtering
 3. Optional independent filtering to remove low-power tests
@@ -91,6 +101,7 @@ Run Wald tests and compute p-values and adjusted p-values.
 **Returns:** None (results stored in `results_df` attribute)
 
 **Result DataFrame columns:**
+
 - `baseMean`: mean normalized count across all samples
 - `log2FoldChange`: log2 fold change between conditions
 - `lfcSE`: standard error of the log2 fold change
@@ -99,11 +110,13 @@ Run Wald tests and compute p-values and adjusted p-values.
 - `padj`: adjusted p-value (FDR-corrected)
 
 #### `lfc_shrink(coeff=None)`
+
 Apply shrinkage to log fold changes using the apeGLM method.
 
 **Purpose:** Reduces noise in LFC estimates for better visualization and ranking, especially for genes with low counts or high variability.
 
 **Parameters:**
+
 - `coeff`: str or None, coefficient name to shrink (if None, uses the coefficient from the contrast)
 
 **Important:** Shrinkage is applied only for visualization/ranking purposes. The statistical test results (p-values, adjusted p-values) remain unchanged.
@@ -111,6 +124,7 @@ Apply shrinkage to log fold changes using the apeGLM method.
 **Returns:** None (updates `results_df` with shrunk LFCs)
 
 **Attributes:**
+
 - `results_df`: pandas DataFrame containing test results (available after `summary()`)
 
 ---
@@ -122,9 +136,11 @@ Apply shrinkage to log fold changes using the apeGLM method.
 Load synthetic example datasets for testing and tutorials.
 
 **Parameters:**
+
 - `modality`: str, either "single-factor" or "multi-factor"
 
 **Returns:** tuple of (counts_df, metadata_df)
+
 - `counts_df`: pandas DataFrame with synthetic count data
 - `metadata_df`: pandas DataFrame with sample annotations
 
@@ -135,6 +151,7 @@ Load synthetic example datasets for testing and tutorials.
 The `pydeseq2.preprocessing` module provides utilities for data preparation.
 
 **Common operations:**
+
 - Gene filtering based on minimum read counts
 - Sample filtering based on metadata criteria
 - Data transformation and normalization
@@ -144,12 +161,15 @@ The `pydeseq2.preprocessing` module provides utilities for data preparation.
 ## Inference Classes
 
 ### Inference
+
 Abstract base class defining the interface for DESeq2-related inference methods.
 
 ### DefaultInference
+
 Default implementation of inference methods using scipy, sklearn, and numpy.
 
 **Purpose:** Provides the mathematical implementations for:
+
 - GLM (Generalized Linear Model) fitting
 - Dispersion estimation
 - Trend curve fitting
@@ -160,6 +180,7 @@ Default implementation of inference methods using scipy, sklearn, and numpy.
 ## Data Structure Requirements
 
 ### Count Matrix
+
 - **Shape:** (samples × genes)
 - **Type:** pandas DataFrame
 - **Values:** Non-negative integers (raw read counts)
@@ -167,6 +188,7 @@ Default implementation of inference methods using scipy, sklearn, and numpy.
 - **Columns:** Gene identifiers
 
 ### Metadata
+
 - **Shape:** (samples × variables)
 - **Type:** pandas DataFrame
 - **Index:** Sample identifiers (must match count matrix index)
@@ -174,6 +196,7 @@ Default implementation of inference methods using scipy, sklearn, and numpy.
 - **Values:** Categorical or continuous variables used in the design formula
 
 ### Important Notes
+
 - Sample order must match between counts and metadata
 - Missing values in metadata should be handled before analysis
 - Gene names should be unique
@@ -220,6 +243,7 @@ results = ds.results_df
 PyDESeq2 aims to match the default settings of DESeq2 v1.34.0. Some differences may exist as it is a from-scratch reimplementation in Python.
 
 **Tested with:**
+
 - Python 3.10-3.11
 - anndata 0.8.0+
 - numpy 1.23.0+

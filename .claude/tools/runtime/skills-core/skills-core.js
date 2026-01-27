@@ -149,9 +149,7 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
 function resolveSkillPath(skillName, frameworkDir, userDir) {
   // Strip framework: prefix if present
   const forceFramework = skillName.startsWith('framework:');
-  const actualSkillName = forceFramework
-    ? skillName.replace(/^framework:/, '')
-    : skillName;
+  const actualSkillName = forceFramework ? skillName.replace(/^framework:/, '') : skillName;
 
   // Try user skills first (unless explicitly framework:)
   if (!forceFramework && userDir) {

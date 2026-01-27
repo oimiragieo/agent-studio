@@ -27,6 +27,7 @@ python scripts/generate_schematic.py "your diagram description" -o output.png
 ## Common Examples
 
 ### CONSORT Flowchart
+
 ```bash
 python scripts/generate_schematic.py \
   "CONSORT flow: screened n=500, excluded n=150, randomized n=350" \
@@ -34,6 +35,7 @@ python scripts/generate_schematic.py \
 ```
 
 ### Neural Network
+
 ```bash
 python scripts/generate_schematic.py \
   "Transformer architecture with encoder and decoder stacks" \
@@ -41,6 +43,7 @@ python scripts/generate_schematic.py \
 ```
 
 ### Biological Pathway
+
 ```bash
 python scripts/generate_schematic.py \
   "MAPK pathway: EGFR → RAS → RAF → MEK → ERK" \
@@ -48,6 +51,7 @@ python scripts/generate_schematic.py \
 ```
 
 ### Circuit Diagram
+
 ```bash
 python scripts/generate_schematic.py \
   "Op-amp circuit with 1kΩ resistor and 10µF capacitor" \
@@ -56,21 +60,23 @@ python scripts/generate_schematic.py \
 
 ## Command Options
 
-| Option | Description | Example |
-|--------|-------------|---------|
-| `-o, --output` | Output file path | `-o figures/diagram.png` |
-| `--iterations N` | Number of refinements (1-2) | `--iterations 2` |
-| `-v, --verbose` | Show detailed output | `-v` |
-| `--api-key KEY` | Provide API key | `--api-key sk-or-v1-...` |
+| Option           | Description                 | Example                  |
+| ---------------- | --------------------------- | ------------------------ |
+| `-o, --output`   | Output file path            | `-o figures/diagram.png` |
+| `--iterations N` | Number of refinements (1-2) | `--iterations 2`         |
+| `-v, --verbose`  | Show detailed output        | `-v`                     |
+| `--api-key KEY`  | Provide API key             | `--api-key sk-or-v1-...` |
 
 ## Prompt Tips
 
 ### ✓ Good Prompts (Specific)
+
 - "CONSORT flowchart with screening (n=500), exclusion (n=150), randomization (n=350)"
 - "Transformer architecture: encoder on left with 6 layers, decoder on right, cross-attention connections"
 - "MAPK signaling: receptor → RAS → RAF → MEK → ERK → nucleus, label each phosphorylation"
 
 ### ✗ Avoid (Too Vague)
+
 - "Make a flowchart"
 - "Neural network"
 - "Pathway diagram"
@@ -78,8 +84,9 @@ python scripts/generate_schematic.py \
 ## Output Files
 
 For input `diagram.png`, you get:
+
 - `diagram_v1.png` - First iteration
-- `diagram_v2.png` - Second iteration  
+- `diagram_v2.png` - Second iteration
 - `diagram_v3.png` - Final iteration
 - `diagram.png` - Copy of final
 - `diagram_review_log.json` - Quality scores and critiques
@@ -131,6 +138,7 @@ print(f"Score: {results['final_score']}/10")
 ## Troubleshooting
 
 ### API Key Not Found
+
 ```bash
 # Check if set
 echo $OPENROUTER_API_KEY
@@ -140,12 +148,14 @@ export OPENROUTER_API_KEY='your_key'
 ```
 
 ### Import Error
+
 ```bash
 # Install requests
 pip install requests
 ```
 
 ### Low Quality Score
+
 - Make prompt more specific
 - Include layout details (left-to-right, top-to-bottom)
 - Specify label requirements
@@ -163,12 +173,14 @@ python test_ai_generation.py
 ## Cost
 
 Typical cost per diagram (max 2 iterations):
+
 - Simple (1 iteration): $0.05-0.15
 - Complex (2 iterations): $0.10-0.30
 
 ## How Nano Banana Pro Works
 
 **Simply describe your diagram in natural language:**
+
 - ✓ No coding required
 - ✓ No templates needed
 - ✓ No manual drawing
@@ -204,4 +216,3 @@ python scripts/generate_schematic.py "diagram" -o out.png -v
 - Implementation details: `IMPLEMENTATION_SUMMARY.md`
 - Example script: `example_usage.sh`
 - Get API key: https://openrouter.ai/keys
-

@@ -113,7 +113,6 @@ When reviewing or writing code, apply these guidelines:
     css
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-    
   - Usage example:
     svelte
 
@@ -184,7 +183,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Implement dark mode using Tailwind's dark variant
 
-
 </instructions>
 
 <examples>
@@ -198,6 +196,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 20 individual skills:
+
 - css-specific-rules
 - styled-components-attrs-method
 - styled-components-best-practices-general
@@ -219,10 +218,10 @@ This expert skill consolidates 20 individual skills:
 - tailwind-custom-styles
 - tailwind-dark-mode
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

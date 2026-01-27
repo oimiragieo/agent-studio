@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - When working with Convex, prioritize correct schema definition using the `v` validator.
 - Be aware of the automatically-generated system fields `_id` and `_creationTime`.
 - See https://docs.convex.dev/database/types for available types.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

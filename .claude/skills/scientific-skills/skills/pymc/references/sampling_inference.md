@@ -6,11 +6,12 @@ This reference covers the sampling algorithms and inference methods available in
 
 ### Primary Sampling Function
 
-**`pm.sample(draws=1000, tune=1000, chains=4, **kwargs)`**
+**`pm.sample(draws=1000, tune=1000, chains=4, **kwargs)`\*\*
 
 The main interface for MCMC sampling in PyMC.
 
 **Key Parameters:**
+
 - `draws`: Number of samples to draw per chain (default: 1000)
 - `tune`: Number of tuning/warmup samples (default: 1000, discarded)
 - `chains`: Number of parallel chains (default: 4)
@@ -23,6 +24,7 @@ The main interface for MCMC sampling in PyMC.
 **Returns:** InferenceData object containing posterior samples, sampling statistics, and diagnostics
 
 **Example:**
+
 ```python
 with pm.Model() as model:
     # ... define model ...
@@ -43,12 +45,14 @@ PyMC automatically selects appropriate samplers based on model structure, but yo
 - Can struggle with high correlation or multimodality
 
 **Manual specification:**
+
 ```python
 with model:
     idata = pm.sample(step=pm.NUTS(target_accept=0.95))
 ```
 
 **When to adjust:**
+
 - Increase `target_accept` (0.9-0.99) if seeing divergences
 - Use `init='adapt_diag'` for faster initialization (default)
 - Use `init='jitter+adapt_diag'` for difficult initializations
@@ -63,6 +67,7 @@ General-purpose Metropolis-Hastings sampler.
 - Requires manual tuning
 
 **Example:**
+
 ```python
 with model:
     idata = pm.sample(step=pm.Metropolis())
@@ -77,6 +82,7 @@ Slice sampling for univariate distributions.
 - Can be slow for high dimensions
 
 **Example:**
+
 ```python
 with model:
     idata = pm.sample(step=pm.Slice())
@@ -87,6 +93,7 @@ with model:
 Combine different samplers for different parameters.
 
 **Example:**
+
 ```python
 with model:
     # Use NUTS for continuous params, Metropolis for discrete
@@ -185,11 +192,12 @@ Faster approximate inference for large models or quick exploration.
 
 ### ADVI (Automatic Differentiation Variational Inference)
 
-**`pm.fit(n=10000, method='advi', **kwargs)`**
+**`pm.fit(n=10000, method='advi', **kwargs)`\*\*
 
 Approximates posterior with simpler distribution (typically mean-field Gaussian).
 
 **Key Parameters:**
+
 - `n`: Number of iterations (default: 10000)
 - `method`: VI algorithm ('advi', 'fullrank_advi', 'svgd')
 - `random_seed`: Random seed
@@ -197,6 +205,7 @@ Approximates posterior with simpler distribution (typically mean-field Gaussian)
 **Returns:** Approximation object for sampling and analysis
 
 **Example:**
+
 ```python
 with model:
     approx = pm.fit(n=50000)
@@ -207,6 +216,7 @@ with model:
 ```
 
 **Trade-offs:**
+
 - **Pros**: Much faster than MCMC, scales to large data
 - **Cons**: Approximate, may miss posterior structure, underestimates uncertainty
 
@@ -238,14 +248,16 @@ Better captures multimodality but more computationally expensive.
 
 Sample from the prior distribution (before seeing data).
 
-**`pm.sample_prior_predictive(samples=500, **kwargs)`**
+**`pm.sample_prior_predictive(samples=500, **kwargs)`\*\*
 
 **Purpose:**
+
 - Validate priors are reasonable
 - Check implied predictions before fitting
 - Ensure model generates plausible data
 
 **Example:**
+
 ```python
 with model:
     prior_pred = pm.sample_prior_predictive(samples=1000)
@@ -258,14 +270,16 @@ az.plot_ppc(prior_pred, group='prior')
 
 Sample from posterior predictive distribution (after fitting).
 
-**`pm.sample_posterior_predictive(trace, **kwargs)`**
+**`pm.sample_posterior_predictive(trace, **kwargs)`\*\*
 
 **Purpose:**
+
 - Model validation via posterior predictive checks
 - Generate predictions for new data
 - Assess goodness-of-fit
 
 **Example:**
+
 ```python
 with model:
     # After sampling
@@ -301,14 +315,16 @@ with model:
 
 Find posterior mode (point estimate).
 
-**`pm.find_MAP(start=None, method='L-BFGS-B', **kwargs)`**
+**`pm.find_MAP(start=None, method='L-BFGS-B', **kwargs)`\*\*
 
 **When to use:**
+
 - Quick point estimates
 - Initialization for MCMC
 - When full posterior not needed
 
 **Example:**
+
 ```python
 with model:
     map_estimate = pm.find_MAP()
@@ -316,6 +332,7 @@ with model:
 ```
 
 **Limitations:**
+
 - Doesn't quantify uncertainty
 - Can find local optima in multimodal posteriors
 - Sensitive to prior specification
@@ -325,16 +342,19 @@ with model:
 ### Standard Workflow
 
 1. **Start with ADVI** for quick exploration:
+
    ```python
    approx = pm.fit(n=20000)
    ```
 
 2. **Run MCMC** for full inference:
+
    ```python
    idata = pm.sample(draws=2000, tune=1000)
    ```
 
 3. **Check diagnostics**:
+
    ```python
    az.summary(idata, var_names=['~mu_log__'])  # Exclude transformed vars
    ```
@@ -346,14 +366,14 @@ with model:
 
 ### Choosing Inference Method
 
-| Scenario | Recommended Method |
-|----------|-------------------|
-| Small-medium models, need full uncertainty | MCMC with NUTS |
-| Large models, initial exploration | ADVI |
-| Discrete parameters | Metropolis or marginalize |
-| Hierarchical models with divergences | Non-centered parameterization + NUTS |
-| Very large data | Minibatch ADVI |
-| Quick point estimates | MAP or ADVI |
+| Scenario                                   | Recommended Method                   |
+| ------------------------------------------ | ------------------------------------ |
+| Small-medium models, need full uncertainty | MCMC with NUTS                       |
+| Large models, initial exploration          | ADVI                                 |
+| Discrete parameters                        | Metropolis or marginalize            |
+| Hierarchical models with divergences       | Non-centered parameterization + NUTS |
+| Very large data                            | Minibatch ADVI                       |
+| Quick point estimates                      | MAP or ADVI                          |
 
 ### Reparameterization Tricks
 

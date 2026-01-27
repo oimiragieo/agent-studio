@@ -5,6 +5,7 @@ Operations for transforming, subsetting, and manipulating AnnData objects.
 ## Subsetting
 
 ### By indices
+
 ```python
 import anndata as ad
 import numpy as np
@@ -25,6 +26,7 @@ single_var = adata[:, 0]
 ```
 
 ### By names
+
 ```python
 import pandas as pd
 
@@ -48,6 +50,7 @@ subset = adata[['cell_0', 'cell_1'], ['gene_0', 'gene_1']]
 ```
 
 ### By boolean masks
+
 ```python
 # Create boolean masks
 high_count_obs = np.random.rand(1000) > 0.5
@@ -60,6 +63,7 @@ subset = adata[high_count_obs, high_var_genes]
 ```
 
 ### By metadata conditions
+
 ```python
 # Add metadata
 adata.obs['cell_type'] = np.random.choice(['A', 'B', 'C'], 1000)
@@ -107,6 +111,7 @@ print(adata_T.var.head()) # Same data, now as variable metadata
 ## Copying
 
 ### Full copy
+
 ```python
 # Create independent copy
 adata_copy = adata.copy()
@@ -117,6 +122,7 @@ print('new_column' in adata.obs.columns)  # False
 ```
 
 ### Shallow copy
+
 ```python
 # View (doesn't copy data, modifications affect original)
 adata_view = adata[0:100, :]
@@ -132,6 +138,7 @@ print(adata_independent.is_view)  # False
 ## Renaming
 
 ### Rename observations and variables
+
 ```python
 # Rename all observations
 adata.obs_names = [f'new_cell_{i}' for i in range(adata.n_obs)]
@@ -145,6 +152,7 @@ adata.var_names_make_unique()
 ```
 
 ### Rename categories
+
 ```python
 # Create categorical column
 adata.obs['cell_type'] = pd.Categorical(['A', 'B', 'C'] * 333 + ['A'])
@@ -163,6 +171,7 @@ adata.rename_categories('cell_type', {
 ## Type Conversions
 
 ### Strings to categoricals
+
 ```python
 # Convert string columns to categorical (more memory efficient)
 adata.obs['cell_type'] = ['TypeA', 'TypeB'] * 500
@@ -176,6 +185,7 @@ print(adata.obs['tissue'].dtype)     # category
 ```
 
 ### Sparse to dense and vice versa
+
 ```python
 from scipy.sparse import csr_matrix
 
@@ -206,6 +216,7 @@ for chunk in adata.chunked_X(chunk_size):
 ## Extracting Vectors
 
 ### Get observation vectors
+
 ```python
 # Get observation metadata as array
 cell_types = adata.obs_vector('cell_type')
@@ -215,6 +226,7 @@ actb_expression = adata.obs_vector('ACTB')  # If ACTB in var_names
 ```
 
 ### Get variable vectors
+
 ```python
 # Get variable metadata as array
 gene_names = adata.var_vector('gene_name')
@@ -223,6 +235,7 @@ gene_names = adata.var_vector('gene_name')
 ## Adding/Modifying Data
 
 ### Add observations
+
 ```python
 # Create new observations
 new_obs = ad.AnnData(X=np.random.rand(100, adata.n_vars))
@@ -233,6 +246,7 @@ adata_extended = ad.concat([adata, new_obs], axis=0)
 ```
 
 ### Add variables
+
 ```python
 # Create new variables
 new_vars = ad.AnnData(X=np.random.rand(adata.n_obs, 100))
@@ -243,6 +257,7 @@ adata_extended = ad.concat([adata, new_vars], axis=1)
 ```
 
 ### Add metadata columns
+
 ```python
 # Add observation annotation
 adata.obs['new_score'] = np.random.rand(adata.n_obs)
@@ -256,6 +271,7 @@ adata.obs['external_info'] = external_data.loc[adata.obs_names, 'column']
 ```
 
 ### Add layers
+
 ```python
 # Add new layer
 adata.layers['raw_counts'] = np.random.randint(0, 100, adata.shape)
@@ -266,6 +282,7 @@ adata.layers['normalized'] = new_normalized_data
 ```
 
 ### Add embeddings
+
 ```python
 # Add PCA
 adata.obsm['X_pca'] = np.random.rand(adata.n_obs, 50)
@@ -279,6 +296,7 @@ adata.obsm['X_diffmap'] = np.random.rand(adata.n_obs, 10)
 ```
 
 ### Add pairwise relationships
+
 ```python
 from scipy.sparse import csr_matrix
 
@@ -292,6 +310,7 @@ adata.obsp['distances'] = csr_matrix(np.random.rand(n_obs, n_obs))
 ```
 
 ### Add unstructured data
+
 ```python
 # Add analysis parameters
 adata.uns['pca'] = {
@@ -307,6 +326,7 @@ adata.uns['cell_type_colors'] = ['#FF0000', '#00FF00', '#0000FF']
 ## Removing Data
 
 ### Remove observations or variables
+
 ```python
 # Keep only specific observations
 keep_obs = adata.obs['quality_score'] > 0.5
@@ -318,6 +338,7 @@ adata = adata[:, ~remove_vars]
 ```
 
 ### Remove metadata columns
+
 ```python
 # Remove observation column
 adata.obs.drop('unwanted_column', axis=1, inplace=True)
@@ -327,6 +348,7 @@ adata.var.drop('unwanted_column', axis=1, inplace=True)
 ```
 
 ### Remove layers
+
 ```python
 # Remove specific layer
 del adata.layers['unwanted_layer']
@@ -336,6 +358,7 @@ adata.layers = {}
 ```
 
 ### Remove embeddings
+
 ```python
 # Remove specific embedding
 del adata.obsm['X_tsne']
@@ -345,6 +368,7 @@ adata.obsm = {}
 ```
 
 ### Remove unstructured data
+
 ```python
 # Remove specific key
 del adata.uns['unwanted_key']
@@ -356,6 +380,7 @@ adata.uns = {}
 ## Reordering
 
 ### Sort observations
+
 ```python
 # Sort by observation metadata
 adata = adata[adata.obs.sort_values('quality_score').index, :]
@@ -365,6 +390,7 @@ adata = adata[sorted(adata.obs_names), :]
 ```
 
 ### Sort variables
+
 ```python
 # Sort by variable metadata
 adata = adata[:, adata.var.sort_values('gene_name').index]
@@ -374,6 +400,7 @@ adata = adata[:, sorted(adata.var_names)]
 ```
 
 ### Reorder to match external list
+
 ```python
 # Reorder observations to match external list
 desired_order = ['cell_10', 'cell_5', 'cell_20', ...]
@@ -387,6 +414,7 @@ adata = adata[:, desired_genes]
 ## Data Transformations
 
 ### Normalize
+
 ```python
 # Total count normalization (CPM/TPM-like)
 total_counts = adata.X.sum(axis=1)
@@ -402,6 +430,7 @@ adata.layers['scaled'] = (adata.X - mean) / std
 ```
 
 ### Filter
+
 ```python
 # Filter cells by total counts
 total_counts = np.array(adata.X.sum(axis=1)).flatten()
@@ -457,6 +486,7 @@ adata.obs = adata.obs.merge(
 ## Common Manipulation Patterns
 
 ### Quality control filtering
+
 ```python
 # Calculate QC metrics
 adata.obs['n_genes'] = (adata.X > 0).sum(axis=1)
@@ -472,6 +502,7 @@ adata = adata[:, adata.var['n_cells'] >= 3]
 ```
 
 ### Select highly variable genes
+
 ```python
 # Mark highly variable genes
 gene_variance = np.var(adata.X, axis=0)
@@ -483,6 +514,7 @@ adata_hvg = adata[:, adata.var['highly_variable']].copy()
 ```
 
 ### Downsample
+
 ```python
 # Random sampling of observations
 np.random.seed(42)
@@ -502,6 +534,7 @@ adata_test = adata[test_idx, :].copy()
 ```
 
 ### Split train/test
+
 ```python
 # Random train/test split
 np.random.seed(42)

@@ -66,6 +66,7 @@ Based on modern GraphQL best practices:
 ## Tools & Frameworks
 
 **GraphQL Servers:**
+
 - **Apollo Server**: Full-featured GraphQL server (Node.js)
 - **GraphQL Yoga**: Flexible GraphQL server with subscriptions
 - **Mercurius**: High-performance GraphQL for Fastify
@@ -73,6 +74,7 @@ Based on modern GraphQL best practices:
 - **Pothos**: Code-first schema builder for TypeScript
 
 **Schema Building:**
+
 - **GraphQL Schema Language**: SDL for schema-first approach
 - **Pothos GraphQL**: Type-safe code-first schema builder
 - **TypeGraphQL**: TypeScript decorators for schemas
@@ -80,12 +82,14 @@ Based on modern GraphQL best practices:
 - **graphql-codegen**: Generate TypeScript types from schemas
 
 **Data Loading:**
+
 - **DataLoader**: Batching and caching for resolvers
 - **Prisma**: Database ORM with GraphQL integration
 - **Drizzle ORM**: TypeScript ORM for SQL databases
 - **TypeORM**: ORM with GraphQL support
 
 **Security & Performance:**
+
 - **graphql-shield**: Permission layer for GraphQL
 - **graphql-depth-limit**: Query depth limiting
 - **graphql-rate-limit**: Rate limiting for queries
@@ -93,11 +97,13 @@ Based on modern GraphQL best practices:
 - **Apollo Cache**: Response caching
 
 **Real-time:**
+
 - **graphql-subscriptions**: Subscription implementation
 - **graphql-ws**: WebSocket server for subscriptions
 - **Redis**: Pub/sub for distributed subscriptions
 
 **Testing:**
+
 - **Jest**: Unit and integration testing
 - **Apollo Server Testing**: Test utilities for Apollo Server
 - **GraphQL Testing Library**: Helper utilities for testing
@@ -108,6 +114,7 @@ Based on modern GraphQL best practices:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files to understand specialized workflows:
+
 - `.claude/skills/graphql-expert/SKILL.md` - GraphQL patterns and best practices
 - `.claude/skills/api-development-expert/SKILL.md` - API design principles
 - `.claude/skills/tdd/SKILL.md` - Test-driven development
@@ -147,6 +154,7 @@ Read: package.json
 ### Step 4: Implement (TDD Approach)
 
 **Schema Definition:**
+
 ```graphql
 # schema.graphql
 type User {
@@ -229,6 +237,7 @@ scalar DateTime
 ```
 
 **Resolver Implementation with DataLoader:**
+
 ```typescript
 // resolvers/user.ts
 import DataLoader from 'dataloader';
@@ -280,9 +289,7 @@ export const userResolvers = {
       if (input.title.length < 3) {
         return {
           post: null,
-          errors: [
-            { field: 'title', message: 'Title must be at least 3 characters' },
-          ],
+          errors: [{ field: 'title', message: 'Title must be at least 3 characters' }],
         };
       }
 
@@ -318,6 +325,7 @@ export const userResolvers = {
 ```
 
 **Server Setup with Security:**
+
 ```typescript
 // server.ts
 import { ApolloServer } from '@apollo/server';
@@ -359,7 +367,7 @@ const server = new ApolloServer({
     depthLimit(10), // Max query depth
     createComplexityLimitRule(1000), // Max complexity
   ],
-  formatError: (error) => {
+  formatError: error => {
     // Custom error formatting
     console.error(error);
     return {
@@ -394,6 +402,7 @@ app.use(
 ```
 
 **Testing:**
+
 ```typescript
 // __tests__/user.test.ts
 import { ApolloServer } from '@apollo/server';
@@ -499,6 +508,7 @@ describe('User Queries', () => {
 ### 1. Design GraphQL Schema
 
 **Process (TDD):**
+
 1. Write schema definition in SDL
 2. Generate TypeScript types with codegen
 3. Implement resolver stubs
@@ -508,6 +518,7 @@ describe('User Queries', () => {
 7. Validate schema
 
 **Verification:**
+
 - [ ] Schema compiles without errors
 - [ ] Types generated correctly
 - [ ] All fields have resolvers
@@ -517,6 +528,7 @@ describe('User Queries', () => {
 ### 2. Implement DataLoader for N+1 Prevention
 
 **Process:**
+
 1. Identify N+1 query problem
 2. Create batch loading function
 3. Implement DataLoader
@@ -525,6 +537,7 @@ describe('User Queries', () => {
 6. Measure performance improvement
 
 **Verification:**
+
 - [ ] Batching working correctly
 - [ ] No duplicate database queries
 - [ ] Performance improved
@@ -534,6 +547,7 @@ describe('User Queries', () => {
 ### 3. Add Authentication & Authorization
 
 **Process:**
+
 1. Implement authentication middleware
 2. Extract user from token/session
 3. Add user to context
@@ -543,6 +557,7 @@ describe('User Queries', () => {
 7. Document auth requirements
 
 **Verification:**
+
 - [ ] Unauthenticated requests rejected
 - [ ] Unauthorized access blocked
 - [ ] Error messages clear
@@ -551,6 +566,7 @@ describe('User Queries', () => {
 ### 4. Implement Subscriptions
 
 **Process:**
+
 1. Define subscription types in schema
 2. Setup pub/sub system (Redis, in-memory)
 3. Implement subscription resolvers
@@ -559,6 +575,7 @@ describe('User Queries', () => {
 6. Handle client connections/disconnections
 
 **Verification:**
+
 - [ ] Subscriptions trigger correctly
 - [ ] Events filtered appropriately
 - [ ] WebSocket connection stable
@@ -568,6 +585,7 @@ describe('User Queries', () => {
 ### 5. Optimize Query Performance
 
 **Process:**
+
 1. Profile slow queries
 2. Implement DataLoader where needed
 3. Add field-level caching
@@ -577,6 +595,7 @@ describe('User Queries', () => {
 7. Document optimizations
 
 **Verification:**
+
 - [ ] Query time reduced
 - [ ] Database queries minimized
 - [ ] Caching effective
@@ -596,21 +615,21 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `graphql-expert` | GraphQL schema and resolvers | Always at task start |
-| `api-development-expert` | API design patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                      | When                 |
+| -------------------------------- | ---------------------------- | -------------------- |
+| `graphql-expert`                 | GraphQL schema and resolvers | Always at task start |
+| `api-development-expert`         | API design patterns          | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle     | Always at task start |
+| `verification-before-completion` | Quality gates                | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| TypeScript backend | `typescript-expert` | TypeScript patterns |
-| Node.js server | `nodejs-expert` | Node.js best practices |
-| Database queries | `database-architect` | Query optimization |
+| Condition          | Skill                | Purpose                      |
+| ------------------ | -------------------- | ---------------------------- |
+| Debugging issues   | `debugging`          | Systematic 4-phase debugging |
+| TypeScript backend | `typescript-expert`  | TypeScript patterns          |
+| Node.js server     | `nodejs-expert`      | Node.js best practices       |
+| Database queries   | `database-architect` | Query optimization           |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -647,6 +666,7 @@ Review past GraphQL patterns, schema designs, and performance optimizations.
 ### Review Requirements
 
 For major API changes:
+
 - [ ] **Architect Review**: Schema design and API architecture
 - [ ] **Security Review**: Authentication and authorization
 - [ ] **QA Review**: Test coverage and integration tests
@@ -654,6 +674,7 @@ For major API changes:
 ## Best Practices
 
 ### Schema Design
+
 - Use descriptive type and field names
 - Add field descriptions for documentation
 - Use enums for fixed value sets
@@ -664,6 +685,7 @@ For major API changes:
 - Errors as data (not just exceptions)
 
 ### Resolver Implementation
+
 - Keep resolvers thin (delegate to services)
 - Use DataLoader to prevent N+1 queries
 - Handle errors gracefully
@@ -673,6 +695,7 @@ For major API changes:
 - Batch database queries
 
 ### Performance
+
 - Implement DataLoader for batching
 - Use query complexity analysis
 - Limit query depth
@@ -682,6 +705,7 @@ For major API changes:
 - Optimize database queries
 
 ### Security
+
 - Authenticate at context creation
 - Authorize at field level
 - Limit query depth and complexity
@@ -692,6 +716,7 @@ For major API changes:
 - Implement CORS properly
 
 ### Testing
+
 - Test resolvers in isolation
 - Test authentication/authorization
 - Test error cases

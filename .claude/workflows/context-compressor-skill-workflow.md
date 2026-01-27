@@ -43,20 +43,20 @@ flowchart TD
 
 ### Token Threshold Triggers
 
-| Threshold | Action | Urgency |
-|-----------|--------|---------|
-| 50,000 tokens | Monitor closely | Low |
-| 75,000 tokens | Begin Phase 1 analysis | Medium |
-| 100,000 tokens | Execute full workflow | High |
-| 125,000 tokens | Emergency compression | Critical |
+| Threshold      | Action                 | Urgency  |
+| -------------- | ---------------------- | -------- |
+| 50,000 tokens  | Monitor closely        | Low      |
+| 75,000 tokens  | Begin Phase 1 analysis | Medium   |
+| 100,000 tokens | Execute full workflow  | High     |
+| 125,000 tokens | Emergency compression  | Critical |
 
 ### Session Duration Triggers
 
-| Duration | Action |
-|----------|--------|
-| 30 minutes | Check context size |
-| 60 minutes | Run analysis phase |
-| 90 minutes | Execute compression if needed |
+| Duration    | Action                           |
+| ----------- | -------------------------------- |
+| 30 minutes  | Check context size               |
+| 60 minutes  | Run analysis phase               |
+| 90 minutes  | Execute compression if needed    |
 | 120 minutes | Mandatory compression checkpoint |
 
 ### Situational Triggers
@@ -128,28 +128,28 @@ Record analysis findings to .claude/context/memory/active_context.md
 
 **Bloat Pattern Indicators**:
 
-| Pattern | Indicator | Example |
-|---------|-----------|---------|
-| Verbose explanations | Multiple paragraphs explaining simple concepts | "Let me explain how this works..." |
-| Repeated content | Same information appears multiple times | Reading same file in multiple messages |
-| Full stack traces | Complete error traces with all frames | 50+ line stack traces |
-| Uncompressed code | Large functions included verbatim | 200+ line implementations |
-| Exploration artifacts | Search results, glob outputs | "Found 47 matching files..." |
-| Superseded decisions | Old decisions replaced by newer ones | "Initially we chose X, then changed to Y" |
-| Completed task details | Full details of finished work | Step-by-step logs of completed tasks |
+| Pattern                | Indicator                                      | Example                                   |
+| ---------------------- | ---------------------------------------------- | ----------------------------------------- |
+| Verbose explanations   | Multiple paragraphs explaining simple concepts | "Let me explain how this works..."        |
+| Repeated content       | Same information appears multiple times        | Reading same file in multiple messages    |
+| Full stack traces      | Complete error traces with all frames          | 50+ line stack traces                     |
+| Uncompressed code      | Large functions included verbatim              | 200+ line implementations                 |
+| Exploration artifacts  | Search results, glob outputs                   | "Found 47 matching files..."              |
+| Superseded decisions   | Old decisions replaced by newer ones           | "Initially we chose X, then changed to Y" |
+| Completed task details | Full details of finished work                  | Step-by-step logs of completed tasks      |
 
 ### Step 1.3: Calculate Compression Potential
 
 **Compression Potential by Category**:
 
-| Category | Typical Compression Ratio | Strategy |
-|----------|---------------------------|----------|
-| Conversation history | 70-90% | Extract decisions only |
-| Code implementations | 50-80% | Keep signatures, summarize body |
-| Error messages | 60-80% | Keep message + location, drop frames |
-| Documentation | 40-60% | Keep headings + key points |
-| File contents | 80-95% | Reference by path, don't include |
-| Tool outputs | 70-90% | Keep patterns, drop repetitions |
+| Category             | Typical Compression Ratio | Strategy                             |
+| -------------------- | ------------------------- | ------------------------------------ |
+| Conversation history | 70-90%                    | Extract decisions only               |
+| Code implementations | 50-80%                    | Keep signatures, summarize body      |
+| Error messages       | 60-80%                    | Keep message + location, drop frames |
+| Documentation        | 40-60%                    | Keep headings + key points           |
+| File contents        | 80-95%                    | Reference by path, don't include     |
+| Tool outputs         | 70-90%                    | Keep patterns, drop repetitions      |
 
 ## Phase 2: Content Classification
 
@@ -270,6 +270,7 @@ Update .claude/context/memory/active_context.md with classification
 #### Technique 1: Decision Extraction
 
 **Before** (verbose):
+
 ```
 User: Should we use Redis or Memcached for the caching layer?
 Assistant: Let me analyze both options for your use case.
@@ -302,6 +303,7 @@ User: Ok let's use Redis.
 ```
 
 **After** (compressed):
+
 ```
 Decision: Use Redis for caching
 - Reason: Pub/sub support, complex data structures for sessions
@@ -311,6 +313,7 @@ Decision: Use Redis for caching
 #### Technique 2: Code Summarization
 
 **Before** (full implementation):
+
 ```javascript
 // UserService.js - 150 lines
 export class UserService {
@@ -337,6 +340,7 @@ export class UserService {
 ```
 
 **After** (compressed):
+
 ```
 UserService @ src/services/user.js
 - Methods: createUser, getUserById, updateUser, deleteUser, findByEmail
@@ -348,6 +352,7 @@ UserService @ src/services/user.js
 #### Technique 3: Error Compression
 
 **Before** (full stack trace):
+
 ```
 Error: Cannot read property 'id' of undefined
     at UserController.getUser (src/controllers/user.js:45:23)
@@ -360,6 +365,7 @@ Error: Cannot read property 'id' of undefined
 ```
 
 **After** (compressed):
+
 ```
 Error: Cannot read 'id' of undefined
 Location: src/controllers/user.js:45
@@ -370,6 +376,7 @@ Fix: Add null check before accessing user.id
 #### Technique 4: Progress Summarization
 
 **Before** (verbose log):
+
 ```
 Phase 1: Setup
 - Created project directory
@@ -392,6 +399,7 @@ Phase 2: Core Implementation
 ```
 
 **After** (compressed):
+
 ```
 Progress Summary:
 - [x] Phase 1: Setup (complete) - 8 tasks
@@ -485,14 +493,14 @@ Save compressed context to .claude/context/memory/compressed-session.md
 
 ### Validation Checklist
 
-| Check | Question | Pass Criteria |
-|-------|----------|---------------|
-| Task Continuity | Can work continue from compressed context? | Current task ID, status, and blockers are clear |
-| Decision Integrity | Are all blocking decisions preserved? | Each decision has what + why + when |
-| File Traceability | Can all modified files be located? | Full paths preserved, no ambiguous references |
-| Error Context | Can bugs be reproduced from compressed info? | Error message + location + cause preserved |
-| Progress Clarity | Is current progress state clear? | Completed/pending items distinguishable |
-| Dependency Awareness | Are critical dependencies documented? | Key file relationships preserved |
+| Check                | Question                                     | Pass Criteria                                   |
+| -------------------- | -------------------------------------------- | ----------------------------------------------- |
+| Task Continuity      | Can work continue from compressed context?   | Current task ID, status, and blockers are clear |
+| Decision Integrity   | Are all blocking decisions preserved?        | Each decision has what + why + when             |
+| File Traceability    | Can all modified files be located?           | Full paths preserved, no ambiguous references   |
+| Error Context        | Can bugs be reproduced from compressed info? | Error message + location + cause preserved      |
+| Progress Clarity     | Is current progress state clear?             | Completed/pending items distinguishable         |
+| Dependency Awareness | Are critical dependencies documented?        | Key file relationships preserved                |
 
 ### Validation Task
 
@@ -599,58 +607,60 @@ If validation fails:
 
 These items must ALWAYS be preserved in full:
 
-| Item | Reason |
-|------|--------|
-| Current task ID and subject | Required for task tracking |
-| Active file paths being modified | Needed for accurate edits |
-| Uncommitted code changes | Would be lost otherwise |
-| Open blockers and questions | Require user input |
-| Security-sensitive decisions | Context matters for security |
-| Test failure root causes | Needed to fix bugs |
-| Active error messages | Needed for debugging |
-| Dependency relationships | Needed for impact analysis |
+| Item                             | Reason                       |
+| -------------------------------- | ---------------------------- |
+| Current task ID and subject      | Required for task tracking   |
+| Active file paths being modified | Needed for accurate edits    |
+| Uncommitted code changes         | Would be lost otherwise      |
+| Open blockers and questions      | Require user input           |
+| Security-sensitive decisions     | Context matters for security |
+| Test failure root causes         | Needed to fix bugs           |
+| Active error messages            | Needed for debugging         |
+| Dependency relationships         | Needed for impact analysis   |
 
 ### ALWAYS Summarize (Never Remove)
 
-| Item | Summary Format |
-|------|----------------|
+| Item                    | Summary Format                 |
+| ----------------------- | ------------------------------ |
 | Architectural decisions | Decision: [what] because [why] |
-| Technology choices | Using [X] for [purpose] |
-| Key file locations | [Component]: [path] |
-| Test results | [X/Y] tests passing |
-| Phase completion | Phase N: [status] |
+| Technology choices      | Using [X] for [purpose]        |
+| Key file locations      | [Component]: [path]            |
+| Test results            | [X/Y] tests passing            |
+| Phase completion        | Phase N: [status]              |
 
 ### SAFE to Remove
 
-| Item | Condition |
-|------|-----------|
-| Verbose explanations | After decision is captured |
-| Full code blocks | After signature + location captured |
-| Search/glob results | After findings summarized |
-| Stack traces | After location + cause captured |
-| Alternative approaches | After chosen approach documented |
-| Historical iterations | After final version captured |
+| Item                   | Condition                           |
+| ---------------------- | ----------------------------------- |
+| Verbose explanations   | After decision is captured          |
+| Full code blocks       | After signature + location captured |
+| Search/glob results    | After findings summarized           |
+| Stack traces           | After location + cause captured     |
+| Alternative approaches | After chosen approach documented    |
+| Historical iterations  | After final version captured        |
 
 ## Metrics
 
 ### Compression Success Metrics
 
-| Metric | Target | Critical Threshold |
-|--------|--------|-------------------|
-| Token Reduction | 50-70% | Minimum 30% |
-| Critical Info Preserved | 100% | 100% (non-negotiable) |
-| Recovery Test Pass | Yes | Yes (non-negotiable) |
-| Validation Pass Rate | 100% | Minimum 95% |
+| Metric                  | Target | Critical Threshold    |
+| ----------------------- | ------ | --------------------- |
+| Token Reduction         | 50-70% | Minimum 30%           |
+| Critical Info Preserved | 100%   | 100% (non-negotiable) |
+| Recovery Test Pass      | Yes    | Yes (non-negotiable)  |
+| Validation Pass Rate    | 100%   | Minimum 95%           |
 
 ### Compression Quality Indicators
 
 **Good Compression**:
+
 - Decisions are clear and actionable
 - File paths are complete and accurate
 - Progress state is unambiguous
 - A fresh agent could continue the work
 
 **Bad Compression**:
+
 - "See above" or "that file" references remain
 - Decisions lack rationale
 - Progress is unclear
@@ -661,21 +671,25 @@ These items must ALWAYS be preserved in full:
 ### Phase Gate Checks
 
 **Phase 1 Complete (Analysis)**:
+
 - [ ] Token usage estimated
 - [ ] Bloat sources identified
 - [ ] Compression potential calculated
 
 **Phase 2 Complete (Classification)**:
+
 - [ ] All content classified
 - [ ] Critical items identified
 - [ ] Compression targets set
 
 **Phase 3 Complete (Compression)**:
+
 - [ ] Techniques applied per classification
 - [ ] Compressed context created
 - [ ] No critical information lost
 
 **Phase 4 Complete (Validation)**:
+
 - [ ] All validation checks pass
 - [ ] Recovery test passes
 - [ ] Metrics recorded
@@ -689,6 +703,7 @@ These items must ALWAYS be preserved in full:
 ## Memory Protocol
 
 **After completing compression**:
+
 - Record compression metrics to `.claude/context/memory/learnings.md`
 - Update active context in `.claude/context/memory/active_context.md`
 - If patterns discovered, add to compression techniques

@@ -5,6 +5,7 @@ Comprehensive guide to extracting accurate citation metadata from DOIs, PMIDs, a
 ## Overview
 
 Accurate metadata is essential for proper citations. This guide covers:
+
 - Identifying paper identifiers (DOI, PMID, arXiv ID)
 - Querying metadata APIs (CrossRef, PubMed, arXiv, DataCite)
 - Required BibTeX fields by entry type
@@ -18,6 +19,7 @@ Accurate metadata is essential for proper citations. This guide covers:
 **Format**: `10.XXXX/suffix`
 
 **Examples**:
+
 ```
 10.1038/s41586-021-03819-2    # Nature article
 10.1126/science.aam9317       # Science article
@@ -26,12 +28,14 @@ Accurate metadata is essential for proper citations. This guide covers:
 ```
 
 **Properties**:
+
 - Permanent identifier
 - Most reliable for metadata
 - Resolves to current location
 - Publisher-assigned
 
 **Where to find**:
+
 - First page of article
 - Article webpage
 - CrossRef, Google Scholar, PubMed
@@ -42,6 +46,7 @@ Accurate metadata is essential for proper citations. This guide covers:
 **Format**: 8-digit number (typically)
 
 **Examples**:
+
 ```
 34265844
 28445112
@@ -49,12 +54,14 @@ Accurate metadata is essential for proper citations. This guide covers:
 ```
 
 **Properties**:
+
 - Specific to PubMed database
 - Biomedical literature only
 - Assigned by NCBI
 - Permanent identifier
 
 **Where to find**:
+
 - PubMed search results
 - Article page on PubMed
 - Often in article PDF footer
@@ -65,12 +72,14 @@ Accurate metadata is essential for proper citations. This guide covers:
 **Format**: PMC followed by numbers
 
 **Examples**:
+
 ```
 PMC8287551
 PMC7456789
 ```
 
 **Properties**:
+
 - Free full-text articles in PMC
 - Subset of PubMed articles
 - Open access or author manuscripts
@@ -80,6 +89,7 @@ PMC7456789
 **Format**: YYMM.NNNNN or archive/YYMMNNN
 
 **Examples**:
+
 ```
 2103.14030        # New format (since 2007)
 2401.12345        # 2024 submission
@@ -87,12 +97,14 @@ arXiv:hep-th/9901001  # Old format
 ```
 
 **Properties**:
+
 - Preprints (not peer-reviewed)
 - Physics, math, CS, q-bio, etc.
 - Version tracking (v1, v2, etc.)
 - Free, open access
 
 **Where to find**:
+
 - arXiv.org
 - Often cited before publication
 - Paper PDF header
@@ -100,12 +112,14 @@ arXiv:hep-th/9901001  # Old format
 ### Other Identifiers
 
 **ISBN** (Books):
+
 ```
 978-0-12-345678-9
 0-123-45678-9
 ```
 
 **arXiv category**:
+
 ```
 cs.LG    # Computer Science - Machine Learning
 q-bio.QM # Quantitative Biology - Quantitative Methods
@@ -121,6 +135,7 @@ math.ST  # Mathematics - Statistics
 **Base URL**: `https://api.crossref.org/works/`
 
 **No API key required**, but polite pool recommended:
+
 - Add email to User-Agent
 - Gets better service
 - No rate limits
@@ -128,25 +143,27 @@ math.ST  # Mathematics - Statistics
 #### Basic DOI Lookup
 
 **Request**:
+
 ```
 GET https://api.crossref.org/works/10.1038/s41586-021-03819-2
 ```
 
 **Response** (simplified):
+
 ```json
 {
   "message": {
     "DOI": "10.1038/s41586-021-03819-2",
     "title": ["Article title here"],
     "author": [
-      {"given": "John", "family": "Smith"},
-      {"given": "Jane", "family": "Doe"}
+      { "given": "John", "family": "Smith" },
+      { "given": "Jane", "family": "Doe" }
     ],
     "container-title": ["Nature"],
     "volume": "595",
     "issue": "7865",
     "page": "123-128",
-    "published-print": {"date-parts": [[2021, 7, 1]]},
+    "published-print": { "date-parts": [[2021, 7, 1]] },
     "publisher": "Springer Nature",
     "type": "journal-article",
     "ISSN": ["0028-0836"]
@@ -157,11 +174,13 @@ GET https://api.crossref.org/works/10.1038/s41586-021-03819-2
 #### Fields Available
 
 **Always present**:
+
 - `DOI`: Digital Object Identifier
 - `title`: Article title (array)
 - `type`: Content type (journal-article, book-chapter, etc.)
 
 **Usually present**:
+
 - `author`: Array of author objects
 - `container-title`: Journal/book title
 - `published-print` or `published-online`: Publication date
@@ -169,6 +188,7 @@ GET https://api.crossref.org/works/10.1038/s41586-021-03819-2
 - `publisher`: Publisher name
 
 **Sometimes present**:
+
 - `abstract`: Article abstract
 - `subject`: Subject categories
 - `ISSN`: Journal ISSN
@@ -179,6 +199,7 @@ GET https://api.crossref.org/works/10.1038/s41586-021-03819-2
 #### Content Types
 
 CrossRef `type` field values:
+
 - `journal-article`: Journal articles
 - `book-chapter`: Book chapters
 - `book`: Books
@@ -195,6 +216,7 @@ CrossRef `type` field values:
 **Base URL**: `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/`
 
 **API key recommended** (free):
+
 - Higher rate limits
 - Better performance
 
@@ -215,6 +237,7 @@ GET https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?
 **Step 2: Parse XML**
 
 Key fields:
+
 ```xml
 <PubmedArticle>
   <MedlineCitation>
@@ -248,6 +271,7 @@ Key fields:
 #### Unique PubMed Fields
 
 **MeSH Terms**: Controlled vocabulary
+
 ```xml
 <MeshHeadingList>
   <MeshHeading>
@@ -257,6 +281,7 @@ Key fields:
 ```
 
 **Publication Types**:
+
 ```xml
 <PublicationTypeList>
   <PublicationType UI="D016428">Journal Article</PublicationType>
@@ -265,6 +290,7 @@ Key fields:
 ```
 
 **Grant Information**:
+
 ```xml
 <GrantList>
   <Grant>
@@ -286,6 +312,7 @@ Key fields:
 #### arXiv ID to Metadata
 
 **Request**:
+
 ```
 GET http://export.arxiv.org/api/query?id_list=2103.14030
 ```
@@ -322,6 +349,7 @@ GET http://export.arxiv.org/api/query?id_list=2103.14030
 #### Version Tracking
 
 arXiv tracks versions:
+
 - `v1`: Initial submission
 - `v2`, `v3`, etc.: Revisions
 
@@ -336,6 +364,7 @@ arXiv tracks versions:
 **Similar to CrossRef** but for datasets, software, code, etc.
 
 **Request**:
+
 ```
 GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ```
@@ -347,12 +376,14 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @article (Journal Articles)
 
 **Required**:
+
 - `author`: Author names
 - `title`: Article title
 - `journal`: Journal name
 - `year`: Publication year
 
 **Optional but recommended**:
+
 - `volume`: Volume number
 - `number`: Issue number
 - `pages`: Page range (e.g., 123--145)
@@ -361,6 +392,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 - `month`: Publication month
 
 **Example**:
+
 ```bibtex
 @article{Smith2024,
   author  = {Smith, John and Doe, Jane},
@@ -377,12 +409,14 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @book (Books)
 
 **Required**:
+
 - `author` or `editor`: Author(s) or editor(s)
 - `title`: Book title
 - `publisher`: Publisher name
 - `year`: Publication year
 
 **Optional but recommended**:
+
 - `edition`: Edition number (if not first)
 - `address`: Publisher location
 - `isbn`: ISBN
@@ -390,6 +424,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 - `series`: Series name
 
 **Example**:
+
 ```bibtex
 @book{Kumar2021,
   author    = {Kumar, Vinay and Abbas, Abul K. and Aster, Jon C.},
@@ -404,12 +439,14 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @inproceedings (Conference Papers)
 
 **Required**:
+
 - `author`: Author names
 - `title`: Paper title
 - `booktitle`: Conference/proceedings name
 - `year`: Year
 
 **Optional but recommended**:
+
 - `pages`: Page range
 - `organization`: Organizing body
 - `publisher`: Publisher
@@ -418,6 +455,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 - `doi`: DOI if available
 
 **Example**:
+
 ```bibtex
 @inproceedings{Vaswani2017,
   author    = {Vaswani, Ashish and Shazeer, Noam and others},
@@ -432,6 +470,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @incollection (Book Chapters)
 
 **Required**:
+
 - `author`: Chapter author(s)
 - `title`: Chapter title
 - `booktitle`: Book title
@@ -439,6 +478,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 - `year`: Publication year
 
 **Optional but recommended**:
+
 - `editor`: Book editor(s)
 - `pages`: Chapter page range
 - `chapter`: Chapter number
@@ -446,6 +486,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 - `address`: Publisher location
 
 **Example**:
+
 ```bibtex
 @incollection{Brown2020,
   author    = {Brown, Peter O. and Botstein, David},
@@ -461,18 +502,21 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @phdthesis (Dissertations)
 
 **Required**:
+
 - `author`: Author name
 - `title`: Thesis title
 - `school`: Institution
 - `year`: Year
 
 **Optional**:
+
 - `type`: Type (e.g., "PhD dissertation")
 - `address`: Institution location
 - `month`: Month
 - `url`: URL
 
 **Example**:
+
 ```bibtex
 @phdthesis{Johnson2023,
   author = {Johnson, Mary L.},
@@ -486,16 +530,19 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ### @misc (Preprints, Software, Datasets)
 
 **Required**:
+
 - `author`: Author(s)
 - `title`: Title
 - `year`: Year
 
 **For preprints, add**:
+
 - `howpublished`: Repository (e.g., "bioRxiv")
 - `doi`: Preprint DOI
 - `note`: Preprint ID
 
 **Example (preprint)**:
+
 ```bibtex
 @misc{Zhang2024,
   author       = {Zhang, Yi and Chen, Li and Wang, Hui},
@@ -508,6 +555,7 @@ GET https://api.datacite.org/dois/10.5281/zenodo.1234567
 ```
 
 **Example (software)**:
+
 ```bibtex
 @misc{AlphaFold2021,
   author       = {DeepMind},
@@ -537,6 +585,7 @@ python scripts/extract_metadata.py \
 ```
 
 **Process**:
+
 1. Query CrossRef API with DOI
 2. Parse JSON response
 3. Extract required fields
@@ -560,6 +609,7 @@ python scripts/extract_metadata.py \
 ```
 
 **Process**:
+
 1. Query PubMed EFetch with PMID
 2. Parse XML response
 3. Extract metadata including MeSH terms
@@ -576,6 +626,7 @@ python scripts/extract_metadata.py --arxiv 2103.14030
 ```
 
 **Process**:
+
 1. Query arXiv API with ID
 2. Parse Atom XML response
 3. Check for published version (DOI in response)
@@ -595,6 +646,7 @@ python scripts/extract_metadata.py \
 ```
 
 **Process**:
+
 1. Parse URL to extract identifier
 2. Identify type (DOI, PMID, arXiv)
 3. Extract identifier from URL
@@ -602,6 +654,7 @@ python scripts/extract_metadata.py \
 5. Format as BibTeX
 
 **URL patterns**:
+
 ```
 # DOI URLs
 https://doi.org/10.1038/nature12345
@@ -635,6 +688,7 @@ python scripts/extract_metadata.py \
 ```
 
 **Process**:
+
 - Script auto-detects identifier type
 - Queries appropriate API
 - Combines all into single BibTeX file
@@ -647,12 +701,14 @@ python scripts/extract_metadata.py \
 **Issue**: Preprint cited, but journal version now available.
 
 **Solution**:
+
 1. Check arXiv metadata for DOI field
 2. If DOI present, use published version
 3. Update citation to journal article
 4. Note preprint version in comments if needed
 
 **Example**:
+
 ```bibtex
 % Originally: arXiv:2103.14030
 % Published as:
@@ -672,11 +728,13 @@ python scripts/extract_metadata.py \
 **Issue**: Many authors (10+).
 
 **BibTeX practice**:
+
 - Include all authors if <10
 - Use "and others" for 10+
 - Or list all (journals vary)
 
 **Example**:
+
 ```bibtex
 @article{LargeCollaboration2024,
   author = {First, Author and Second, Author and Third, Author and others},
@@ -689,6 +747,7 @@ python scripts/extract_metadata.py \
 **Issue**: Authors publish under different name formats.
 
 **Standardization**:
+
 ```
 # Common variations
 John Smith
@@ -703,6 +762,7 @@ author = {Smith, John A.}
 ```
 
 **Extraction preference**:
+
 1. Use full name if available
 2. Include middle initial if available
 3. Format: Last, First Middle
@@ -712,12 +772,14 @@ author = {Smith, John A.}
 **Issue**: Older papers or books without DOIs.
 
 **Solutions**:
+
 1. Use PMID if available (biomedical)
 2. Use ISBN for books
 3. Use URL to stable source
 4. Include full publication details
 
 **Example**:
+
 ```bibtex
 @article{OldPaper1995,
   author  = {Author, Name},
@@ -736,11 +798,13 @@ author = {Smith, John A.}
 **Issue**: Same work published in both.
 
 **Best practice**:
+
 - Cite journal version if both available
 - Journal version is archival
 - Conference version for timeliness
 
 **If citing conference**:
+
 ```bibtex
 @inproceedings{Smith2024conf,
   author    = {Smith, John},
@@ -751,6 +815,7 @@ author = {Smith, John A.}
 ```
 
 **If citing journal**:
+
 ```bibtex
 @article{Smith2024journal,
   author  = {Smith, John},
@@ -763,6 +828,7 @@ author = {Smith, John A.}
 ### Book Chapters vs Edited Collections
 
 **Extract correctly**:
+
 - Chapter: Use `@incollection`
 - Whole book: Use `@book`
 - Book editor: List in `editor` field
@@ -792,6 +858,7 @@ python scripts/validate_citations.py extracted_refs.bib
 ```
 
 **Check**:
+
 - All required fields present
 - DOI resolves correctly
 - Author names formatted consistently
@@ -805,6 +872,7 @@ python scripts/validate_citations.py extracted_refs.bib
 ### 1. Prefer DOI When Available
 
 DOIs provide:
+
 - Permanent identifier
 - Best metadata source
 - Publisher-verified information
@@ -813,6 +881,7 @@ DOIs provide:
 ### 2. Verify Automatically Extracted Metadata
 
 Spot-check:
+
 - Author names match publication
 - Title matches (including capitalization)
 - Year is correct
@@ -821,6 +890,7 @@ Spot-check:
 ### 3. Handle Special Characters
 
 **LaTeX special characters**:
+
 - Protect capitalization: `{AlphaFold}`
 - Handle accents: `M{\"u}ller` or use Unicode
 - Chemical formulas: `H$_2$O` or `\ce{H2O}`
@@ -828,6 +898,7 @@ Spot-check:
 ### 4. Use Consistent Citation Keys
 
 **Convention**: `FirstAuthorYEARkeyword`
+
 ```
 Smith2024protein
 Doe2023machine
@@ -837,6 +908,7 @@ Johnson2024cancer
 ### 5. Include DOI for Modern Papers
 
 All papers published after ~2000 should have DOI:
+
 ```bibtex
 doi = {10.1038/nature12345}
 ```
@@ -844,6 +916,7 @@ doi = {10.1038/nature12345}
 ### 6. Document Source
 
 For non-standard sources, add note:
+
 ```bibtex
 note = {Preprint, not peer-reviewed}
 note = {Technical report}
@@ -862,9 +935,9 @@ Metadata extraction workflow:
 6. **Verify**: Spot-check critical citations
 
 **Use scripts** to automate:
+
 - `extract_metadata.py`: Universal extractor
 - `doi_to_bibtex.py`: Quick DOI conversion
 - `validate_citations.py`: Verify accuracy
 
 **Always validate** extracted metadata before final submission!
-

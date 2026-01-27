@@ -19,6 +19,7 @@ image = (
 ```
 
 Available base images:
+
 - `Image.debian_slim()` - Debian Linux with Python
 - `Image.micromamba()` - Base with Micromamba package manager
 - `Image.from_registry()` - Pull from Docker Hub, ECR, etc.
@@ -147,6 +148,7 @@ Can pull from Docker Hub, Nvidia NGC, AWS ECR, GitHub ghcr.io.
 Use Modal Secrets for authentication:
 
 **Docker Hub**:
+
 ```python
 secret = modal.Secret.from_name("my-docker-secret")
 image = modal.Image.from_registry(
@@ -156,6 +158,7 @@ image = modal.Image.from_registry(
 ```
 
 **AWS ECR**:
+
 ```python
 aws_secret = modal.Secret.from_name("my-aws-secret")
 image = modal.Image.from_aws_ecr(
@@ -216,6 +219,7 @@ image = (
 ```
 
 Or set environment variable:
+
 ```bash
 MODAL_FORCE_BUILD=1 modal run ...
 ```
@@ -256,6 +260,7 @@ docker buildx build --tag "<registry>/<namespace>/<repo>:<version>" \
 ```
 
 Supported registries:
+
 - AWS ECR
 - Docker Hub
 - Google Artifact Registry

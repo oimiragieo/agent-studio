@@ -13,16 +13,19 @@ LabArchives integrates with numerous scientific software platforms to streamline
 Export protocols directly from Protocols.io to LabArchives notebooks.
 
 **Use cases:**
+
 - Standardize experimental procedures across lab notebooks
 - Maintain version control for protocols
 - Link protocols to experimental results
 
 **Setup:**
+
 1. Enable Protocols.io integration in LabArchives settings
 2. Authenticate with Protocols.io account
 3. Browse and select protocols to export
 
 **Programmatic approach:**
+
 ```python
 # Export Protocols.io protocol as HTML/PDF
 # Then upload to LabArchives via API
@@ -63,16 +66,19 @@ def import_protocol_to_labarchives(client, uid, nbid, protocol_id):
 Export analyses, graphs, and figures directly from Prism to LabArchives.
 
 **Use cases:**
+
 - Archive statistical analyses with raw data
 - Document figure generation for publications
 - Maintain analysis audit trail for compliance
 
 **Setup:**
+
 1. Install GraphPad Prism 8 or higher
 2. Configure LabArchives connection in Prism preferences
 3. Use "Export to LabArchives" option from File menu
 
 **Programmatic approach:**
+
 ```python
 # Upload Prism files to LabArchives via API
 
@@ -96,6 +102,7 @@ def upload_prism_analysis(client, uid, nbid, entry_id, prism_file_path):
 ```
 
 **Supported file types:**
+
 - .pzfx (Prism project files)
 - .png, .jpg, .pdf (exported graphs)
 - .xlsx (exported data tables)
@@ -109,22 +116,26 @@ def upload_prism_analysis(client, uid, nbid, entry_id, prism_file_path):
 Direct integration for molecular biology workflows, plasmid maps, and sequence analysis.
 
 **Use cases:**
+
 - Document cloning strategies
 - Archive plasmid maps with experimental records
 - Link sequences to experimental results
 
 **Setup:**
+
 1. Install SnapGene software
 2. Enable LabArchives export in SnapGene preferences
 3. Use "Send to LabArchives" feature
 
 **File format support:**
+
 - .dna (SnapGene files)
 - .gb, .gbk (GenBank format)
 - .fasta (sequence files)
 - .png, .pdf (plasmid map exports)
 
 **Programmatic workflow:**
+
 ```python
 def upload_snapgene_file(client, uid, nbid, entry_id, snapgene_file):
     """Upload SnapGene file with preview image"""
@@ -141,17 +152,20 @@ def upload_snapgene_file(client, uid, nbid, entry_id, snapgene_file):
 Bioinformatics analysis export from Geneious to LabArchives.
 
 **Use cases:**
+
 - Archive sequence alignments and phylogenetic trees
 - Document NGS analysis pipelines
 - Link bioinformatics workflows to wet-lab experiments
 
 **Supported exports:**
+
 - Sequence alignments
 - Phylogenetic trees
 - Assembly reports
 - Variant calling results
 
 **File formats:**
+
 - .geneious (Geneious documents)
 - .fasta, .fastq (sequence data)
 - .bam, .sam (alignment files)
@@ -164,6 +178,7 @@ Bioinformatics analysis export from Geneious to LabArchives.
 Embed Jupyter notebooks as LabArchives entries for reproducible computational research.
 
 **Use cases:**
+
 - Document data analysis workflows
 - Archive computational experiments
 - Link code, results, and narrative
@@ -202,6 +217,7 @@ def export_jupyter_to_labarchives(notebook_path, client, uid, nbid):
 ```
 
 **Best practices:**
+
 - Export with outputs included (Run All Cells before export)
 - Include environment.yml or requirements.txt as attachment
 - Add execution timestamp and system info in comments
@@ -213,16 +229,19 @@ def export_jupyter_to_labarchives(notebook_path, client, uid, nbid):
 Clinical data capture integration with LabArchives for research compliance and audit trails.
 
 **Use cases:**
+
 - Link clinical data collection to research notebooks
 - Maintain audit trails for regulatory compliance
 - Document clinical trial protocols and amendments
 
 **Integration approach:**
+
 - REDCap API exports data to LabArchives entries
 - Automated data synchronization for longitudinal studies
 - HIPAA-compliant data handling
 
 **Example workflow:**
+
 ```python
 def sync_redcap_to_labarchives(redcap_api_token, client, uid, nbid):
     """Sync REDCap data to LabArchives"""
@@ -242,6 +261,7 @@ def sync_redcap_to_labarchives(redcap_api_token, client, uid, nbid):
 ```
 
 **Compliance features:**
+
 - 21 CFR Part 11 compliance
 - Audit trail maintenance
 - Data integrity verification
@@ -253,11 +273,13 @@ def sync_redcap_to_labarchives(redcap_api_token, client, uid, nbid):
 Research publishing platform integration for preprints and peer review.
 
 **Use cases:**
+
 - Export research findings to preprint servers
 - Document publication workflows
 - Link published articles to lab notebooks
 
 **Workflow:**
+
 - Export formatted entries from LabArchives
 - Submit to Qeios platform
 - Maintain bidirectional links between notebook and publication
@@ -267,11 +289,13 @@ Research publishing platform integration for preprints and peer review.
 Literature management and citation integration.
 
 **Use cases:**
+
 - Link references to experimental procedures
 - Maintain literature review in notebooks
 - Generate bibliographies for reports
 
 **Features:**
+
 - Citation import from SciSpace to LabArchives
 - PDF annotation synchronization
 - Reference management
@@ -314,6 +338,7 @@ def labarchives_oauth_flow(client_id, client_secret, redirect_uri):
 ```
 
 **OAuth advantages:**
+
 - More secure than API keys
 - Fine-grained permission control
 - Token refresh for long-running integrations
@@ -391,16 +416,19 @@ class LabArchivesIntegration:
 ### Common Issues
 
 **Integration not appearing in LabArchives:**
+
 - Verify integration is enabled by administrator
 - Check OAuth permissions if using OAuth
 - Ensure compatible software version
 
 **File upload failures:**
+
 - Verify file size limits (typically 2GB per file)
 - Check file format compatibility
 - Ensure sufficient storage quota
 
 **Authentication errors:**
+
 - Verify API credentials are current
 - Check if integration-specific tokens have expired
 - Confirm user has necessary permissions
@@ -408,6 +436,7 @@ class LabArchivesIntegration:
 ### Integration Support
 
 For integration-specific issues:
+
 - Check software vendor documentation (e.g., GraphPad, Protocols.io)
 - Contact LabArchives support: support@labarchives.com
 - Review LabArchives knowledge base: help.labarchives.com
@@ -415,6 +444,7 @@ For integration-specific issues:
 ## Future Integration Opportunities
 
 Potential integrations for custom development:
+
 - Electronic data capture (EDC) systems
 - Laboratory information management systems (LIMS)
 - Instrument data systems (chromatography, spectroscopy)

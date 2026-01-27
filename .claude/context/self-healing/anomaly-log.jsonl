@@ -2024,3 +2024,16 @@
 {"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4910936,"heapTotal":5832704,"heapUsedRatio":0.8419655789150281,"external":1673405},"timestamp":"2026-01-27T00:00:00.872Z"}
 {"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4912496,"heapTotal":5832704,"heapUsedRatio":0.8422330363412921,"external":1673853},"timestamp":"2026-01-27T00:00:00.905Z"}
 {"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4939600,"heapTotal":5832704,"heapUsedRatio":0.8468799376755618,"external":1686230},"timestamp":"2026-01-27T00:00:09.062Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4926720,"heapTotal":5832704,"heapUsedRatio":0.8446716994382022,"external":1681220},"timestamp":"2026-01-27T02:55:56.885Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4942120,"heapTotal":5832704,"heapUsedRatio":0.8473119842872191,"external":1687635},"timestamp":"2026-01-27T02:56:26.018Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4914168,"heapTotal":5832704,"heapUsedRatio":0.8425196958391854,"external":1674177},"timestamp":"2026-01-27T02:56:51.053Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4910992,"heapTotal":5832704,"heapUsedRatio":0.8419751799508427,"external":1673555},"timestamp":"2026-01-27T02:57:20.413Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4910976,"heapTotal":5832704,"heapUsedRatio":0.8419724367977528,"external":1673548},"timestamp":"2026-01-27T02:57:31.183Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4911152,"heapTotal":5832704,"heapUsedRatio":0.8420026114817416,"external":1673632},"timestamp":"2026-01-27T03:03:35.874Z"}
+{"type":"resource_exhaustion","detected":true,"warning":false,"metrics":{"heapUsed":5252872,"heapTotal":5832704,"heapUsedRatio":0.9005895035990169,"external":1765056},"timestamp":"2026-01-27T03:03:35.901Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":5227448,"heapTotal":5832704,"heapUsedRatio":0.8962306333391854,"external":1752317},"timestamp":"2026-01-27T03:03:37.547Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4912496,"heapTotal":5832704,"heapUsedRatio":0.8422330363412921,"external":1674312},"timestamp":"2026-01-27T03:03:50.751Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4913128,"heapTotal":5832704,"heapUsedRatio":0.8423413908883427,"external":1674636},"timestamp":"2026-01-27T03:04:11.784Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4911296,"heapTotal":5832704,"heapUsedRatio":0.8420272998595506,"external":1673707},"timestamp":"2026-01-27T03:04:18.210Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4912296,"heapTotal":5832704,"heapUsedRatio":0.8421987469276685,"external":1674211},"timestamp":"2026-01-27T03:04:26.824Z"}
+{"type":"resource_exhaustion","detected":false,"warning":true,"metrics":{"heapUsed":4910928,"heapTotal":5832704,"heapUsedRatio":0.8419642073384831,"external":1673522},"timestamp":"2026-01-27T03:04:32.879Z"}

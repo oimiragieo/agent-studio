@@ -59,7 +59,7 @@ Incoming:
 
 ### Template 1: Shift Handoff Document
 
-```markdown
+````markdown
 # On-Call Handoff: Platform Team
 
 **Outgoing**: @alice (2024-01-15 to 2024-01-22)
@@ -214,6 +214,7 @@ psql -c "SELECT count(*) FROM pg_stat_activity;"
 # Clear cache (emergency only)
 redis-cli FLUSHDB
 ```
+````
 
 ### Important Links
 
@@ -243,7 +244,8 @@ redis-cli FLUSHDB
 - [ ] Verify Slack notifications working
 - [ ] Check VPN/access working
 - [ ] Review critical dashboards
-```
+
+````
 
 ### Template 2: Quick Handoff (Async)
 
@@ -269,7 +271,7 @@ redis-cli FLUSHDB
 
 ## Questions?
 I'll be available on Slack until 17:00 today.
-```
+````
 
 ### Template 3: Incident Handoff (Mid-Incident)
 
@@ -497,6 +499,7 @@ I'll be available on Slack until 17:00 today.
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

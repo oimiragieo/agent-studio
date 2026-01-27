@@ -197,6 +197,7 @@ Access to Patent Trial and Appeal Board proceedings data.
 ### Purpose
 
 Retrieve information about:
+
 - Inter partes review (IPR)
 - Post-grant review (PGR)
 - Covered business method (CBM) review

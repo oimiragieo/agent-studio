@@ -3,6 +3,7 @@
 This document provides detailed API information, advanced examples, and troubleshooting guidance for working with scikit-bio.
 
 ## Table of Contents
+
 1. [Sequence Classes](#sequence-classes)
 2. [Alignment Methods](#alignment-methods)
 3. [Phylogenetic Trees](#phylogenetic-trees)
@@ -643,6 +644,7 @@ skbio.io.write(seqs, format='fasta', into='genes.fasta')
 ### Common Issues and Solutions
 
 #### Issue: "ValueError: Ids must be unique"
+
 ```python
 # Problem: Duplicate sequence IDs
 # Solution: Make IDs unique or filter duplicates
@@ -655,6 +657,7 @@ for seq in sequences:
 ```
 
 #### Issue: "ValueError: Counts must be integers"
+
 ```python
 # Problem: Relative abundances instead of counts
 # Solution: Convert to integer counts or use appropriate metrics
@@ -662,6 +665,7 @@ counts_int = (abundance_table * 1000).astype(int)
 ```
 
 #### Issue: Memory error with large files
+
 ```python
 # Problem: Loading entire file into memory
 # Solution: Use generators
@@ -671,6 +675,7 @@ for seq in skbio.io.read('huge.fasta', format='fasta', constructor=skbio.DNA):
 ```
 
 #### Issue: Tree tips don't match OTU IDs
+
 ```python
 # Problem: Mismatch between tree tip names and feature IDs
 # Solution: Verify and align IDs
@@ -684,6 +689,7 @@ tree_pruned = tree.shear(feature_ids)
 ```
 
 #### Issue: Alignment fails with sequences of different lengths
+
 ```python
 # Problem: Trying to align pre-aligned sequences
 # Solution: Degap sequences first or ensure sequences are unaligned
@@ -702,6 +708,7 @@ alignment = local_pairwise_align_ssw(seq1_degapped, seq2_degapped)
 ### Integration Examples
 
 #### With pandas
+
 ```python
 import pandas as pd
 from skbio import DistanceMatrix
@@ -716,6 +723,7 @@ alpha_df = pd.DataFrame({'shannon': alpha})
 ```
 
 #### With matplotlib/seaborn
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -732,6 +740,7 @@ sns.heatmap(dm.to_data_frame(), cmap='viridis')
 ```
 
 #### With QIIME 2
+
 ```python
 # scikit-bio objects are compatible with QIIME 2
 # Export from QIIME 2

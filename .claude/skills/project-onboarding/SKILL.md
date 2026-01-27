@@ -35,6 +35,7 @@ Project Onboarding Specialist - Guided codebase exploration and knowledge captur
 ## When to Use
 
 Invoke this skill when:
+
 - Starting work on an unfamiliar codebase
 - After context is lost (new session)
 - When `check_onboarding_performed` indicates no memories exist
@@ -59,13 +60,13 @@ If memories exist, read them and skip to Step 6 (Validation).
 
 #### Greenfield vs Brownfield Detection
 
-| Indicator | Present? | Classification |
-|-----------|----------|----------------|
-| `.git` directory with history | Yes | Brownfield |
-| Package manifest (`package.json`, `requirements.txt`, etc.) | Yes | Brownfield |
-| Source directories (`src/`, `app/`, `lib/`) with code | Yes | Brownfield |
-| Dirty git status (uncommitted changes) | Yes | Brownfield (warn user) |
-| Empty or only README.md | None of above | Greenfield |
+| Indicator                                                   | Present?      | Classification         |
+| ----------------------------------------------------------- | ------------- | ---------------------- |
+| `.git` directory with history                               | Yes           | Brownfield             |
+| Package manifest (`package.json`, `requirements.txt`, etc.) | Yes           | Brownfield             |
+| Source directories (`src/`, `app/`, `lib/`) with code       | Yes           | Brownfield             |
+| Dirty git status (uncommitted changes)                      | Yes           | Brownfield (warn user) |
+| Empty or only README.md                                     | None of above | Greenfield             |
 
 **For Brownfield Projects:**
 
@@ -91,6 +92,7 @@ find . -type f \
 ```
 
 **For Greenfield Projects:**
+
 - Create fresh context artifacts
 - Use interactive-requirements-gathering skill for setup
 
@@ -115,6 +117,7 @@ Analyze the project root to identify:
 Identify how to build/run the project:
 
 1. **Check package.json scripts** (Node.js):
+
    ```json
    {
      "scripts": {
@@ -127,6 +130,7 @@ Identify how to build/run the project:
    ```
 
 2. **Check Makefiles** (Python, Go, Rust):
+
    ```makefile
    build:
    test:
@@ -134,6 +138,7 @@ Identify how to build/run the project:
    ```
 
 3. **Check pyproject.toml** (Python):
+
    ```toml
    [tool.poetry.scripts]
    [tool.poe.tasks]
@@ -149,16 +154,17 @@ Identify how to build/run the project:
 
 Map key directories:
 
-| Directory | Purpose |
-|-----------|---------|
-| `src/` | Source code |
-| `lib/` | Library code |
-| `test/`, `tests/`, `__tests__/` | Test files |
-| `docs/` | Documentation |
-| `scripts/` | Utility scripts |
-| `config/` | Configuration files |
+| Directory                       | Purpose             |
+| ------------------------------- | ------------------- |
+| `src/`                          | Source code         |
+| `lib/`                          | Library code        |
+| `test/`, `tests/`, `__tests__/` | Test files          |
+| `docs/`                         | Documentation       |
+| `scripts/`                      | Utility scripts     |
+| `config/`                       | Configuration files |
 
 Identify:
+
 - Entry points (`index.ts`, `main.py`, `app.py`)
 - Component directories
 - API routes
@@ -169,57 +175,70 @@ Identify:
 Save discovered information to persistent memories:
 
 **Memory: project-structure.md**
+
 ```markdown
 # Project Structure
 
 ## Overview
+
 - Project Type: [fullstack/backend/frontend/library]
 - Primary Language: [TypeScript/Python/Go/Rust]
 - Framework: [Next.js/FastAPI/Express/etc.]
 
 ## Key Directories
+
 - Source: `src/`
 - Tests: `test/`
 - Config: `.claude/`
 
 ## Entry Points
+
 - Main: `src/index.ts`
 - API: `src/api/`
 
 ## Important Files
+
 - Configuration: `package.json`, `tsconfig.json`
 - Environment: `.env.example`
 ```
 
 **Memory: build-commands.md**
+
 ```markdown
 # Build Commands
 
 ## Development
+
 - Start dev server: `npm run dev`
 - Watch mode: `npm run watch`
 
 ## Build
+
 - Production build: `npm run build`
 - Type check: `npm run typecheck`
 
 ## Clean
+
 - Clean build: `npm run clean`
 ```
 
 **Memory: test-commands.md**
+
 ```markdown
 # Test Commands
 
 ## Unit Tests
+
 - Run all: `npm test`
 - Watch mode: `npm test -- --watch`
 - Coverage: `npm test -- --coverage`
 
 ## E2E Tests
+
 - Run: `npm run test:e2e`
 
 ## Linting
+
 - Lint: `npm run lint`
 - Fix: `npm run lint:fix`
 ```
@@ -271,6 +290,7 @@ Output a concise summary:
 **User Request**: "I need to understand this codebase"
 
 **Agent Actions**:
+
 1. Check for existing memories in `.claude/context/memory/`
 2. If no memories, run project discovery
 3. Analyze package.json, directory structure
@@ -278,6 +298,7 @@ Output a concise summary:
 5. Report summary
 
 **Output**:
+
 ```
 ## Onboarding Complete
 
@@ -296,6 +317,7 @@ Output a concise summary:
 
 **Memories Created**: 3 files
 ```
+
 </usage_example>
 </examples>
 
@@ -312,6 +334,7 @@ Output a concise summary:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

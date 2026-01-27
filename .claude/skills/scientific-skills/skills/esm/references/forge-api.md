@@ -5,6 +5,7 @@
 Forge is EvolutionaryScale's cloud platform for scalable protein design and inference. It provides API access to the full ESM3 model family, including large models not available for local execution.
 
 **Key Benefits:**
+
 - Access to all ESM3 models including 98B parameter version
 - No local GPU requirements
 - Scalable batch processing
@@ -47,12 +48,12 @@ print(result.sequence)
 
 ## Available Models
 
-| Model ID | Parameters | Speed | Quality | Use Case |
-|----------|-----------|-------|---------|----------|
-| `esm3-small-2024-08` | 1.4B | Fastest | Good | Rapid prototyping, testing |
-| `esm3-medium-2024-08` | 7B | Fast | Excellent | Production, most applications |
-| `esm3-large-2024-03` | 98B | Slower | Best | Research, critical designs |
-| `esm3-medium-multimer-2024-09` | 7B | Fast | Experimental | Protein complexes |
+| Model ID                       | Parameters | Speed   | Quality      | Use Case                      |
+| ------------------------------ | ---------- | ------- | ------------ | ----------------------------- |
+| `esm3-small-2024-08`           | 1.4B       | Fastest | Good         | Rapid prototyping, testing    |
+| `esm3-medium-2024-08`          | 7B         | Fast    | Excellent    | Production, most applications |
+| `esm3-large-2024-03`           | 98B        | Slower  | Best         | Research, critical designs    |
+| `esm3-medium-multimer-2024-09` | 7B         | Fast    | Experimental | Protein complexes             |
 
 **Model Selection Guidelines:**
 
@@ -170,11 +171,13 @@ print(f"Completed {len(batch_results)} generations")
 ### Understanding Limits
 
 Forge implements rate limiting based on:
+
 - Requests per minute (RPM)
 - Tokens per minute (TPM)
 - Concurrent requests
 
 **Typical Limits (subject to change):**
+
 - Free tier: 60 RPM, 5 concurrent
 - Pro tier: 300 RPM, 20 concurrent
 - Enterprise: Custom limits
@@ -600,6 +603,7 @@ For dedicated infrastructure and enterprise use:
 - Custom instance types and scaling
 
 **More Information:**
+
 - AWS Marketplace: https://aws.amazon.com/marketplace/seller-profile?id=seller-iw2nbscescndm
 - Contact EvolutionaryScale for enterprise licensing
 

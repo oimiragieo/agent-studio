@@ -9,6 +9,7 @@ BBClient provides efficient caching of BED files from remote sources, enabling f
 ### When to Use
 
 Use BBClient when:
+
 - Repeatedly accessing BED files from remote databases
 - Working with BEDbase repositories
 - Integrating genomic data with R pipelines
@@ -59,6 +60,7 @@ BEDshift provides tools for randomizing BED files while preserving genomic conte
 ### When to Use
 
 Use BEDshift when:
+
 - Creating null models for statistical testing
 - Generating control datasets
 - Assessing significance of genomic overlaps
@@ -92,21 +94,27 @@ geniml bedshift \
 ### Randomization Strategies
 
 **Preserve chromosome distribution:**
+
 ```python
 bedshift(input_bed, genome, preserve_chrom=True)
 ```
+
 Maintains regions on same chromosomes as original.
 
 **Preserve distance distribution:**
+
 ```python
 bedshift(input_bed, genome, preserve_distance=True)
 ```
+
 Maintains inter-region distances.
 
 **Preserve region sizes:**
+
 ```python
 bedshift(input_bed, genome, preserve_size=True)
 ```
+
 Keeps original region lengths.
 
 ### Best Practices
@@ -127,6 +135,7 @@ Geniml provides evaluation utilities for assessing embedding quality and model p
 ### When to Use
 
 Use evaluation tools when:
+
 - Validating trained embeddings
 - Comparing different models
 - Assessing clustering quality
@@ -190,6 +199,7 @@ Tokenization converts genomic regions into discrete tokens using a reference uni
 ### When to Use
 
 Tokenization is a required preprocessing step for:
+
 - Region2Vec training
 - scEmbed model training
 - Any embedding method requiring discrete tokens
@@ -210,6 +220,7 @@ hard_tokenization(
 ```
 
 **Parameters:**
+
 - `p_value_threshold`: Significance level for overlap (typically 1e-9 or 1e-6)
 
 ### Soft Tokenization
@@ -228,6 +239,7 @@ soft_tokenization(
 ```
 
 **Parameters:**
+
 - `overlap_threshold`: Minimum overlap fraction (0-1)
 
 ### Universe-Based Tokenization
@@ -282,6 +294,7 @@ Text2BedNN creates neural network-based search backends for querying genomic reg
 ### When to Use
 
 Use Text2BedNN when:
+
 - Building search interfaces for genomic databases
 - Enabling natural language queries over BED files
 - Creating metadata-aware search systems
@@ -366,6 +379,7 @@ model = load_model('my_model/')
 ### Common Patterns
 
 **Pipeline workflow:**
+
 ```python
 # 1. Build universe
 universe = build_universe(coverage_folder='coverage/', method='cc', cutoff=5)

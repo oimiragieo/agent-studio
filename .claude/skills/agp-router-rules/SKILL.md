@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - You are an expert in Agp Router.
 - Use the Agp Router to create routes for your application.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

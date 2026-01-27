@@ -72,7 +72,6 @@ When reviewing or writing code, apply these guidelines:
 - Implement rate limiting for sensitive functions to prevent abuse.
 - Use OpenZeppelin's SafeERC20 f
 
-
 </instructions>
 
 <examples>
@@ -86,12 +85,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- web3-expert
 
+- web3-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

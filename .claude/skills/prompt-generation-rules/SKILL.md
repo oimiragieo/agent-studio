@@ -47,7 +47,7 @@ When reviewing or writing code, apply these guidelines:
 - Mention performance optimization techniques if applicable
 - Include instructions for testing the component
 - Suggest documentation requirements for the component
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -60,6 +60,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

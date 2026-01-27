@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Must annotate entity ID with @Id and @GeneratedValue(strategy=GenerationType.IDENTITY).
 - Must use FetchType.LAZY for relationships, unless specified in a prompt otherwise.
 - Annotate entity properties properly according to best practices, e.g., @Size, @NotEmpty, @Email, etc.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

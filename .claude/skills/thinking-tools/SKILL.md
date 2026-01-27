@@ -37,6 +37,7 @@ This skill provides three structured thinking patterns that agents should use at
 ## Thinking Pattern 1: Think About Collected Information
 
 **When to Use**: After completing a non-trivial sequence of searching steps like:
+
 - Reading multiple files
 - Searching for symbols or patterns
 - Exploring directory structures
@@ -71,6 +72,7 @@ This skill provides three structured thinking patterns that agents should use at
 ```
 
 **Example Reflection**:
+
 ```
 I've read the authentication module (auth.ts) and the user model (user.ts).
 I understand how login works but I haven't checked:
@@ -114,6 +116,7 @@ Decision: Read session.ts and error-handler.ts before proceeding.
 ```
 
 **Example Reflection**:
+
 ```
 Original Task: "Fix the login timeout error"
 
@@ -165,6 +168,7 @@ If user wants those improvements, they can request them separately.
 ```
 
 **Example Reflection**:
+
 ```
 Task: "Add user email validation"
 
@@ -220,19 +224,23 @@ For important tasks, log reflections to memory:
 
 ```markdown
 ## Task: [description]
+
 ## Reflection Log
 
 ### Information Gathering
+
 - Files read: [list]
 - Gaps identified: [list]
 - Decision: [proceed/gather more]
 
 ### Task Adherence Check
+
 - Original task: [description]
 - Planned changes: [list]
 - Scope assessment: [in-scope/adjusted]
 
 ### Completion Check
+
 - Requirements: [met/partial/not met]
 - Tests: [passed/failed/not run]
 - Final status: [complete/needs work]
@@ -245,6 +253,7 @@ For important tasks, log reflections to memory:
 **Scenario**: Agent is asked to "fix the broken search feature"
 
 **Phase 1 - After Research**:
+
 ```
 Think About Collected Information:
 - Read search.ts, index.ts, searchUtils.ts
@@ -256,6 +265,7 @@ Found search-config.ts which is relevant. Reading now.
 ```
 
 **Phase 2 - Before Coding**:
+
 ```
 Think About Task Adherence:
 - Original: "fix the broken search feature"
@@ -265,6 +275,7 @@ Decision: Proceed with targeted fix.
 ```
 
 **Phase 3 - After Implementation**:
+
 ```
 Think About Whether You Are Done:
 - [x] Bug fixed (regex corrected)
@@ -272,6 +283,7 @@ Think About Whether You Are Done:
 - [ ] No new test for this specific case
 Decision: Add regression test, then complete.
 ```
+
 </usage_example>
 </examples>
 
@@ -288,6 +300,7 @@ Decision: Add regression test, then complete.
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

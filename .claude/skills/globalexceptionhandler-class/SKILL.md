@@ -32,7 +32,6 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-
 </instructions>
 
 <examples>
@@ -46,6 +45,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -22,12 +22,14 @@ No authentication is required for basic API access. All endpoints are publicly a
 ## Data License
 
 All data accessed through the API is subject to:
+
 - Creative Commons Attribution-ShareAlike 4.0 International License
 - ClinPGx Data Usage Policy
 
 ## Response Format
 
 All successful responses return JSON with appropriate HTTP status codes:
+
 - `200 OK`: Successful request
 - `404 Not Found`: Resource does not exist
 - `429 Too Many Requests`: Rate limit exceeded
@@ -46,14 +48,17 @@ GET /v1/gene/{gene_symbol}
 ```
 
 **Parameters:**
+
 - `gene_symbol` (path, required): Gene symbol (e.g., CYP2D6, TPMT, DPYD)
 
 **Example Request:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/gene/CYP2D6"
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": "PA126",
@@ -75,9 +80,11 @@ GET /v1/gene?q={search_term}
 ```
 
 **Parameters:**
+
 - `q` (query, optional): Search term for gene name or symbol
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/gene?q=CYP"
 ```
@@ -93,9 +100,11 @@ GET /v1/chemical/{drug_id}
 ```
 
 **Parameters:**
+
 - `drug_id` (path, required): ClinPGx drug identifier (e.g., PA448515)
 
 **Example Request:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/chemical/PA448515"
 ```
@@ -107,14 +116,17 @@ GET /v1/chemical?name={drug_name}
 ```
 
 **Parameters:**
+
 - `name` (query, optional): Drug name or synonym
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/chemical?name=warfarin"
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -140,11 +152,13 @@ GET /v1/geneDrugPair?gene={gene}&drug={drug}
 ```
 
 **Parameters:**
+
 - `gene` (query, optional): Gene symbol
 - `drug` (query, optional): Drug name
 - `cpicLevel` (query, optional): Filter by CPIC recommendation level (A, B, C, D)
 
 **Example Requests:**
+
 ```bash
 # Get all pairs for a gene
 curl "https://api.clinpgx.org/v1/geneDrugPair?gene=CYP2D6"
@@ -157,6 +171,7 @@ curl "https://api.clinpgx.org/v1/geneDrugPair?cpicLevel=A"
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -183,11 +198,13 @@ GET /v1/guideline?source={source}&gene={gene}&drug={drug}
 ```
 
 **Parameters:**
+
 - `source` (query, optional): Guideline source (CPIC, DPWG, FDA)
 - `gene` (query, optional): Gene symbol
 - `drug` (query, optional): Drug name
 
 **Example Requests:**
+
 ```bash
 # Get all CPIC guidelines
 curl "https://api.clinpgx.org/v1/guideline?source=CPIC"
@@ -203,11 +220,13 @@ GET /v1/guideline/{guideline_id}
 ```
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/guideline/PA166104939"
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": "PA166104939",
@@ -235,14 +254,17 @@ GET /v1/allele?gene={gene_symbol}
 ```
 
 **Parameters:**
+
 - `gene` (query, required): Gene symbol
 
 **Example Request:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/allele?gene=CYP2D6"
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -253,7 +275,7 @@ curl "https://api.clinpgx.org/v1/allele?gene=CYP2D6"
     "frequencies": {
       "European": 0.42,
       "African": 0.37,
-      "East Asian": 0.50,
+      "East Asian": 0.5,
       "Latino": 0.44
     },
     "definingVariants": ["Reference allele"],
@@ -265,10 +287,10 @@ curl "https://api.clinpgx.org/v1/allele?gene=CYP2D6"
     "function": "No function",
     "activityScore": 0.0,
     "frequencies": {
-      "European": 0.20,
+      "European": 0.2,
       "African": 0.05,
       "East Asian": 0.01,
-      "Latino": 0.10
+      "Latino": 0.1
     },
     "definingVariants": ["rs3892097"],
     "pharmVarId": "PV00004"
@@ -283,9 +305,11 @@ GET /v1/allele/{allele_name}
 ```
 
 **Parameters:**
-- `allele_name` (path, required): Allele name with star nomenclature (e.g., CYP2D6*4)
+
+- `allele_name` (path, required): Allele name with star nomenclature (e.g., CYP2D6\*4)
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/allele/CYP2D6*4"
 ```
@@ -301,14 +325,17 @@ GET /v1/variant/{rsid}
 ```
 
 **Parameters:**
+
 - `rsid` (path, required): dbSNP reference SNP ID
 
 **Example Request:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/variant/rs4244285"
 ```
 
 **Example Response:**
+
 ```json
 {
   "rsid": "rs4244285",
@@ -335,10 +362,12 @@ GET /v1/variant?chromosome={chr}&position={pos}
 ```
 
 **Parameters:**
+
 - `chromosome` (query, optional): Chromosome number (1-22, X, Y)
 - `position` (query, optional): Genomic position (GRCh38)
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/variant?chromosome=10&position=94781859"
 ```
@@ -354,12 +383,14 @@ GET /v1/clinicalAnnotation?gene={gene}&drug={drug}&evidenceLevel={level}
 ```
 
 **Parameters:**
+
 - `gene` (query, optional): Gene symbol
 - `drug` (query, optional): Drug name
 - `evidenceLevel` (query, optional): Evidence level (1A, 1B, 2A, 2B, 3, 4)
 - `phenotype` (query, optional): Phenotype or outcome
 
 **Example Requests:**
+
 ```bash
 # Get all annotations for a gene
 curl "https://api.clinpgx.org/v1/clinicalAnnotation?gene=CYP2D6"
@@ -372,6 +403,7 @@ curl "https://api.clinpgx.org/v1/clinicalAnnotation?gene=TPMT&drug=azathioprine"
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -390,6 +422,7 @@ curl "https://api.clinpgx.org/v1/clinicalAnnotation?gene=TPMT&drug=azathioprine"
 ```
 
 **Evidence Levels:**
+
 - **1A**: High-quality evidence from guidelines (CPIC, FDA, DPWG)
 - **1B**: High-quality evidence not yet guideline
 - **2A**: Moderate evidence from well-designed studies
@@ -408,10 +441,12 @@ GET /v1/drugLabel?drug={drug_name}&source={source}
 ```
 
 **Parameters:**
+
 - `drug` (query, required): Drug name
 - `source` (query, optional): Regulatory source (FDA, EMA, PMDA, Health Canada)
 
 **Example Requests:**
+
 ```bash
 # Get all labels for warfarin
 curl "https://api.clinpgx.org/v1/drugLabel?drug=warfarin"
@@ -421,6 +456,7 @@ curl "https://api.clinpgx.org/v1/drugLabel?drug=warfarin&source=FDA"
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -451,9 +487,11 @@ GET /v1/pathway/{pathway_id}
 ```
 
 **Parameters:**
+
 - `pathway_id` (path, required): ClinPGx pathway identifier
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/pathway/PA146123006"
 ```
@@ -465,15 +503,18 @@ GET /v1/pathway?drug={drug_name}&gene={gene}
 ```
 
 **Parameters:**
+
 - `drug` (query, optional): Drug name
 - `gene` (query, optional): Gene symbol
 
 **Example:**
+
 ```bash
 curl "https://api.clinpgx.org/v1/pathway?drug=warfarin"
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": "PA146123006",
@@ -580,6 +621,7 @@ if pair['cpicLevel'] == 'A':
 ### Common Error Responses
 
 #### 404 Not Found
+
 ```json
 {
   "error": "Resource not found",
@@ -588,6 +630,7 @@ if pair['cpicLevel'] == 'A':
 ```
 
 #### 429 Too Many Requests
+
 ```json
 {
   "error": "Rate limit exceeded",
@@ -630,12 +673,14 @@ def safe_query(url, params=None, max_retries=3):
 ## Best Practices
 
 ### Rate Limiting
+
 - Implement 500ms delay between requests (2 requests/second maximum)
 - Use exponential backoff for rate limit errors
 - Consider caching results for frequently accessed data
 - For bulk operations, contact api@clinpgx.org
 
 ### Caching Strategy
+
 ```python
 import json
 from pathlib import Path
@@ -657,6 +702,7 @@ def cached_query(cache_file, query_func, *args, **kwargs):
 ```
 
 ### Batch Processing
+
 ```python
 import time
 
@@ -673,6 +719,7 @@ def batch_gene_query(genes, delay=0.5):
 ## Data Schema Definitions
 
 ### Gene Object
+
 ```typescript
 {
   id: string;              // ClinPGx gene ID
@@ -686,6 +733,7 @@ def batch_gene_query(genes, delay=0.5):
 ```
 
 ### Drug Object
+
 ```typescript
 {
   id: string;              // ClinPGx drug ID
@@ -698,6 +746,7 @@ def batch_gene_query(genes, delay=0.5):
 ```
 
 ### Gene-Drug Pair Object
+
 ```typescript
 {
   gene: string;            // Gene symbol
@@ -710,6 +759,7 @@ def batch_gene_query(genes, delay=0.5):
 ```
 
 ### Allele Object
+
 ```typescript
 {
   name: string;            // Allele name (e.g., CYP2D6*4)
@@ -726,16 +776,20 @@ def batch_gene_query(genes, delay=0.5):
 ## API Stability and Versioning
 
 ### Current Status
+
 - API version: v1
 - Stability: Beta - endpoints stable, parameters may change
 - Monitor: https://blog.clinpgx.org/ for updates
 
 ### Migration from PharmGKB
+
 As of July 2025, PharmGKB URLs redirect to ClinPGx. Update references:
+
 - Old: `https://api.pharmgkb.org/`
 - New: `https://api.clinpgx.org/`
 
 ### Future Changes
+
 - Watch for API v2 announcements
 - Breaking changes will be announced on ClinPGx Blog
 - Consider version pinning for production applications

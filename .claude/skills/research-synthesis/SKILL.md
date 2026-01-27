@@ -17,9 +17,9 @@ tools:
 skills:
   - task-management-protocol
 triggers:
-  - "research for"
-  - "best practices for"
-  - "before creating"
+  - 'research for'
+  - 'best practices for'
+  - 'before creating'
 best_practices:
   - Execute minimum 3 research queries before synthesizing
   - Consult at least 3 external sources
@@ -80,12 +80,14 @@ Before executing queries, clearly define:
 **Artifact Type**: [agent | skill | workflow | hook | schema | template]
 **Domain/Capability**: [What this artifact will do]
 **Key Questions**:
+
 1. What are the best practices for this domain?
 2. What implementation patterns exist?
 3. What tools/frameworks should be used?
 4. What are the common pitfalls?
 
 **Existing Patterns to Examine**:
+
 - .claude/[category]/ - Similar artifacts
 - .claude/templates/ - Relevant templates
 - .claude/schemas/ - Validation patterns
@@ -192,21 +194,23 @@ Output a structured research report in the following format:
 
 ### Research Queries Executed
 
-| # | Query | Tool | Sources Found | Key Finding |
-|---|-------|------|---------------|-------------|
-| 1 | "{query_1}" | Exa | 5 | {brief_finding} |
-| 2 | "{query_2}" | WebSearch | 3 | {brief_finding} |
-| 3 | "{query_3}" | Exa Code | 4 | {brief_finding} |
+| #   | Query       | Tool      | Sources Found | Key Finding     |
+| --- | ----------- | --------- | ------------- | --------------- |
+| 1   | "{query_1}" | Exa       | 5             | {brief_finding} |
+| 2   | "{query_2}" | WebSearch | 3             | {brief_finding} |
+| 3   | "{query_3}" | Exa Code  | 4             | {brief_finding} |
 
 ---
 
 ### Existing Codebase Patterns
 
 **Similar Artifacts Found:**
+
 - `{path_1}` - {what it does, what patterns it uses}
 - `{path_2}` - {what it does, what patterns it uses}
 
 **Conventions Identified:**
+
 - Naming: {convention}
 - Structure: {convention}
 - Tools: {convention}
@@ -216,13 +220,14 @@ Output a structured research report in the following format:
 
 ### Best Practices Identified
 
-| # | Practice | Source | Confidence | Rationale |
-|---|----------|--------|------------|-----------|
-| 1 | {practice} | {source_url_or_name} | High | {why_applicable} |
-| 2 | {practice} | {source_url_or_name} | Medium | {why_applicable} |
-| 3 | {practice} | {source_url_or_name} | High | {why_applicable} |
+| #   | Practice   | Source               | Confidence | Rationale        |
+| --- | ---------- | -------------------- | ---------- | ---------------- |
+| 1   | {practice} | {source_url_or_name} | High       | {why_applicable} |
+| 2   | {practice} | {source_url_or_name} | Medium     | {why_applicable} |
+| 3   | {practice} | {source_url_or_name} | High       | {why_applicable} |
 
 **Confidence Levels:**
+
 - **High**: Multiple authoritative sources agree
 - **Medium**: Single authoritative source or multiple secondary sources
 - **Low**: Limited evidence, requires validation
@@ -231,11 +236,11 @@ Output a structured research report in the following format:
 
 ### Design Decisions
 
-| Decision | Rationale | Source | Alternatives Considered |
-|----------|-----------|--------|------------------------|
-| {decision_1} | {why} | {source} | {what_else_was_considered} |
-| {decision_2} | {why} | {source} | {what_else_was_considered} |
-| {decision_3} | {why} | {source} | {what_else_was_considered} |
+| Decision     | Rationale | Source   | Alternatives Considered    |
+| ------------ | --------- | -------- | -------------------------- |
+| {decision_1} | {why}     | {source} | {what_else_was_considered} |
+| {decision_2} | {why}     | {source} | {what_else_was_considered} |
+| {decision_3} | {why}     | {source} | {what_else_was_considered} |
 
 ---
 
@@ -246,13 +251,16 @@ Output a structured research report in the following format:
 **Template to Use**: `.claude/templates/{template}.md`
 
 **Skills to Invoke**:
+
 - `{skill_1}` - {why}
 - `{skill_2}` - {why}
 
 **Hooks Needed**:
+
 - `{hook_type}` - {purpose}
 
 **Dependencies**:
+
 - Existing artifacts: {list}
 - External tools: {list}
 
@@ -260,11 +268,11 @@ Output a structured research report in the following format:
 
 ### Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| {risk_1} | Medium | High | {how_to_prevent} |
-| {risk_2} | Low | Medium | {how_to_prevent} |
-| {risk_3} | High | Low | {how_to_prevent} |
+| Risk     | Likelihood | Impact | Mitigation       |
+| -------- | ---------- | ------ | ---------------- |
+| {risk_1} | Medium     | High   | {how_to_prevent} |
+| {risk_2} | Low        | Medium | {how_to_prevent} |
+| {risk_3} | High       | Low    | {how_to_prevent} |
 
 ---
 
@@ -327,6 +335,7 @@ After completing research, provide this handoff to the creator skill:
 {2-3 sentence summary of key findings}
 
 **Critical Decisions**:
+
 1. {decision_1}
 2. {decision_2}
 3. {decision_3}
@@ -417,27 +426,30 @@ Read({ file_path: '.claude/agents/core/developer.md' });
 
 ## Common Research Domains
 
-| Domain | Key Queries | Authoritative Sources |
-|--------|-------------|----------------------|
-| API Integration | "REST API design", "GraphQL patterns" | OpenAPI spec, GraphQL spec |
-| Security | "OWASP top 10", "security best practices" | OWASP, NIST |
-| Database | "database design patterns", "SQL optimization" | PostgreSQL docs, MySQL docs |
-| Frontend | "React patterns", "accessibility WCAG" | React docs, W3C |
-| DevOps | "CI/CD best practices", "IaC patterns" | GitLab docs, Terraform docs |
-| Testing | "TDD patterns", "test automation" | Testing Library, Jest docs |
-| AI/ML | "LLM integration patterns", "prompt engineering" | Anthropic docs, OpenAI docs |
+| Domain          | Key Queries                                      | Authoritative Sources       |
+| --------------- | ------------------------------------------------ | --------------------------- |
+| API Integration | "REST API design", "GraphQL patterns"            | OpenAPI spec, GraphQL spec  |
+| Security        | "OWASP top 10", "security best practices"        | OWASP, NIST                 |
+| Database        | "database design patterns", "SQL optimization"   | PostgreSQL docs, MySQL docs |
+| Frontend        | "React patterns", "accessibility WCAG"           | React docs, W3C             |
+| DevOps          | "CI/CD best practices", "IaC patterns"           | GitLab docs, Terraform docs |
+| Testing         | "TDD patterns", "test automation"                | Testing Library, Jest docs  |
+| AI/ML           | "LLM integration patterns", "prompt engineering" | Anthropic docs, OpenAI docs |
 
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/context/artifacts/research-reports/`
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -452,6 +464,7 @@ cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previous research on similar domains
 - Known patterns and conventions
 - Documented decisions
@@ -468,14 +481,14 @@ Check for:
 
 This skill integrates with the Creator Ecosystem:
 
-| Creator | Research Focus |
-|---------|---------------|
-| `agent-creator` | Domain expertise, agent patterns, skill dependencies |
-| `skill-creator` | Tool integration, MCP patterns, validation hooks |
-| `workflow-creator` | Orchestration patterns, multi-agent coordination |
-| `hook-creator` | Validation patterns, security checks, safety gates |
-| `schema-creator` | JSON Schema patterns, validation strategies |
-| `template-creator` | Code scaffolding, project structure patterns |
+| Creator            | Research Focus                                       |
+| ------------------ | ---------------------------------------------------- |
+| `agent-creator`    | Domain expertise, agent patterns, skill dependencies |
+| `skill-creator`    | Tool integration, MCP patterns, validation hooks     |
+| `workflow-creator` | Orchestration patterns, multi-agent coordination     |
+| `hook-creator`     | Validation patterns, security checks, safety gates   |
+| `schema-creator`   | JSON Schema patterns, validation strategies          |
+| `template-creator` | Code scaffolding, project structure patterns         |
 
 **Full lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
 

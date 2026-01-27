@@ -260,19 +260,19 @@ node .claude/skills/skill-creator/scripts/create.cjs --show-structure
 
 ```yaml
 ---
-name: skill-name                    # REQUIRED: lowercase-with-hyphens
-description: What this skill does   # REQUIRED: min 20 chars
-version: 1.0                        # RECOMMENDED
-model: sonnet                       # OPTIONAL: sonnet|opus|haiku|inherit
-invoked_by: both                    # OPTIONAL: user|agent|both
-user_invocable: true                # OPTIONAL: boolean
-tools: [Read, Write, Bash]          # RECOMMENDED: tools used
-args: "<required> [optional]"       # OPTIONAL: argument format
-best_practices:                     # OPTIONAL
+name: skill-name # REQUIRED: lowercase-with-hyphens
+description: What this skill does # REQUIRED: min 20 chars
+version: 1.0 # RECOMMENDED
+model: sonnet # OPTIONAL: sonnet|opus|haiku|inherit
+invoked_by: both # OPTIONAL: user|agent|both
+user_invocable: true # OPTIONAL: boolean
+tools: [Read, Write, Bash] # RECOMMENDED: tools used
+args: '<required> [optional]' # OPTIONAL: argument format
+best_practices: # OPTIONAL
   - Practice 1
   - Practice 2
-error_handling: graceful            # OPTIONAL: graceful|strict|warn
-streaming: supported                # OPTIONAL: supported|required|disabled
+error_handling: graceful # OPTIONAL: graceful|strict|warn
+streaming: supported # OPTIONAL: supported|required|disabled
 ---
 ```
 
@@ -297,17 +297,20 @@ One-line description of this skill's purpose.
 Description of what to do.
 
 ### Step 2: [Second Step]
+
 Description of what to do.
 
 ### Step 3: [Final Step]
+
 Description of what to do.
 </execution_process>
 
 <best_practices>
+
 1. **Practice Name**: Description
 2. **Practice Name**: Description
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <code_example>
@@ -322,7 +325,9 @@ Description of what to do.
 **Example Commands**:
 
 \`\`\`bash
+
 # Example command
+
 node .claude/skills/<skill-name>/scripts/main.cjs --option value
 \`\`\`
 </usage_example>
@@ -336,6 +341,7 @@ cat .claude/context/memory/learnings.md
 \`\`\`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`
@@ -457,6 +463,7 @@ When converting external codebases to skills:
 ## Validation Checklist
 
 ### Required
+
 - [ ] SKILL.md exists with valid YAML frontmatter
 - [ ] `name` field is lowercase-with-hyphens
 - [ ] `description` is at least 20 characters
@@ -467,23 +474,27 @@ When converting external codebases to skills:
 - [ ] Has Memory Protocol section
 
 ### Scripts
+
 - [ ] Scripts have proper shebang (#!/usr/bin/env node)
 - [ ] Scripts use CommonJS (.cjs) or ES Modules (.mjs) extension
 - [ ] Main script handles --help flag
 
 ### Hooks (if present)
+
 - [ ] Hooks directory contains pre-execute.cjs and/or post-execute.cjs
 - [ ] Hook scripts have proper shebang
 - [ ] Hook scripts exit with code 0 on success, 1 on failure
 - [ ] Hooks registered in settings.json (if needed)
 
 ### Schemas (if present)
+
 - [ ] Schemas directory contains input.schema.json and/or output.schema.json
 - [ ] Schemas follow JSON Schema draft 2020-12
 - [ ] Schemas have title and description
 - [ ] Schemas registered globally (if needed)
 
 ### Quality
+
 - [ ] All files pass `pnpm format`
 - [ ] No hardcoded paths (use findProjectRoot())
 - [ ] Error handling is graceful

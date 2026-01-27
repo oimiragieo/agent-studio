@@ -20,6 +20,7 @@ wavelengths = [500, 600, 700] * u.nm
 ```
 
 Access components via `.value` and `.unit` attributes:
+
 ```python
 distance.value  # 42.0
 distance.unit   # Unit("m")
@@ -106,27 +107,35 @@ abundance = 8.5 * u.dex(u.cm**-3)
 ## Common Units
 
 ### Length
+
 `u.m, u.km, u.cm, u.mm, u.micron, u.angstrom, u.au, u.pc, u.kpc, u.Mpc, u.lyr`
 
 ### Time
+
 `u.s, u.min, u.hour, u.day, u.year, u.Myr, u.Gyr`
 
 ### Mass
+
 `u.kg, u.g, u.M_sun, u.M_earth, u.M_jup`
 
 ### Temperature
+
 `u.K, u.deg_C`
 
 ### Angle
+
 `u.deg, u.arcmin, u.arcsec, u.rad, u.hourangle, u.mas`
 
 ### Energy/Power
+
 `u.J, u.erg, u.eV, u.keV, u.MeV, u.GeV, u.W, u.L_sun`
 
 ### Frequency
+
 `u.Hz, u.kHz, u.MHz, u.GHz`
 
 ### Flux
+
 `u.Jy, u.mJy, u.erg / u.s / u.cm**2`
 
 ## Performance Optimization

@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Use JSON Web Tokens (JWT) for authentication.
 - Consider Docker for deployment.
 - Use Git for version control.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

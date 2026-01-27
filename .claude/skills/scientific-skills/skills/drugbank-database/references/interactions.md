@@ -1,11 +1,13 @@
 # Drug-Drug Interactions
 
 ## Overview
+
 DrugBank provides comprehensive drug-drug interaction (DDI) data including mechanism, severity, and clinical significance. This information is critical for pharmacovigilance, clinical decision support, and drug safety research.
 
 ## Interaction Data Structure
 
 ### XML Structure
+
 ```xml
 <drug-interactions>
   <drug-interaction>
@@ -22,6 +24,7 @@ DrugBank provides comprehensive drug-drug interaction (DDI) data including mecha
 ```
 
 ### Interaction Components
+
 - **drugbank-id**: DrugBank ID of interacting drug
 - **name**: Name of interacting drug
 - **description**: Detailed description of interaction mechanism and clinical significance
@@ -29,6 +32,7 @@ DrugBank provides comprehensive drug-drug interaction (DDI) data including mecha
 ## Extract Drug Interactions
 
 ### Basic Interaction Extraction
+
 ```python
 from drugbank_downloader import get_drugbank_root
 
@@ -63,6 +67,7 @@ print(f"Found {len(interactions)} interactions")
 ```
 
 ### Bidirectional Interaction Mapping
+
 ```python
 def build_interaction_network():
     """Build complete interaction network (all drug pairs)"""
@@ -92,6 +97,7 @@ network = build_interaction_network()
 ## Analyze Interaction Patterns
 
 ### Count Interactions per Drug
+
 ```python
 def rank_drugs_by_interactions():
     """Rank drugs by number of known interactions"""
@@ -126,6 +132,7 @@ for drug in top_drugs:
 ```
 
 ### Find Common Interaction Partners
+
 ```python
 def find_common_interactors(drugbank_id1, drugbank_id2):
     """Find drugs that interact with both specified drugs"""
@@ -141,6 +148,7 @@ print(f"Common interacting drugs: {len(common)}")
 ```
 
 ### Check Specific Drug Pair
+
 ```python
 def check_interaction(drug1_id, drug2_id):
     """Check if two drugs interact and get details"""
@@ -169,6 +177,7 @@ else:
 ## Interaction Classification
 
 ### Parse Interaction Descriptions
+
 ```python
 import re
 
@@ -207,6 +216,7 @@ def classify_interaction_mechanism(description):
 ```
 
 ### Categorize Interactions
+
 ```python
 def categorize_drug_interactions(drugbank_id):
     """Categorize interactions by severity and mechanism"""
@@ -237,6 +247,7 @@ print(f"Minor: {len(categorized['minor'])}")
 ## Build Interaction Matrix
 
 ### Create Pairwise Interaction Matrix
+
 ```python
 import pandas as pd
 import numpy as np
@@ -268,6 +279,7 @@ interaction_matrix = create_interaction_matrix(top_100_drugs)
 ```
 
 ### Export Interaction Network
+
 ```python
 def export_interaction_network_csv(output_file='drugbank_interactions.csv'):
     """Export all interactions as edge list (CSV)"""
@@ -306,6 +318,7 @@ export_interaction_network_csv()
 ## Network Analysis
 
 ### Graph Representation
+
 ```python
 import networkx as nx
 
@@ -338,6 +351,7 @@ print("Top 10 hubs:", top_hubs)
 ```
 
 ### Community Detection
+
 ```python
 def detect_interaction_communities():
     """Detect communities in interaction network"""
@@ -362,6 +376,7 @@ communities = detect_interaction_communities()
 ## Clinical Applications
 
 ### Polypharmacy Analysis
+
 ```python
 def check_polypharmacy_interactions(drug_list):
     """Check for interactions in a drug regimen"""
@@ -391,6 +406,7 @@ for interaction in interactions:
 ```
 
 ### Interaction Risk Score
+
 ```python
 def calculate_interaction_risk_score(drug_list):
     """Calculate overall interaction risk for drug combination"""

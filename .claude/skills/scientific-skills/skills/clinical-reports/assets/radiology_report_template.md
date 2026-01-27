@@ -49,9 +49,10 @@ OR: "No prior imaging available for comparison"
 [Detailed description of imaging parameters and protocol]
 
 **For CT:**
+
 ```
-Multidetector CT of the [body region] was performed [without/with] intravenous 
-contrast. [Volume] mL of [iodinated contrast agent name] was administered 
+Multidetector CT of the [body region] was performed [without/with] intravenous
+contrast. [Volume] mL of [iodinated contrast agent name] was administered
 intravenously. Images were acquired in the [arterial/venous/delayed] phase(s).
 Multiplanar reconstructions were performed.
 
@@ -60,6 +61,7 @@ Radiation dose (DLP): [mGy-cm]
 ```
 
 **For MRI:**
+
 ```
 MRI of the [body region] was performed [without/with] intravenous contrast
 using the following sequences: [list sequences - T1, T2, FLAIR, DWI, etc.]
@@ -70,14 +72,16 @@ Technical quality: [Adequate / Limited by motion artifact]
 ```
 
 **For X-Ray:**
+
 ```
 [Number] views of the [body part] were obtained: [AP/PA/Lateral/Oblique]
 Technical quality: [Adequate penetration and positioning / Limited by...]
 ```
 
 **For Ultrasound:**
+
 ```
-Real-time ultrasound examination of the [body part] was performed using 
+Real-time ultrasound examination of the [body part] was performed using
 [linear/curved] array transducer.
 Technical quality: [Adequate / Limited by bowel gas / Limited by body habitus]
 ```
@@ -97,6 +101,7 @@ Technical quality: [Adequate / Limited by bowel gas / Limited by body habitus]
 **Abnormal statement:** "[Description of abnormality with measurements]"
 
 Example:
+
 ```
 Lungs:
 - Bilateral ground-glass opacities are present, predominant in the lower lobes.
@@ -112,6 +117,7 @@ Lungs:
 ### [Additional Regions as Applicable]
 
 **For Chest CT:**
+
 - Lungs
 - Airways
 - Pleura
@@ -122,6 +128,7 @@ Lungs:
 - Bones
 
 **For Abdomen/Pelvis CT:**
+
 - Liver
 - Gallbladder
 - Spleen
@@ -138,6 +145,7 @@ Lungs:
 - Soft Tissues
 
 **For Brain MRI:**
+
 - Brain Parenchyma
 - Ventricles and Cisterns
 - Extra-axial Spaces
@@ -147,10 +155,10 @@ Lungs:
 
 ### Measurements (if applicable)
 
-| Structure | Measurement | Normal Range |
-|-----------|-------------|--------------|
-| [Lesion/mass] | [Size in cm, 3 dimensions] | - |
-| [Organ] | [Size] | [Normal size] |
+| Structure     | Measurement                | Normal Range  |
+| ------------- | -------------------------- | ------------- |
+| [Lesion/mass] | [Size in cm, 3 dimensions] | -             |
+| [Organ]       | [Size]                     | [Normal size] |
 
 ---
 
@@ -169,16 +177,19 @@ Lungs:
 3. **[Additional findings]**
 
 **Alternative format for normal study:**
+
 ```
 No acute intrathoracic abnormality.
 Specifically, no evidence of pulmonary embolism.
 ```
 
 **Recommendations (if applicable):**
+
 - [Further imaging, follow-up imaging interval, clinical correlation, biopsy, etc.]
 - [Timeframe for follow-up]
 
 Example:
+
 ```
 Recommend follow-up CT in 3 months to assess for interval change.
 Clinical correlation with laboratory values recommended.
@@ -203,18 +214,22 @@ Consider PET/CT for further characterization if clinically indicated.
 ## Structured Reporting (if applicable)
 
 ### For Lung Nodules (Lung-RADS):
+
 **Category:** [Lung-RADS 0/1/2/3/4A/4B/4X]  
 **Recommendation:** [Per Lung-RADS guidelines]
 
 ### For Breast Imaging (BI-RADS):
+
 **Category:** [BI-RADS 0/1/2/3/4/5/6]  
 **Recommendation:** [Per BI-RADS guidelines]
 
 ### For Liver Lesions (LI-RADS):
+
 **Category:** [LI-RADS 1/2/3/4/5/M/TIV]  
 **Features:** [Arterial phase hyperenhancement, washout, capsule, size, growth]
 
 ### For Prostate (PI-RADS):
+
 **Score:** [PI-RADS 1/2/3/4/5]  
 **Location:** [Peripheral zone / Transition zone]
 
@@ -240,23 +255,27 @@ Consider PET/CT for further characterization if clinically indicated.
 ### General Principles
 
 **Be systematic:**
+
 - Use consistent order (head to toe, outside to inside)
 - Don't skip regions even if normal
 - Include pertinent negatives
 
 **Be specific:**
+
 - Provide measurements (size in 3 dimensions for masses)
 - Describe location precisely
 - Use standardized terminology (RadLex)
 - Quantify when possible
 
 **Be clear:**
+
 - Avoid ambiguous language
 - Make impression stand-alone
 - Answer the clinical question directly
 - State what IS present, not just what isn't
 
 **Communication:**
+
 - Critical findings require immediate verbal notification
 - Document communication
 - Provide specific recommendations
@@ -265,14 +284,17 @@ Consider PET/CT for further characterization if clinically indicated.
 ### Measurement Guidelines
 
 **Lesions/Masses:**
+
 - Three dimensions: [length x width x height in cm]
 - Use consistent measurement method for follow-up
 
 **Lymph Nodes:**
+
 - Short axis diameter in cm
 - Note morphology (round vs. oval)
 
 **Organ Sizes:**
+
 - Use established normal ranges
 - Age and sex appropriate
 
@@ -300,19 +322,21 @@ Consider PET/CT for further characterization if clinically indicated.
 ### Recommendations
 
 **Follow-up imaging:**
+
 - Specify modality, timing, and what to assess
 - "Recommend CT chest in 6-12 months to assess stability"
 
 **Further characterization:**
+
 - "Consider MRI for further characterization"
 - "Ultrasound correlation recommended"
 
 **Clinical correlation:**
+
 - "Clinical correlation with tumor markers recommended"
 - "Correlate with patient symptoms and physical examination"
 
 **Biopsy/Intervention:**
+
 - "Consider biopsy for definitive diagnosis"
 - "Amenable to image-guided biopsy if clinically indicated"
-
-

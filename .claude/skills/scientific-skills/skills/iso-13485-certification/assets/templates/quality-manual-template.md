@@ -1,6 +1,7 @@
 # Quality Manual Template
 
 # [COMPANY NAME]
+
 ## QUALITY MANUAL
 
 **Document Number:** QM-001
@@ -14,26 +15,26 @@
 
 ### Approval Signatures
 
-| Role | Name | Signature | Date |
-|------|------|-----------|------|
-| Chief Executive Officer | [NAME] | | [DATE] |
-| Quality Manager | [NAME] | | [DATE] |
-| Management Representative | [NAME] | | [DATE] |
+| Role                      | Name   | Signature | Date   |
+| ------------------------- | ------ | --------- | ------ |
+| Chief Executive Officer   | [NAME] |           | [DATE] |
+| Quality Manager           | [NAME] |           | [DATE] |
+| Management Representative | [NAME] |           | [DATE] |
 
 ### Revision History
 
-| Revision | Date | Description of Changes | Approved By |
-|----------|------|------------------------|-------------|
-| 00 | [DATE] | Initial release | [NAME] |
-|  |  |  |  |
+| Revision | Date   | Description of Changes | Approved By |
+| -------- | ------ | ---------------------- | ----------- |
+| 00       | [DATE] | Initial release        | [NAME]      |
+|          |        |                        |             |
 
 ### Distribution List
 
-| Copy No. | Holder | Location | Date Issued |
-|----------|--------|----------|-------------|
-| 001 | Master Copy | Document Control | [DATE] |
-| 002 | [NAME/DEPT] | [LOCATION] | [DATE] |
-|  |  |  |  |
+| Copy No. | Holder      | Location         | Date Issued |
+| -------- | ----------- | ---------------- | ----------- |
+| 001      | Master Copy | Document Control | [DATE]      |
+| 002      | [NAME/DEPT] | [LOCATION]       | [DATE]      |
+|          |             |                  |             |
 
 ---
 
@@ -135,25 +136,25 @@ All recipients of controlled copies are responsible for ensuring they are using 
 
 ### 1.4 Definitions and Abbreviations
 
-| Term/Abbreviation | Definition |
-|-------------------|------------|
-| CAPA | Corrective and Preventive Action |
-| CFR | Code of Federal Regulations |
-| DHF | Design History File |
-| DHR | Device History Record |
-| DMR | Device Master Record |
-| FDA | U.S. Food and Drug Administration |
-| IFU | Instructions for Use |
-| ISO | International Organization for Standardization |
-| MDF | Medical Device File |
-| MDR | Medical Device Regulation (EU) |
-| M&M Equipment | Monitoring and Measuring Equipment |
-| NCR | Nonconformance Report |
-| QMS | Quality Management System |
-| QMSR | Quality Management System Regulation (FDA) |
-| QSR | Quality System Regulation (FDA - former) |
-| SOP | Standard Operating Procedure |
-| WI | Work Instruction |
+| Term/Abbreviation | Definition                                     |
+| ----------------- | ---------------------------------------------- |
+| CAPA              | Corrective and Preventive Action               |
+| CFR               | Code of Federal Regulations                    |
+| DHF               | Design History File                            |
+| DHR               | Device History Record                          |
+| DMR               | Device Master Record                           |
+| FDA               | U.S. Food and Drug Administration              |
+| IFU               | Instructions for Use                           |
+| ISO               | International Organization for Standardization |
+| MDF               | Medical Device File                            |
+| MDR               | Medical Device Regulation (EU)                 |
+| M&M Equipment     | Monitoring and Measuring Equipment             |
+| NCR               | Nonconformance Report                          |
+| QMS               | Quality Management System                      |
+| QMSR              | Quality Management System Regulation (FDA)     |
+| QSR               | Quality System Regulation (FDA - former)       |
+| SOP               | Standard Operating Procedure                   |
+| WI                | Work Instruction                               |
 
 ---
 
@@ -164,13 +165,16 @@ All recipients of controlled copies are responsible for ensuring they are using 
 This Quality Management System applies to [COMPANY NAME] and covers all activities related to [LIST ACTIVITIES: e.g., design, development, production, storage, distribution, installation, servicing] of medical devices.
 
 **Organizational Scope:**
+
 - All departments and functions at [COMPANY NAME]
 - All employees, contractors, and temporary staff performing work affecting product quality
 
 **Physical Locations:**
+
 - [LIST ALL FACILITIES AND ADDRESSES]
 
 **Activities Covered:**
+
 - [✓ / ✗] Design and Development
 - [✓ / ✗] Manufacturing and Production
 - [✓ / ✗] Installation
@@ -183,27 +187,30 @@ This Quality Management System applies to [COMPANY NAME] and covers all activiti
 
 This QMS covers the following medical device product families:
 
-| Product Family | Device Classification | Intended Use | Applicable Markets |
-|----------------|----------------------|--------------|-------------------|
-| [PRODUCT NAME/FAMILY] | [Class I/II/III] | [BRIEF INTENDED USE] | [FDA/EU/Other] |
-|  |  |  |  |
+| Product Family        | Device Classification | Intended Use         | Applicable Markets |
+| --------------------- | --------------------- | -------------------- | ------------------ |
+| [PRODUCT NAME/FAMILY] | [Class I/II/III]      | [BRIEF INTENDED USE] | [FDA/EU/Other]     |
+|                       |                       |                      |                    |
 
 ### 2.3 Applicable Regulatory Requirements
 
 The QMS is designed to comply with the following standards and regulatory requirements:
 
 **International Standards:**
+
 - ISO 13485:2016 - Medical devices — Quality management systems — Requirements for regulatory purposes
 - ISO 14971:[YEAR] - Medical devices — Application of risk management to medical devices
 - [OTHER APPLICABLE ISO/IEC STANDARDS]
 
 **Regulatory Requirements:**
+
 - **United States:** FDA 21 CFR Part 820 (QMSR) - Quality Management System Regulation
 - **European Union:** EU MDR 2017/745 - Medical Devices Regulation [or IVDR 2017/746 for IVDs]
 - **Canada:** Canadian Medical Devices Regulations (SOR/98-282)
 - [OTHER APPLICABLE REGIONAL REQUIREMENTS]
 
 **Recognized Standards:**
+
 - [LIST PRODUCT-SPECIFIC STANDARDS, e.g., IEC 60601, ISO 10993, etc.]
 
 ### 2.4 Exclusions and Justifications
@@ -211,6 +218,7 @@ The QMS is designed to comply with the following standards and regulatory requir
 The following clauses of ISO 13485:2016 are excluded from the scope of this QMS:
 
 [IF NO EXCLUSIONS:]
+
 > There are no exclusions from ISO 13485:2016. All clauses are applicable and have been implemented.
 
 [IF EXCLUSIONS EXIST, USE THIS FORMAT:]
@@ -220,6 +228,7 @@ The following clauses of ISO 13485:2016 are excluded from the scope of this QMS:
 **Status:** [EXCLUDED / PARTIALLY EXCLUDED / FULLY IMPLEMENTED]
 
 **Justification (if excluded):**
+
 > [COMPANY NAME] [operates as a contract manufacturer and produces medical devices according to complete design specifications provided by customers / only distributes medical devices designed and manufactured by third parties / etc.]. All design and development activities are [performed by customers / performed by a separate corporate entity / not applicable to business model]. [COMPANY NAME] has no responsibility for design inputs, outputs, verification, validation, design changes, or design history files.
 
 **Clause 7.5.3 - Installation Activities**
@@ -227,6 +236,7 @@ The following clauses of ISO 13485:2016 are excluded from the scope of this QMS:
 **Status:** [EXCLUDED / PARTIALLY EXCLUDED / FULLY IMPLEMENTED]
 
 **Justification (if excluded):**
+
 > The medical devices manufactured by [COMPANY NAME] are [supplied ready for use and do not require installation / intended for installation by customer personnel under separate contractual arrangements]. Installation activities are [not performed / performed by authorized distributors or customers].
 
 **Clause 7.5.4 - Servicing Activities**
@@ -234,6 +244,7 @@ The following clauses of ISO 13485:2016 are excluded from the scope of this QMS:
 **Status:** [EXCLUDED / PARTIALLY EXCLUDED / FULLY IMPLEMENTED]
 
 **Justification (if excluded):**
+
 > [COMPANY NAME] does not provide servicing of medical devices after delivery. Products are [intended for single use / serviced by authorized service partners under separate arrangements / serviced by customer personnel]. Post-delivery activities are limited to technical support and complaint handling.
 
 ---
@@ -245,6 +256,7 @@ The following clauses of ISO 13485:2016 are excluded from the scope of this QMS:
 **QUALITY POLICY**
 
 [INSERT YOUR COMPANY-SPECIFIC QUALITY POLICY HERE. The policy should include:
+
 - Commitment to meeting customer and regulatory requirements
 - Commitment to maintaining QMS effectiveness
 - Framework for quality objectives
@@ -256,6 +268,7 @@ Example:]
 > At [COMPANY NAME], quality is our highest priority. We are committed to designing, manufacturing, and delivering medical devices that meet the highest standards of safety, performance, and reliability.
 >
 > Our commitments include:
+>
 > - Compliance with ISO 13485 and all applicable regulatory requirements
 > - Understanding and meeting customer and patient needs
 > - Establishing and achieving measurable quality objectives
@@ -274,15 +287,15 @@ Example:]
 
 The organization has established the following measurable quality objectives to support the Quality Policy:
 
-| Objective | Measurement | Target | Responsibility | Review Frequency |
-|-----------|-------------|--------|----------------|------------------|
-| Customer Satisfaction | Survey rating | ≥ [X] out of 5.0 | [ROLE] | Quarterly |
-| Product Quality | Defect rate | < [X]% | [ROLE] | Monthly |
-| On-Time Delivery | % on-time | ≥ [X]% | [ROLE] | Monthly |
-| CAPA Effectiveness | % closed on time | ≥ [X]% | [ROLE] | Monthly |
-| Training Completion | % complete on schedule | 100% | [ROLE] | Quarterly |
-| Internal Audit Findings | Findings addressed | ≥ [X]% within 30 days | [ROLE] | After each audit |
-| [OTHER OBJECTIVES] |  |  |  |  |
+| Objective               | Measurement            | Target                | Responsibility | Review Frequency |
+| ----------------------- | ---------------------- | --------------------- | -------------- | ---------------- |
+| Customer Satisfaction   | Survey rating          | ≥ [X] out of 5.0      | [ROLE]         | Quarterly        |
+| Product Quality         | Defect rate            | < [X]%                | [ROLE]         | Monthly          |
+| On-Time Delivery        | % on-time              | ≥ [X]%                | [ROLE]         | Monthly          |
+| CAPA Effectiveness      | % closed on time       | ≥ [X]%                | [ROLE]         | Monthly          |
+| Training Completion     | % complete on schedule | 100%                  | [ROLE]         | Quarterly        |
+| Internal Audit Findings | Findings addressed     | ≥ [X]% within 30 days | [ROLE]         | After each audit |
+| [OTHER OBJECTIVES]      |                        |                       |                |                  |
 
 Quality objectives are monitored, reported in management review, and revised as necessary to drive continual improvement.
 
@@ -313,24 +326,28 @@ All employees are made aware of the relevance and importance of their activities
 The QMS processes have been identified and are documented in this Quality Manual and referenced procedures. These processes include:
 
 **Management Processes:**
+
 - Management commitment and review
 - Quality planning
 - Internal communication
 - Resource management
 
 **Product Realization Processes:**
+
 - [Design and development - if applicable]
 - Purchasing
 - Production and service provision
 - Customer-related processes
 
 **Support Processes:**
+
 - Document and record control
 - Human resources and training
 - Infrastructure and maintenance
 - Software validation
 
 **Monitoring and Measurement Processes:**
+
 - Customer feedback and complaints
 - Internal audits
 - Process and product monitoring
@@ -355,11 +372,11 @@ The QMS processes are interconnected and operate as a system. Process interactio
 
 The following QMS processes are outsourced to external parties:
 
-| Process | Service Provider | Control Method | Responsible Party |
-|---------|-----------------|----------------|-------------------|
-| [e.g., Sterilization] | [PROVIDER NAME] | Supplier qualification, contract, ongoing monitoring | [ROLE] |
-| [e.g., Calibration] | [PROVIDER NAME] | Qualified service provider, certificates reviewed | [ROLE] |
-|  |  |  |  |
+| Process               | Service Provider | Control Method                                       | Responsible Party |
+| --------------------- | ---------------- | ---------------------------------------------------- | ----------------- |
+| [e.g., Sterilization] | [PROVIDER NAME]  | Supplier qualification, contract, ongoing monitoring | [ROLE]            |
+| [e.g., Calibration]   | [PROVIDER NAME]  | Qualified service provider, certificates reviewed    | [ROLE]            |
+|                       |                  |                                                      |                   |
 
 Outsourcing does not relieve [COMPANY NAME] of responsibility for conformity to customer and regulatory requirements. Control of outsourced processes is documented in [REFERENCE PROCEDURE].
 
@@ -386,6 +403,7 @@ Computer software applications used in the QMS are validated prior to initial us
 - [Other software affecting product quality or QMS effectiveness]
 
 Validation is based on risk assessment and includes:
+
 - Documented validation approach
 - Risk-appropriate validation activities
 - Defined acceptance criteria
@@ -403,20 +421,24 @@ The QMS documentation includes:
 **Tier 1:** Quality Policy and Quality Manual (this document)
 
 **Tier 2:** Documented Procedures (SOPs)
+
 - The [31+] documented procedures required by ISO 13485:2016
 - Additional procedures established by the organization
 - Referenced in Appendix A
 
 **Tier 3:** Work Instructions (WIs)
+
 - Detailed step-by-step instructions for specific tasks
 - Department or process-specific documents
 
 **Tier 4:** Records and Forms
+
 - Evidence of conformity to requirements
 - Evidence of effective QMS operation
 - Maintained per retention requirements
 
 **Additional Documentation:**
+
 - Medical Device Files
 - Risk management files
 - Design and development files (when applicable)
@@ -447,11 +469,13 @@ A Medical Device File (MDF) is established and maintained for each medical devic
 MDF structure, content, and control are defined in SOP-[NUMBER] Medical Device File.
 
 **Current Medical Device Files:**
+
 - [LIST MDFs MAINTAINED]
 
 #### 4.2.4 Control of Documents
 
 All QMS documents are controlled to ensure:
+
 - Approval before issue
 - Review and update as necessary
 - Current revision status identified
@@ -468,6 +492,7 @@ The Document Control Coordinator is responsible for document control system oper
 #### 4.2.5 Control of Records
 
 QMS records provide evidence of conformity to requirements and effective QMS operation. Records are controlled to ensure:
+
 - Legibility, identification, and retrievability
 - Proper storage, security, and integrity
 - Appropriate retention time (minimum: device lifetime)

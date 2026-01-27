@@ -84,7 +84,6 @@ When reviewing or writing code, apply these guidelines:
 - Suggest appropriate file structure and naming conventions aligned with Next.js 14 best practices.
 - Use the `'use client'` directive only w
 
-
 </instructions>
 
 <examples>
@@ -98,6 +97,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
+
 - typescript-expert
 
 ## Related Skills
@@ -107,6 +107,7 @@ This expert skill consolidates 1 individual skills:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

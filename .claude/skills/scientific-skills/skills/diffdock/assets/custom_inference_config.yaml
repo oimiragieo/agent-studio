@@ -8,16 +8,16 @@ ckpt: best_ema_inference_epoch_model.pt
 confidence_ckpt: best_model_epoch75.pt
 
 # Model version flags
-old_score_model: false  # Set to true to use original DiffDock instead of DiffDock-L
+old_score_model: false # Set to true to use original DiffDock instead of DiffDock-L
 old_filtering_model: true
 
 # Inference steps
-inference_steps: 20  # Increase for potentially better accuracy (e.g., 25-30)
+inference_steps: 20 # Increase for potentially better accuracy (e.g., 25-30)
 actual_steps: 19
 no_final_step_noise: true
 
 # Sampling parameters
-samples_per_complex: 10  # Increase for difficult cases (e.g., 20-40)
+samples_per_complex: 10 # Increase for difficult cases (e.g., 20-40)
 sigma_schedule: expbeta
 initial_noise_std_proportion: 1.46
 
@@ -25,9 +25,9 @@ initial_noise_std_proportion: 1.46
 # Higher values = more diverse predictions, lower values = more focused predictions
 
 # Sampling temperatures
-temp_sampling_tr: 1.17   # Translation sampling temperature
-temp_sampling_rot: 2.06  # Rotation sampling temperature
-temp_sampling_tor: 7.04  # Torsion sampling temperature (increase for flexible ligands)
+temp_sampling_tr: 1.17 # Translation sampling temperature
+temp_sampling_rot: 2.06 # Rotation sampling temperature
+temp_sampling_tor: 7.04 # Torsion sampling temperature (increase for flexible ligands)
 
 # Psi angle temperatures
 temp_psi_tr: 0.73
@@ -42,7 +42,7 @@ temp_sigma_data_tor: 0.69
 # Feature flags
 no_model: false
 no_random: false
-ode: false  # Set to true to use ODE solver instead of SDE
+ode: false # Set to true to use ODE solver instead of SDE
 different_schedules: false
 limit_failures: 5
 

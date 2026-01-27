@@ -85,7 +85,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Use TypeScript for type safety with GraphQL operations
 
-
 </instructions>
 
 <examples>
@@ -99,12 +98,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- graphql-expert
 
+- graphql-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -15,11 +15,13 @@ signals, info = nk.eog_process(eog_signal, sampling_rate=500, method='neurokit')
 ```
 
 **Pipeline steps:**
+
 1. Signal cleaning (filtering)
 2. Blink detection
 3. Blink rate calculation
 
 **Returns:**
+
 - `signals`: DataFrame with:
   - `EOG_Clean`: Filtered EOG signal
   - `EOG_Blinks`: Binary blink markers (0/1)
@@ -27,6 +29,7 @@ signals, info = nk.eog_process(eog_signal, sampling_rate=500, method='neurokit')
 - `info`: Dictionary with blink indices and parameters
 
 **Methods:**
+
 - `'neurokit'`: NeuroKit2 optimized approach (default)
 - `'agarwal2019'`: Agarwal et al. (2019) algorithm
 - `'mne'`: MNE-Python method
@@ -44,6 +47,7 @@ cleaned_eog = nk.eog_clean(eog_signal, sampling_rate=500, method='neurokit')
 ```
 
 **Methods:**
+
 - `'neurokit'`: Butterworth filtering optimized for EOG
 - `'agarwal2019'`: Alternative filtering
 - `'mne'`: MNE-Python preprocessing
@@ -51,11 +55,13 @@ cleaned_eog = nk.eog_clean(eog_signal, sampling_rate=500, method='neurokit')
 - `'kong1998'`: Kong's method
 
 **Typical filtering:**
+
 - Low-pass: 10-20 Hz (remove high-frequency noise)
 - High-pass: 0.1-1 Hz (remove DC drift)
 - Preserves blink waveform (typical duration 100-400 ms)
 
 **EOG signal characteristics:**
+
 - **Blinks**: Large amplitude, stereotyped waveform (200-400 ms)
 - **Saccades**: Rapid step-like deflections (20-80 ms)
 - **Smooth pursuit**: Slow ramp-like changes
@@ -73,21 +79,25 @@ blinks, info = nk.eog_peaks(cleaned_eog, sampling_rate=500, method='neurokit',
 ```
 
 **Methods:**
+
 - `'neurokit'`: Amplitude and duration criteria (default)
 - `'mne'`: MNE-Python blink detection
 - `'brainstorm'`: Brainstorm approach
 - `'blinker'`: BLINKER algorithm (Kleifges et al., 2017)
 
 **Key parameters:**
+
 - `threshold`: Amplitude threshold (fraction of max amplitude)
   - Typical: 0.2-0.5
   - Lower: more sensitive (may include false positives)
   - Higher: more conservative (may miss small blinks)
 
 **Returns:**
+
 - Dictionary with `'EOG_Blinks'` key containing blink peak indices
 
 **Blink characteristics:**
+
 - **Frequency**: 15-20 blinks/min (resting, comfortable)
 - **Duration**: 100-400 ms (mean ~200 ms)
 - **Amplitude**: Varies with electrode placement and individual factors
@@ -102,6 +112,7 @@ blinks_dict = nk.eog_findpeaks(cleaned_eog, sampling_rate=500, method='neurokit'
 ```
 
 **Use cases:**
+
 - Custom parameter tuning
 - Algorithm comparison
 - Research method development
@@ -117,6 +128,7 @@ features = nk.eog_features(signals, sampling_rate=500)
 ```
 
 **Computed features:**
+
 - **Amplitude velocity ratio (AVR)**: Peak velocity / amplitude
   - Discriminates blinks from artifacts
 - **Blink-amplitude ratio**: Consistency of blink amplitudes
@@ -125,6 +137,7 @@ features = nk.eog_features(signals, sampling_rate=500)
 - **Peak velocity**: Maximum rate of change
 
 **Use cases:**
+
 - Blink quality assessment
 - Drowsiness detection (blink duration increases when sleepy)
 - Neurological assessment (altered blink dynamics in disease)
@@ -138,11 +151,13 @@ blink_rate = nk.eog_rate(blinks, sampling_rate=500, desired_length=None)
 ```
 
 **Method:**
+
 - Calculate inter-blink intervals
 - Convert to blinks per minute
 - Interpolate to match signal length
 
 **Typical blink rates:**
+
 - **Resting**: 15-20 blinks/min
 - **Reading/visual tasks**: 5-10 blinks/min (suppressed)
 - **Conversation**: 20-30 blinks/min
@@ -160,6 +175,7 @@ analysis = nk.eog_analyze(signals, sampling_rate=500)
 ```
 
 **Mode selection:**
+
 - Duration < 10 seconds → event-related
 - Duration ≥ 10 seconds → interval-related
 
@@ -172,12 +188,14 @@ results = nk.eog_eventrelated(epochs)
 ```
 
 **Computed metrics (per epoch):**
+
 - `EOG_Blinks_N`: Number of blinks during epoch
 - `EOG_Rate_Mean`: Average blink rate
 - `EOG_Blink_Presence`: Binary (any blinks occurred)
 - Temporal distribution of blinks across epoch
 
 **Use cases:**
+
 - Blink-locked ERP contamination assessment
 - Attention and engagement during stimuli
 - Visual task difficulty (suppressed blinks during demanding tasks)
@@ -192,6 +210,7 @@ results = nk.eog_intervalrelated(signals, sampling_rate=500)
 ```
 
 **Computed metrics:**
+
 - `EOG_Blinks_N`: Total number of blinks
 - `EOG_Rate_Mean`: Average blink rate (blinks/min)
 - `EOG_Rate_SD`: Blink rate variability
@@ -199,6 +218,7 @@ results = nk.eog_intervalrelated(signals, sampling_rate=500)
 - `EOG_Amplitude_Mean`: Average blink amplitude (if available)
 
 **Use cases:**
+
 - Resting state blink patterns
 - Drowsiness or fatigue monitoring (increased duration)
 - Sustained attention tasks (suppressed rate)
@@ -215,6 +235,7 @@ nk.eog_plot(signals, info)
 ```
 
 **Displays:**
+
 - Raw and cleaned EOG signal
 - Detected blink markers
 - Blink rate time course
@@ -222,12 +243,14 @@ nk.eog_plot(signals, info)
 ## Practical Considerations
 
 ### Sampling Rate Recommendations
+
 - **Minimum**: 100 Hz (basic blink detection)
 - **Standard**: 250-500 Hz (research applications)
 - **High-resolution**: 1000 Hz (detailed waveform analysis, saccades)
 - **Sleep studies**: 200-250 Hz typical
 
 ### Recording Duration
+
 - **Blink detection**: Any duration (≥1 blink)
 - **Blink rate estimation**: ≥60 seconds for stable estimate
 - **Event-related**: Depends on paradigm (seconds per trial)
@@ -238,38 +261,45 @@ nk.eog_plot(signals, info)
 **Standard configurations:**
 
 **Horizontal EOG (HEOG):**
+
 - Two electrodes: lateral canthi (outer corners) of left and right eyes
 - Measures horizontal eye movements (saccades, smooth pursuit)
 - Bipolar recording (left - right)
 
 **Vertical EOG (VEOG):**
+
 - Two electrodes: above and below one eye (typically right)
 - Measures vertical eye movements and blinks
 - Bipolar recording (above - below)
 
 **Sleep EOG:**
+
 - Often uses slightly different placement (temple area)
 - E1: 1 cm lateral and 1 cm below outer canthus of left eye
 - E2: 1 cm lateral and 1 cm above outer canthus of right eye
 - Captures both horizontal and vertical movements
 
 **EEG contamination removal:**
+
 - Frontal electrodes (Fp1, Fp2) can serve as EOG proxies
 - ICA-based EOG artifact removal common in EEG preprocessing
 
 ### Common Issues and Solutions
 
 **Electrode issues:**
+
 - Poor contact: low amplitude, noise
 - Skin preparation: clean, light abrasion
 - Conductive gel: ensure good contact
 
 **Artifacts:**
+
 - Muscle activity (especially frontalis): high-frequency noise
 - Movement: cable artifacts, head motion
 - Electrical noise: 50/60 Hz hum (ground properly)
 
 **Saturation:**
+
 - Large saccades may saturate amplifier
 - Adjust gain or voltage range
 - More common with low-resolution systems
@@ -277,6 +307,7 @@ nk.eog_plot(signals, info)
 ### Best Practices
 
 **Standard workflow:**
+
 ```python
 # 1. Clean signal
 cleaned = nk.eog_clean(eog_raw, sampling_rate=500, method='neurokit')
@@ -295,6 +326,7 @@ analysis = nk.eog_analyze(signals, sampling_rate=500)
 ```
 
 **EEG artifact correction workflow:**
+
 ```python
 # Option 1: Regression-based removal
 # Identify EOG components from cleaned EOG signal
@@ -310,43 +342,51 @@ analysis = nk.eog_analyze(signals, sampling_rate=500)
 ## Clinical and Research Applications
 
 **EEG artifact correction:**
+
 - Blinks contaminate frontal EEG channels
 - ICA or regression methods remove EOG artifacts
 - Essential for ERP studies
 
 **Sleep staging:**
+
 - Rapid eye movements (REMs) during REM sleep
 - Slow rolling eye movements during drowsiness
 - Sleep onset and stage transitions
 
 **Attention and cognitive load:**
+
 - Blink rate suppressed during demanding tasks
 - Blinks cluster at task boundaries (natural breakpoints)
 - Spontaneous blink as indicator of attention shifts
 
 **Fatigue and drowsiness monitoring:**
+
 - Increased blink duration when sleepy
 - Slower eyelid closures
 - Partial or incomplete blinks
 - Driver monitoring applications
 
 **Reading and visual processing:**
+
 - Blinks suppressed during reading
 - Eye movements during saccades (line changes)
 - Fatigue effects on reading efficiency
 
 **Neurological disorders:**
+
 - **Parkinson's disease**: Reduced spontaneous blink rate
 - **Schizophrenia**: Increased blink rate
 - **Tourette syndrome**: Excessive blinking (tics)
 - **Dry eye syndrome**: Increased, incomplete blinks
 
 **Affective and social cognition:**
+
 - Blink synchrony in social interaction
 - Emotional modulation of blink rate
 - Blink-related potentials in ERPs
 
 **Human-computer interaction:**
+
 - Gaze tracking preprocessing
 - Attention monitoring
 - User engagement assessment
@@ -354,22 +394,26 @@ analysis = nk.eog_analyze(signals, sampling_rate=500)
 ## Eye Movement Types Detectable with EOG
 
 **Blinks:**
+
 - Large amplitude, brief duration (100-400 ms)
 - NeuroKit2 primary focus
 - Vertical EOG most sensitive
 
 **Saccades:**
+
 - Rapid, ballistic eye movements (20-80 ms)
 - Step-like voltage deflections
 - Horizontal or vertical
 - Require higher sampling rates for detailed analysis
 
 **Smooth pursuit:**
+
 - Slow tracking of moving objects
 - Ramp-like voltage changes
 - Lower amplitude than saccades
 
 **Fixations:**
+
 - Stable gaze
 - Baseline EOG with small oscillations
 - Duration varies (200-600 ms typical in reading)
@@ -379,22 +423,26 @@ analysis = nk.eog_analyze(signals, sampling_rate=500)
 ## Interpretation Guidelines
 
 **Blink rate:**
+
 - **Normal resting**: 15-20 blinks/min
 - **<10 blinks/min**: Visual task engagement, concentration
 - **>30 blinks/min**: Stress, dry eyes, fatigue
 - **Context-dependent**: Task demands, lighting, screen use
 
 **Blink duration:**
+
 - **Normal**: 100-400 ms (mean ~200 ms)
 - **Prolonged**: Drowsiness, fatigue (>500 ms)
 - **Short**: Normal alertness
 
 **Blink amplitude:**
+
 - Varies with electrode placement and individuals
 - Within-subject comparisons most reliable
 - Incomplete blinks: reduced amplitude (dry eye, fatigue)
 
 **Temporal patterns:**
+
 - **Clustered blinks**: Transitions between tasks or cognitive states
 - **Suppressed blinks**: Active visual processing, sustained attention
 - **Post-stimulus blinks**: After completing visual processing

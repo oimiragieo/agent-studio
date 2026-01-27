@@ -80,8 +80,8 @@ kind: Service
 metadata:
   name: public-api
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-type: 'nlb'
+    service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
 spec:
   type: LoadBalancer
   selector:
@@ -101,26 +101,26 @@ spec:
 
 ```yaml
 annotations:
-  service.beta.kubernetes.io/aws-load-balancer-type: "nlb" # or "external"
-  service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
-  service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
-  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:..."
-  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+  service.beta.kubernetes.io/aws-load-balancer-type: 'nlb' # or "external"
+  service.beta.kubernetes.io/aws-load-balancer-scheme: 'internet-facing'
+  service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+  service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm:...'
+  service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
 ```
 
 **Azure:**
 
 ```yaml
 annotations:
-  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-  service.beta.kubernetes.io/azure-pip-name: "my-public-ip"
+  service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+  service.beta.kubernetes.io/azure-pip-name: 'my-public-ip'
 ```
 
 **GCP:**
 
 ```yaml
 annotations:
-  cloud.google.com/load-balancer-type: "Internal"
+  cloud.google.com/load-balancer-type: 'Internal'
   cloud.google.com/backend-config: '{"default": "my-backend-config"}'
 ```
 
@@ -158,8 +158,8 @@ metadata:
     app: my-app
     tier: backend
   annotations:
-    description: "Main application service"
-    prometheus.io/scrape: "true"
+    description: 'Main application service'
+    prometheus.io/scrape: 'true'
 spec:
   # Service type
   type: ClusterIP
@@ -510,8 +510,8 @@ kind: Service
 metadata:
   name: api-gateway
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:..."
+    service.beta.kubernetes.io/aws-load-balancer-type: 'nlb'
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm:...'
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
@@ -602,9 +602,9 @@ kind: Service
 metadata:
   name: web-app
   annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9090"
-    prometheus.io/path: "/metrics"
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+    prometheus.io/path: '/metrics'
 spec:
   type: ClusterIP
   selector:

@@ -3,6 +3,7 @@
 Extended workflow examples demonstrating how to combine multiple gget modules for common bioinformatics tasks.
 
 ## Table of Contents
+
 1. [Complete Gene Analysis Pipeline](#complete-gene-analysis-pipeline)
 2. [Comparative Structural Biology](#comparative-structural-biology)
 3. [Cancer Genomics Analysis](#cancer-genomics-analysis)
@@ -747,6 +748,7 @@ print("\nDrug target discovery workflow completed!")
 ## Tips for Workflow Development
 
 ### Error Handling
+
 ```python
 import gget
 
@@ -766,6 +768,7 @@ if result is not None:
 ```
 
 ### Rate Limiting
+
 ```python
 import time
 import gget
@@ -785,6 +788,7 @@ def rate_limited_queries(gene_ids, delay=1):
 ```
 
 ### Caching Results
+
 ```python
 import os
 import pickle

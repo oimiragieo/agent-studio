@@ -7,15 +7,18 @@ Complete technical reference for programmatic access to the ZINC database, cover
 ## Base URLs
 
 ### ZINC22 (Current)
+
 - **CartBlanche22 API**: `https://cartblanche22.docking.org/`
 - **File Repository**: `https://files.docking.org/zinc22/`
 - **Main Website**: `https://zinc.docking.org/`
 
 ### ZINC20 (Maintained)
+
 - **API**: `https://zinc20.docking.org/`
 - **File Repository**: `https://files.docking.org/zinc20/`
 
 ### Documentation
+
 - **Wiki**: `https://wiki.docking.org/`
 - **GitHub**: `https://github.com/docking-org/`
 
@@ -28,10 +31,12 @@ Retrieve compound information using ZINC identifiers.
 **Endpoint**: `/substances.txt`
 
 **Parameters**:
+
 - `zinc_id` (required): Single ZINC ID or comma-separated list
 - `output_fields` (optional): Comma-separated field names (default: all fields)
 
 **URL Format**:
+
 ```
 https://cartblanche22.docking.org/substances.txt:zinc_id={ZINC_ID}&output_fields={FIELDS}
 ```
@@ -39,16 +44,19 @@ https://cartblanche22.docking.org/substances.txt:zinc_id={ZINC_ID}&output_fields
 **Examples**:
 
 Single compound:
+
 ```bash
 curl "https://cartblanche22.docking.org/[email protected]_fields=zinc_id,smiles,catalogs"
 ```
 
 Multiple compounds:
+
 ```bash
 curl "https://cartblanche22.docking.org/substances.txt:zinc_id=ZINC000000000001,ZINC000000000002,ZINC000000000003&output_fields=zinc_id,smiles,tranche"
 ```
 
 Batch retrieval from file:
+
 ```bash
 # Create file with ZINC IDs (one per line or comma-separated)
 curl -X POST "https://cartblanche22.docking.org/substances.txt?output_fields=zinc_id,smiles" \
@@ -56,6 +64,7 @@ curl -X POST "https://cartblanche22.docking.org/substances.txt?output_fields=zin
 ```
 
 **Response Format** (TSV):
+
 ```
 zinc_id	smiles	catalogs
 ZINC000000000001	CC(C)O	[vendor1,vendor2]
@@ -69,12 +78,14 @@ Search for compounds by chemical structure with optional similarity thresholds.
 **Endpoint**: `/smiles.txt`
 
 **Parameters**:
+
 - `smiles` (required): Query SMILES string (URL-encode if necessary)
 - `dist` (optional): Tanimoto distance threshold (0-10, default: 0 = exact)
 - `adist` (optional): Alternative distance metric (0-10, default: 0)
 - `output_fields` (optional): Comma-separated field names
 
 **URL Format**:
+
 ```
 https://cartblanche22.docking.org/smiles.txt:smiles={SMILES}&dist={DIST}&adist={ADIST}&output_fields={FIELDS}
 ```
@@ -82,21 +93,25 @@ https://cartblanche22.docking.org/smiles.txt:smiles={SMILES}&dist={DIST}&adist={
 **Examples**:
 
 Exact structure match:
+
 ```bash
 curl "https://cartblanche22.docking.org/smiles.txt:smiles=c1ccccc1&output_fields=zinc_id,smiles"
 ```
 
 Similarity search (Tanimoto distance = 3):
+
 ```bash
 curl "https://cartblanche22.docking.org/smiles.txt:smiles=CC(C)Cc1ccc(cc1)C(C)C(=O)O&dist=3&output_fields=zinc_id,smiles,catalogs"
 ```
 
 Broad similarity search:
+
 ```bash
 curl "https://cartblanche22.docking.org/smiles.txt:smiles=c1ccccc1&dist=5&adist=5&output_fields=zinc_id,smiles,tranche"
 ```
 
 URL-encoded SMILES (for special characters):
+
 ```bash
 # Original: CC(=O)Oc1ccccc1C(=O)O
 # Encoded: CC%28%3DO%29Oc1ccccc1C%28%3DO%29O
@@ -104,6 +119,7 @@ curl "https://cartblanche22.docking.org/smiles.txt:smiles=CC%28%3DO%29Oc1ccccc1C
 ```
 
 **Distance Parameters Interpretation**:
+
 - `dist=0`: Exact match
 - `dist=1-3`: Close analogs (high similarity)
 - `dist=4-6`: Moderate analogs
@@ -116,15 +132,18 @@ Query compounds by vendor catalog numbers.
 **Endpoint**: `/catitems.txt`
 
 **Parameters**:
+
 - `catitem_id` (required): Supplier catalog code
 - `output_fields` (optional): Comma-separated field names
 
 **URL Format**:
+
 ```
 https://cartblanche22.docking.org/catitems.txt:catitem_id={SUPPLIER_CODE}&output_fields={FIELDS}
 ```
 
 **Example**:
+
 ```bash
 curl "https://cartblanche22.docking.org/catitems.txt:catitem_id=SUPPLIER-12345&output_fields=zinc_id,smiles,supplier_code,catalogs"
 ```
@@ -136,11 +155,13 @@ Generate random compound sets with optional filtering by chemical properties.
 **Endpoint**: `/substance/random.txt`
 
 **Parameters**:
+
 - `count` (optional): Number of compounds to retrieve (default: 100, max: depends on server)
 - `subset` (optional): Filter by predefined subset (e.g., 'lead-like', 'drug-like', 'fragment')
 - `output_fields` (optional): Comma-separated field names
 
 **URL Format**:
+
 ```
 https://cartblanche22.docking.org/substance/random.txt:count={COUNT}&subset={SUBSET}&output_fields={FIELDS}
 ```
@@ -148,26 +169,31 @@ https://cartblanche22.docking.org/substance/random.txt:count={COUNT}&subset={SUB
 **Examples**:
 
 Random 100 compounds (default):
+
 ```bash
 curl "https://cartblanche22.docking.org/substance/random.txt"
 ```
 
 Random lead-like molecules:
+
 ```bash
 curl "https://cartblanche22.docking.org/substance/random.txt:count=1000&subset=lead-like&output_fields=zinc_id,smiles,tranche"
 ```
 
 Random drug-like molecules:
+
 ```bash
 curl "https://cartblanche22.docking.org/substance/random.txt:count=5000&subset=drug-like&output_fields=zinc_id,smiles"
 ```
 
 Random fragments:
+
 ```bash
 curl "https://cartblanche22.docking.org/substance/random.txt:count=500&subset=fragment&output_fields=zinc_id,smiles,tranche"
 ```
 
 **Subset Definitions**:
+
 - `fragment`: MW < 250, suitable for fragment-based drug discovery
 - `lead-like`: MW 250-350, LogP ≤ 3.5, rotatable bonds ≤ 7
 - `drug-like`: MW 350-500, follows Lipinski's Rule of Five
@@ -179,19 +205,19 @@ curl "https://cartblanche22.docking.org/substance/random.txt:count=500&subset=fr
 
 Customize API responses using the `output_fields` parameter:
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `zinc_id` | ZINC identifier | ZINC000000000001 |
-| `smiles` | Canonical SMILES string | CC(C)O |
-| `sub_id` | Internal substance ID | 123456 |
-| `supplier_code` | Vendor catalog number | AB-1234567 |
-| `catalogs` | List of suppliers | [emolecules, mcule, mcule-ultimate] |
-| `tranche` | Encoded molecular properties | H02P025M300-0 |
-| `mwt` | Molecular weight | 325.45 |
-| `logp` | LogP (partition coefficient) | 2.5 |
-| `hba` | H-bond acceptors | 4 |
-| `hbd` | H-bond donors | 2 |
-| `rotatable_bonds` | Rotatable bonds count | 5 |
+| Field             | Description                  | Example                             |
+| ----------------- | ---------------------------- | ----------------------------------- |
+| `zinc_id`         | ZINC identifier              | ZINC000000000001                    |
+| `smiles`          | Canonical SMILES string      | CC(C)O                              |
+| `sub_id`          | Internal substance ID        | 123456                              |
+| `supplier_code`   | Vendor catalog number        | AB-1234567                          |
+| `catalogs`        | List of suppliers            | [emolecules, mcule, mcule-ultimate] |
+| `tranche`         | Encoded molecular properties | H02P025M300-0                       |
+| `mwt`             | Molecular weight             | 325.45                              |
+| `logp`            | LogP (partition coefficient) | 2.5                                 |
+| `hba`             | H-bond acceptors             | 4                                   |
+| `hbd`             | H-bond donors                | 2                                   |
+| `rotatable_bonds` | Rotatable bonds count        | 5                                   |
 
 **Note**: Not all fields are available for all endpoints. Field availability depends on the database version and endpoint.
 
@@ -202,11 +228,13 @@ If `output_fields` is not specified, endpoints return all available fields in TS
 ### Custom Field Selection
 
 Request specific fields only:
+
 ```bash
 curl "https://cartblanche22.docking.org/[email protected]_fields=zinc_id,smiles"
 ```
 
 Request multiple fields:
+
 ```bash
 curl "https://cartblanche22.docking.org/[email protected]_fields=zinc_id,smiles,tranche,catalogs"
 ```
@@ -219,27 +247,27 @@ ZINC organizes compounds into tranches based on molecular properties for efficie
 
 **Pattern**: `H##P###M###-phase`
 
-| Component | Description | Range |
-|-----------|-------------|-------|
-| H## | Hydrogen bond donors | 00-99 |
-| P### | LogP × 10 | 000-999 (e.g., P035 = LogP 3.5) |
-| M### | Molecular weight | 000-999 Da |
-| phase | Reactivity classification | 0-9 |
+| Component | Description               | Range                           |
+| --------- | ------------------------- | ------------------------------- |
+| H##       | Hydrogen bond donors      | 00-99                           |
+| P###      | LogP × 10                 | 000-999 (e.g., P035 = LogP 3.5) |
+| M###      | Molecular weight          | 000-999 Da                      |
+| phase     | Reactivity classification | 0-9                             |
 
 ### Examples
 
-| Tranche Code | Interpretation |
-|--------------|----------------|
-| `H00P010M250-0` | 0 H-donors, LogP=1.0, MW=250 Da, phase 0 |
-| `H05P035M400-0` | 5 H-donors, LogP=3.5, MW=400 Da, phase 0 |
+| Tranche Code     | Interpretation                            |
+| ---------------- | ----------------------------------------- |
+| `H00P010M250-0`  | 0 H-donors, LogP=1.0, MW=250 Da, phase 0  |
+| `H05P035M400-0`  | 5 H-donors, LogP=3.5, MW=400 Da, phase 0  |
 | `H02P-005M180-0` | 2 H-donors, LogP=-0.5, MW=180 Da, phase 0 |
 
 ### Reactivity Phases
 
-| Phase | Description |
-|-------|-------------|
-| 0 | Unreactive (preferred for screening) |
-| 1-9 | Increasing reactivity (PAINS, reactive groups) |
+| Phase | Description                                    |
+| ----- | ---------------------------------------------- |
+| 0     | Unreactive (preferred for screening)           |
+| 1-9   | Increasing reactivity (PAINS, reactive groups) |
 
 ### Parsing Tranches in Python
 
@@ -278,6 +306,7 @@ print(props)  # {'h_donors': 5, 'logp': 3.5, 'mw': 400, 'phase': 0}
 ### Filtering by Tranches
 
 Download specific tranches from file repositories:
+
 ```bash
 # Download all compounds in a specific tranche
 wget https://files.docking.org/zinc22/H05/H05P035M400-0.db2.gz
@@ -302,21 +331,23 @@ https://files.docking.org/zinc22/
 
 ### File Formats
 
-| Extension | Format | Description |
-|-----------|--------|-------------|
-| `.db2.gz` | DOCK database | Compressed multi-conformer DB for DOCK |
-| `.mol2.gz` | MOL2 | Multi-molecule format with 3D coordinates |
-| `.sdf.gz` | SDF | Structure-Data File format |
-| `.smi` | SMILES | Plain text SMILES with ZINC IDs |
+| Extension  | Format        | Description                               |
+| ---------- | ------------- | ----------------------------------------- |
+| `.db2.gz`  | DOCK database | Compressed multi-conformer DB for DOCK    |
+| `.mol2.gz` | MOL2          | Multi-molecule format with 3D coordinates |
+| `.sdf.gz`  | SDF           | Structure-Data File format                |
+| `.smi`     | SMILES        | Plain text SMILES with ZINC IDs           |
 
 ### Downloading 3D Structures
 
 **Single tranche**:
+
 ```bash
 wget https://files.docking.org/zinc22/H05/H05P035M400-0.db2.gz
 ```
 
 **Multiple tranches** (parallel download with aria2c):
+
 ```bash
 # Create URL list
 cat > tranche_urls.txt <<EOF
@@ -330,6 +361,7 @@ aria2c -i tranche_urls.txt -x 8 -j 4
 ```
 
 **Recursive download** (use with caution - large data):
+
 ```bash
 wget -r -np -nH --cut-dirs=1 -A "*.db2.gz" \
   https://files.docking.org/zinc22/H05/
@@ -632,15 +664,19 @@ def save_to_sdf(zinc_df, output_file):
 ### Common Issues
 
 **Issue**: Empty or no results
+
 - **Solution**: Check SMILES syntax, verify ZINC IDs exist, try broader similarity search
 
 **Issue**: Timeout errors
+
 - **Solution**: Reduce result count, use batch queries, try during off-peak hours
 
 **Issue**: Invalid SMILES encoding
+
 - **Solution**: URL-encode special characters (use `urllib.parse.quote()` in Python)
 
 **Issue**: Tranche files not found
+
 - **Solution**: Verify tranche code format, check file repository structure
 
 ### Debug Mode
@@ -665,17 +701,18 @@ def debug_zinc_query(url):
 
 ### ZINC22 vs ZINC20 vs ZINC15
 
-| Feature | ZINC22 | ZINC20 | ZINC15 |
-|---------|--------|--------|--------|
-| Compounds | 230M+ purchasable | Focused on leads | ~750M total |
-| API | CartBlanche22 | Similar | REST-like |
-| Tranches | Yes | Yes | Yes |
-| 3D Structures | Yes | Yes | Yes |
-| Status | Current, growing | Maintained | Legacy |
+| Feature       | ZINC22            | ZINC20           | ZINC15      |
+| ------------- | ----------------- | ---------------- | ----------- |
+| Compounds     | 230M+ purchasable | Focused on leads | ~750M total |
+| API           | CartBlanche22     | Similar          | REST-like   |
+| Tranches      | Yes               | Yes              | Yes         |
+| 3D Structures | Yes               | Yes              | Yes         |
+| Status        | Current, growing  | Maintained       | Legacy      |
 
 ### API Compatibility
 
 Most query patterns work across versions, but URLs differ:
+
 - ZINC22: `cartblanche22.docking.org`
 - ZINC20: `zinc20.docking.org`
 - ZINC15: `zinc15.docking.org`

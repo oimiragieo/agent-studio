@@ -8,6 +8,7 @@ Comprehensive guide for styling and customizing matplotlib visualizations.
 
 **1. Perceptually Uniform Sequential**
 Best for ordered data that progresses from low to high values.
+
 - `viridis` (default, colorblind-friendly)
 - `plasma`
 - `inferno`
@@ -15,6 +16,7 @@ Best for ordered data that progresses from low to high values.
 - `cividis` (optimized for colorblind viewers)
 
 **Usage:**
+
 ```python
 im = ax.imshow(data, cmap='viridis')
 scatter = ax.scatter(x, y, c=values, cmap='plasma')
@@ -22,12 +24,14 @@ scatter = ax.scatter(x, y, c=values, cmap='plasma')
 
 **2. Sequential**
 Traditional colormaps for ordered data.
+
 - `Blues`, `Greens`, `Reds`, `Oranges`, `Purples`
 - `YlOrBr`, `YlOrRd`, `OrRd`, `PuRd`
 - `BuPu`, `GnBu`, `PuBu`, `YlGnBu`
 
 **3. Diverging**
 Best for data with a meaningful center point (e.g., zero, mean).
+
 - `coolwarm` (blue to red)
 - `RdBu` (red-blue)
 - `RdYlBu` (red-yellow-blue)
@@ -35,6 +39,7 @@ Best for data with a meaningful center point (e.g., zero, mean).
 - `PiYG`, `PRGn`, `BrBG`, `PuOr`, `RdGy`
 
 **Usage:**
+
 ```python
 # Center colormap at zero
 im = ax.imshow(data, cmap='coolwarm', vmin=-1, vmax=1)
@@ -42,6 +47,7 @@ im = ax.imshow(data, cmap='coolwarm', vmin=-1, vmax=1)
 
 **4. Qualitative**
 Best for categorical/nominal data without inherent ordering.
+
 - `tab10` (10 distinct colors)
 - `tab20` (20 distinct colors)
 - `Set1`, `Set2`, `Set3`
@@ -49,6 +55,7 @@ Best for categorical/nominal data without inherent ordering.
 - `Dark2`, `Accent`, `Paired`
 
 **Usage:**
+
 ```python
 colors = plt.cm.tab10(np.linspace(0, 1, n_categories))
 for i, category in enumerate(categories):
@@ -57,6 +64,7 @@ for i, category in enumerate(categories):
 
 **5. Cyclic**
 Best for cyclic data (e.g., phase, angle).
+
 - `twilight`
 - `twilight_shifted`
 - `hsv`
@@ -194,6 +202,7 @@ savefig.facecolor: white
 ```
 
 Load and use:
+
 ```python
 plt.style.use('path/to/custom_style.mplstyle')
 ```
@@ -232,6 +241,7 @@ with plt.rc_context({'font.size': 14, 'lines.linewidth': 2.5}):
 ### Common rcParams
 
 **Figure settings:**
+
 ```python
 plt.rcParams['figure.figsize'] = (10, 6)
 plt.rcParams['figure.dpi'] = 100
@@ -242,6 +252,7 @@ plt.rcParams['figure.constrained_layout.use'] = True
 ```
 
 **Font settings:**
+
 ```python
 plt.rcParams['font.family'] = 'sans-serif'
 plt.rcParams['font.sans-serif'] = ['Arial', 'Helvetica', 'DejaVu Sans']
@@ -250,6 +261,7 @@ plt.rcParams['font.weight'] = 'normal'
 ```
 
 **Axes settings:**
+
 ```python
 plt.rcParams['axes.facecolor'] = 'white'
 plt.rcParams['axes.edgecolor'] = 'black'
@@ -263,6 +275,7 @@ plt.rcParams['axes.spines.right'] = True
 ```
 
 **Line settings:**
+
 ```python
 plt.rcParams['lines.linewidth'] = 2
 plt.rcParams['lines.linestyle'] = '-'
@@ -271,6 +284,7 @@ plt.rcParams['lines.markersize'] = 6
 ```
 
 **Save settings:**
+
 ```python
 plt.rcParams['savefig.dpi'] = 300
 plt.rcParams['savefig.format'] = 'png'

@@ -12,6 +12,7 @@ SHAP is grounded in **Shapley values**, a solution concept from cooperative game
 In cooperative game theory, players collaborate to achieve a total payoff, and the question is: how should this payoff be fairly distributed among players?
 
 **Mapping to Machine Learning**:
+
 - **Players** → Input features
 - **Game** → Model prediction task
 - **Payoff** → Model output (prediction value)
@@ -25,6 +26,7 @@ For a feature $i$, its Shapley value $\phi_i$ is:
 $$\phi_i = \sum_{S \subseteq F \setminus \{i\}} \frac{|S|!(|F|-|S|-1)!}{|F|!} [f(S \cup \{i\}) - f(S)]$$
 
 Where:
+
 - $F$ is the set of all features
 - $S$ is a subset of features not including $i$
 - $f(S)$ is the model's expected output given only features in $S$
@@ -60,6 +62,7 @@ If a feature's marginal contribution increases across coalitions, its Shapley va
 ### The Challenge
 
 Computing exact Shapley values requires evaluating the model on all possible feature coalitions:
+
 - For $n$ features, there are $2^n$ possible coalitions
 - For 50 features, this is over 1 quadrillion evaluations
 
@@ -73,6 +76,7 @@ SHAP connects Shapley values to **additive feature attribution methods**, enabli
 $$g(z') = \phi_0 + \sum_{i=1}^{M} \phi_i z'_i$$
 
 Where:
+
 - $g$ is the explanation model
 - $z' \in \{0,1\}^M$ indicates feature presence/absence
 - $\phi_i$ is the attribution to feature $i$
@@ -141,6 +145,7 @@ Different SHAP explainers use specialized algorithms to compute Shapley values e
 **Innovation**: Exploits tree structure to compute exact Shapley values in polynomial time instead of exponential.
 
 **Algorithm**:
+
 - Traverses each tree path from root to leaf
 - Computes feature contributions using tree splits and weights
 - Aggregates across all trees in ensemble
@@ -154,6 +159,7 @@ Different SHAP explainers use specialized algorithms to compute Shapley values e
 **Innovation**: Uses weighted linear regression to estimate Shapley values for any model.
 
 **Algorithm**:
+
 - Samples coalitions (feature subsets) according to Shapley kernel weights
 - Evaluates model on each coalition (missing features replaced by background values)
 - Fits weighted linear model to estimate feature attributions
@@ -169,6 +175,7 @@ Different SHAP explainers use specialized algorithms to compute Shapley values e
 **Innovation**: Combines DeepLIFT with Shapley value sampling.
 
 **Algorithm**:
+
 - Computes DeepLIFT attributions for each reference sample
 - Averages attributions across multiple reference samples
 - Approximates conditional expectations: $E[f(x) | x_S]$
@@ -182,6 +189,7 @@ Different SHAP explainers use specialized algorithms to compute Shapley values e
 **Innovation**: Closed-form Shapley values for linear models.
 
 **Algorithm**:
+
 - For independent features: $\phi_i = w_i \cdot (x_i - E[x_i])$
 - For correlated features: Adjusts for feature covariance
 
@@ -200,16 +208,19 @@ Computing $f(S)$ (model output given only features in $S$) requires handling mis
 ### Two Approaches
 
 **1. Interventional (Marginal) Approach**:
+
 - Replace missing features with values from background dataset
 - Estimates: $E[f(x) | x_S]$ by marginalizing over $x_{\bar{S}}$
 - Interpretation: "What would the model predict if we didn't know features $\bar{S}$?"
 
 **2. Observational (Conditional) Approach**:
+
 - Use conditional distribution: $E[f(x) | x_S = x_S^*]$
 - Accounts for feature dependencies
 - Interpretation: "What would the model predict for similar instances with features $S = x_S^*$?"
 
 **Trade-offs**:
+
 - **Interventional**: Simpler, assumes feature independence, matches causal interpretation
 - **Observational**: More accurate for correlated features, requires conditional distribution estimation
 
@@ -222,10 +233,12 @@ The **baseline** $\phi_0 = E[f(x)]$ represents the model's average prediction.
 ### Computing the Baseline
 
 **For TreeExplainer**:
+
 - With background data: Average prediction on background dataset
 - With tree_path_dependent: Weighted average using tree leaf distributions
 
 **For DeepExplainer / KernelExplainer**:
+
 - Average prediction on background samples
 
 ### Importance of Baseline
@@ -240,6 +253,7 @@ The **baseline** $\phi_0 = E[f(x)]$ represents the model's average prediction.
 ### Units and Scale
 
 **SHAP values have the same units as the model output**:
+
 - Regression: Same units as target variable (dollars, temperature, etc.)
 - Classification (log-odds): Log-odds units
 - Classification (probability): Probability units (if model output transformed)
@@ -247,6 +261,7 @@ The **baseline** $\phi_0 = E[f(x)]$ represents the model's average prediction.
 **Magnitude**: Higher absolute SHAP value = stronger feature impact
 
 **Sign**:
+
 - Positive SHAP value = Feature pushes prediction higher
 - Negative SHAP value = Feature pushes prediction lower
 
@@ -256,6 +271,7 @@ For a prediction $f(x)$:
 $$f(x) = E[f(X)] + \sum_{i=1}^{n} \phi_i(x)$$
 
 **Example**:
+
 - Expected value (baseline): 0.3
 - SHAP values: {Age: +0.15, Income: +0.10, Education: -0.05}
 - Prediction: $0.3 + 0.15 + 0.10 - 0.05 = 0.50$
@@ -263,11 +279,13 @@ $$f(x) = E[f(X)] + \sum_{i=1}^{n} \phi_i(x)$$
 ### Global vs. Local Importance
 
 **Local (Instance-level)**:
+
 - SHAP values for single prediction: $\phi_i(x)$
 - Explains: "Why did the model predict $f(x)$ for this instance?"
 - Visualization: Waterfall, force plots
 
 **Global (Dataset-level)**:
+
 - Average absolute SHAP values: $E[|\phi_i(x)|]$
 - Explains: "Which features are most important overall?"
 - Visualization: Beeswarm, bar plots
@@ -279,11 +297,13 @@ $$f(x) = E[f(X)] + \sum_{i=1}^{n} \phi_i(x)$$
 ### Comparison with Permutation Importance
 
 **Permutation Importance**:
+
 - Shuffles a feature and measures accuracy drop
 - Global metric only (no instance-level explanations)
 - Can be misleading with correlated features
 
 **SHAP**:
+
 - Provides both local and global importance
 - Handles feature correlations through coalitional averaging
 - Consistent: Additive property guarantees sum to prediction
@@ -291,10 +311,12 @@ $$f(x) = E[f(X)] + \sum_{i=1}^{n} \phi_i(x)$$
 ### Comparison with Feature Coefficients (Linear Models)
 
 **Feature Coefficients** ($w_i$):
+
 - Measure impact per unit change in feature
 - Don't account for feature scale or distribution
 
 **SHAP for Linear Models**:
+
 - $\phi_i = w_i \cdot (x_i - E[x_i])$
 - Accounts for feature value relative to average
 - More interpretable for comparing features with different units/scales
@@ -302,12 +324,14 @@ $$f(x) = E[f(X)] + \sum_{i=1}^{n} \phi_i(x)$$
 ### Comparison with Tree Feature Importance (Gini/Split-based)
 
 **Gini/Split Importance**:
+
 - Based on training process (purity gain or frequency of splits)
 - Biased toward high-cardinality features
 - No instance-level explanations
 - Can be misleading (importance ≠ predictive power)
 
 **SHAP (Tree SHAP)**:
+
 - Based on model output (prediction behavior)
 - Fair attribution through Shapley values
 - Provides instance-level explanations
@@ -325,6 +349,7 @@ $$\phi_{i,j} = \sum_{S \subseteq F \setminus \{i,j\}} \frac{|S|!(|F|-|S|-2)!}{2(
 Where $\Delta_{ij}(S)$ is the interaction effect of features $i$ and $j$ given coalition $S$.
 
 **Interpretation**:
+
 - $\phi_{i,i}$: Main effect of feature $i$
 - $\phi_{i,j}$ ($i \neq j$): Interaction effect between features $i$ and $j$
 
@@ -336,6 +361,7 @@ Main SHAP value equals main effect plus half of all pairwise interactions involv
 ### Computing Interactions
 
 **TreeExplainer** supports exact interaction computation:
+
 ```python
 explainer = shap.TreeExplainer(model)
 shap_interaction_values = explainer.shap_interaction_values(X)
@@ -350,6 +376,7 @@ shap_interaction_values = explainer.shap_interaction_values(X)
 **Exact Computation**: $O(2^n)$ - intractable for large $n$
 
 **Specialized Algorithms**:
+
 - Tree SHAP: $O(TLD^2)$ - efficient for trees
 - Deep SHAP, Kernel SHAP: Approximations required
 
@@ -362,6 +389,7 @@ shap_interaction_values = explainer.shap_interaction_values(X)
 **Challenge**: Real features are often correlated (e.g., height and weight)
 
 **Solutions**:
+
 - Use observational approach (conditional expectations)
 - TreeExplainer with correlation-aware perturbation
 - Feature grouping for highly correlated features
@@ -384,6 +412,7 @@ SHAP answers: "How does the model's prediction change with this feature?"
 SHAP does NOT answer: "What would happen if we changed this feature in reality?"
 
 **Example**:
+
 - SHAP: "Hospital stay length increases prediction of mortality" (association)
 - Causality: "Longer hospital stays cause higher mortality" (incorrect!)
 
@@ -394,6 +423,7 @@ SHAP does NOT answer: "What would happen if we changed this feature in reality?"
 ### SHAP as Optimal Credit Allocation
 
 SHAP is the unique attribution method satisfying:
+
 1. **Local accuracy**: Explanation matches model
 2. **Missingness**: Absent features have zero attribution
 3. **Consistency**: Attribution reflects feature importance changes
@@ -410,6 +440,7 @@ Where $f_i(x_i)$ captures main effect of feature $i$, and $\phi_i \approx f_i(x_
 ### Relationship to Sensitivity Analysis
 
 SHAP generalizes sensitivity analysis:
+
 - **Sensitivity Analysis**: $\frac{\partial f}{\partial x_i}$ (local gradient)
 - **SHAP**: Integrated sensitivity over feature coalition space
 
@@ -436,11 +467,13 @@ Gradient-based methods (GradientExplainer, Integrated Gradients) approximate SHA
 ## References and Further Reading
 
 **Foundational Papers**:
+
 - Shapley, L. S. (1951). "A value for n-person games"
 - Lundberg, S. M., & Lee, S. I. (2017). "A Unified Approach to Interpreting Model Predictions" (NeurIPS)
 - Lundberg, S. M., et al. (2020). "From local explanations to global understanding with explainable AI for trees" (Nature Machine Intelligence)
 
 **Key Concepts**:
+
 - Cooperative game theory and Shapley values
 - Additive feature attribution methods
 - Conditional expectation estimation

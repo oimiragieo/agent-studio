@@ -43,6 +43,7 @@ def square(x: int):
 ```
 
 Call with:
+
 ```bash
 curl "https://workspace--app-square.modal.run?x=42"
 ```
@@ -57,6 +58,7 @@ def square(item: dict):
 ```
 
 Call with:
+
 ```bash
 curl -X POST -H 'Content-Type: application/json' \
   --data '{"x": 42}' \
@@ -222,6 +224,7 @@ def protected():
 ```
 
 Protect with tokens in settings, pass in headers:
+
 - `Modal-Key`
 - `Modal-Secret`
 
@@ -300,11 +303,13 @@ def hello(message: str):
 ```
 
 Multiple domains:
+
 ```python
 @modal.fastapi_endpoint(custom_domains=["api.example.com", "api.example.net"])
 ```
 
 Wildcard domains:
+
 ```python
 @modal.fastapi_endpoint(custom_domains=["*.example.com"])
 ```
@@ -327,6 +332,7 @@ First request may experience cold start (few seconds). Modal keeps containers al
 ### Rate Limits
 
 Default: 200 requests/second with 5-second burst multiplier
+
 - Excess returns 429 status code
 - Contact support to increase limits
 

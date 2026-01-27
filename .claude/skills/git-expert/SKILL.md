@@ -17,6 +17,7 @@ streaming: supported
 # Git Expert Skill
 
 ## ⚡ Token-Efficient Workflow
+
 Do not use `git status` repeatedly. Use this workflow:
 
 1.  **Check State**: `git status -s` (Short format saves tokens)
@@ -26,6 +27,7 @@ Do not use `git status` repeatedly. Use this workflow:
 ## 🔄 Common Patterns
 
 ### Safe Commit
+
 ```bash
 git add <file>
 git diff --cached # REVIEW THIS!
@@ -33,17 +35,20 @@ git commit -m "feat: description"
 ```
 
 ### Undo Last Commit (Soft)
+
 ```bash
 git reset --soft HEAD~1
 ```
 
 ### Fix Merge Conflict
+
 1. `git status` to see conflict files.
 2. Edit file to resolve markers (`<<<<`, `====`, `>>>>`).
 3. `git add <file>`
 4. `git commit --no-edit`
 
 ## 🛡️ Safety Rules
+
 - NEVER use `git push --force`.
 - NEVER commit secrets.
 - ALWAYS run tests before pushing.
@@ -58,6 +63,7 @@ git reset --soft HEAD~1
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

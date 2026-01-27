@@ -26,15 +26,15 @@ syncPolicy:
 ```yaml
 syncWindows:
   - kind: allow
-    schedule: "0 8 * * *"
+    schedule: '0 8 * * *'
     duration: 1h
     applications:
       - my-app
   - kind: deny
-    schedule: "0 22 * * *"
+    schedule: '0 22 * * *'
     duration: 8h
     applications:
-      - "*"
+      - '*'
 ```
 
 ### Retry Policy

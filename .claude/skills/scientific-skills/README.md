@@ -19,14 +19,14 @@ A comprehensive collection of **140 ready-to-use scientific skills** for Claude,
 
 Want 10x the power with zero setup? **[K-Dense Web](https://k-dense.ai)** is the complete AI co-scientist platform—everything in this repo, plus:
 
-| Feature | This Repo | K-Dense Web |
-|---------|-----------|-------------|
-| Scientific Skills | 140 skills | **200+ skills** (exclusive access) |
-| Setup Required | Manual installation | **Zero setup** — works instantly |
-| Compute | Your machine | **Cloud GPUs & HPC** included |
-| Workflows | Basic prompts | **End-to-end research pipelines** |
-| Outputs | Code & analysis | **Publication-ready** figures, reports & papers |
-| Integrations | Local tools | **Lab systems, ELNs, cloud storage** |
+| Feature           | This Repo           | K-Dense Web                                     |
+| ----------------- | ------------------- | ----------------------------------------------- |
+| Scientific Skills | 140 skills          | **200+ skills** (exclusive access)              |
+| Setup Required    | Manual installation | **Zero setup** — works instantly                |
+| Compute           | Your machine        | **Cloud GPUs & HPC** included                   |
+| Workflows         | Basic prompts       | **End-to-end research pipelines**               |
+| Outputs           | Code & analysis     | **Publication-ready** figures, reports & papers |
+| Integrations      | Local tools         | **Lab systems, ELNs, cloud storage**            |
 
 **Researchers at Stanford, MIT, and leading pharma companies use K-Dense Web to accelerate discoveries.**
 
@@ -34,11 +34,12 @@ Want 10x the power with zero setup? **[K-Dense Web](https://k-dense.ai)** is the
 
 <a href="https://k-dense.ai"><img src="https://img.shields.io/badge/Try_K--Dense_Web-Start_Free-blue?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTUgMTJoMTQiLz48cGF0aCBkPSJtMTIgNSA3IDctNyA3Ii8+PC9zdmc+" alt="Try K-Dense Web"></a>
 
-*Learn more at [k-dense.ai](https://k-dense.ai)* | *[Read our detailed comparison →](https://k-dense.ai/blog/k-dense-web-vs-claude-scientific-skills)*
+_Learn more at [k-dense.ai](https://k-dense.ai)_ | _[Read our detailed comparison →](https://k-dense.ai/blog/k-dense-web-vs-claude-scientific-skills)_
 
 ---
 
 These skills enable Claude to seamlessly work with specialized scientific libraries, databases, and tools across multiple scientific domains:
+
 - 🧬 Bioinformatics & Genomics - Sequence analysis, single-cell RNA-seq, gene regulatory networks, variant annotation, phylogenetic analysis
 - 🧪 Cheminformatics & Drug Discovery - Molecular property prediction, virtual screening, ADMET analysis, molecular docking, lead optimization
 - 🔬 Proteomics & Mass Spectrometry - LC-MS/MS processing, peptide identification, spectral matching, protein quantification
@@ -73,6 +74,7 @@ This repository provides **140 scientific skills** organized into the following 
 - **10+ Research & Clinical Tools** - Hypothesis generation, grant writing, clinical decision support, treatment plans, regulatory compliance
 
 Each skill includes:
+
 - ✅ Comprehensive documentation (`SKILL.md`)
 - ✅ Practical code examples
 - ✅ Use cases and best practices
@@ -107,21 +109,25 @@ Each skill includes:
 ## 🚀 Why Use This?
 
 ### ⚡ **Accelerate Your Research**
+
 - **Save Days of Work** - Skip API documentation research and integration setup
 - **Production-Ready Code** - Tested, validated examples following scientific best practices
 - **Multi-Step Workflows** - Execute complex pipelines with a single prompt
 
 ### 🎯 **Comprehensive Coverage**
+
 - **140 Skills** - Extensive coverage across all major scientific domains
 - **28+ Databases** - Direct access to OpenAlex, PubMed, bioRxiv, ChEMBL, UniProt, COSMIC, and more
 - **55+ Python Packages** - RDKit, Scanpy, PyTorch Lightning, scikit-learn, BioServices, PennyLane, Qiskit, and others
 
 ### 🔧 **Easy Integration**
+
 - **One-Click Setup** - Install via Claude Code or MCP server
 - **Automatic Discovery** - Claude automatically finds and uses relevant skills
 - **Well Documented** - Each skill includes examples, use cases, and best practices
 
 ### 🌟 **Maintained & Supported**
+
 - **Regular Updates** - Continuously maintained and expanded by K-Dense team
 - **Community Driven** - Open source with active community contributions
 - **Enterprise Ready** - Commercial support available for advanced needs
@@ -139,11 +145,13 @@ Choose your preferred platform to get started:
 **Step 1: Install Claude Code**
 
 **macOS:**
+
 ```bash
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
 **Windows:**
+
 ```powershell
 irm https://claude.ai/install.ps1 | iex
 ```
@@ -151,6 +159,7 @@ irm https://claude.ai/install.ps1 | iex
 **Step 2: Register the Marketplace**
 
 In Claude Code, run the following command:
+
 ```bash
 /plugin marketplace add K-Dense-AI/claude-scientific-skills
 ```
@@ -158,11 +167,13 @@ In Claude Code, run the following command:
 **Step 3: Install the Plugin**
 
 **Option A: Direct Install (Fastest)**
+
 ```bash
 /plugin install scientific-skills@claude-scientific-skills
 ```
 
 **Option B: Interactive Install**
+
 1. Run `/plugin` in Claude Code
 2. Select **Browse and install plugins**
 3. Choose **claude-scientific-skills** marketplace
@@ -172,6 +183,7 @@ In Claude Code, run the following command:
 **That's it!** Claude will automatically use the appropriate skills when you describe your scientific tasks.
 
 **Managing Your Plugin:**
+
 ```bash
 # Check installed plugins
 /plugin → Manage Plugins
@@ -208,6 +220,7 @@ One-click installation via our hosted MCP server:
 Access all skills via our MCP server in any MCP-compatible client (ChatGPT, Google ADK, OpenAI Agent SDK, etc.):
 
 **Option 1: Hosted MCP Server** (Easiest)
+
 ```
 https://mcp.k-dense.ai/claude-scientific-skills/mcp
 ```
@@ -245,21 +258,25 @@ Claude Scientific Skills is powered by **50+ incredible open source projects** m
 The skills use `uv` as the package manager for installing Python dependencies. Install it using the instructions for your operating system:
 
 **macOS and Linux:**
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
 **Windows:**
+
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 **Alternative (via pip):**
+
 ```bash
 pip install uv
 ```
 
 After installation, verify it works by running:
+
 ```bash
 uv --version
 ```
@@ -273,13 +290,15 @@ For more installation options and details, visit the [official uv documentation]
 Once you've installed the skills, you can ask Claude to execute complex multi-step scientific workflows. Here are some example prompts:
 
 ### 🧪 Drug Discovery Pipeline
+
 **Goal**: Find novel EGFR inhibitors for lung cancer treatment
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Query ChEMBL for EGFR inhibitors (IC50 < 50nM), analyze structure-activity relationships 
-with RDKit, generate improved analogs with datamol, perform virtual screening with DiffDock 
-against AlphaFold EGFR structure, search PubMed for resistance mechanisms, check COSMIC for 
+Use available skills you have access to whenever possible. Query ChEMBL for EGFR inhibitors (IC50 < 50nM), analyze structure-activity relationships
+with RDKit, generate improved analogs with datamol, perform virtual screening with DiffDock
+against AlphaFold EGFR structure, search PubMed for resistance mechanisms, check COSMIC for
 mutations, and create visualizations and a comprehensive report.
 ```
 
@@ -288,13 +307,15 @@ mutations, and create visualizations and a comprehensive report.
 ---
 
 ### 🔬 Single-Cell RNA-seq Analysis
+
 **Goal**: Comprehensive analysis of 10X Genomics data with public data integration
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Load 10X dataset with Scanpy, perform QC and doublet removal, integrate with Cellxgene 
-Census data, identify cell types using NCBI Gene markers, run differential expression with 
-PyDESeq2, infer gene regulatory networks with Arboreto, enrich pathways via Reactome/KEGG, 
+Use available skills you have access to whenever possible. Load 10X dataset with Scanpy, perform QC and doublet removal, integrate with Cellxgene
+Census data, identify cell types using NCBI Gene markers, run differential expression with
+PyDESeq2, infer gene regulatory networks with Arboreto, enrich pathways via Reactome/KEGG,
 and identify therapeutic targets with Open Targets.
 ```
 
@@ -303,13 +324,15 @@ and identify therapeutic targets with Open Targets.
 ---
 
 ### 🧬 Multi-Omics Biomarker Discovery
+
 **Goal**: Integrate RNA-seq, proteomics, and metabolomics to predict patient outcomes
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Analyze RNA-seq with PyDESeq2, process mass spec with pyOpenMS, integrate metabolites from 
-HMDB/Metabolomics Workbench, map proteins to pathways (UniProt/KEGG), find interactions via 
-STRING, correlate omics layers with statsmodels, build predictive model with scikit-learn, 
+Use available skills you have access to whenever possible. Analyze RNA-seq with PyDESeq2, process mass spec with pyOpenMS, integrate metabolites from
+HMDB/Metabolomics Workbench, map proteins to pathways (UniProt/KEGG), find interactions via
+STRING, correlate omics layers with statsmodels, build predictive model with scikit-learn,
 and search ClinicalTrials.gov for relevant trials.
 ```
 
@@ -318,13 +341,15 @@ and search ClinicalTrials.gov for relevant trials.
 ---
 
 ### 🎯 Virtual Screening Campaign
+
 **Goal**: Discover allosteric modulators for protein-protein interactions
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Retrieve AlphaFold structures, identify interaction interface with BioPython, search ZINC 
-for allosteric candidates (MW 300-500, logP 2-4), filter with RDKit, dock with DiffDock, 
-rank with DeepChem, check PubChem suppliers, search USPTO patents, and optimize leads with 
+Use available skills you have access to whenever possible. Retrieve AlphaFold structures, identify interaction interface with BioPython, search ZINC
+for allosteric candidates (MW 300-500, logP 2-4), filter with RDKit, dock with DiffDock,
+rank with DeepChem, check PubChem suppliers, search USPTO patents, and optimize leads with
 MedChem/molfeat.
 ```
 
@@ -333,13 +358,15 @@ MedChem/molfeat.
 ---
 
 ### 🏥 Clinical Variant Interpretation
+
 **Goal**: Analyze VCF file for hereditary cancer risk assessment
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Parse VCF with pysam, annotate variants with Ensembl VEP, query ClinVar for pathogenicity, 
-check COSMIC for cancer mutations, retrieve gene info from NCBI Gene, analyze protein impact 
-with UniProt, search PubMed for case reports, check ClinPGx for pharmacogenomics, generate 
+Use available skills you have access to whenever possible. Parse VCF with pysam, annotate variants with Ensembl VEP, query ClinVar for pathogenicity,
+check COSMIC for cancer mutations, retrieve gene info from NCBI Gene, analyze protein impact
+with UniProt, search PubMed for case reports, check ClinPGx for pharmacogenomics, generate
 clinical report with ReportLab, and find matching trials on ClinicalTrials.gov.
 ```
 
@@ -348,13 +375,15 @@ clinical report with ReportLab, and find matching trials on ClinicalTrials.gov.
 ---
 
 ### 🌐 Systems Biology Network Analysis
+
 **Goal**: Analyze gene regulatory networks from RNA-seq data
 
 **Prompt**:
+
 ```
-Use available skills you have access to whenever possible. Query NCBI Gene for annotations, retrieve sequences from UniProt, identify interactions via 
-STRING, map to Reactome/KEGG pathways, analyze topology with Torch Geometric, reconstruct 
-GRNs with Arboreto, assess druggability with Open Targets, model with PyMC, visualize 
+Use available skills you have access to whenever possible. Query NCBI Gene for annotations, retrieve sequences from UniProt, identify interactions via
+STRING, map to Reactome/KEGG pathways, analyze topology with Torch Geometric, reconstruct
+GRNs with Arboreto, assess druggability with Open Targets, model with PyMC, visualize
 networks, and search GEO for similar patterns.
 ```
 
@@ -367,6 +396,7 @@ networks, and search GEO for similar patterns.
 ## 🔬 Use Cases
 
 ### 🧪 Drug Discovery & Medicinal Chemistry
+
 - **Virtual Screening**: Screen millions of compounds from PubChem/ZINC against protein targets
 - **Lead Optimization**: Analyze structure-activity relationships with RDKit, generate analogs with datamol
 - **ADMET Prediction**: Predict absorption, distribution, metabolism, excretion, and toxicity with DeepChem
@@ -374,6 +404,7 @@ networks, and search GEO for similar patterns.
 - **Bioactivity Mining**: Query ChEMBL for known inhibitors and analyze SAR patterns
 
 ### 🧬 Bioinformatics & Genomics
+
 - **Sequence Analysis**: Process DNA/RNA/protein sequences with BioPython and pysam
 - **Single-Cell Analysis**: Analyze 10X Genomics data with Scanpy, identify cell types, infer GRNs with Arboreto
 - **Variant Annotation**: Annotate VCF files with Ensembl VEP, query ClinVar for pathogenicity
@@ -381,24 +412,28 @@ networks, and search GEO for similar patterns.
 - **Network Analysis**: Identify protein-protein interactions via STRING, map to pathways (KEGG, Reactome)
 
 ### 🏥 Clinical Research & Precision Medicine
+
 - **Clinical Trials**: Search ClinicalTrials.gov for relevant studies, analyze eligibility criteria
 - **Variant Interpretation**: Annotate variants with ClinVar, COSMIC, and ClinPGx for pharmacogenomics
 - **Drug Safety**: Query FDA databases for adverse events, drug interactions, and recalls
 - **Precision Therapeutics**: Match patient variants to targeted therapies and clinical trials
 
 ### 🔬 Multi-Omics & Systems Biology
+
 - **Multi-Omics Integration**: Combine RNA-seq, proteomics, and metabolomics data
 - **Pathway Analysis**: Enrich differentially expressed genes in KEGG/Reactome pathways
 - **Network Biology**: Reconstruct gene regulatory networks, identify hub genes
 - **Biomarker Discovery**: Integrate multi-omics layers to predict patient outcomes
 
 ### 📊 Data Analysis & Visualization
+
 - **Statistical Analysis**: Perform hypothesis testing, power analysis, and experimental design
 - **Publication Figures**: Create publication-quality visualizations with matplotlib and seaborn
 - **Network Visualization**: Visualize biological networks with NetworkX
 - **Report Generation**: Generate comprehensive PDF reports with ReportLab
 
 ### 🧪 Laboratory Automation
+
 - **Protocol Design**: Create Opentrons protocols for automated liquid handling
 - **LIMS Integration**: Integrate with Benchling and LabArchives for data management
 - **Workflow Automation**: Automate multi-step laboratory workflows
@@ -412,12 +447,14 @@ This repository contains **140 scientific skills** organized across multiple dom
 ### Skill Categories
 
 #### 🧬 **Bioinformatics & Genomics** (16+ skills)
+
 - Sequence analysis: BioPython, pysam, scikit-bio, BioServices
 - Single-cell analysis: Scanpy, AnnData, scvi-tools, Arboreto, Cellxgene Census
 - Genomic tools: gget, geniml, gtars, deepTools, FlowIO, Zarr
 - Phylogenetics: ETE Toolkit
 
 #### 🧪 **Cheminformatics & Drug Discovery** (11+ skills)
+
 - Molecular manipulation: RDKit, Datamol, Molfeat
 - Deep learning: DeepChem, TorchDrug
 - Docking & screening: DiffDock
@@ -426,22 +463,27 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Benchmarks: PyTDC
 
 #### 🔬 **Proteomics & Mass Spectrometry** (2 skills)
+
 - Spectral processing: matchms, pyOpenMS
 
 #### 🏥 **Clinical Research & Precision Medicine** (12+ skills)
+
 - Clinical databases: ClinicalTrials.gov, ClinVar, ClinPGx, COSMIC, FDA Databases
 - Healthcare AI: PyHealth, NeuroKit2, Clinical Decision Support
 - Clinical documentation: Clinical Reports, Treatment Plans
 - Variant analysis: Ensembl, NCBI Gene
 
 #### 🖼️ **Medical Imaging & Digital Pathology** (3 skills)
+
 - DICOM processing: pydicom
 - Whole slide imaging: histolab, PathML
 
 #### 🧠 **Neuroscience & Electrophysiology** (1 skill)
+
 - Neural recordings: Neuropixels-Analysis (extracellular spikes, silicon probes, spike sorting)
 
 #### 🤖 **Machine Learning & AI** (15+ skills)
+
 - Deep learning: PyTorch Lightning, Transformers, Stable Baselines3, PufferLib
 - Classical ML: scikit-learn, scikit-survival, SHAP
 - Time series: aeon
@@ -452,18 +494,21 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Statistical modeling: statsmodels
 
 #### 🔮 **Materials Science, Chemistry & Physics** (7 skills)
+
 - Materials: Pymatgen
 - Metabolic modeling: COBRApy
 - Astronomy: Astropy
 - Quantum computing: Cirq, PennyLane, Qiskit, QuTiP
 
 #### ⚙️ **Engineering & Simulation** (4 skills)
+
 - Numerical computing: MATLAB/Octave
 - Computational fluid dynamics: FluidSim
 - Discrete-event simulation: SimPy
 - Data processing: Dask, Polars, Vaex
 
 #### 📊 **Data Analysis & Visualization** (14+ skills)
+
 - Visualization: Matplotlib, Seaborn, Plotly, Scientific Visualization
 - Geospatial analysis: GeoPandas
 - Network analysis: NetworkX
@@ -474,20 +519,24 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Statistical analysis: Statistical Analysis workflows
 
 #### 🧪 **Laboratory Automation** (3 skills)
+
 - Liquid handling: PyLabRobot
 - Protocol management: Protocols.io
 - LIMS integration: Benchling, LabArchives
 
 #### 🔬 **Multi-omics & Systems Biology** (5+ skills)
+
 - Pathway analysis: KEGG, Reactome, STRING
 - Multi-omics: Denario, HypoGeniC
 - Data management: LaminDB
 
 #### 🧬 **Protein Engineering & Design** (2 skills)
+
 - Protein language models: ESM
 - Cloud laboratory platform: Adaptyv (automated protein testing and validation)
 
 #### 📚 **Scientific Communication** (20+ skills)
+
 - Literature: OpenAlex, PubMed, bioRxiv, Literature Review
 - Web search: Perplexity Search (AI-powered search with real-time information)
 - Writing: Scientific Writing, Peer Review
@@ -499,6 +548,7 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Illustration: Generate Image (AI image generation with FLUX.2 Pro and Gemini 3 Pro (Nano Banana Pro))
 
 #### 🔬 **Scientific Databases** (28+ skills)
+
 - Protein: UniProt, PDB, AlphaFold DB
 - Chemical: PubChem, ChEMBL, DrugBank, ZINC, HMDB
 - Genomic: Ensembl, NCBI Gene, GEO, ENA, GWAS Catalog
@@ -511,6 +561,7 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Patents: USPTO
 
 #### 🔧 **Infrastructure & Platforms** (6+ skills)
+
 - Cloud compute: Modal
 - Genomics platforms: DNAnexus, LatchBio
 - Microscopy: OMERO
@@ -518,6 +569,7 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Tool discovery: ToolUniverse, Get Available Resources
 
 #### 🎓 **Research Methodology & Planning** (8+ skills)
+
 - Ideation: Scientific Brainstorming, Hypothesis Generation
 - Critical analysis: Scientific Critical Thinking, Scholar Evaluation
 - Funding: Research Grants
@@ -525,6 +577,7 @@ This repository contains **140 scientific skills** organized across multiple dom
 - Market analysis: Market Research Reports
 
 #### ⚖️ **Regulatory & Standards** (1 skill)
+
 - Medical device standards: ISO 13485 Certification
 
 > 📖 **For complete details on all skills**, see [docs/scientific-skills.md](docs/scientific-skills.md)
@@ -540,16 +593,19 @@ We welcome contributions to expand and improve this scientific skills repository
 ### Ways to Contribute
 
 ✨ **Add New Skills**
+
 - Create skills for additional scientific packages or databases
 - Add integrations for scientific platforms and tools
 
 📚 **Improve Existing Skills**
+
 - Enhance documentation with more examples and use cases
 - Add new workflows and reference materials
 - Improve code examples and scripts
 - Fix bugs or update outdated information
 
 🐛 **Report Issues**
+
 - Submit bug reports with detailed reproduction steps
 - Suggest improvements or new features
 
@@ -577,6 +633,7 @@ We welcome contributions to expand and improve this scientific skills repository
 ### Recognition
 
 Contributors are recognized in our community and may be featured in:
+
 - Repository contributors list
 - Special mentions in release notes
 - K-Dense community highlights
@@ -594,24 +651,29 @@ This project builds on 50+ amazing open source projects. If you find value in th
 ### Common Issues
 
 **Problem: Skills not loading in Claude Code**
+
 - Solution: Ensure you've installed the latest version of Claude Code
 - Verify the plugin is installed: `/plugin → Manage Plugins`
 - Try reinstalling: `/plugin uninstall scientific-skills@claude-scientific-skills` then `/plugin install scientific-skills@claude-scientific-skills`
 - Re-add the marketplace if needed: `/plugin marketplace add K-Dense-AI/claude-scientific-skills`
 
 **Problem: Missing Python dependencies**
+
 - Solution: Check the specific `SKILL.md` file for required packages
 - Install dependencies: `uv pip install package-name`
 
 **Problem: API rate limits**
+
 - Solution: Many databases have rate limits. Review the specific database documentation
 - Consider implementing caching or batch requests
 
 **Problem: Authentication errors**
+
 - Solution: Some services require API keys. Check the `SKILL.md` for authentication setup
 - Verify your credentials and permissions
 
 **Problem: Outdated examples**
+
 - Solution: Report the issue via GitHub Issues
 - Check the official package documentation for updated syntax
 
@@ -691,6 +753,7 @@ Whether you're just getting started or you're a power user, our community is her
 If you use Claude Scientific Skills in your research or project, please cite it as:
 
 ### BibTeX
+
 ```bibtex
 @software{claude_scientific_skills_2025,
   author = {{K-Dense Inc.}},
@@ -702,16 +765,19 @@ If you use Claude Scientific Skills in your research or project, please cite it 
 ```
 
 ### APA
+
 ```
 K-Dense Inc. (2025). Claude Scientific Skills: A comprehensive collection of scientific tools for Claude AI [Computer software]. https://github.com/K-Dense-AI/claude-scientific-skills
 ```
 
 ### MLA
+
 ```
 K-Dense Inc. Claude Scientific Skills: A Comprehensive Collection of Scientific Tools for Claude AI. 2025, github.com/K-Dense-AI/claude-scientific-skills.
 ```
 
 ### Plain Text
+
 ```
 Claude Scientific Skills by K-Dense Inc. (2025)
 Available at: https://github.com/K-Dense-AI/claude-scientific-skills
@@ -728,6 +794,7 @@ This project is licensed under the **MIT License**.
 **Copyright © 2025 K-Dense Inc.** ([k-dense.ai](https://k-dense.ai/))
 
 ### Key Points:
+
 - ✅ **Free for any use** (commercial and noncommercial)
 - ✅ **Open source** - modify, distribute, and use freely
 - ✅ **Permissive** - minimal restrictions on reuse

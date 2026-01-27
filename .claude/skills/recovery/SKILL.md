@@ -108,30 +108,33 @@ Recovery Skill - Workflow recovery protocol for resuming workflows after context
 
 When a task fails, classify the failure type:
 
-| Failure Type | Indicators | Recovery Action |
-|--------------|------------|-----------------|
-| BROKEN_BUILD | Build errors, syntax errors, module not found | ROLLBACK + fix |
+| Failure Type        | Indicators                                         | Recovery Action                 |
+| ------------------- | -------------------------------------------------- | ------------------------------- |
+| BROKEN_BUILD        | Build errors, syntax errors, module not found      | ROLLBACK + fix                  |
 | VERIFICATION_FAILED | Test failures, validation errors, assertion errors | RETRY with fix (max 3 attempts) |
-| CIRCULAR_FIX | Same error 3+ times, similar approaches repeated | SKIP or ESCALATE |
-| CONTEXT_EXHAUSTED | Token limit reached, maximum length exceeded | Compress context, continue |
-| UNKNOWN | No pattern match | RETRY once, then ESCALATE |
+| CIRCULAR_FIX        | Same error 3+ times, similar approaches repeated   | SKIP or ESCALATE                |
+| CONTEXT_EXHAUSTED   | Token limit reached, maximum length exceeded       | Compress context, continue      |
+| UNKNOWN             | No pattern match                                   | RETRY once, then ESCALATE       |
 
 ## Circular Fix Detection
 
 **Iron Law**: If the same approach has been tried 3+ times without success, STOP.
 
 When circular fix is detected:
+
 1. **Stop** the current approach immediately
 2. **Document** what was tried (approaches, errors, files)
 3. **Try fundamentally different approach** (different library, different pattern, simpler implementation)
 4. **If still failing, ESCALATE** to human intervention
 
 **Detection Algorithm**:
+
 - Extract keywords from current approach (excluding stop words)
 - Compare with keywords from last 3 attempts
 - If Jaccard similarity > 30% for 2+ attempts, flag as circular
 
 **Example**:
+
 ```
 Attempt 1: "Using async await for fetch"
 Attempt 2: "Using async/await with try-catch"
@@ -141,16 +144,17 @@ Attempt 3: "Trying async await pattern again"
 
 ## Attempt Count Thresholds
 
-| Failure Type | Max Attempts | Then Action |
-|--------------|--------------|-------------|
-| VERIFICATION_FAILED | 3 | SKIP + ESCALATE |
-| UNKNOWN | 2 | ESCALATE |
-| BROKEN_BUILD | 1 | ROLLBACK (if good commit exists) |
-| CIRCULAR_FIX | 0 | Immediately SKIP |
+| Failure Type        | Max Attempts | Then Action                      |
+| ------------------- | ------------ | -------------------------------- |
+| VERIFICATION_FAILED | 3            | SKIP + ESCALATE                  |
+| UNKNOWN             | 2            | ESCALATE                         |
+| BROKEN_BUILD        | 1            | ROLLBACK (if good commit exists) |
+| CIRCULAR_FIX        | 0            | Immediately SKIP                 |
 
 ## References
 
 See `references/` for detailed patterns:
+
 - `failure-types.md` - Failure classification details and indicators
 - `recovery-actions.md` - Recovery action decision tree and execution
 - `merge-strategies.md` - File merge strategies for multi-agent scenarios
@@ -221,11 +225,13 @@ cat .claude/context/history/reasoning/{workflow_id}/*.json
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

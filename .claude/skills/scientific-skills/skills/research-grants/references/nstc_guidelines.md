@@ -23,6 +23,7 @@ Based on official NSTC documentation:
 **Paper Size**: A4 (29.7 cm × 21 cm)
 
 **Font**:
+
 - Chinese: PMingLiU (新細明體) or BiauKai (標楷體)
 - English: Times New Roman or Arial
 - Size: 12-point minimum
@@ -30,6 +31,7 @@ Based on official NSTC documentation:
 **Spacing**: Single space for English; no extra spacing between lines for Chinese
 
 **Page Limits** (varies by field and program type):
+
 - **Humanities**: Individual 1-year: 30 pages; Multi-year: 45 pages
 - **Engineering**: Individual 1-year: 20 pages; Multi-year: 25 pages
 - **Natural Sciences**: Individual: 30 pages; Integrated: 45 pages
@@ -47,11 +49,13 @@ Based on official CM03 templates, the proposal must include:
 ### 1. Abstract (摘要)
 
 **Requirements**:
+
 - **Chinese abstract**: Maximum 500 characters
 - **English abstract**: Maximum 500 words
 - **Keywords**: 3-5 keywords in both languages
 
 **Content**:
+
 - Research background and problem statement
 - Research objectives
 - Key methods and approaches
@@ -60,6 +64,7 @@ Based on official CM03 templates, the proposal must include:
 ### 2. Research Background and Objectives (研究計畫之背景及目的)
 
 **Required Elements**:
+
 - Problem statement and significance
 - Research originality and innovation
 - Expected impact
@@ -70,6 +75,7 @@ Based on official CM03 templates, the proposal must include:
 ### 3. Research Methods, Steps, and Timeline (研究方法、進行步驟及執行進度)
 
 **Required Elements**:
+
 - Research principles and methodology
 - Justification for chosen methods
 - Innovative aspects of the approach
@@ -81,6 +87,7 @@ Based on official CM03 templates, the proposal must include:
 ### 4. Expected Outcomes (預期完成之工作項目及成果)
 
 **Required Elements**:
+
 - Expected research tasks (by year)
 - Personnel training plans
 - Expected outputs:
@@ -101,10 +108,12 @@ Based on official announcements:
 **Project Start Date**: Most projects begin August 1, 2025 (114年8月1日)
 
 **Academic Ethics Requirement**:
+
 - First-time applicants and first-time participants must complete **at least 6 hours** of academic ethics training within 3 years before submission
 - Must provide certification
 
 **Thesis Disclosure**:
+
 - If proposal content involves student theses supervised by the PI, it must be clearly disclosed or cited
 - Already published work (including student theses) should not be hidden as new research content
 
@@ -115,23 +124,28 @@ Based on official announcements:
 Based on official guidelines:
 
 **Personnel (人事費)**:
+
 - Postdoctoral researchers
 - Research assistants
 - Part-time staff
 - **Note**: PI salary typically not allowed
 
 **Equipment (設備費)**:
+
 - Items exceeding NT$10,000 with service life > 2 years
 - Items exceeding NT$200,000 may require price appraisal
 
 **Consumables (耗材費)**:
+
 - Lab supplies, reagents, software licenses
 
 **Travel (差旅費)**:
+
 - Domestic and international conferences
 - Research collaborations
 
 **Other (其他費用)**:
+
 - Publication fees, data collection, outsourcing
 
 ---
@@ -154,6 +168,7 @@ Based on official guidelines:
 **Application System**: Access through "學術研發服務網" (Academic Research Service Network)
 
 **Help Desk**:
+
 - Computer/System Issues: 0800-212-058 or (02)2737-7592
 - Regulation Questions: (02)2737-7440, 7568, 7847, 7980, 8010
 
@@ -166,6 +181,7 @@ For those who prefer LaTeX for proposal writing, there are excellent community-c
 #### Official CTAN Package (Recommended)
 
 **nstc-proposal** - Professional LaTeX classes for NSTC proposals:
+
 - **GitHub**: https://github.com/L-TChen/nstc-proposal
 - **CTAN**: Available via `tlmgr install nstc-proposal`
 - **Supports**: Both CM03 and CM302 (bibliography format)
@@ -177,6 +193,7 @@ For those who prefer LaTeX for proposal writing, there are excellent community-c
   - Proper formatting for NSTC requirements
 
 **Installation**:
+
 ```bash
 # Via TeX package manager (easiest)
 tlmgr install nstc-proposal
@@ -188,6 +205,7 @@ latex nstc-proposal.ins
 ```
 
 **Basic Usage Example**:
+
 ```latex
 \documentclass{nstc-cm03}
 \usepackage{microtype}
@@ -211,6 +229,7 @@ latex nstc-proposal.ins
 #### Alternative Templates
 
 **Engineering Division Template**:
+
 - GitHub: https://github.com/mcps5601/NSTC-proposal-LaTeX
 - Provides CM03 format specifically for Engineering Division (工程司)
 - **Note**: Format requirements may differ by division
@@ -246,6 +265,7 @@ latex nstc-proposal.ins
 Based on Engineering Division (工程司) - Automation/Control field experience:
 
 **Scoring Thresholds**:
+
 - **92+ points (Top 5%)**: Outstanding research level - eligible for Distinguished Research Award (傑出研究獎)
 - **88+ points (Top 15%)**: Required threshold if applying for a second concurrent project
 - **81+ points (Top 54-55%)**: **Passing threshold** - proposals scoring 81 or above are recommended for approval
@@ -260,6 +280,7 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 #### Abstract (摘要)
 
 **Reviewer Expectations**:
+
 - Must demonstrate **innovation** and **problem-solving strategy** immediately
 - Should capture attention in the first reading
 - Clearly state what makes this proposal different from existing work
@@ -269,6 +290,7 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 #### Research Background and Motivation (研究背景及目的)
 
 **What Reviewers Look For**:
+
 - **Clear problem definition**: Is the core problem well-defined?
 - **Reasonable design and objectives**: Are the goals achievable and well-justified?
 - **Logical flow**: Does the background naturally lead to your research objectives?
@@ -278,6 +300,7 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 #### Literature Review (文獻探討)
 
 **Quality Over Quantity**:
+
 - Select **highly relevant** literature, not just many papers
 - **Critical synthesis**: Don't just list papers - analyze strengths, weaknesses, and gaps
 - **Recency matters**: Include publications from the **last 2-3 years** to show awareness of current state-of-the-art
@@ -288,12 +311,14 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 #### Research Methods and Implementation (研究方法、進行步驟及執行進度)
 
 **Feasibility is Critical**:
+
 - **Avoid over-idealization**: Proposals that are too ambitious without clear mitigation strategies often fail
 - **Logical progression**: Each step should follow naturally from the previous one
 - **Comparison with existing methods**: Clearly show how your approach differs and why it's better
 - **Contingency planning**: Address potential problems and provide alternative approaches
 
 **Red Flags for Reviewers**:
+
 - Methods that are too difficult without demonstrated capability
 - Lack of logical connection between steps
 - No discussion of potential challenges
@@ -302,10 +327,12 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 #### Expected Outcomes (預期完成之工作項目及成果)
 
 **Be Specific and Quantifiable**:
+
 - ✅ **Good**: "Improve system efficiency by 15% compared to baseline method X"
 - ❌ **Weak**: "Improve system efficiency"
 
 **Include Multiple Dimensions**:
+
 - **Academic value**: Target journals and expected number of publications
 - **Economic benefits**: Potential industrial applications
 - **Talent cultivation**: Number and level of students to be trained
@@ -315,11 +342,13 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 ### Budget Preparation Tips
 
 **Alignment with Research Plan**:
+
 - Every budget item should directly support a specific research activity
 - Personnel costs should reflect actual time commitment
 - Equipment justification should explain why existing facilities are insufficient
 
 **International Conference Travel**:
+
 - Typical budget: NT$70,000 - 100,000
 - **Must justify**: Explain your track record of international conference participation and contributions
 - Show how conference attendance benefits the research
@@ -331,11 +360,13 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 ### Strategic Career Advice
 
 **For New Faculty**:
+
 1. **Always apply**: New investigators have certain advantages - don't miss the opportunity
 2. **Build foundation**: Use undergraduate research projects (大專學生研究計畫) to develop preliminary data
 3. **Self-assessment**: Use the review criteria checklist to evaluate your proposal before submission
 
 **Building Academic Visibility**:
+
 - Join professional societies (e.g., IEEE, CAA)
 - Serve as reviewer for journals and conferences
 - Take on roles as Associate Editor (AE) or board member
@@ -346,16 +377,19 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 ### Preparation and Mindset
 
 **Timeline**:
+
 - **Start early**: Successful proposals require multiple revisions
 - **Iterate**: Don't wait until the deadline to start writing
 - **Seek feedback**: Have colleagues review your draft
 
 **Handling Rejection**:
+
 - **Learn from feedback**: Carefully review all reviewer comments
 - **Revise and resubmit**: Address criticisms in next submission
 - **Consider alternatives**: If fundamental issues exist, consider different program types or focus areas
 
 **Professional Presentation**:
+
 - **Figures and tables**: Must be clear, numbered, and properly labeled
 - **Formatting**: Professional layout demonstrates attention to detail
 - **Proofreading**: Typos and formatting errors suggest carelessness
@@ -367,22 +401,26 @@ Based on Engineering Division (工程司) - Automation/Control field experience:
 Before submitting, ask yourself:
 
 **Innovation**:
+
 - [ ] Is my approach genuinely novel or just incremental?
 - [ ] Have I clearly explained what's new compared to existing work?
 - [ ] Do I have evidence (preliminary data) that my innovation is feasible?
 
 **Feasibility**:
+
 - [ ] Are my methods well-described and logical?
 - [ ] Do I have the necessary expertise and resources?
 - [ ] Have I addressed potential problems?
 - [ ] Is my timeline realistic?
 
 **Impact**:
+
 - [ ] Are my expected outcomes specific and measurable?
 - [ ] Have I explained both academic and practical value?
 - [ ] Does my proposal align with national priorities or industrial needs?
 
 **Presentation**:
+
 - [ ] Are all figures clear and properly labeled?
 - [ ] Is the writing clear and free of errors?
 - [ ] Does the budget align with proposed activities?
@@ -393,6 +431,7 @@ Before submitting, ask yourself:
 ## Advanced Writing Strategies from Government Reviewers
 
 > 📚 **Sources**: This section integrates insights from two comprehensive guides:
+>
 > 1. "如何提升政府科技發展計畫書撰寫品質" by **Prof. Guo Yao-Huang (郭耀煌教授)**
 > 2. "如何提升政府科技發展計畫書撰寫品質" by **President Wei Yao-Hui (魏耀揮校長)**, Mackay Medical College
 >
@@ -403,19 +442,22 @@ Before submitting, ask yourself:
 **Core Principle**: A high-quality proposal must demonstrate complete logical coherence from problem to performance.
 
 **The Loop**:
+
 ```
-Problem Discovery → Goal Definition → Strategy Formulation → 
+Problem Discovery → Goal Definition → Strategy Formulation →
 Concrete Measures → Execution Plan → Performance Indicators (KPI)
 ```
 
-**Critical Requirement**: Every element must connect logically. 
+**Critical Requirement**: Every element must connect logically.
 
 **Example of Broken Logic**:
+
 - ❌ **Goal**: Improve industrial technology
 - ❌ **Strategy**: Provide student scholarships
 - **Problem**: The strategy doesn't directly support the goal
 
 **Example of Closed Logic**:
+
 - ✅ **Goal**: Improve industrial technology
 - ✅ **Strategy**: Develop advanced manufacturing process
 - ✅ **Measures**: Establish testing facility, train engineers
@@ -427,13 +469,13 @@ Concrete Measures → Execution Plan → Performance Indicators (KPI)
 
 Before writing, ensure your proposal meets **SMART** criteria:
 
-| Criterion | Meaning | Application |
-|-----------|---------|-------------|
-| **S**pecific | Concrete goals | Define exact technical metrics (e.g., "improve accuracy to 95%") |
-| **M**easurable | Quantifiable KPIs | Use numbers, percentages, counts |
-| **A**chievable | Realistic scope | Match available resources, personnel, equipment, budget |
-| **R**ealistic | Scientific basis | Grounded in data and logical reasoning |
-| **T**imely | Clear timeline | Specific milestones with dates |
+| Criterion      | Meaning           | Application                                                      |
+| -------------- | ----------------- | ---------------------------------------------------------------- |
+| **S**pecific   | Concrete goals    | Define exact technical metrics (e.g., "improve accuracy to 95%") |
+| **M**easurable | Quantifiable KPIs | Use numbers, percentages, counts                                 |
+| **A**chievable | Realistic scope   | Match available resources, personnel, equipment, budget          |
+| **R**ealistic  | Scientific basis  | Grounded in data and logical reasoning                           |
+| **T**imely     | Clear timeline    | Specific milestones with dates                                   |
 
 ---
 
@@ -442,6 +484,7 @@ Before writing, ensure your proposal meets **SMART** criteria:
 Reviewers evaluate proposals across four key dimensions:
 
 #### 1. **Necessity (需求性)**
+
 - Does it align with national science and technology policies?
 - Is there urgent need for this research?
 - Why must this problem be solved **now**?
@@ -451,6 +494,7 @@ Reviewers evaluate proposals across four key dimensions:
 **Strong Proposal**: Cites specific policy documents, demonstrates time-sensitive need
 
 #### 2. **Feasibility (可行性)**
+
 - Are the goals achievable within the proposed timeline?
 - Is the team qualified (track record, expertise)?
 - Are the methods sound and well-justified?
@@ -459,6 +503,7 @@ Reviewers evaluate proposals across four key dimensions:
 **Red Flag**: Overly ambitious goals without preliminary data or risk mitigation
 
 #### 3. **Appropriateness (適當性)**
+
 - Does the budget match the work scope?
 - Are personnel allocations reasonable?
 - Is existing equipment utilized effectively?
@@ -467,6 +512,7 @@ Reviewers evaluate proposals across four key dimensions:
 **Reviewer's Question**: Why do you need this expensive equipment when similar facilities exist?
 
 #### 4. **Impact and Benefits (效益與影響)**
+
 - Beyond academic output, what are the societal effects?
 - Economic benefits or industrial applications?
 - Environmental, health, or national security impacts?
@@ -480,25 +526,28 @@ Reviewers evaluate proposals across four key dimensions:
 
 Understanding the difference between input, output, and outcome is critical:
 
-| Level | Type | Examples | Reviewer Value |
-|-------|------|----------|----------------|
-| **Input** | Resources invested | Personnel, budget, equipment | Basic requirement |
-| **Output** | Direct products | Papers, patents, conferences | Minimum expectation |
-| **Outcome** | Real-world impact | Industry adoption, health improvement, policy influence | **High value** |
+| Level       | Type               | Examples                                                | Reviewer Value      |
+| ----------- | ------------------ | ------------------------------------------------------- | ------------------- |
+| **Input**   | Resources invested | Personnel, budget, equipment                            | Basic requirement   |
+| **Output**  | Direct products    | Papers, patents, conferences                            | Minimum expectation |
+| **Outcome** | Real-world impact  | Industry adoption, health improvement, policy influence | **High value**      |
 
 **Example Comparison**:
+
 - ❌ **Weak KPI**: "Publish 3 papers" (output only)
 - ✅ **Strong KPI**: "Publish 3 papers in Q1 journals AND transfer technology to 2 companies, generating NT$5M in licensing revenue" (output + outcome)
 
 **KPI Best Practices**:
+
 - **Relevance**: Directly tied to project goals
 - **Ease**: Simple to measure and verify
 - **Credibility**: Based on realistic projections
 - **Cost-efficiency**: Achievable within budget
 
 **Progressive Targets**: Show year-by-year progress, not just final goals
+
 - Year 1: 30% completion
-- Year 2: 70% completion  
+- Year 2: 70% completion
 - Year 3: 100% completion + sustainability plan
 
 ---
@@ -509,21 +558,22 @@ Understanding the difference between input, output, and outcome is critical:
 
 Use SWOT to position your proposal strategically:
 
-| Strengths | Weaknesses |
-|-----------|------------|
-| Your unique expertise | Resource limitations |
-| Existing facilities | Lack of certain skills |
-| Strong track record | Time constraints |
+| Strengths             | Weaknesses             |
+| --------------------- | ---------------------- |
+| Your unique expertise | Resource limitations   |
+| Existing facilities   | Lack of certain skills |
+| Strong track record   | Time constraints       |
 
-| Opportunities | Threats |
-|---------------|---------|
-| Policy alignment | Competing teams |
+| Opportunities         | Threats            |
+| --------------------- | ------------------ |
+| Policy alignment      | Competing teams    |
 | Industry partnerships | Technology changes |
-| Emerging trends | Funding cuts |
+| Emerging trends       | Funding cuts       |
 
 **Critical**: Don't just list SWOT - **provide response strategies** for Weaknesses and Threats.
 
 **Example**:
+
 - **Weakness**: Lack of high-performance computing cluster
 - **Response**: Partner with National Center for High-performance Computing (國網中心)
 
@@ -545,6 +595,7 @@ Use fishbone diagrams to demonstrate deep problem understanding:
 #### Gantt Chart
 
 For complex multi-year projects, include Gantt charts to show:
+
 - Task dependencies
 - Resource allocation over time
 - Milestones and deliverables
@@ -559,10 +610,12 @@ For complex multi-year projects, include Gantt charts to show:
 #### Necessity and Reasonableness
 
 **The Two Questions Every Budget Item Must Answer**:
+
 1. **Why is this necessary?** (Link to specific research activity)
 2. **How was this calculated?** (Show detailed breakdown)
 
 **Example - Equipment Justification**:
+
 - ❌ **Weak**: "High-performance workstation: NT$150,000"
 - ✅ **Strong**: "High-performance workstation (Intel Xeon 32-core, 128GB RAM, RTX 4090 GPU) for deep learning model training: NT$150,000. Current lab computers (8GB RAM) cannot handle the 50GB dataset required for Aim 2. Estimated training time reduction from 2 weeks to 2 days."
 
@@ -571,12 +624,14 @@ For complex multi-year projects, include Gantt charts to show:
 **Critical Rule**: Strictly separate "recurrent" (經常門) and "capital" (資本門) expenses.
 
 **Recurrent (經常門)**:
+
 - Personnel salaries
 - Travel expenses
 - Consumables
 - Publication fees
 
 **Capital (資本門)**:
+
 - Equipment ≥ NT$10,000 with lifespan ≥ 2 years
 - Items ≥ NT$200,000 may require price comparison
 
@@ -585,6 +640,7 @@ For complex multi-year projects, include Gantt charts to show:
 #### Outsourcing (委辦費用)
 
 If including outsourcing costs:
+
 - Specify exact scope of work
 - Explain why in-house execution is not feasible
 - Describe selection and oversight procedures
@@ -595,6 +651,7 @@ If including outsourcing costs:
 **Typical Range**: NT$70,000 - 100,000
 
 **Required Justification**:
+
 - Your track record of international presentations
 - Specific conference name and dates (if known)
 - How attendance benefits the research (networking, collaboration, dissemination)
@@ -607,31 +664,38 @@ If including outsourcing costs:
 Based on actual reviewer feedback from government proposals:
 
 #### 1. **Vague Objectives**
+
 - ❌ "Promote development of..."
 - ❌ "Research on..."
 - ✅ "Develop algorithm achieving 95% accuracy on benchmark X"
 
 #### 2. **Redundancy and Overlap**
+
 - **Problem**: Multiple agencies funding similar work
 - **Solution**: Clearly differentiate from existing programs; coordinate with other ministries before submission
 
 #### 3. **Lack of Continuity Explanation**
+
 - **For continuing projects**: Must explain relationship between previous results and new proposal
 - Show how you're building on (not repeating) past work
 
 #### 4. **Technology Push Without Market Pull**
+
 - **Problem**: Developing technology without considering industry needs or market readiness
 - **Solution**: Include industry partner letters, market analysis, or user needs assessment
 
 #### 5. **Ignoring Negative Impacts**
+
 - **Common oversight**: Privacy concerns, environmental impact, ethical issues
 - **Solution**: Include risk assessment and mitigation strategies
 
 #### 6. **Excessive Administrative Overhead**
+
 - **Problem**: Too many project management offices (PMO) or coordinators
 - **Solution**: Justify administrative structure based on project complexity
 
 #### 7. **Missing Customer Definition**
+
 - **Question**: Who will use your research results?
 - **Answer**: Clearly define your target users/beneficiaries
 
@@ -642,6 +706,7 @@ Based on actual reviewer feedback from government proposals:
 **Remember**: You're writing for busy reviewers, not for yourself.
 
 **Best Practices**:
+
 1. **Use visual aids**: Replace dense text with figures, tables, flowcharts
 2. **Data-driven**: Support claims with specific numbers and citations
 3. **Objective correctness**: Verify all data and calculations
@@ -657,6 +722,7 @@ Based on actual reviewer feedback from government proposals:
 **Essential**: Connect your research to national priorities.
 
 **How to Demonstrate Alignment**:
+
 - Cite specific government policy documents (e.g., "六大核心戰略產業")
 - Reference national development plans
 - Show how your research addresses societal needs
@@ -672,11 +738,13 @@ Based on actual reviewer feedback from government proposals:
 **Requirement**: Long-term projects must include sustainability plans.
 
 **Key Questions**:
+
 - What happens when funding ends?
 - How will results be maintained or transferred?
 - What are the success/failure criteria for early termination?
 
 **Components**:
+
 - Technology transfer plan
 - Industry partnership agreements
 - Follow-on funding strategy
@@ -689,6 +757,7 @@ Based on actual reviewer feedback from government proposals:
 **For public service projects**: Include feedback and assessment systems.
 
 **Components**:
+
 - User satisfaction surveys
 - Performance metrics tracking
 - Regular review milestones
@@ -725,6 +794,7 @@ Before submission:
 ## Disclaimer
 
 **This guide is for reference only.** Official requirements may change annually and vary by program. **Always consult**:
+
 1. The latest official NSTC announcements (徵求公告)
 2. Your specific program's application guidelines
 3. Your institution's research office

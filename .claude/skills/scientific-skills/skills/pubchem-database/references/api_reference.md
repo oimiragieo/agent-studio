@@ -21,6 +21,7 @@ https://pubchem.ncbi.nlm.nih.gov/rest/pug/<input>/<operation>/<output>
 ```
 
 Components:
+
 - `<input>`: compound/cid, substance/sid, assay/aid, or search specifications
 - `<operation>`: Optional operations like property, synonyms, classification, etc.
 - `<output>`: Format such as JSON, XML, CSV, PNG, SDF, etc.
@@ -30,21 +31,25 @@ Components:
 #### 1. Retrieve by Identifier
 
 Get compound by CID (Compound ID):
+
 ```
 GET /rest/pug/compound/cid/{cid}/property/{properties}/JSON
 ```
 
 Get compound by name:
+
 ```
 GET /rest/pug/compound/name/{name}/property/{properties}/JSON
 ```
 
 Get compound by SMILES:
+
 ```
 GET /rest/pug/compound/smiles/{smiles}/property/{properties}/JSON
 ```
 
 Get compound by InChI:
+
 ```
 GET /rest/pug/compound/inchi/{inchi}/property/{properties}/JSON
 ```
@@ -52,6 +57,7 @@ GET /rest/pug/compound/inchi/{inchi}/property/{properties}/JSON
 #### 2. Available Properties
 
 Common molecular properties that can be retrieved:
+
 - `MolecularFormula`
 - `MolecularWeight`
 - `CanonicalSMILES`
@@ -80,6 +86,7 @@ Common molecular properties that can be retrieved:
 - `FeatureCount3D`
 
 To retrieve multiple properties, separate them with commas:
+
 ```
 /property/MolecularFormula,MolecularWeight,CanonicalSMILES/JSON
 ```
@@ -87,17 +94,20 @@ To retrieve multiple properties, separate them with commas:
 #### 3. Structure Search Operations
 
 **Similarity Search**:
+
 ```
 POST /rest/pug/compound/similarity/smiles/{smiles}/JSON
 Parameters: Threshold (default 90%)
 ```
 
 **Substructure Search**:
+
 ```
 POST /rest/pug/compound/substructure/smiles/{smiles}/cids/JSON
 ```
 
 **Superstructure Search**:
+
 ```
 POST /rest/pug/compound/superstructure/smiles/{smiles}/cids/JSON
 ```
@@ -105,6 +115,7 @@ POST /rest/pug/compound/superstructure/smiles/{smiles}/cids/JSON
 #### 4. Image Generation
 
 Get 2D structure image:
+
 ```
 GET /rest/pug/compound/cid/{cid}/PNG
 Optional parameters: image_size=small|large
@@ -113,11 +124,13 @@ Optional parameters: image_size=small|large
 #### 5. Format Conversion
 
 Get compound as SDF (Structure-Data File):
+
 ```
 GET /rest/pug/compound/cid/{cid}/SDF
 ```
 
 Get compound as MOL:
+
 ```
 GET /rest/pug/compound/cid/{cid}/record/SDF
 ```
@@ -125,6 +138,7 @@ GET /rest/pug/compound/cid/{cid}/record/SDF
 #### 6. Synonym Retrieval
 
 Get all synonyms for a compound:
+
 ```
 GET /rest/pug/compound/cid/{cid}/synonyms/JSON
 ```
@@ -132,11 +146,13 @@ GET /rest/pug/compound/cid/{cid}/synonyms/JSON
 #### 7. Bioassay Data
 
 Get bioassay data for a compound:
+
 ```
 GET /rest/pug/compound/cid/{cid}/assaysummary/JSON
 ```
 
 Get specific assay information:
+
 ```
 GET /rest/pug/assay/aid/{aid}/description/JSON
 ```
@@ -150,6 +166,7 @@ For large queries (similarity/substructure searches), PUG-REST uses an asynchron
 3. Retrieve results when ready
 
 Example workflow:
+
 ```python
 # Step 1: Submit similarity search
 response = requests.post(
@@ -168,11 +185,13 @@ status_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/listkey/{listk
 ### Usage Limits
 
 **Rate Limits**:
+
 - Maximum 5 requests per second
 - Maximum 400 requests per minute
 - Maximum 300 seconds running time per minute
 
 **Best Practices**:
+
 - Use batch requests when possible
 - Implement exponential backoff for retries
 - Cache results when appropriate
@@ -215,28 +234,33 @@ compound.tpsa              # Topological polar surface area
 #### Search Methods
 
 **By Name**:
+
 ```python
 compounds = pcp.get_compounds('aspirin', 'name')
 # Returns list of Compound objects
 ```
 
 **By SMILES**:
+
 ```python
 compound = pcp.get_compounds('CC(=O)OC1=CC=CC=C1C(=O)O', 'smiles')[0]
 ```
 
 **By InChI**:
+
 ```python
 compound = pcp.get_compounds('InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)9(11)12/h2-5H,1H3,(H,11,12)', 'inchi')[0]
 ```
 
 **By Formula**:
+
 ```python
 compounds = pcp.get_compounds('C9H8O4', 'formula')
 # Returns all compounds with this formula
 ```
 
 **Similarity Search**:
+
 ```python
 results = pcp.get_compounds('CC(=O)OC1=CC=CC=C1C(=O)O', 'smiles',
                            searchtype='similarity',
@@ -244,6 +268,7 @@ results = pcp.get_compounds('CC(=O)OC1=CC=CC=C1C(=O)O', 'smiles',
 ```
 
 **Substructure Search**:
+
 ```python
 results = pcp.get_compounds('c1ccccc1', 'smiles',
                            searchtype='substructure')
@@ -253,6 +278,7 @@ results = pcp.get_compounds('c1ccccc1', 'smiles',
 #### Property Retrieval
 
 Get specific properties for multiple compounds:
+
 ```python
 properties = pcp.get_properties(
     ['MolecularFormula', 'MolecularWeight', 'CanonicalSMILES'],
@@ -263,6 +289,7 @@ properties = pcp.get_properties(
 ```
 
 Get properties as pandas DataFrame:
+
 ```python
 import pandas as pd
 df = pd.DataFrame(properties)
@@ -271,6 +298,7 @@ df = pd.DataFrame(properties)
 #### Synonyms
 
 Get all synonyms for a compound:
+
 ```python
 synonyms = pcp.get_synonyms('aspirin', 'name')
 # Returns list of dictionaries with CID and synonym lists
@@ -279,6 +307,7 @@ synonyms = pcp.get_synonyms('aspirin', 'name')
 #### Download Formats
 
 Download compound in various formats:
+
 ```python
 # Get as SDF
 sdf_data = pcp.download('SDF', 'aspirin', 'name', overwrite=True)
@@ -312,16 +341,19 @@ PUG-View provides access to full textual annotations and specialized reports.
 ### Key Endpoints
 
 Get compound annotations:
+
 ```
 GET /rest/pug_view/data/compound/{cid}/JSON
 ```
 
 Get specific annotation sections:
+
 ```
 GET /rest/pug_view/data/compound/{cid}/JSON?heading={section_name}
 ```
 
 Available sections include:
+
 - Chemical and Physical Properties
 - Drug and Medication Information
 - Pharmacology and Biochemistry
@@ -336,6 +368,7 @@ Available sections include:
 ### 1. Chemical Identifier Conversion
 
 Convert from name to SMILES to InChI:
+
 ```python
 import pubchempy as pcp
 
@@ -349,6 +382,7 @@ cid = compound.cid
 ### 2. Batch Property Retrieval
 
 Get properties for multiple compounds:
+
 ```python
 compound_names = ['aspirin', 'ibuprofen', 'paracetamol']
 properties = []
@@ -368,6 +402,7 @@ df = pd.DataFrame(properties)
 ### 3. Finding Similar Compounds
 
 Find structurally similar compounds to a query:
+
 ```python
 # Start with a known compound
 query_compound = pcp.get_compounds('gefitinib', 'name')[0]
@@ -389,6 +424,7 @@ for compound in similar[:10]:  # First 10 results
 ### 4. Substructure Screening
 
 Find all compounds containing a specific substructure:
+
 ```python
 # Search for compounds containing pyridine ring
 pyridine_smiles = 'c1ccncc1'

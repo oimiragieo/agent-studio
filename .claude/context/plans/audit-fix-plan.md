@@ -36,6 +36,7 @@ This plan addresses audit findings across three priority levels. The most critic
 ---
 
 ## Phase 1: Critical Fixes (Tool Blacklist & Skill Names)
+
 **Dependencies**: None
 **Parallel OK**: No (changes affect same files)
 
@@ -51,7 +52,8 @@ This plan addresses audit findings across three priority levels. The most critic
   - **Command**: Edit `.claude/CLAUDE.md` Section 7 to reference skill-catalog.md instead of listing skill names
   - **Details**: Currently lists specific skill names (python-pro, rust-pro, etc.) which may not match actual skill names (python-backend-expert). Replace with catalog reference pattern.
   - **New Section 7 Content**:
-    ```markdown
+
+    ````markdown
     ## 7. SKILL INVOCATION PROTOCOL (CRITICAL)
 
     **Agents must use the `Skill()` tool to invoke skills, not just read them.**
@@ -64,9 +66,9 @@ This plan addresses audit findings across three priority levels. The most critic
     // WRONG: Just reading the file doesn't apply the skill
     Read('.claude/skills/tdd/SKILL.md'); // Reading is not invoking
     ```
+    ````
 
     **Skill Discovery**: Skills are dynamically discovered from the catalog.
-
     - **Skill Catalog**: `.claude/context/artifacts/skill-catalog.md`
     - **Usage**: Consult the catalog for available skills by category
     - **Total Skills**: See catalog header for current count
@@ -83,17 +85,24 @@ This plan addresses audit findings across three priority levels. The most critic
     - Languages (see catalog Languages section)
     - Frameworks (see catalog Frameworks section)
     - Creator Tools (agent-creator, skill-creator)
+
     ```
+
+    ```
+
   - **Verify**: `grep "python-pro" .claude/CLAUDE.md | grep -v "agents/domain"` should return nothing (no static skill references except routing table)
   - **Rollback**: `git checkout -- .claude/CLAUDE.md`
 
 #### Phase 1 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 1 failed: $(date) - [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
 
 #### Phase 1 Verification Gate
+
 ```bash
 # All must pass before proceeding
 grep -E "^  - Glob|^  - Grep" .claude/agents/core/router.md && echo "FAIL: Router still has Glob/Grep" && exit 1
@@ -104,6 +113,7 @@ echo "Phase 1 PASS"
 ---
 
 ## Phase 2: Hook & Settings Fixes
+
 **Dependencies**: None (independent of Phase 1)
 **Parallel OK**: Yes
 
@@ -130,12 +140,15 @@ echo "Phase 1 PASS"
   - **Rollback**: `move .claude\tests\hooks\extract-workflow-learnings.test.cjs .claude\hooks\memory\`
 
 #### Phase 2 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 2 failed: $(date) - [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 3
 
 #### Phase 2 Verification Gate
+
 ```bash
 # All must pass before proceeding
 grep "memory-reminder" .claude/settings.json || echo "FAIL: Hook not registered" && exit 1
@@ -146,6 +159,7 @@ echo "Phase 2 PASS"
 ---
 
 ## Phase 3: Workflow & Reference Cleanup
+
 **Dependencies**: None
 **Parallel OK**: Yes
 
@@ -173,12 +187,15 @@ echo "Phase 2 PASS"
   - **Rollback**: `git checkout -- .claude/context/artifacts/skill-catalog.md`
 
 #### Phase 3 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 3 failed: $(date) - [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 4
 
 #### Phase 3 Verification Gate
+
 ```bash
 # All must pass before proceeding
 grep "Codebase Integration Skill" .claude/workflows/core/external-integration.md || echo "FAIL: Reference not updated"
@@ -188,6 +205,7 @@ echo "Phase 3 PASS"
 ---
 
 ## Phase 4: Documentation & Memory Maintenance
+
 **Dependencies**: Phase 1, 2, 3
 **Parallel OK**: No
 
@@ -206,24 +224,30 @@ echo "Phase 3 PASS"
 - [ ] **4.2** Record audit fixes in decisions.md (~5 min)
   - **Command**: Append ADR entry to `.claude/context/memory/decisions.md`
   - **New ADR**:
+
     ```markdown
     ## [ADR-004] Lazy-Load Skill Discovery
+
     - **Date**: 2026-01-24
     - **Status**: Accepted
     - **Context**: CLAUDE.md Section 7 listed static skill names that became stale (e.g., python-pro vs python-backend-expert)
     - **Decision**: Reference skill-catalog.md dynamically instead of hardcoding skill names in CLAUDE.md
     - **Consequences**: Router and agents must read skill catalog for discovery; catalog becomes source of truth for available skills
     ```
+
   - **Verify**: `grep "ADR-004" .claude/context/memory/decisions.md`
   - **Rollback**: Manual removal of ADR entry
 
 #### Phase 4 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error in issues.md
 3. Report partial completion
 
 #### Phase 4 Verification Gate
+
 ```bash
 # All must pass
 grep "ARCHIVAL GUIDANCE" .claude/context/memory/learnings.md || echo "WARN: No archival guidance"
@@ -234,6 +258,7 @@ echo "Phase 4 PASS"
 ---
 
 ## Phase 5: Final Verification
+
 **Dependencies**: Phases 1-4
 **Parallel OK**: No
 
@@ -242,6 +267,7 @@ echo "Phase 4 PASS"
 - [ ] **5.1** Run comprehensive verification (~5 min)
   - **Command**: Execute all verification checks
   - **Verification Script**:
+
     ```bash
     echo "=== Audit Fix Verification ==="
 
@@ -265,11 +291,13 @@ echo "Phase 4 PASS"
 
     echo "=== Verification Complete ==="
     ```
+
   - **Verify**: All checks return PASS
   - **Rollback**: N/A (verification only)
 
 - [ ] **5.2** Commit changes (~3 min)
   - **Command**:
+
     ```bash
     git add .claude/agents/core/router.md \
             .claude/CLAUDE.md \
@@ -289,10 +317,12 @@ echo "Phase 4 PASS"
     - Update skill catalog count
     - Add ADR-004 for lazy-load skill decision"
     ```
+
   - **Verify**: `git log -1 --oneline` shows the commit
   - **Rollback**: `git reset --soft HEAD~1`
 
 #### Phase 5 Verification Gate
+
 ```bash
 git status --porcelain | grep -q "" && echo "WARN: Uncommitted changes" || echo "PASS: Clean working directory"
 echo "Phase 5 PASS - Audit fixes complete"
@@ -302,23 +332,23 @@ echo "Phase 5 PASS - Audit fixes complete"
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Router breaks without Glob/Grep | High | Router should spawn agents that use Glob/Grep | `git checkout -- .claude/agents/core/router.md` |
-| Skill discovery slower with catalog lookup | Low | Catalog is small (~500 lines), fast to search | N/A - performance acceptable |
-| Missing hook breaks workflow | Medium | Test memory-reminder.cjs before commit | `git checkout -- .claude/settings.json` |
-| Test file import paths break | Low | Update imports if test was imported elsewhere | Move file back |
+| Risk                                       | Impact | Mitigation                                    | Rollback                                        |
+| ------------------------------------------ | ------ | --------------------------------------------- | ----------------------------------------------- |
+| Router breaks without Glob/Grep            | High   | Router should spawn agents that use Glob/Grep | `git checkout -- .claude/agents/core/router.md` |
+| Skill discovery slower with catalog lookup | Low    | Catalog is small (~500 lines), fast to search | N/A - performance acceptable                    |
+| Missing hook breaks workflow               | Medium | Test memory-reminder.cjs before commit        | `git checkout -- .claude/settings.json`         |
+| Test file import paths break               | Low    | Update imports if test was imported elsewhere | Move file back                                  |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 2 | 20 min | No |
-| 2 | 2 | 8 min | Yes |
-| 3 | 2 | 15 min | Yes |
-| 4 | 2 | 15 min | No |
-| 5 | 2 | 8 min | No |
-| **Total** | **10** | **~66 min** | |
+| Phase     | Tasks  | Est. Time   | Parallel? |
+| --------- | ------ | ----------- | --------- |
+| 1         | 2      | 20 min      | No        |
+| 2         | 2      | 8 min       | Yes       |
+| 3         | 2      | 15 min      | Yes       |
+| 4         | 2      | 15 min      | No        |
+| 5         | 2      | 8 min       | No        |
+| **Total** | **10** | **~66 min** |           |
 
 ---
 

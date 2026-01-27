@@ -5,6 +5,7 @@ This document provides comprehensive guidance on statistical tests, diagnostics,
 ## Overview
 
 Statsmodels provides extensive statistical testing capabilities:
+
 - Residual diagnostics and specification tests
 - Hypothesis testing (parametric and non-parametric)
 - Goodness-of-fit tests

@@ -22,9 +22,9 @@ updater_config:
   backup_location: .claude/context/backups/hooks/
   compatibility_check: true
   registration_targets:
-    - ".claude/settings.json"
-    - ".claude/hooks/README.md"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/settings.json'
+    - '.claude/hooks/README.md'
+    - '.claude/context/memory/learnings.md'
   protected_exports:
     - validate
     - main
@@ -73,11 +73,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-hook'].output.hook_path !== null"
         on_fail: abort
-        message: "Hook does not exist. Use hook-creator-workflow to create new hooks."
+        message: 'Hook does not exist. Use hook-creator-workflow to create new hooks.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes don't break hook functionality
@@ -120,11 +120,11 @@ phases:
       - id: gate-validate-exports
         condition: "steps['check-protected-exports'].output.exports_intact === true"
         on_fail: abort
-        message: "Cannot remove protected exports (validate, main)"
+        message: 'Cannot remove protected exports (validate, main)'
       - id: gate-validate-signature
         condition: "steps['check-signature-changes'].output.signature_changed === false"
         on_fail: warn
-        message: "Signature changes may break callers. Review carefully."
+        message: 'Signature changes may break callers. Review carefully.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -154,9 +154,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -209,12 +209,12 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-hook'].output.hook_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated hook file"
+        message: 'Failed to write updated hook file'
 
   verify:
     description: Run tests and validate exports
@@ -263,15 +263,15 @@ phases:
       - id: gate-verify-tests
         condition: "steps['run-tests'].output.tests_passed === true"
         on_fail: return_to_lock
-        message: "Tests failed after update. Fix implementation."
+        message: 'Tests failed after update. Fix implementation.'
       - id: gate-verify-exports
         condition: "steps['validate-exports'].output.exports_valid === true"
         on_fail: return_to_lock
-        message: "Hook must still export validate() and main()"
+        message: 'Hook must still export validate() and main()'
       - id: gate-verify-graceful
         condition: "steps['check-graceful-degradation'].output.graceful_degradation === true"
         on_fail: return_to_lock
-        message: "Hook must still default to warn mode"
+        message: 'Hook must still default to warn mode'
 
   enable:
     description: Update registrations and record changes
@@ -333,7 +333,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Hook registration verification failed after update"
+        message: 'Hook registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -343,32 +343,32 @@ compensate:
       description: Restore hook and test files from backup
   enable:
     - action: revert_settings
-      target: ".claude/settings.json"
+      target: '.claude/settings.json'
       description: Revert settings.json changes if made
     - action: revert_readme
-      target: ".claude/hooks/README.md"
+      target: '.claude/hooks/README.md'
       description: Revert README changes
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for hook updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-validate
-    rule: "Cannot remove validate() export"
+    rule: 'Cannot remove validate() export'
     enforcement: gate-validate-exports
   - id: no-removal-of-main
-    rule: "Cannot remove main() export"
+    rule: 'Cannot remove main() export'
     enforcement: gate-validate-exports
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: tests-must-pass
-    rule: "All tests must pass after update"
+    rule: 'All tests must pass after update'
     enforcement: gate-verify-tests
   - id: maintain-graceful-degradation
-    rule: "Hook must still default to warn mode"
+    rule: 'Hook must still default to warn mode'
     enforcement: gate-verify-graceful

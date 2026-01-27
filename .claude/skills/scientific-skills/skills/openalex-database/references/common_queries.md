@@ -7,10 +7,12 @@ This document provides practical examples for common research queries using Open
 **User query**: "Find papers by Albert Einstein"
 
 **Approach**: Two-step pattern
+
 1. Search for author to get ID
 2. Filter works by author ID
 
 **Python example**:
+
 ```python
 from scripts.openalex_client import OpenAlexClient
 from scripts.query_helpers import find_author_works
@@ -27,10 +29,12 @@ for work in works:
 **User query**: "What papers has MIT published in the last year?"
 
 **Approach**: Two-step pattern with date filter
+
 1. Search for institution to get ID
 2. Filter works by institution ID and year
 
 **Python example**:
+
 ```python
 from scripts.query_helpers import find_institution_works
 
@@ -49,6 +53,7 @@ recent_works = [w for w in works if w['publication_year'] == current_year]
 **Approach**: Search + filter + sort
 
 **Python example**:
+
 ```python
 works = client.search_works(
     search="CRISPR",
@@ -73,6 +78,7 @@ for work in works['results']:
 **Approach**: Search + OA filter
 
 **Python example**:
+
 ```python
 from scripts.query_helpers import get_open_access_papers
 
@@ -96,6 +102,7 @@ for paper in papers:
 **Approach**: Use group_by to aggregate by year
 
 **Python example**:
+
 ```python
 from scripts.query_helpers import get_publication_trends
 
@@ -120,6 +127,7 @@ for trend in trends_sorted[-10:]:  # Last 10 years
 **Approach**: Multiple aggregations for comprehensive analysis
 
 **Python example**:
+
 ```python
 from scripts.query_helpers import analyze_research_output
 
@@ -145,6 +153,7 @@ for topic in analysis['top_topics'][:5]:
 **Approach**: Batch lookup with pipe separator
 
 **Python example**:
+
 ```python
 dois = [
     "https://doi.org/10.1371/journal.pone.0266781",
@@ -170,6 +179,7 @@ for work in works:
 **Approach**: Use sample parameter with seed for reproducibility
 
 **Python example**:
+
 ```python
 works = client.sample_works(
     sample_size=50,
@@ -190,6 +200,7 @@ print(f"Got {len(works)} random papers from 2023")
 **Approach**: Use + operator for AND within same attribute
 
 **Python example**:
+
 ```python
 # First, get institution IDs
 mit_response = client._make_request(
@@ -222,6 +233,7 @@ print(f"Found {works['meta']['count']} collaborative papers")
 **Approach**: Two-step - find journal ID, then filter works
 
 **Python example**:
+
 ```python
 # Step 1: Find journal source ID
 source_response = client._make_request(
@@ -252,6 +264,7 @@ print(f"Found {works['meta']['count']} papers from Nature in 2023")
 **Approach**: Filter by institution, group by topics
 
 **Python example**:
+
 ```python
 # Get MIT ID
 inst_response = client._make_request(
@@ -282,6 +295,7 @@ for i, topic in enumerate(topics[:10], 1):
 **Approach**: Get work by DOI, then use cited_by_api_url
 
 **Python example**:
+
 ```python
 # Get the work
 doi = "https://doi.org/10.1038/s41586-021-03819-2"
@@ -309,6 +323,7 @@ for citing_work in citing_works['results'][:5]:
 **Approach**: Paginate through all results
 
 **Python example**:
+
 ```python
 all_papers = client.paginate_all(
     endpoint='/works',
@@ -344,6 +359,7 @@ with open('quantum_papers.csv', 'w', newline='') as f:
 **Approach**: Combine multiple filters
 
 **Python example**:
+
 ```python
 # Get IDs for top institutions
 top_institutions = ['MIT', 'Stanford', 'Oxford']

@@ -41,10 +41,12 @@ result_handle.close()
 ### Common Databases
 
 **Nucleotide databases:**
+
 - `nt` - All GenBank+EMBL+DDBJ+PDB sequences
 - `refseq_rna` - RefSeq RNA sequences
 
 **Protein databases:**
+
 - `nr` - All non-redundant GenBank CDS translations
 - `refseq_protein` - RefSeq protein sequences
 - `pdb` - Protein Data Bank sequences
@@ -163,6 +165,7 @@ with open("batch_blast_results.xml") as result_handle:
 ### Prerequisites
 
 Local BLAST requires:
+
 1. BLAST+ command-line tools installed
 2. BLAST databases downloaded locally
 

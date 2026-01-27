@@ -89,7 +89,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Note: This is a reference structu
 
-
 </instructions>
 
 <examples>
@@ -103,12 +102,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- android-expert
 
+- android-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -23,7 +23,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function findProjectRoot() {
   let dir = __dirname;
   let prevDir = '';
-  while (dir !== prevDir) {  // Stop when we reach the root (dirname returns same path)
+  while (dir !== prevDir) {
+    // Stop when we reach the root (dirname returns same path)
     // Check if this directory contains a .claude folder (project root)
     if (existsSync(join(dir, '.claude'))) return dir;
     prevDir = dir;
@@ -52,9 +53,10 @@ export function assessEcosystem(config) {
 
   // Run both assessments
   const hookAssessment = assessHooks({ name, description, capabilities, keywords });
-  const mcpAssessment = type === 'agent'
-    ? discoverMcpMatches({ name, description, capabilities })
-    : { hasMatches: false, matches: [] };
+  const mcpAssessment =
+    type === 'agent'
+      ? discoverMcpMatches({ name, description, capabilities })
+      : { hasMatches: false, matches: [] };
 
   // Combine recommendations
   const recommendations = {
@@ -187,8 +189,8 @@ export function registerHook(hookPath, trigger, matcher = '') {
   if (!settings.hooks[trigger]) settings.hooks[trigger] = [];
 
   // Check if hook already registered
-  const existing = settings.hooks[trigger].find(
-    h => h.hooks?.some(hook => hook.command?.includes(hookPath))
+  const existing = settings.hooks[trigger].find(h =>
+    h.hooks?.some(hook => hook.command?.includes(hookPath))
   );
 
   if (!existing) {
@@ -314,9 +316,10 @@ export function reverseAssessHook(config) {
     matchedKeywords,
     suggestedAgents: existingAgents,
     suggestedSkills: existingSkills,
-    assignCommand: existingAgents.length > 0
-      ? `node .claude/tools/hook-creator/create-hook.mjs --assign "${name}" --agents "${existingAgents.join(',')}"`
-      : null,
+    assignCommand:
+      existingAgents.length > 0
+        ? `node .claude/tools/hook-creator/create-hook.mjs --assign "${name}" --agents "${existingAgents.join(',')}"`
+        : null,
   };
 }
 
@@ -383,11 +386,15 @@ export function reverseAssessWorkflow(config) {
     workflow: { name, description, stepCount: steps.length },
     suggestedAgents: existingAgents,
     requiredSkills: [...requiredSkills],
-    assignCommand: existingAgents.length > 0
-      ? existingAgents.map(a =>
-          `node .claude/tools/workflow-creator/create-workflow.mjs --assign "${name}" --agent "${a}"`
-        ).join('\n')
-      : null,
+    assignCommand:
+      existingAgents.length > 0
+        ? existingAgents
+            .map(
+              a =>
+                `node .claude/tools/workflow-creator/create-workflow.mjs --assign "${name}" --agent "${a}"`
+            )
+            .join('\n')
+        : null,
   };
 }
 
@@ -509,8 +516,8 @@ export function ecosystemHealthCheck() {
       for (const cat of categories) {
         const catPath = join(WORKFLOWS_DIR, cat);
         try {
-          const files = readdirSync(catPath).filter(f =>
-            f.endsWith('.yaml') || f.endsWith('.yml') || f.endsWith('.md')
+          const files = readdirSync(catPath).filter(
+            f => f.endsWith('.yaml') || f.endsWith('.yml') || f.endsWith('.md')
           );
           stats.workflows += files.length;
         } catch (e) {
@@ -550,9 +557,14 @@ function displayResults(result) {
     console.log('\n⚠️  HOOK RECOMMENDATIONS');
     console.log('─'.repeat(40));
     for (const hook of result.recommendations.hooks) {
-      const icon = hook.priority === 'critical' ? '🔴' :
-                   hook.priority === 'high' ? '🟠' :
-                   hook.priority === 'medium' ? '🟡' : '🟢';
+      const icon =
+        hook.priority === 'critical'
+          ? '🔴'
+          : hook.priority === 'high'
+            ? '🟠'
+            : hook.priority === 'medium'
+              ? '🟡'
+              : '🟢';
       console.log(`  ${icon} [${hook.priority.toUpperCase()}] ${hook.type}`);
       console.log(`     Purpose: ${hook.purpose}`);
       console.log(`     Category: ${hook.category}`);
@@ -613,7 +625,8 @@ function displayResults(result) {
 
 // CLI usage - normalize paths for Windows compatibility
 const scriptPath = process.argv[1] || '';
-const isMain = import.meta.url === `file://${scriptPath}` ||
+const isMain =
+  import.meta.url === `file://${scriptPath}` ||
   import.meta.url === `file:///${scriptPath.replace(/\\/g, '/')}`;
 if (isMain) {
   const args = process.argv.slice(2);

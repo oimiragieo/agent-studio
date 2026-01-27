@@ -38,7 +38,7 @@ When reviewing or writing code, apply these guidelines:
   - If errors occur, remove both packages and reinstall specific versions:
     npm remove nativewind tailwindcss
     npm install nativewind@2.0.11 tailwindcss@3.3.2
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

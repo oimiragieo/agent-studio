@@ -9,16 +9,19 @@ Before submitting protein sequences for experimental testing, use computational 
 ### 1. Unpaired Cysteines
 
 **Problem:**
+
 - Unpaired cysteines form unwanted disulfide bonds
 - Leads to aggregation and misfolding
 - Reduces expression yield and stability
 
 **Solution:**
+
 - Remove unpaired cysteines unless functionally necessary
 - Pair cysteines appropriately for structural disulfides
 - Replace with serine or alanine in non-critical positions
 
 **Example:**
+
 ```python
 # Check for cysteine pairs
 from Bio.Seq import Seq
@@ -33,16 +36,19 @@ def check_cysteines(sequence):
 ### 2. Excessive Hydrophobicity
 
 **Problem:**
+
 - Long hydrophobic patches promote aggregation
 - Exposed hydrophobic residues drive protein clumping
 - Poor solubility in aqueous buffers
 
 **Solution:**
+
 - Maintain balanced hydropathy profiles
 - Use short, flexible linkers between domains
 - Reduce surface-exposed hydrophobic residues
 
 **Metrics:**
+
 - Kyte-Doolittle hydropathy plots
 - GRAVY score (Grand Average of Hydropathy)
 - pSAE (percent Solvent-Accessible hydrophobic residues)
@@ -50,11 +56,13 @@ def check_cysteines(sequence):
 ### 3. Low Solubility
 
 **Problem:**
+
 - Proteins precipitate during expression or purification
 - Inclusion body formation
 - Difficult downstream processing
 
 **Solution:**
+
 - Use solubility prediction tools for pre-screening
 - Apply sequence optimization algorithms
 - Add solubilizing tags if needed
@@ -68,6 +76,7 @@ def check_cysteines(sequence):
 **Method:** Machine learning model trained on E. coli expression data.
 
 **Usage:**
+
 ```python
 # Install: uv pip install requests
 import requests
@@ -91,11 +100,13 @@ print(f"Solubility score: {result['score']}")
 ```
 
 **Interpretation:**
+
 - Score > 0.5: Likely soluble
 - Score < 0.5: Likely insoluble
 - Use for initial filtering before more expensive predictions
 
 **When to use:**
+
 - First-pass filtering of large libraries
 - Quick validation of designed sequences
 - Prioritizing sequences for experimental testing
@@ -107,6 +118,7 @@ print(f"Solubility score: {result['score']}")
 **Method:** Deep learning model incorporating sequence and structural features.
 
 **Usage:**
+
 ```python
 # Install: uv pip install soluprot
 from soluprot import predict_solubility
@@ -135,11 +147,13 @@ soluble_variants = [r for r in results if r['predicted_soluble']]
 ```
 
 **Interpretation:**
+
 - Score > 0.6: High solubility confidence
 - Score 0.4-0.6: Uncertain, may need optimization
 - Score < 0.4: Likely problematic
 
 **When to use:**
+
 - After initial NetSolP filtering
 - When higher prediction accuracy is needed
 - Before committing to expensive synthesis/testing
@@ -151,6 +165,7 @@ soluble_variants = [r for r in results if r['predicted_soluble']]
 **Method:** Graph neural network that suggests mutations to increase solubility.
 
 **Usage:**
+
 ```python
 # Install: uv pip install soluble-mpnn
 from soluble_mpnn import optimize_sequence
@@ -188,16 +203,19 @@ for i, variant in enumerate(optimized_variants):
 ```
 
 **Design strategy:**
+
 - **Conservative** (temperature=0.1): Minimal changes, safer
 - **Moderate** (temperature=0.3): Balance between change and safety
 - **Aggressive** (temperature=0.5): More mutations, higher risk
 
 **When to use:**
+
 - Primary tool for sequence optimization
 - Default starting point for improving problematic sequences
 - Generating diverse soluble variants
 
 **Best practices:**
+
 - Generate 10-50 variants per sequence
 - Use structure information when available (improves accuracy)
 - Validate key functional residues are preserved
@@ -210,6 +228,7 @@ for i, variant in enumerate(optimized_variants):
 **Method:** Protein language model trained on millions of natural sequences.
 
 **Usage:**
+
 ```python
 # Install: uv pip install fair-esm
 import torch
@@ -249,17 +268,20 @@ for name, seq in sequences.items():
 ```
 
 **Interpretation:**
+
 - Higher scores → More "natural" sequence
 - Use to avoid unlikely mutations
 - Balance with functional requirements
 
 **When to use:**
+
 - Filtering synthetic designs
 - Comparing SolubleMPNN variants
 - Ensuring sequences aren't too artificial
 - Avoiding expression bottlenecks
 
 **Integration with design:**
+
 ```python
 def rank_variants_by_esm(variants):
     """Rank protein variants by ESM likelihood"""
@@ -285,6 +307,7 @@ def rank_variants_by_esm(variants):
 **Method:** Interface predicted TM-score from AlphaFold-Multimer predictions.
 
 **Usage:**
+
 ```python
 # Requires AlphaFold-Multimer installation
 # Or use ColabFold for easier access
@@ -327,11 +350,13 @@ else:
 ```
 
 **Interpretation:**
+
 - ipTM > 0.7: Strong predicted interface
 - ipTM 0.5-0.7: Moderate interface confidence
 - ipTM < 0.5: Weak interface, consider redesign
 
 **When to use:**
+
 - Antibody-antigen design
 - Protein-protein interaction engineering
 - Validating binding interfaces
@@ -344,6 +369,7 @@ else:
 **Method:** Calculates percentage of solvent-accessible surface area (SASA) occupied by hydrophobic residues.
 
 **Usage:**
+
 ```python
 # Requires structure (PDB file or AlphaFold prediction)
 # Install: uv pip install biopython
@@ -397,11 +423,13 @@ else:
 ```
 
 **Interpretation:**
+
 - pSAE < 25%: Low aggregation risk
 - pSAE 25-35%: Moderate risk
 - pSAE > 35%: High aggregation risk
 
 **When to use:**
+
 - Analyzing designed structures
 - Post-AlphaFold validation
 - Identifying aggregation hotspots
@@ -613,24 +641,28 @@ response = requests.post(
 ## Troubleshooting
 
 **Issue: All sequences score poorly on solubility predictions**
+
 - Check if sequences contain unusual amino acids
 - Verify FASTA format is correct
 - Consider if protein family is naturally low-solubility
 - May need experimental validation despite predictions
 
 **Issue: SolubleMPNN changes functionally important residues**
+
 - Provide structure file to preserve spatial constraints
 - Mask critical residues from mutation
 - Lower temperature parameter for conservative changes
 - Manually revert problematic mutations
 
 **Issue: ESM scores are low after optimization**
+
 - Optimization may be too aggressive
 - Try lower temperature in SolubleMPNN
 - Balance between solubility and naturalness
 - Consider that some optimization may require non-natural mutations
 
 **Issue: Predictions don't match experimental results**
+
 - Predictions are probabilistic, not deterministic
 - Host system and conditions affect expression
 - Some proteins may need experimental validation

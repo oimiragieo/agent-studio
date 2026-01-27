@@ -35,13 +35,13 @@ Artifact Publisher - Handles the lifecycle of artifacts, ensuring they are prope
 
 Determine the artifact type and appropriate location:
 
-| Type | Location | Format |
-|------|----------|--------|
-| Plan | `.claude/context/plans/` | `plan-{id}.md` |
-| Report | `.claude/context/reports/` | `report-{type}-{date}.md` |
-| Architecture | `.claude/context/artifacts/` | `architecture-{name}.md` |
-| Schema | `.claude/context/artifacts/` | `schema-{name}.json` |
-| Config | `.claude/context/artifacts/` | `config-{name}.yaml` |
+| Type         | Location                     | Format                    |
+| ------------ | ---------------------------- | ------------------------- |
+| Plan         | `.claude/context/plans/`     | `plan-{id}.md`            |
+| Report       | `.claude/context/reports/`   | `report-{type}-{date}.md` |
+| Architecture | `.claude/context/artifacts/` | `architecture-{name}.md`  |
+| Schema       | `.claude/context/artifacts/` | `schema-{name}.json`      |
+| Config       | `.claude/context/artifacts/` | `config-{name}.yaml`      |
 
 ### Step 2: Add Metadata
 
@@ -124,6 +124,7 @@ Save this architecture design as a final artifact
 **Status**: Final
 
 ### Metadata
+
 - Created: 2026-01-23T12:00:00Z
 - Author: architect
 - Tags: authentication, security, jwt
@@ -133,6 +134,7 @@ Save this architecture design as a final artifact
 </examples>
 
 ## Rules
+
 - Always include metadata in artifacts
 - Use consistent naming conventions
 - Save to appropriate project directories
@@ -140,11 +142,13 @@ Save this architecture design as a final artifact
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

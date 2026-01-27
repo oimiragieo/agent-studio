@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Add appropriate metadata to all pages.
 - Optimize images and other media for search engines.
 - Use internal and external links to improve navigation and SEO.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -26,15 +26,18 @@ Variables controlling Router-First protocol enforcement.
 **Purpose**: Controls automated enforcement of PLANNER-first requirement for HIGH/EPIC complexity tasks.
 
 **Values**:
+
 - `block` (default) - Blocks TaskCreate without PLANNER spawn
 - `warn` - Allows TaskCreate but logs warning
 - `off` - Disables enforcement (for debugging only)
 
 **Used By**:
+
 - `.claude/hooks/routing/task-create-guard.cjs`
 - `.claude/hooks/routing/planner-first-guard.cjs`
 
 **Example**:
+
 ```bash
 export PLANNER_FIRST_ENFORCEMENT=warn  # Development mode
 export PLANNER_FIRST_ENFORCEMENT=block # Production (default)
@@ -47,14 +50,17 @@ export PLANNER_FIRST_ENFORCEMENT=block # Production (default)
 **Purpose**: Blocks Router from directly editing/writing files (forces agent spawning).
 
 **Values**:
+
 - `block` (default) - Prevents Router from using Edit/Write tools
 - `warn` - Allows but logs warning
 - `off` - Disables enforcement
 
 **Used By**:
+
 - `.claude/hooks/safety/router-write-guard.cjs`
 
 **Example**:
+
 ```bash
 export ROUTER_WRITE_GUARD=off  # Allow Router to write (dangerous)
 ```
@@ -66,14 +72,17 @@ export ROUTER_WRITE_GUARD=off  # Allow Router to write (dangerous)
 **Purpose**: Enforces security architect review for security-sensitive changes.
 
 **Values**:
+
 - `block` (default) - Blocks changes without security review
 - `warn` - Allows but logs warning
 - `off` - Disables enforcement
 
 **Used By**:
+
 - `.claude/hooks/routing/security-review-guard.cjs`
 
 **Example**:
+
 ```bash
 export SECURITY_REVIEW_ENFORCEMENT=warn
 ```
@@ -89,13 +98,16 @@ Variables controlling the self-evolution system.
 **Purpose**: Enables automatic EVOLVE workflow triggering when artifact creation is blocked.
 
 **Values**:
+
 - `false` (default) - Manual EVOLVE trigger required
 - `true` - Auto-spawn evolution-orchestrator on blocking
 
 **Used By**:
+
 - `.claude/hooks/safety/file-placement-guard.cjs`
 
 **Example**:
+
 ```bash
 export EVOLVE_AUTO_START=true   # Enable auto-evolution
 ```
@@ -109,13 +121,16 @@ export EVOLVE_AUTO_START=true   # Enable auto-evolution
 **Purpose**: Circuit breaker rate limiting for EVOLVE auto-start.
 
 **Values**:
+
 - `3` (default) - Max 3 evolutions per hour
 - `N` (integer) - Custom limit
 
 **Used By**:
+
 - `.claude/hooks/safety/file-placement-guard.cjs` (circuit breaker logic)
 
 **Example**:
+
 ```bash
 export EVOLVE_RATE_LIMIT=5  # Allow 5 evolutions per hour
 ```
@@ -127,13 +142,16 @@ export EVOLVE_RATE_LIMIT=5  # Allow 5 evolutions per hour
 **Purpose**: Bypass EVOLVE workflow enforcement for emergency artifact creation.
 
 **Values**:
+
 - Not set (default) - EVOLVE required for artifact creation
 - `true` - Bypass EVOLVE enforcement
 
 **Used By**:
+
 - `.claude/hooks/safety/file-placement-guard.cjs`
 
 **Example**:
+
 ```bash
 export EVOLVE_ENFORCEMENT_OVERRIDE=true  # Emergency bypass
 ```
@@ -151,15 +169,18 @@ Variables controlling hook execution and behavior.
 **Purpose**: Master switch for reflection system hooks.
 
 **Values**:
+
 - `true` (default) - Reflection hooks enabled
 - `false` - All reflection hooks disabled
 
 **Used By**:
+
 - `.claude/hooks/reflection/task-completion-reflection.cjs`
 - `.claude/hooks/reflection/error-recovery-reflection.cjs`
 - `.claude/hooks/reflection/session-end-reflection.cjs`
 
 **Example**:
+
 ```bash
 export REFLECTION_ENABLED=false  # Disable reflection
 ```
@@ -171,14 +192,17 @@ export REFLECTION_ENABLED=false  # Disable reflection
 **Purpose**: Controls reflection hook enforcement mode.
 
 **Values**:
+
 - `block` (default) - Reflection hooks block on failure
 - `warn` - Log warnings but don't block
 - `off` - Disable reflection hooks
 
 **Used By**:
+
 - All hooks in `.claude/hooks/reflection/`
 
 **Example**:
+
 ```bash
 export REFLECTION_HOOK_MODE=warn
 ```
@@ -188,15 +212,18 @@ export REFLECTION_HOOK_MODE=warn
 **Purpose**: Security override for hook failures (debugging only).
 
 **Values**:
+
 - Not set (default) - Hooks fail closed (deny on error)
 - `true` - Hooks fail open (allow on error)
 
 **Used By**:
+
 - Most hooks with error handling
 - `.claude/hooks/safety/file-placement-guard.cjs`
 - `.claude/hooks/routing/task-create-guard.cjs`
 
 **Example**:
+
 ```bash
 export HOOK_FAIL_OPEN=true  # Debugging only - DANGEROUS
 ```
@@ -208,13 +235,16 @@ export HOOK_FAIL_OPEN=true  # Debugging only - DANGEROUS
 **Purpose**: Bypass file placement validation.
 
 **Values**:
+
 - Not set (default) - File placement enforced
 - `true` - Bypass file placement rules
 
 **Used By**:
+
 - `.claude/hooks/safety/file-placement-guard.cjs`
 
 **Example**:
+
 ```bash
 export FILE_PLACEMENT_OVERRIDE=true  # Bypass placement checks
 ```
@@ -232,13 +262,16 @@ Variables controlling memory management.
 **Purpose**: Shared task list ID for cross-session coordination.
 
 **Values**:
+
 - Not set (default) - Session-specific task list
 - `<project-name>` - Shared task list identifier
 
 **Used By**:
+
 - Claude Code task tools (TaskCreate, TaskList, TaskUpdate)
 
 **Example**:
+
 ```bash
 export CLAUDE_CODE_TASK_LIST_ID="agent-studio-tasks"
 ```
@@ -250,14 +283,17 @@ export CLAUDE_CODE_TASK_LIST_ID="agent-studio-tasks"
 **Purpose**: Size threshold for triggering memory pruning.
 
 **Values**:
+
 - `100000` (default) - 100KB per memory file
 - `N` (integer) - Custom threshold in bytes
 
 **Used By**:
+
 - `.claude/lib/memory/memory-pruner.js`
 - `.claude/lib/memory/memory-manager.js`
 
 **Example**:
+
 ```bash
 export MEMORY_PRUNE_THRESHOLD=150000  # 150KB threshold
 ```
@@ -273,14 +309,17 @@ Variables controlling quality reflection and learning.
 **Purpose**: Number of reflection queue entries to process in batch.
 
 **Values**:
+
 - `10` (default) - Process 10 entries per batch
 - `N` (integer) - Custom batch size
 
 **Used By**:
+
 - `.claude/agents/core/reflection-agent.md`
 - Reflection queue processor
 
 **Example**:
+
 ```bash
 export REFLECTION_BATCH_SIZE=20
 ```
@@ -290,13 +329,16 @@ export REFLECTION_BATCH_SIZE=20
 **Purpose**: Minimum rubric score threshold for reflection alerts.
 
 **Values**:
+
 - `0.7` (default) - Alert on scores < 0.7
 - `N` (float 0.0-1.0) - Custom threshold
 
 **Used By**:
+
 - `.claude/agents/core/reflection-agent.md`
 
 **Example**:
+
 ```bash
 export REFLECTION_MIN_SCORE=0.8  # Higher quality threshold
 ```
@@ -312,13 +354,16 @@ Variables controlling safety and validation systems.
 **Purpose**: Maximum loops before blocking recursive calls.
 
 **Values**:
+
 - `5` (default) - Block after 5 identical calls
 - `N` (integer) - Custom threshold
 
 **Used By**:
+
 - `.claude/hooks/safety/loop-prevention.cjs`
 
 **Example**:
+
 ```bash
 export LOOP_PREVENTION_THRESHOLD=10
 ```
@@ -328,14 +373,17 @@ export LOOP_PREVENTION_THRESHOLD=10
 **Purpose**: Enable strict validation for all artifacts.
 
 **Values**:
+
 - `false` (default) - Standard validation
 - `true` - Strict validation (fail on warnings)
 
 **Used By**:
+
 - `.claude/lib/workflow/workflow-validator.js`
 - `.claude/schemas/*.json` validators
 
 **Example**:
+
 ```bash
 export VALIDATION_STRICT_MODE=true
 ```
@@ -351,14 +399,17 @@ Variables for performance tuning and debugging.
 **Purpose**: Override project root detection (for testing/nested projects).
 
 **Values**:
+
 - Auto-detected (default) - Walks up to find `.claude/CLAUDE.md`
 - `/absolute/path` - Custom project root
 
 **Used By**:
+
 - `.claude/lib/utils/project-root.cjs`
 - All hooks and tools that write files
 
 **Example**:
+
 ```bash
 export PROJECT_ROOT=/home/user/projects/my-project
 ```
@@ -370,13 +421,16 @@ export PROJECT_ROOT=/home/user/projects/my-project
 **Purpose**: Enable verbose hook execution logging.
 
 **Values**:
+
 - Not set (default) - Standard logging
 - `true` - Verbose hook logging
 
 **Used By**:
+
 - All hooks (optional debug logging)
 
 **Example**:
+
 ```bash
 export DEBUG_HOOKS=true
 ```
@@ -386,14 +440,17 @@ export DEBUG_HOOKS=true
 **Purpose**: Skip artifact validation for performance (development only).
 
 **Values**:
+
 - Not set (default) - Validation enabled
 - `true` - Skip validation
 
 **Used By**:
+
 - `.claude/tools/cli/validate-agents.js`
 - Creator skills (agent-creator, skill-creator, etc.)
 
 **Example**:
+
 ```bash
 export SKIP_VALIDATION=true  # Development only
 ```

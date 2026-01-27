@@ -31,19 +31,22 @@ This document shows common ways to execute MATLAB-style `.m` scripts from a Bash
 ## Requirements
 
 ### MATLAB
+
 - MATLAB must be installed.
 - The `matlab` executable must be on your PATH, or you must reference it by full path.
 - A valid license is required to run MATLAB.
 
 Check:
+
 ```bash
 matlab -help | head
+```
 ````
 
 ### GNU Octave
 
-* Octave must be installed.
-* The `octave` executable must be on your PATH.
+- Octave must be installed.
+- The `octave` executable must be on your PATH.
 
 Check:
 
@@ -131,13 +134,13 @@ matlab -batch "a=1; b=2; fprintf('%d\n', a+b)"
 
 Common options:
 
-* Change directory at startup:
+- Change directory at startup:
 
 ```bash
 matlab -batch "cd('/path/to/project'); myfunc()"
 ```
 
-* Add code directories to MATLAB path:
+- Add code directories to MATLAB path:
 
 ```bash
 matlab -batch "addpath('/path/to/lib'); myfunc()"
@@ -186,11 +189,11 @@ matlab -batch "try, run('myscript.m'); catch ME, disp(getReport(ME)); exit(1); e
 
 Commonly useful options:
 
-* `-batch "cmd"`: run command, return a process exit code, then exit
-* `-nodisplay`: no display (useful on headless systems)
-* `-nodesktop`: no desktop GUI
-* `-nosplash`: no startup splash
-* `-r "cmd"`: run command; must include `exit` if you want it to terminate
+- `-batch "cmd"`: run command, return a process exit code, then exit
+- `-nodisplay`: no display (useful on headless systems)
+- `-nodesktop`: no desktop GUI
+- `-nosplash`: no startup splash
+- `-r "cmd"`: run command; must include `exit` if you want it to terminate
 
 Exact availability varies by MATLAB release, so use `matlab -help` for your version.
 
@@ -337,11 +340,11 @@ octave --quiet --eval "try, run('myscript.m'); catch err, disp(err.message); exi
 
 Useful options:
 
-* `--eval "cmd"`: run a command string
-* `--quiet`: suppress startup messages
-* `--no-gui`: disable GUI
-* `--no-window-system`: similar headless mode on some installs
-* `--persist`: keep Octave open after running commands (opposite of batch behavior)
+- `--eval "cmd"`: run a command string
+- `--quiet`: suppress startup messages
+- `--no-gui`: disable GUI
+- `--no-window-system`: similar headless mode on some installs
+- `--persist`: keep Octave open after running commands (opposite of batch behavior)
 
 Check:
 
@@ -419,7 +422,7 @@ Or run a function call:
 
 ### MATLAB: command not found
 
-* Add MATLAB to PATH, or invoke it by full path, for example:
+- Add MATLAB to PATH, or invoke it by full path, for example:
 
 ```bash
 /Applications/MATLAB_R202x?.app/bin/matlab -batch "disp('ok')"
@@ -427,18 +430,18 @@ Or run a function call:
 
 ### Octave: GUI issues on servers
 
-* Use `--no-gui` or `--no-window-system`.
+- Use `--no-gui` or `--no-window-system`.
 
 ### Scripts depend on relative paths
 
-* `cd` into the script directory before launching, or do `cd()` within MATLAB/Octave before calling `run()`.
+- `cd` into the script directory before launching, or do `cd()` within MATLAB/Octave before calling `run()`.
 
 ### Quoting problems when passing strings
 
-* Avoid complex quoting in `--eval` or `-batch`.
-* Use environment variables and read them inside MATLAB/Octave when inputs are complicated.
+- Avoid complex quoting in `--eval` or `-batch`.
+- Use environment variables and read them inside MATLAB/Octave when inputs are complicated.
 
 ### Different behavior between MATLAB and Octave
 
-* Check for unsupported functions or toolbox calls.
-* Run minimal repro steps using `--eval` or `-batch` to isolate incompatibilities.
+- Check for unsupported functions or toolbox calls.
+- Run minimal repro steps using `--eval` or `-batch` to isolate incompatibilities.

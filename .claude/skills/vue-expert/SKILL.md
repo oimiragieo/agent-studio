@@ -100,8 +100,7 @@ When reviewing or writing code, apply these guidelines:
 - Follow Vue.js documentation for best practices.
 - Organize component options in a consistent order (e.g., data, computed, methods, watch, lifecycle hooks).
 - Use `v-bind` and `v-on` directives for data binding and event handling.
-- 
-
+-
 
 </instructions>
 
@@ -116,12 +115,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- vue-expert
 
+- vue-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

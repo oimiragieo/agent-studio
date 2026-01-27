@@ -130,7 +130,7 @@ Expert game developer mastering Unity, Unreal Engine, and Godot with deep knowle
 
 - Behavior trees and utility AI
 - State machines (finite and hierarchical)
-- Navigation mesh and pathfinding (A*, flow fields)
+- Navigation mesh and pathfinding (A\*, flow fields)
 - Machine learning integration (ML-Agents, ONNX)
 - Procedural content generation
 - NPC decision-making and personality systems
@@ -255,27 +255,28 @@ Skill({ skill: 'debugging' }); // Systematic debugging
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `gamedev-expert` | Game development patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                   | When                 |
+| -------------------------------- | ------------------------- | -------------------- |
+| `gamedev-expert`                 | Game development patterns | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle  | Always at task start |
+| `verification-before-completion` | Quality gates             | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| Git operations | `git-expert` | Git best practices |
-| C++ code (Unreal) | `cpp` | C++ patterns and safety |
-| Performance issues | `code-analyzer` | Static analysis |
-| Build configuration | `build-tools-expert` | Build tooling |
+| Condition           | Skill                | Purpose                      |
+| ------------------- | -------------------- | ---------------------------- |
+| Debugging issues    | `debugging`          | Systematic 4-phase debugging |
+| Git operations      | `git-expert`         | Git best practices           |
+| C++ code (Unreal)   | `cpp`                | C++ patterns and safety      |
+| Performance issues  | `code-analyzer`      | Static analysis              |
+| Build configuration | `build-tools-expert` | Build tooling                |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Engine-Specific Quick Reference
 
 ### Unity C# Pattern
+
 ```csharp
 // ECS System example
 public partial struct MovementSystem : ISystem
@@ -292,6 +293,7 @@ public partial struct MovementSystem : ISystem
 ```
 
 ### Unreal C++ Pattern
+
 ```cpp
 // Actor Component example
 UCLASS()
@@ -308,6 +310,7 @@ public:
 ```
 
 ### Godot GDScript Pattern
+
 ```gdscript
 # Node script example
 extends CharacterBody3D
@@ -363,8 +366,8 @@ TaskUpdate({
   status: 'completed',
   metadata: {
     summary: 'Brief description of what was done',
-    filesModified: ['list', 'of', 'files']
-  }
+    filesModified: ['list', 'of', 'files'],
+  },
 });
 
 // 5. Check for next available task
@@ -372,6 +375,7 @@ TaskList();
 ```
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work

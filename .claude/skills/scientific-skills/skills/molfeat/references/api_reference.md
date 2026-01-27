@@ -19,12 +19,14 @@ Calculators are callable objects that convert individual molecules into feature 
 ### SerializableCalculator (Base Class)
 
 Base abstract class for all calculators. When subclassing, must implement:
+
 - `__call__()` - Required method for featurization
 - `__len__()` - Optional, returns output length
 - `columns` - Optional property, returns feature names
 - `batch_compute()` - Optional, for efficient batch processing
 
 **State Management Methods:**
+
 - `to_state_json()` - Save calculator state as JSON
 - `to_state_yaml()` - Save calculator state as YAML
 - `from_state_dict()` - Load calculator from state dictionary
@@ -37,6 +39,7 @@ Computes molecular fingerprints. Supports 15+ fingerprint methods.
 **Supported Fingerprint Types:**
 
 **Structural Fingerprints:**
+
 - `ecfp` - Extended-connectivity fingerprints (circular)
 - `fcfp` - Functional-class fingerprints
 - `rdkit` - RDKit topological fingerprints
@@ -46,18 +49,21 @@ Computes molecular fingerprints. Supports 15+ fingerprint methods.
 - `layered` - Layered fingerprints
 
 **Atom-based Fingerprints:**
+
 - `atompair` - Atom pair fingerprints
 - `atompair-count` - Counted atom pairs
 - `topological` - Topological torsion fingerprints
 - `topological-count` - Counted topological torsions
 
 **Specialized Fingerprints:**
+
 - `map4` - MinHashed atom-pair fingerprint up to 4 bonds
 - `secfp` - SMILES extended connectivity fingerprint
 - `erg` - Extended reduced graphs
 - `estate` - Electrotopological state indices
 
 **Parameters:**
+
 - `method` (str) - Fingerprint type name
 - `radius` (int) - Radius for circular fingerprints (default: 3)
 - `fpSize` (int) - Fingerprint size (default: 2048)
@@ -65,6 +71,7 @@ Computes molecular fingerprints. Supports 15+ fingerprint methods.
 - `counting` (bool) - Use count vectors instead of binary
 
 **Usage:**
+
 ```python
 from molfeat.calc import FPCalculator
 
@@ -82,6 +89,7 @@ names = calc.columns
 ```
 
 **Common Fingerprint Dimensions:**
+
 - MACCS: 167 dimensions
 - ECFP (default): 2048 dimensions
 - MAP4 (default): 1024 dimensions
@@ -123,6 +131,7 @@ Consensus pharmacophore fingerprints from multiple conformers.
 Computes Chemically Advanced Template Search (CATS) descriptors - pharmacophore point pair distributions.
 
 **Parameters:**
+
 - `mode` - "2D" or "3D" distance calculations
 - `dist_bins` - Distance bins for pair distributions
 - `scale` - Scaling mode: "raw", "num", or "count"
@@ -180,6 +189,7 @@ Transformers wrap calculators into complete featurization pipelines for batch pr
 Scikit-learn compatible transformer for batch molecular featurization.
 
 **Key Parameters:**
+
 - `featurizer` - Calculator or featurizer to use
 - `n_jobs` (int) - Number of parallel jobs (-1 for all cores)
 - `dtype` - Output data type (numpy float32/64, torch tensors)
@@ -187,6 +197,7 @@ Scikit-learn compatible transformer for batch molecular featurization.
 - `ignore_errors` (bool) - Continue on failures (returns None for failed molecules)
 
 **Essential Methods:**
+
 - `transform(mols)` - Processes batches and returns representations
 - `_transform(mol)` - Handles individual molecule featurization
 - `__call__(mols)` - Convenience wrapper around transform()
@@ -195,6 +206,7 @@ Scikit-learn compatible transformer for batch molecular featurization.
 - `from_state_yaml_file(path)` - Load transformer configuration
 
 **Usage:**
+
 ```python
 from molfeat.calc import FPCalculator
 from molfeat.trans import MoleculeTransformer
@@ -243,6 +255,7 @@ features = transformer(smiles)
 Subclass of `MoleculeTransformer` for pre-trained deep learning models.
 
 **Unique Features:**
+
 - `_embed()` - Batched inference for neural networks
 - `_convert()` - Transforms SMILES/molecules into model-compatible formats
   - SELFIES strings for language models
@@ -250,6 +263,7 @@ Subclass of `MoleculeTransformer` for pre-trained deep learning models.
 - Integrated caching system for efficient storage
 
 **Usage:**
+
 ```python
 from molfeat.trans.pretrained import PretrainedMolTransformer
 
@@ -275,12 +289,14 @@ Manages featurizer discovery, loading, and registration.
 Central hub for accessing available featurizers.
 
 **Key Methods:**
+
 - `available_models` - Property listing all available featurizers
 - `search(name=None, **kwargs)` - Search for specific featurizers
 - `load(name, **kwargs)` - Load a featurizer by name
 - `register(name, card)` - Register custom featurizer
 
 **Usage:**
+
 ```python
 from molfeat.store.modelstore import ModelStore
 
@@ -307,6 +323,7 @@ transformer = store.load("ChemBERTa-77M-MLM")
 ```
 
 **ModelCard Attributes:**
+
 - `name` - Model identifier
 - `description` - Model description
 - `version` - Model version

@@ -9,6 +9,7 @@ This document provides a comprehensive reference for all major seaborn functions
 **Purpose:** Create a scatter plot with points representing individual observations.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict of arrays
 - `x, y` - Variables for x and y axes
 - `hue` - Grouping variable for color encoding
@@ -26,6 +27,7 @@ This document provides a comprehensive reference for all major seaborn functions
 - `ax` - Matplotlib axes to plot on
 
 **Example:**
+
 ```python
 sns.scatterplot(data=df, x='height', y='weight',
                 hue='gender', size='age', style='smoker',
@@ -37,6 +39,7 @@ sns.scatterplot(data=df, x='height', y='weight',
 **Purpose:** Draw a line plot with automatic aggregation and confidence intervals for repeated measures.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict of arrays
 - `x, y` - Variables for x and y axes
 - `hue` - Grouping variable for color encoding
@@ -56,6 +59,7 @@ sns.scatterplot(data=df, x='height', y='weight',
 - `ax` - Matplotlib axes to plot on
 
 **Example:**
+
 ```python
 sns.lineplot(data=timeseries, x='time', y='signal',
              hue='condition', style='subject',
@@ -68,6 +72,7 @@ sns.lineplot(data=timeseries, x='time', y='signal',
 
 **Key Parameters:**
 All parameters from `scatterplot()` and `lineplot()`, plus:
+
 - `kind` - "scatter" or "line"
 - `col` - Categorical variable for column facets
 - `row` - Categorical variable for row facets
@@ -75,10 +80,11 @@ All parameters from `scatterplot()` and `lineplot()`, plus:
 - `col_order` - Order for column facet levels
 - `row_order` - Order for row facet levels
 - `height` - Height of each facet in inches
-- `aspect` - Aspect ratio (width = height * aspect)
+- `aspect` - Aspect ratio (width = height \* aspect)
 - `facet_kws` - Additional parameters for FacetGrid
 
 **Example:**
+
 ```python
 sns.relplot(data=df, x='time', y='measurement',
             hue='treatment', style='batch',
@@ -93,6 +99,7 @@ sns.relplot(data=df, x='time', y='measurement',
 **Purpose:** Plot univariate or bivariate histograms with flexible binning.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (y optional for bivariate)
 - `hue` - Grouping variable
@@ -120,6 +127,7 @@ sns.relplot(data=df, x='time', y='measurement',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.histplot(data=df, x='measurement', hue='condition',
              stat='density', bins=30, kde=True,
@@ -131,6 +139,7 @@ sns.histplot(data=df, x='measurement', hue='condition',
 **Purpose:** Plot univariate or bivariate kernel density estimates.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (y optional for bivariate)
 - `hue` - Grouping variable
@@ -155,6 +164,7 @@ sns.histplot(data=df, x='measurement', hue='condition',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 # Univariate
 sns.kdeplot(data=df, x='measurement', hue='condition',
@@ -170,6 +180,7 @@ sns.kdeplot(data=df, x='var1', y='var2',
 **Purpose:** Plot empirical cumulative distribution functions.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (specify one)
 - `hue` - Grouping variable
@@ -184,6 +195,7 @@ sns.kdeplot(data=df, x='var1', y='var2',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.ecdfplot(data=df, x='response_time', hue='treatment',
              stat='proportion', complementary=False)
@@ -194,6 +206,7 @@ sns.ecdfplot(data=df, x='response_time', hue='treatment',
 **Purpose:** Plot tick marks showing individual observations along an axis.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variable (specify one)
 - `hue` - Grouping variable
@@ -206,6 +219,7 @@ sns.ecdfplot(data=df, x='response_time', hue='treatment',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.rugplot(data=df, x='value', hue='category', height=0.05)
 ```
@@ -216,6 +230,7 @@ sns.rugplot(data=df, x='value', hue='category', height=0.05)
 
 **Key Parameters:**
 All parameters from `histplot()`, `kdeplot()`, and `ecdfplot()`, plus:
+
 - `kind` - "hist", "kde", "ecdf"
 - `rug` - Add rug plot on marginal axes
 - `rug_kws` - Parameters for rug plot
@@ -229,6 +244,7 @@ All parameters from `histplot()`, `kdeplot()`, and `ecdfplot()`, plus:
 - `facet_kws` - Additional parameters for FacetGrid
 
 **Example:**
+
 ```python
 sns.displot(data=df, x='measurement', hue='treatment',
             col='timepoint', kind='kde', fill=True,
@@ -240,6 +256,7 @@ sns.displot(data=df, x='measurement', hue='treatment',
 **Purpose:** Draw a bivariate plot with marginal univariate plots.
 
 **Key Parameters:**
+
 - `data` - DataFrame
 - `x, y` - Variables for x and y axes
 - `hue` - Grouping variable
@@ -256,6 +273,7 @@ sns.displot(data=df, x='measurement', hue='treatment',
 - `palette` - Color palette
 
 **Example:**
+
 ```python
 sns.jointplot(data=df, x='var1', y='var2', hue='group',
               kind='scatter', height=6, ratio=4,
@@ -267,6 +285,7 @@ sns.jointplot(data=df, x='var1', y='var2', hue='group',
 **Purpose:** Plot pairwise relationships in a dataset.
 
 **Key Parameters:**
+
 - `data` - DataFrame
 - `hue` - Grouping variable for color encoding
 - `hue_order` - Order for hue levels
@@ -285,6 +304,7 @@ sns.jointplot(data=df, x='var1', y='var2', hue='group',
 - `grid_kws` - Parameters for PairGrid
 
 **Example:**
+
 ```python
 sns.pairplot(data=df, hue='species', palette='Set2',
              vars=['sepal_length', 'sepal_width', 'petal_length'],
@@ -298,6 +318,7 @@ sns.pairplot(data=df, hue='species', palette='Set2',
 **Purpose:** Draw a categorical scatterplot with jittered points.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (one categorical, one continuous)
 - `hue` - Grouping variable
@@ -317,6 +338,7 @@ sns.pairplot(data=df, hue='species', palette='Set2',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.stripplot(data=df, x='day', y='total_bill',
               hue='sex', dodge=True, jitter=0.2)
@@ -328,6 +350,7 @@ sns.stripplot(data=df, x='day', y='total_bill',
 
 **Key Parameters:**
 Same as `stripplot()`, except:
+
 - No `jitter` parameter
 - `size` - Marker size (important for avoiding overlap)
 - `warn_thresh` - Threshold for warning about too many points (default: 0.05)
@@ -335,6 +358,7 @@ Same as `stripplot()`, except:
 **Note:** Computationally intensive for large datasets. Use stripplot for >1000 points.
 
 **Example:**
+
 ```python
 sns.swarmplot(data=df, x='day', y='total_bill',
               hue='time', dodge=True, size=5)
@@ -345,6 +369,7 @@ sns.swarmplot(data=df, x='day', y='total_bill',
 **Purpose:** Draw a box plot showing quartiles and outliers.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (one categorical, one continuous)
 - `hue` - Grouping variable
@@ -374,6 +399,7 @@ sns.swarmplot(data=df, x='day', y='total_bill',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.boxplot(data=df, x='day', y='total_bill',
             hue='smoker', palette='Set3',
@@ -386,6 +412,7 @@ sns.boxplot(data=df, x='day', y='total_bill',
 
 **Key Parameters:**
 Same as `boxplot()`, plus:
+
 - `bw_method` - KDE bandwidth method
 - `bw_adjust` - KDE bandwidth multiplier
 - `cut` - KDE extension beyond extremes
@@ -397,6 +424,7 @@ Same as `boxplot()`, plus:
 - `gridsize` - KDE grid resolution
 
 **Example:**
+
 ```python
 sns.violinplot(data=df, x='day', y='total_bill',
                hue='sex', split=True, inner='quartile',
@@ -409,12 +437,14 @@ sns.violinplot(data=df, x='day', y='total_bill',
 
 **Key Parameters:**
 Same as `boxplot()`, plus:
+
 - `k_depth` - "tukey", "proportion", "trustworthy", "full", or int
 - `outlier_prop` - Proportion of data as outliers
 - `trust_alpha` - Alpha for trustworthy depth
 - `showfliers` - Show outlier points
 
 **Example:**
+
 ```python
 sns.boxenplot(data=df, x='day', y='total_bill',
               hue='time', palette='Set2')
@@ -425,6 +455,7 @@ sns.boxenplot(data=df, x='day', y='total_bill',
 **Purpose:** Draw a bar plot with error bars showing statistical estimates.
 
 **Key Parameters:**
+
 - `data` - DataFrame, array, or dict
 - `x, y` - Variables (one categorical, one continuous)
 - `hue` - Grouping variable
@@ -451,6 +482,7 @@ sns.boxenplot(data=df, x='day', y='total_bill',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.barplot(data=df, x='day', y='total_bill',
             hue='sex', estimator='median',
@@ -463,11 +495,13 @@ sns.barplot(data=df, x='day', y='total_bill',
 
 **Key Parameters:**
 Same as `barplot()`, but:
+
 - Only specify one of x or y (the categorical variable)
 - No estimator or errorbar (shows counts)
 - `stat` - "count" or "percent"
 
 **Example:**
+
 ```python
 sns.countplot(data=df, x='day', hue='time',
               palette='pastel', dodge=True)
@@ -479,6 +513,7 @@ sns.countplot(data=df, x='day', hue='time',
 
 **Key Parameters:**
 Same as `barplot()`, plus:
+
 - `markers` - Marker style(s)
 - `linestyles` - Line style(s)
 - `scale` - Scale for markers
@@ -486,6 +521,7 @@ Same as `barplot()`, plus:
 - `capsize` - Error bar cap width
 
 **Example:**
+
 ```python
 sns.pointplot(data=df, x='time', y='total_bill',
               hue='sex', markers=['o', 's'],
@@ -498,6 +534,7 @@ sns.pointplot(data=df, x='time', y='total_bill',
 
 **Key Parameters:**
 All parameters from categorical plots, plus:
+
 - `kind` - "strip", "swarm", "box", "violin", "boxen", "bar", "point", "count"
 - `col` - Categorical variable for column facets
 - `row` - Categorical variable for row facets
@@ -512,6 +549,7 @@ All parameters from categorical plots, plus:
 - `facet_kws` - Additional FacetGrid parameters
 
 **Example:**
+
 ```python
 sns.catplot(data=df, x='day', y='total_bill',
             hue='smoker', col='time',
@@ -526,6 +564,7 @@ sns.catplot(data=df, x='day', y='total_bill',
 **Purpose:** Plot data and a linear regression fit.
 
 **Key Parameters:**
+
 - `data` - DataFrame
 - `x, y` - Variables or data vectors
 - `x_estimator` - Apply estimator to x bins
@@ -554,6 +593,7 @@ sns.catplot(data=df, x='day', y='total_bill',
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 sns.regplot(data=df, x='total_bill', y='tip',
             order=2, robust=True, ci=95,
@@ -566,6 +606,7 @@ sns.regplot(data=df, x='total_bill', y='tip',
 
 **Key Parameters:**
 All parameters from `regplot()`, plus:
+
 - `hue` - Grouping variable
 - `col` - Column facets
 - `row` - Row facets
@@ -583,6 +624,7 @@ All parameters from `regplot()`, plus:
 - `facet_kws` - FacetGrid parameters
 
 **Example:**
+
 ```python
 sns.lmplot(data=df, x='total_bill', y='tip',
            hue='smoker', col='time', row='sex',
@@ -595,11 +637,13 @@ sns.lmplot(data=df, x='total_bill', y='tip',
 
 **Key Parameters:**
 Same as `regplot()`, but:
+
 - Always plots residuals (y - predicted) vs x
 - Adds horizontal line at y=0
 - `lowess` - Fit lowess smoother to residuals
 
 **Example:**
+
 ```python
 sns.residplot(data=df, x='x', y='y', lowess=True,
               scatter_kws={'alpha': 0.5})
@@ -612,6 +656,7 @@ sns.residplot(data=df, x='x', y='y', lowess=True,
 **Purpose:** Plot rectangular data as a color-encoded matrix.
 
 **Key Parameters:**
+
 - `data` - 2D array-like data
 - `vmin, vmax` - Anchor values for colormap
 - `cmap` - Colormap name or object
@@ -631,6 +676,7 @@ sns.residplot(data=df, x='x', y='y', lowess=True,
 - `ax` - Matplotlib axes
 
 **Example:**
+
 ```python
 # Correlation matrix
 corr = df.corr()
@@ -646,6 +692,7 @@ sns.heatmap(corr, mask=mask, annot=True, fmt='.2f',
 
 **Key Parameters:**
 All parameters from `heatmap()`, plus:
+
 - `pivot_kws` - Parameters for pivoting (if needed)
 - `method` - Linkage method: "single", "complete", "average", "weighted", "centroid", "median", "ward"
 - `metric` - Distance metric for clustering
@@ -661,6 +708,7 @@ All parameters from `heatmap()`, plus:
 - `figsize` - Figure size
 
 **Example:**
+
 ```python
 sns.clustermap(data, method='average', metric='euclidean',
                z_score=0, cmap='viridis',
@@ -675,6 +723,7 @@ sns.clustermap(data, method='average', metric='euclidean',
 **Purpose:** Multi-plot grid for plotting conditional relationships.
 
 **Initialization:**
+
 ```python
 g = sns.FacetGrid(data, row=None, col=None, hue=None,
                   col_wrap=None, sharex=True, sharey=True,
@@ -687,6 +736,7 @@ g = sns.FacetGrid(data, row=None, col=None, hue=None,
 ```
 
 **Methods:**
+
 - `map(func, *args, **kwargs)` - Apply function to each facet
 - `map_dataframe(func, *args, **kwargs)` - Apply function with full DataFrame
 - `set_axis_labels(x_var, y_var)` - Set axis labels
@@ -696,6 +746,7 @@ g = sns.FacetGrid(data, row=None, col=None, hue=None,
 - `savefig(*args, **kwargs)` - Save figure
 
 **Example:**
+
 ```python
 g = sns.FacetGrid(df, col='time', row='sex', hue='smoker',
                   height=3, aspect=1.5, margin_titles=True)
@@ -710,6 +761,7 @@ g.set_titles('{col_name} | {row_name}')
 **Purpose:** Grid for plotting pairwise relationships in a dataset.
 
 **Initialization:**
+
 ```python
 g = sns.PairGrid(data, hue=None, vars=None,
                  x_vars=None, y_vars=None,
@@ -721,6 +773,7 @@ g = sns.PairGrid(data, hue=None, vars=None,
 ```
 
 **Methods:**
+
 - `map(func, **kwargs)` - Apply function to all subplots
 - `map_diag(func, **kwargs)` - Apply to diagonal
 - `map_offdiag(func, **kwargs)` - Apply to off-diagonal
@@ -730,6 +783,7 @@ g = sns.PairGrid(data, hue=None, vars=None,
 - `savefig(*args, **kwargs)` - Save figure
 
 **Example:**
+
 ```python
 g = sns.PairGrid(df, hue='species', vars=['a', 'b', 'c', 'd'],
                  corner=True, height=2.5)
@@ -744,6 +798,7 @@ g.add_legend()
 **Purpose:** Grid for bivariate plot with marginal univariate plots.
 
 **Initialization:**
+
 ```python
 g = sns.JointGrid(data=None, x=None, y=None, hue=None,
                   height=6, ratio=5, space=0.2,
@@ -753,6 +808,7 @@ g = sns.JointGrid(data=None, x=None, y=None, hue=None,
 ```
 
 **Methods:**
+
 - `plot(joint_func, marginal_func, **kwargs)` - Plot both joint and marginals
 - `plot_joint(func, **kwargs)` - Plot joint distribution
 - `plot_marginals(func, **kwargs)` - Plot marginal distributions
@@ -761,6 +817,7 @@ g = sns.JointGrid(data=None, x=None, y=None, hue=None,
 - `savefig(*args, **kwargs)` - Save figure
 
 **Example:**
+
 ```python
 g = sns.JointGrid(data=df, x='x', y='y', hue='group',
                   height=6, ratio=5, space=0.2)

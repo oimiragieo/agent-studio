@@ -33,7 +33,7 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 - Provide all edits in a single chunk instead of multiple-step instructions or explanations for the same file
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -46,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

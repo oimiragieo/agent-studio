@@ -37,14 +37,16 @@ When reviewing or writing code, apply these guidelines:
 ## Main Branches
 
 ### main (or master)
+
 - Contains production-ready code
 - Never commit directly to main
 - Only accepts merges from:
-  - hotfix/* branches
-  - release/* branches
+  - hotfix/\* branches
+  - release/\* branches
 - Must be tagged with version number after each merge
 
 ### develop
+
 - Main development branch
 - Contains latest delivered development changes
 - Source branch for feature branches
@@ -52,7 +54,8 @@ When reviewing or writing code, apply these guidelines:
 
 ## Supporting Branches
 
-### feature/*
+### feature/\*
+
 - Branch from: develop
 - Merge back into: develop
 - Naming convention: feature/[issue-id]-descriptive-name
@@ -60,9 +63,10 @@ When reviewing or writing code, apply these guidelines:
 - Must be up-to-date with develop before creating PR
 - Delete after merge
 
-### release/*
+### release/\*
+
 - Branch from: develop
-- Merge back into: 
+- Merge back into:
   - main
   - develop
 - Naming convention: release/vX.Y.Z
@@ -71,7 +75,8 @@ When reviewing or writing code, apply these guidelines:
 - No new features
 - Delete after merge
 
-### hotfix/*
+### hotfix/\*
+
 - Branch from: main
 - Merge back into:
   - main
@@ -96,6 +101,7 @@ When reviewing or writing code, apply these guidelines:
 ## Version Control
 
 ### Semantic Versioning
+
 - MAJOR version for incompatible API changes
 - MINOR version for backwards-compatible functionality
 - PATCH version for backwards-compatible bug fixes
@@ -112,6 +118,7 @@ When reviewing or writing code, apply these guidelines:
 ## Branch Protection Rules
 
 ### main & develop
+
 - Require pull request reviews
 - Require status checks to pass
 - Require branches to be up to date
@@ -139,8 +146,8 @@ When reviewing or writing code, apply these guidelines:
 5. After merge to main:
    - Tag release
    - Merge back to develop
-   - Delete hotfix branch 
-</instructions>
+   - Delete hotfix branch
+     </instructions>
 
 <examples>
 Example usage:
@@ -157,6 +164,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -3,9 +3,7 @@
   "title": "linear-pm Output Schema",
   "description": "Output validation schema for linear-pm skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

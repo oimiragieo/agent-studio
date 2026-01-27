@@ -4,11 +4,11 @@ description: Unified lifecycle management for all framework artifacts (skills, a
 version: 1.0.0
 author: Claude Code Enterprise Framework
 triggers:
-  - "create skill"
-  - "create agent"
-  - "update skill"
-  - "deprecate"
-  - "artifact lifecycle"
+  - 'create skill'
+  - 'create agent'
+  - 'update skill'
+  - 'deprecate'
+  - 'artifact lifecycle'
 metadata:
   skill-author: Claude Code Enterprise Framework
   category: orchestration
@@ -26,6 +26,7 @@ This skill provides a simplified interface to the comprehensive artifact lifecyc
 ## When to Use
 
 Use this skill when you need to:
+
 - Create a new artifact (skill, agent, hook, workflow, template, schema)
 - Update an existing artifact
 - Deprecate an artifact with migration guidance
@@ -35,7 +36,7 @@ Use this skill when you need to:
 
 ```javascript
 // Invoke this skill
-Skill({ skill: "artifact-lifecycle" });
+Skill({ skill: 'artifact-lifecycle' });
 ```
 
 ## Workflow Reference
@@ -45,41 +46,49 @@ Skill({ skill: "artifact-lifecycle" });
 ## Phases
 
 ### Phase 1: Discovery
+
 Check if artifact exists, compare versions.
 
 **Agent:** architect
 **Output:** Discovery report with recommendations
 
 ### Phase 2: Decision
+
 Determine action: CREATE, UPDATE, or DEPRECATE.
 
 **Agent:** planner
 **Output:** Action plan with tasks
 
 ### Phase 3: Action
+
 Execute the determined action.
 
 **Agent:** developer + appropriate creator skill
 **Tools:**
+
 - `Skill({ skill: "skill-creator" })` for skills
 - `Skill({ skill: "agent-creator" })` for agents
 - `Skill({ skill: "hook-creator" })` for hooks
 - `Skill({ skill: "workflow-creator" })` for workflows
 
 ### Phase 4: Integration
+
 Update registries, catalogs, and CLAUDE.md.
 
 **Agent:** developer
 **Updates:**
+
 - creator-registry.json
 - skill-catalog.md (for skills)
 - CLAUDE.md Section 3 (for agents) or Section 8.5/8.6 (for skills/workflows)
 
 ### Phase 5: Validation
+
 Test integration and verify references.
 
 **Agent:** qa
 **Checks:**
+
 - Artifact invocable
 - References valid
 - No broken cross-references
@@ -87,6 +96,7 @@ Test integration and verify references.
 ## Usage Examples
 
 ### Create New Skill
+
 ```
 User: "Create a skill for Kubernetes deployment"
 
@@ -100,6 +110,7 @@ Validates: skill invocable
 ```
 
 ### Update Existing Agent
+
 ```
 User: "Update the devops agent to support Terraform Cloud"
 
@@ -113,6 +124,7 @@ Validates: agent referenced correctly
 ```
 
 ### Deprecate Workflow
+
 ```
 User: "Deprecate the old deployment workflow"
 
@@ -127,11 +139,11 @@ Validates: no broken references
 
 ## Configuration
 
-| Parameter | Values | Default |
-|-----------|--------|---------|
+| Parameter     | Values                                         | Default     |
+| ------------- | ---------------------------------------------- | ----------- |
 | artifact_type | skill, agent, hook, workflow, template, schema | auto-detect |
-| operation | create, update, deprecate, integrate | auto-detect |
-| version_bump | major, minor, patch | minor |
+| operation     | create, update, deprecate, integrate           | auto-detect |
+| version_bump  | major, minor, patch                            | minor       |
 
 ## Memory Protocol
 

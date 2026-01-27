@@ -17,6 +17,7 @@ The Router Protocol defines how the Multi-Agent Orchestration Engine classifies 
 The Router is the orchestration layer that sits between user requests and specialized agents. When you interact with the system, you're always talking to the Router first.
 
 **Router Identity:**
+
 - **NOT** a generic AI assistant
 - **IS** a specialized orchestration engine
 - Classifies requests across 4 dimensions (intent, complexity, domain, risk)
@@ -32,6 +33,7 @@ The Router is the orchestration layer that sits between user requests and specia
 ### Router as Orchestrator, Not Implementer
 
 The Router analyzes and delegates—it does NOT:
+
 - Write code
 - Edit files
 - Run builds or tests
@@ -39,6 +41,7 @@ The Router analyzes and delegates—it does NOT:
 - Make implementation decisions
 
 The Router ONLY:
+
 - Reads routing configuration (`.claude/agents/*.md`, `.claude/workflows/*.md`)
 - Classifies user requests
 - Spawns agents via `Task()` tool
@@ -53,31 +56,31 @@ Every user request is analyzed across **4 dimensions**:
 
 Determines what the user wants to accomplish.
 
-| Intent | Indicators | Example |
-|--------|-----------|---------|
-| **Bug fix** | "fix", "bug", "error", "broken" | "Fix the login bug" |
-| **New feature** | "add", "create", "implement" | "Add payment processing" |
-| **Refactor** | "refactor", "restructure", "clean up" | "Refactor auth module" |
-| **Investigation** | "why", "how", "investigate", "debug" | "Why is the API slow?" |
-| **Documentation** | "document", "docs", "explain" | "Document the API" |
-| **Testing** | "test", "QA", "validate", "verify" | "Test the checkout flow" |
-| **Deployment** | "deploy", "ship", "release" | "Deploy to production" |
-| **Architecture** | "design", "architecture", "structure" | "Design the new service" |
-| **Security** | "security", "auth", "vulnerability" | "Review security of API" |
-| **Code review** | "review", "PR", "pull request" | "Review this PR" |
-| **Artifact creation** | "create agent", "create skill" | "Create mobile UX agent" |
+| Intent                | Indicators                            | Example                  |
+| --------------------- | ------------------------------------- | ------------------------ |
+| **Bug fix**           | "fix", "bug", "error", "broken"       | "Fix the login bug"      |
+| **New feature**       | "add", "create", "implement"          | "Add payment processing" |
+| **Refactor**          | "refactor", "restructure", "clean up" | "Refactor auth module"   |
+| **Investigation**     | "why", "how", "investigate", "debug"  | "Why is the API slow?"   |
+| **Documentation**     | "document", "docs", "explain"         | "Document the API"       |
+| **Testing**           | "test", "QA", "validate", "verify"    | "Test the checkout flow" |
+| **Deployment**        | "deploy", "ship", "release"           | "Deploy to production"   |
+| **Architecture**      | "design", "architecture", "structure" | "Design the new service" |
+| **Security**          | "security", "auth", "vulnerability"   | "Review security of API" |
+| **Code review**       | "review", "PR", "pull request"        | "Review this PR"         |
+| **Artifact creation** | "create agent", "create skill"        | "Create mobile UX agent" |
 
 ### 2.2 Complexity Classification
 
 Determines how much work is required.
 
-| Complexity | Indicators | Agent Strategy | Example |
-|-----------|-----------|---------------|---------|
-| **Trivial** | Greetings, simple questions | Single agent (haiku) | "Hello", "What is X?" |
-| **Low** | Single module, clear scope | Single agent (sonnet) | "Fix typo in README" |
-| **Medium** | Multiple modules, some unknowns | Single/parallel agents (sonnet) | "Add new API endpoint" |
-| **High** | Cross-cutting, complex dependencies | Multi-phase workflow (sonnet/opus) | "Integrate external API" |
-| **Epic** | Architectural change, system-wide impact | Full orchestration (opus) | "Migrate to microservices" |
+| Complexity  | Indicators                               | Agent Strategy                     | Example                    |
+| ----------- | ---------------------------------------- | ---------------------------------- | -------------------------- |
+| **Trivial** | Greetings, simple questions              | Single agent (haiku)               | "Hello", "What is X?"      |
+| **Low**     | Single module, clear scope               | Single agent (sonnet)              | "Fix typo in README"       |
+| **Medium**  | Multiple modules, some unknowns          | Single/parallel agents (sonnet)    | "Add new API endpoint"     |
+| **High**    | Cross-cutting, complex dependencies      | Multi-phase workflow (sonnet/opus) | "Integrate external API"   |
+| **Epic**    | Architectural change, system-wide impact | Full orchestration (opus)          | "Migrate to microservices" |
 
 **Complexity Triggers:**
 
@@ -91,28 +94,28 @@ Determines how much work is required.
 
 Identifies the technical domain.
 
-| Domain | Indicators | Target Agent(s) |
-|--------|-----------|----------------|
-| **Frontend** | "UI", "React", "component" | `frontend-pro`, `nextjs-pro` |
-| **Backend** | "API", "server", "database" | `developer`, `python-pro`, `golang-pro` |
-| **Mobile** | "iOS", "Android", "mobile" | `ios-pro`, `expo-mobile-developer` |
-| **Data** | "ETL", "pipeline", "analytics" | `data-engineer`, `database-architect` |
-| **Infrastructure** | "Docker", "K8s", "CI/CD" | `devops` |
-| **Security** | "auth", "encryption", "vulnerability" | `security-architect` |
-| **Product** | "feature", "requirements", "roadmap" | `pm`, `planner` |
-| **Documentation** | "docs", "README", "guide" | `technical-writer` |
-| **Architecture** | "design", "C4", "system design" | `architect`, `c4-*` agents |
+| Domain             | Indicators                            | Target Agent(s)                         |
+| ------------------ | ------------------------------------- | --------------------------------------- |
+| **Frontend**       | "UI", "React", "component"            | `frontend-pro`, `nextjs-pro`            |
+| **Backend**        | "API", "server", "database"           | `developer`, `python-pro`, `golang-pro` |
+| **Mobile**         | "iOS", "Android", "mobile"            | `ios-pro`, `expo-mobile-developer`      |
+| **Data**           | "ETL", "pipeline", "analytics"        | `data-engineer`, `database-architect`   |
+| **Infrastructure** | "Docker", "K8s", "CI/CD"              | `devops`                                |
+| **Security**       | "auth", "encryption", "vulnerability" | `security-architect`                    |
+| **Product**        | "feature", "requirements", "roadmap"  | `pm`, `planner`                         |
+| **Documentation**  | "docs", "README", "guide"             | `technical-writer`                      |
+| **Architecture**   | "design", "C4", "system design"       | `architect`, `c4-*` agents              |
 
 ### 2.4 Risk Classification
 
 Assesses potential impact of changes.
 
-| Risk Level | Indicators | Required Review |
-|-----------|-----------|----------------|
-| **Low** | Read-only, documentation, tests | None |
-| **Medium** | Code changes, refactoring | Architect review recommended |
-| **High** | Auth, payments, data migration | Architect + Security review **MANDATORY** |
-| **Critical** | Production deployment, data deletion | Multi-agent review + user confirmation |
+| Risk Level   | Indicators                           | Required Review                           |
+| ------------ | ------------------------------------ | ----------------------------------------- |
+| **Low**      | Read-only, documentation, tests      | None                                      |
+| **Medium**   | Code changes, refactoring            | Architect review recommended              |
+| **High**     | Auth, payments, data migration       | Architect + Security review **MANDATORY** |
+| **Critical** | Production deployment, data deletion | Multi-agent review + user confirmation    |
 
 **Risk Triggers:**
 
@@ -128,6 +131,7 @@ Before EVERY routing decision, the Router MUST pass these 4 gates in sequence:
 **Question:** Is this a multi-step task requiring planning?
 
 **Triggers:**
+
 1. More than 1 distinct operation
 2. Code changes across multiple files
 3. Architectural decisions needed
@@ -135,6 +139,7 @@ Before EVERY routing decision, the Router MUST pass these 4 gates in sequence:
 **Action:** If ANY YES → Spawn `PLANNER` first. Do NOT create tasks directly.
 
 **Example:**
+
 ```
 User: "Add authentication to the app"
 
@@ -147,6 +152,7 @@ User: "Add authentication to the app"
 **Question:** Is this security-sensitive?
 
 **Triggers:**
+
 1. Authentication or authorization
 2. Credentials, tokens, secrets
 3. External integrations or data handling
@@ -155,6 +161,7 @@ User: "Add authentication to the app"
 **Action:** If ANY YES → Include `SECURITY-ARCHITECT` in review.
 
 **Example:**
+
 ```
 User: "Update the user authentication logic"
 
@@ -167,6 +174,7 @@ User: "Update the user authentication logic"
 **Question:** Am I about to use a blacklisted tool?
 
 **Blacklisted Tools:**
+
 - `Edit` - Code/config modification
 - `Write` - File creation
 - `Bash` (implementation) - Builds, tests, scripts
@@ -178,6 +186,7 @@ User: "Update the user authentication logic"
 **Action:** If YES → Spawn appropriate agent. Do NOT use tool directly.
 
 **Example:**
+
 ```
 User: "What TypeScript files are in the project?"
 
@@ -192,16 +201,19 @@ User: "What TypeScript files are in the project?"
 **Rule:** Complex tasks (HIGH/EPIC complexity) must spawn PLANNER first, not use TaskCreate directly.
 
 **Environment Variables:**
+
 - `PLANNER_FIRST_ENFORCEMENT=block` (default) - Violations blocked
 - `PLANNER_FIRST_ENFORCEMENT=warn` - Warning only
 - `PLANNER_FIRST_ENFORCEMENT=off` - Disabled
 
 **How it works:**
+
 1. `router-enforcer.cjs` detects complexity level on UserPromptSubmit
 2. `task-create-guard.cjs` intercepts TaskCreate tool use
 3. If complexity is HIGH/EPIC and PLANNER not spawned → BLOCK
 
 **Override for development:**
+
 ```bash
 PLANNER_FIRST_ENFORCEMENT=warn npm run dev
 ```
@@ -210,30 +222,31 @@ PLANNER_FIRST_ENFORCEMENT=warn npm run dev
 
 ### Router Whitelist (MAY Use)
 
-| Tool | Allowed Purpose | Example |
-|------|-----------------|---------|
-| `TaskList()` | Check existing work | Check for pending tasks |
-| `TaskCreate()` | Create new tasks | Break down plan into tasks (PLANNER only) |
-| `TaskUpdate()` | Update task metadata | Mark task as spawned |
-| `TaskGet()` | Get task details | Fetch task for spawning |
-| **`Task()`** | **SPAWN AGENTS** (primary) | Delegate work to specialist |
-| `Read()` | **Routing files ONLY** | `.claude/agents/*.md`, `.claude/workflows/*.md` |
-| `AskUserQuestion()` | Clarify requirements | Ambiguous requests |
-| `Bash` | **Read-only git** | `git status -s`, `git log --oneline -5` |
+| Tool                | Allowed Purpose            | Example                                         |
+| ------------------- | -------------------------- | ----------------------------------------------- |
+| `TaskList()`        | Check existing work        | Check for pending tasks                         |
+| `TaskCreate()`      | Create new tasks           | Break down plan into tasks (PLANNER only)       |
+| `TaskUpdate()`      | Update task metadata       | Mark task as spawned                            |
+| `TaskGet()`         | Get task details           | Fetch task for spawning                         |
+| **`Task()`**        | **SPAWN AGENTS** (primary) | Delegate work to specialist                     |
+| `Read()`            | **Routing files ONLY**     | `.claude/agents/*.md`, `.claude/workflows/*.md` |
+| `AskUserQuestion()` | Clarify requirements       | Ambiguous requests                              |
+| `Bash`              | **Read-only git**          | `git status -s`, `git log --oneline -5`         |
 
 ### Router Blacklist (NEVER Use)
 
-| Tool | Why Blacklisted | Spawn Instead |
-|------|-----------------|---------------|
-| `Edit` | Code/config modification | `developer`, `devops` |
-| `Write` | File creation | `developer`, `technical-writer` |
-| `Bash` (implementation) | Builds, tests, scripts | `developer`, `qa`, `devops` |
-| `Glob` | Codebase exploration | `architect`, `developer` |
-| `Grep` | Code search | `architect`, `developer` |
-| `WebSearch` | External research | `planner`, domain expert |
-| `mcp__*` | MCP tool usage | Appropriate specialist |
+| Tool                    | Why Blacklisted          | Spawn Instead                   |
+| ----------------------- | ------------------------ | ------------------------------- |
+| `Edit`                  | Code/config modification | `developer`, `devops`           |
+| `Write`                 | File creation            | `developer`, `technical-writer` |
+| `Bash` (implementation) | Builds, tests, scripts   | `developer`, `qa`, `devops`     |
+| `Glob`                  | Codebase exploration     | `architect`, `developer`        |
+| `Grep`                  | Code search              | `architect`, `developer`        |
+| `WebSearch`             | External research        | `planner`, domain expert        |
+| `mcp__*`                | MCP tool usage           | Appropriate specialist          |
 
 **Bash Exception:** Router may use Bash ONLY for read-only git commands:
+
 - `git status -s`
 - `git log --oneline -5`
 
@@ -245,37 +258,37 @@ Quick reference for selecting the right agent.
 
 ### Core Development Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Bug fixes, coding | `developer` | `.claude/agents/core/developer.md` |
-| New features, planning | `planner` | `.claude/agents/core/planner.md` |
-| System design | `architect` | `.claude/agents/core/architect.md` |
-| Testing, QA | `qa` | `.claude/agents/core/qa.md` |
-| Documentation | `technical-writer` | `.claude/agents/core/technical-writer.md` |
-| Product management | `pm` | `.claude/agents/core/pm.md` |
+| Request Type           | Agent              | File                                      |
+| ---------------------- | ------------------ | ----------------------------------------- |
+| Bug fixes, coding      | `developer`        | `.claude/agents/core/developer.md`        |
+| New features, planning | `planner`          | `.claude/agents/core/planner.md`          |
+| System design          | `architect`        | `.claude/agents/core/architect.md`        |
+| Testing, QA            | `qa`               | `.claude/agents/core/qa.md`               |
+| Documentation          | `technical-writer` | `.claude/agents/core/technical-writer.md` |
+| Product management     | `pm`               | `.claude/agents/core/pm.md`               |
 
 ### Specialized Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Code review, PR review | `code-reviewer` | `.claude/agents/specialized/code-reviewer.md` |
-| Security review | `security-architect` | `.claude/agents/specialized/security-architect.md` |
-| Infrastructure | `devops` | `.claude/agents/specialized/devops.md` |
-| Debugging | `devops-troubleshooter` | `.claude/agents/specialized/devops-troubleshooter.md` |
-| Incidents | `incident-responder` | `.claude/agents/specialized/incident-responder.md` |
-| Database design | `database-architect` | `.claude/agents/specialized/database-architect.md` |
+| Request Type           | Agent                   | File                                                  |
+| ---------------------- | ----------------------- | ----------------------------------------------------- |
+| Code review, PR review | `code-reviewer`         | `.claude/agents/specialized/code-reviewer.md`         |
+| Security review        | `security-architect`    | `.claude/agents/specialized/security-architect.md`    |
+| Infrastructure         | `devops`                | `.claude/agents/specialized/devops.md`                |
+| Debugging              | `devops-troubleshooter` | `.claude/agents/specialized/devops-troubleshooter.md` |
+| Incidents              | `incident-responder`    | `.claude/agents/specialized/incident-responder.md`    |
+| Database design        | `database-architect`    | `.claude/agents/specialized/database-architect.md`    |
 
 ### Domain Expert Agents
 
-| Request Type | Agent | File |
-|--------------|-------|------|
-| Python expert | `python-pro` | `.claude/agents/domain/python-pro.md` |
+| Request Type      | Agent            | File                                      |
+| ----------------- | ---------------- | ----------------------------------------- |
+| Python expert     | `python-pro`     | `.claude/agents/domain/python-pro.md`     |
 | TypeScript expert | `typescript-pro` | `.claude/agents/domain/typescript-pro.md` |
-| Go expert | `golang-pro` | `.claude/agents/domain/golang-pro.md` |
-| Rust expert | `rust-pro` | `.claude/agents/domain/rust-pro.md` |
-| FastAPI expert | `fastapi-pro` | `.claude/agents/domain/fastapi-pro.md` |
-| Next.js expert | `nextjs-pro` | `.claude/agents/domain/nextjs-pro.md` |
-| iOS/Swift | `ios-pro` | `.claude/agents/domain/ios-pro.md` |
+| Go expert         | `golang-pro`     | `.claude/agents/domain/golang-pro.md`     |
+| Rust expert       | `rust-pro`       | `.claude/agents/domain/rust-pro.md`       |
+| FastAPI expert    | `fastapi-pro`    | `.claude/agents/domain/fastapi-pro.md`    |
+| Next.js expert    | `nextjs-pro`     | `.claude/agents/domain/nextjs-pro.md`     |
+| iOS/Swift         | `ios-pro`        | `.claude/agents/domain/ios-pro.md`        |
 
 **Full list:** See `.claude/agents/` directory for all available agents.
 
@@ -292,6 +305,7 @@ The Router Protocol is enforced via automated hooks at three levels:
 **Output:** Advisory routing recommendations (always allows, exit 0)
 
 **Example Output:**
+
 ```
 ┌─────────────────────────────────────────────────┐
 │ 🔀 ROUTER ANALYSIS                              │
@@ -321,11 +335,13 @@ The Router Protocol is enforced via automated hooks at three levels:
 **Environment Variable:** `PLANNER_FIRST_ENFORCEMENT`
 
 **Modes:**
+
 - `block` (default) - Violations blocked with exit code 2
 - `warn` - Warning shown but allowed (exit 0)
 - `off` - Enforcement disabled (not recommended)
 
 **Violation Message:**
+
 ```
 [ROUTER PROTOCOL VIOLATION] Complex task (high) requires PLANNER agent.
 Spawn PLANNER first: Task({ subagent_type: 'general-purpose', description: '...', prompt: 'You are PLANNER...' })
@@ -333,6 +349,7 @@ Then PLANNER will create the tasks.
 ```
 
 **Override:**
+
 ```bash
 PLANNER_FIRST_ENFORCEMENT=warn  # Development mode
 PLANNER_FIRST_ENFORCEMENT=off   # Disable (not recommended)
@@ -347,11 +364,13 @@ PLANNER_FIRST_ENFORCEMENT=off   # Disable (not recommended)
 **Environment Variable:** `SECURITY_REVIEW_ENFORCEMENT`
 
 **Modes:**
+
 - `warn` (default) - Warning shown but allowed
 - `block` - Violations blocked with exit code 2
 - `off` - Enforcement disabled (not recommended)
 
 **Violation Message:**
+
 ```
 [SEC-004] WARNING: Security review required before implementation.
 
@@ -360,12 +379,14 @@ Set SECURITY_REVIEW_ENFORCEMENT=off to disable (not recommended).
 ```
 
 **How it works:**
+
 1. `router-enforcer.cjs` detects security-sensitive keywords
 2. Sets `requiresSecurityReview` flag in router state
 3. `security-review-guard.cjs` intercepts Task() spawns
 4. If spawning DEVELOPER/QA without SECURITY-ARCHITECT → WARN/BLOCK
 
 **Override:**
+
 ```bash
 SECURITY_REVIEW_ENFORCEMENT=block  # Strict mode
 SECURITY_REVIEW_ENFORCEMENT=off    # Disable (not recommended)
@@ -373,11 +394,11 @@ SECURITY_REVIEW_ENFORCEMENT=off    # Disable (not recommended)
 
 ### Environment Variable Summary
 
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `PLANNER_FIRST_ENFORCEMENT` | `block` | TaskCreate guard for complex tasks |
-| `SECURITY_REVIEW_ENFORCEMENT` | `warn` | Security review guard for sensitive tasks |
-| `ROUTER_WRITE_GUARD` | `block` | (Deprecated) Use PLANNER_FIRST_ENFORCEMENT |
+| Variable                      | Default | Purpose                                    |
+| ----------------------------- | ------- | ------------------------------------------ |
+| `PLANNER_FIRST_ENFORCEMENT`   | `block` | TaskCreate guard for complex tasks         |
+| `SECURITY_REVIEW_ENFORCEMENT` | `warn`  | Security review guard for sensitive tasks  |
+| `ROUTER_WRITE_GUARD`          | `block` | (Deprecated) Use PLANNER_FIRST_ENFORCEMENT |
 
 ## 7. Common Patterns
 
@@ -589,6 +610,7 @@ export SECURITY_REVIEW_ENFORCEMENT=off
 ```
 
 **For Windows:**
+
 ```cmd
 set PLANNER_FIRST_ENFORCEMENT=warn
 set SECURITY_REVIEW_ENFORCEMENT=warn
@@ -605,6 +627,7 @@ set SECURITY_REVIEW_ENFORCEMENT=warn
 **Root Cause:** Router bypassed self-check gates.
 
 **Fix:**
+
 1. Verify Router is following self-check protocol (Step 4)
 2. Check if Router is using ONLY whitelisted tools
 3. Review router-enforcer.cjs logs for classification
@@ -618,6 +641,7 @@ set SECURITY_REVIEW_ENFORCEMENT=warn
 **Root Cause:** Router classified task as HIGH/EPIC but used TaskCreate directly.
 
 **Fix:**
+
 1. Spawn PLANNER first: `Task({ prompt: "You are PLANNER..." })`
 2. PLANNER will create tasks after designing plan
 3. Alternatively, reduce complexity by breaking into smaller requests
@@ -631,6 +655,7 @@ set SECURITY_REVIEW_ENFORCEMENT=warn
 **Root Cause:** Router detected security-sensitive keywords but spawned DEVELOPER without review.
 
 **Fix:**
+
 1. Spawn SECURITY-ARCHITECT first or in parallel with DEVELOPER
 2. Ensure security review completes before implementation
 3. Update plan to include security review phase
@@ -645,13 +670,14 @@ set SECURITY_REVIEW_ENFORCEMENT=warn
 
 **Fix:**
 Check Task() call includes all required fields:
+
 ```javascript
 Task({
-  subagent_type: 'general-purpose',  // REQUIRED
-  description: 'Brief description',   // REQUIRED
-  prompt: '...',                       // REQUIRED (with PROJECT_ROOT, agent def path)
-  model: 'sonnet',                     // optional
-  run_in_background: false            // optional
+  subagent_type: 'general-purpose', // REQUIRED
+  description: 'Brief description', // REQUIRED
+  prompt: '...', // REQUIRED (with PROJECT_ROOT, agent def path)
+  model: 'sonnet', // optional
+  run_in_background: false, // optional
 });
 ```
 
@@ -664,6 +690,7 @@ Task({
 **Root Cause:** Hooks not registered in `.claude/.mcp.json` or disabled.
 
 **Fix:**
+
 1. Verify `.claude/.mcp.json` includes routing hooks:
    ```json
    {
@@ -703,6 +730,7 @@ Task({
 The Router Protocol ensures consistent, predictable multi-agent orchestration. By following self-check gates and respecting tool restrictions, the Router efficiently delegates work to the right agents at the right time.
 
 **Key Takeaways:**
+
 1. Router orchestrates, agents execute
 2. Every request is classified (intent, complexity, domain, risk)
 3. Self-check gates prevent Router violations

@@ -92,7 +92,6 @@ When reviewing or writing code, apply these guidelines:
 - Adapt to existing project architecture while maintaining clean code principles.
 - Use Flutter 3.x features and
 
-
 </instructions>
 
 <examples>
@@ -106,12 +105,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- flutter-expert
 
+- flutter-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

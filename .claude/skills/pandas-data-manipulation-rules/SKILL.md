@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Prefer method chaining for data transformations when possible.
 - Use loc and iloc for explicit data selection.
 - Utilize groupby operations for efficient data aggregation.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

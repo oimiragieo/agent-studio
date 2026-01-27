@@ -36,12 +36,12 @@ Swarm Coordination Skill - Orchestrates parallel agent execution, manages inter-
 
 Identify parallelizable work:
 
-| Pattern | Example | Strategy |
-|---------|---------|----------|
-| Independent tasks | Review multiple files | Spawn in parallel |
-| Dependent tasks | Design → Implement | Sequential spawn |
-| Fan-out/Fan-in | Multiple reviews → Consolidate | Parallel + Aggregation |
-| Pipeline | Parse → Transform → Validate | Sequential handoff |
+| Pattern           | Example                        | Strategy               |
+| ----------------- | ------------------------------ | ---------------------- |
+| Independent tasks | Review multiple files          | Spawn in parallel      |
+| Dependent tasks   | Design → Implement             | Sequential spawn       |
+| Fan-out/Fan-in    | Multiple reviews → Consolidate | Parallel + Aggregation |
+| Pipeline          | Parse → Transform → Validate   | Sequential handoff     |
 
 ### Step 2: Spawn Agents in Parallel
 
@@ -52,13 +52,13 @@ Use the Task tool to spawn multiple agents in a single message:
 Task({
   subagent_type: 'general-purpose',
   description: 'Architect reviewing design',
-  prompt: 'Review architecture...'
+  prompt: 'Review architecture...',
 });
 
 Task({
   subagent_type: 'general-purpose',
   description: 'Security reviewing design',
-  prompt: 'Review security...'
+  prompt: 'Review security...',
 });
 ```
 
@@ -72,18 +72,22 @@ Use structured formats for agent communication:
 ## Agent Handoff: [Source] → [Target]
 
 ### Context
+
 - Task: [What was done]
 - Files: [Files touched]
 
 ### Findings
+
 - [Key finding 1]
 - [Key finding 2]
 
 ### Recommendations
+
 - [Action item 1]
 - [Action item 2]
 
 ### Artifacts
+
 - [Path to artifact 1]
 - [Path to artifact 2]
 ```
@@ -96,18 +100,22 @@ Combine outputs from parallel agents:
 ## Swarm Results Aggregation
 
 ### Participating Agents
+
 - Architect: Completed ✅
 - Security: Completed ✅
 - DevOps: Completed ✅
 
 ### Consensus Points
+
 - [Point all agents agree on]
 
 ### Conflicts
+
 - [Point agents disagree on]
 - Resolution: [How to resolve]
 
 ### Combined Recommendations
+
 1. [Prioritized recommendation]
 2. [Prioritized recommendation]
 ```
@@ -116,12 +124,12 @@ Combine outputs from parallel agents:
 
 Strategies for partial failures:
 
-| Scenario | Strategy |
-|----------|----------|
-| Agent timeout | Retry with simpler prompt |
-| Agent error | Continue with available results |
-| Conflicting results | Use consensus-voting skill |
-| Missing critical result | Block and retry |
+| Scenario                | Strategy                        |
+| ----------------------- | ------------------------------- |
+| Agent timeout           | Retry with simpler prompt       |
+| Agent error             | Continue with available results |
+| Conflicting results     | Use consensus-voting skill      |
+| Missing critical result | Block and retry                 |
 
 </execution_process>
 
@@ -159,10 +167,12 @@ Task({ description: 'Performance reviewing API', prompt: '...' });
 ## API Design Review (3 agents)
 
 ### Consensus
+
 - RESTful design is appropriate
 - Need authentication on all endpoints
 
 ### Recommendations by Priority
+
 1. [HIGH] Add rate limiting (Security)
 2. [HIGH] Use connection pooling (Performance)
 3. [MED] Add versioning to URLs (Architect)
@@ -172,6 +182,7 @@ Task({ description: 'Performance reviewing API', prompt: '...' });
 </examples>
 
 ## Rules
+
 - Always spawn independent agents in parallel
 - Use structured handoff formats
 - Handle partial failures gracefully
@@ -181,14 +192,17 @@ Task({ description: 'Performance reviewing API', prompt: '...' });
 This skill powers multi-agent orchestration patterns across the framework:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - Router uses swarm patterns for parallel agent spawning
 - Planning Orchestration Matrix defines when to use swarm coordination
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Swarm patterns apply to artifact creation at scale
 - Parallel validation of multiple artifacts
 
 **Related Workflows:**
+
 - `consensus-voting` skill for resolving conflicting agent outputs
 - `context-compressor` skill for aggregating parallel results
 - Enterprise workflows in `.claude/workflows/enterprise/` use swarm patterns
@@ -198,11 +212,13 @@ This skill powers multi-agent orchestration patterns across the framework:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

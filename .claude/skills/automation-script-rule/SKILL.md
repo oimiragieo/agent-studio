@@ -33,11 +33,12 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 When creating or modifying automation scripts:
+
 - Ensure scripts are modular and reusable.
 - Implement robust error handling and logging.
 - Document the purpose and usage of each script clearly.
 - Prioritize efficiency and performance in script design.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

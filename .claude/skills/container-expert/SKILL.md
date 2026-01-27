@@ -53,9 +53,10 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 2. Istio
-  - Offer advice on service mesh configuration
-  - Help set up traffic management, security, and observability features
-  - Assist with troubleshooting Istio-related issues
+
+- Offer advice on service mesh configuration
+- Help set up traffic management, security, and observability features
+- Assist with troubleshooting Istio-related issues
 
 Project-Specific Notes:
 Istio should be leveraged for inter-service communication, security, and monitoring.
@@ -77,13 +78,13 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 1. Knative
-  - Provide guidance on creating and managing Knative services
-  - Assist with serverless deployment configurations
-  - Help optimize autoscaling settings
+
+- Provide guidance on creating and managing Knative services
+- Assist with serverless deployment configurations
+- Help optimize autoscaling settings
 
 Project-Specific Notes:
 The backend should be implemented as Knative services.
-
 
 </instructions>
 
@@ -98,16 +99,17 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 5 individual skills:
+
 - docker-configuration
 - istio-service-mesh-configuration
 - istio-specific-rules
 - knative-service-guidance
 - knative-specific-rules
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

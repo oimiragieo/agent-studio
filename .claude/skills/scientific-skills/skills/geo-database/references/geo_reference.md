@@ -19,11 +19,13 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/
 **Purpose:** Search a database and return a list of UIDs matching the query.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
 ```
 
 **Parameters:**
+
 - `db` (required): Database to search (e.g., "gds", "geoprofiles")
 - `term` (required): Search query string
 - `retmax`: Maximum number of UIDs to return (default: 20, max: 10000)
@@ -36,6 +38,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
 - `mindate`, `maxdate`: Date range limits (YYYY/MM/DD)
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -64,17 +67,20 @@ handle.close()
 **Purpose:** Retrieve document summaries for a list of UIDs.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi
 ```
 
 **Parameters:**
+
 - `db` (required): Database
 - `id` (required): Comma-separated list of UIDs or query_key+WebEnv
 - `retmode`: Return format ("xml" or "json")
 - `version`: Summary version ("2.0" recommended)
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -104,17 +110,20 @@ handle.close()
 **Purpose:** Retrieve full records for a list of UIDs.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
 ```
 
 **Parameters:**
+
 - `db` (required): Database
 - `id` (required): Comma-separated list of UIDs
 - `retmode`: Return format ("xml", "text")
 - `rettype`: Record type (database-specific)
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -134,11 +143,13 @@ handle.close()
 **Purpose:** Find related records in same or different databases.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi
 ```
 
 **Parameters:**
+
 - `dbfrom` (required): Source database
 - `db` (required): Target database
 - `id` (required): UID from source database
@@ -150,6 +161,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi
   - "llinks": Return URLs to LinkOut resources
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -169,15 +181,18 @@ handle.close()
 **Purpose:** Upload a list of UIDs to the history server for use in subsequent requests.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/epost.fcgi
 ```
 
 **Parameters:**
+
 - `db` (required): Database
 - `id` (required): Comma-separated list of UIDs
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -198,15 +213,18 @@ webenv = result["WebEnv"]
 **Purpose:** Get information about available databases and their fields.
 
 **URL Pattern:**
+
 ```
 https://eutils.ncbi.nlm.nih.gov/entrez/eutils/einfo.fcgi
 ```
 
 **Parameters:**
+
 - `db`: Database name (omit to get list of all databases)
 - `version`: Set to "2.0" for detailed field information
 
 **Example:**
+
 ```python
 from Bio import Entrez
 Entrez.email = "your@email.com"
@@ -229,6 +247,7 @@ handle.close()
 Common search fields for building targeted queries:
 
 **General Fields:**
+
 - `[Accession]`: GEO accession number
 - `[Title]`: Dataset title
 - `[Author]`: Author name
@@ -238,19 +257,23 @@ Common search fields for building targeted queries:
 - `[PubMed ID]`: Associated PubMed ID
 
 **Date Fields:**
+
 - `[Publication Date]`: Publication date (YYYY or YYYY/MM/DD)
 - `[Submission Date]`: Submission date
 - `[Modification Date]`: Last modification date
 
 **MeSH Terms:**
+
 - `[MeSH Terms]`: Medical Subject Headings
 - `[MeSH Major Topic]`: Major MeSH topics
 
 **Study Type Fields:**
+
 - `[DataSet Type]`: Type of study (e.g., "RNA-seq", "ChIP-seq")
 - `[Sample Type]`: Sample type
 
 **Example Complex Query:**
+
 ```python
 query = """
     (breast cancer[MeSH] OR breast neoplasms[Title]) AND
@@ -270,18 +293,21 @@ SOFT (Simple Omnibus Format in Text) is GEO's primary data exchange format. File
 ### File Types
 
 **Family SOFT Files:**
+
 - Filename: `GSExxxxx_family.soft.gz`
 - Contains: Complete series with all samples and platforms
 - Size: Can be very large (100s of MB compressed)
 - Use: Complete data extraction
 
 **Series Matrix Files:**
+
 - Filename: `GSExxxxx_series_matrix.txt.gz`
 - Contains: Expression matrix with minimal metadata
 - Size: Smaller than family files
 - Use: Quick access to expression data
 
 **Platform SOFT Files:**
+
 - Filename: `GPLxxxxx.soft`
 - Contains: Platform annotation and probe information
 - Use: Mapping probes to genes
@@ -348,6 +374,7 @@ ID_REF    VALUE
 ### Parsing SOFT Files
 
 **With GEOparse:**
+
 ```python
 import GEOparse
 
@@ -370,6 +397,7 @@ for gpl_name, gpl in gse.gpls.items():
 ```
 
 **Manual Parsing:**
+
 ```python
 import gzip
 
@@ -500,6 +528,7 @@ MINiML (MIAME Notation in Markup Language) is GEO's XML-based format for data ex
 ### Series Files
 
 **Pattern:**
+
 ```
 ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE{nnn}nnn/GSE{xxxxx}/
 ```
@@ -507,17 +536,20 @@ ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE{nnn}nnn/GSE{xxxxx}/
 Where `{nnn}` represents replacing last 3 digits with "nnn" and `{xxxxx}` is the full accession.
 
 **Example:**
+
 - GSE123456 → `/geo/series/GSE123nnn/GSE123456/`
 - GSE1234 → `/geo/series/GSE1nnn/GSE1234/`
 - GSE100001 → `/geo/series/GSE100nnn/GSE100001/`
 
 **Subdirectories:**
+
 - `/matrix/` - Series matrix files
 - `/soft/` - Family SOFT files
 - `/miniml/` - MINiML XML files
 - `/suppl/` - Supplementary files
 
 **File Types:**
+
 ```
 matrix/
   └── GSE123456_series_matrix.txt.gz
@@ -537,21 +569,25 @@ suppl/
 ### Sample Files
 
 **Pattern:**
+
 ```
 ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM{nnn}nnn/GSM{xxxxx}/
 ```
 
 **Subdirectories:**
+
 - `/suppl/` - Sample-specific supplementary files
 
 ### Platform Files
 
 **Pattern:**
+
 ```
 ftp://ftp.ncbi.nlm.nih.gov/geo/platforms/GPL{nnn}nnn/GPL{xxxxx}/
 ```
 
 **File Types:**
+
 ```
 soft/
   └── GPL570.soft.gz
@@ -678,12 +714,15 @@ def process_large_gse(gse_id, chunk_size=1000):
 **Symptoms:** Timeout errors, connection failures
 
 **Solutions:**
+
 1. Check internet connection
 2. Try downloading directly via FTP first
 3. Parse local files:
+
 ```python
 gse = GEOparse.get_GEO(filepath="./local/GSE123456_family.soft.gz")
 ```
+
 4. Increase timeout (modify GEOparse source if needed)
 
 ### Issue: Missing Expression Data
@@ -693,6 +732,7 @@ gse = GEOparse.get_GEO(filepath="./local/GSE123456_family.soft.gz")
 **Cause:** Not all series have series matrix files (older submissions)
 
 **Solution:** Parse individual sample tables:
+
 ```python
 expression_data = {}
 for gsm_name, gsm in gse.gsms.items():
@@ -709,6 +749,7 @@ expression_df = pd.DataFrame(expression_data)
 **Cause:** Different platform versions or sample processing
 
 **Solution:** Standardize using platform annotation:
+
 ```python
 # Get common probe set
 all_probes = set()
@@ -731,8 +772,10 @@ expression_df = pd.DataFrame(standardized_data)
 **Symptoms:** HTTP 429 errors, slow responses
 
 **Solution:**
+
 1. Get an API key from NCBI
 2. Implement rate limiting:
+
 ```python
 import time
 from functools import wraps
@@ -768,10 +811,12 @@ def safe_esearch(query):
 **Symptoms:** MemoryError, system slowdown
 
 **Solution:**
+
 1. Process data in chunks
 2. Use sparse matrices for expression data
 3. Load only necessary columns
 4. Use memory-efficient data types:
+
 ```python
 import pandas as pd
 

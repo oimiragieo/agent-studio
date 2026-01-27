@@ -50,15 +50,15 @@ Skip any step = lying, not verifying
 
 ## Common Failures
 
-| Claim | Requires | Not Sufficient |
-|-------|----------|----------------|
-| Tests pass | Test command output: 0 failures | Previous run, "should pass" |
-| Linter clean | Linter output: 0 errors | Partial check, extrapolation |
-| Build succeeds | Build command: exit 0 | Linter passing, logs look good |
-| Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
-| Regression test works | Red-green cycle verified | Test passes once |
-| Agent completed | VCS diff shows changes | Agent reports "success" |
-| Requirements met | Line-by-line checklist | Tests passing |
+| Claim                 | Requires                        | Not Sufficient                 |
+| --------------------- | ------------------------------- | ------------------------------ |
+| Tests pass            | Test command output: 0 failures | Previous run, "should pass"    |
+| Linter clean          | Linter output: 0 errors         | Partial check, extrapolation   |
+| Build succeeds        | Build command: exit 0           | Linter passing, logs look good |
+| Bug fixed             | Test original symptom: passes   | Code changed, assumed fixed    |
+| Regression test works | Red-green cycle verified        | Test passes once               |
+| Agent completed       | VCS diff shows changes          | Agent reports "success"        |
+| Requirements met      | Line-by-line checklist          | Tests passing                  |
 
 ## Red Flags - STOP
 
@@ -73,44 +73,49 @@ Skip any step = lying, not verifying
 
 ## Rationalization Prevention
 
-| Excuse | Reality |
-|--------|---------|
-| "Should work now" | RUN the verification |
-| "I'm confident" | Confidence does not equal evidence |
-| "Just this once" | No exceptions |
-| "Linter passed" | Linter does not equal compiler |
-| "Agent said success" | Verify independently |
-| "I'm tired" | Exhaustion does not equal excuse |
-| "Partial check is enough" | Partial proves nothing |
-| "Different words so rule doesn't apply" | Spirit over letter |
+| Excuse                                  | Reality                            |
+| --------------------------------------- | ---------------------------------- |
+| "Should work now"                       | RUN the verification               |
+| "I'm confident"                         | Confidence does not equal evidence |
+| "Just this once"                        | No exceptions                      |
+| "Linter passed"                         | Linter does not equal compiler     |
+| "Agent said success"                    | Verify independently               |
+| "I'm tired"                             | Exhaustion does not equal excuse   |
+| "Partial check is enough"               | Partial proves nothing             |
+| "Different words so rule doesn't apply" | Spirit over letter                 |
 
 ## Key Patterns
 
 **Tests:**
+
 ```
 CORRECT: [Run test command] [See: 34/34 pass] "All tests pass"
 WRONG: "Should pass now" / "Looks correct"
 ```
 
 **Regression tests (TDD Red-Green):**
+
 ```
 CORRECT: Write -> Run (pass) -> Revert fix -> Run (MUST FAIL) -> Restore -> Run (pass)
 WRONG: "I've written a regression test" (without red-green verification)
 ```
 
 **Build:**
+
 ```
 CORRECT: [Run build] [See: exit 0] "Build passes"
 WRONG: "Linter passed" (linter doesn't check compilation)
 ```
 
 **Requirements:**
+
 ```
 CORRECT: Re-read plan -> Create checklist -> Verify each -> Report gaps or completion
 WRONG: "Tests pass, phase complete"
 ```
 
 **Agent delegation:**
+
 ```
 CORRECT: Agent reports success -> Check VCS diff -> Verify changes -> Report actual state
 WRONG: Trust agent report
@@ -119,6 +124,7 @@ WRONG: Trust agent report
 ## Why This Matters
 
 From failure analysis:
+
 - "I don't believe you" - trust broken
 - Undefined functions shipped - would crash
 - Missing requirements shipped - incomplete features
@@ -128,6 +134,7 @@ From failure analysis:
 ## When To Apply
 
 **ALWAYS before:**
+
 - ANY variation of success/completion claims
 - ANY expression of satisfaction
 - ANY positive statement about work state
@@ -136,6 +143,7 @@ From failure analysis:
 - Delegating to agents
 
 **Rule applies to:**
+
 - Exact phrases
 - Paraphrases and synonyms
 - Implications of success
@@ -155,6 +163,7 @@ This is non-negotiable.
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

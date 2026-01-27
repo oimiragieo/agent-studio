@@ -112,6 +112,7 @@ coverage = set_a.overlap_coverage(set_b)
 ## Performance Characteristics
 
 IGD provides efficient querying:
+
 - **Index construction**: O(n log n) where n is number of regions
 - **Query time**: O(k + log n) where k is number of overlaps
 - **Memory efficient**: Compact representation of genomic intervals

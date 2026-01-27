@@ -7,6 +7,7 @@ Geniml provides tools for building genomic "universes" — standardized referenc
 ## When to Use
 
 Use consensus peak creation when:
+
 - Building reference peak sets from multiple experiments
 - Creating universe files for Region2Vec or BEDspace tokenization
 - Standardizing genomic regions across a collection of datasets
@@ -31,6 +32,7 @@ uniwig -m 25 combined_files.bed chrom.sizes coverage/
 ```
 
 **Parameters:**
+
 - `-m 25`: Smoothing window size (25bp typical for chromatin accessibility)
 - `chrom.sizes`: Chromosome sizes file for your genome
 - `coverage/`: Output directory for bigWig files
@@ -57,6 +59,7 @@ geniml universe build cc \
 ```
 
 **Parameters:**
+
 - `--cutoff`: Coverage threshold (1 = union; file count = intersection)
 - `--merge`: Distance for merging adjacent peaks (bp)
 - `--filter-size`: Minimum peak size for inclusion (bp)
@@ -78,6 +81,7 @@ geniml universe build ccf \
 ```
 
 **Additional parameters:**
+
 - `--confidence`: Confidence level for flexible boundaries (0-1)
 
 **Use when:** Uncertainty in peak boundaries should be captured
@@ -96,6 +100,7 @@ geniml universe build ml \
 ```
 
 **Parameters:**
+
 - `--model-type`: Distribution for likelihood estimation (gaussian, poisson)
 
 **Use when:** Statistical modeling of peak locations is important
@@ -114,6 +119,7 @@ geniml universe build hmm \
 ```
 
 **Parameters:**
+
 - `--states`: Number of HMM hidden states (typically 2-5)
 
 **Use when:** Complex patterns of genomic states should be captured
@@ -136,12 +142,12 @@ universe = build_universe(
 
 ## Method Comparison
 
-| Method | Complexity | Flexibility | Computational Cost | Best For |
-|--------|------------|-------------|-------------------|----------|
-| CC | Low | Low | Low | Quick reference sets |
-| CCF | Medium | Medium | Medium | Boundary uncertainty |
-| ML | High | High | High | Statistical rigor |
-| HMM | High | High | Very High | Complex patterns |
+| Method | Complexity | Flexibility | Computational Cost | Best For             |
+| ------ | ---------- | ----------- | ------------------ | -------------------- |
+| CC     | Low        | Low         | Low                | Quick reference sets |
+| CCF    | Medium     | Medium      | Medium             | Boundary uncertainty |
+| ML     | High       | High        | High               | Statistical rigor    |
+| HMM    | High       | High        | Very High          | Complex patterns     |
 
 ## Best Practices
 
@@ -155,16 +161,19 @@ universe = build_universe(
 ### Parameter Selection
 
 **Coverage cutoff:**
+
 - `cutoff = 1`: Union of all peaks (most permissive)
 - `cutoff = n_files`: Intersection (most stringent)
 - `cutoff = 0.5 * n_files`: Moderate consensus (typical choice)
 
 **Merge distance:**
+
 - ATAC-seq: 100-200bp
 - ChIP-seq (narrow peaks): 50-100bp
 - ChIP-seq (broad peaks): 500-1000bp
 
 **Filter size:**
+
 - Minimum 30bp to avoid artifacts
 - 50-100bp typical for most assays
 - Larger for broad histone marks
@@ -188,6 +197,7 @@ print(f"Coverage of input peaks: {metrics['coverage']:.1%}")
 ```
 
 **Key metrics:**
+
 - **Region count**: Should capture major features without excessive fragmentation
 - **Size distribution**: Should match expected biology (e.g., ~500bp for ATAC-seq)
 - **Input coverage**: Proportion of original peaks represented (typically >80%)

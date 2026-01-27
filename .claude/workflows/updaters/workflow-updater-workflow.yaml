@@ -21,8 +21,8 @@ updater_config:
   backup_location: .claude/context/backups/workflows/
   compatibility_check: true
   registration_targets:
-    - ".claude/CLAUDE.md"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/CLAUDE.md'
+    - '.claude/context/memory/learnings.md'
   protected_phases:
     - evaluate
     - validate
@@ -75,11 +75,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-workflow'].output.workflow_path !== null"
         on_fail: abort
-        message: "Workflow does not exist. Use workflow-creator-workflow to create new workflows."
+        message: 'Workflow does not exist. Use workflow-creator-workflow to create new workflows.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes don't break workflow structure
@@ -121,11 +121,11 @@ phases:
       - id: gate-validate-phases
         condition: "steps['check-phase-preservation'].output.phases_intact === true"
         on_fail: abort
-        message: "Cannot remove EVOLVE phases (evaluate, validate, obtain, lock, verify, enable)"
+        message: 'Cannot remove EVOLVE phases (evaluate, validate, obtain, lock, verify, enable)'
       - id: gate-validate-gates
         condition: "steps['check-gate-preservation'].output.gates_intact === true"
         on_fail: warn
-        message: "Removing gates may weaken workflow validation. Review carefully."
+        message: 'Removing gates may weaken workflow validation. Review carefully.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -155,9 +155,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -218,17 +218,17 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-workflow'].output.workflow_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated workflow file"
+        message: 'Failed to write updated workflow file'
       - id: gate-lock-yaml
         condition: "steps['validate-yaml-syntax'].output.yaml_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "YAML syntax validation failed after changes"
+        message: 'YAML syntax validation failed after changes'
 
   verify:
     description: Run tests and validate structure
@@ -269,15 +269,15 @@ phases:
       - id: gate-verify-tests
         condition: "steps['run-tests'].output.tests_passed === true"
         on_fail: return_to_lock
-        message: "Tests failed after update. Fix workflow."
+        message: 'Tests failed after update. Fix workflow.'
       - id: gate-verify-phases
         condition: "steps['validate-phases'].output.all_phases_present === true"
         on_fail: return_to_lock
-        message: "Workflow must have all 6 EVOLVE phases"
+        message: 'Workflow must have all 6 EVOLVE phases'
       - id: gate-verify-gates
         condition: "steps['validate-gates'].output.gates_valid === true"
         on_fail: return_to_lock
-        message: "Each phase must have at least one gate"
+        message: 'Each phase must have at least one gate'
 
   enable:
     description: Update registrations and record changes
@@ -329,7 +329,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Workflow registration verification failed after update"
+        message: 'Workflow registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -339,29 +339,29 @@ compensate:
       description: Restore workflow and test files from backup
   enable:
     - action: revert_claude_md
-      target: ".claude/CLAUDE.md"
+      target: '.claude/CLAUDE.md'
       description: Revert CLAUDE.md changes if made
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for workflow updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-evolve-phases
-    rule: "Cannot remove EVOLVE phases"
+    rule: 'Cannot remove EVOLVE phases'
     enforcement: gate-validate-phases
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: yaml-must-remain-valid
-    rule: "YAML syntax must remain valid after update"
+    rule: 'YAML syntax must remain valid after update'
     enforcement: gate-lock-yaml
   - id: tests-must-pass
-    rule: "All tests must pass after update"
+    rule: 'All tests must pass after update'
     enforcement: gate-verify-tests
   - id: maintain-gate-coverage
-    rule: "Each phase must have at least one gate"
+    rule: 'Each phase must have at least one gate'
     enforcement: gate-verify-gates

@@ -5,6 +5,7 @@ A comprehensive guide for creating, testing, and deploying hooks in the Claude C
 ## Overview
 
 Hooks are event handlers that execute at specific points in the Claude Code lifecycle. They provide:
+
 - **Validation**: Block dangerous commands before execution
 - **Transformation**: Modify inputs before processing
 - **Recording**: Extract and persist insights after operations
@@ -38,22 +39,22 @@ Allow     Block
 
 ### Event Types
 
-| Event | When It Fires | Common Uses |
-|-------|---------------|-------------|
-| `UserPromptSubmit` | User sends message | Router analysis, session context reset |
-| `PreToolUse` | Before tool executes | Command validation, routing enforcement |
-| `PostToolUse` | After tool executes | Memory extraction, format enforcement |
-| `SessionEnd` | Session ends | Persist session insights |
+| Event              | When It Fires        | Common Uses                             |
+| ------------------ | -------------------- | --------------------------------------- |
+| `UserPromptSubmit` | User sends message   | Router analysis, session context reset  |
+| `PreToolUse`       | Before tool executes | Command validation, routing enforcement |
+| `PostToolUse`      | After tool executes  | Memory extraction, format enforcement   |
+| `SessionEnd`       | Session ends         | Persist session insights                |
 
 ## Exit Code Conventions
 
 Exit codes determine how Claude Code responds to hook execution:
 
-| Exit Code | Meaning | Behavior |
-|-----------|---------|----------|
-| `0` | Pass/Allow | Operation proceeds normally |
-| `1` | Error | Hook encountered an error (logged, operation proceeds) |
-| `2` | Block | Operation is blocked with error message |
+| Exit Code | Meaning    | Behavior                                               |
+| --------- | ---------- | ------------------------------------------------------ |
+| `0`       | Pass/Allow | Operation proceeds normally                            |
+| `1`       | Error      | Hook encountered an error (logged, operation proceeds) |
+| `2`       | Block      | Operation is blocked with error message                |
 
 ### Critical: Exit Code 2 for Blocking
 
@@ -63,7 +64,7 @@ Exit code `2` is the ONLY way to block an operation. Example:
 // Block a dangerous command
 if (isDangerous) {
   console.log('BLOCKED: Dangerous command detected');
-  process.exit(2);  // This blocks the operation
+  process.exit(2); // This blocks the operation
 }
 ```
 
@@ -89,13 +90,13 @@ async function parseHookInput() {
   }
 
   // Read from stdin (current hook format)
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let input = '';
     let hasData = false;
 
     process.stdin.setEncoding('utf8');
 
-    process.stdin.on('data', (chunk) => {
+    process.stdin.on('data', chunk => {
       hasData = true;
       input += chunk;
     });
@@ -141,6 +142,7 @@ const state = safeReadJSON('/path/to/file.json', 'router-state');
 ```
 
 **Available Schemas**:
+
 - `router-state`: Router mode and complexity tracking
 - `loop-state`: Loop prevention state
 - `evolution-state`: Self-evolution state tracking
@@ -168,7 +170,11 @@ Location: `.claude/lib/utils/state-cache.cjs`
 TTL-based caching layer for state files to reduce redundant file I/O.
 
 ```javascript
-const { getCachedState, invalidateCache, clearAllCache } = require('../../lib/utils/state-cache.cjs');
+const {
+  getCachedState,
+  invalidateCache,
+  clearAllCache,
+} = require('../../lib/utils/state-cache.cjs');
 
 // Read with caching (1 second TTL default)
 const state = getCachedState('/path/to/router-state.json', {});
@@ -294,16 +300,20 @@ async function testWithStdin(hookPath, input) {
 
   return new Promise((resolve, reject) => {
     const proc = spawn('node', [hookPath], {
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     let stdout = '';
     let stderr = '';
 
-    proc.stdout.on('data', (data) => { stdout += data; });
-    proc.stderr.on('data', (data) => { stderr += data; });
+    proc.stdout.on('data', data => {
+      stdout += data;
+    });
+    proc.stderr.on('data', data => {
+      stderr += data;
+    });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       resolve({ code, stdout, stderr });
     });
 
@@ -329,26 +339,29 @@ async function main() {
 
     if (!hookInput) {
       // SEC-008 FIX: Fail closed when no input available
-      console.error(JSON.stringify({
-        hook: 'hook-name',
-        event: 'no_input_fail_closed',
-        timestamp: new Date().toISOString(),
-        reason: 'No hook input provided - failing closed for security'
-      }));
-      process.exit(2);  // BLOCK, not allow
+      console.error(
+        JSON.stringify({
+          hook: 'hook-name',
+          event: 'no_input_fail_closed',
+          timestamp: new Date().toISOString(),
+          reason: 'No hook input provided - failing closed for security',
+        })
+      );
+      process.exit(2); // BLOCK, not allow
     }
 
     // Validation logic...
-
   } catch (err) {
     // SEC-008 FIX: Fail closed on errors (defense-in-depth)
-    console.error(JSON.stringify({
-      hook: 'hook-name',
-      event: 'error_fail_closed',
-      error: err.message,
-      timestamp: new Date().toISOString()
-    }));
-    process.exit(2);  // BLOCK, not allow
+    console.error(
+      JSON.stringify({
+        hook: 'hook-name',
+        event: 'error_fail_closed',
+        error: err.message,
+        timestamp: new Date().toISOString(),
+      })
+    );
+    process.exit(2); // BLOCK, not allow
   }
 }
 ```
@@ -360,12 +373,14 @@ For debugging, provide environment variable override:
 ```javascript
 // Allow fail-open for debugging only
 if (process.env.HOOK_NAME_FAIL_OPEN === 'true') {
-  console.error(JSON.stringify({
-    hook: 'hook-name',
-    event: 'fail_open_override',
-    error: err.message,
-    timestamp: new Date().toISOString()
-  }));
+  console.error(
+    JSON.stringify({
+      hook: 'hook-name',
+      event: 'fail_open_override',
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    })
+  );
   process.exit(0);
 }
 ```
@@ -376,13 +391,15 @@ Log all security-relevant events:
 
 ```javascript
 // Log security override usage
-console.error(JSON.stringify({
-  hook: 'hook-name',
-  event: 'security_override_used',
-  override: 'ENFORCEMENT_VAR=off',
-  timestamp: new Date().toISOString(),
-  warning: 'Security enforcement disabled'
-}));
+console.error(
+  JSON.stringify({
+    hook: 'hook-name',
+    event: 'security_override_used',
+    override: 'ENFORCEMENT_VAR=off',
+    timestamp: new Date().toISOString(),
+    warning: 'Security enforcement disabled',
+  })
+);
 ```
 
 ### Prototype Pollution Prevention
@@ -426,7 +443,7 @@ function validateCommand(command) {
   const dangerousPatterns = [
     /rm\s+-rf\s+\/$/,
     /sudo\s+/,
-    /:(){:|:&};:/  // Fork bomb
+    /:(){:|:&};:/, // Fork bomb
   ];
 
   for (const pattern of dangerousPatterns) {
@@ -469,7 +486,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     console.error('Hook error:', err.message);
-    process.exit(2);  // Fail closed
+    process.exit(2); // Fail closed
   }
 }
 
@@ -512,7 +529,7 @@ function recordToolUse(hookInput) {
     timestamp: new Date().toISOString(),
     tool: toolName,
     input: toolInput,
-    result: toolResult
+    result: toolResult,
   };
 
   // Append to log file
@@ -536,7 +553,7 @@ async function main() {
     const hookInput = await parseHookInput();
 
     if (!hookInput) {
-      process.exit(0);  // Fail open for recording hooks
+      process.exit(0); // Fail open for recording hooks
     }
 
     recordToolUse(hookInput);
@@ -545,7 +562,7 @@ async function main() {
     if (process.env.DEBUG_HOOKS) {
       console.error('Recording hook error:', err.message);
     }
-    process.exit(0);  // Fail open
+    process.exit(0); // Fail open
   }
 }
 
@@ -577,7 +594,7 @@ async function main() {
     if (process.env.DEBUG_HOOKS) {
       console.error('State reset error:', err.message);
     }
-    process.exit(0);  // Fail open for state management
+    process.exit(0); // Fail open for state management
   }
 }
 
@@ -596,9 +613,7 @@ Register hooks in `.claude/settings.json`:
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "hooks": [
-          { "type": "command", "command": "node .claude/hooks/safety/your-hook.cjs" }
-        ]
+        "hooks": [{ "type": "command", "command": "node .claude/hooks/safety/your-hook.cjs" }]
       }
     ]
   }
@@ -607,22 +622,22 @@ Register hooks in `.claude/settings.json`:
 
 ### Matcher Patterns
 
-| Pattern | Matches |
-|---------|---------|
-| `""` | All tools |
-| `"Bash"` | Bash tool only |
-| `"Edit\|Write"` | Edit OR Write tools |
+| Pattern                       | Matches                 |
+| ----------------------------- | ----------------------- |
+| `""`                          | All tools               |
+| `"Bash"`                      | Bash tool only          |
+| `"Edit\|Write"`               | Edit OR Write tools     |
 | `"Edit\|Write\|NotebookEdit"` | Multiple specific tools |
 
 ## Enforcement Modes
 
 Standard enforcement modes for security hooks:
 
-| Mode | Behavior | Environment Variable |
-|------|----------|---------------------|
-| `block` | Stops execution with error (exit 2) | Default for security hooks |
-| `warn` | Logs warning, allows action (exit 0) | Development/testing |
-| `off` | Silent pass-through | Debugging only |
+| Mode    | Behavior                             | Environment Variable       |
+| ------- | ------------------------------------ | -------------------------- |
+| `block` | Stops execution with error (exit 2)  | Default for security hooks |
+| `warn`  | Logs warning, allows action (exit 0) | Development/testing        |
+| `off`   | Silent pass-through                  | Debugging only             |
 
 Example implementation:
 
@@ -631,12 +646,14 @@ const enforcement = process.env.MY_HOOK_ENFORCEMENT || 'block';
 
 if (enforcement === 'off') {
   // Log override usage for audit
-  console.error(JSON.stringify({
-    hook: 'my-hook',
-    event: 'security_override_used',
-    override: 'MY_HOOK_ENFORCEMENT=off',
-    timestamp: new Date().toISOString()
-  }));
+  console.error(
+    JSON.stringify({
+      hook: 'my-hook',
+      event: 'security_override_used',
+      override: 'MY_HOOK_ENFORCEMENT=off',
+      timestamp: new Date().toISOString(),
+    })
+  );
   process.exit(0);
 }
 

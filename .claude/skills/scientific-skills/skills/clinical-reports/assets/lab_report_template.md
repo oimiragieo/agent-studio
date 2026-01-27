@@ -27,22 +27,22 @@
 
 ## Laboratory Results
 
-| Test Name | Result | Units | Reference Range | Flag |
-|-----------|--------|-------|----------------|------|
-| [Test] | [Value] | [Unit] | [Normal range] | [L/H/Critical] |
+| Test Name | Result  | Units  | Reference Range | Flag           |
+| --------- | ------- | ------ | --------------- | -------------- |
+| [Test]    | [Value] | [Unit] | [Normal range]  | [L/H/Critical] |
 
 ### Example: Complete Blood Count (CBC)
 
-| Test | Result | Units | Reference Range | Flag |
-|------|--------|-------|----------------|------|
-| White Blood Cell Count | 12.5 | × 10³/μL | 4.5-11.0 | H |
-| Hemoglobin | 10.2 | g/dL | 12.0-16.0 (F), 14.0-18.0 (M) | L |
-| Hematocrit | 31.5 | % | 36.0-48.0 (F), 42.0-52.0 (M) | L |
-| Platelet Count | 245 | × 10³/μL | 150-400 | - |
-| MCV | 88.5 | fL | 80.0-100.0 | - |
-| MCH | 29.5 | pg | 27.0-33.0 | - |
-| MCHC | 33.2 | g/dL | 32.0-36.0 | - |
-| RDW | 14.5 | % | 11.5-14.5 | - |
+| Test                   | Result | Units    | Reference Range              | Flag |
+| ---------------------- | ------ | -------- | ---------------------------- | ---- |
+| White Blood Cell Count | 12.5   | × 10³/μL | 4.5-11.0                     | H    |
+| Hemoglobin             | 10.2   | g/dL     | 12.0-16.0 (F), 14.0-18.0 (M) | L    |
+| Hematocrit             | 31.5   | %        | 36.0-48.0 (F), 42.0-52.0 (M) | L    |
+| Platelet Count         | 245    | × 10³/μL | 150-400                      | -    |
+| MCV                    | 88.5   | fL       | 80.0-100.0                   | -    |
+| MCH                    | 29.5   | pg       | 27.0-33.0                    | -    |
+| MCHC                   | 33.2   | g/dL     | 32.0-36.0                    | -    |
+| RDW                    | 14.5   | %        | 11.5-14.5                    | -    |
 
 **Differential:**
 | Cell Type | Result | Units | Reference Range | Flag |
@@ -55,16 +55,16 @@
 
 ### Example: Basic Metabolic Panel (BMP)
 
-| Test | Result | Units | Reference Range | Flag |
-|------|--------|-------|----------------|------|
-| Sodium | 138 | mEq/L | 136-145 | - |
-| Potassium | 3.2 | mEq/L | 3.5-5.0 | L |
-| Chloride | 102 | mEq/L | 98-107 | - |
-| CO2 | 24 | mEq/L | 22-30 | - |
-| Blood Urea Nitrogen | 28 | mg/dL | 7-20 | H |
-| Creatinine | 1.8 | mg/dL | 0.6-1.2 (F), 0.7-1.3 (M) | H |
-| Glucose | 145 | mg/dL | 70-100 (fasting) | H |
-| eGFR | 42 | mL/min/1.73m² | >60 | L |
+| Test                | Result | Units         | Reference Range          | Flag |
+| ------------------- | ------ | ------------- | ------------------------ | ---- |
+| Sodium              | 138    | mEq/L         | 136-145                  | -    |
+| Potassium           | 3.2    | mEq/L         | 3.5-5.0                  | L    |
+| Chloride            | 102    | mEq/L         | 98-107                   | -    |
+| CO2                 | 24     | mEq/L         | 22-30                    | -    |
+| Blood Urea Nitrogen | 28     | mg/dL         | 7-20                     | H    |
+| Creatinine          | 1.8    | mg/dL         | 0.6-1.2 (F), 0.7-1.3 (M) | H    |
+| Glucose             | 145    | mg/dL         | 70-100 (fasting)         | H    |
+| eGFR                | 42     | mL/min/1.73m² | >60                      | L    |
 
 ---
 
@@ -73,17 +73,19 @@
 [Clinical interpretation when applicable]
 
 **Example for Anemia:**
+
 ```
-Normocytic anemia with elevated WBC. Differential diagnosis includes anemia of chronic 
-disease, recent blood loss, or hemolysis. Consider reticulocyte count, iron studies, 
+Normocytic anemia with elevated WBC. Differential diagnosis includes anemia of chronic
+disease, recent blood loss, or hemolysis. Consider reticulocyte count, iron studies,
 and peripheral smear for further evaluation. Clinical correlation recommended.
 ```
 
 **Example for Electrolyte Abnormality:**
+
 ```
-Hypokalemia detected (K+ 3.2 mEq/L). Common causes include diuretic use, GI losses, or 
-inadequate intake. Recommend potassium repletion and follow-up testing. Moderate 
-azotemia present, consistent with acute kidney injury or chronic kidney disease. 
+Hypokalemia detected (K+ 3.2 mEq/L). Common causes include diuretic use, GI losses, or
+inadequate intake. Recommend potassium repletion and follow-up testing. Moderate
+azotemia present, consistent with acute kidney injury or chronic kidney disease.
 Clinical correlation with patient history and prior results recommended.
 ```
 
@@ -98,12 +100,14 @@ Clinical correlation with patient history and prior results recommended.
 **Significance:** [Life-threatening, requires immediate action]
 
 **Notification:**
+
 - **Called to:** [Name and title of person notified]
 - **Date/Time:** [MM/DD/YYYY at HH:MM]
 - **Read-back verified:** [Yes]
 - **Notified by:** [Lab personnel name]
 
 **Example Critical Values:**
+
 - Glucose <40 mg/dL or >500 mg/dL
 - Potassium <2.5 mEq/L or >6.5 mEq/L
 - Sodium <120 mEq/L or >160 mEq/L
@@ -121,13 +125,15 @@ Clinical correlation with patient history and prior results recommended.
 **Specimen Quality:** [Acceptable / See note]
 
 **QC Notes:**
-- [X] Specimen collected in appropriate tube
-- [X] Specimen adequately labeled
-- [X] Specimen volume sufficient
-- [X] No hemolysis, lipemia, or icterus
-- [X] Specimen processed within acceptable time
+
+- [x] Specimen collected in appropriate tube
+- [x] Specimen adequately labeled
+- [x] Specimen volume sufficient
+- [x] No hemolysis, lipemia, or icterus
+- [x] Specimen processed within acceptable time
 
 **Issues (if any):**
+
 - [ ] Hemolyzed - may affect [specific tests]
 - [ ] Clotted - unable to perform coagulation studies
 - [ ] Insufficient volume - limited testing performed
@@ -140,6 +146,7 @@ Clinical correlation with patient history and prior results recommended.
 **Test Method:** [Instrumentation and methodology]
 
 Examples:
+
 - **CBC:** Automated cell counter (Sysmex XN-1000)
 - **Chemistry:** Spectrophotometry (Beckman AU5800)
 - **Glucose:** Enzymatic assay, hexokinase method
@@ -153,12 +160,13 @@ Examples:
 
 ### Hemoglobin A1c
 
-| Test | Result | Units | Interpretation |
-|------|--------|-------|----------------|
-| HbA1c | 8.5 | % | Consistent with poorly controlled diabetes |
-| HbA1c | 8.5 | % (69 mmol/mol) | Target <7% for most patients |
+| Test  | Result | Units           | Interpretation                             |
+| ----- | ------ | --------------- | ------------------------------------------ |
+| HbA1c | 8.5    | %               | Consistent with poorly controlled diabetes |
+| HbA1c | 8.5    | % (69 mmol/mol) | Target <7% for most patients               |
 
 **Reference Ranges:**
+
 - Non-diabetic: 4.0-5.6%
 - Prediabetes: 5.7-6.4%
 - Diabetes diagnosis: ≥6.5%
@@ -166,40 +174,42 @@ Examples:
 
 ### Lipid Panel
 
-| Test | Result | Units | Reference Range | Desirable |
-|------|--------|-------|----------------|-----------|
-| Total Cholesterol | 245 | mg/dL | - | <200 |
-| LDL Cholesterol | 160 | mg/dL | - | <100 |
-| HDL Cholesterol | 38 | mg/dL | - | >40 (M), >50 (F) |
-| Triglycerides | 235 | mg/dL | - | <150 |
-| VLDL Cholesterol (calc) | 47 | mg/dL | - | <30 |
+| Test                    | Result | Units | Reference Range | Desirable        |
+| ----------------------- | ------ | ----- | --------------- | ---------------- |
+| Total Cholesterol       | 245    | mg/dL | -               | <200             |
+| LDL Cholesterol         | 160    | mg/dL | -               | <100             |
+| HDL Cholesterol         | 38     | mg/dL | -               | >40 (M), >50 (F) |
+| Triglycerides           | 235    | mg/dL | -               | <150             |
+| VLDL Cholesterol (calc) | 47     | mg/dL | -               | <30              |
 
 ### Coagulation Studies
 
-| Test | Result | Units | Reference Range | Flag |
-|------|--------|-------|----------------|------|
-| PT | 18.5 | seconds | 11.0-13.5 | H |
-| INR | 2.8 | ratio | 0.8-1.2 | H |
-| PTT | 42 | seconds | 25-35 | H |
+| Test | Result | Units   | Reference Range | Flag |
+| ---- | ------ | ------- | --------------- | ---- |
+| PT   | 18.5   | seconds | 11.0-13.5       | H    |
+| INR  | 2.8    | ratio   | 0.8-1.2         | H    |
+| PTT  | 42     | seconds | 25-35           | H    |
 
 **Therapeutic Ranges (INR):**
+
 - Atrial fibrillation: 2.0-3.0
 - Mechanical heart valve: 2.5-3.5
 - DVT/PE treatment: 2.0-3.0
 
 ### Thyroid Function Tests
 
-| Test | Result | Units | Reference Range | Flag |
-|------|--------|-------|----------------|------|
-| TSH | 8.5 | μIU/mL | 0.4-4.0 | H |
-| Free T4 | 0.7 | ng/dL | 0.8-1.8 | L |
-| Free T3 | 2.1 | pg/mL | 2.3-4.2 | L |
+| Test    | Result | Units  | Reference Range | Flag |
+| ------- | ------ | ------ | --------------- | ---- |
+| TSH     | 8.5    | μIU/mL | 0.4-4.0         | H    |
+| Free T4 | 0.7    | ng/dL  | 0.8-1.8         | L    |
+| Free T3 | 2.1    | pg/mL  | 2.3-4.2         | L    |
 
 **Interpretation:** Findings consistent with primary hypothyroidism
 
 ### Urinalysis
 
 **Physical Examination:**
+
 - Color: [Yellow / Amber / Other]
 - Clarity: [Clear / Cloudy / Turbid]
 - Specific Gravity: [1.005-1.030]
@@ -218,6 +228,7 @@ Examples:
 | Leukocyte Esterase | Positive | Negative |
 
 **Microscopic Examination (if indicated):**
+
 - WBCs: [number] /hpf (normal <5)
 - RBCs: [number] /hpf (normal <3)
 - Epithelial cells: [Few/Moderate/Many]
@@ -245,9 +256,9 @@ Example: "Many Gram-positive cocci in clusters, many WBCs"
 
 **Antimicrobial Susceptibility Testing:**
 
-| Antibiotic | Result | MIC (μg/mL) |
-|------------|--------|-------------|
-| [Drug name] | S/I/R | [Value] |
+| Antibiotic  | Result | MIC (μg/mL) |
+| ----------- | ------ | ----------- |
+| [Drug name] | S/I/R  | [Value]     |
 
 Example:
 | Antibiotic | Result | MIC |
@@ -301,9 +312,8 @@ Example:
 [LOINC codes for each test when applicable for electronic reporting]
 
 Example:
+
 - Hemoglobin: 718-7
 - Glucose: 2345-7
 - Creatinine: 2160-0
 - TSH: 3016-3
-
-

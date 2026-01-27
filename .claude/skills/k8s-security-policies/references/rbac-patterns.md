@@ -10,9 +10,9 @@ kind: ClusterRole
 metadata:
   name: read-only
 rules:
-  - apiGroups: ["", "apps", "batch"]
-    resources: ["*"]
-    verbs: ["get", "list", "watch"]
+  - apiGroups: ['', 'apps', 'batch']
+    resources: ['*']
+    verbs: ['get', 'list', 'watch']
 ```
 
 ### Pattern 2: Namespace Admin
@@ -24,9 +24,9 @@ metadata:
   name: namespace-admin
   namespace: production
 rules:
-  - apiGroups: ["", "apps", "batch", "extensions"]
-    resources: ["*"]
-    verbs: ["*"]
+  - apiGroups: ['', 'apps', 'batch', 'extensions']
+    resources: ['*']
+    verbs: ['*']
 ```
 
 ### Pattern 3: Deployment Manager
@@ -38,12 +38,12 @@ metadata:
   name: deployment-manager
   namespace: production
 rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "watch"]
+  - apiGroups: ['apps']
+    resources: ['deployments']
+    verbs: ['get', 'list', 'watch', 'create', 'update', 'patch', 'delete']
+  - apiGroups: ['']
+    resources: ['pods']
+    verbs: ['get', 'list', 'watch']
 ```
 
 ### Pattern 4: Secret Reader (ServiceAccount)
@@ -55,10 +55,10 @@ metadata:
   name: secret-reader
   namespace: production
 rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get"]
-    resourceNames: ["app-secrets"] # Specific secret only
+  - apiGroups: ['']
+    resources: ['secrets']
+    verbs: ['get']
+    resourceNames: ['app-secrets'] # Specific secret only
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -83,15 +83,15 @@ kind: ClusterRole
 metadata:
   name: cicd-deployer
 rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments", "replicasets"]
-    verbs: ["get", "list", "create", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["services", "configmaps"]
-    verbs: ["get", "list", "create", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list"]
+  - apiGroups: ['apps']
+    resources: ['deployments', 'replicasets']
+    verbs: ['get', 'list', 'create', 'update', 'patch']
+  - apiGroups: ['']
+    resources: ['services', 'configmaps']
+    verbs: ['get', 'list', 'create', 'update', 'patch']
+  - apiGroups: ['']
+    resources: ['pods']
+    verbs: ['get', 'list']
 ```
 
 ## ServiceAccount Best Practices
@@ -125,10 +125,10 @@ metadata:
   name: my-app-role
   namespace: production
 rules:
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get"]
-    resourceNames: ["my-app-config"]
+  - apiGroups: ['']
+    resources: ['configmaps']
+    verbs: ['get']
+    resourceNames: ['my-app-config']
 ```
 
 ## Security Best Practices

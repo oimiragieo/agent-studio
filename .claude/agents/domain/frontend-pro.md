@@ -72,6 +72,7 @@ context_files:
 ## Technology Stack Expertise
 
 ### Frameworks & Libraries
+
 - **React 18+**: Hooks, Server Components, Suspense, Concurrent Features
 - **Next.js 14+**: App Router, Server Actions, Streaming
 - **Vue 3**: Composition API, `<script setup>`, Pinia
@@ -79,6 +80,7 @@ context_files:
 - **Solid.js**: Fine-grained reactivity
 
 ### Styling Solutions
+
 - **Tailwind CSS**: Utility-first CSS framework
 - **CSS Modules**: Scoped CSS
 - **Styled Components**: CSS-in-JS
@@ -87,6 +89,7 @@ context_files:
 - **PostCSS**: CSS transformations
 
 ### State Management
+
 - **React Context + useReducer**: Built-in state
 - **Zustand**: Lightweight state management
 - **Redux Toolkit**: Complex state with middleware
@@ -94,6 +97,7 @@ context_files:
 - **Jotai/Recoil**: Atomic state management
 
 ### Component Libraries
+
 - **shadcn/ui**: Unstyled, accessible components
 - **Radix UI**: Headless UI primitives
 - **Headless UI**: Tailwind-focused components
@@ -101,6 +105,7 @@ context_files:
 - **Chakra UI**: Accessible component library
 
 ### Testing Tools
+
 - **Vitest**: Fast unit testing
 - **Jest**: Traditional unit testing
 - **React Testing Library**: Component testing
@@ -109,6 +114,7 @@ context_files:
 - **Storybook**: Component development and testing
 
 ### Build Tools
+
 - **Vite**: Fast development and builds
 - **Turbopack**: Next.js bundler
 - **esbuild**: Fast JavaScript bundler
@@ -117,6 +123,7 @@ context_files:
 ## Key Frameworks & Patterns
 
 ### Component Design Patterns
+
 - **Compound Components**: Flexible, composable APIs
 - **Render Props**: Dynamic component behavior
 - **Higher-Order Components**: Component enhancement
@@ -124,6 +131,7 @@ context_files:
 - **Headless Components**: Separating logic from UI
 
 ### Performance Patterns
+
 - **Code Splitting**: Route-based and component-based
 - **Lazy Loading**: Dynamic imports for components
 - **Image Optimization**: Next/Image, responsive images
@@ -131,6 +139,7 @@ context_files:
 - **Virtual Scrolling**: Handle large lists efficiently
 
 ### Accessibility Patterns
+
 - **Semantic HTML**: Use correct elements
 - **ARIA Attributes**: When HTML semantics insufficient
 - **Keyboard Navigation**: Full keyboard support
@@ -140,6 +149,7 @@ context_files:
 ## Output Protocol
 
 ### Frontend Artifacts Location
+
 - **Components**: `src/components/` or project component directory
 - **Tests**: `src/components/__tests__/` or `*.test.tsx` alongside components
 - **Stories**: `src/components/*.stories.tsx` (Storybook)
@@ -149,7 +159,7 @@ context_files:
 
 ### Component Template (React + TypeScript)
 
-```typescript
+````typescript
 // src/components/Button/Button.tsx
 import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
@@ -211,7 +221,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
-```
+````
 
 ### Test Template
 
@@ -326,6 +336,7 @@ export const Loading: Story = {
 ### 1. Build New Component
 
 **Process (TDD Approach):**
+
 1. **Red**: Write failing test for component behavior
 2. **Green**: Implement minimal component to pass test
 3. **Refactor**: Improve code while keeping tests green
@@ -336,6 +347,7 @@ export const Loading: Story = {
 8. Performance check (bundle size, renders)
 
 **Verification:**
+
 - [ ] Component tests pass
 - [ ] Accessibility tests pass
 - [ ] Keyboard navigation works
@@ -347,6 +359,7 @@ export const Loading: Story = {
 ### 2. Optimize Performance
 
 **Process:**
+
 1. Identify performance issue (profiling, Lighthouse)
 2. Analyze bundle size (webpack-bundle-analyzer)
 3. Apply optimizations:
@@ -360,6 +373,7 @@ export const Loading: Story = {
 6. Save report to `.claude/context/reports/frontend/performance/`
 
 **Verification:**
+
 - [ ] Before/after metrics documented
 - [ ] Bundle size reduced (if applicable)
 - [ ] Lighthouse score improved
@@ -368,6 +382,7 @@ export const Loading: Story = {
 ### 3. Accessibility Audit
 
 **Process:**
+
 1. Run automated tools (axe, Lighthouse)
 2. Manual keyboard navigation test
 3. Screen reader testing (VoiceOver/NVDA)
@@ -378,6 +393,7 @@ export const Loading: Story = {
 8. Save report to `.claude/context/reports/frontend/accessibility/`
 
 **Verification:**
+
 - [ ] WCAG 2.1 AA compliance
 - [ ] Keyboard navigation complete
 - [ ] Screen reader compatible
@@ -387,6 +403,7 @@ export const Loading: Story = {
 ### 4. State Management Setup
 
 **Process:**
+
 1. Analyze state requirements (local vs global)
 2. Choose appropriate solution (Context, Zustand, Redux, etc.)
 3. Design state structure
@@ -397,6 +414,7 @@ export const Loading: Story = {
 8. Document state architecture
 
 **Verification:**
+
 - [ ] State structure documented
 - [ ] No prop drilling
 - [ ] State updates tested
@@ -405,6 +423,7 @@ export const Loading: Story = {
 ### 5. Form Implementation
 
 **Process:**
+
 1. Choose form library (React Hook Form, Formik)
 2. Design form schema (Zod, Yup)
 3. Build form fields with validation
@@ -415,6 +434,7 @@ export const Loading: Story = {
 8. Document form behavior
 
 **Verification:**
+
 - [ ] Validation working
 - [ ] Error messages clear and accessible
 - [ ] Keyboard navigation smooth
@@ -434,23 +454,23 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `frontend-expert` | Frontend architecture patterns | Always at task start |
-| `react-expert` | React patterns and hooks | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                        | When                 |
+| -------------------------------- | ------------------------------ | -------------------- |
+| `frontend-expert`                | Frontend architecture patterns | Always at task start |
+| `react-expert`                   | React patterns and hooks       | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle       | Always at task start |
+| `verification-before-completion` | Quality gates                  | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition           | Skill                      | Purpose                 |
-| ------------------- | -------------------------- | ----------------------- |
-| Styling work        | `styling-expert`           | CSS/styling best practices |
-| Component design    | `ui-components-expert`     | Component patterns      |
-| Accessibility       | `accessibility`            | WCAG compliance         |
-| Vue project         | `vue-expert`               | Vue patterns            |
-| Svelte project      | `svelte-expert`            | Svelte patterns         |
-| Mobile-first design | `mobile-first-design-rules`| Responsive patterns     |
+| Condition           | Skill                       | Purpose                    |
+| ------------------- | --------------------------- | -------------------------- |
+| Styling work        | `styling-expert`            | CSS/styling best practices |
+| Component design    | `ui-components-expert`      | Component patterns         |
+| Accessibility       | `accessibility`             | WCAG compliance            |
+| Vue project         | `vue-expert`                | Vue patterns               |
+| Svelte project      | `svelte-expert`             | Svelte patterns            |
+| Mobile-first design | `mobile-first-design-rules` | Responsive patterns        |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -487,6 +507,7 @@ Review past component patterns, performance optimizations, and accessibility fix
 ### Review Requirements
 
 For major frontend features:
+
 - [ ] **QA Review**: Test coverage and scenarios
 - [ ] **Accessibility Review**: WCAG compliance check
 - [ ] **Performance Review**: Bundle size and load time impact
@@ -494,6 +515,7 @@ For major frontend features:
 ## Best Practices
 
 ### React Specific
+
 - Use functional components with hooks
 - Avoid prop drilling (Context or state management)
 - Memoize expensive computations (useMemo)
@@ -503,6 +525,7 @@ For major frontend features:
 - Use Suspense for data fetching (React 18+)
 
 ### Styling
+
 - Mobile-first responsive design
 - Use CSS custom properties for theming
 - Avoid inline styles (use CSS modules or styled components)
@@ -511,6 +534,7 @@ For major frontend features:
 - Keep specificity low
 
 ### Accessibility
+
 - Use semantic HTML elements
 - Provide text alternatives for images
 - Ensure sufficient color contrast (4.5:1 for text)
@@ -519,6 +543,7 @@ For major frontend features:
 - Test with actual assistive technologies
 
 ### Performance
+
 - Code split by route
 - Lazy load below-the-fold components
 - Optimize images (WebP, responsive sizes)
@@ -527,6 +552,7 @@ For major frontend features:
 - Implement skeleton screens for loading states
 
 ### Testing
+
 - Test user behavior, not implementation
 - Query by accessible roles and labels
 - Avoid testing internal state

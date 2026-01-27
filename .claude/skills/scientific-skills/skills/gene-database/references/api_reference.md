@@ -35,6 +35,7 @@ Search for genes matching a text query.
 **Endpoint:** `esearch.fcgi`
 
 **Parameters:**
+
 - `db=gene` (required) - Database to search
 - `term` (required) - Search query
 - `retmax` - Maximum results (default: 20)
@@ -42,6 +43,7 @@ Search for genes matching a text query.
 - `usehistory=y` - Store results on history server for large result sets
 
 **Query Syntax:**
+
 - Gene symbol: `BRCA1[gene]` or `BRCA1[gene name]`
 - Organism: `human[organism]` or `9606[taxid]`
 - Combine terms: `BRCA1[gene] AND human[organism]`
@@ -77,6 +79,7 @@ Retrieve document summaries for Gene IDs.
 **Endpoint:** `esummary.fcgi`
 
 **Parameters:**
+
 - `db=gene` (required) - Database
 - `id` (required) - Comma-separated Gene IDs (up to 500)
 - `retmode` - json or xml (default: xml)
@@ -118,6 +121,7 @@ Fetch detailed gene records in various formats.
 **Endpoint:** `efetch.fcgi`
 
 **Parameters:**
+
 - `db=gene` (required) - Database
 - `id` (required) - Comma-separated Gene IDs
 - `retmode` - xml, text, asn.1 (default: xml)
@@ -130,6 +134,7 @@ curl "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=gene&id=672&r
 ```
 
 **XML Response:** Contains detailed gene information including:
+
 - Gene nomenclature
 - Sequence locations
 - Transcript variants
@@ -145,6 +150,7 @@ Find related records in Gene or other databases.
 **Endpoint:** `elink.fcgi`
 
 **Parameters:**
+
 - `dbfrom=gene` (required) - Source database
 - `db` (required) - Target database (gene, nuccore, protein, pubmed, etc.)
 - `id` (required) - Gene ID(s)
@@ -163,6 +169,7 @@ Get information about the Gene database.
 **Endpoint:** `einfo.fcgi`
 
 **Parameters:**
+
 - `db=gene` - Database to query
 
 **Example Request:**
@@ -253,6 +260,7 @@ Retrieve gene data by symbol and organism.
 **Endpoint:** `GET /gene/symbol/{symbol}/taxon/{taxon}`
 
 **Parameters:**
+
 - `{symbol}` - Gene symbol (e.g., BRCA1)
 - `{taxon}` - Taxon ID (e.g., 9606 for human)
 
@@ -298,10 +306,12 @@ curl -X POST "https://api.ncbi.nlm.nih.gov/datasets/v2alpha/gene/id" \
 ### Rate Limits
 
 **E-utilities:**
+
 - Without API key: 3 requests/second
 - With API key: 10 requests/second
 
 **Datasets API:**
+
 - Without API key: 5 requests/second
 - With API key: 10 requests/second
 
@@ -330,11 +340,13 @@ curl -X POST "https://api.ncbi.nlm.nih.gov/datasets/v2alpha/gene/id" \
 E-utilities return errors in the response body:
 
 **XML format:**
+
 ```xml
 <ERROR>Empty id list - nothing to do</ERROR>
 ```
 
 **JSON format:**
+
 ```json
 {
   "error": "Invalid db name"
@@ -382,17 +394,17 @@ def retry_request(func, max_attempts=3):
 
 ## Common Taxon IDs
 
-| Organism | Scientific Name | Taxon ID |
-|----------|----------------|----------|
-| Human | Homo sapiens | 9606 |
-| Mouse | Mus musculus | 10090 |
-| Rat | Rattus norvegicus | 10116 |
-| Zebrafish | Danio rerio | 7955 |
-| Fruit fly | Drosophila melanogaster | 7227 |
-| C. elegans | Caenorhabditis elegans | 6239 |
-| Yeast | Saccharomyces cerevisiae | 4932 |
-| Arabidopsis | Arabidopsis thaliana | 3702 |
-| E. coli | Escherichia coli | 562 |
+| Organism    | Scientific Name          | Taxon ID |
+| ----------- | ------------------------ | -------- |
+| Human       | Homo sapiens             | 9606     |
+| Mouse       | Mus musculus             | 10090    |
+| Rat         | Rattus norvegicus        | 10116    |
+| Zebrafish   | Danio rerio              | 7955     |
+| Fruit fly   | Drosophila melanogaster  | 7227     |
+| C. elegans  | Caenorhabditis elegans   | 6239     |
+| Yeast       | Saccharomyces cerevisiae | 4932     |
+| Arabidopsis | Arabidopsis thaliana     | 3702     |
+| E. coli     | Escherichia coli         | 562      |
 
 ---
 

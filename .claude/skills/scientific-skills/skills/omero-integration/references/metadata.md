@@ -173,6 +173,7 @@ dataset.linkAnnotation(file_ann)
 ### Supported MIME Types
 
 Common MIME types:
+
 - Text: `"text/plain"`, `"text/csv"`, `"text/tab-separated-values"`
 - Documents: `"application/pdf"`, `"application/vnd.ms-excel"`
 - Images: `"image/png"`, `"image/jpeg"`
@@ -582,6 +583,7 @@ omero_ns.NSBULKANNOTATIONS
 ### Custom Namespaces
 
 Best practices for custom namespaces:
+
 - Use reverse domain notation: `"org.mylab.category.subcategory"`
 - Be specific: `"com.company.project.analysis.v1"`
 - Include version if schema may change: `"mylab.metadata.v2"`

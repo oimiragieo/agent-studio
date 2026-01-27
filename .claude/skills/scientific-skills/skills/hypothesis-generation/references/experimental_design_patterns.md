@@ -9,6 +9,7 @@ This reference provides patterns and frameworks for designing experiments across
 ## Design Selection Framework
 
 Choose experimental approaches based on:
+
 - **Nature of hypothesis:** Mechanistic, causal, correlational, descriptive
 - **System studied:** In vitro, in vivo, computational, observational
 - **Feasibility:** Time, cost, ethics, technical capabilities
@@ -23,6 +24,7 @@ Choose experimental approaches based on:
 **Common patterns:**
 
 #### 1. Dose-Response Studies
+
 - **Purpose:** Establish quantitative relationship between input and effect
 - **Design:** Test multiple concentrations/doses of intervention
 - **Key elements:**
@@ -36,6 +38,7 @@ Choose experimental approaches based on:
 "To test if compound X inhibits enzyme Y, measure enzyme activity at 0, 1, 10, 100, 1000 nM compound X concentrations with n=3 replicates per dose."
 
 #### 2. Gain/Loss of Function Studies
+
 - **Purpose:** Establish causal role of specific component
 - **Design:** Add (overexpression) or remove (knockout/knockdown) component
 - **Key elements:**
@@ -49,6 +52,7 @@ Choose experimental approaches based on:
 "Test if protein X causes phenotype Y by: (1) knocking out X and observing phenotype loss, (2) overexpressing X and observing phenotype enhancement, (3) rescuing knockout with X re-expression."
 
 #### 3. Time-Course Studies
+
 - **Purpose:** Understand temporal dynamics and sequence of events
 - **Design:** Measure outcomes at multiple time points
 - **Key elements:**
@@ -68,6 +72,7 @@ Choose experimental approaches based on:
 **Common patterns:**
 
 #### 4. Between-Subjects Designs
+
 - **Purpose:** Compare different groups receiving different treatments
 - **Design:** Randomly assign subjects to treatment groups
 - **Key elements:**
@@ -81,6 +86,7 @@ Choose experimental approaches based on:
 "Randomly assign 20 mice each to vehicle control or drug treatment groups, measure tumor size weekly for 8 weeks, with experimenters blinded to group assignment."
 
 #### 5. Within-Subjects (Repeated Measures) Designs
+
 - **Purpose:** Each subject serves as own control, reducing inter-subject variability
 - **Design:** Same subjects measured across multiple conditions/time points
 - **Key elements:**
@@ -93,6 +99,7 @@ Choose experimental approaches based on:
 "Measure cognitive performance in same participants at baseline, after training intervention, and at 3-month follow-up."
 
 #### 6. Factorial Designs
+
 - **Purpose:** Test multiple factors and their interactions simultaneously
 - **Design:** Cross all levels of multiple independent variables
 - **Key elements:**
@@ -108,6 +115,7 @@ Choose experimental approaches based on:
 **When to use:** Testing hypotheses about complex systems, making predictions, or when physical experiments are infeasible.
 
 #### 7. In Silico Simulations
+
 - **Purpose:** Model complex systems, test theoretical predictions
 - **Design:** Implement computational model and vary parameters
 - **Key elements:**
@@ -120,6 +128,7 @@ Choose experimental approaches based on:
 "Build agent-based model of disease spread, vary transmission rate and intervention timing, compare predictions to empirical epidemic data."
 
 #### 8. Bioinformatics/Meta-Analysis
+
 - **Purpose:** Test hypotheses using existing datasets
 - **Design:** Analyze large-scale data or aggregate multiple studies
 - **Key elements:**
@@ -136,6 +145,7 @@ Choose experimental approaches based on:
 ### When Physical Manipulation is Impossible or Unethical
 
 #### 9. Cross-Sectional Studies
+
 - **Purpose:** Examine associations at a single time point
 - **Design:** Measure variables of interest in population at one time
 - **Strengths:** Fast, inexpensive, can establish prevalence
@@ -150,6 +160,7 @@ Choose experimental approaches based on:
 "Survey 1000 adults to test association between diet pattern and biomarker X, controlling for age, sex, BMI, and physical activity."
 
 #### 10. Cohort Studies (Prospective/Longitudinal)
+
 - **Purpose:** Establish temporal relationships and potentially causal associations
 - **Design:** Follow group over time, measuring exposures and outcomes
 - **Strengths:** Can establish temporality, calculate incidence
@@ -164,6 +175,7 @@ Choose experimental approaches based on:
 "Follow 5000 initially healthy individuals for 10 years, testing if baseline vitamin D levels predict cardiovascular disease incidence."
 
 #### 11. Case-Control Studies
+
 - **Purpose:** Efficiently study rare outcomes by comparing cases to controls
 - **Design:** Identify cases with outcome, select matched controls, compare exposures
 - **Strengths:** Efficient for rare diseases, relatively quick
@@ -180,6 +192,7 @@ Choose experimental approaches based on:
 ## Clinical Trial Designs
 
 #### 12. Randomized Controlled Trials (RCTs)
+
 - **Purpose:** Gold standard for testing interventions in humans
 - **Design:** Randomly assign participants to treatment or control
 - **Key elements:**
@@ -193,6 +206,7 @@ Choose experimental approaches based on:
 "Double-blind RCT: randomly assign 300 patients to receive drug X or placebo for 12 weeks, measure primary outcome of symptom improvement."
 
 #### 13. Crossover Trials
+
 - **Purpose:** Each participant receives all treatments in sequence
 - **Design:** Participants crossed over between treatments with washout
 - **Strengths:** Reduces inter-subject variability, requires fewer participants
@@ -210,12 +224,14 @@ Choose experimental approaches based on:
 ### Sample Size and Statistical Power
 
 **Key questions:**
+
 - What effect size is meaningful to detect?
 - What statistical test will be used?
 - What alpha (significance level) and beta (power) are appropriate?
 - What is expected variability in the measurement?
 
 **General guidelines:**
+
 - Conduct formal power analysis before experiment
 - For pilot studies, n≥10 per group minimum
 - For definitive studies, aim for ≥80% power
@@ -224,6 +240,7 @@ Choose experimental approaches based on:
 ### Controls
 
 **Types of controls:**
+
 - **Negative control:** No intervention (baseline)
 - **Positive control:** Known effective intervention (validates system)
 - **Vehicle control:** Delivery method without active ingredient
@@ -233,6 +250,7 @@ Choose experimental approaches based on:
 ### Blinding
 
 **Levels:**
+
 - **Open-label:** No blinding (acceptable for objective measures)
 - **Single-blind:** Participants blinded (reduces placebo effects)
 - **Double-blind:** Participants and experimenters blinded (reduces bias in assessment)
@@ -241,21 +259,25 @@ Choose experimental approaches based on:
 ### Replication
 
 **Technical replicates:** Repeated measurements on same sample
+
 - Reduce measurement error
 - Typically 2-3 replicates sufficient
 
 **Biological replicates:** Independent samples/subjects
+
 - Address biological variability
 - Critical for generalization
 - Minimum: n≥3, preferably n≥5-10 per group
 
 **Experimental replicates:** Repeat entire experiment
+
 - Validate findings across time, equipment, operators
 - Gold standard for confirming results
 
 ### Confound Control
 
 **Strategies:**
+
 - **Randomization:** Distribute confounds evenly across groups
 - **Matching:** Pair similar subjects across conditions
 - **Blocking:** Group by confound, then randomize within blocks
@@ -294,6 +316,7 @@ Choose experimental approaches based on:
 Strong hypothesis testing often combines multiple designs:
 
 **Example: Testing if microbiome affects cognitive function**
+
 1. **Observational:** Cohort study showing association between microbiome composition and cognition
 2. **Animal model:** Germ-free mice receiving microbiome transplants show cognitive changes
 3. **Mechanism:** In vitro studies showing microbial metabolites affect neuronal function
@@ -301,6 +324,7 @@ Strong hypothesis testing often combines multiple designs:
 5. **Computational:** Model predicting which microbiome profiles should affect cognition
 
 **Triangulation approach:**
+
 - Each design addresses different aspects/limitations
 - Convergent evidence from multiple approaches strengthens causal claims
 - Start with observational/in vitro, then move to definitive causal tests

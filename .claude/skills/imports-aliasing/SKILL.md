@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
     typescript
     import SomeComponent from '$lib/components/SomeComponent.svelte';
     import { someUtil } from '$lib/utils';
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

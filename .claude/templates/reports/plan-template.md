@@ -5,31 +5,42 @@
 **Author**: {{agent}}
 
 ## Executive Summary
+
 {{summary}}
 
 ## Phases
+
 {{#phases}}
+
 ### Phase {{number}}: {{title}}
+
 **Duration**: {{duration}}
 **Dependencies**: {{dependencies}}
 
 #### Tasks
+
 {{#tasks}}
+
 - [ ] {{task}}
-{{/tasks}}
-{{/phases}}
+      {{/tasks}}
+      {{/phases}}
 
 ## Dependencies
+
 {{dependencies_diagram}}
 
 ## Risks
+
 | Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
+| ---- | ---------- | ------ | ---------- |
+
 {{#risks}}
 | {{risk}} | {{likelihood}} | {{impact}} | {{mitigation}} |
 {{/risks}}
 
 ## Success Criteria
+
 {{#criteria}}
+
 - [ ] {{criterion}}
-{{/criteria}}
+      {{/criteria}}

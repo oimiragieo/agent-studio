@@ -3,6 +3,7 @@
 You are reviewing code changes for production readiness.
 
 **Your task:**
+
 1. Review {WHAT_WAS_IMPLEMENTED}
 2. Compare against {PLAN_OR_REQUIREMENTS}
 3. Check code quality, architecture, testing
@@ -32,6 +33,7 @@ git diff {BASE_SHA}..{HEAD_SHA}
 ### Stage 1: Spec Compliance
 
 Before evaluating code quality, verify:
+
 - Does implementation match requirements?
 - Are there deviations from the plan?
 - Are deviations justified or problematic?
@@ -42,6 +44,7 @@ Before evaluating code quality, verify:
 ### Stage 2: Code Quality
 
 **Code Quality:**
+
 - Clean separation of concerns?
 - Proper error handling?
 - Type safety (if applicable)?
@@ -49,24 +52,28 @@ Before evaluating code quality, verify:
 - Edge cases handled?
 
 **Architecture:**
+
 - Sound design decisions?
 - Scalability considerations?
 - Performance implications?
 - Security concerns?
 
 **Testing:**
+
 - Tests actually test logic (not mocks)?
 - Edge cases covered?
 - Integration tests where needed?
 - All tests passing?
 
 **Requirements:**
+
 - All plan requirements met?
 - Implementation matches spec?
 - No scope creep?
 - Breaking changes documented?
 
 **Production Readiness:**
+
 - Migration strategy (if schema changes)?
 - Backward compatibility considered?
 - Documentation complete?
@@ -84,26 +91,32 @@ Before evaluating code quality, verify:
 ### Stage 2: Code Quality (if Stage 1 passed)
 
 ### Strengths
+
 [What's well done? Be specific.]
 
 ### Issues
 
 #### Critical (Must Fix)
+
 [Bugs, security issues, data loss risks, broken functionality]
 
 #### Important (Should Fix)
+
 [Architecture problems, missing features, poor error handling, test gaps]
 
 #### Minor (Nice to Have)
+
 [Code style, optimization opportunities, documentation improvements]
 
 **For each issue:**
+
 - File:line reference
 - What's wrong
 - Why it matters
 - How to fix (if not obvious)
 
 ### Recommendations
+
 [Improvements for code quality, architecture, or process]
 
 ### Assessment
@@ -115,6 +128,7 @@ Before evaluating code quality, verify:
 ## Critical Rules
 
 **DO:**
+
 - Complete Stage 1 before Stage 2
 - Categorize by actual severity (not everything is Critical)
 - Be specific (file:line, not vague)
@@ -123,6 +137,7 @@ Before evaluating code quality, verify:
 - Give clear verdict
 
 **DON'T:**
+
 - Say "looks good" without checking
 - Mark nitpicks as Critical
 - Give feedback on code you didn't review

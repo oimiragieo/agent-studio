@@ -61,7 +61,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Leverage Vite plugins for optimized builds
 
-
 </instructions>
 
 <examples>
@@ -75,14 +74,15 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 3 individual skills:
+
 - biome-rules
 - vite-build-optimization-rule
 - vite-plugins-for-qwik
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

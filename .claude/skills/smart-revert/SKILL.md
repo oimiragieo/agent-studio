@@ -32,10 +32,10 @@ Git-aware intelligent revert system for reverting logical work units (tracks, ph
 
 ### Logical vs Physical Revert
 
-| Type | Description | Example |
-|------|-------------|---------|
-| **Logical** | Revert a track/phase/task as defined in plan.md | "Revert Task 2.1" |
-| **Physical** | Revert specific Git commits | "Revert commit abc1234" |
+| Type         | Description                                     | Example                 |
+| ------------ | ----------------------------------------------- | ----------------------- |
+| **Logical**  | Revert a track/phase/task as defined in plan.md | "Revert Task 2.1"       |
+| **Physical** | Revert specific Git commits                     | "Revert commit abc1234" |
 
 This skill bridges the gap: given a logical target, it finds all physical commits.
 
@@ -50,6 +50,7 @@ This skill bridges the gap: given a logical target, it finds all physical commit
 3. **Confirm intent**: Verify understanding before proceeding
 
 **Menu Format:**
+
 ```
 I found the following items to potentially revert:
 
@@ -77,6 +78,7 @@ Which would you like to revert?
    - Search git log for when track entry was added to tracks.md
 
 **Handling Ghost Commits:**
+
 ```
 SHA abc1234 from plan.md not found in git history.
 This may have been rewritten by rebase/squash.
@@ -110,11 +112,13 @@ B) No - cancel and review
 ### Phase 4: Execution & Verification
 
 1. **Execute reverts** (newest to oldest):
+
    ```bash
    git revert --no-edit <sha>
    ```
 
 2. **Handle conflicts**: If conflict occurs, provide guidance:
+
    ```
    Merge conflict detected. Please resolve manually:
    1. Edit conflicted files
@@ -166,11 +170,11 @@ git log -p -- conductor/tracks.md | grep -B5 "Track: user-auth"
 
 ### Multiple Confirmation Gates
 
-| Gate | Purpose | When |
-|------|---------|------|
-| Target confirmation | Verify correct item selected | After selection |
-| Execution plan review | Show exactly what will happen | Before any git operation |
-| Final go/no-go | Last chance to cancel | Immediately before revert |
+| Gate                  | Purpose                       | When                      |
+| --------------------- | ----------------------------- | ------------------------- |
+| Target confirmation   | Verify correct item selected  | After selection           |
+| Execution plan review | Show exactly what will happen | Before any git operation  |
+| Final go/no-go        | Last chance to cancel         | Immediately before revert |
 
 ### Conflict Handling
 
@@ -187,7 +191,7 @@ Always verify the plan file reflects the revert:
 
 ```markdown
 Before: [x] Task 2.1: Implement validation `abc1234`
-After:  [ ] Task 2.1: Implement validation
+After: [ ] Task 2.1: Implement validation
 ```
 
 If plan state is inconsistent, offer to fix it.
@@ -283,6 +287,7 @@ Update context files if revert affects product features.
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

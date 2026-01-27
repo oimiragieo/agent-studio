@@ -37,13 +37,13 @@ Security Architect Skill - Performs threat modeling, OWASP Top 10 analysis, secu
 
 Analyze threats using STRIDE:
 
-| Threat | Description | Example |
-|--------|-------------|---------|
-| **S**poofing | Impersonating users/systems | Stolen credentials |
-| **T**ampering | Modifying data | SQL injection |
-| **R**epudiation | Denying actions | Missing audit logs |
-| **I**nformation Disclosure | Data leaks | Exposed secrets |
-| **D**enial of Service | Blocking access | Resource exhaustion |
+| Threat                     | Description                 | Example               |
+| -------------------------- | --------------------------- | --------------------- |
+| **S**poofing               | Impersonating users/systems | Stolen credentials    |
+| **T**ampering              | Modifying data              | SQL injection         |
+| **R**epudiation            | Denying actions             | Missing audit logs    |
+| **I**nformation Disclosure | Data leaks                  | Exposed secrets       |
+| **D**enial of Service      | Blocking access             | Resource exhaustion   |
 | **E**levation of Privilege | Gaining unauthorized access | Broken access control |
 
 ### Step 2: OWASP Top 10 Analysis
@@ -105,7 +105,7 @@ await db.query(query, [userId]);
 
 ```javascript
 // BAD: Hardcoded secrets
-const apiKey = "sk-abc123...";
+const apiKey = 'sk-abc123...';
 
 // GOOD: Environment variables
 const apiKey = process.env.API_KEY;
@@ -129,16 +129,19 @@ Create findings report:
 ## Security Assessment Report
 
 ### Critical Findings
+
 1. SQL injection in /api/users endpoint
    - Risk: Data breach
    - Fix: Use parameterized queries
 
 ### High Findings
+
 2. Missing rate limiting on login
    - Risk: Brute force attacks
    - Fix: Implement rate limiting
 
 ### Recommendations
+
 - Enable HTTPS everywhere
 - Implement CSP headers
 - Add security logging
@@ -173,21 +176,25 @@ Review the authentication flow in src/auth/ for security issues
 ### Findings
 
 #### CRITICAL: Weak Password Hashing
+
 - File: src/auth/password.js:23
 - Issue: Using MD5 for password hashing
 - Fix: Use bcrypt with cost factor >= 12
 
 #### HIGH: No Rate Limiting
+
 - File: src/auth/login.js
 - Issue: Login endpoint has no rate limiting
 - Fix: Add rate limiting (5 attempts/minute)
 
 #### MEDIUM: Session Not Invalidated
+
 - File: src/auth/logout.js
 - Issue: Logout doesn't invalidate server-side session
 - Fix: Clear session from store on logout
 
 ### Recommendations
+
 1. Implement bcrypt for password hashing
 2. Add rate limiting middleware
 3. Use secure session configuration
@@ -197,6 +204,7 @@ Review the authentication flow in src/auth/ for security issues
 </examples>
 
 ## Rules
+
 - Always prioritize findings by severity
 - Provide specific remediation steps
 - Consider business context when assessing risk
@@ -208,11 +216,13 @@ Review the authentication flow in src/auth/ for security issues
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

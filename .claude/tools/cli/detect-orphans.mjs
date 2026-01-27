@@ -49,7 +49,10 @@ function parseFrontmatter(content) {
       if (value === '') {
         frontmatter[currentKey] = [];
       } else if (value.startsWith('[') && value.endsWith(']')) {
-        frontmatter[currentKey] = value.slice(1, -1).split(',').map(s => s.trim());
+        frontmatter[currentKey] = value
+          .slice(1, -1)
+          .split(',')
+          .map(s => s.trim());
       } else {
         frontmatter[currentKey] = value;
       }
@@ -74,17 +77,17 @@ const AGENT_SKILL_MATRIX = {
   'react|vue|frontend|css|tailwind': ['frontend-pro', 'typescript-pro'],
   'python|django|flask|fastapi': ['python-pro', 'fastapi-pro'],
   'go|golang': ['golang-pro'],
-  'rust': ['rust-pro'],
+  rust: ['rust-pro'],
   'java|spring': ['java-pro'],
   'typescript|javascript': ['typescript-pro'],
   'nextjs|next': ['nextjs-pro'],
   'svelte|sveltekit': ['sveltekit-expert'],
   'ios|swift|apple': ['ios-pro'],
   'expo|react-native': ['expo-mobile-developer'],
-  'graphql': ['graphql-pro'],
+  graphql: ['graphql-pro'],
   'node|express|nest': ['nodejs-pro'],
   'php|laravel': ['php-pro'],
-  'tauri': ['tauri-desktop-developer'],
+  tauri: ['tauri-desktop-developer'],
   'data|etl|pipeline': ['data-engineer'],
 };
 
@@ -195,7 +198,9 @@ async function main() {
     console.log('\n🔧 Fix Commands:\n');
     for (const [skill, agents] of Object.entries(suggested)) {
       console.log(`# Assign ${skill} to ${agents[0]}`);
-      console.log(`node .claude/skills/skill-creator/scripts/create.cjs --assign "${skill}" --agent "${agents[0]}"`);
+      console.log(
+        `node .claude/skills/skill-creator/scripts/create.cjs --assign "${skill}" --agent "${agents[0]}"`
+      );
       console.log('');
     }
   }

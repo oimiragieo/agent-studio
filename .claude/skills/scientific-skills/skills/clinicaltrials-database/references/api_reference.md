@@ -25,22 +25,23 @@ Search for clinical trials using various query parameters and filters.
 
 **Query Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `query.cond` | string | Disease or condition search | `lung cancer`, `diabetes` |
-| `query.intr` | string | Treatment or intervention search | `Pembrolizumab`, `exercise` |
-| `query.locn` | string | Geographic location filtering | `New York`, `California, USA` |
-| `query.spons` | string | Sponsor or collaborator name | `National Cancer Institute` |
-| `query.term` | string | General full-text search | `breast cancer treatment` |
-| `filter.overallStatus` | string | Status-based filtering (comma-separated) | `RECRUITING,NOT_YET_RECRUITING` |
-| `filter.ids` | string | NCT ID intersection filtering (comma-separated) | `NCT04852770,NCT01728545` |
-| `filter.phase` | string | Study phase filtering | `PHASE1,PHASE2` |
-| `sort` | string | Result ordering | `LastUpdatePostDate:desc` |
-| `pageSize` | integer | Results per page (max 1000) | `100` |
-| `pageToken` | string | Pagination token from previous response | `<token>` |
-| `format` | string | Response format (`json` or `csv`) | `json` |
+| Parameter              | Type    | Description                                     | Example                         |
+| ---------------------- | ------- | ----------------------------------------------- | ------------------------------- |
+| `query.cond`           | string  | Disease or condition search                     | `lung cancer`, `diabetes`       |
+| `query.intr`           | string  | Treatment or intervention search                | `Pembrolizumab`, `exercise`     |
+| `query.locn`           | string  | Geographic location filtering                   | `New York`, `California, USA`   |
+| `query.spons`          | string  | Sponsor or collaborator name                    | `National Cancer Institute`     |
+| `query.term`           | string  | General full-text search                        | `breast cancer treatment`       |
+| `filter.overallStatus` | string  | Status-based filtering (comma-separated)        | `RECRUITING,NOT_YET_RECRUITING` |
+| `filter.ids`           | string  | NCT ID intersection filtering (comma-separated) | `NCT04852770,NCT01728545`       |
+| `filter.phase`         | string  | Study phase filtering                           | `PHASE1,PHASE2`                 |
+| `sort`                 | string  | Result ordering                                 | `LastUpdatePostDate:desc`       |
+| `pageSize`             | integer | Results per page (max 1000)                     | `100`                           |
+| `pageToken`            | string  | Pagination token from previous response         | `<token>`                       |
+| `format`               | string  | Response format (`json` or `csv`)               | `json`                          |
 
 **Valid Status Values:**
+
 - `RECRUITING` - Currently recruiting participants
 - `NOT_YET_RECRUITING` - Not yet open for recruitment
 - `ENROLLING_BY_INVITATION` - Only enrolling by invitation
@@ -51,6 +52,7 @@ Search for clinical trials using various query parameters and filters.
 - `WITHDRAWN` - Withdrawn prior to enrollment
 
 **Valid Phase Values:**
+
 - `EARLY_PHASE1` - Early Phase 1 (formerly Phase 0)
 - `PHASE1` - Phase 1
 - `PHASE2` - Phase 2
@@ -59,17 +61,20 @@ Search for clinical trials using various query parameters and filters.
 - `NA` - Not Applicable
 
 **Sort Options:**
+
 - `LastUpdatePostDate:asc` / `LastUpdatePostDate:desc` - Sort by last update date
 - `EnrollmentCount:asc` / `EnrollmentCount:desc` - Sort by enrollment count
 - `StartDate:asc` / `StartDate:desc` - Sort by start date
 - `StudyFirstPostDate:asc` / `StudyFirstPostDate:desc` - Sort by first posted date
 
 **Example Request:**
+
 ```bash
 curl "https://clinicaltrials.gov/api/v2/studies?query.cond=lung+cancer&filter.overallStatus=RECRUITING&pageSize=10&format=json"
 ```
 
 **Example Response Structure:**
+
 ```json
 {
   "studies": [
@@ -92,17 +97,18 @@ Retrieve comprehensive information about a specific clinical trial.
 
 **Path Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `NCT_ID` | string | The unique NCT identifier | `NCT04852770` |
+| Parameter | Type   | Description               | Example       |
+| --------- | ------ | ------------------------- | ------------- |
+| `NCT_ID`  | string | The unique NCT identifier | `NCT04852770` |
 
 **Query Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `format` | string | Response format (`json` or `csv`) | `json` |
+| Parameter | Type   | Description                       | Example |
+| --------- | ------ | --------------------------------- | ------- |
+| `format`  | string | Response format (`json` or `csv`) | `json`  |
 
 **Example Request:**
+
 ```bash
 curl "https://clinicaltrials.gov/api/v2/studies/NCT04852770?format=json"
 ```

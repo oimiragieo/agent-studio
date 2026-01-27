@@ -7,6 +7,7 @@ Callbacks enable adding arbitrary self-contained programs to training without cl
 ## Architecture
 
 Lightning organizes training logic across three components:
+
 - **Trainer** - Engineering infrastructure
 - **LightningModule** - Research code
 - **Callbacks** - Non-essential functionality (monitoring, checkpointing, custom behaviors)
@@ -36,6 +37,7 @@ trainer = L.Trainer(callbacks=[MyCustomCallback()])
 Save models based on monitored metrics.
 
 **Key Parameters:**
+
 - `dirpath` - Directory to save checkpoints
 - `filename` - Checkpoint filename pattern
 - `monitor` - Metric to monitor
@@ -46,6 +48,7 @@ Save models based on monitored metrics.
 - `save_on_train_epoch_end` - Save at train epoch end vs validation end
 
 **Examples:**
+
 ```python
 from lightning.pytorch.callbacks import ModelCheckpoint
 
@@ -80,6 +83,7 @@ trainer = L.Trainer(callbacks=[checkpoint_callback])
 ```
 
 **Accessing Saved Checkpoints:**
+
 ```python
 # Get best model path
 best_model_path = checkpoint_callback.best_model_path
@@ -96,6 +100,7 @@ all_checkpoints = checkpoint_callback.best_k_models
 Stop training when a monitored metric stops improving.
 
 **Key Parameters:**
+
 - `monitor` - Metric to monitor
 - `patience` - Number of epochs with no improvement after which training stops
 - `mode` - "min" or "max" for monitored metric
@@ -104,6 +109,7 @@ Stop training when a monitored metric stops improving.
 - `strict` - Crash if monitored metric not found
 
 **Examples:**
+
 ```python
 from lightning.pytorch.callbacks import EarlyStopping
 
@@ -131,10 +137,12 @@ trainer = L.Trainer(callbacks=[early_stop])
 Track learning rate changes from schedulers.
 
 **Key Parameters:**
+
 - `logging_interval` - When to log: "step" or "epoch"
 - `log_momentum` - Also log momentum values
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import LearningRateMonitor
 
@@ -149,9 +157,11 @@ trainer = L.Trainer(callbacks=[lr_monitor])
 Log device performance metrics (GPU/CPU/TPU).
 
 **Key Parameters:**
+
 - `cpu_stats` - Log CPU stats
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import DeviceStatsMonitor
 
@@ -166,6 +176,7 @@ trainer = L.Trainer(callbacks=[device_stats])
 Display model architecture and parameter count.
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import ModelSummary, RichModelSummary
 
@@ -183,10 +194,12 @@ trainer = L.Trainer(callbacks=[rich_summary])
 Track and limit training duration.
 
 **Key Parameters:**
+
 - `duration` - Maximum training time (timedelta or dict)
 - `interval` - Check interval: "step", "epoch", or "batch"
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import Timer
 from datetime import timedelta
@@ -205,6 +218,7 @@ trainer = L.Trainer(callbacks=[timer])
 Automatically find the optimal batch size.
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import BatchSizeFinder
 
@@ -221,6 +235,7 @@ trainer.fit(model, datamodule=dm)
 Schedule gradient accumulation steps dynamically.
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import GradientAccumulationScheduler
 
@@ -235,6 +250,7 @@ trainer = L.Trainer(callbacks=[accumulator])
 Apply stochastic weight averaging for better generalization.
 
 **Example:**
+
 ```python
 from lightning.pytorch.callbacks import StochasticWeightAveraging
 
@@ -361,16 +377,19 @@ class PredictionSaver(Callback):
 ## Available Hooks
 
 ### Setup and Teardown
+
 - `setup(trainer, pl_module, stage)` - Called at beginning of fit/test/predict
 - `teardown(trainer, pl_module, stage)` - Called at end of fit/test/predict
 
 ### Training Lifecycle
+
 - `on_fit_start(trainer, pl_module)` - Called at start of fit
 - `on_fit_end(trainer, pl_module)` - Called at end of fit
 - `on_train_start(trainer, pl_module)` - Called at start of training
 - `on_train_end(trainer, pl_module)` - Called at end of training
 
 ### Epoch Boundaries
+
 - `on_train_epoch_start(trainer, pl_module)` - Called at start of training epoch
 - `on_train_epoch_end(trainer, pl_module)` - Called at end of training epoch
 - `on_validation_epoch_start(trainer, pl_module)` - Called at start of validation
@@ -379,21 +398,25 @@ class PredictionSaver(Callback):
 - `on_test_epoch_end(trainer, pl_module)` - Called at end of test
 
 ### Batch Boundaries
+
 - `on_train_batch_start(trainer, pl_module, batch, batch_idx)` - Before training batch
 - `on_train_batch_end(trainer, pl_module, outputs, batch, batch_idx)` - After training batch
 - `on_validation_batch_start(trainer, pl_module, batch, batch_idx)` - Before validation batch
 - `on_validation_batch_end(trainer, pl_module, outputs, batch, batch_idx)` - After validation batch
 
 ### Gradient Events
+
 - `on_before_backward(trainer, pl_module, loss)` - Before loss.backward()
 - `on_after_backward(trainer, pl_module)` - After loss.backward()
 - `on_before_optimizer_step(trainer, pl_module, optimizer)` - Before optimizer.step()
 
 ### Checkpoint Events
+
 - `on_save_checkpoint(trainer, pl_module, checkpoint)` - When saving checkpoint
 - `on_load_checkpoint(trainer, pl_module, checkpoint)` - When loading checkpoint
 
 ### Exception Handling
+
 - `on_exception(trainer, pl_module, exception)` - When exception occurs
 
 ## State Management
@@ -423,6 +446,7 @@ class StatefulCallback(Callback):
 ## Best Practices
 
 ### 1. Keep Callbacks Isolated
+
 Each callback should be self-contained and independent:
 
 ```python
@@ -443,6 +467,7 @@ class BadCallback(Callback):
 ```
 
 ### 2. Avoid Inter-Callback Dependencies
+
 Callbacks should not depend on other callbacks:
 
 ```python
@@ -467,6 +492,7 @@ class CallbackB(Callback):
 ```
 
 ### 3. Never Manually Invoke Callback Methods
+
 Let Lightning call callbacks automatically:
 
 ```python
@@ -479,6 +505,7 @@ trainer = L.Trainer(callbacks=[MyCallback()])
 ```
 
 ### 4. Design for Any Execution Order
+
 Callbacks may execute in any order, so don't rely on specific ordering:
 
 ```python
@@ -491,6 +518,7 @@ class GoodCallback(Callback):
 ```
 
 ### 5. Use Callbacks for Non-Essential Logic
+
 Keep core research code in LightningModule, use callbacks for auxiliary functionality:
 
 ```python

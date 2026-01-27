@@ -5,6 +5,7 @@ The AnnData object stores a data matrix with associated annotations, providing a
 ## Core Components
 
 ### X (Data Matrix)
+
 The primary data matrix with shape (n_obs, n_vars) storing experimental measurements.
 
 ```python
@@ -21,6 +22,7 @@ adata = ad.AnnData(X=sparse_data)
 ```
 
 Access data:
+
 ```python
 # Full matrix (caution with large datasets)
 full_data = adata.X
@@ -33,6 +35,7 @@ var_data = adata.X[:, 0]
 ```
 
 ### obs (Observation Annotations)
+
 DataFrame storing metadata about observations (rows). Each row corresponds to one observation in X.
 
 ```python
@@ -53,6 +56,7 @@ print(adata.obs.loc['cell_1'])
 ```
 
 ### var (Variable Annotations)
+
 DataFrame storing metadata about variables (columns). Each row corresponds to one variable in X.
 
 ```python
@@ -71,6 +75,7 @@ print(adata.var.loc['ENSG00001'])
 ```
 
 ### layers (Alternative Data Representations)
+
 Dictionary storing alternative matrices with the same dimensions as X.
 
 ```python
@@ -86,12 +91,14 @@ normalized_data = adata.layers['normalized']
 ```
 
 Common layer uses:
+
 - `raw_counts`: Original count data before normalization
 - `normalized`: Log-normalized or TPM values
 - `scaled`: Z-scored values for analysis
 - `imputed`: Data after imputation
 
 ### obsm (Multi-dimensional Observation Annotations)
+
 Dictionary storing multi-dimensional arrays aligned to observations.
 
 ```python
@@ -106,6 +113,7 @@ umap_coords = adata.obsm['X_umap']
 ```
 
 Common obsm uses:
+
 - `X_pca`: Principal component coordinates
 - `X_umap`: UMAP embedding coordinates
 - `X_tsne`: t-SNE embedding coordinates
@@ -113,6 +121,7 @@ Common obsm uses:
 - `protein_expression`: Protein abundance measurements (CITE-seq)
 
 ### varm (Multi-dimensional Variable Annotations)
+
 Dictionary storing multi-dimensional arrays aligned to variables.
 
 ```python
@@ -125,10 +134,12 @@ pc_loadings = adata.varm['PCs']
 ```
 
 Common varm uses:
+
 - `PCs`: Principal component loadings
 - `gene_modules`: Gene co-expression module assignments
 
 ### obsp (Pairwise Observation Relationships)
+
 Dictionary storing sparse matrices representing relationships between observations.
 
 ```python
@@ -146,10 +157,12 @@ distances = adata.obsp['distances']
 ```
 
 Common obsp uses:
+
 - `connectivities`: Cell-cell neighborhood graph
 - `distances`: Pairwise distances between cells
 
 ### varp (Pairwise Variable Relationships)
+
 Dictionary storing sparse matrices representing relationships between variables.
 
 ```python
@@ -163,6 +176,7 @@ gene_correlations = adata.varp['correlations']
 ```
 
 ### uns (Unstructured Annotations)
+
 Dictionary storing arbitrary unstructured metadata.
 
 ```python
@@ -183,12 +197,14 @@ pca_params = adata.uns['pca']['params']
 ```
 
 Common uns uses:
+
 - Analysis parameters and settings
 - Color palettes for plotting
 - Cluster information
 - Tool-specific metadata
 
 ### raw (Original Data Snapshot)
+
 Optional attribute preserving the original data matrix and variable annotations before filtering.
 
 ```python
@@ -229,6 +245,7 @@ filename = adata.filename  # Path to backing file (if backed)
 ## Creating AnnData Objects
 
 ### From arrays and DataFrames
+
 ```python
 import anndata as ad
 import numpy as np
@@ -255,6 +272,7 @@ adata = ad.AnnData(
 ```
 
 ### From DataFrame
+
 ```python
 # Create from pandas DataFrame (genes as columns, cells as rows)
 df = pd.DataFrame(
@@ -268,6 +286,7 @@ adata = ad.AnnData(df)
 ## Data Access Patterns
 
 ### Vector extraction
+
 ```python
 # Get observation annotation as array
 cell_types = adata.obs_vector('cell_type')
@@ -280,6 +299,7 @@ gene_names = adata.var_vector('gene_name')
 ```
 
 ### Subsetting
+
 ```python
 # By index
 subset = adata[0:10, 0:100]  # First 10 obs, first 100 vars
@@ -298,6 +318,7 @@ t_cells = adata[adata.obs['cell_type'] == 'T cell']
 ## Memory Considerations
 
 The AnnData structure is designed for memory efficiency:
+
 - Sparse matrices reduce memory for sparse data
 - Views avoid copying data when possible
 - Backed mode enables working with data larger than RAM

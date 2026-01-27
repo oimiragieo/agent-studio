@@ -33,23 +33,23 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 - Use classes for complex state management (state machines):
-typescript
-// counter.svelte.ts
-class Counter {
+  typescript
+  // counter.svelte.ts
+  class Counter {
   count = $state(0);
   incrementor = $state(1);
   increment() {
-    this.count += this.incrementor;
+  this.count += this.incrementor;
   }
   resetCount() {
-    this.count = 0;
+  this.count = 0;
   }
   resetIncrementor() {
-    this.incrementor = 1;
+  this.incrementor = 1;
   }
-}
-export const counter = new Counter();
-</instructions>
+  }
+  export const counter = new Counter();
+  </instructions>
 
 <examples>
 Example usage:
@@ -62,6 +62,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -57,23 +57,27 @@ Request planning input from relevant agents:
 
 Create plan following this **EXECUTABLE** structure:
 
-```markdown
+````markdown
 # Plan: [Title]
 
 ## Executive Summary
+
 [2-3 sentence overview]
 
 ## Objectives
+
 - [Objective 1]
 - [Objective 2]
 
 ## Phases
 
 ### Phase N: [Phase Title]
+
 **Dependencies**: [Phase numbers or 'None']
 **Parallel OK**: [Yes/No - can tasks run concurrently?]
 
 #### Tasks
+
 - [ ] **N.1** [Task description] (~X min)
   - **Command**: `actual shell command here`
   - **Verify**: `command to verify success`
@@ -84,28 +88,35 @@ Create plan following this **EXECUTABLE** structure:
   - **Verify**: `...`
 
 #### Phase N Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase N failed: [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase N+1
 
 #### Phase N Verification Gate
+
 ```bash
 # All must pass before proceeding
 [verification commands]
 ```
+````
 
 ## Risks
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
+
+| Risk   | Impact  | Mitigation | Rollback  |
+| ------ | ------- | ---------- | --------- |
 | [Risk] | [H/M/L] | [Strategy] | [Command] |
 
 ## Timeline Summary
+
 | Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 5 | 30 min | Partial |
-| 2 | 3 | 20 min | No |
-```
+| ----- | ----- | --------- | --------- |
+| 1     | 5     | 30 min    | Partial   |
+| 2     | 3     | 20 min    | No        |
+
+````
 
 ### The Executable Task Format (MANDATORY)
 
@@ -240,13 +251,15 @@ Add JWT-based authentication with login/logout endpoints. Includes password hash
 #### Phase 1 Verification Gate
 ```bash
 git branch --show-current | grep feature/auth && ls src/auth && ls .claude/context/artifacts/auth-design.md
-```
+````
 
 ### Phase 2: Implementation
+
 **Dependencies**: Phase 1
 **Parallel OK**: No (sequential TDD)
 
 #### Tasks
+
 - [ ] **2.1** Write auth endpoint tests (~10 min)
   - **Command**: `Task({ agent: "developer", prompt: "TDD: Write failing tests for /login endpoint" })`
   - **Verify**: `npm test -- --grep "login" 2>&1 | grep -E "failing|FAIL"`
@@ -261,21 +274,26 @@ git branch --show-current | grep feature/auth && ls src/auth && ls .claude/conte
   - **Verify**: `npm test -- --grep "logout" 2>&1 | grep -E "passing|PASS"`
 
 #### Phase 2 Error Handling
+
 If any task fails:
+
 1. Run: `git stash && git checkout -- src/auth/`
 2. Document: `echo "Phase 2 failed: $(date)" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 3
 
 #### Phase 2 Verification Gate
+
 ```bash
 npm test -- --grep "auth" && echo "All auth tests passing"
 ```
 
 ### Phase 3: Security Review
+
 **Dependencies**: Phase 2
 **Parallel OK**: Yes
 
 #### Tasks
+
 - [ ] **3.1** Security audit (~20 min) [⚡ parallel OK]
   - **Command**: `Task({ agent: "security-architect", prompt: "Audit auth implementation" })`
   - **Verify**: `ls .claude/context/reports/security-audit.md`
@@ -285,18 +303,21 @@ npm test -- --grep "auth" && echo "All auth tests passing"
   - **Verify**: `echo $?` (exit code 0)
 
 ## Risks
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| JWT secret exposure | High | Use env vars | Rotate secret immediately |
-| SQL injection | High | Parameterized queries | `git revert HEAD` |
+
+| Risk                | Impact | Mitigation            | Rollback                  |
+| ------------------- | ------ | --------------------- | ------------------------- |
+| JWT secret exposure | High   | Use env vars          | Rotate secret immediately |
+| SQL injection       | High   | Parameterized queries | `git revert HEAD`         |
 
 ## Timeline Summary
-| Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 3 | 18 min | Partial |
-| 2 | 3 | 35 min | No |
-| 3 | 2 | 25 min | Yes |
-| **Total** | **8** | **~78 min** | |
+
+| Phase     | Tasks | Est. Time   | Parallel? |
+| --------- | ----- | ----------- | --------- |
+| 1         | 3     | 18 min      | Partial   |
+| 2         | 3     | 35 min      | No        |
+| 3         | 2     | 25 min      | Yes       |
+| **Total** | **8** | **~78 min** |           |
+
 ```
 
 </formatting_example>
@@ -306,8 +327,10 @@ npm test -- --grep "auth" && echo "All auth tests passing"
 
 ### The Iron Law of Planning
 ```
+
 EVERY TASK MUST HAVE AN EXECUTABLE COMMAND
-```
+
+````
 
 A task without a command is not a task - it's a wish.
 
@@ -342,9 +365,10 @@ Before finalizing any plan, verify:
 **Before starting:**
 ```bash
 cat .claude/context/memory/learnings.md
-```
+````
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

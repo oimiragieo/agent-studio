@@ -1,6 +1,7 @@
 # Advanced Features in PennyLane
 
 ## Table of Contents
+
 1. [Templates and Layers](#templates-and-layers)
 2. [Transforms](#transforms)
 3. [Pulse Programming](#pulse-programming)

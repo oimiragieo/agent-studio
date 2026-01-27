@@ -9,6 +9,7 @@ This document defines the failure types recognized by the recovery system.
 **Definition**: Code does not compile, run, or pass syntax validation.
 
 **Indicators**:
+
 - `syntax error`
 - `compilation error`
 - `module not found`
@@ -21,6 +22,7 @@ This document defines the failure types recognized by the recovery system.
 **Recovery Action**: ROLLBACK to last known good state, then fix.
 
 **Example**:
+
 ```
 Error: Cannot find module './utils' from 'src/index.js'
 ```
@@ -32,6 +34,7 @@ Error: Cannot find module './utils' from 'src/index.js'
 **Definition**: Code runs but fails tests or validation checks.
 
 **Indicators**:
+
 - `verification failed`
 - `expected` (assertion mismatch)
 - `assertion`
@@ -41,6 +44,7 @@ Error: Cannot find module './utils' from 'src/index.js'
 **Recovery Action**: RETRY with a different approach (up to 3 attempts).
 
 **Example**:
+
 ```
 AssertionError: Expected 200 but got 404
 ```
@@ -52,11 +56,13 @@ AssertionError: Expected 200 but got 404
 **Definition**: Same approach has been tried multiple times without success.
 
 **Indicators**:
+
 - 3+ recent attempts with similar approaches
 - Jaccard similarity > 30% between current approach and previous 3 attempts
 - Stop words excluded from similarity calculation (with, using, the, a, an, and, or, but, in, on, at, to, for, trying)
 
 **Detection Algorithm**:
+
 ```
 1. Extract keywords from current approach (excluding stop words)
 2. For each of last 3 attempts:
@@ -69,6 +75,7 @@ AssertionError: Expected 200 but got 404
 **Recovery Action**: SKIP and ESCALATE to human intervention.
 
 **Example**:
+
 ```
 Attempt 1: "Using async await for fetch"
 Attempt 2: "Using async/await with try-catch"
@@ -83,6 +90,7 @@ Attempt 3: "Using async await pattern"
 **Definition**: Agent ran out of context window mid-task.
 
 **Indicators**:
+
 - `context`
 - `token limit`
 - `maximum length`
@@ -90,6 +98,7 @@ Attempt 3: "Using async await pattern"
 **Recovery Action**: Commit current progress and continue in a new session.
 
 **Example**:
+
 ```
 Error: Maximum context length (128k tokens) exceeded
 ```
@@ -101,11 +110,13 @@ Error: Maximum context length (128k tokens) exceeded
 **Definition**: Error that does not match any known pattern.
 
 **Indicators**:
+
 - None of the above indicators match
 
 **Recovery Action**: RETRY once, then ESCALATE if still failing.
 
 **Example**:
+
 ```
 Error: Connection refused to database server
 ```

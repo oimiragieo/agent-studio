@@ -40,23 +40,27 @@ random_tiler.extract(slide, extraction_mask=TissueMask())
 ```
 
 **Key Parameters:**
+
 - `n_tiles`: Number of random tiles to extract
 - `seed`: Random seed for reproducible tile selection
 - `max_iter`: Maximum attempts to find valid tiles (default 1000)
 
 **Use cases:**
+
 - Exploratory analysis of slide content
 - Sampling diverse regions for training data
 - Quick assessment of tissue characteristics
 - Balanced dataset creation from multiple slides
 
 **Advantages:**
+
 - Computationally efficient
 - Good for sampling diverse tissue morphologies
 - Reproducible with seed parameter
 - Fast execution
 
 **Limitations:**
+
 - May miss rare tissue patterns
 - No guarantee of coverage
 - Random distribution may not capture structured features
@@ -81,12 +85,14 @@ grid_tiler.extract(slide)
 ```
 
 **Key Parameters:**
+
 - `pixel_overlap`: Number of overlapping pixels between adjacent tiles
   - `pixel_overlap=0`: Non-overlapping tiles
   - `pixel_overlap=128`: 128-pixel overlap on each side
   - Can be used for sliding window approaches
 
 **Use cases:**
+
 - Comprehensive slide coverage
 - Spatial analysis requiring positional information
 - Image reconstruction from tiles
@@ -94,17 +100,20 @@ grid_tiler.extract(slide)
 - Region-based analysis
 
 **Advantages:**
+
 - Complete tissue coverage
 - Preserves spatial relationships
 - Predictable tile positions
 - Suitable for whole-slide analysis
 
 **Limitations:**
+
 - Computationally intensive for large slides
 - May generate many background-heavy tiles (mitigated by `check_tissue`)
 - Larger output datasets
 
 **Grid Pattern:**
+
 ```
 [Tile 1][Tile 2][Tile 3]
 [Tile 4][Tile 5][Tile 6]
@@ -112,6 +121,7 @@ grid_tiler.extract(slide)
 ```
 
 With `pixel_overlap=64`:
+
 ```
 [Tile 1-overlap-Tile 2-overlap-Tile 3]
 [    overlap       overlap       overlap]
@@ -139,10 +149,12 @@ score_tiler.extract(slide)
 ```
 
 **Key Parameters:**
+
 - `n_tiles`: Number of top-scoring tiles to extract
 - `scorer`: Scoring function (e.g., `NucleiScorer`, `CellularityScorer`, custom scorer)
 
 **Use cases:**
+
 - Extracting most informative regions
 - Prioritizing tiles with specific features (nuclei, cells, etc.)
 - Quality-based tile selection
@@ -150,12 +162,14 @@ score_tiler.extract(slide)
 - Training data curation
 
 **Advantages:**
+
 - Focuses on most informative tiles
 - Reduces dataset size while maintaining quality
 - Customizable with different scorers
 - Efficient for targeted analysis
 
 **Limitations:**
+
 - Slower than RandomTiler (must score all candidate tiles)
 - Requires appropriate scorer for task
 - May miss low-scoring but relevant regions
@@ -173,12 +187,14 @@ nuclei_scorer = NucleiScorer()
 ```
 
 **How it works:**
+
 1. Converts tile to grayscale
 2. Applies thresholding to detect nuclei
 3. Counts nuclei-like structures
 4. Assigns score based on nuclei density
 
 **Best for:**
+
 - Cell-rich tissue regions
 - Tumor detection
 - Mitosis analysis
@@ -195,6 +211,7 @@ cellularity_scorer = CellularityScorer()
 ```
 
 **Best for:**
+
 - Identifying cellular vs. stromal regions
 - Tumor cellularity assessment
 - Separating dense from sparse tissue areas
@@ -293,6 +310,7 @@ score_tiler.extract(slide, report_path="tiles_report.csv")
 ```
 
 Report format:
+
 ```csv
 tile_name,x_coord,y_coord,level,score,tissue_percent
 tile_001.png,10240,5120,0,0.89,95.2
@@ -396,26 +414,34 @@ filter_blurry_tiles("output/tiles/")
 ## Troubleshooting
 
 ### Issue: No tiles extracted
+
 **Solutions:**
+
 - Lower `tissue_percent` threshold
 - Verify slide contains tissue (check thumbnail)
 - Ensure extraction_mask captures tissue regions
 - Check that tile_size is appropriate for slide resolution
 
 ### Issue: Many background tiles extracted
+
 **Solutions:**
+
 - Enable `check_tissue=True`
 - Increase `tissue_percent` threshold
 - Use appropriate mask (TissueMask vs. BiggestTissueBoxMask)
 
 ### Issue: Extraction is very slow
+
 **Solutions:**
+
 - Extract at lower pyramid level (level=1 or 2)
 - Reduce `n_tiles` for RandomTiler/ScoreTiler
 - Use RandomTiler instead of GridTiler for sampling
 - Use BiggestTissueBoxMask instead of TissueMask
 
 ### Issue: Tiles have too much overlap (GridTiler)
+
 **Solutions:**
+
 - Set `pixel_overlap=0` for non-overlapping tiles
 - Reduce `pixel_overlap` value

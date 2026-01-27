@@ -32,9 +32,9 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- Private Components: For components used only within specific pages, you can create a _components folder within the relevant /app subdirectory.
+- Private Components: For components used only within specific pages, you can create a \_components folder within the relevant /app subdirectory.
 - Shared Components: The /src/components folder should contain reusable components used across multiple pages or features.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

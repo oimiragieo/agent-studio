@@ -5,6 +5,7 @@
 ### Table Design Principles
 
 **General guidelines:**
+
 - Clear, concise title describing table contents
 - Column headers with units
 - Row labels aligned left, data aligned appropriately (numbers right, text left)
@@ -13,12 +14,14 @@
 - Consistent formatting throughout document
 
 **Title placement:**
+
 - Above table
 - Numbered sequentially (Table 1, Table 2, etc.)
 - Descriptive enough to stand alone
 
 **Footnote symbols (in order):**
-- *, †, ‡, §, ||, ¶, #
+
+- \*, †, ‡, §, ||, ¶, #
 - Or use superscript letters (a, b, c...)
 - Or use superscript numbers if not confused with references
 
@@ -68,6 +71,7 @@ HbA1c = hemoglobin A1c
 ```
 
 **Key elements:**
+
 - Sample size for each group (N=)
 - Continuous variables: mean (SD), median (IQR), range
 - Categorical variables: n (%)
@@ -97,17 +101,18 @@ Change in FPG, mg/dL
 
 % achieving HbA1c <7%
   n (%)                            78 (52.0)      25 (17.2)      -              <0.001
-  95% CI                           (43.9, 60.1)   (11.4, 24.5)   
+  95% CI                           (43.9, 60.1)   (11.4, 24.5)
 
 Change in body weight, kg
   Mean (SE)                        -3.2 (0.4)     -0.5 (0.4)     -2.7          <0.001
   95% CI                           (-4.0, -2.4)   (-1.3, 0.3)    (-3.8, -1.6)
 ──────────────────────────────────────────────────────────────────────────────
-SE = standard error; CI = confidence interval; HbA1c = hemoglobin A1c; 
+SE = standard error; CI = confidence interval; HbA1c = hemoglobin A1c;
 FPG = fasting plasma glucose
 ```
 
 **Statistical presentation:**
+
 - Point estimates with measures of precision (SE or CI)
 - p-values (consider adjustment for multiplicity)
 - Effect size (difference or ratio) with 95% CI
@@ -148,6 +153,7 @@ Adverse events coded using MedDRA version 24.0
 ```
 
 **Key elements:**
+
 - Overall AE summary
 - Serious AEs highlighted
 - Deaths reported
@@ -172,7 +178,7 @@ Creatinine >1.5× baseline            12 (8.0)       5 (3.4)
 Hemoglobin <10 g/dL                  3 (2.0)        2 (1.4)
 Platelets <100 × 10³/μL              1 (0.7)        0 (0.0)
 ──────────────────────────────────────────────────────────────────────────
-ULN = upper limit of normal; ALT = alanine aminotransferase; 
+ULN = upper limit of normal; ALT = alanine aminotransferase;
 AST = aspartate aminotransferase
 ```
 
@@ -210,6 +216,7 @@ ITT = intent-to-treat
 ### Figure Design Principles
 
 **General guidelines:**
+
 - Clear, concise caption/legend below figure
 - Numbered sequentially (Figure 1, Figure 2, etc.)
 - Axis labels with units
@@ -219,6 +226,7 @@ ITT = intent-to-treat
 - Black and white compatible (use different symbols/patterns)
 
 **Figure caption:**
+
 - Describes what is shown
 - Explains symbols, error bars, statistical annotations
 - Defines abbreviations
@@ -265,6 +273,7 @@ ITT = intent-to-treat
 **Purpose:** Show time-to-event data
 
 **Elements:**
+
 - X-axis: Time (weeks, months, years)
 - Y-axis: Probability of event-free survival (0 to 1 or 0% to 100%)
 - Separate curves for each treatment group
@@ -275,6 +284,7 @@ ITT = intent-to-treat
 - Hazard ratio with 95% CI
 
 **Caption example:**
+
 ```
 Figure 1. Kaplan-Meier Curves for Overall Survival
 
@@ -289,6 +299,7 @@ Control 18.2 months (95% CI: 16.5-20.1). Hazard ratio 0.68 (95% CI: 0.55-0.84).
 **Purpose:** Display subgroup analyses or meta-analysis results
 
 **Elements:**
+
 - Point estimates (squares or diamonds)
 - Size of symbol proportional to precision (inverse variance) or sample size
 - Horizontal lines showing 95% CI
@@ -299,6 +310,7 @@ Control 18.2 months (95% CI: 16.5-20.1). Hazard ratio 0.68 (95% CI: 0.55-0.84).
 - Heterogeneity statistics (I², p-value)
 
 **Caption example:**
+
 ```
 Figure 2. Forest Plot of Treatment Effect by Subgroup
 
@@ -313,6 +325,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Show distribution of continuous variable
 
 **Elements:**
+
 - Box: IQR (25th to 75th percentile)
 - Line in box: Median
 - Whiskers: Extend to most extreme data point within 1.5 × IQR
@@ -325,6 +338,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Show relationship between two continuous variables
 
 **Elements:**
+
 - X-axis: Independent variable
 - Y-axis: Dependent variable
 - Individual data points
@@ -339,6 +353,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Show individual trajectories over time
 
 **Elements:**
+
 - X-axis: Time
 - Y-axis: Outcome variable
 - Individual patient lines (often semi-transparent)
@@ -350,6 +365,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Compare proportions or means across groups
 
 **Elements:**
+
 - Clear separation between bars
 - Error bars (SEM or 95% CI)
 - Y-axis starts at 0 (do not truncate for bar charts)
@@ -358,6 +374,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 - Statistical significance indicated (p-values or asterisks)
 
 **Avoid:**
+
 - 3D bar charts (distort perception)
 - Excessive decoration
 - Truncated Y-axis for bars
@@ -367,6 +384,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Show changes over time
 
 **Elements:**
+
 - X-axis: Time (with consistent intervals)
 - Y-axis: Outcome variable
 - Separate lines for each group (different colors/patterns)
@@ -380,6 +398,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 **Purpose:** Show distribution of continuous variable
 
 **Elements:**
+
 - X-axis: Variable (divided into bins)
 - Y-axis: Frequency or density
 - Appropriate bin width (not too few, not too many)
@@ -390,26 +409,31 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ### Presenting Proportions
 
 **Numerator and denominator:**
+
 - Always provide both: 25/100 (25%)
 - Not just percentage (25%)
 
 **Percentages:**
+
 - No decimal places if n<100
 - 1 decimal place if n≥100
 - Never report >1 decimal place for percentages
 
 **Confidence intervals for proportions:**
+
 - Wilson score interval or exact binomial (better than Wald for small samples)
 - Always report with percentage
 
 ### Presenting Continuous Data
 
 **Measures of central tendency:**
+
 - Mean for normally distributed data
 - Median for skewed data or ordinal data
 - Report both if distribution unclear
 
 **Measures of dispersion:**
+
 - **Standard deviation (SD)**: Describes variability in data
 - **Standard error (SE)**: Describes precision of mean estimate
 - **95% Confidence interval**: Preferred for inferential statistics
@@ -417,6 +441,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 - **Range**: Min to max
 
 **When to use each:**
+
 - Descriptive statistics → Mean (SD) or Median (IQR)
 - Inferential statistics → Mean (95% CI) or Mean (SE)
 - Never use ± without specifying SD, SE, or CI
@@ -424,6 +449,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ### Presenting P-values
 
 **Reporting guidelines:**
+
 - Report exact p-values to 2-3 decimal places (p=0.042)
 - For very small p-values, use p<0.001 (not p=0.000)
 - Do not report as "NS" or "p=NS"
@@ -433,6 +459,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 - Report significance threshold used (α=0.05 is standard)
 
 **Avoid:**
+
 - p<0.05 (report exact value)
 - p=0.00 (impossible)
 - Multiple decimal places (p=0.04235891)
@@ -440,22 +467,25 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ### Statistical Significance Indicators
 
 **Options:**
+
 1. Report p-values in table
 2. Use asterisks with legend:
-   - *p<0.05
-   - **p<0.01
-   - ***p<0.001
+   - \*p<0.05
+   - \*\*p<0.01
+   - \*\*\*p<0.001
 3. Use confidence intervals (preferred)
 
 ### Confidence Intervals
 
 **Reporting:**
+
 - 95% CI is standard
 - Format: (lower limit, upper limit)
 - Or: lower limit to upper limit
 - Or: lower limit-upper limit
 
 **Interpretation:**
+
 - If CI for difference excludes 0 → significant
 - If CI for ratio excludes 1 → significant
 - Width of CI indicates precision
@@ -463,6 +493,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ### Missing Data
 
 **Indicate clearly:**
+
 - Footnote explaining missing data
 - State clearly if analysis is complete case
 - Describe imputation method if used
@@ -471,6 +502,7 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ### Decimal Places and Rounding
 
 **General rules:**
+
 - Report to level of measurement precision
 - Consistent decimal places within table
 - Round p-values to 2-3 decimal places
@@ -481,12 +513,14 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ## Software for Creating Figures
 
 **Statistical software:**
+
 - R (ggplot2) - highly customizable
 - GraphPad Prism - user-friendly for biomedical
 - SAS, Stata, SPSS - comprehensive statistical packages
 - Python (matplotlib, seaborn) - flexible and powerful
 
 **General graphics software:**
+
 - Adobe Illustrator - professional publication-quality
 - Inkscape - free vector graphics editor
 - PowerPoint - basic graphs, easy to use
@@ -495,12 +529,14 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ## Color Schemes
 
 **Color-blind friendly palettes:**
+
 - Avoid red-green combinations
 - Use blue-orange, blue-yellow
 - Include shape/pattern differences
 - Test figures in grayscale
 
 **Recommended palettes:**
+
 - ColorBrewer (designed for data visualization)
 - Viridis (perceptually uniform)
 - IBM Color Blind Safe Palette
@@ -508,17 +544,20 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ## Image Quality Standards
 
 **Resolution:**
+
 - 300 dpi for print publication
 - 150 dpi for web/screen
 - Vector graphics (PDF, SVG) preferred for graphs
 
 **File formats:**
+
 - TIFF or EPS for print
 - PNG for web
 - PDF for vector graphics
 - JPEG acceptable for photographs (high quality)
 
 **Image editing:**
+
 - No manipulation that alters data
 - Only acceptable adjustments: brightness, contrast, color balance applied to entire image
 - Document all adjustments
@@ -527,4 +566,3 @@ p-value for interaction testing heterogeneity of treatment effect across subgrou
 ---
 
 This reference provides comprehensive guidance for presenting clinical data in tables and figures following best practices and publication standards. Use these guidelines to create clear, accurate, and professional data presentations.
-

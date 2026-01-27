@@ -25,6 +25,7 @@ Standardized protocol for task synchronization, progress tracking, and context h
 Background agents complete work but main sessions don't receive notifications. Agents don't update task descriptions with findings. No protocol exists for structured context handoff between agents or sessions.
 
 **This skill solves:**
+
 1. Lost context when sessions end or agents complete
 2. Background agent findings not surfacing to main session
 3. Duplicate work due to poor task visibility
@@ -32,12 +33,12 @@ Background agents complete work but main sessions don't receive notifications. A
 
 ## Core Tools Reference
 
-| Tool | Purpose | When to Use |
-|------|---------|-------------|
-| `TaskList()` | List all tasks with status | Start of work, after completion |
-| `TaskGet(id)` | Get full task details | Before starting assigned task |
-| `TaskCreate(...)` | Create new task | Planning phase, discovered subtasks |
-| `TaskUpdate(...)` | Update status/metadata | Progress, discoveries, completion |
+| Tool              | Purpose                    | When to Use                         |
+| ----------------- | -------------------------- | ----------------------------------- |
+| `TaskList()`      | List all tasks with status | Start of work, after completion     |
+| `TaskGet(id)`     | Get full task details      | Before starting assigned task       |
+| `TaskCreate(...)` | Create new task            | Planning phase, discovered subtasks |
+| `TaskUpdate(...)` | Update status/metadata     | Progress, discoveries, completion   |
 
 ## The Protocol
 
@@ -50,17 +51,18 @@ Background agents complete work but main sessions don't receive notifications. A
 TaskList();
 
 // Step 2: If assigned task exists, read full details
-TaskGet({ taskId: "<assigned-id>" });
+TaskGet({ taskId: '<assigned-id>' });
 
 // Step 3: Claim the task
 TaskUpdate({
-  taskId: "<assigned-id>",
-  status: "in_progress",
-  activeForm: "Working on <task-subject>"
+  taskId: '<assigned-id>',
+  status: 'in_progress',
+  activeForm: 'Working on <task-subject>',
 });
 ```
 
 **Why this matters:**
+
 - Prevents duplicate work (see what's already in progress)
 - Gets full context from task description
 - Signals to other agents/sessions that work has started
@@ -68,6 +70,7 @@ TaskUpdate({
 ### Phase 2: During Work (Progress Updates)
 
 **Update tasks when you:**
+
 - Discover important information
 - Find blockers
 - Identify subtasks
@@ -78,7 +81,7 @@ TaskUpdate({
 ```javascript
 // When you discover something important
 TaskUpdate({
-  taskId: "X",
+  taskId: 'X',
   description: `ORIGINAL: <original-description>
 
 ## Discoveries (${new Date().toISOString().split('T')[0]})
@@ -86,10 +89,10 @@ TaskUpdate({
 - Files: <relevant files>
 - Impact: <why this matters>`,
   metadata: {
-    discoveredFiles: ["path/to/file1.ts", "path/to/file2.ts"],
-    discoveries: ["Pattern X found", "Dependency Y required"],
-    lastUpdated: new Date().toISOString()
-  }
+    discoveredFiles: ['path/to/file1.ts', 'path/to/file2.ts'],
+    discoveries: ['Pattern X found', 'Dependency Y required'],
+    lastUpdated: new Date().toISOString(),
+  },
 });
 ```
 
@@ -98,7 +101,7 @@ TaskUpdate({
 ```javascript
 // When you hit a blocker
 TaskUpdate({
-  taskId: "X",
+  taskId: 'X',
   description: `<existing-description>
 
 ## BLOCKED (${new Date().toISOString().split('T')[0]})
@@ -106,11 +109,11 @@ TaskUpdate({
 - Needs: <what's required to unblock>
 - Workaround: <possible workaround if any>`,
   metadata: {
-    status: "blocked",
-    blocker: "Description of blocker",
-    blockerType: "dependency|permission|information|external",
-    needsFrom: "user|other-agent|external-system"
-  }
+    status: 'blocked',
+    blocker: 'Description of blocker',
+    blockerType: 'dependency|permission|information|external',
+    needsFrom: 'user|other-agent|external-system',
+  },
 });
 ```
 
@@ -119,7 +122,7 @@ TaskUpdate({
 ```javascript
 // When you discover subtasks
 TaskCreate({
-  subject: "Subtask: <specific-task>",
+  subject: 'Subtask: <specific-task>',
   description: `Parent: Task #X
 
 ## Context
@@ -131,13 +134,13 @@ TaskCreate({
 ## Acceptance Criteria
 - [ ] <criterion 1>
 - [ ] <criterion 2>`,
-  activeForm: "Working on <subtask>"
+  activeForm: 'Working on <subtask>',
 });
 
 // Link to parent
 TaskUpdate({
-  taskId: "<new-subtask-id>",
-  addBlockedBy: ["X"]  // This subtask blocks parent completion
+  taskId: '<new-subtask-id>',
+  addBlockedBy: ['X'], // This subtask blocks parent completion
 });
 ```
 
@@ -147,8 +150,8 @@ TaskUpdate({
 
 ```javascript
 TaskUpdate({
-  taskId: "X",
-  status: "completed",
+  taskId: 'X',
+  status: 'completed',
   description: `<original-description>
 
 ## Completed (${new Date().toISOString().split('T')[0]})
@@ -156,15 +159,15 @@ TaskUpdate({
 - Files modified: <list>
 - Tests: <passed/added/none>`,
   metadata: {
-    summary: "Concise summary of completed work",
-    filesModified: ["path/to/file1.ts", "path/to/file2.ts"],
-    filesCreated: ["path/to/new.ts"],
+    summary: 'Concise summary of completed work',
+    filesModified: ['path/to/file1.ts', 'path/to/file2.ts'],
+    filesCreated: ['path/to/new.ts'],
     testsAdded: true,
     testsPassing: true,
-    outputArtifacts: [".claude/context/reports/my-report.md"],
-    nextSteps: ["Optional follow-up", "Another consideration"],
-    completedAt: new Date().toISOString()
-  }
+    outputArtifacts: ['.claude/context/reports/my-report.md'],
+    nextSteps: ['Optional follow-up', 'Another consideration'],
+    completedAt: new Date().toISOString(),
+  },
 });
 
 // Check for newly unblocked tasks
@@ -178,7 +181,7 @@ TaskList();
 ```javascript
 // Update all in-progress tasks with current state
 TaskUpdate({
-  taskId: "X",
+  taskId: 'X',
   description: `<existing-description>
 
 ## Session Paused (${new Date().toISOString().split('T')[0]})
@@ -188,13 +191,13 @@ TaskUpdate({
 - Files to review: <key files>`,
   metadata: {
     sessionPaused: true,
-    progress: "60%",
-    currentState: "Description of current state",
-    immediateNextStep: "The very next thing to do",
-    keyFiles: ["file1.ts", "file2.ts"],
-    keyDecisions: ["Decision 1", "Decision 2"],
-    pausedAt: new Date().toISOString()
-  }
+    progress: '60%',
+    currentState: 'Description of current state',
+    immediateNextStep: 'The very next thing to do',
+    keyFiles: ['file1.ts', 'file2.ts'],
+    keyDecisions: ['Decision 1', 'Decision 2'],
+    pausedAt: new Date().toISOString(),
+  },
 });
 ```
 
@@ -207,8 +210,8 @@ Use this consistent structure for context handoff between agents:
 ```typescript
 interface TaskHandoffMetadata {
   // Progress tracking
-  status?: "not_started" | "in_progress" | "blocked" | "completed";
-  progress?: string;  // e.g., "60%", "3/5 steps"
+  status?: 'not_started' | 'in_progress' | 'blocked' | 'completed';
+  progress?: string; // e.g., "60%", "3/5 steps"
 
   // Discovery context
   discoveredFiles?: string[];
@@ -217,7 +220,7 @@ interface TaskHandoffMetadata {
 
   // Blocker information
   blocker?: string;
-  blockerType?: "dependency" | "permission" | "information" | "external";
+  blockerType?: 'dependency' | 'permission' | 'information' | 'external';
   needsFrom?: string;
 
   // Completion context
@@ -245,7 +248,7 @@ When starting work on a task that another agent worked on:
 
 ```javascript
 // Get full task details including metadata
-const task = TaskGet({ taskId: "X" });
+const task = TaskGet({ taskId: 'X' });
 
 // Check metadata for context
 if (task.metadata?.sessionPaused) {
@@ -274,6 +277,7 @@ claude
 ```
 
 **When to use:**
+
 - Multiple terminals working on same project
 - Background agents that should share task state
 - Team collaboration on task lists
@@ -283,23 +287,23 @@ claude
 ```javascript
 // Session A creates task
 TaskCreate({
-  subject: "Implement feature X",
-  description: "...",
+  subject: 'Implement feature X',
+  description: '...',
   metadata: {
-    owner: "session-a",
-    priority: "high"
-  }
+    owner: 'session-a',
+    priority: 'high',
+  },
 });
 
 // Session B (same CLAUDE_CODE_TASK_LIST_ID) picks up task
-TaskList();  // Sees task from Session A
+TaskList(); // Sees task from Session A
 TaskUpdate({
-  taskId: "1",
-  status: "in_progress",
+  taskId: '1',
+  status: 'in_progress',
   metadata: {
-    owner: "session-b",  // Claims ownership
-    previousOwner: "session-a"
-  }
+    owner: 'session-b', // Claims ownership
+    previousOwner: 'session-a',
+  },
 });
 ```
 
@@ -309,17 +313,17 @@ TaskUpdate({
 
 ```javascript
 // WRONG - No context for future reference
-TaskUpdate({ taskId: "X", status: "completed" });
+TaskUpdate({ taskId: 'X', status: 'completed' });
 
 // CORRECT - Full context preserved
 TaskUpdate({
-  taskId: "X",
-  status: "completed",
+  taskId: 'X',
+  status: 'completed',
   metadata: {
-    summary: "Added auth middleware with JWT validation",
-    filesModified: ["src/middleware/auth.ts"],
-    completedAt: new Date().toISOString()
-  }
+    summary: 'Added auth middleware with JWT validation',
+    filesModified: ['src/middleware/auth.ts'],
+    completedAt: new Date().toISOString(),
+  },
 });
 ```
 
@@ -331,10 +335,10 @@ TaskUpdate({
 
 // CORRECT - Discoveries preserved
 TaskUpdate({
-  taskId: "X",
+  taskId: 'X',
   metadata: {
-    discoveries: [...existingDiscoveries, "Found circular dependency in module X"]
-  }
+    discoveries: [...existingDiscoveries, 'Found circular dependency in module X'],
+  },
 });
 ```
 
@@ -355,19 +359,19 @@ TaskList();  // Find newly unblocked tasks
 ```javascript
 // WRONG - Structured data in prose
 TaskUpdate({
-  taskId: "X",
-  description: "Files: a.ts, b.ts. Blocked by: auth issue. Progress: 50%"
+  taskId: 'X',
+  description: 'Files: a.ts, b.ts. Blocked by: auth issue. Progress: 50%',
 });
 
 // CORRECT - Structured metadata + prose description
 TaskUpdate({
-  taskId: "X",
-  description: "Implementing auth flow. Hit a blocker with token refresh.",
+  taskId: 'X',
+  description: 'Implementing auth flow. Hit a blocker with token refresh.',
   metadata: {
-    filesModified: ["a.ts", "b.ts"],
-    blocker: "auth issue",
-    progress: "50%"
-  }
+    filesModified: ['a.ts', 'b.ts'],
+    blocker: 'auth issue',
+    progress: '50%',
+  },
 });
 ```
 
@@ -375,16 +379,17 @@ TaskUpdate({
 
 Task metadata complements but does not replace Memory Protocol:
 
-| Information Type | Task Metadata | Memory Files |
-|-----------------|---------------|--------------|
-| Task-specific discoveries | Yes | No |
-| Project-wide patterns | Reference only | Yes (learnings.md) |
-| Architecture decisions | Reference only | Yes (decisions.md) |
-| Blocking issues | Yes | Yes (issues.md) |
-| Progress state | Yes | No |
-| Completion summary | Yes | Yes (learnings.md) |
+| Information Type          | Task Metadata  | Memory Files       |
+| ------------------------- | -------------- | ------------------ |
+| Task-specific discoveries | Yes            | No                 |
+| Project-wide patterns     | Reference only | Yes (learnings.md) |
+| Architecture decisions    | Reference only | Yes (decisions.md) |
+| Blocking issues           | Yes            | Yes (issues.md)    |
+| Progress state            | Yes            | No                 |
+| Completion summary        | Yes            | Yes (learnings.md) |
 
 **Pattern:**
+
 1. Record task-specific context in task metadata
 2. Record project-wide learnings in memory files
 3. Cross-reference between them
@@ -392,15 +397,12 @@ Task metadata complements but does not replace Memory Protocol:
 ```javascript
 // Task completion with memory reference
 TaskUpdate({
-  taskId: "X",
-  status: "completed",
+  taskId: 'X',
+  status: 'completed',
   metadata: {
-    summary: "Implemented auth flow",
-    memoryUpdates: [
-      "learnings.md: JWT refresh pattern",
-      "decisions.md: ADR-005 auth architecture"
-    ]
-  }
+    summary: 'Implemented auth flow',
+    memoryUpdates: ['learnings.md: JWT refresh pattern', 'decisions.md: ADR-005 auth architecture'],
+  },
 });
 ```
 
@@ -411,32 +413,32 @@ TaskUpdate({
 ```javascript
 // Start
 TaskList();
-TaskGet({ taskId: "5" });
-TaskUpdate({ taskId: "5", status: "in_progress", activeForm: "Implementing login flow" });
+TaskGet({ taskId: '5' });
+TaskUpdate({ taskId: '5', status: 'in_progress', activeForm: 'Implementing login flow' });
 
 // Discovery during work
 TaskUpdate({
-  taskId: "5",
+  taskId: '5',
   metadata: {
-    discoveries: ["Existing auth module at src/auth/", "Uses JWT not sessions"],
-    keyFiles: ["src/auth/jwt.ts", "src/middleware/auth.ts"]
-  }
+    discoveries: ['Existing auth module at src/auth/', 'Uses JWT not sessions'],
+    keyFiles: ['src/auth/jwt.ts', 'src/middleware/auth.ts'],
+  },
 });
 
 // Completion
 TaskUpdate({
-  taskId: "5",
-  status: "completed",
+  taskId: '5',
+  status: 'completed',
   metadata: {
-    summary: "Added login endpoint with JWT auth",
-    filesCreated: ["src/routes/login.ts", "src/routes/login.test.ts"],
-    filesModified: ["src/routes/index.ts"],
+    summary: 'Added login endpoint with JWT auth',
+    filesCreated: ['src/routes/login.ts', 'src/routes/login.test.ts'],
+    filesModified: ['src/routes/index.ts'],
     testsAdded: true,
     testsPassing: true,
-    completedAt: new Date().toISOString()
-  }
+    completedAt: new Date().toISOString(),
+  },
 });
-TaskList();  // Check for unblocked tasks
+TaskList(); // Check for unblocked tasks
 ```
 
 ### Example 2: Background Agent with Handoff
@@ -444,33 +446,33 @@ TaskList();  // Check for unblocked tasks
 ```javascript
 // Background agent starting long task
 TaskUpdate({
-  taskId: "10",
-  status: "in_progress",
-  metadata: { runningInBackground: true }
+  taskId: '10',
+  status: 'in_progress',
+  metadata: { runningInBackground: true },
 });
 
 // Progress update (multiple during execution)
 TaskUpdate({
-  taskId: "10",
+  taskId: '10',
   metadata: {
-    progress: "40%",
-    currentState: "Processed 400/1000 files",
-    discoveries: ["Found 12 security issues", "3 critical in auth module"]
-  }
+    progress: '40%',
+    currentState: 'Processed 400/1000 files',
+    discoveries: ['Found 12 security issues', '3 critical in auth module'],
+  },
 });
 
 // Completion - main session can check this
 TaskUpdate({
-  taskId: "10",
-  status: "completed",
+  taskId: '10',
+  status: 'completed',
   metadata: {
-    summary: "Security scan complete: 12 issues found (3 critical)",
-    outputArtifacts: [".claude/context/reports/security-scan.md"],
+    summary: 'Security scan complete: 12 issues found (3 critical)',
+    outputArtifacts: ['.claude/context/reports/security-scan.md'],
     criticalFindings: 3,
     highFindings: 5,
     mediumFindings: 4,
-    completedAt: new Date().toISOString()
-  }
+    completedAt: new Date().toISOString(),
+  },
 });
 ```
 
@@ -478,27 +480,31 @@ TaskUpdate({
 
 ```javascript
 // Planner creates tasks with dependencies
-TaskCreate({ subject: "Design auth system", description: "...", activeForm: "Designing auth" });
-TaskCreate({ subject: "Implement auth backend", description: "...", activeForm: "Implementing auth" });
-TaskCreate({ subject: "Add auth tests", description: "...", activeForm: "Testing auth" });
+TaskCreate({ subject: 'Design auth system', description: '...', activeForm: 'Designing auth' });
+TaskCreate({
+  subject: 'Implement auth backend',
+  description: '...',
+  activeForm: 'Implementing auth',
+});
+TaskCreate({ subject: 'Add auth tests', description: '...', activeForm: 'Testing auth' });
 
-TaskUpdate({ taskId: "2", addBlockedBy: ["1"] });  // Implementation blocked by design
-TaskUpdate({ taskId: "3", addBlockedBy: ["2"] });  // Tests blocked by implementation
+TaskUpdate({ taskId: '2', addBlockedBy: ['1'] }); // Implementation blocked by design
+TaskUpdate({ taskId: '3', addBlockedBy: ['2'] }); // Tests blocked by implementation
 
 // Architect completes design
 TaskUpdate({
-  taskId: "1",
-  status: "completed",
+  taskId: '1',
+  status: 'completed',
   metadata: {
-    summary: "Auth design complete - JWT with refresh tokens",
-    outputArtifacts: [".claude/context/plans/auth-design.md"],
-    keyDecisions: ["JWT over sessions", "Redis for token store"]
-  }
+    summary: 'Auth design complete - JWT with refresh tokens',
+    outputArtifacts: ['.claude/context/plans/auth-design.md'],
+    keyDecisions: ['JWT over sessions', 'Redis for token store'],
+  },
 });
 
 // Developer can now start (task 2 unblocked)
-TaskList();  // Shows task 2 now available
-TaskGet({ taskId: "2" });  // Gets design context from task 1's metadata
+TaskList(); // Shows task 2 now available
+TaskGet({ taskId: '2' }); // Gets design context from task 1's metadata
 ```
 
 ## Related Skills
@@ -513,6 +519,7 @@ TaskGet({ taskId: "2" });  // Gets design context from task 1's metadata
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New task pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue with task tools -> `.claude/context/memory/issues.md`
 - Decision about task structure -> `.claude/context/memory/decisions.md`

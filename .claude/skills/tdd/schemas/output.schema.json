@@ -3,9 +3,7 @@
   "title": "tdd Output Schema",
   "description": "Output validation schema for tdd skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

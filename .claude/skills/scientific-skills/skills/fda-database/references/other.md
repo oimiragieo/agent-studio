@@ -17,6 +17,7 @@ The FDA maintains additional databases for substance-level information that is p
 **Data Source**: FDA Global Substance Registration System (GSRS)
 
 **Key Fields**:
+
 - `uuid` - Unique substance identifier (UUID)
 - `approvalID` - FDA Unique Ingredient Identifier (UNII)
 - `approved` - Approval date
@@ -56,6 +57,7 @@ The FDA maintains additional databases for substance-level information that is p
 - `references` - Literature references
 
 **Substance Classes**:
+
 - **Chemical** - Small molecules with defined chemical structure
 - **Protein** - Proteins and peptides
 - **Nucleic Acid** - DNA, RNA, oligonucleotides
@@ -65,6 +67,7 @@ The FDA maintains additional databases for substance-level information that is p
 - **Concept** - Abstract concepts (e.g., groups)
 
 **Common Use Cases**:
+
 - Active ingredient identification
 - Molecular structure lookup
 - UNII code resolution
@@ -75,6 +78,7 @@ The FDA maintains additional databases for substance-level information that is p
 - Protein and biologic characterization
 
 **Example Queries**:
+
 ```python
 import requests
 
@@ -146,6 +150,7 @@ params = {
 **Note**: This database is primarily for historical reference. For current substance information, use the Substance Data endpoint.
 
 **Key Fields**:
+
 - `proprietary_name` - Product proprietary name
 - `nonproprietary_name` - Nonproprietary name
 - `dosage_form` - Dosage form
@@ -158,12 +163,14 @@ params = {
 - `dea_schedule` - DEA controlled substance schedule
 
 **Common Use Cases**:
+
 - Historical drug formulation research
 - Legacy system integration
 - Historical substance name mapping
 - Pharmaceutical history research
 
 **Example Queries**:
+
 ```python
 # Search by substance name
 params = {
@@ -418,6 +425,7 @@ def find_active_ingredients_by_product(product_name, api_key):
 ## UNII System
 
 The FDA Unique Ingredient Identifier (UNII) system provides:
+
 - **Unique identifiers** - Each substance gets one UNII
 - **Substance specificity** - Different forms (salts, hydrates) get different UNIIs
 - **Global recognition** - Used internationally
@@ -429,36 +437,42 @@ The FDA Unique Ingredient Identifier (UNII) system provides:
 ## Substance Classes Explained
 
 ### Chemical
+
 - Traditional small molecule drugs
 - Have defined molecular structure
 - Include organic and inorganic compounds
 - SMILES, InChI, molecular formula available
 
 ### Protein
+
 - Polypeptides and proteins
 - Sequence information available
 - May have post-translational modifications
 - Includes antibodies, enzymes, hormones
 
 ### Nucleic Acid
+
 - DNA and RNA sequences
 - Oligonucleotides
 - Antisense, siRNA, mRNA
 - Sequence data available
 
 ### Polymer
+
 - Synthetic and natural polymers
 - Structural repeat units
 - Molecular weight distributions
 - Used as excipients and active ingredients
 
 ### Structurally Diverse
+
 - Complex natural products
 - Botanical extracts
 - Materials without single molecular structure
 - Characterized by source and composition
 
 ### Mixture
+
 - Defined combinations of substances
 - Fixed or variable composition
 - Each component trackable

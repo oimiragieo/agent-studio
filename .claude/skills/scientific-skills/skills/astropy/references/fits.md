@@ -52,6 +52,7 @@ with fits.open(uri, use_fsspec=True, fsspec_kwargs={"anon": True}) as hdul:
 ## HDU Structure
 
 FITS files contain Header Data Units (HDUs):
+
 - **Primary HDU** (`hdul[0]`): First HDU, always present
 - **Extension HDUs** (`hdul[1:]`): Image or table extensions
 
@@ -267,6 +268,7 @@ table_hdu.writeto('catalog.fits', overwrite=True)
 ### Column Formats
 
 Common FITS table column formats:
+
 - `'A'`: Character string (e.g., '20A' for 20 characters)
 - `'L'`: Logical (boolean)
 - `'B'`: Unsigned byte

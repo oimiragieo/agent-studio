@@ -4,7 +4,7 @@ description: Cloud-based quantum chemistry platform with Python API. Preferred f
 license: Proprietary (API key required)
 compatibility: API required
 metadata:
-    skill-author: K-Dense Inc.
+  skill-author: K-Dense Inc.
 ---
 
 # Rowan: Cloud-Based Quantum Chemistry Platform
@@ -14,6 +14,7 @@ metadata:
 Rowan is a cloud-based computational chemistry platform that provides programmatic access to quantum chemistry workflows through a Python API. It enables automation of complex molecular simulations without requiring local computational resources or expertise in multiple quantum chemistry packages.
 
 **Key Capabilities:**
+
 - Molecular property prediction (pKa, redox potential, solubility, ADMET-Tox)
 - Geometry optimization and conformer searching
 - Protein-ligand docking with AutoDock Vina
@@ -22,6 +23,7 @@ Rowan is a cloud-based computational chemistry platform that provides programmat
 - Cloud compute with automatic resource allocation
 
 **Why Rowan:**
+
 - No local compute cluster required
 - Unified API for dozens of computational methods
 - Results viewable in web interface at labs.rowansci.com
@@ -40,12 +42,14 @@ uv pip install rowan-python
 Generate an API key at [labs.rowansci.com/account/api-keys](https://labs.rowansci.com/account/api-keys).
 
 **Option 1: Direct assignment**
+
 ```python
 import rowan
 rowan.api_key = "your_api_key_here"
 ```
 
 **Option 2: Environment variable (recommended)**
+
 ```bash
 export ROWAN_API_KEY="your_api_key_here"
 ```
@@ -226,6 +230,7 @@ for mol, result in zip(mols, results):
 ```
 
 **Available RDKit-native functions:**
+
 - `run_pka`, `batch_pka` - pKa calculations
 - `run_tautomers`, `batch_tautomers` - Tautomer enumeration
 - `run_conformers`, `batch_conformers` - Conformer generation
@@ -287,13 +292,16 @@ folder_workflows = rowan.list_workflows(folder_uuid=folder.uuid)
 Rowan supports multiple levels of theory:
 
 **Neural Network Potentials:**
+
 - AIMNet2 (ωB97M-D3) - Fast and accurate
 - Egret - Rowan's proprietary model
 
 **Semiempirical:**
+
 - GFN1-xTB, GFN2-xTB - Fast for large molecules
 
 **DFT:**
+
 - B3LYP, PBE, ωB97X variants
 - Multiple basis sets available
 

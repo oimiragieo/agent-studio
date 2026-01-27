@@ -3,6 +3,7 @@
 ## General Quality Standards
 
 ### Completeness
+
 - [ ] All required sections present
 - [ ] No blank fields or missing information
 - [ ] All relevant clinical information included
@@ -12,6 +13,7 @@
 - [ ] Follow-up plan specified
 
 ### Accuracy
+
 - [ ] Patient demographics correct
 - [ ] Dates and times accurate
 - [ ] Laboratory values with correct units and reference ranges
@@ -21,6 +23,7 @@
 - [ ] No contradictory information
 
 ### Clarity
+
 - [ ] Clear, professional language
 - [ ] Medical terminology used appropriately
 - [ ] Abbreviations defined or standard only
@@ -30,6 +33,7 @@
 - [ ] Clinical reasoning clearly explained
 
 ### Timeliness
+
 - [ ] Documented in real-time or shortly after encounter
 - [ ] Discharge summary completed within 24-48 hours
 - [ ] Critical results communicated immediately
@@ -40,6 +44,7 @@
 ## Case Report Quality Checklist
 
 ### CARE Guidelines Compliance
+
 - [ ] Title includes "case report"
 - [ ] Keywords provided (2-5 MeSH terms)
 - [ ] Structured abstract with all elements
@@ -55,6 +60,7 @@
 - [ ] Informed consent statement present
 
 ### Privacy and Ethics
+
 - [ ] Informed consent obtained and documented
 - [ ] All 18 HIPAA identifiers removed
 - [ ] Dates removed or approximated
@@ -64,6 +70,7 @@
 - [ ] IRB approval if applicable
 
 ### Scientific Quality
+
 - [ ] Novelty clearly established
 - [ ] Literature search comprehensive
 - [ ] Differential diagnosis considered
@@ -77,6 +84,7 @@
 ## Clinical Trial Report Quality Checklist
 
 ### SAE Report Checklist
+
 - [ ] All administrative information complete
 - [ ] Subject de-identified (ID number only)
 - [ ] Event description detailed
@@ -93,6 +101,7 @@
 - [ ] Regulatory timelines met (7-day, 15-day)
 
 ### Clinical Study Report (CSR) Checklist
+
 - [ ] ICH-E3 structure followed
 - [ ] Synopsis complete and accurate
 - [ ] All sections numbered correctly
@@ -116,6 +125,7 @@
 ## Diagnostic Report Quality Checklist
 
 ### Radiology Report
+
 - [ ] Patient demographics complete
 - [ ] Clinical indication documented
 - [ ] Comparison studies noted
@@ -130,6 +140,7 @@
 - [ ] Report signed and dated
 
 ### Pathology Report
+
 - [ ] Specimen labeled correctly
 - [ ] Clinical history provided
 - [ ] Gross description detailed
@@ -144,6 +155,7 @@
 - [ ] Report signed by pathologist
 
 ### Laboratory Report
+
 - [ ] Specimen type documented
 - [ ] Collection time documented
 - [ ] Results with units
@@ -161,6 +173,7 @@
 ## Patient Documentation Quality Checklist
 
 ### SOAP Note
+
 - [ ] Chief complaint documented
 - [ ] HPI comprehensive (≥4 elements)
 - [ ] Review of systems performed
@@ -174,6 +187,7 @@
 - [ ] Signed, dated, and timed
 
 ### History and Physical (H&P)
+
 - [ ] Chief complaint
 - [ ] Detailed HPI
 - [ ] Past medical history
@@ -191,6 +205,7 @@
 - [ ] Signed and cosigned (if required)
 
 ### Discharge Summary
+
 - [ ] Admission and discharge dates
 - [ ] Length of stay
 - [ ] Admission diagnosis
@@ -214,6 +229,7 @@
 ## Regulatory Compliance Checklist
 
 ### HIPAA Compliance
+
 - [ ] Only minimum necessary PHI disclosed
 - [ ] PHI secured and protected
 - [ ] Patient authorization obtained (if required)
@@ -223,6 +239,7 @@
 - [ ] De-identification performed correctly
 
 ### FDA/ICH-GCP Compliance (Clinical Trials)
+
 - [ ] GCP principles followed
 - [ ] Informed consent documented
 - [ ] IRB approval current
@@ -238,6 +255,7 @@
 ## Writing Quality Checklist
 
 ### Grammar and Style
+
 - [ ] Correct spelling
 - [ ] Proper grammar
 - [ ] Appropriate punctuation
@@ -248,6 +266,7 @@
 - [ ] Active voice used appropriately
 
 ### Format and Presentation
+
 - [ ] Consistent formatting
 - [ ] Appropriate font and size
 - [ ] Adequate margins
@@ -258,6 +277,7 @@
 - [ ] References formatted correctly
 
 ### Medical Terminology
+
 - [ ] Terminology accurate
 - [ ] Abbreviations standard only
 - [ ] Abbreviations defined on first use
@@ -271,6 +291,7 @@
 ## Documentation Integrity Checklist
 
 ### Legal and Ethical Standards
+
 - [ ] Facts documented, not opinions
 - [ ] Patient quotes when relevant
 - [ ] Non-compliance documented objectively
@@ -281,6 +302,7 @@
 - [ ] Authorship clear
 
 ### Billing and Coding Support
+
 - [ ] Medical necessity documented
 - [ ] Complexity of care documented
 - [ ] Time documented (if time-based billing)
@@ -323,16 +345,15 @@ Before finalizing any clinical report:
 
 **Quality Assurance Reviewer:**
 
-**Name:** ____________________  
-**Date:** ____________________  
-**Signature:** ____________________
+**Name:** **\*\*\*\***\_\_\_\_**\*\*\*\***  
+**Date:** **\*\*\*\***\_\_\_\_**\*\*\*\***  
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
-**Quality Score:** _____ / 100
+**Quality Score:** **\_** / 100
 
 **Issues Identified:**
+
 1. [Issue and recommendation]
 2. [Issue and recommendation]
 
-**Follow-up Required:** [ ] Yes  [ ] No
-
-
+**Follow-up Required:** [ ] Yes [ ] No

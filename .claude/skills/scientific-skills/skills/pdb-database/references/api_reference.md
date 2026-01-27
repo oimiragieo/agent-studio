@@ -19,7 +19,7 @@ RCSB PDB provides multiple programmatic interfaces:
 
 The Data API organizes information hierarchically:
 
-- **core_entry**: PDB entries or Computed Structure Models (CSM IDs start with AF_ or MA_)
+- **core_entry**: PDB entries or Computed Structure Models (CSM IDs start with AF* or MA*)
 - **core_polymer_entity**: Protein, DNA, and RNA entities
 - **core_nonpolymer_entity**: Ligands, cofactors, ions
 - **core_branched_entity**: Oligosaccharides
@@ -32,21 +32,25 @@ The Data API organizes information hierarchically:
 Base URL: `https://data.rcsb.org/rest/v1/`
 
 **Entry Data:**
+
 ```
 GET https://data.rcsb.org/rest/v1/core/entry/{entry_id}
 ```
 
 **Polymer Entity:**
+
 ```
 GET https://data.rcsb.org/rest/v1/core/polymer_entity/{entry_id}_{entity_id}
 ```
 
 **Assembly:**
+
 ```
 GET https://data.rcsb.org/rest/v1/core/assembly/{entry_id}/{assembly_id}
 ```
 
 **Examples:**
+
 ```bash
 # Get entry data for hemoglobin
 curl https://data.rcsb.org/rest/v1/core/entry/4HHB
@@ -65,6 +69,7 @@ Endpoint: `https://data.rcsb.org/graphql`
 The GraphQL API enables flexible data retrieval, allowing you to grab any piece of data from any level of the hierarchy in a single query.
 
 **Example Query:**
+
 ```graphql
 {
   entry(entry_id: "4HHB") {
@@ -88,6 +93,7 @@ The GraphQL API enables flexible data retrieval, allowing you to grab any piece 
 ```
 
 **Python Example:**
+
 ```python
 import requests
 
@@ -120,6 +126,7 @@ data = response.json()
 ### Common Data Fields
 
 **Entry Level:**
+
 - `struct.title` - Structure title/description
 - `exptl[].method` - Experimental method (X-RAY DIFFRACTION, NMR, ELECTRON MICROSCOPY, etc.)
 - `rcsb_entry_info.resolution_combined` - Resolution in Ångströms
@@ -128,12 +135,14 @@ data = response.json()
 - `rcsb_accession_info.initial_release_date` - Release date
 
 **Polymer Entity Level:**
+
 - `entity_poly.pdbx_seq_one_letter_code` - Primary sequence
 - `rcsb_polymer_entity.formula_weight` - Molecular weight
 - `rcsb_entity_source_organism.scientific_name` - Source organism
 - `rcsb_entity_source_organism.ncbi_taxonomy_id` - NCBI taxonomy ID
 
 **Assembly Level:**
+
 - `rcsb_assembly_info.polymer_entity_count` - Number of polymer entities
 - `rcsb_assembly_info.assembly_id` - Assembly identifier
 
@@ -170,6 +179,7 @@ Available operators for AttributeQuery:
 ### Common Searchable Attributes
 
 **Resolution and Quality:**
+
 ```python
 from rcsbapi.search import AttributeQuery
 from rcsbapi.search.attrs import rcsb_entry_info
@@ -183,6 +193,7 @@ query = AttributeQuery(
 ```
 
 **Experimental Method:**
+
 ```python
 from rcsbapi.search.attrs import exptl
 
@@ -194,6 +205,7 @@ query = AttributeQuery(
 ```
 
 **Organism:**
+
 ```python
 from rcsbapi.search.attrs import rcsb_entity_source_organism
 
@@ -205,6 +217,7 @@ query = AttributeQuery(
 ```
 
 **Molecular Weight:**
+
 ```python
 from rcsbapi.search.attrs import rcsb_polymer_entity
 
@@ -216,6 +229,7 @@ query = AttributeQuery(
 ```
 
 **Release Date:**
+
 ```python
 from rcsbapi.search.attrs import rcsb_accession_info
 
@@ -359,27 +373,32 @@ results = list(query(return_type=ReturnType.POLYMER_ENTITY))
 ### Structure Files
 
 **PDB Format (legacy):**
+
 ```
 https://files.rcsb.org/download/{PDB_ID}.pdb
 ```
 
 **mmCIF Format (modern standard):**
+
 ```
 https://files.rcsb.org/download/{PDB_ID}.cif
 ```
 
 **Structure Factors:**
+
 ```
 https://files.rcsb.org/download/{PDB_ID}-sf.cif
 ```
 
 **Biological Assembly:**
+
 ```
 https://files.rcsb.org/download/{PDB_ID}.pdb1  # Assembly 1
 https://files.rcsb.org/download/{PDB_ID}.pdb2  # Assembly 2
 ```
 
 **FASTA Sequence:**
+
 ```
 https://www.rcsb.org/fasta/entry/{PDB_ID}
 ```
@@ -565,21 +584,25 @@ recent_structures = list(query())
 ### Common Errors
 
 **404 Not Found:**
+
 - PDB ID doesn't exist or is obsolete
 - Check if ID is correct (case-sensitive)
 - Verify entry hasn't been superseded
 
 **429 Too Many Requests:**
+
 - Rate limit exceeded
 - Implement exponential backoff
 - Reduce request frequency
 
 **500 Internal Server Error:**
+
 - Temporary server issue
 - Retry after short delay
 - Check RCSB PDB status page
 
 **Empty Results:**
+
 - Query too restrictive
 - Check attribute names and operators
 - Verify data exists for searched field

@@ -84,11 +84,11 @@ spec:
               name: http
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: '256Mi'
+              cpu: '250m'
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: '512Mi'
+              cpu: '500m'
           livenessProbe:
             httpGet:
               path: /health
@@ -103,7 +103,7 @@ spec:
             periodSeconds: 5
           env:
             - name: ENV_VAR
-              value: "value"
+              value: 'value'
           envFrom:
             - configMapRef:
                 name: <app-name>-config
@@ -215,8 +215,8 @@ metadata:
   namespace: <namespace>
 type: Opaque
 stringData:
-  DATABASE_PASSWORD: "changeme"
-  API_KEY: "secret-api-key"
+  DATABASE_PASSWORD: 'changeme'
+  API_KEY: 'secret-api-key'
   # For certificate files
   tls.crt: |
     -----BEGIN CERTIFICATE-----
@@ -322,7 +322,7 @@ metadata:
   labels:
     app.kubernetes.io/name: <app-name>
     app.kubernetes.io/instance: <instance-name>
-    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/version: '1.0.0'
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: <system-name>
     app.kubernetes.io/managed-by: kubectl
@@ -333,11 +333,11 @@ metadata:
 ```yaml
 metadata:
   annotations:
-    description: "Application description"
-    contact: "team@example.com"
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9090"
-    prometheus.io/path: "/metrics"
+    description: 'Application description'
+    contact: 'team@example.com'
+    prometheus.io/scrape: 'true'
+    prometheus.io/port: '9090'
+    prometheus.io/path: '/metrics'
 ```
 
 ### 9. Organize Multi-Resource Manifests

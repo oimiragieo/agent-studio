@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement internationalization (i18n) to support multiple languages.
 - Ensure text and UI elements are adaptable to different locales.
 - Provide translations for all user-facing content.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

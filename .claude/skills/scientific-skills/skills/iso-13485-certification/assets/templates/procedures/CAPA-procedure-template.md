@@ -12,18 +12,18 @@
 
 ### Approval Signatures
 
-| Role | Name | Signature | Date |
-|------|------|-----------|------|
-| Author | [NAME] | | [DATE] |
-| Reviewer | [NAME] | | [DATE] |
-| Approver (Quality Manager) | [NAME] | | [DATE] |
+| Role                       | Name   | Signature | Date   |
+| -------------------------- | ------ | --------- | ------ |
+| Author                     | [NAME] |           | [DATE] |
+| Reviewer                   | [NAME] |           | [DATE] |
+| Approver (Quality Manager) | [NAME] |           | [DATE] |
 
 ### Revision History
 
-| Revision | Date | Description of Changes | Approved By |
-|----------|------|------------------------|-------------|
-| 00 | [DATE] | Initial release | [NAME] |
-|  |  |  |  |
+| Revision | Date   | Description of Changes | Approved By |
+| -------- | ------ | ---------------------- | ----------- |
+| 00       | [DATE] | Initial release        | [NAME]      |
+|          |        |                        |             |
 
 ---
 
@@ -74,23 +74,24 @@ This procedure applies to:
 
 ## 3. DEFINITIONS
 
-| Term | Definition |
-|------|------------|
-| **CAPA** | Corrective and Preventive Action |
-| **Corrective Action** | Action to eliminate the cause of a detected nonconformity or other undesirable situation to prevent recurrence |
-| **Preventive Action** | Action to eliminate the cause of a potential nonconformity or other potential undesirable situation to prevent occurrence |
-| **Nonconformity** | Non-fulfillment of a requirement |
-| **Root Cause** | The fundamental reason for the occurrence of a problem |
-| **Root Cause Analysis (RCA)** | Systematic process to identify the root cause of a problem |
-| **Effectiveness Check** | Verification that implemented actions have achieved the intended result |
-| **5 Whys** | Iterative questioning technique used to explore cause-and-effect relationships |
-| **Fishbone Diagram** | Visual tool for categorizing potential causes of a problem (also called Ishikawa diagram) |
+| Term                          | Definition                                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **CAPA**                      | Corrective and Preventive Action                                                                                          |
+| **Corrective Action**         | Action to eliminate the cause of a detected nonconformity or other undesirable situation to prevent recurrence            |
+| **Preventive Action**         | Action to eliminate the cause of a potential nonconformity or other potential undesirable situation to prevent occurrence |
+| **Nonconformity**             | Non-fulfillment of a requirement                                                                                          |
+| **Root Cause**                | The fundamental reason for the occurrence of a problem                                                                    |
+| **Root Cause Analysis (RCA)** | Systematic process to identify the root cause of a problem                                                                |
+| **Effectiveness Check**       | Verification that implemented actions have achieved the intended result                                                   |
+| **5 Whys**                    | Iterative questioning technique used to explore cause-and-effect relationships                                            |
+| **Fishbone Diagram**          | Visual tool for categorizing potential causes of a problem (also called Ishikawa diagram)                                 |
 
 ---
 
 ## 4. RESPONSIBILITIES
 
 ### 4.1 Quality Manager
+
 - Overall responsibility for CAPA system
 - Reviews all CAPAs for adequacy
 - Approves CAPA closures
@@ -98,6 +99,7 @@ This procedure applies to:
 - Ensures resources are available for CAPA activities
 
 ### 4.2 CAPA Coordinator
+
 - Manages CAPA database/system
 - Assigns CAPA numbers
 - Tracks CAPA status and due dates
@@ -106,6 +108,7 @@ This procedure applies to:
 - Maintains CAPA records
 
 ### 4.3 CAPA Owner (Assigned Personnel)
+
 - Leads investigation and root cause analysis
 - Develops action plan
 - Implements corrective/preventive actions
@@ -115,12 +118,14 @@ This procedure applies to:
 - Requests CAPA closure when complete
 
 ### 4.4 Department Managers
+
 - Provide resources and support for CAPA activities
 - Participate in investigations within their areas
 - Implement actions within their departments
 - Verify implementation of actions
 
 ### 4.5 All Personnel
+
 - Report nonconformities and improvement opportunities
 - Participate in CAPA investigations as requested
 - Implement actions assigned to them
@@ -135,6 +140,7 @@ This procedure applies to:
 Corrective actions are initiated in response to identified nonconformities from sources including:
 
 **Sources of Nonconformities:**
+
 - Customer complaints (per SOP-[NUMBER])
 - Internal nonconforming product (per SOP-[NUMBER])
 - Internal audit findings (per SOP-[NUMBER])
@@ -173,6 +179,7 @@ Corrective actions are initiated in response to identified nonconformities from 
 Preventive actions are initiated proactively to address potential problems before they occur.
 
 **Sources of Preventive Action:**
+
 - Trend analysis of complaints, NCRs, or other data
 - Risk management activities (per SOP-[NUMBER])
 - Process capability studies
@@ -186,6 +193,7 @@ Preventive actions are initiated proactively to address potential problems befor
 **5.2.1 Preventive Action Initiation**
 
 Process is similar to corrective action (Section 5.1.1), but:
+
 - Describes potential nonconformity and its possible consequences
 - Includes data or rationale supporting the need for preventive action
 - May have different prioritization based on risk of occurrence
@@ -193,18 +201,19 @@ Process is similar to corrective action (Section 5.1.1), but:
 ### 5.3 CAPA Prioritization
 
 All CAPAs are prioritized based on:
+
 - Severity of impact (safety, regulatory, customer impact)
 - Frequency or likelihood of occurrence
 - Detectability before reaching customer
 
 **Priority Levels:**
 
-| Priority | Criteria | Due Date for Completion |
-|----------|----------|-------------------------|
-| **Critical** | Safety issue, regulatory requirement, major customer impact, Class I recall potential | [X] days |
-| **High** | Significant quality impact, repeat issue, moderate customer impact, regulatory reporting | [X] days |
-| **Medium** | Moderate impact, isolated occurrence, minor customer impact | [X] days |
-| **Low** | Minor impact, isolated occurrence, no customer impact, improvement opportunity | [X] days |
+| Priority     | Criteria                                                                                 | Due Date for Completion |
+| ------------ | ---------------------------------------------------------------------------------------- | ----------------------- |
+| **Critical** | Safety issue, regulatory requirement, major customer impact, Class I recall potential    | [X] days                |
+| **High**     | Significant quality impact, repeat issue, moderate customer impact, regulatory reporting | [X] days                |
+| **Medium**   | Moderate impact, isolated occurrence, minor customer impact                              | [X] days                |
+| **Low**      | Minor impact, isolated occurrence, no customer impact, improvement opportunity           | [X] days                |
 
 Priority is determined by Quality Manager in consultation with CAPA Owner and affected department managers.
 
@@ -213,6 +222,7 @@ Priority is determined by Quality Manager in consultation with CAPA Owner and af
 **5.4.1 Investigation Planning**
 
 CAPA Owner develops investigation plan including:
+
 - Scope of investigation
 - Team members needed (if applicable)
 - Data to be collected
@@ -222,6 +232,7 @@ CAPA Owner develops investigation plan including:
 **5.4.2 Data Collection**
 
 Collect relevant data:
+
 - Review related records (batch records, inspection records, training records, etc.)
 - Interview personnel involved
 - Review similar past occurrences
@@ -234,16 +245,19 @@ Collect relevant data:
 Use appropriate RCA tools based on complexity:
 
 **For Simple Issues:**
+
 - 5 Whys technique
 - Cause and effect analysis
 
 **For Complex Issues:**
+
 - Fishbone (Ishikawa) diagram
 - Fault tree analysis
 - Failure mode and effects analysis (FMEA)
 - Statistical analysis
 
 **RCA Requirements:**
+
 - Dig beyond superficial causes to find root cause
 - Distinguish between symptoms and causes
 - Consider multiple contributing factors
@@ -254,6 +268,7 @@ Use appropriate RCA tools based on complexity:
 **5.4.4 Root Cause Documentation**
 
 Document in CAPA record:
+
 - Summary of investigation findings
 - Root cause(s) identified
 - Supporting data and analysis
@@ -270,6 +285,7 @@ Quality Manager reviews and approves root cause determination.
 Based on root cause, CAPA Owner develops action plan:
 
 **Actions must be:**
+
 - **Effective:** Address root cause, not just symptoms
 - **Achievable:** Realistic with available resources
 - **Measurable:** Include objective success criteria
@@ -277,6 +293,7 @@ Based on root cause, CAPA Owner develops action plan:
 - **Risk-appropriate:** Commensurate with severity and likelihood
 
 **Action Plan includes:**
+
 - Specific actions to be taken
 - Responsible person for each action
 - Target completion date for each action
@@ -287,6 +304,7 @@ Based on root cause, CAPA Owner develops action plan:
 **5.5.2 Types of Actions**
 
 Actions may include:
+
 - Procedure revisions or clarifications
 - Training or retraining
 - Equipment repair, replacement, or modification
@@ -317,6 +335,7 @@ Actions may include:
 **5.5.5 Documentation of Implementation**
 
 For each action, document:
+
 - Date implemented
 - Evidence of implementation (updated procedures, training records, work orders, etc.)
 - Any deviations from planned actions and justification
@@ -327,6 +346,7 @@ For each action, document:
 **5.6.1 Timing of Effectiveness Check**
 
 Effectiveness is verified after:
+
 - Sufficient time has passed to observe results
 - Minimum: [X days/weeks] after implementation
 - Extended period for process or trend verification: [X months]
@@ -335,6 +355,7 @@ Effectiveness is verified after:
 **5.6.2 Effectiveness Verification Methods**
 
 Methods appropriate to the CAPA may include:
+
 - Review of process or product data for improved performance
 - Inspection or test results showing improvement
 - Absence of recurrence over defined period
@@ -348,6 +369,7 @@ Methods appropriate to the CAPA may include:
 **5.6.3 Effectiveness Determination**
 
 CAPA Owner:
+
 - Collects effectiveness data using planned method
 - Analyzes data to determine if actions achieved intended result
 - Documents findings in CAPA record
@@ -359,6 +381,7 @@ CAPA Owner:
 **5.6.4 Ineffective Actions**
 
 If actions determined not effective:
+
 - CAPA remains open
 - Re-investigation performed
 - Alternative actions developed
@@ -369,6 +392,7 @@ If actions determined not effective:
 **5.7.1 Closure Criteria**
 
 CAPA may be closed when:
+
 - All planned actions implemented and verified
 - Effectiveness check completed and actions determined effective
 - All documentation complete
@@ -395,6 +419,7 @@ CAPA may be closed when:
 **5.7.3 CAPA Extension**
 
 If additional time needed:
+
 - CAPA Owner submits extension request with justification
 - Quality Manager reviews and approves/denies extension
 - New due date established
@@ -406,16 +431,16 @@ If additional time needed:
 
 Records generated and maintained per this procedure:
 
-| Record | Retention Period | Location | Responsible Party |
-|--------|------------------|----------|-------------------|
-| CAPA Request Forms | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| CAPA Investigation Records | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| Root Cause Analysis Documentation | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| Action Plans | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| Implementation Evidence | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| Effectiveness Verification Records | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| CAPA Closure Approvals | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator |
-| CAPA Metrics and Trend Reports | [X years] | [LOCATION] | Quality Manager |
+| Record                             | Retention Period             | Location          | Responsible Party |
+| ---------------------------------- | ---------------------------- | ----------------- | ----------------- |
+| CAPA Request Forms                 | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| CAPA Investigation Records         | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| Root Cause Analysis Documentation  | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| Action Plans                       | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| Implementation Evidence            | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| Effectiveness Verification Records | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| CAPA Closure Approvals             | [X years or device lifetime] | [LOCATION/SYSTEM] | CAPA Coordinator  |
+| CAPA Metrics and Trend Reports     | [X years]                    | [LOCATION]        | Quality Manager   |
 
 ---
 

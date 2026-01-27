@@ -40,7 +40,7 @@ When reviewing or writing code, apply these guidelines:
     - Temperature: Affect the overall activity level or energy of cells within the region.
     - Energy level: Influence the likelihood of certain operations or state changes.
   - Design these functions to be modular and easily expandable, allowing for the addition of new parameters in the future without major code restructuring.
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -53,6 +53,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

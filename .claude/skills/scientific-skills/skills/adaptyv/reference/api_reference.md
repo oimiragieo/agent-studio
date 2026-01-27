@@ -15,11 +15,13 @@ Authorization: Bearer YOUR_API_KEY
 ```
 
 To obtain API access:
+
 1. Contact support@adaptyvbio.com
 2. Request API access during alpha/beta period
 3. Receive your personal access token
 
 Store your API key securely:
+
 - Use environment variables: `ADAPTYV_API_KEY`
 - Never commit API keys to version control
 - Use `.env` files with `.gitignore` for local development
@@ -35,6 +37,7 @@ Submit protein sequences for experimental testing.
 **Endpoint:** `POST /experiments`
 
 **Request Body:**
+
 ```json
 {
   "sequences": ">protein1\nMKVLWALLGLLGAA...\n>protein2\nMATGVLWALLG...",
@@ -49,11 +52,13 @@ Submit protein sequences for experimental testing.
 ```
 
 **Sequence Format:**
+
 - FASTA format with headers
 - Multiple sequences supported
 - Standard amino acid codes
 
 **Response:**
+
 ```json
 {
   "experiment_id": "exp_abc123xyz",
@@ -70,6 +75,7 @@ Check the current status of an experiment.
 **Endpoint:** `GET /experiments/{experiment_id}`
 
 **Response:**
+
 ```json
 {
   "experiment_id": "exp_abc123xyz",
@@ -84,6 +90,7 @@ Check the current status of an experiment.
 ```
 
 **Status Values:**
+
 - `submitted` - Experiment received and queued
 - `processing` - Active testing in progress
 - `completed` - Results available for download
@@ -96,11 +103,13 @@ Retrieve all experiments for your organization.
 **Endpoint:** `GET /experiments`
 
 **Query Parameters:**
+
 - `status` - Filter by status (optional)
 - `limit` - Number of results per page (default: 50)
 - `offset` - Pagination offset (default: 0)
 
 **Response:**
+
 ```json
 {
   "experiments": [
@@ -126,6 +135,7 @@ Download results from a completed experiment.
 **Endpoint:** `GET /experiments/{experiment_id}/results`
 
 **Response:**
+
 ```json
 {
   "experiment_id": "exp_abc123xyz",
@@ -160,11 +170,13 @@ Search the ACROBiosystems antigen catalog.
 **Endpoint:** `GET /targets`
 
 **Query Parameters:**
+
 - `search` - Search term (protein name, UniProt ID, etc.)
 - `species` - Filter by species
 - `category` - Filter by category
 
 **Response:**
+
 ```json
 {
   "targets": [
@@ -187,6 +199,7 @@ Request an antigen not in the standard catalog.
 **Endpoint:** `POST /targets/request`
 
 **Request Body:**
+
 ```json
 {
   "target_name": "Custom target name",
@@ -205,6 +218,7 @@ Check your organization's credit balance and usage.
 **Endpoint:** `GET /organization/credits`
 
 **Response:**
+
 ```json
 {
   "balance": 10000,
@@ -219,6 +233,7 @@ Check your organization's credit balance and usage.
 Configure webhook URLs to receive notifications when experiments complete.
 
 **Webhook Payload:**
+
 ```json
 {
   "event": "experiment.completed",
@@ -230,12 +245,14 @@ Configure webhook URLs to receive notifications when experiments complete.
 ```
 
 **Webhook Events:**
+
 - `experiment.submitted` - Experiment received
 - `experiment.started` - Processing began
 - `experiment.completed` - Results available
 - `experiment.failed` - Error occurred
 
 **Security:**
+
 - Verify webhook signatures (details provided during onboarding)
 - Use HTTPS endpoints only
 - Respond with 200 OK to acknowledge receipt
@@ -243,6 +260,7 @@ Configure webhook URLs to receive notifications when experiments complete.
 ## Error Handling
 
 **Error Response Format:**
+
 ```json
 {
   "error": {
@@ -258,6 +276,7 @@ Configure webhook URLs to receive notifications when experiments complete.
 ```
 
 **Common Error Codes:**
+
 - `authentication_failed` - Invalid or missing API key
 - `invalid_sequence` - Malformed FASTA or invalid amino acids
 - `insufficient_credits` - Not enough credits for experiment
@@ -273,6 +292,7 @@ Configure webhook URLs to receive notifications when experiments complete.
 - Batch submissions encouraged for large-scale testing
 
 When rate limited, response includes:
+
 ```
 HTTP 429 Too Many Requests
 Retry-After: 60
@@ -291,11 +311,13 @@ Retry-After: 60
 ## API Versioning
 
 The API is currently in alpha/beta. Breaking changes may occur but will be:
+
 - Announced via email to registered users
 - Documented in the changelog
 - Supported with migration guides
 
 Current version is reflected in response headers:
+
 ```
 X-API-Version: alpha-2025-11
 ```
@@ -303,6 +325,7 @@ X-API-Version: alpha-2025-11
 ## Support
 
 For API issues or questions:
+
 - Email: support@adaptyvbio.com
 - Documentation updates: https://docs.adaptyvbio.com
 - Report bugs with experiment IDs and request details

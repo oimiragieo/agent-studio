@@ -13,6 +13,7 @@
 ## Executive Summary
 
 This plan addresses findings from the skill audit:
+
 1. 2 duplicate skills to delete (swarm, codequality)
 2. 21 skills missing Memory Protocol (verified subset from audit)
 3. 1 skill with incomplete instruction (code-quality-expert line 102)
@@ -28,15 +29,16 @@ This plan addresses findings from the skill audit:
 ---
 
 ## Phase 1: Delete Duplicates
+
 **Dependencies**: None
 **Parallel OK**: Yes
 
 ### Analysis Summary
 
-| Skill to Delete | Lines | Comprehensive Skill | Lines | Reason |
-|-----------------|-------|---------------------|-------|--------|
-| `swarm` | 23 | `swarm-coordination` | 192 | swarm is stub (3 bullet points), swarm-coordination has full 5-step process, handoff formats, aggregation patterns |
-| `codequality` | 98 | `code-quality-expert` | 131 | codequality has AI behavior guidelines, code-quality-expert has actual clean code patterns (DRY, SRP, naming, testing) |
+| Skill to Delete | Lines | Comprehensive Skill   | Lines | Reason                                                                                                                 |
+| --------------- | ----- | --------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------- |
+| `swarm`         | 23    | `swarm-coordination`  | 192   | swarm is stub (3 bullet points), swarm-coordination has full 5-step process, handoff formats, aggregation patterns     |
+| `codequality`   | 98    | `code-quality-expert` | 131   | codequality has AI behavior guidelines, code-quality-expert has actual clean code patterns (DRY, SRP, naming, testing) |
 
 #### Tasks
 
@@ -55,12 +57,15 @@ This plan addresses findings from the skill audit:
   - **Verify**: Both return `True`
 
 #### Phase 1 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 1 failed: [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
 
 #### Phase 1 Verification Gate
+
 ```powershell
 # All must pass before proceeding
 $swarmDeleted = -not (Test-Path "C:\dev\projects\agent-studio\.claude\skills\swarm")
@@ -74,6 +79,7 @@ if ($swarmDeleted -and $codequalityDeleted -and $swarmCoordExists -and $codeQual
 ---
 
 ## Phase 2: Fix Incomplete Instruction
+
 **Dependencies**: Phase 1
 **Parallel OK**: No
 
@@ -81,11 +87,11 @@ if ($swarmDeleted -and $codequalityDeleted -and $swarmCoordExists -and $codeQual
 
 File: `.claude/skills/code-quality-expert/SKILL.md`
 Line 102-103 shows incomplete content:
+
 ```markdown
 ### code quality standards
 
 When reviewing or writing code, apply
-
 
 </instructions>
 ```
@@ -97,6 +103,7 @@ The instruction is cut off mid-sentence.
 - [ ] **2.1** Fix incomplete instruction in code-quality-expert (~2 min)
   - **File**: `C:\dev\projects\agent-studio\.claude\skills\code-quality-expert\SKILL.md`
   - **Old string (lines 100-105)**:
+
     ```
     ### code quality standards
 
@@ -105,7 +112,9 @@ The instruction is cut off mid-sentence.
 
     </instructions>
     ```
+
   - **New string**:
+
     ```
     ### code quality standards
 
@@ -116,10 +125,12 @@ The instruction is cut off mid-sentence.
 
     </instructions>
     ```
+
   - **Verify**: `Select-String -Path "C:\dev\projects\agent-studio\.claude\skills\code-quality-expert\SKILL.md" -Pattern "Readability over cleverness"`
   - **Rollback**: `git checkout HEAD -- ".claude/skills/code-quality-expert/SKILL.md"`
 
 #### Phase 2 Verification Gate
+
 ```powershell
 $fixed = Select-String -Path "C:\dev\projects\agent-studio\.claude\skills\code-quality-expert\SKILL.md" -Pattern "Readability over cleverness" -Quiet
 if ($fixed) { "PASS" } else { "FAIL" }
@@ -128,6 +139,7 @@ if ($fixed) { "PASS" } else { "FAIL" }
 ---
 
 ## Phase 3: Add Memory Protocol to Missing Skills
+
 **Dependencies**: Phase 2
 **Parallel OK**: Yes (batch processing)
 
@@ -136,6 +148,7 @@ if ($fixed) { "PASS" } else { "FAIL" }
 Based on verification, these skills need Memory Protocol added:
 
 **Core/Infrastructure Skills (HIGH priority - used by many agents):**
+
 1. aws-cloud-ops
 2. code-analyzer
 3. code-style-validator
@@ -156,35 +169,31 @@ Based on verification, these skills need Memory Protocol added:
 18. test-generator
 19. tool-search
 
-**Incident Response Skills (MEDIUM priority):**
-20. incident-runbook-templates
-21. on-call-handoff-patterns
-22. postmortem-writing
-23. sentry-monitoring
-24. slack-notifications
+**Incident Response Skills (MEDIUM priority):** 20. incident-runbook-templates 21. on-call-handoff-patterns 22. postmortem-writing 23. sentry-monitoring 24. slack-notifications
 
-**PM Skills (MEDIUM priority):**
-25. jira-pm
-26. linear-pm
+**PM Skills (MEDIUM priority):** 25. jira-pm 26. linear-pm
 
 ### Memory Protocol Text to Append
 
-```markdown
-
+````markdown
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
+````
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`
 
 > ASSUME INTERRUPTION: Your context may reset. If it's not in memory, it didn't happen.
-```
+
+````
 
 #### Tasks
 
@@ -242,11 +251,12 @@ foreach ($skill in $skills) {
 $rate = [math]::Round(($passed / $skills.Count) * 100)
 Write-Host "Memory Protocol coverage: $passed/$($skills.Count) = $rate%"
 if ($rate -ge 80) { "PASS" } else { "FAIL - Only $rate% coverage" }
-```
+````
 
 ---
 
 ## Phase 4: Commit Changes
+
 **Dependencies**: Phase 3
 **Parallel OK**: No
 
@@ -261,6 +271,7 @@ if ($rate -ge 80) { "PASS" } else { "FAIL - Only $rate% coverage" }
   - **Verify**: `git log -1 --oneline | Select-String "refactor\(skills\)"`
 
 #### Phase 4 Verification Gate
+
 ```powershell
 $committed = git log -1 --oneline | Select-String "refactor\(skills\)" -Quiet
 if ($committed) { "PASS" } else { "FAIL" }
@@ -273,16 +284,19 @@ if ($committed) { "PASS" } else { "FAIL" }
 ### Analysis
 
 **full-stack-developer-persona** (56 lines):
+
 - Description: "full-stack developer with expertise in React, TypeScript, PHP, Symfony, and Docker"
 - Specific tech stack focus
 
 **persona-senior-full-stack-developer** (56 lines):
+
 - Description: "senior full-stack developer... rare 10x developers that has incredible knowledge"
 - General seniority/expertise focus
 
 ### Recommendation
 
 **KEEP BOTH SEPARATE** because:
+
 1. Both are minimal stubs (56 lines each) - no consolidation benefit
 2. Different purposes: one is tech-stack specific, one is seniority mindset
 3. Both already have Memory Protocol
@@ -292,20 +306,22 @@ if ($committed) { "PASS" } else { "FAIL" }
 ---
 
 ## Risks
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Delete wrong skill | High | Verify comprehensive versions exist before delete | `git checkout HEAD -- ".claude/skills/[skill]/"` |
-| Memory Protocol append breaks skill | Medium | Validate YAML frontmatter after append | `git checkout HEAD -- ".claude/skills/[skill]/SKILL.md"` |
-| Incomplete fix makes skill worse | Low | Test skill parsing after edit | `git checkout HEAD -- ".claude/skills/code-quality-expert/SKILL.md"` |
+
+| Risk                                | Impact | Mitigation                                        | Rollback                                                             |
+| ----------------------------------- | ------ | ------------------------------------------------- | -------------------------------------------------------------------- |
+| Delete wrong skill                  | High   | Verify comprehensive versions exist before delete | `git checkout HEAD -- ".claude/skills/[skill]/"`                     |
+| Memory Protocol append breaks skill | Medium | Validate YAML frontmatter after append            | `git checkout HEAD -- ".claude/skills/[skill]/SKILL.md"`             |
+| Incomplete fix makes skill worse    | Low    | Test skill parsing after edit                     | `git checkout HEAD -- ".claude/skills/code-quality-expert/SKILL.md"` |
 
 ## Timeline Summary
-| Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 3 | 3 min | Yes |
-| 2 | 1 | 2 min | No |
-| 3 | 6 | 20 min | Yes |
-| 4 | 2 | 2 min | No |
-| **Total** | **12** | **~27 min** | |
+
+| Phase     | Tasks  | Est. Time   | Parallel? |
+| --------- | ------ | ----------- | --------- |
+| 1         | 3      | 3 min       | Yes       |
+| 2         | 1      | 2 min       | No        |
+| 3         | 6      | 20 min      | Yes       |
+| 4         | 2      | 2 min       | No        |
+| **Total** | **12** | **~27 min** |           |
 
 ---
 
@@ -315,5 +331,6 @@ if ($committed) { "PASS" } else { "FAIL" }
 - [ ] **Security Review**: Not Required - No security-sensitive changes
 
 ### Review Focus Areas
+
 - Architect: Verify skill consolidation decisions are correct
 - Security: N/A

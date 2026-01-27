@@ -21,8 +21,8 @@ The Skill tool loads the skill instructions into your context and applies them t
 
 Before starting any task, invoke these skills:
 
-| Skill | Purpose | When |
-|-------|---------|------|
+| Skill                 | Purpose           | When                 |
+| --------------------- | ----------------- | -------------------- |
 | `{{PRIMARY_SKILL_1}}` | {{DESCRIPTION_1}} | Always at task start |
 | `{{PRIMARY_SKILL_2}}` | {{DESCRIPTION_2}} | Always at task start |
 
@@ -30,8 +30,8 @@ Before starting any task, invoke these skills:
 
 Invoke based on task context:
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
+| Condition       | Skill                    | Purpose       |
+| --------------- | ------------------------ | ------------- |
 | {{CONDITION_1}} | `{{CONTEXTUAL_SKILL_1}}` | {{PURPOSE_1}} |
 | {{CONDITION_2}} | `{{CONTEXTUAL_SKILL_2}}` | {{PURPOSE_2}} |
 | {{CONDITION_3}} | `{{CONTEXTUAL_SKILL_3}}` | {{PURPOSE_3}} |
@@ -66,26 +66,26 @@ Replace these placeholders when using this template:
 
 ### Primary Skills (Always Invoked)
 
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{PRIMARY_SKILL_1}}` | Agent's primary skill | `tdd` |
-| `{{DESCRIPTION_1}}` | Brief skill purpose | `Test-Driven Development methodology` |
-| `{{PRIMARY_SKILL_2}}` | Agent's secondary skill | `debugging` |
-| `{{DESCRIPTION_2}}` | Brief skill purpose | `Systematic debugging process` |
+| Placeholder           | Description             | Example                               |
+| --------------------- | ----------------------- | ------------------------------------- |
+| `{{PRIMARY_SKILL_1}}` | Agent's primary skill   | `tdd`                                 |
+| `{{DESCRIPTION_1}}`   | Brief skill purpose     | `Test-Driven Development methodology` |
+| `{{PRIMARY_SKILL_2}}` | Agent's secondary skill | `debugging`                           |
+| `{{DESCRIPTION_2}}`   | Brief skill purpose     | `Systematic debugging process`        |
 
 ### Contextual Skills (Condition-Based)
 
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{CONDITION_1}}` | When to invoke | `Debugging issues` |
-| `{{CONTEXTUAL_SKILL_1}}` | Skill name | `debugging` |
-| `{{PURPOSE_1}}` | Why to invoke | `Systematic 4-phase debugging` |
-| `{{CONDITION_2}}` | When to invoke | `Security-sensitive code` |
-| `{{CONTEXTUAL_SKILL_2}}` | Skill name | `security-architect` |
-| `{{PURPOSE_2}}` | Why to invoke | `Threat modeling and OWASP analysis` |
-| `{{CONDITION_3}}` | When to invoke | `Before claiming completion` |
-| `{{CONTEXTUAL_SKILL_3}}` | Skill name | `verification-before-completion` |
-| `{{PURPOSE_3}}` | Why to invoke | `Evidence-based completion gates` |
+| Placeholder              | Description    | Example                              |
+| ------------------------ | -------------- | ------------------------------------ |
+| `{{CONDITION_1}}`        | When to invoke | `Debugging issues`                   |
+| `{{CONTEXTUAL_SKILL_1}}` | Skill name     | `debugging`                          |
+| `{{PURPOSE_1}}`          | Why to invoke  | `Systematic 4-phase debugging`       |
+| `{{CONDITION_2}}`        | When to invoke | `Security-sensitive code`            |
+| `{{CONTEXTUAL_SKILL_2}}` | Skill name     | `security-architect`                 |
+| `{{PURPOSE_2}}`          | Why to invoke  | `Threat modeling and OWASP analysis` |
+| `{{CONDITION_3}}`        | When to invoke | `Before claiming completion`         |
+| `{{CONTEXTUAL_SKILL_3}}` | Skill name     | `verification-before-completion`     |
+| `{{PURPOSE_3}}`          | Why to invoke  | `Evidence-based completion gates`    |
 
 ---
 
@@ -108,22 +108,22 @@ The Skill tool loads the skill instructions into your context and applies them t
 
 Before starting any task, invoke these skills:
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
+| Skill        | Purpose                       | When                 |
+| ------------ | ----------------------------- | -------------------- |
+| `tdd`        | Red-Green-Refactor cycle      | Always at task start |
 | `git-expert` | Git operations best practices | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
 Invoke based on task context:
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| Security-sensitive code | `security-architect` | Threat modeling and OWASP analysis |
-| Before claiming completion | `verification-before-completion` | Evidence-based completion gates |
-| GitHub operations | `github-mcp` | GitHub API operations |
-| Code quality review | `code-analyzer` | Static analysis and metrics |
+| Condition                  | Skill                            | Purpose                            |
+| -------------------------- | -------------------------------- | ---------------------------------- |
+| Debugging issues           | `debugging`                      | Systematic 4-phase debugging       |
+| Security-sensitive code    | `security-architect`             | Threat modeling and OWASP analysis |
+| Before claiming completion | `verification-before-completion` | Evidence-based completion gates    |
+| GitHub operations          | `github-mcp`                     | GitHub API operations              |
+| Code quality review        | `code-analyzer`                  | Static analysis and metrics        |
 
 ### Skill Discovery
 
@@ -172,21 +172,21 @@ The Skill tool loads the skill instructions into your context and applies them t
 
 Before starting any task, invoke these skills:
 
-| Skill | Purpose | When |
-|-------|---------|------|
+| Skill                   | Purpose                    | When                 |
+| ----------------------- | -------------------------- | -------------------- |
 | `python-backend-expert` | Python patterns and idioms | Always at task start |
-| `tdd` | Test-Driven Development | Always at task start |
+| `tdd`                   | Test-Driven Development    | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
 Invoke based on task context:
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic debugging process |
-| API development | `api-development-expert` | API design patterns |
-| Testing strategy | `testing-expert` | Comprehensive testing patterns |
-| Git operations | `git-expert` | Git best practices |
+| Condition        | Skill                    | Purpose                        |
+| ---------------- | ------------------------ | ------------------------------ |
+| Debugging issues | `debugging`              | Systematic debugging process   |
+| API development  | `api-development-expert` | API design patterns            |
+| Testing strategy | `testing-expert`         | Comprehensive testing patterns |
+| Git operations   | `git-expert`             | Git best practices             |
 
 ### Skill Discovery
 
@@ -207,12 +207,15 @@ Add this section after the "Workflow" section and before the "Memory Protocol" s
 
 ```markdown
 ## Workflow
+
 [Agent workflow steps]
 
 ## Skill Invocation Protocol (MANDATORY)
+
 [This template content]
 
 ## Memory Protocol (MANDATORY)
+
 [Memory protocol content]
 ```
 
@@ -236,15 +239,15 @@ skills:
 
 ### Skill Categories Quick Reference
 
-| Category | Common Skills |
-|----------|--------------|
+| Category             | Common Skills                                                      |
+| -------------------- | ------------------------------------------------------------------ |
 | **Core Development** | `tdd`, `debugging`, `git-expert`, `verification-before-completion` |
-| **Code Quality** | `code-analyzer`, `code-quality-expert`, `code-style-validator` |
-| **Security** | `security-architect` |
-| **Documentation** | `doc-generator`, `diagram-generator` |
-| **Planning** | `plan-generator`, `complexity-assessment` |
-| **Languages** | `python-backend-expert`, `typescript-expert`, `golang-pro` |
-| **Frameworks** | `react-expert`, `nextjs-expert`, `fastapi` |
-| **Creator Tools** | `agent-creator`, `skill-creator`, `workflow-creator` |
+| **Code Quality**     | `code-analyzer`, `code-quality-expert`, `code-style-validator`     |
+| **Security**         | `security-architect`                                               |
+| **Documentation**    | `doc-generator`, `diagram-generator`                               |
+| **Planning**         | `plan-generator`, `complexity-assessment`                          |
+| **Languages**        | `python-backend-expert`, `typescript-expert`, `golang-pro`         |
+| **Frameworks**       | `react-expert`, `nextjs-expert`, `fastapi`                         |
+| **Creator Tools**    | `agent-creator`, `skill-creator`, `workflow-creator`               |
 
 See `.claude/context/artifacts/skill-catalog.md` for the complete list.

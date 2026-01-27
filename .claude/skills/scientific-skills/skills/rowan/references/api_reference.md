@@ -16,17 +16,17 @@ The `Workflow` class represents a submitted computational job.
 
 ### Attributes
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `uuid` | str | Unique identifier |
-| `name` | str | User-assigned name |
-| `status` | str | Current status: "pending", "running", "completed", "failed" |
-| `created_at` | datetime | Submission timestamp |
-| `completed_at` | datetime | Completion timestamp (None if not finished) |
-| `credits_charged` | float | Credits consumed |
-| `data` | dict | Workflow results (lazy-loaded) |
-| `workflow_type` | str | Type of calculation |
-| `folder_uuid` | str | Parent folder UUID |
+| Attribute         | Type     | Description                                                 |
+| ----------------- | -------- | ----------------------------------------------------------- |
+| `uuid`            | str      | Unique identifier                                           |
+| `name`            | str      | User-assigned name                                          |
+| `status`          | str      | Current status: "pending", "running", "completed", "failed" |
+| `created_at`      | datetime | Submission timestamp                                        |
+| `completed_at`    | datetime | Completion timestamp (None if not finished)                 |
+| `credits_charged` | float    | Credits consumed                                            |
+| `data`            | dict     | Workflow results (lazy-loaded)                              |
+| `workflow_type`   | str      | Type of calculation                                         |
+| `folder_uuid`     | str      | Parent folder UUID                                          |
 
 **Note:** Workflow data is not loaded by default to avoid unnecessary downloads. Call `fetch_latest()` to load results.
 
@@ -340,16 +340,16 @@ Returned by `rowan.whoami()`.
 
 ### Attributes
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `username` | str | Username |
-| `email` | str | Email address |
-| `firstname` | str | First name |
-| `lastname` | str | Last name |
-| `credits` | float | Available credits |
-| `weekly_credits` | float | Weekly credit allocation |
-| `organization` | dict | Organization details |
-| `individual_subscription` | dict | Subscription information |
+| Attribute                 | Type  | Description              |
+| ------------------------- | ----- | ------------------------ |
+| `username`                | str   | Username                 |
+| `email`                   | str   | Email address            |
+| `firstname`               | str   | First name               |
+| `lastname`                | str   | Last name                |
+| `credits`                 | float | Available credits        |
+| `weekly_credits`          | float | Weekly credit allocation |
+| `organization`            | dict  | Organization details     |
+| `individual_subscription` | dict  | Subscription information |
 
 ---
 

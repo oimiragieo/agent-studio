@@ -37,7 +37,7 @@ Accessibility
 - Ensure proper semantic HTML structure in Astro components.
 - Implement ARIA attributes where necessary.
 - Ensure keyboard navigation support for interactive elements.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

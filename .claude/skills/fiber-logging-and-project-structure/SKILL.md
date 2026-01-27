@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement proper logging with Fiber's Logger middleware
 - Follow Fiber's best practices for project structure
 - Use environment variables for configuration
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

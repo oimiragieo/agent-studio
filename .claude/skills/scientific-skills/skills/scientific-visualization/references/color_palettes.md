@@ -25,6 +25,7 @@ okabe_ito = {
 ```
 
 **Usage in Matplotlib:**
+
 ```python
 import matplotlib.pyplot as plt
 
@@ -34,6 +35,7 @@ plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
 ```
 
 **Usage in Seaborn:**
+
 ```python
 import seaborn as sns
 
@@ -43,6 +45,7 @@ sns.set_palette(okabe_ito_palette)
 ```
 
 **Usage in Plotly:**
+
 ```python
 import plotly.graph_objects as go
 
@@ -74,18 +77,21 @@ wong_palette = {
 Paul Tol has designed multiple scientifically-optimized palettes for different use cases.
 
 **Bright Palette (up to 7 categories):**
+
 ```python
 tol_bright = ['#4477AA', '#EE6677', '#228833', '#CCBB44',
               '#66CCEE', '#AA3377', '#BBBBBB']
 ```
 
 **Muted Palette (up to 9 categories):**
+
 ```python
 tol_muted = ['#332288', '#88CCEE', '#44AA99', '#117733',
              '#999933', '#DDCC77', '#CC6677', '#882255', '#AA4499']
 ```
 
 **High Contrast (3 categories only):**
+
 ```python
 tol_high_contrast = ['#004488', '#DDAA33', '#BB5566']
 ```
@@ -99,28 +105,35 @@ Sequential colormaps represent data from low to high values with a single hue.
 These colormaps have uniform perceptual change across the color scale.
 
 **Viridis (default in Matplotlib):**
+
 - Colorblind-friendly
 - Prints well in grayscale
 - Perceptually uniform
+
 ```python
 plt.imshow(data, cmap='viridis')
 ```
 
 **Cividis:**
+
 - Optimized for colorblind viewers
 - Designed specifically for deuteranopia/protanopia
+
 ```python
 plt.imshow(data, cmap='cividis')
 ```
 
 **Plasma, Inferno, Magma:**
+
 - Perceptually uniform alternatives to viridis
 - Good for different aesthetic preferences
+
 ```python
 plt.imshow(data, cmap='plasma')
 ```
 
 ### When to Use Sequential Maps
+
 - Heatmaps showing intensity
 - Geographic elevation data
 - Probability distributions
@@ -133,27 +146,34 @@ Diverging colormaps have a neutral middle color with two contrasting colors at e
 ### Colorblind-Safe Diverging Maps
 
 **RdYlBu (Red-Yellow-Blue):**
+
 ```python
 plt.imshow(data, cmap='RdYlBu_r')  # _r reverses: blue (low) to red (high)
 ```
 
 **PuOr (Purple-Orange):**
+
 - Excellent for colorblind viewers
+
 ```python
 plt.imshow(data, cmap='PuOr')
 ```
 
 **BrBG (Brown-Blue-Green):**
+
 - Good colorblind accessibility
+
 ```python
 plt.imshow(data, cmap='BrBG')
 ```
 
 ### Avoid These Diverging Maps
+
 - **RdGn (Red-Green)**: Problematic for red-green colorblindness
 - **RdYlGn (Red-Yellow-Green)**: Same issue
 
 ### When to Use Diverging Maps
+
 - Correlation matrices
 - Change/difference data (positive vs. negative)
 - Deviation from a central value
@@ -164,6 +184,7 @@ plt.imshow(data, cmap='BrBG')
 ### For Genomics/Bioinformatics
 
 **Sequence type identification:**
+
 ```python
 # DNA/RNA bases
 nucleotide_colors = {
@@ -176,12 +197,14 @@ nucleotide_colors = {
 ```
 
 **Gene expression:**
+
 - Use sequential colormaps (viridis, YlOrRd) for expression levels
 - Use diverging colormaps (RdBu) for log2 fold change
 
 ### For Microscopy
 
 **Fluorescence channels:**
+
 ```python
 # Traditional fluorophore colors (use with caution)
 fluorophore_colors = {
@@ -205,12 +228,14 @@ fluorophore_alt = {
 ### Categorical Data (Qualitative Color Schemes)
 
 **Do:**
+
 - Use distinct, saturated colors from Okabe-Ito or Wong palette
 - Limit to 7-8 categories max in one plot
 - Use consistent colors for same categories across figures
 - Add patterns/markers when colors alone might be insufficient
 
 **Don't:**
+
 - Use red/green combinations
 - Use rainbow (jet) colormap for categories
 - Use similar hues that are hard to distinguish
@@ -218,12 +243,14 @@ fluorophore_alt = {
 ### Continuous Data (Sequential/Diverging Schemes)
 
 **Do:**
+
 - Use perceptually uniform colormaps (viridis, plasma, cividis)
 - Choose diverging maps when data has meaningful center point
 - Include colorbar with labeled ticks
 - Test appearance in grayscale
 
 **Don't:**
+
 - Use rainbow (jet) colormap - not perceptually uniform
 - Use red-green diverging maps
 - Omit colorbar on heatmaps
@@ -231,16 +258,19 @@ fluorophore_alt = {
 ## Testing for Colorblind Accessibility
 
 ### Online Simulators
+
 - **Coblis**: https://www.color-blindness.com/coblis-color-blindness-simulator/
 - **Color Oracle**: Free downloadable tool for Windows/Mac/Linux
 - **Sim Daltonism**: Mac application
 
 ### Types of Color Vision Deficiency
+
 - **Deuteranopia** (~5% of males): Cannot distinguish green
 - **Protanopia** (~2% of males): Cannot distinguish red
 - **Tritanopia** (<1%): Cannot distinguish blue (rare)
 
 ### Python Tools
+
 ```python
 # Using colorspacious to simulate colorblind vision
 from colorspacious import cspace_convert
@@ -255,6 +285,7 @@ def simulate_deuteranopia(image_rgb):
 ## Implementation Examples
 
 ### Setting Global Matplotlib Style
+
 ```python
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -269,6 +300,7 @@ mpl.rcParams['image.cmap'] = 'viridis'
 ```
 
 ### Seaborn with Custom Palette
+
 ```python
 import seaborn as sns
 
@@ -282,6 +314,7 @@ sns.heatmap(data, cmap='viridis', annot=True)
 ```
 
 ### Plotly with Discrete Colors
+
 ```python
 import plotly.express as px
 
@@ -303,6 +336,7 @@ fig.savefig('figure_gray.png', dpi=300, colormap='gray')
 ```
 
 **Strategies for grayscale compatibility:**
+
 1. Use different line styles (solid, dashed, dotted)
 2. Use different marker shapes (circles, squares, triangles)
 3. Add hatching patterns to bars
@@ -311,15 +345,18 @@ fig.savefig('figure_gray.png', dpi=300, colormap='gray')
 ## Color Spaces
 
 ### RGB vs CMYK
+
 - **RGB** (Red, Green, Blue): For digital/screen display
 - **CMYK** (Cyan, Magenta, Yellow, Black): For print
 
 **Important:** Colors appear different in print vs. screen. When preparing for print:
+
 1. Convert to CMYK color space
 2. Check color appearance in CMYK preview
 3. Ensure sufficient contrast remains
 
 ### Matplotlib Color Spaces
+
 ```python
 # Save for print (CMYK)
 # Note: Direct CMYK support limited; use PDF and let publisher convert

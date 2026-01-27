@@ -41,7 +41,7 @@ When reviewing or writing code, apply these guidelines:
   etc.etc.
   Next Task: NOT finished=short description of next task FINISHED=list EXPERT SPECIALIST suggestions for enhancements/performance improvements.
   """
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -54,6 +54,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

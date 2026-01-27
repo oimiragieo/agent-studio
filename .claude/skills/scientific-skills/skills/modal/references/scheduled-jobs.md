@@ -18,6 +18,7 @@ def daily_task():
 ```
 
 Deploy to activate:
+
 ```bash
 modal deploy script.py
 ```
@@ -76,6 +77,7 @@ def quarter_hourly():
 ```
 
 **Cron syntax**: `minute hour day month day_of_week`
+
 - Minute: 0-59
 - Hour: 0-23
 - Day: 1-31
@@ -118,6 +120,7 @@ if __name__ == "__main__":
 ### View Execution Logs
 
 Check https://modal.com/apps for:
+
 - Past execution logs
 - Execution history
 - Failure notifications
@@ -131,6 +134,7 @@ Trigger scheduled function immediately via dashboard "Run now" button.
 ### Pausing Schedules
 
 Schedules cannot be paused. To stop:
+
 1. Remove `schedule` parameter
 2. Redeploy app
 
@@ -272,6 +276,7 @@ def disable_high_traffic_mode():
 ## Error Handling
 
 Scheduled functions that fail will:
+
 - Show failure in dashboard
 - Send notifications (configurable)
 - Retry on next scheduled run

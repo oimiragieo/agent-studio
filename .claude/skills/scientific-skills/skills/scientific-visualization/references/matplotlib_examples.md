@@ -582,18 +582,21 @@ plt.show()
 ## Tips for Each Library
 
 ### Matplotlib
+
 - Use `fig.tight_layout()` or `constrained_layout=True` to prevent overlapping
 - Set DPI to 300-600 for publication
 - Use vector formats (PDF, EPS) for line plots
 - Embed fonts in PDF/EPS files
 
 ### Seaborn
+
 - Built on matplotlib, so all matplotlib customizations work
 - Use `sns.set_style('ticks')` or `'whitegrid'` for clean looks
 - `sns.despine()` removes top and right spines
 - Set custom palette with `sns.set_palette()`
 
 ### Plotly
+
 - Great for interactive exploratory analysis
 - Export static images with `fig.write_image()` (requires kaleido package)
 - Use `scale` parameter to control DPI (scale=3 ≈ 300 DPI)

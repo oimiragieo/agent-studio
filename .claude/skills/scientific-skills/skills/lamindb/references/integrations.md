@@ -124,6 +124,7 @@ ln.finish()
 ```
 
 **Nextflow config example:**
+
 ```nextflow
 process ANALYZE {
     input:
@@ -608,6 +609,7 @@ artifact = ln.Artifact.from_dataframe(
 ## Troubleshooting Common Issues
 
 **Issue: S3 credentials not found**
+
 ```bash
 export AWS_ACCESS_KEY_ID=your_key
 export AWS_SECRET_ACCESS_KEY=your_secret
@@ -615,12 +617,14 @@ export AWS_DEFAULT_REGION=us-east-1
 ```
 
 **Issue: GCS authentication failure**
+
 ```bash
 gcloud auth application-default login
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
 ```
 
 **Issue: Git sync not working**
+
 ```bash
 # Ensure git repo is set
 lamin settings get sync-git-repo
@@ -635,6 +639,7 @@ ln.track()
 ```
 
 **Issue: MLflow artifacts not syncing**
+
 ```python
 # Save explicitly to both systems
 mlflow.log_artifact("model.pkl")

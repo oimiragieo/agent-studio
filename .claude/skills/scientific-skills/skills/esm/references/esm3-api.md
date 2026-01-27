@@ -8,14 +8,15 @@ ESM3 is a frontier multimodal generative language model that reasons over the se
 
 **ESM3 Family Models:**
 
-| Model ID | Parameters | Availability | Best For |
-|----------|-----------|--------------|----------|
-| `esm3-sm-open-v1` | 1.4B | Open weights (local) | Development, testing, learning |
-| `esm3-medium-2024-08` | 7B | Forge API only | Production, balanced quality/speed |
-| `esm3-large-2024-03` | 98B | Forge API only | Maximum quality, research |
-| `esm3-medium-multimer-2024-09` | 7B | Forge API only | Protein complexes (experimental) |
+| Model ID                       | Parameters | Availability         | Best For                           |
+| ------------------------------ | ---------- | -------------------- | ---------------------------------- |
+| `esm3-sm-open-v1`              | 1.4B       | Open weights (local) | Development, testing, learning     |
+| `esm3-medium-2024-08`          | 7B         | Forge API only       | Production, balanced quality/speed |
+| `esm3-large-2024-03`           | 98B        | Forge API only       | Maximum quality, research          |
+| `esm3-medium-multimer-2024-09` | 7B         | Forge API only       | Protein complexes (experimental)   |
 
 **Key Features:**
+
 - Simultaneous reasoning across sequence, structure, and function
 - Iterative generation with controllable number of steps
 - Support for partial prompting across modalities
@@ -425,18 +426,21 @@ except torch.cuda.OutOfMemoryError:
 ## Model-Specific Considerations
 
 **esm3-sm-open-v1:**
+
 - Suitable for development and testing
 - Lower quality than larger models
 - Fast inference on consumer GPUs
 - Open weights allow fine-tuning
 
 **esm3-medium-2024-08:**
+
 - Production quality
 - Good balance of speed and accuracy
 - Requires Forge API access
 - Recommended for most applications
 
 **esm3-large-2024-03:**
+
 - State-of-the-art quality
 - Slowest inference
 - Use for critical applications

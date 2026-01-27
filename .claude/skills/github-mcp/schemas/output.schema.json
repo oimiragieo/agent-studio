@@ -3,9 +3,7 @@
   "title": "github-mcp Output Schema",
   "description": "Output validation schema for github-mcp skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

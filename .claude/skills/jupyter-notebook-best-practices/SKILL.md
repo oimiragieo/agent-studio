@@ -39,7 +39,7 @@ When reviewing or writing code, apply these guidelines:
 - Use magic commands like %matplotlib inline for inline plotting.
 - Document data sources, assumptions, and methodologies clearly.
 - Use version control (e.g., git) for tracking changes in notebooks and scripts.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

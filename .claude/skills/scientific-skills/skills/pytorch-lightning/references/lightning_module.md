@@ -57,15 +57,18 @@ class MyModel(L.LightningModule):
 ### Training Pipeline Methods
 
 #### `training_step(batch, batch_idx)`
+
 Computes the forward pass and returns the loss. Lightning automatically handles backward propagation and optimizer updates in automatic optimization mode.
 
 **Parameters:**
+
 - `batch` - Current training batch from the DataLoader
 - `batch_idx` - Index of the current batch
 
 **Returns:** Loss tensor (scalar) or dictionary with 'loss' key
 
 **Example:**
+
 ```python
 def training_step(self, batch, batch_idx):
     x, y = batch
@@ -80,15 +83,18 @@ def training_step(self, batch, batch_idx):
 ```
 
 #### `validation_step(batch, batch_idx)`
+
 Evaluates the model on validation data. Runs with gradients disabled and model in eval mode automatically.
 
 **Parameters:**
+
 - `batch` - Current validation batch
 - `batch_idx` - Index of the current batch
 
 **Returns:** Optional - Loss or dictionary of metrics
 
 **Example:**
+
 ```python
 def validation_step(self, batch, batch_idx):
     x, y = batch
@@ -101,18 +107,22 @@ def validation_step(self, batch, batch_idx):
 ```
 
 #### `test_step(batch, batch_idx)`
+
 Evaluates the model on test data. Only run when explicitly called with `trainer.test()`. Use after training is complete, typically before publication.
 
 **Parameters:**
+
 - `batch` - Current test batch
 - `batch_idx` - Index of the current batch
 
 **Returns:** Optional - Loss or dictionary of metrics
 
 #### `predict_step(batch, batch_idx, dataloader_idx=0)`
+
 Runs inference on data. Called when using `trainer.predict()`.
 
 **Parameters:**
+
 - `batch` - Current batch
 - `batch_idx` - Index of the current batch
 - `dataloader_idx` - Index of dataloader (if multiple)
@@ -120,6 +130,7 @@ Runs inference on data. Called when using `trainer.predict()`.
 **Returns:** Predictions (any format you need)
 
 **Example:**
+
 ```python
 def predict_step(self, batch, batch_idx):
     x, y = batch
@@ -129,17 +140,20 @@ def predict_step(self, batch, batch_idx):
 ### Configuration Methods
 
 #### `configure_optimizers()`
+
 Returns optimizer(s) and optional learning rate scheduler(s).
 
 **Return formats:**
 
 1. **Single optimizer:**
+
 ```python
 def configure_optimizers(self):
     return torch.optim.Adam(self.parameters(), lr=0.001)
 ```
 
 2. **Optimizer + scheduler:**
+
 ```python
 def configure_optimizers(self):
     optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -148,6 +162,7 @@ def configure_optimizers(self):
 ```
 
 3. **Advanced configuration with scheduler monitoring:**
+
 ```python
 def configure_optimizers(self):
     optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
@@ -165,6 +180,7 @@ def configure_optimizers(self):
 ```
 
 4. **Multiple optimizers (for GANs, etc.):**
+
 ```python
 def configure_optimizers(self):
     opt_g = torch.optim.Adam(self.generator.parameters(), lr=0.0002)
@@ -173,9 +189,11 @@ def configure_optimizers(self):
 ```
 
 #### `forward(*args, **kwargs)`
+
 Standard PyTorch forward method. Use for inference or as part of training_step.
 
 **Example:**
+
 ```python
 def forward(self, x):
     return self.model(x)
@@ -189,9 +207,11 @@ def training_step(self, batch, batch_idx):
 ### Logging and Metrics
 
 #### `log(name, value, **kwargs)`
+
 Records metrics with automatic epoch-level reduction across devices.
 
 **Key parameters:**
+
 - `name` - Metric name (string)
 - `value` - Metric value (tensor or number)
 - `on_step` - Log at current step (default: True in training_step, False otherwise)
@@ -202,6 +222,7 @@ Records metrics with automatic epoch-level reduction across devices.
 - `sync_dist` - Synchronize across devices in distributed training (default: False)
 
 **Examples:**
+
 ```python
 # Simple logging
 self.log("train_loss", loss)
@@ -217,18 +238,22 @@ self.log("batch_size", batch.size(0), reduce_fx="sum", sync_dist=True)
 ```
 
 #### `log_dict(dictionary, **kwargs)`
+
 Log multiple metrics simultaneously.
 
 **Example:**
+
 ```python
 metrics = {"train_loss": loss, "train_acc": acc, "learning_rate": lr}
 self.log_dict(metrics, on_step=True, on_epoch=True)
 ```
 
 #### `save_hyperparameters(*args, **kwargs)`
+
 Stores initialization arguments for reproducibility and checkpoint restoration. Call in `__init__()`.
 
 **Example:**
+
 ```python
 def __init__(self, learning_rate, hidden_dim, dropout):
     super().__init__()
@@ -238,15 +263,15 @@ def __init__(self, learning_rate, hidden_dim, dropout):
 
 ## Key Properties
 
-| Property | Description |
-|----------|-------------|
-| `self.current_epoch` | Current epoch number (0-indexed) |
-| `self.global_step` | Total optimizer steps across all epochs |
-| `self.device` | Current device (cuda:0, cpu, etc.) |
-| `self.global_rank` | Process rank in distributed training (0 for main) |
-| `self.local_rank` | GPU rank on current node |
-| `self.hparams` | Saved hyperparameters (via save_hyperparameters) |
-| `self.trainer` | Reference to parent Trainer instance |
+| Property                      | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| `self.current_epoch`          | Current epoch number (0-indexed)                      |
+| `self.global_step`            | Total optimizer steps across all epochs               |
+| `self.device`                 | Current device (cuda:0, cpu, etc.)                    |
+| `self.global_rank`            | Process rank in distributed training (0 for main)     |
+| `self.local_rank`             | GPU rank on current node                              |
+| `self.hparams`                | Saved hyperparameters (via save_hyperparameters)      |
+| `self.trainer`                | Reference to parent Trainer instance                  |
 | `self.automatic_optimization` | Whether to use automatic optimization (default: True) |
 
 ## Manual Optimization
@@ -289,12 +314,15 @@ class GANModel(L.LightningModule):
 ### Setup and Teardown
 
 #### `setup(stage)`
+
 Called at the beginning of fit, validate, test, or predict. Useful for stage-specific setup.
 
 **Parameters:**
+
 - `stage` - 'fit', 'validate', 'test', or 'predict'
 
 **Example:**
+
 ```python
 def setup(self, stage):
     if stage == 'fit':
@@ -306,14 +334,17 @@ def setup(self, stage):
 ```
 
 #### `teardown(stage)`
+
 Called at the end of fit, validate, test, or predict. Cleanup resources.
 
 ### Epoch Boundaries
 
 #### `on_train_epoch_start()` / `on_train_epoch_end()`
+
 Called at the beginning/end of each training epoch.
 
 **Example:**
+
 ```python
 def on_train_epoch_end(self):
     # Compute epoch-level metrics
@@ -324,20 +355,25 @@ def on_train_epoch_end(self):
 ```
 
 #### `on_validation_epoch_start()` / `on_validation_epoch_end()`
+
 Called at the beginning/end of validation epoch.
 
 #### `on_test_epoch_start()` / `on_test_epoch_end()`
+
 Called at the beginning/end of test epoch.
 
 ### Gradient Hooks
 
 #### `on_before_backward(loss)`
+
 Called before loss.backward().
 
 #### `on_after_backward()`
+
 Called after loss.backward() but before optimizer step.
 
 **Example - Gradient inspection:**
+
 ```python
 def on_after_backward(self):
     # Log gradient norms
@@ -348,18 +384,22 @@ def on_after_backward(self):
 ### Checkpoint Hooks
 
 #### `on_save_checkpoint(checkpoint)`
+
 Customize checkpoint saving. Add extra state to save.
 
 **Example:**
+
 ```python
 def on_save_checkpoint(self, checkpoint):
     checkpoint['custom_state'] = self.custom_data
 ```
 
 #### `on_load_checkpoint(checkpoint)`
+
 Customize checkpoint loading. Restore extra state.
 
 **Example:**
+
 ```python
 def on_load_checkpoint(self, checkpoint):
     self.custom_data = checkpoint.get('custom_state', default_value)
@@ -368,38 +408,46 @@ def on_load_checkpoint(self, checkpoint):
 ## Best Practices
 
 ### 1. Device Agnosticism
+
 Never use explicit `.cuda()` or `.cpu()` calls. Lightning handles device placement automatically.
 
 **Bad:**
+
 ```python
 x = x.cuda()
 model = model.cuda()
 ```
 
 **Good:**
+
 ```python
 x = x.to(self.device)  # Inside LightningModule
 # Or let Lightning handle it automatically
 ```
 
 ### 2. Distributed Training Safety
+
 Don't manually create `DistributedSampler`. Lightning handles this automatically.
 
 **Bad:**
+
 ```python
 sampler = DistributedSampler(dataset)
 DataLoader(dataset, sampler=sampler)
 ```
 
 **Good:**
+
 ```python
 DataLoader(dataset, shuffle=True)  # Lightning converts to DistributedSampler
 ```
 
 ### 3. Metric Aggregation
+
 Use `self.log()` for automatic cross-device reduction rather than manual collection.
 
 **Bad:**
+
 ```python
 self.validation_outputs.append(loss)
 
@@ -408,14 +456,17 @@ def on_validation_epoch_end(self):
 ```
 
 **Good:**
+
 ```python
 self.log("val_loss", loss)  # Automatic aggregation
 ```
 
 ### 4. Hyperparameter Tracking
+
 Always use `self.save_hyperparameters()` for easy model reloading.
 
 **Example:**
+
 ```python
 def __init__(self, learning_rate, hidden_dim):
     super().__init__()
@@ -427,6 +478,7 @@ print(model.hparams.learning_rate)
 ```
 
 ### 5. Validation Placement
+
 Run validation on a single device to ensure each sample is evaluated exactly once. Lightning handles this automatically with proper strategy configuration.
 
 ## Loading from Checkpoint
@@ -449,6 +501,7 @@ predictions = model(data)
 ## Common Patterns
 
 ### Gradient Accumulation
+
 Let Lightning handle gradient accumulation:
 
 ```python
@@ -456,6 +509,7 @@ trainer = L.Trainer(accumulate_grad_batches=4)
 ```
 
 ### Gradient Clipping
+
 Configure in Trainer:
 
 ```python
@@ -463,6 +517,7 @@ trainer = L.Trainer(gradient_clip_val=0.5, gradient_clip_algorithm="norm")
 ```
 
 ### Mixed Precision Training
+
 Configure precision in Trainer:
 
 ```python
@@ -470,6 +525,7 @@ trainer = L.Trainer(precision="16-mixed")  # or "bf16-mixed", "32-true"
 ```
 
 ### Learning Rate Warmup
+
 Implement in configure_optimizers:
 
 ```python

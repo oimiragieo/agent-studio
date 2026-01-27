@@ -5,6 +5,7 @@
 ChEMBL is a manually curated database of bioactive molecules with drug-like properties maintained by the European Bioinformatics Institute (EBI). It contains information about compounds, targets, assays, bioactivity data, and approved drugs.
 
 The ChEMBL database contains:
+
 - Over 2 million compound records
 - Over 1.4 million assay records
 - Over 19 million activity values
@@ -61,16 +62,19 @@ The API supports Django-style filter operators:
 ### Example Filter Queries
 
 **Molecular weight filtering:**
+
 ```python
 molecules.filter(molecule_properties__mw_freebase__lte=300)
 ```
 
 **Name pattern matching:**
+
 ```python
 molecules.filter(pref_name__endswith='nib')
 ```
 
 **Multiple conditions:**
+
 ```python
 molecules.filter(
     molecule_properties__mw_freebase__lte=300,
@@ -81,6 +85,7 @@ molecules.filter(
 ## Chemical Structure Searches
 
 ### Substructure Search
+
 Search for compounds containing a specific substructure using SMILES:
 
 ```python
@@ -90,6 +95,7 @@ results = similarity.filter(smiles='CC(=O)Oc1ccccc1C(=O)O', similarity=70)
 ```
 
 ### Similarity Search
+
 Find compounds similar to a query structure:
 
 ```python
@@ -100,16 +106,19 @@ results = similarity.filter(smiles='CC(=O)Oc1ccccc1C(=O)O', similarity=85)
 ## Common Data Retrieval Patterns
 
 ### Get Molecule by ChEMBL ID
+
 ```python
 molecule = new_client.molecule.get('CHEMBL25')
 ```
 
 ### Get Target Information
+
 ```python
 target = new_client.target.get('CHEMBL240')
 ```
 
 ### Get Activity Data
+
 ```python
 activities = new_client.activity.filter(
     target_chembl_id='CHEMBL240',
@@ -119,6 +128,7 @@ activities = new_client.activity.filter(
 ```
 
 ### Get Drug Information
+
 ```python
 drug = new_client.drug.get('CHEMBL1234')
 ```
@@ -126,6 +136,7 @@ drug = new_client.drug.get('CHEMBL1234')
 ## Response Formats
 
 The API supports multiple response formats:
+
 - JSON (default)
 - XML
 - YAML
@@ -133,6 +144,7 @@ The API supports multiple response formats:
 ## Caching and Performance
 
 The Python client automatically caches results locally:
+
 - **Default cache duration**: 24 hours
 - **Cache location**: Local file system
 - **Lazy evaluation**: Queries execute only when data is accessed
@@ -198,6 +210,7 @@ Target data includes:
 ## Advanced Query Examples
 
 ### Find Kinase Inhibitors
+
 ```python
 # Get kinase targets
 targets = new_client.target.filter(
@@ -214,6 +227,7 @@ activities = new_client.activity.filter(
 ```
 
 ### Retrieve Drug Mechanisms
+
 ```python
 mechanisms = new_client.mechanism.filter(
     molecule_chembl_id='CHEMBL25'
@@ -221,6 +235,7 @@ mechanisms = new_client.mechanism.filter(
 ```
 
 ### Get Compound Bioactivities
+
 ```python
 activities = new_client.activity.filter(
     molecule_chembl_id='CHEMBL25',
@@ -251,6 +266,7 @@ for activity in activities:
 ## Error Handling
 
 Common errors:
+
 - **404**: Resource not found
 - **503**: Service temporarily unavailable
 - **Timeout**: Request took too long
@@ -260,6 +276,7 @@ The client automatically retries failed requests based on `TOTAL_RETRIES` settin
 ## Rate Limiting
 
 ChEMBL has fair usage policies:
+
 - Be respectful with query frequency
 - Use caching to minimize repeated requests
 - Consider bulk downloads for large datasets

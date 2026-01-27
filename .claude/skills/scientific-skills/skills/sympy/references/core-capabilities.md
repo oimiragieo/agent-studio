@@ -7,6 +7,7 @@ This document covers SymPy's fundamental operations: symbolic computation basics
 ### Symbol Creation
 
 **Single symbols:**
+
 ```python
 from sympy import symbols, Symbol
 x = Symbol('x')
@@ -15,6 +16,7 @@ x, y, z = symbols('x y z')
 ```
 
 **With assumptions:**
+
 ```python
 x = symbols('x', real=True, positive=True)
 n = symbols('n', integer=True)
@@ -25,6 +27,7 @@ Common assumptions: `real`, `positive`, `negative`, `integer`, `rational`, `prim
 ### Basic Arithmetic
 
 SymPy supports standard Python operators for symbolic expressions:
+
 - Addition: `x + y`
 - Subtraction: `x - y`
 - Multiplication: `x * y`
@@ -32,6 +35,7 @@ SymPy supports standard Python operators for symbolic expressions:
 - Exponentiation: `x**y`
 
 **Important gotcha:** Use `sympy.Rational()` or `S()` for exact rational numbers:
+
 ```python
 from sympy import Rational, S
 expr = Rational(1, 2) * x  # Correct: exact 1/2
@@ -42,6 +46,7 @@ expr = 0.5 * x             # Creates floating-point approximation
 ### Substitution and Evaluation
 
 **Substitute values:**
+
 ```python
 expr = x**2 + 2*x + 1
 expr.subs(x, 3)  # Returns 16
@@ -49,6 +54,7 @@ expr.subs({x: 2, y: 3})  # Multiple substitutions
 ```
 
 **Numerical evaluation:**
+
 ```python
 from sympy import pi, sqrt
 expr = sqrt(8)
@@ -135,6 +141,7 @@ d.doit()  # Evaluates to 2*x
 ### Integrals
 
 **Indefinite integrals:**
+
 ```python
 from sympy import integrate
 
@@ -146,6 +153,7 @@ integrate(1/x, x)            # log(x)
 **Note:** SymPy does not include the constant of integration. Add `+ C` manually if needed.
 
 **Definite integrals:**
+
 ```python
 from sympy import oo, pi, exp, sin
 
@@ -155,11 +163,13 @@ integrate(sin(x), (x, 0, pi))  # 2
 ```
 
 **Multiple integrals:**
+
 ```python
 integrate(x*y, (x, 0, 1), (y, 0, x))  # 1/12
 ```
 
 **Numerical integration (when symbolic fails):**
+
 ```python
 integrate(x**x, (x, 0, 1)).evalf()  # 0.783430510712134
 ```
@@ -236,6 +246,7 @@ solveset(x**2 + 1, x, domain=S.Reals)  # EmptySet (no real solutions)
 ### Systems of Equations
 
 **Linear systems - linsolve:**
+
 ```python
 from sympy import linsolve, Matrix
 
@@ -252,6 +263,7 @@ linsolve((A, b), x, y)
 ```
 
 **Nonlinear systems - nonlinsolve:**
+
 ```python
 from sympy import nonlinsolve
 
@@ -273,6 +285,7 @@ roots(x**3 - 6*x**2 + 9*x, x)  # {0: 1, 3: 2}
 ### General Solver - solve
 
 More flexible alternative for transcendental equations:
+
 ```python
 from sympy import solve, exp, log
 
@@ -305,6 +318,7 @@ dsolve(Derivative(f(x), x, 2) + f(x), f(x))
 ## Common Patterns and Best Practices
 
 ### Pattern 1: Building Complex Expressions Incrementally
+
 ```python
 from sympy import *
 x, y = symbols('x y')
@@ -316,6 +330,7 @@ expr = simplify(expr)
 ```
 
 ### Pattern 2: Working with Assumptions
+
 ```python
 # Define symbols with physical constraints
 x = symbols('x', positive=True, real=True)
@@ -326,6 +341,7 @@ sqrt(x**2)  # Returns x (not Abs(x)) due to positive assumption
 ```
 
 ### Pattern 3: Converting to Numerical Functions
+
 ```python
 from sympy import lambdify
 import numpy as np
@@ -339,6 +355,7 @@ y_vals = f(x_vals)
 ```
 
 ### Pattern 4: Pretty Printing
+
 ```python
 from sympy import init_printing, pprint
 init_printing()  # Enable pretty printing in terminal/notebook

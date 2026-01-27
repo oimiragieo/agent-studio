@@ -36,6 +36,7 @@ You help developers write better code by applying established guidelines and bes
 When designing REST APIs, follow these core architectural principles:
 
 **Resource-Oriented Design**
+
 - Use nouns for resources (plural form): `/users`, `/products`, `/orders`
 - Avoid verbs in URIs: ❌ `/getUsers`, `/createProduct`
 - Structure hierarchically: `/users/{userId}/orders` (orders belonging to a user)
@@ -43,6 +44,7 @@ When designing REST APIs, follow these core architectural principles:
 - No trailing slashes: `/users` not `/users/`
 
 **HTTP Methods (Verbs with Purpose)**
+
 - `GET` - Retrieve resources (idempotent & safe, no side effects)
 - `POST` - Create new resources (not idempotent, returns 201 Created with Location header)
 - `PUT` - Replace entire resource or upsert (idempotent)
@@ -50,6 +52,7 @@ When designing REST APIs, follow these core architectural principles:
 - `DELETE` - Remove resource (idempotent, returns 204 No Content or 200 OK)
 
 **Query Parameters for Filtering, Sorting, and Pagination**
+
 - Filtering: `/products?category=electronics&price_gt=100`
 - Sorting: `/products?sort_by=price&order=desc`
 - Pagination: `/products?page=2&limit=10`
@@ -70,6 +73,7 @@ When designing REST APIs, follow these core architectural principles:
 Use OpenAPI 3.0+ to define your API specification:
 
 **Benefits:**
+
 - Machine-readable API specification
 - Auto-generates interactive documentation portals
 - Client SDK generation
@@ -77,6 +81,7 @@ Use OpenAPI 3.0+ to define your API specification:
 - IDE and API tool auto-validation
 
 **Define schemas for:**
+
 - Request parameters (required fields, allowed values, data types)
 - Response structures
 - Error responses
@@ -90,6 +95,7 @@ Example: Define validation rules so invalid requests are caught before reaching 
 Protect against abuse and ensure fair usage:
 
 **Implementation strategies:**
+
 - Use `429 Too Many Requests` status code
 - Return rate limit headers:
   - `X-RateLimit-Limit: 1000`
@@ -110,9 +116,7 @@ Protect against abuse and ensure fair usage:
   "error": {
     "code": "validation_error",
     "message": "Input validation failed.",
-    "details": [
-      { "field": "email", "message": "Invalid email format." }
-    ]
+    "details": [{ "field": "email", "message": "Invalid email format." }]
   }
 }
 ```
@@ -124,6 +128,7 @@ Protect against abuse and ensure fair usage:
 **3xx Redirection:** `301 Moved Permanently`, `304 Not Modified`
 
 **4xx Client Error:**
+
 - `400 Bad Request` - General client error
 - `401 Unauthorized` - Authentication missing/failed
 - `403 Forbidden` - Authenticated but no permission
@@ -134,6 +139,7 @@ Protect against abuse and ensure fair usage:
 - `429 Too Many Requests` - Rate limiting
 
 **5xx Server Error:**
+
 - `500 Internal Server Error` - Generic server error
 - `503 Service Unavailable` - Service temporarily down
 
@@ -142,6 +148,7 @@ Protect against abuse and ensure fair usage:
 ### Authentication Patterns
 
 **OAuth 2.1** (Industry standard for delegated authorization)
+
 - **Mandatory PKCE** for all authorization code flows
 - Authorization Code + PKCE flow for SPAs, mobile, and web apps
 - **Removed flows:** Implicit grant and Resource Owner Password Credentials (security risks)
@@ -150,12 +157,14 @@ Protect against abuse and ensure fair usage:
 - Implement refresh token rotation or sender-constrained tokens
 
 **JWT (JSON Web Tokens)** for stateless authentication:
+
 - Short expiry times (≤15 minutes for access tokens)
 - Use refresh tokens for long-lived sessions
 - Include claims for authorization decisions
 - Validate signature, expiry, and issuer
 
 **API Keys** for simpler integrations:
+
 - Use for service-to-service authentication
 - Rotate regularly
 - Never expose in client-side code
@@ -164,17 +173,20 @@ Protect against abuse and ensure fair usage:
 ### Performance & Caching
 
 **HTTP Caching Headers:**
+
 - `Cache-Control: max-age=3600` - Cache for 1 hour
 - `ETag` - Entity tag for conditional requests
 - `Expires` - Absolute expiration time
 - `304 Not Modified` - Return for unchanged resources
 
 **Caching strategies:**
+
 - Client-side caching (browser cache)
 - Proxy/CDN caching (intermediate caches)
 - Server-side caching (database query cache, object cache)
 
 **Optimization techniques:**
+
 - Compression: Use GZIP for large responses
 - Pagination: Return only needed data
 - Field selection: Allow clients to request specific fields (`?fields=id,name`)
@@ -183,6 +195,7 @@ Protect against abuse and ensure fair usage:
 ### API Documentation Best Practices
 
 **Comprehensive documentation must include:**
+
 - Overview and getting started guide
 - Authentication and authorization details
 - Endpoint descriptions with HTTP methods
@@ -194,10 +207,10 @@ Protect against abuse and ensure fair usage:
 - Changelog for version updates
 
 **Use tools:**
+
 - Swagger UI / OpenAPI for interactive docs
 - Postman collections for testing
 - Code examples in multiple languages
-
 
 </instructions>
 
@@ -212,12 +225,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- api-development-expert
 
+- api-development-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

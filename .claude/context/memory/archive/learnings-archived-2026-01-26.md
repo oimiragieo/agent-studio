@@ -5,6 +5,7 @@ Archived by semantic-archival (importance-based preservation)
 ---
 
 ## [UNKNOWN] Untitled
+
 **Importance**: LOW
 **Archived**: 2026-01-26
 
@@ -14,6 +15,7 @@ _Archived content: `.claude/context/memory/archive/learnings-archive-2026-01.md`
 ---
 
 ## [NOTE] Framework Deep Dive Complete
+
 **Date**: 2026-01-26
 **Importance**: LOW
 **Archived**: 2026-01-26
@@ -23,6 +25,7 @@ _Archived content: `.claude/context/memory/archive/learnings-archive-2026-01.md`
 A comprehensive 7-phase deep dive of the .claude framework infrastructure was completed, covering security, code quality, architecture, performance, and process maturity.
 
 **Phases Completed**:
+
 1. **Security Deep Dive** (Task #5) - 10/11 SEC-AUDIT issues fixed (91%)
 2. **Hook Code Quality Audit** (Task #3) - 80 hooks reviewed, 95% security compliant
 3. **Library Code Quality Audit** (Task #2) - 3 CRITICAL, 8 IMPORTANT issues identified
@@ -32,22 +35,26 @@ A comprehensive 7-phase deep dive of the .claude framework infrastructure was co
 7. **Final Consolidation** (Task #8) - FRAMEWORK-DEEP-DIVE-REPORT.md created
 
 **Key Statistics**:
+
 - **Total Findings**: 87
 - **Resolved**: 37 (43%)
 - **Open**: 50 (57%)
 - **Framework Health Score**: 78/100
 
 **Top Risks Identified**:
+
 1. Performance bottleneck (80 hooks, 500-1000ms overhead)
 2. Code duplication (~2300 lines across 40+ files)
 3. Incomplete security automation
 
 **Top Strengths Confirmed**:
+
 1. Security hardening (91% SEC-AUDIT resolved)
 2. Comprehensive agent coverage (46 agents, 85+ skills)
 3. Self-evolution system (EVOLVE workflow)
 
 **Recommended Priority Actions**:
+
 1. Create hook-input.cjs shared utility (PERF-006)
 2. Integrate state-cache for evolution hooks (PERF-004)
 3. Consolidate routing guard hooks (PERF-001)
@@ -57,8 +64,8 @@ A comprehensive 7-phase deep dive of the .claude framework infrastructure was co
 
 ---
 
-
 ## [PATTERN] Hook Pattern
+
 **Importance**: MEDIUM
 **Archived**: 2026-01-26
 
@@ -70,14 +77,12 @@ A comprehensive 7-phase deep dive of the .claude framework infrastructure was co
 
 **Key Features**:
 
-
 All hooks follow a consistent pattern:
 
 - `isEnabled()` - Check REFLECTION_ENABLED and REFLECTION_HOOK_MODE env vars
 - `shouldTriggerReflection(input)` - Check if hook should fire for this input
 - `createReflectionEntry(input)` - Create queue entry from hook context
 - `queueReflection(entry, queueFile)` - Write to JSONL queue file
-
 
 **File**: `.claude/context/reflection-queue.jsonl` (append-only JSONL)
 
@@ -87,12 +92,10 @@ All hooks follow a consistent pattern:
 {"context":"session_end","trigger":"session_end","sessionId":"...","priority":"low"}
 ```
 
-
 | Variable             | Default | Description                      |
 | -------------------- | ------- | -------------------------------- |
 | REFLECTION_ENABLED   | true    | Master switch for all reflection |
 | REFLECTION_HOOK_MODE | block   | Hook mode: block/warn/off        |
-
 
 | Hook                       | Trigger                      | Priority | Purpose                      |
 | -------------------------- | ---------------------------- | -------- | ---------------------------- |
@@ -103,7 +106,6 @@ All hooks follow a consistent pattern:
 **Test Coverage**: 44 tests total, all passing
 
 **Pattern Learned**: Hook modules should export a QUEUE_FILE property that can be overridden for testing. Using getter/setter syntax allows test files to redirect queue writes to test-specific files.
-
 
 **Pattern Learned**: Hooks that write to project directories MUST use `findProjectRoot()` instead of `process.cwd()`.
 
@@ -138,7 +140,6 @@ const PROJECT_ROOT = findProjectRoot();
 
 **Total**: 38 `process.cwd()` defaults replaced with `PROJECT_ROOT`
 
-
 **Pattern Learned**: To enforce the EVOLVE workflow for new artifact creation, add checks to `file-placement-guard.cjs` that:
 
 1. Read evolution state from `.claude/context/evolution-state.json`
@@ -165,6 +166,7 @@ const PROJECT_ROOT = findProjectRoot();
 ---
 
 ## [2026-01-26] Auto-Extracted: Test Workflow Run
+
 **Date**: 2026-01-26
 **Importance**: MEDIUM
 **Archived**: 2026-01-26
@@ -207,7 +209,6 @@ const PROJECT_ROOT = findProjectRoot();
 
 **Full Report**: `.claude/context/artifacts/performance-analysis-2026-01-26.md`
 
-
 **Pattern Learned**: Node.js native test runner file discovery uses glob patterns that must match actual file locations.
 
 **Common Issues**:
@@ -242,10 +243,8 @@ const PROJECT_ROOT = findProjectRoot();
 find .claude -name "*.test.cjs" -o -name "*.test.mjs" | wc -l
 ```
 
-
 - Always validate input before processing.
 - Use early returns for error handling.
-
 
 **Pattern Learned**: When blocking artifact creation due to EVOLVE enforcement, output structured JSON trigger data that enables automatic spawning of the evolution-orchestrator.
 
@@ -307,6 +306,7 @@ find .claude -name "*.test.cjs" -o -name "*.test.mjs" | wc -l
 ---
 
 ## [PATTERN] Documentation Audit Pattern
+
 **Date**: 2026-01-26
 **Importance**: MEDIUM
 **Archived**: 2026-01-26
@@ -360,7 +360,6 @@ find .claude -name "*.test.cjs" -o -name "*.test.mjs" | wc -l
 3. Fix quality issues - paths, terminology, formatting (Phase 3)
 4. Polish and add missing features (Phase 4)
 
-
 **Pattern Learned**: Documentation consolidation should follow Divio 4-quadrant system (Tutorials, How-to Guides, Reference, Explanation) with priority on:
 
 1. **30-second hook** at document start (blockquote format recommended)
@@ -404,6 +403,7 @@ find .claude -name "*.test.cjs" -o -name "*.test.mjs" | wc -l
 ---
 
 ## [DOCUMENTATION] Documentation Best Practices
+
 **Date**: 2026-01-26
 **Importance**: MEDIUM
 **Archived**: 2026-01-26

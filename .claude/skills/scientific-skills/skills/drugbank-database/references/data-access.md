@@ -3,7 +3,9 @@
 ## Authentication and Setup
 
 ### Account Creation
+
 DrugBank requires user authentication to access data:
+
 1. Create account at go.drugbank.com
 2. Accept the license agreement (free for academic use, paid for commercial)
 3. Obtain username and password credentials
@@ -11,6 +13,7 @@ DrugBank requires user authentication to access data:
 ### Credential Management
 
 **Environment Variables (Recommended)**
+
 ```bash
 export DRUGBANK_USERNAME="your_username"
 export DRUGBANK_PASSWORD="your_password"
@@ -18,6 +21,7 @@ export DRUGBANK_PASSWORD="your_password"
 
 **Configuration File**
 Create `~/.config/drugbank.ini`:
+
 ```ini
 [drugbank]
 username = your_username
@@ -25,6 +29,7 @@ password = your_password
 ```
 
 **Direct Specification**
+
 ```python
 # Pass credentials directly (not recommended for production)
 download_drugbank(username="user", password="pass")
@@ -33,7 +38,9 @@ download_drugbank(username="user", password="pass")
 ## Python Package Installation
 
 ### drugbank-downloader
+
 Primary tool for programmatic access:
+
 ```bash
 pip install drugbank-downloader
 ```
@@ -41,6 +48,7 @@ pip install drugbank-downloader
 **Requirements:** Python >=3.9
 
 ### Optional Dependencies
+
 ```bash
 pip install bioversions  # For automatic latest version detection
 pip install lxml  # For XML parsing optimization
@@ -49,6 +57,7 @@ pip install lxml  # For XML parsing optimization
 ## Data Download Methods
 
 ### Download Full Database
+
 ```python
 from drugbank_downloader import download_drugbank
 
@@ -61,6 +70,7 @@ path = download_drugbank()
 ```
 
 ### Custom Storage Location
+
 ```python
 # Custom prefix for storage
 path = download_drugbank(prefix=['custom', 'location', 'drugbank'])
@@ -68,6 +78,7 @@ path = download_drugbank(prefix=['custom', 'location', 'drugbank'])
 ```
 
 ### Verify Download
+
 ```python
 import os
 if os.path.exists(path):
@@ -78,6 +89,7 @@ if os.path.exists(path):
 ## Working with Downloaded Data
 
 ### Open Zipped XML Without Extraction
+
 ```python
 from drugbank_downloader import open_drugbank
 import xml.etree.ElementTree as ET
@@ -89,6 +101,7 @@ with open_drugbank() as file:
 ```
 
 ### Parse XML Tree
+
 ```python
 from drugbank_downloader import parse_drugbank, get_drugbank_root
 
@@ -100,6 +113,7 @@ root = get_drugbank_root()
 ```
 
 ### CLI Usage
+
 ```bash
 # Download using command line
 drugbank_downloader --username USER --password PASS
@@ -111,12 +125,14 @@ drugbank_downloader
 ## Data Formats and Versions
 
 ### Available Formats
+
 - **XML**: Primary format, most comprehensive data
 - **JSON**: Available via API (requires separate API key)
 - **CSV/TSV**: Export from web interface or parse XML
 - **SQL**: Database dumps available for download
 
 ### Version Management
+
 ```python
 # Specify exact version for reproducibility
 path = download_drugbank(version='5.1.10')
@@ -130,6 +146,7 @@ if drugbank_dir.exists():
 ```
 
 ### Version History
+
 - **Version 6.0** (2024): Latest release, expanded drug entries
 - **Version 5.1.x** (2019-2023): Incremental updates
 - **Version 5.0** (2017): ~9,591 drug entries
@@ -140,6 +157,7 @@ if drugbank_dir.exists():
 ## API Access
 
 ### REST API Endpoints
+
 ```python
 import requests
 
@@ -154,12 +172,15 @@ if response.status_code == 200:
 ```
 
 ### Rate Limits
+
 - **Development Key**: 3,000 requests/month
 - **Production Key**: Custom limits based on license
 - **Best Practice**: Cache results locally to minimize API calls
 
 ### Regional Scoping
+
 DrugBank API is scoped by region:
+
 - **USA**: FDA-approved drugs
 - **Canada**: Health Canada-approved drugs
 - **EU**: EMA-approved drugs
@@ -169,6 +190,7 @@ Specify region in API requests when applicable.
 ## Data Caching Strategy
 
 ### Intermediate Results
+
 ```python
 import pickle
 from pathlib import Path
@@ -190,6 +212,7 @@ else:
 ```
 
 ### Version-Specific Caching
+
 ```python
 version = "5.1.10"
 cache_file = Path(f"drugbank_{version}_processed.pkl")
@@ -201,21 +224,25 @@ cache_file = Path(f"drugbank_{version}_processed.pkl")
 ### Common Issues
 
 **Authentication Failures**
+
 - Verify credentials are correct
 - Check license agreement is accepted
 - Ensure account has not expired
 
 **Download Failures**
+
 - Check internet connectivity
 - Verify sufficient disk space (~1-2 GB needed)
 - Try specifying an older version if latest fails
 
 **Parsing Errors**
+
 - Ensure complete download (check file size)
 - Verify XML is not corrupted
 - Use lxml parser for better error handling
 
 ### Error Handling
+
 ```python
 from drugbank_downloader import download_drugbank
 import logging

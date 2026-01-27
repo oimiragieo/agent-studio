@@ -13,29 +13,36 @@ Problem → [Map] → [Optimize] → [Execute] → [Post-process] → Solution
 ```
 
 ### 1. Map
+
 Translate classical problems into quantum circuits and operators
 
 ### 2. Optimize
+
 Prepare circuits for target hardware through transpilation
 
 ### 3. Execute
+
 Run circuits on quantum hardware using primitives
 
 ### 4. Post-process
+
 Extract and refine results with classical computation
 
 ## Step 1: Map
 
 ### Goal
+
 Transform domain-specific problems into quantum representations (circuits, operators, Hamiltonians).
 
 ### Key Decisions
 
 **Choose Output Type:**
+
 - **Sampler**: For bitstring outputs (optimization, search)
 - **Estimator**: For expectation values (chemistry, physics)
 
 **Design Circuit Structure:**
+
 ```python
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -71,6 +78,7 @@ ansatz, params = create_ansatz(num_qubits=4, depth=2)
 ### Domain-Specific Examples
 
 **Chemistry: Molecular Hamiltonian**
+
 ```python
 from qiskit_nature.second_q.drivers import PySCFDriver
 from qiskit_nature.second_q.mappers import JordanWignerMapper
@@ -85,6 +93,7 @@ hamiltonian = mapper.map(problem.hamiltonian)
 ```
 
 **Optimization: QAOA Circuit**
+
 ```python
 from qiskit.circuit import QuantumCircuit, Parameter
 
@@ -116,6 +125,7 @@ def qaoa_circuit(graph, p):
 ## Step 2: Optimize
 
 ### Goal
+
 Transform abstract circuits to hardware-compatible ISA (Instruction Set Architecture) circuits.
 
 ### Transpilation
@@ -139,6 +149,7 @@ qc_isa = transpile(
 ### Pre-optimization Tips
 
 1. **Test with simulators first**:
+
 ```python
 from qiskit_aer import AerSimulator
 
@@ -148,6 +159,7 @@ print(f"Estimated depth: {qc_test.depth()}")
 ```
 
 2. **Analyze transpilation results**:
+
 ```python
 print(f"Original gates: {qc.size()}")
 print(f"Transpiled gates: {qc_isa.size()}")
@@ -155,6 +167,7 @@ print(f"Two-qubit gates: {qc_isa.count_ops().get('cx', 0)}")
 ```
 
 3. **Consider circuit cutting** for large circuits:
+
 ```python
 # For circuits too large for available hardware
 # Use circuit cutting techniques to split into smaller subcircuits
@@ -163,6 +176,7 @@ print(f"Two-qubit gates: {qc_isa.count_ops().get('cx', 0)}")
 ## Step 3: Execute
 
 ### Goal
+
 Run ISA circuits on quantum hardware using primitives.
 
 ### Using Sampler
@@ -208,6 +222,7 @@ expectation_value = result[0].data.evs
 ### Execution Modes
 
 **Session Mode (Iterative):**
+
 ```python
 from qiskit_ibm_runtime import Session
 
@@ -227,6 +242,7 @@ with Session(backend=backend) as session:
 ```
 
 **Batch Mode (Parallel):**
+
 ```python
 from qiskit_ibm_runtime import Batch
 
@@ -259,11 +275,13 @@ sampler = Sampler(backend, options=options)
 ## Step 4: Post-process
 
 ### Goal
+
 Extract meaningful results from quantum measurements using classical computation.
 
 ### Result Processing
 
 **For Sampler (Bitstrings):**
+
 ```python
 counts = result[0].data.meas.get_counts()
 
@@ -277,6 +295,7 @@ print(f"Most probable state: {max_state} ({counts[max_state]}/{total_shots})")
 ```
 
 **For Estimator (Expectation Values):**
+
 ```python
 expectation_value = result[0].data.evs
 std_dev = result[0].data.stds  # Standard deviation
@@ -287,6 +306,7 @@ print(f"Energy: {expectation_value} ± {std_dev}")
 ### Domain-Specific Post-Processing
 
 **Chemistry: Ground State Energy**
+
 ```python
 def post_process_chemistry(result, nuclear_repulsion):
     """Extract ground state energy"""
@@ -296,6 +316,7 @@ def post_process_chemistry(result, nuclear_repulsion):
 ```
 
 **Optimization: MaxCut Solution**
+
 ```python
 def post_process_maxcut(counts, graph):
     """Find best cut from measurement results"""
@@ -322,6 +343,7 @@ def post_process_maxcut(counts, graph):
 ### Advanced Post-Processing
 
 **Error Mitigation Post-Processing:**
+
 ```python
 # Apply additional classical error mitigation
 from qiskit.result import marginal_counts
@@ -332,6 +354,7 @@ marginal = marginal_counts(counts, indices=relevant_qubits)
 ```
 
 **Statistical Analysis:**
+
 ```python
 import numpy as np
 
@@ -351,6 +374,7 @@ def analyze_results(results_list):
 ```
 
 **Visualization:**
+
 ```python
 from qiskit.visualization import plot_histogram
 import matplotlib.pyplot as plt
@@ -427,7 +451,9 @@ print(f"Optimized parameters: {optimized_params}")
 ## Best Practices
 
 ### 1. Iterate Locally First
+
 Test the full workflow with simulators before using hardware:
+
 ```python
 from qiskit.primitives import StatevectorEstimator
 
@@ -436,13 +462,16 @@ estimator = StatevectorEstimator()
 ```
 
 ### 2. Use Sessions for Iterative Algorithms
+
 VQE, QAOA, and other variational algorithms benefit from sessions.
 
 ### 3. Choose Appropriate Shots
+
 - Development/testing: 100-1000 shots
 - Production: 10,000+ shots
 
 ### 4. Monitor Convergence
+
 ```python
 energies = []
 
@@ -454,6 +483,7 @@ def cost_function_with_tracking(params):
 ```
 
 ### 5. Save Results
+
 ```python
 import json
 
@@ -491,6 +521,7 @@ result = job.result()
 ## Common Workflow Patterns
 
 ### Pattern 1: Parameter Sweep
+
 ```python
 # Map → Optimize once → Execute many → Post-process
 qc_isa = transpile(parameterized_circuit, backend=backend)
@@ -506,6 +537,7 @@ with Batch(backend=backend) as batch:
 ```
 
 ### Pattern 2: Iterative Refinement
+
 ```python
 # Map → (Optimize → Execute → Post-process) repeated
 with Session(backend=backend) as session:
@@ -520,6 +552,7 @@ with Session(backend=backend) as session:
 ```
 
 ### Pattern 3: Ensemble Measurement
+
 ```python
 # Map → Optimize → Execute many observables → Post-process
 qc_isa = transpile(qc, backend=backend)

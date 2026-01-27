@@ -45,6 +45,7 @@ def run_llama_405b():
 ```
 
 Supported counts:
+
 - B200, H200, H100, A100, L4, T4, L40S: up to 8 GPUs (up to 1,536 GB)
 - A10: up to 4 GPUs (up to 96 GB)
 
@@ -53,15 +54,18 @@ Note: Requesting >2 GPUs may result in longer wait times.
 ## GPU Selection Guide
 
 **For Inference (Recommended)**: Start with L40S
+
 - Excellent cost/performance
 - 48 GB memory
 - Good for LLaMA, Stable Diffusion, etc.
 
 **For Training**: Consider H100 or A100
+
 - High compute throughput
 - Large memory for batch processing
 
 **For Memory-Bound Tasks**: H200 or A100-80GB
+
 - More memory capacity
 - Better for large models
 
@@ -89,10 +93,12 @@ def train():
 ### Automatic H200 Upgrades
 
 Modal may upgrade `gpu="H100"` to H200 at no extra cost. H200 provides:
+
 - 141 GB memory (vs 80 GB for H100)
 - 4.8 TB/s bandwidth (vs 3.35 TB/s)
 
 To avoid automatic upgrades (e.g., for benchmarking):
+
 ```python
 @app.function(gpu="H100!")
 def benchmark():
@@ -158,11 +164,13 @@ For PyTorch Lightning, set strategy to `ddp_spawn` or `ddp_notebook`.
 ## Performance Considerations
 
 **Memory-Bound vs Compute-Bound**:
+
 - Running models with small batch sizes is memory-bound
 - Newer GPUs have faster arithmetic than memory access
 - Speedup from newer hardware may not justify cost for memory-bound workloads
 
 **Optimization**:
+
 - Use batching when possible
 - Consider L40S before jumping to H100/B200
 - Profile to identify bottlenecks

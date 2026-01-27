@@ -21,12 +21,12 @@ updater_config:
   backup_location: .claude/context/backups/schemas/
   compatibility_check: true
   registration_targets:
-    - ".claude/schemas/index.json"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/schemas/index.json'
+    - '.claude/context/memory/learnings.md'
   protected_fields:
-    - "$schema"
-    - "$id"
-    - "type"
+    - '$schema'
+    - '$id'
+    - 'type'
 
 phases:
   evaluate:
@@ -71,11 +71,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-schema'].output.schema_path !== null"
         on_fail: abort
-        message: "Schema does not exist. Use schema-creator-workflow to create new schemas."
+        message: 'Schema does not exist. Use schema-creator-workflow to create new schemas.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes maintain backwards compatibility
@@ -119,15 +119,15 @@ phases:
       - id: gate-validate-protected
         condition: "steps['check-protected-fields'].output.protected_intact === true"
         on_fail: abort
-        message: "Cannot remove protected fields ($schema, $id, type)"
+        message: 'Cannot remove protected fields ($schema, $id, type)'
       - id: gate-validate-compatibility
         condition: "steps['check-backwards-compatibility'].output.backwards_compatible === true"
         on_fail: warn
-        message: "Breaking changes detected. Ensure all consumers are updated."
+        message: 'Breaking changes detected. Ensure all consumers are updated.'
       - id: gate-validate-required
         condition: "steps['check-required-changes'].output.required_changed === false"
         on_fail: warn
-        message: "Adding required fields may break existing documents."
+        message: 'Adding required fields may break existing documents.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -157,9 +157,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -218,22 +218,22 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-schema'].output.schema_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated schema file"
+        message: 'Failed to write updated schema file'
       - id: gate-lock-json
         condition: "steps['validate-json-syntax'].output.json_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "JSON syntax validation failed after changes"
+        message: 'JSON syntax validation failed after changes'
       - id: gate-lock-structure
         condition: "steps['validate-schema-structure'].output.structure_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "Schema structure validation failed after changes"
+        message: 'Schema structure validation failed after changes'
 
   verify:
     description: Validate schema against test data
@@ -274,15 +274,15 @@ phases:
       - id: gate-verify-fields
         condition: "steps['validate-required-fields'].output.fields_present === true"
         on_fail: return_to_lock
-        message: "Required JSON Schema fields missing after update"
+        message: 'Required JSON Schema fields missing after update'
       - id: gate-verify-existing
         condition: "steps['test-with-existing-documents'].output.existing_valid === true"
         on_fail: return_to_lock
-        message: "Updated schema breaks existing conforming documents"
+        message: 'Updated schema breaks existing conforming documents'
       - id: gate-verify-tests
         condition: "steps['test-schema-validation'].output.validation_tests_passed === true"
         on_fail: return_to_lock
-        message: "Schema validation tests failed after update"
+        message: 'Schema validation tests failed after update'
 
   enable:
     description: Update registrations and record changes
@@ -334,7 +334,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Schema registration verification failed after update"
+        message: 'Schema registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -344,32 +344,32 @@ compensate:
       description: Restore schema file from backup
   enable:
     - action: revert_index
-      target: ".claude/schemas/index.json"
+      target: '.claude/schemas/index.json'
       description: Revert index changes if made
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for schema updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-protected
-    rule: "Cannot remove $schema, $id, or type fields"
+    rule: 'Cannot remove $schema, $id, or type fields'
     enforcement: gate-validate-protected
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: json-must-remain-valid
-    rule: "JSON syntax must remain valid after update"
+    rule: 'JSON syntax must remain valid after update'
     enforcement: gate-lock-json
   - id: schema-must-remain-valid
-    rule: "Schema structure must remain valid after update"
+    rule: 'Schema structure must remain valid after update'
     enforcement: gate-lock-structure
   - id: backwards-compatibility-preferred
-    rule: "Prefer backwards-compatible changes"
+    rule: 'Prefer backwards-compatible changes'
     enforcement: gate-validate-compatibility
   - id: existing-documents-must-validate
-    rule: "Existing conforming documents must still validate"
+    rule: 'Existing conforming documents must still validate'
     enforcement: gate-verify-existing

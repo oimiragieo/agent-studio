@@ -30,6 +30,7 @@ micromamba activate diffdock
 ```
 
 ### First Run
+
 The first execution pre-computes SO(2) and SO(3) lookup tables, taking a few minutes. Subsequent runs start immediately.
 
 ## Workflow 1: Single Protein-Ligand Docking
@@ -45,6 +46,7 @@ python -m inference \
 ```
 
 **Output Structure**:
+
 ```
 results/single_docking/
 ├── index_0_rank_1.sdf       # Top-ranked prediction
@@ -79,6 +81,7 @@ python -m inference \
 ```
 
 **Use Cases**:
+
 - Protein structure not available in PDB
 - Modeling mutations or variants
 - De novo protein design validation
@@ -99,6 +102,7 @@ complex3,proteins/protein3.pdb,ligands/ligand3.sdf,
 ```
 
 **Column Descriptions**:
+
 - `complex_name`: Unique identifier for the complex
 - `protein_path`: Path to PDB file (leave empty if using sequence)
 - `ligand_description`: SMILES string or path to ligand file
@@ -115,6 +119,7 @@ python -m inference \
 ```
 
 **Output Structure**:
+
 ```
 results/batch_predictions/
 ├── complex1/
@@ -299,9 +304,11 @@ python app/main.py
 ```
 
 ### Access Interface
+
 Navigate to `http://localhost:7860` in web browser
 
 ### Features
+
 - Upload protein PDB or enter sequence
 - Input ligand SMILES or upload structure
 - Adjust inference parameters via GUI
@@ -309,7 +316,9 @@ Navigate to `http://localhost:7860` in web browser
 - Download predictions directly
 
 ### Online Alternative
+
 Use the Hugging Face Spaces demo without local installation:
+
 - URL: https://huggingface.co/spaces/reginabarzilaygroup/DiffDock-Web
 
 ## Advanced Configuration
@@ -325,8 +334,8 @@ model_dir: ./workdir/v1.1/score_model
 confidence_model_dir: ./workdir/v1.1/confidence_model
 
 # Sampling parameters
-samples_per_complex: 20  # More samples for better coverage
-inference_steps: 25      # More steps for accuracy
+samples_per_complex: 20 # More samples for better coverage
+inference_steps: 25 # More steps for accuracy
 
 # Temperature adjustments (increase for more diversity)
 temp_sampling_tr: 1.3
@@ -352,6 +361,7 @@ python -m inference \
 ### Issue: Out of Memory Errors
 
 **Solution**: Reduce batch size
+
 ```bash
 python -m inference ... --batch_size 2
 ```
@@ -359,6 +369,7 @@ python -m inference ... --batch_size 2
 ### Issue: Slow Performance
 
 **Solution**: Ensure GPU usage
+
 ```python
 import torch
 print(torch.cuda.is_available())  # Should return True
@@ -367,6 +378,7 @@ print(torch.cuda.is_available())  # Should return True
 ### Issue: Poor Predictions for Large Ligands
 
 **Solution**: Increase sampling diversity
+
 ```bash
 python -m inference ... --samples_per_complex 40 --temp_sampling_tor 9.0
 ```
@@ -374,6 +386,7 @@ python -m inference ... --samples_per_complex 40 --temp_sampling_tor 9.0
 ### Issue: Protein with Many Chains
 
 **Solution**: Limit chains or isolate binding site
+
 ```bash
 python -m inference ... --chain_cutoff 4
 ```

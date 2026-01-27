@@ -9,6 +9,7 @@ Troubleshooting guide for frequently encountered matplotlib problems.
 **Problem:** `plt.show()` doesn't display anything
 
 **Solutions:**
+
 ```python
 # 1. Check if backend is properly set (for interactive use)
 import matplotlib
@@ -33,6 +34,7 @@ plt.show()
 **Problem:** Interactive mode issues with threading
 
 **Solution:**
+
 ```python
 # Switch to non-interactive backend
 import matplotlib
@@ -48,6 +50,7 @@ plt.ioff()
 **Problem:** Changes not reflected in interactive windows
 
 **Solution:**
+
 ```python
 # Enable interactive mode
 plt.ion()
@@ -65,6 +68,7 @@ plt.pause(0.001)  # Brief pause to update display
 **Problem:** Labels, titles, or tick labels overlap or get cut off
 
 **Solutions:**
+
 ```python
 # Solution 1: Constrained layout (RECOMMENDED)
 fig, ax = plt.subplots(constrained_layout=True)
@@ -88,6 +92,7 @@ ax.set_xticklabels(labels, rotation=45, ha='right')
 **Problem:** Adding colorbar shrinks the plot
 
 **Solution:**
+
 ```python
 # Solution 1: Use constrained layout
 fig, ax = plt.subplots(constrained_layout=True)
@@ -112,6 +117,7 @@ fig.colorbar(im, ax=axes.ravel().tolist(), shrink=0.95)
 **Problem:** Multiple subplots overlapping
 
 **Solution:**
+
 ```python
 # Solution 1: Use constrained_layout
 fig, axes = plt.subplots(2, 2, constrained_layout=True)
@@ -131,6 +137,7 @@ plt.tight_layout(h_pad=2.0, w_pad=2.0)
 **Problem:** Memory usage grows when creating many figures
 
 **Solution:**
+
 ```python
 # Close figures explicitly
 fig, ax = plt.subplots()
@@ -150,6 +157,7 @@ plt.cla()
 **Problem:** Saved figures are too large
 
 **Solutions:**
+
 ```python
 # Solution 1: Reduce DPI
 plt.savefig('figure.png', dpi=150)  # Instead of 300
@@ -169,6 +177,7 @@ plt.savefig('figure.png', dpi=300, optimize=True)
 **Problem:** Plotting takes too long with many points
 
 **Solutions:**
+
 ```python
 # Solution 1: Downsample data
 from scipy.signal import decimate
@@ -193,6 +202,7 @@ ax.hexbin(x, y, gridsize=50, cmap='viridis')
 **Problem:** "findfont: Font family [...] not found"
 
 **Solutions:**
+
 ```python
 # Solution 1: Use available fonts
 from matplotlib.font_manager import findfont, FontProperties
@@ -215,6 +225,7 @@ plt.rcParams['font.sans-serif'] = ['Arial', 'DejaVu Sans', 'sans-serif']
 **Problem:** Math text not rendering correctly
 
 **Solutions:**
+
 ```python
 # Solution 1: Use raw strings with r prefix
 ax.set_xlabel(r'$\alpha$')  # Not '\alpha'
@@ -235,6 +246,7 @@ ax.text(x, y, r'$\int_0^\infty e^{-x} dx$')
 **Problem:** Labels or annotations appear outside figure bounds
 
 **Solutions:**
+
 ```python
 # Solution 1: Use bbox_inches='tight'
 plt.savefig('figure.png', bbox_inches='tight')
@@ -256,6 +268,7 @@ fig, ax = plt.subplots(constrained_layout=True)
 **Problem:** Colorbar shows different range than data
 
 **Solution:**
+
 ```python
 # Explicitly set vmin and vmax
 im = ax.imshow(data, vmin=0, vmax=1, cmap='viridis')
@@ -273,6 +286,7 @@ im2 = ax2.imshow(data2, norm=norm, cmap='viridis')
 **Problem:** Unexpected colors in plots
 
 **Solutions:**
+
 ```python
 # Solution 1: Check color specification format
 ax.plot(x, y, color='blue')  # Correct
@@ -294,6 +308,7 @@ ax.plot(x, y, alpha=1.0)  # 0=transparent, 1=opaque
 **Problem:** Colormap direction is backwards
 
 **Solution:**
+
 ```python
 # Add _r suffix to reverse any colormap
 ax.imshow(data, cmap='viridis_r')
@@ -306,6 +321,7 @@ ax.imshow(data, cmap='viridis_r')
 **Problem:** `set_xlim` or `set_ylim` not taking effect
 
 **Solutions:**
+
 ```python
 # Solution 1: Set after plotting
 ax.plot(x, y)
@@ -325,6 +341,7 @@ ax.axis([xmin, xmax, ymin, ymax])
 **Problem:** ValueError when using log scale with data ≤ 0
 
 **Solutions:**
+
 ```python
 # Solution 1: Filter out non-positive values
 mask = (data > 0)
@@ -344,6 +361,7 @@ ax.set_yscale('log')
 **Problem:** Date axis shows numbers instead of dates
 
 **Solution:**
+
 ```python
 import matplotlib.dates as mdates
 import pandas as pd
@@ -366,6 +384,7 @@ plt.xticks(rotation=45)
 **Problem:** Legend obscures important parts of plot
 
 **Solutions:**
+
 ```python
 # Solution 1: Use 'best' location
 ax.legend(loc='best')
@@ -385,6 +404,7 @@ ax.legend(bbox_to_anchor=(0.5, -0.15), loc='upper center', ncol=3)
 **Problem:** Legend is cluttered with many entries
 
 **Solutions:**
+
 ```python
 # Solution 1: Only label selected items
 for i, (x, y) in enumerate(data):
@@ -414,6 +434,7 @@ ax_leg.axis('off')
 **Problem:** Difficult to perceive depth in 3D plots
 
 **Solutions:**
+
 ```python
 # Solution 1: Adjust viewing angle
 ax.view_init(elev=30, azim=45)
@@ -433,6 +454,7 @@ scatter = ax.scatter(x, y, z, c=z, cmap='viridis')
 **Problem:** 3D axis labels appear outside figure
 
 **Solution:**
+
 ```python
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -454,6 +476,7 @@ plt.savefig('3d_plot.png', bbox_inches='tight', pad_inches=0.5)
 **Problem:** Image orientation is wrong
 
 **Solution:**
+
 ```python
 # Set origin parameter
 ax.imshow(img, origin='lower')  # or 'upper' (default)
@@ -467,6 +490,7 @@ ax.imshow(np.flipud(img))
 **Problem:** Image appears blocky when zoomed
 
 **Solutions:**
+
 ```python
 # Solution 1: Use interpolation
 ax.imshow(img, interpolation='bilinear')
@@ -484,6 +508,7 @@ plt.savefig('figure.pdf')
 ### "TypeError: 'AxesSubplot' object is not subscriptable"
 
 **Problem:** Trying to index single axes
+
 ```python
 # Wrong
 fig, ax = plt.subplots()
@@ -497,6 +522,7 @@ ax.plot(x, y)
 ### "ValueError: x and y must have same first dimension"
 
 **Problem:** Data arrays have mismatched lengths
+
 ```python
 # Check shapes
 print(f"x shape: {x.shape}, y shape: {y.shape}")
@@ -508,6 +534,7 @@ assert len(x) == len(y), "x and y must have same length"
 ### "AttributeError: 'numpy.ndarray' object has no attribute 'plot'"
 
 **Problem:** Calling plot on array instead of axes
+
 ```python
 # Wrong
 data.plot(x, y)
@@ -521,37 +548,44 @@ data.plot(ax=ax)
 ## Best Practices to Avoid Issues
 
 1. **Always use the OO interface** - Avoid pyplot state machine
+
    ```python
    fig, ax = plt.subplots()  # Good
    ax.plot(x, y)
    ```
 
 2. **Use constrained_layout** - Prevents overlap issues
+
    ```python
    fig, ax = plt.subplots(constrained_layout=True)
    ```
 
 3. **Close figures explicitly** - Prevents memory leaks
+
    ```python
    plt.close(fig)
    ```
 
 4. **Set figure size at creation** - Better than resizing later
+
    ```python
    fig, ax = plt.subplots(figsize=(10, 6))
    ```
 
 5. **Use raw strings for math text** - Avoids escape issues
+
    ```python
    ax.set_xlabel(r'$\alpha$')
    ```
 
 6. **Check data shapes before plotting** - Catch size mismatches early
+
    ```python
    assert len(x) == len(y)
    ```
 
 7. **Use appropriate DPI** - 300 for print, 150 for web
+
    ```python
    plt.savefig('figure.png', dpi=300)
    ```

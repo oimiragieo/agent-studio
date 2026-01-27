@@ -31,6 +31,7 @@ FlowData(fcs_file,
 ```
 
 **Parameters:**
+
 - `fcs_file`: File path (str), Path object, or file handle
 - `ignore_offset_error` (bool): Ignore offset errors (default: False)
 - `ignore_offset_discrepancy` (bool): Ignore offset discrepancies between HEADER and TEXT sections (default: False)
@@ -42,6 +43,7 @@ FlowData(fcs_file,
 #### Attributes
 
 **File Information:**
+
 - `name`: Name of the FCS file
 - `file_size`: Size of the file in bytes
 - `version`: FCS version (e.g., '3.0', '3.1')
@@ -49,6 +51,7 @@ FlowData(fcs_file,
 - `data_type`: Type of data format ('I', 'F', 'D', 'A')
 
 **Channel Information:**
+
 - `channel_count`: Number of channels in the dataset
 - `channels`: Dictionary mapping channel numbers to channel info
 - `pnn_labels`: List of PnN (short channel name) labels
@@ -60,10 +63,12 @@ FlowData(fcs_file,
 - `null_channels`: List of null channel indices
 
 **Event Data:**
+
 - `event_count`: Number of events (rows) in the dataset
 - `events`: Raw event data as bytes
 
 **Metadata:**
+
 - `text`: Dictionary of TEXT segment key-value pairs
 - `analysis`: Dictionary of ANALYSIS segment key-value pairs (if present)
 
@@ -78,12 +83,15 @@ as_array(preprocess=True)
 Return event data as a 2-D NumPy array.
 
 **Parameters:**
+
 - `preprocess` (bool): Apply gain, logarithmic, and time scaling transformations (default: True)
 
 **Returns:**
+
 - NumPy ndarray with shape (event_count, channel_count)
 
 **Example:**
+
 ```python
 flow_data = FlowData('sample.fcs')
 events_array = flow_data.as_array()  # Preprocessed data
@@ -99,10 +107,12 @@ write_fcs(filename, metadata=None)
 Export the FlowData instance as a new FCS file.
 
 **Parameters:**
+
 - `filename` (str): Output file path
 - `metadata` (dict): Optional dictionary of TEXT segment keywords to add/update
 
 **Example:**
+
 ```python
 flow_data = FlowData('sample.fcs')
 flow_data.write_fcs('output.fcs', metadata={'$SRC': 'Modified data'})
@@ -124,12 +134,15 @@ read_multiple_data_sets(fcs_file,
 Read all datasets from an FCS file containing multiple datasets.
 
 **Parameters:**
+
 - Same as FlowData constructor (except `nextdata_offset`)
 
 **Returns:**
+
 - List of FlowData instances, one for each dataset
 
 **Example:**
+
 ```python
 from flowio import read_multiple_data_sets
 
@@ -152,6 +165,7 @@ create_fcs(filename,
 Create a new FCS file from event data.
 
 **Parameters:**
+
 - `filename` (str): Output file path
 - `event_data` (ndarray): 2-D NumPy array of event data (rows=events, columns=channels)
 - `channel_names` (list): List of PnN (short) channel names
@@ -159,6 +173,7 @@ Create a new FCS file from event data.
 - `metadata` (dict): Optional dictionary of TEXT segment keywords
 
 **Example:**
+
 ```python
 import numpy as np
 from flowio import create_fcs
@@ -239,6 +254,7 @@ FlowIO automatically categorizes channels:
 - **Time channel**: Usually labeled "Time"
 
 Access indices via:
+
 - `flow_data.scatter_indices`
 - `flow_data.fluoro_indices`
 - `flow_data.time_index`

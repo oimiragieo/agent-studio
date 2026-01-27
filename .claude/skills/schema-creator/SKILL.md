@@ -31,6 +31,7 @@ Creates JSON Schema validation files for the Claude Code Enterprise Framework. S
 3. Add schema reference to CLAUDE.md if globally significant
 
 **Verification:**
+
 ```bash
 # Verify schema is valid JSON
 node -e "JSON.parse(require('fs').readFileSync('.claude/schemas/<schema-name>.json'))"
@@ -55,21 +56,22 @@ Schemas provide structured validation for:
 
 ## Schema Types
 
-| Type | Location | Purpose |
-|------|----------|---------|
-| Skill Input | `.claude/skills/{name}/schemas/input.schema.json` | Validate skill invocation inputs |
-| Skill Output | `.claude/skills/{name}/schemas/output.schema.json` | Validate skill execution outputs |
-| Agent Definition | `.claude/schemas/agent-definition.schema.json` | Validate agent YAML frontmatter |
-| Skill Definition | `.claude/schemas/skill-definition.schema.json` | Validate skill YAML frontmatter |
-| Hook Definition | `.claude/schemas/hook-definition.schema.json` | Validate hook configuration |
-| Workflow Definition | `.claude/schemas/workflow-definition.schema.json` | Validate workflow structure |
-| Custom | `.claude/schemas/{name}.schema.json` | Project-specific validation |
+| Type                | Location                                           | Purpose                          |
+| ------------------- | -------------------------------------------------- | -------------------------------- |
+| Skill Input         | `.claude/skills/{name}/schemas/input.schema.json`  | Validate skill invocation inputs |
+| Skill Output        | `.claude/skills/{name}/schemas/output.schema.json` | Validate skill execution outputs |
+| Agent Definition    | `.claude/schemas/agent-definition.schema.json`     | Validate agent YAML frontmatter  |
+| Skill Definition    | `.claude/schemas/skill-definition.schema.json`     | Validate skill YAML frontmatter  |
+| Hook Definition     | `.claude/schemas/hook-definition.schema.json`      | Validate hook configuration      |
+| Workflow Definition | `.claude/schemas/workflow-definition.schema.json`  | Validate workflow structure      |
+| Custom              | `.claude/schemas/{name}.schema.json`               | Project-specific validation      |
 
 ### Reference Schema
 
 **Use `.claude/schemas/agent-definition.schema.json` as the canonical reference schema.**
 
 Before finalizing any schema, compare against reference:
+
 - [ ] Follows JSON Schema draft-07 or later (draft-2020-12 preferred)
 - [ ] Has $schema, $id, title, description, type fields
 - [ ] Required fields are documented in "required" array
@@ -86,6 +88,7 @@ After creating a schema, update CLAUDE.md if the schema enables new capabilities
 3. **Framework-wide schema** - Add to Existing Schemas Reference table in this skill
 
 **Verification:**
+
 ```bash
 grep "schema-name" .claude/CLAUDE.md || echo "WARNING: Schema not registered in CLAUDE.md"
 ```
@@ -122,12 +125,12 @@ Before creating a schema, understand:
 
 ### Step 2: Determine Schema Type and Location
 
-| Creating For | Schema Location | Example |
-|--------------|-----------------|---------|
-| New skill inputs | `.claude/skills/{skill}/schemas/input.schema.json` | `tdd` skill parameters |
-| New skill outputs | `.claude/skills/{skill}/schemas/output.schema.json` | `tdd` skill results |
-| Global definition | `.claude/schemas/{name}.schema.json` | `test-results.schema.json` |
-| Reusable component | `.claude/schemas/components/{name}.schema.json` | `task-status.schema.json` |
+| Creating For       | Schema Location                                     | Example                    |
+| ------------------ | --------------------------------------------------- | -------------------------- |
+| New skill inputs   | `.claude/skills/{skill}/schemas/input.schema.json`  | `tdd` skill parameters     |
+| New skill outputs  | `.claude/skills/{skill}/schemas/output.schema.json` | `tdd` skill results        |
+| Global definition  | `.claude/schemas/{name}.schema.json`                | `test-results.schema.json` |
+| Reusable component | `.claude/schemas/components/{name}.schema.json`     | `task-status.schema.json`  |
 
 ### Step 3: Analyze Data Structure
 
@@ -138,14 +141,14 @@ Examine existing data or specify expected structure:
 const exampleOutput = {
   success: true,
   result: {
-    filesCreated: ["src/test.ts"],
+    filesCreated: ['src/test.ts'],
     testsGenerated: 5,
-    coverage: 85.2
+    coverage: 85.2,
   },
   metadata: {
     duration: 1234,
-    skill: "test-generator"
-  }
+    skill: 'test-generator',
+  },
 };
 
 // Extract schema from example:
@@ -233,11 +236,15 @@ const ajv = new Ajv({ allErrors: true });
 const validate = ajv.compile(schema);
 
 // Test valid data
-const validData = { /* valid example */ };
+const validData = {
+  /* valid example */
+};
 console.log('Valid:', validate(validData));
 
 // Test invalid data
-const invalidData = { /* invalid example */ };
+const invalidData = {
+  /* invalid example */
+};
 console.log('Invalid:', validate(invalidData));
 console.log('Errors:', validate.errors);
 ```
@@ -277,27 +284,32 @@ ls -la .claude/schemas/*.schema.json
 After creating a schema, complete ALL of the following:
 
 ### 1. CLAUDE.md Update
+
 - Add to appropriate section if schema enables new capability
 - Section 3 for agent-related schemas
 - Section 4.1 for creator ecosystem schemas
 - Section 8.5 for skill-related schemas
 
 ### 2. Validator Integration
+
 - Check if hooks should validate against new schema
 - Update `.claude/hooks/` if schema affects validation
 - Add to `schemaMap` in relevant validators
 
 ### 3. Related Schemas
+
 - Update related schemas if needed ($ref links)
 - Check for circular dependencies
 - Ensure $id values are unique
 
 ### 4. Documentation
+
 - Update `.claude/docs/` if schema documents new pattern
 - Add schema to Existing Schemas Reference table
 - Update skill-catalog.md if schema is for a new skill
 
 **Verification Checklist:**
+
 ```bash
 # Check CLAUDE.md registration
 grep "{schema-name}" .claude/CLAUDE.md
@@ -609,7 +621,7 @@ function validateSkillDefinition(data) {
   if (!valid) {
     return {
       valid: false,
-      errors: validate.errors.map(e => `${e.instancePath} ${e.message}`)
+      errors: validate.errors.map(e => `${e.instancePath} ${e.message}`),
     };
   }
   return { valid: true };
@@ -627,7 +639,7 @@ const Ajv = require('ajv');
 const schemaMap = {
   '.claude/agents/': '.claude/schemas/agent-definition.schema.json',
   '.claude/skills/': '.claude/schemas/skill-definition.schema.json',
-  '.claude/hooks/': '.claude/schemas/hook-definition.schema.json'
+  '.claude/hooks/': '.claude/schemas/hook-definition.schema.json',
 };
 
 function validateFile(filePath) {
@@ -650,14 +662,17 @@ function validateFile(filePath) {
 This skill is part of the unified artifact lifecycle. For complete multi-agent orchestration:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - How the Router discovers and invokes this skill's artifacts
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Discovery, creation, update, deprecation phases
 - Version management and registry updates
 - CLAUDE.md integration requirements
 
 **External Integration:** `.claude/workflows/core/external-integration.md`
+
 - Safe integration of external artifacts
 - Security review and validation phases
 
@@ -667,13 +682,13 @@ This skill is part of the unified artifact lifecycle. For complete multi-agent o
 
 This skill is part of the **Creator Ecosystem**. Use companion creators for related artifacts:
 
-| Creator | When to Use | Invocation |
-|---------|-------------|------------|
-| **agent-creator** | Creating agents that use schemas | `Skill({ skill: 'agent-creator' })` |
-| **skill-creator** | Creating skills with input/output schemas | `Skill({ skill: 'skill-creator' })` |
-| **hook-creator** | Creating hooks with validation | `Skill({ skill: 'hook-creator' })` |
-| **workflow-creator** | Creating workflows with step schemas | `Skill({ skill: 'workflow-creator' })` |
-| **template-creator** | Creating templates with data schemas | `Skill({ skill: 'template-creator' })` |
+| Creator              | When to Use                               | Invocation                             |
+| -------------------- | ----------------------------------------- | -------------------------------------- |
+| **agent-creator**    | Creating agents that use schemas          | `Skill({ skill: 'agent-creator' })`    |
+| **skill-creator**    | Creating skills with input/output schemas | `Skill({ skill: 'skill-creator' })`    |
+| **hook-creator**     | Creating hooks with validation            | `Skill({ skill: 'hook-creator' })`     |
+| **workflow-creator** | Creating workflows with step schemas      | `Skill({ skill: 'workflow-creator' })` |
+| **template-creator** | Creating templates with data schemas      | `Skill({ skill: 'template-creator' })` |
 
 ### Integration Chain
 
@@ -693,35 +708,39 @@ This skill is part of the **Creator Ecosystem**. Use companion creators for rela
 
 ## Existing Schemas Reference
 
-| Schema | Location | Purpose |
-|--------|----------|---------|
-| `agent-definition` | `.claude/schemas/` | Agent YAML frontmatter |
-| `skill-definition` | `.claude/schemas/` | Skill YAML frontmatter |
-| `hook-definition` | `.claude/schemas/` | Hook configuration |
-| `workflow-definition` | `.claude/schemas/` | Workflow structure |
-| `project-analysis` | `.claude/schemas/` | Project analyzer output |
-| `test-results` | `.claude/schemas/` | Test execution results |
-| `test_plan` | `.claude/schemas/` | Test plan structure |
+| Schema                | Location           | Purpose                 |
+| --------------------- | ------------------ | ----------------------- |
+| `agent-definition`    | `.claude/schemas/` | Agent YAML frontmatter  |
+| `skill-definition`    | `.claude/schemas/` | Skill YAML frontmatter  |
+| `hook-definition`     | `.claude/schemas/` | Hook configuration      |
+| `workflow-definition` | `.claude/schemas/` | Workflow structure      |
+| `project-analysis`    | `.claude/schemas/` | Project analyzer output |
+| `test-results`        | `.claude/schemas/` | Test execution results  |
+| `test_plan`           | `.claude/schemas/` | Test plan structure     |
 
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/schemas/`
 
 For skill-specific schemas: `.claude/skills/<skill-name>/schemas/`
 
 Schema naming convention:
+
 - Global schemas: `<name>.schema.json`
 - Skill input: `input.schema.json`
 - Skill output: `output.schema.json`
 - Components: `components/<name>.schema.json`
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -730,16 +749,19 @@ Invalid placements will be blocked in production mode.
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previously created schemas
 - Known validation issues
 - Schema naming conventions
 
 **After completing:**
+
 - New schema created -> Append to `.claude/context/memory/learnings.md`
 - Validation issue found -> Append to `.claude/context/memory/issues.md`
 - Architecture decision -> Append to `.claude/context/memory/decisions.md`
@@ -804,6 +826,7 @@ ls -la .claude/schemas/*.schema.json
 ```
 
 **Completion Checklist** (all must be checked):
+
 ```
 [ ] Schema file created with .schema.json extension
 [ ] $schema field present (draft-07 or later)

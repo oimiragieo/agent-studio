@@ -13,6 +13,7 @@ https://api.biorxiv.org
 ## Rate Limiting
 
 Be respectful of the API:
+
 - Add delays between requests (minimum 0.5 seconds recommended)
 - Use appropriate User-Agent headers
 - Cache results when possible
@@ -24,23 +25,27 @@ Be respectful of the API:
 Retrieve preprints posted within a specific date range.
 
 **Endpoint:**
+
 ```
 GET /details/biorxiv/{start_date}/{end_date}
 GET /details/biorxiv/{start_date}/{end_date}/{category}
 ```
 
 **Parameters:**
+
 - `start_date`: Start date in YYYY-MM-DD format
 - `end_date`: End date in YYYY-MM-DD format
 - `category` (optional): Filter by subject category
 
 **Example:**
+
 ```
 GET https://api.biorxiv.org/details/biorxiv/2024-01-01/2024-01-31
 GET https://api.biorxiv.org/details/biorxiv/2024-01-01/2024-01-31/neuroscience
 ```
 
 **Response:**
+
 ```json
 {
   "messages": [
@@ -75,14 +80,17 @@ GET https://api.biorxiv.org/details/biorxiv/2024-01-01/2024-01-31/neuroscience
 Retrieve details for a specific preprint by DOI.
 
 **Endpoint:**
+
 ```
 GET /details/biorxiv/{doi}
 ```
 
 **Parameters:**
+
 - `doi`: The DOI of the preprint (e.g., `10.1101/2024.01.15.123456`)
 
 **Example:**
+
 ```
 GET https://api.biorxiv.org/details/biorxiv/10.1101/2024.01.15.123456
 ```
@@ -92,21 +100,25 @@ GET https://api.biorxiv.org/details/biorxiv/10.1101/2024.01.15.123456
 Retrieve recent publications from a time interval.
 
 **Endpoint:**
+
 ```
 GET /pubs/biorxiv/{interval}/{cursor}/{format}
 ```
 
 **Parameters:**
+
 - `interval`: Number of days back to search (e.g., `1` for last 24 hours)
 - `cursor`: Pagination cursor (0 for first page, increment by 100 for subsequent pages)
 - `format`: Response format (`json` or `xml`)
 
 **Example:**
+
 ```
 GET https://api.biorxiv.org/pubs/biorxiv/1/0/json
 ```
 
 **Response includes pagination:**
+
 ```json
 {
   "messages": [
@@ -157,21 +169,21 @@ bioRxiv organizes preprints into the following categories:
 
 Each paper in the `collection` array contains:
 
-| Field | Description | Type |
-|-------|-------------|------|
-| `doi` | Digital Object Identifier | string |
-| `title` | Paper title | string |
-| `authors` | Comma-separated author list | string |
-| `author_corresponding` | Corresponding author name | string |
-| `author_corresponding_institution` | Corresponding author's institution | string |
-| `date` | Publication date (YYYY-MM-DD) | string |
-| `version` | Version number | string |
-| `type` | Type of submission (e.g., "new results") | string |
-| `license` | License type (e.g., "cc_by") | string |
-| `category` | Subject category | string |
-| `jatsxml` | URL to JATS XML | string |
-| `abstract` | Paper abstract | string |
-| `published` | Journal publication info (if published) | string |
+| Field                              | Description                              | Type   |
+| ---------------------------------- | ---------------------------------------- | ------ |
+| `doi`                              | Digital Object Identifier                | string |
+| `title`                            | Paper title                              | string |
+| `authors`                          | Comma-separated author list              | string |
+| `author_corresponding`             | Corresponding author name                | string |
+| `author_corresponding_institution` | Corresponding author's institution       | string |
+| `date`                             | Publication date (YYYY-MM-DD)            | string |
+| `version`                          | Version number                           | string |
+| `type`                             | Type of submission (e.g., "new results") | string |
+| `license`                          | License type (e.g., "cc_by")             | string |
+| `category`                         | Subject category                         | string |
+| `jatsxml`                          | URL to JATS XML                          | string |
+| `abstract`                         | Paper abstract                           | string |
+| `published`                        | Journal publication info (if published)  | string |
 
 ## Downloading Full Papers
 
@@ -184,6 +196,7 @@ https://www.biorxiv.org/content/{doi}v{version}.full.pdf
 ```
 
 Example:
+
 ```
 https://www.biorxiv.org/content/10.1101/2024.01.15.123456v1.full.pdf
 ```
@@ -219,11 +232,13 @@ Full structured XML is available via the `jatsxml` field in the API response.
 ## Error Handling
 
 Common HTTP status codes:
+
 - `200`: Success
 - `404`: Resource not found
 - `500`: Server error
 
 Always check the `messages` array in the response:
+
 ```json
 {
   "messages": [

@@ -124,11 +124,13 @@ sim.time_stepping.start()
 ### Running MPI Simulations
 
 Install with MPI support:
+
 ```bash
 uv pip install "fluidsim[fft,mpi]"
 ```
 
 Run with MPI:
+
 ```bash
 mpirun -np 8 python simulation_script.py
 ```
@@ -309,6 +311,7 @@ class SimulCustom(SimulNS2D):
 ```
 
 Use the custom solver:
+
 ```python
 params = SimulCustom.create_default_params()
 # Configure params...

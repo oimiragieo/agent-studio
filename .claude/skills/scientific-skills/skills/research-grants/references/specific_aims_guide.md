@@ -9,7 +9,8 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Font**: 11-point Arial, Helvetica, or similar (no smaller)
 **Line spacing**: Must be readable
 
-**Purpose**: 
+**Purpose**:
+
 - Communicate your research vision clearly and compellingly
 - Establish significance and innovation
 - Demonstrate feasibility
@@ -21,7 +22,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 ### Essential Components (in order)
 
 1. **Opening Hook** (2-4 sentences)
-2. **Gap/Problem Statement** (2-4 sentences)  
+2. **Gap/Problem Statement** (2-4 sentences)
 3. **Long-Term Goal** (1 sentence)
 4. **Objective** (1-2 sentences)
 5. **Central Hypothesis** (1 sentence) [or Research Questions]
@@ -36,6 +37,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Purpose**: Establish importance and grab attention
 
 **What to include**:
+
 - Broad context (disease burden, biological importance, technological need)
 - Epidemiological data or statistics that establish scale
 - Why this problem matters for health or science
@@ -44,6 +46,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Length**: 2-4 sentences
 
 **Writing tips**:
+
 - Start strong with compelling statement
 - Use concrete numbers (prevalence, mortality, costs)
 - Avoid jargon in first sentence
@@ -51,10 +54,10 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 
 **Examples**:
 
-*Clinical Example*:
+_Clinical Example_:
 "Pancreatic ductal adenocarcinoma (PDAC) is the third leading cause of cancer death in the United States, with a devastating 5-year survival rate of only 11%. Despite decades of research, therapeutic options remain limited, and most patients present with advanced, unresectable disease. The lack of effective early detection methods and targeted therapies represents a critical unmet medical need affecting over 62,000 Americans diagnosed annually."
 
-*Basic Science Example*:
+_Basic Science Example_:
 "Mitochondrial dysfunction is a hallmark of aging and age-related diseases, yet the mechanisms linking mitochondrial decline to cellular senescence remain poorly understood. Emerging evidence suggests that mitochondrial-nuclear communication pathways play a central role in longevity determination across species, from yeast to mammals. Understanding how cells sense and respond to mitochondrial stress could reveal new therapeutic targets for age-related diseases affecting millions worldwide."
 
 ### Second Paragraph: Gap and Context
@@ -62,6 +65,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Purpose**: Define what's known, what's unknown, and why it matters
 
 **What to include**:
+
 - Current state of knowledge (brief literature context)
 - Specific gap or barrier to progress
 - Why this gap is critical to address
@@ -70,6 +74,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Length**: 3-5 sentences
 
 **Structure**:
+
 1. What we know (1-2 sentences)
 2. What we don't know / what's limiting progress (1-2 sentences)
 3. Why this gap matters (1 sentence)
@@ -85,49 +90,56 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Structure**:
 
 **Long-Term Goal** (1 sentence):
+
 - Your overarching research program direction
 - Broader than this specific proposal
 - Provides context for this work
 
-*Example*: "The long-term goal of our research is to elucidate the molecular mechanisms by which the tumor microenvironment promotes therapeutic resistance in pancreatic cancer."
+_Example_: "The long-term goal of our research is to elucidate the molecular mechanisms by which the tumor microenvironment promotes therapeutic resistance in pancreatic cancer."
 
 **Objective** (1-2 sentences):
+
 - Specific objective of THIS grant
 - What you will accomplish in 3-5 years
 - More focused than long-term goal
 
-*Example*: "The objective of this application is to define the role of cancer-associated fibroblasts (CAFs) in mediating gemcitabine resistance and to develop combination therapies targeting CAF-tumor interactions."
+_Example_: "The objective of this application is to define the role of cancer-associated fibroblasts (CAFs) in mediating gemcitabine resistance and to develop combination therapies targeting CAF-tumor interactions."
 
 **Central Hypothesis** (1 sentence):
+
 - Testable prediction
 - Should unify the specific aims
 - Based on preliminary data or logical reasoning
 - Clear and specific
 
-*Example*: "Our central hypothesis is that CAF-secreted factors activate protective autophagy in tumor cells, conferring resistance to gemcitabine, and that dual inhibition of CAF signaling and autophagy will restore drug sensitivity."
+_Example_: "Our central hypothesis is that CAF-secreted factors activate protective autophagy in tumor cells, conferring resistance to gemcitabine, and that dual inhibition of CAF signaling and autophagy will restore drug sensitivity."
 
 **Alternative: Research Questions** (if hypothesis-testing isn't appropriate):
+
 - 2-3 focused questions
 - Should correspond to specific aims
 
-*Example*: "This project will address the following questions: (1) What factors secreted by CAFs promote tumor cell survival during chemotherapy? (2) How do tumor cells integrate CAF signals to activate protective responses? (3) Can targeting CAF-tumor interactions enhance therapeutic efficacy in preclinical models?"
+_Example_: "This project will address the following questions: (1) What factors secreted by CAFs promote tumor cell survival during chemotherapy? (2) How do tumor cells integrate CAF signals to activate protective responses? (3) Can targeting CAF-tumor interactions enhance therapeutic efficacy in preclinical models?"
 
 **Rationale** (2-3 sentences):
+
 - Why you think the hypothesis is true
 - Mention key preliminary data (very briefly)
 - Logical basis for your approach
 - Why this approach will work
 
-*Example*: "This hypothesis is based on our preliminary data showing that CAF-conditioned medium protects tumor cells from gemcitabine-induced apoptosis by 60% (Fig. 1), and that this protection is blocked by autophagy inhibitors (Fig. 2). Proteomic analysis of CAF secretomes identified 15 candidate factors enriched in drug-resistant contexts (Table 1). These findings suggest a targetable pathway linking CAF signaling to tumor cell survival that could be exploited therapeutically."
+_Example_: "This hypothesis is based on our preliminary data showing that CAF-conditioned medium protects tumor cells from gemcitabine-induced apoptosis by 60% (Fig. 1), and that this protection is blocked by autophagy inhibitors (Fig. 2). Proteomic analysis of CAF secretomes identified 15 candidate factors enriched in drug-resistant contexts (Table 1). These findings suggest a targetable pathway linking CAF signaling to tumor cell survival that could be exploited therapeutically."
 
 ### Specific Aims (Main Section)
 
 **How many aims**: 2-4 aims (3 is most common for R01)
+
 - **Too few (1)**: Insufficient work, appears risky
 - **Just right (2-3)**: Focused, achievable, synergistic
 - **Too many (4+)**: Overly ambitious, unlikely to complete
 
 **Structure for each aim**:
+
 1. **Aim Statement** (1-2 sentences, bold or underlined)
 2. **Rationale and Background** (1-3 sentences)
 3. **Working Hypothesis** (1 sentence, if applicable)
@@ -137,6 +149,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Length per aim**: ~4-6 sentences (¼ to ⅓ page)
 
 **Relationships between aims**:
+
 - **Independent**: Failure of one aim doesn't doom the others
 - **Synergistic**: Aims build on each other or address complementary questions
 - **Progressive**: Aim 1 enables Aim 2, Aim 2 enables Aim 3 (be careful—creates risk)
@@ -145,43 +158,44 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 
 **Aim 1: Identify CAF-secreted factors that mediate gemcitabine resistance.**
 
-*Rationale*: CAF-conditioned medium confers significant protection against gemcitabine (Fig. 1), suggesting secreted factors are responsible. We have identified 15 candidate proteins enriched in CAF secretomes from resistant versus sensitive contexts (Table 1). 
+_Rationale_: CAF-conditioned medium confers significant protection against gemcitabine (Fig. 1), suggesting secreted factors are responsible. We have identified 15 candidate proteins enriched in CAF secretomes from resistant versus sensitive contexts (Table 1).
 
-*Working Hypothesis*: CAFs secrete specific growth factors and cytokines (including IL-6, CXCL12, and HGF) that activate pro-survival pathways in tumor cells.
+_Working Hypothesis_: CAFs secrete specific growth factors and cytokines (including IL-6, CXCL12, and HGF) that activate pro-survival pathways in tumor cells.
 
-*Approach*: We will (1) validate candidate factors using neutralizing antibodies in co-culture assays, (2) measure activation of downstream signaling pathways (STAT3, PI3K/AKT, MAPK) in tumor cells, and (3) perform CRISPR screens in CAFs to identify factors required for resistance phenotype. We will use patient-derived CAFs and tumor cells to ensure clinical relevance.
+_Approach_: We will (1) validate candidate factors using neutralizing antibodies in co-culture assays, (2) measure activation of downstream signaling pathways (STAT3, PI3K/AKT, MAPK) in tumor cells, and (3) perform CRISPR screens in CAFs to identify factors required for resistance phenotype. We will use patient-derived CAFs and tumor cells to ensure clinical relevance.
 
-*Expected Outcomes*: We expect to identify 3-5 CAF-secreted factors sufficient and necessary for gemcitabine resistance, and define their signaling mechanisms. These will serve as therapeutic targets for Aims 2-3.
+_Expected Outcomes_: We expect to identify 3-5 CAF-secreted factors sufficient and necessary for gemcitabine resistance, and define their signaling mechanisms. These will serve as therapeutic targets for Aims 2-3.
 
 ---
 
 **Aim 2: Determine the mechanisms by which CAF signals activate protective autophagy in tumor cells.**
 
-*Rationale*: Our data show that CAF-mediated resistance requires autophagy (Fig. 2), but the signaling pathways linking CAF factors to autophagy activation remain unknown.
+_Rationale_: Our data show that CAF-mediated resistance requires autophagy (Fig. 2), but the signaling pathways linking CAF factors to autophagy activation remain unknown.
 
-*Working Hypothesis*: CAF-secreted factors activate mTOR-independent autophagy through AMPK and ULK1 phosphorylation.
+_Working Hypothesis_: CAF-secreted factors activate mTOR-independent autophagy through AMPK and ULK1 phosphorylation.
 
-*Approach*: We will (1) measure autophagy flux in tumor cells exposed to CAF factors using LC3 turnover assays and electron microscopy, (2) define signaling pathways using phosphoproteomic analysis and pharmacologic inhibitors, and (3) validate pathways using genetic knockdowns (shRNA/CRISPR) of key nodes. Studies will be performed in 2D and 3D co-culture systems.
+_Approach_: We will (1) measure autophagy flux in tumor cells exposed to CAF factors using LC3 turnover assays and electron microscopy, (2) define signaling pathways using phosphoproteomic analysis and pharmacologic inhibitors, and (3) validate pathways using genetic knockdowns (shRNA/CRISPR) of key nodes. Studies will be performed in 2D and 3D co-culture systems.
 
-*Expected Outcomes*: We will define the signaling cascade from CAF factors to autophagy activation, identifying druggable nodes for combination therapy. Results will inform Aim 3 therapeutic strategies.
+_Expected Outcomes_: We will define the signaling cascade from CAF factors to autophagy activation, identifying druggable nodes for combination therapy. Results will inform Aim 3 therapeutic strategies.
 
 ---
 
 **Aim 3: Evaluate combination therapies targeting CAF-tumor interactions in preclinical models.**
 
-*Rationale*: Single-agent therapies targeting CAFs or autophagy have shown limited efficacy clinically, suggesting combination approaches are needed.
+_Rationale_: Single-agent therapies targeting CAFs or autophagy have shown limited efficacy clinically, suggesting combination approaches are needed.
 
-*Working Hypothesis*: Dual inhibition of CAF signaling and autophagy will synergistically restore gemcitabine sensitivity in vivo.
+_Working Hypothesis_: Dual inhibition of CAF signaling and autophagy will synergistically restore gemcitabine sensitivity in vivo.
 
-*Approach*: Using patient-derived xenograft (PDX) models and genetically engineered mouse models (GEMM) of PDAC, we will test combinations of (1) gemcitabine + CAF pathway inhibitors identified in Aim 1, (2) gemcitabine + autophagy inhibitors, and (3) triple combinations. We will assess tumor growth, survival, and mechanism (IHC, RNA-seq) in n=10-15 mice per group.
+_Approach_: Using patient-derived xenograft (PDX) models and genetically engineered mouse models (GEMM) of PDAC, we will test combinations of (1) gemcitabine + CAF pathway inhibitors identified in Aim 1, (2) gemcitabine + autophagy inhibitors, and (3) triple combinations. We will assess tumor growth, survival, and mechanism (IHC, RNA-seq) in n=10-15 mice per group.
 
-*Expected Outcomes*: We expect combination therapies will reduce tumor growth by ≥60% compared to gemcitabine alone, with synergistic effects. The most effective regimen will be advanced toward clinical translation through an investigator-initiated trial (we have IND-enabling resources available at our institution).
+_Expected Outcomes_: We expect combination therapies will reduce tumor growth by ≥60% compared to gemcitabine alone, with synergistic effects. The most effective regimen will be advanced toward clinical translation through an investigator-initiated trial (we have IND-enabling resources available at our institution).
 
 ### Closing Paragraph: Impact and Significance
 
 **Purpose**: Leave reviewers with enthusiasm and clear understanding of importance
 
 **What to include**:
+
 - Expected outcomes of the overall project
 - How findings will advance the field
 - Positive impact on health or science
@@ -191,6 +205,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 **Length**: 2-4 sentences
 
 **Writing tips**:
+
 - Be confident but not arrogant
 - Connect back to opening (full circle)
 - Emphasize transformative potential
@@ -205,12 +220,14 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 ### Clarity and Accessibility
 
 **Write for a mixed audience**:
+
 - Some panel members will be experts in your area
 - Others will be in related but not identical fields
 - Program officers and council members will read it
 - Some reviewers will only read this page before scoring
 
 **Strategies**:
+
 - Define technical terms at first use
 - Explain abbreviations (except very common ones)
 - Use clear, direct language
@@ -220,16 +237,19 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 ### Confidence Without Arrogance
 
 **Confident** ✅:
+
 - "Our preliminary data demonstrate..."
 - "We have established a robust model system..."
 - "This approach will elucidate..."
 
 **Arrogant** ❌:
+
 - "We are uniquely qualified..."
 - "Only our lab can do this..."
 - "This will revolutionize the field..."
 
 **Tentative** ❌:
+
 - "We hope to..."
 - "We will try to..."
 - "It is possible that..."
@@ -237,6 +257,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 ### Active and Specific
 
 **Aim statements should**:
+
 - Start with action verbs (Determine, Identify, Elucidate, Define, Characterize, Validate, Develop)
 - Be specific and testable
 - Indicate what will be learned
@@ -250,6 +271,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 ### Show Feasibility
 
 **Throughout the aims page**:
+
 - Mention preliminary data (figures, tables)
 - Reference established methods
 - Show you have necessary resources
@@ -257,6 +279,7 @@ The **Specific Aims page** is the most important page of your entire NIH grant a
 - Indicate prior success
 
 **Don't**:
+
 - Relegate all preliminary data to Research Strategy
 - Make it seem like you're starting from scratch
 - Propose overly ambitious aims without support
@@ -339,6 +362,7 @@ The aims page is NOT a mini review article. Provide only enough background to es
 ### Use Visual Elements
 
 **Figures on Specific Aims Page**:
+
 - NIH allows figures on aims page
 - Can be very effective to show key preliminary data
 - Must be legible (font size requirements apply)
@@ -346,6 +370,7 @@ The aims page is NOT a mini review article. Provide only enough background to es
 - Typical: 1 small figure or panel showing most critical data
 
 **Tables**:
+
 - Can summarize preliminary data compactly
 - Show patient characteristics, gene lists, etc.
 - Must be readable
@@ -353,11 +378,13 @@ The aims page is NOT a mini review article. Provide only enough background to es
 ### Strategic Use of Bold/Italics
 
 **Appropriate**:
+
 - Bold aim statements to make them stand out
 - Italicize gene names (standard convention)
 - Underline key points (sparingly)
 
 **Avoid**:
+
 - Excessive formatting that looks cluttered
 - All caps (looks like shouting)
 - Colors (may not print/display correctly)
@@ -365,6 +392,7 @@ The aims page is NOT a mini review article. Provide only enough background to es
 ### The "Skim Test"
 
 **Your aims page should pass the skim test**:
+
 - Someone reading just aim statements should understand the project
 - Bold aim statements that can be read independently
 - Each paragraph has clear topic sentence
@@ -375,12 +403,14 @@ The aims page is NOT a mini review article. Provide only enough background to es
 ### Tailoring to Career Stage
 
 **Early Stage Investigators**:
+
 - Show you've thought through challenges
 - Demonstrate strong mentorship and institutional support
 - Emphasize innovation while ensuring feasibility
 - Don't over-promise
 
 **Established Investigators**:
+
 - Show how this extends your research program
 - Emphasize track record implicitly
 - Can propose more ambitious aims if supported by extensive preliminary data
@@ -405,6 +435,7 @@ The aims page is NOT a mini review article. Provide only enough background to es
 Before finalizing, ensure your aims page:
 
 **Content**:
+
 - [ ] Opens with compelling statement of importance
 - [ ] Clearly defines the gap or problem
 - [ ] States specific, measurable objective
@@ -417,6 +448,7 @@ Before finalizing, ensure your aims page:
 - [ ] Closes with impact and significance
 
 **Clarity**:
+
 - [ ] First paragraph is accessible to non-specialists
 - [ ] Technical terms are defined
 - [ ] Abbreviations are spelled out at first use
@@ -425,6 +457,7 @@ Before finalizing, ensure your aims page:
 - [ ] Language is confident and active
 
 **Format**:
+
 - [ ] Exactly 1 page
 - [ ] 0.5-inch margins
 - [ ] 11-point font or larger
@@ -433,6 +466,7 @@ Before finalizing, ensure your aims page:
 - [ ] Figures (if included) are legible
 
 **Impact**:
+
 - [ ] Passes the "skim test"
 - [ ] Would make you excited if you were a reviewer
 - [ ] Clearly articulates significance
@@ -455,4 +489,3 @@ The Specific Aims page is where grants are won or lost. **Invest time in getting
 ---
 
 **Key Takeaway**: The perfect Specific Aims page tells a compelling story in exactly one page—establishing a significant problem, presenting an innovative and feasible solution, showing preliminary evidence of success, and articulating transformative impact. Every sentence must earn its place.
-

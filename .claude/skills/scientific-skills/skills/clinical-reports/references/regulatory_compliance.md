@@ -11,11 +11,13 @@ HIPAA Privacy Rule protects individually identifiable health information (Protec
 **Definition:** Individually identifiable health information held or transmitted by covered entities or business associates in any form or medium.
 
 **Covered Entities:**
+
 - Healthcare providers
 - Health plans
 - Healthcare clearinghouses
 
 **Business Associates:**
+
 - Third parties providing services involving PHI
 - Require Business Associate Agreement (BAA)
 
@@ -49,6 +51,7 @@ These identifiers must be removed for Safe Harbor de-identification:
 Remove all 18 identifiers AND have no actual knowledge that remaining information could be used to identify the individual.
 
 **Implementation:**
+
 - Remove/redact all 18 identifiers
 - Ages over 89 must be aggregated to "90 or older"
 - Dates can keep year only
@@ -60,6 +63,7 @@ Remove all 18 identifiers AND have no actual knowledge that remaining informatio
 Statistical/scientific analysis demonstrating that risk of re-identification is very small.
 
 **Requirements:**
+
 - Performed by qualified statistician or expert
 - Documented analysis methods
 - Conclusion that re-identification risk is very small
@@ -70,11 +74,13 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 **Principle:** Use, disclose, and request only the minimum PHI necessary to accomplish purpose.
 
 **Exceptions:**
+
 - Treatment purposes (providers need full information)
 - Patient-authorized disclosures
 - Required by law
 
 **Implementation:**
+
 - Role-based access controls
 - Purpose-specific disclosures
 - Limited data sets when feasible
@@ -82,6 +88,7 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 ### Patient Authorization
 
 **When required:**
+
 - Uses/disclosures beyond treatment, payment, operations (TPO)
 - Marketing purposes
 - Sale of PHI
@@ -89,6 +96,7 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 - Research (unless waiver obtained)
 
 **Required elements of authorization:**
+
 - Specific description of PHI to be used/disclosed
 - Person(s) authorized to make disclosure
 - Person(s) to receive information
@@ -101,6 +109,7 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 ### HIPAA Security Rule (Electronic PHI)
 
 **Administrative Safeguards:**
+
 - Security management process
 - Workforce security
 - Information access management
@@ -108,11 +117,13 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 - Security incident procedures
 
 **Physical Safeguards:**
+
 - Facility access controls
 - Workstation use and security
 - Device and media controls
 
 **Technical Safeguards:**
+
 - Access control
 - Audit controls
 - Integrity controls
@@ -123,12 +134,14 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 **Breach definition:** Unauthorized acquisition, access, use, or disclosure of PHI that compromises security or privacy.
 
 **Notification requirements:**
+
 - **Individual notification:** Without unreasonable delay, no later than 60 days
 - **Media notification:** If breach affects >500 residents of a state or jurisdiction
 - **HHS notification:** Within 60 days if >500 individuals; annually if <500
 - **Business associate notification to covered entity:** Without unreasonable delay
 
 **Content of notification:**
+
 - Description of breach
 - Types of information involved
 - Steps individuals should take to protect themselves
@@ -138,12 +151,14 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 ### Penalties for HIPAA Violations
 
 **Civil penalties (per violation):**
+
 - Tier 1: $100-$50,000 (unknowing)
 - Tier 2: $1,000-$50,000 (reasonable cause)
 - Tier 3: $10,000-$50,000 (willful neglect, corrected)
 - Tier 4: $50,000-$1.9M (willful neglect, not corrected)
 
 **Criminal penalties:**
+
 - Knowingly obtaining PHI: Up to $50,000 and/or 1 year
 - Under false pretenses: Up to $100,000 and/or 5 years
 - Intent to sell/transfer/use for commercial advantage: Up to $250,000 and/or 10 years
@@ -151,11 +166,13 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 ### Research and HIPAA
 
 **HIPAA authorization for research:**
+
 - Specific to research study
 - Describes PHI to be used
 - States that PHI may not be necessary for treatment
 
 **Waiver of authorization:**
+
 - IRB or Privacy Board approval
 - Minimal risk to privacy
 - Research could not practically be conducted without waiver
@@ -165,6 +182,7 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 - Written assurances
 
 **Limited data sets:**
+
 - Remove 16 of 18 identifiers (may keep dates and geographic subdivisions)
 - Data use agreement required
 - Only for research, public health, or healthcare operations
@@ -176,6 +194,7 @@ Statistical/scientific analysis demonstrating that risk of re-identification is 
 FDA regulation establishing criteria for electronic records and electronic signatures to be considered trustworthy, reliable, and equivalent to paper records.
 
 **Applies to:**
+
 - Clinical trial data
 - Regulatory submissions
 - Manufacturing records
@@ -185,11 +204,13 @@ FDA regulation establishing criteria for electronic records and electronic signa
 ### Electronic Records Requirements
 
 **System validation:**
+
 - Validation documentation
 - Accuracy, reliability, consistent performance
 - Ability to discern invalid or altered records
 
 **Audit trails:**
+
 - Secure, computer-generated, time-stamped audit trail
 - Record of:
   - Date and time of entry/modification
@@ -199,12 +220,14 @@ FDA regulation establishing criteria for electronic records and electronic signa
 - Retained for records retention period
 
 **Operational checks:**
+
 - Authority checks (user authorization)
 - Device checks (valid input devices)
 - Education and training
 - Confirmation of intent (e.g., "Are you sure?")
 
 **Record retention:**
+
 - Electronic copies as accurate as paper
 - Protection from loss (backups)
 - Protection from unauthorized access
@@ -213,17 +236,20 @@ FDA regulation establishing criteria for electronic records and electronic signa
 ### Electronic Signatures Requirements
 
 **General requirements:**
+
 - Unique to one individual
 - Not reused or reassigned
 - Verification of identity before establishing
 - Certification to FDA that electronic signatures are legally binding
 
 **Components:**
+
 - Unique ID
 - Password or biometric
 - Two distinct components when executed
 
 **Controls:**
+
 - Session timeout for inactivity
 - Periodic password changes
 - Prevention of password reuse
@@ -233,6 +259,7 @@ FDA regulation establishing criteria for electronic records and electronic signa
 
 **Electronic signature manifestations:**
 Must include:
+
 - Printed name of signer
 - Date and time of signing
 - Meaning of signature (e.g., review, approval, authorship)
@@ -240,11 +267,13 @@ Must include:
 ### Closed vs. Open Systems
 
 **Closed system:**
+
 - Access limited to authorized individuals
 - Within a single organization
 - Less stringent requirements
 
 **Open system:**
+
 - Not controlled by persons responsible for content
 - Accessible to unauthorized persons
 - Requires additional measures:
@@ -255,6 +284,7 @@ Must include:
 ### Hybrid Systems (Paper + Electronic)
 
 **Requirements:**
+
 - Clear procedures for hybrid system use
 - Maintain record integrity
 - Paper records linked to electronic
@@ -264,6 +294,7 @@ Must include:
 ### Legacy Systems
 
 **Grandfather clause:**
+
 - Systems in use before August 20, 1997 may be grandfathered
 - Must demonstrate trustworthiness without full Part 11 compliance
 - Must validate and document reliability
@@ -276,10 +307,12 @@ Must include:
 International ethical and scientific quality standard for designing, conducting, recording, and reporting trials involving human subjects.
 
 **Purpose:**
+
 - Protect rights, safety, and well-being of trial subjects
 - Ensure credibility of clinical trial data
 
 **Regulatory adoption:**
+
 - FDA recognizes ICH-GCP (E6)
 - Required for studies supporting regulatory submissions
 
@@ -314,6 +347,7 @@ International ethical and scientific quality standard for designing, conducting,
 ### Essential Documents
 
 **Before trial initiation:**
+
 - Investigator's Brochure
 - Protocol and amendments
 - Sample CRF
@@ -329,6 +363,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Instructions for handling investigational products
 
 **During trial:**
+
 - Updates to investigator's brochure
 - Protocol amendments and approvals
 - Continuing IRB review
@@ -341,6 +376,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Correspondence with regulatory authorities
 
 **After trial:**
+
 - Final report
 - Documentation of investigational product destruction
 - Samples of labels and labeling
@@ -349,12 +385,14 @@ International ethical and scientific quality standard for designing, conducting,
 ### Investigator Responsibilities
 
 **Qualifications:**
+
 - Qualified by education, training, and experience
 - Has adequate resources
 - Has adequate time
 - Has access to subjects
 
 **Compliance:**
+
 - Conduct trial per protocol
 - Obtain IRB approval before trial
 - Obtain informed consent
@@ -364,6 +402,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Retain records
 
 **Safety reporting:**
+
 - Immediately report SAEs to sponsor
 - Report to IRB per requirements
 - Report to regulatory authority per requirements
@@ -371,16 +410,19 @@ International ethical and scientific quality standard for designing, conducting,
 ### Source Documentation
 
 **Source documents:**
+
 - Original documents, data, and records
 - Examples: hospital records, clinical charts, laboratory notes, ECGs, pharmacy records
 - Must support data in CRFs
 
 **Source data verification (SDV):**
+
 - Comparison of CRF data to source documents
 - Required by monitors
 - Can be 100% or risk-based sampling
 
 **Good documentation practice:**
+
 - Contemporaneous (record in real-time or soon after)
 - Legible
 - Indelible
@@ -391,6 +433,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Not retrospectively changed without documentation
 
 **Corrections to source:**
+
 - Single line through error
 - Reason for change
 - Date and initials
@@ -401,12 +444,14 @@ International ethical and scientific quality standard for designing, conducting,
 ### Record Retention
 
 **Minimum retention:**
+
 - 2 years after last approval of marketing application (US)
 - At least 2 years after formal discontinuation of clinical development
 - Longer if required by local regulations
 - 25 years for some countries (e.g., Japan for new drugs)
 
 **Documents to retain:**
+
 - Protocols and amendments
 - CRFs
 - Source documents
@@ -422,6 +467,7 @@ International ethical and scientific quality standard for designing, conducting,
 ### 21 CFR Part 50 (Informed Consent)
 
 **Elements of informed consent:**
+
 1. Statement that study involves research
 2. Description of purpose, duration, procedures
 3. Experimental procedures identified
@@ -436,6 +482,7 @@ International ethical and scientific quality standard for designing, conducting,
 12. Statement that subject may discontinue at any time
 
 **Additional elements (when appropriate):**
+
 - Unforeseeable risks to subject or embryo/fetus
 - Circumstances of study termination by investigator
 - Additional costs to subject
@@ -444,6 +491,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Approximate number of subjects
 
 **Documentation:**
+
 - Written consent required (unless waived)
 - Copy provided to subject
 - Subject or legally authorized representative must sign
@@ -451,6 +499,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Date of consent
 
 **Vulnerable populations:**
+
 - Children: Parental permission + assent (if capable)
 - Prisoners: Additional protections
 - Pregnant women: Additional protections for fetus
@@ -459,6 +508,7 @@ International ethical and scientific quality standard for designing, conducting,
 ### 21 CFR Part 56 (IRB Standards)
 
 **IRB composition:**
+
 - At least 5 members
 - Varying backgrounds
 - At least one scientist
@@ -467,6 +517,7 @@ International ethical and scientific quality standard for designing, conducting,
 - No member may participate in review of study in which member has conflicting interest
 
 **IRB review criteria:**
+
 - Risks minimized
 - Risks reasonable in relation to benefits
 - Selection of subjects equitable
@@ -476,16 +527,19 @@ International ethical and scientific quality standard for designing, conducting,
 - Additional safeguards for vulnerable populations
 
 **IRB review types:**
+
 - Full board review
 - Expedited review (certain categories of minimal risk)
 - Exempt (certain categories)
 
 **Continuing review:**
+
 - At least annually
 - More frequent if determined by IRB
 - Review of progress, new information, consent process
 
 **Documentation:**
+
 - Written procedures
 - Meeting minutes
 - Review determinations
@@ -495,6 +549,7 @@ International ethical and scientific quality standard for designing, conducting,
 ### 21 CFR Part 312 (IND Regulations)
 
 **IND requirements:**
+
 - Investigator's Brochure
 - Protocol(s)
 - Chemistry, manufacturing, and controls information
@@ -503,18 +558,21 @@ International ethical and scientific quality standard for designing, conducting,
 - Additional information (if applicable)
 
 **IND amendments:**
+
 - Protocol amendments
 - Information amendments
 - Safety reports
 - Annual reports
 
 **Safety reporting:**
+
 - IND safety reports (7-day and 15-day)
 - Fatal or life-threatening unexpected: 7 days (preliminary), 15 days (complete)
 - Other serious unexpected: 15 days
 - Annual safety reports
 
 **General investigational plan:**
+
 - Rationale for drug or study
 - Indications to be studied
 - Approach to evaluating drug
@@ -526,6 +584,7 @@ International ethical and scientific quality standard for designing, conducting,
 **EU CTR 536/2014** (replaced Clinical Trials Directive 2001/20/EC)
 
 **Key requirements:**
+
 - Single submission portal (CTIS - Clinical Trials Information System)
 - Single assessment by multiple member states
 - Transparency requirements (EudraCT database)
@@ -533,6 +592,7 @@ International ethical and scientific quality standard for designing, conducting,
 - Layperson summary of results required
 
 **Timelines:**
+
 - Assessment: 60 days (Part I), additional time for Part II
 - Substantial modifications: 38 days
 - Safety reporting: Within specified timelines to EudraVigilance
@@ -542,6 +602,7 @@ International ethical and scientific quality standard for designing, conducting,
 ### Principles
 
 **ALCOA-CCEA:**
+
 - **A**ttributable: Who performed action and when
 - **L**egible: Readable and permanent
 - **C**ontemporaneous: Recorded when performed
@@ -549,6 +610,7 @@ International ethical and scientific quality standard for designing, conducting,
 - **A**ccurate: Correct and truthful
 
 Additional:
+
 - **C**omplete: All data captured
 - **C**onsistent: Chronological sequence, no discrepancies
 - **E**nduring: Durable throughout retention period
@@ -557,6 +619,7 @@ Additional:
 ### Data Integrity
 
 **MHRA (UK) data integrity guidance:**
+
 - Data governance (ownership, quality)
 - Risk assessment
 - Change management
@@ -564,6 +627,7 @@ Additional:
 - Regular audit
 
 **Common data integrity issues:**
+
 - Back-dating of records
 - Deletion or hiding of data
 - Repeat testing without documentation
@@ -574,4 +638,3 @@ Additional:
 ---
 
 This reference provides comprehensive guidance for regulatory compliance in clinical reports and clinical trials, including HIPAA, FDA regulations, ICH-GCP, and EU requirements. Ensure all clinical documentation adheres to applicable regulations.
-

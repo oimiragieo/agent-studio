@@ -13,6 +13,7 @@ https://eutils.ncbi.nlm.nih.gov/entrez/eutils/
 As of December 1, 2018, NCBI enforces API key usage for E-utility calls. API keys increase rate limits from 3 requests/second to 10 requests/second. To obtain an API key, register for an NCBI account and generate a key from your account settings.
 
 Include the API key in requests using the `&api_key` parameter:
+
 ```
 esearch.fcgi?db=pubmed&term=cancer&api_key=YOUR_API_KEY
 ```
@@ -32,10 +33,12 @@ esearch.fcgi?db=pubmed&term=cancer&api_key=YOUR_API_KEY
 **Purpose**: Search an Entrez database and retrieve a list of UIDs (e.g., PMIDs for PubMed)
 
 **Required Parameters**:
+
 - `db` - Database to search (e.g., pubmed, gene, protein)
 - `term` - Search query
 
 **Optional Parameters**:
+
 - `retmax` - Maximum records to return (default: 20, max: 10000)
 - `retstart` - Index of first record to return (default: 0)
 - `usehistory=y` - Store results on history server for large result sets
@@ -47,11 +50,13 @@ esearch.fcgi?db=pubmed&term=cancer&api_key=YOUR_API_KEY
 - `maxdate` - Maximum date (YYYY/MM/DD format)
 
 **Example Request**:
+
 ```
 esearch.fcgi?db=pubmed&term=breast+cancer&retmax=100&retmode=json&api_key=YOUR_API_KEY
 ```
 
 **Response Elements**:
+
 - `Count` - Total number of records matching query
 - `RetMax` - Number of records returned in this response
 - `RetStart` - Index of first returned record
@@ -66,21 +71,25 @@ esearch.fcgi?db=pubmed&term=breast+cancer&retmax=100&retmode=json&api_key=YOUR_A
 **Purpose**: Retrieve full records from a database in various formats
 
 **Required Parameters**:
+
 - `db` - Database name
 - `id` - Comma-separated list of UIDs, or use WebEnv/query_key from ESearch
 
 **Optional Parameters**:
+
 - `rettype` - Record type (abstract, medline, xml, uilist)
 - `retmode` - Return mode (text, xml)
 - `retstart` - Starting record index
 - `retmax` - Maximum records per request
 
 **Example Request**:
+
 ```
 efetch.fcgi?db=pubmed&id=123456,234567&rettype=abstract&retmode=text&api_key=YOUR_API_KEY
 ```
 
 **Common rettype Values for PubMed**:
+
 - `abstract` - Abstract text
 - `medline` - Full MEDLINE format
 - `xml` - PubMed XML format
@@ -93,19 +102,23 @@ efetch.fcgi?db=pubmed&id=123456,234567&rettype=abstract&retmode=text&api_key=YOU
 **Purpose**: Get document summaries (DocSum) for a list of UIDs
 
 **Required Parameters**:
+
 - `db` - Database name
 - `id` - Comma-separated UIDs or WebEnv/query_key
 
 **Optional Parameters**:
+
 - `retmode` - Return format (xml, json)
 - `version` - DocSum version (1.0 or 2.0, default is 1.0)
 
 **Example Request**:
+
 ```
 esummary.fcgi?db=pubmed&id=123456,234567&retmode=json&version=2.0&api_key=YOUR_API_KEY
 ```
 
 **DocSum Fields** (vary by database, common PubMed fields):
+
 - Title
 - Authors
 - Source (journal)
@@ -121,10 +134,12 @@ esummary.fcgi?db=pubmed&id=123456,234567&retmode=json&version=2.0&api_key=YOUR_A
 **Purpose**: Upload a list of UIDs to the history server for use in subsequent requests
 
 **Required Parameters**:
+
 - `db` - Database name
 - `id` - Comma-separated list of UIDs
 
 **Example Request**:
+
 ```
 epost.fcgi?db=pubmed&id=123456,234567,345678&api_key=YOUR_API_KEY
 ```
@@ -139,22 +154,26 @@ Returns WebEnv and QueryKey for use in subsequent requests
 **Purpose**: Find related records within the same database or in different databases
 
 **Required Parameters**:
+
 - `dbfrom` - Source database
 - `db` - Target database (can be same as dbfrom)
 - `id` - UID(s) from source database
 
 **Optional Parameters**:
+
 - `cmd` - Link command (neighbor, neighbor_history, prlinks, llinks, etc.)
 - `linkname` - Specific link type to retrieve
 - `term` - Filter results with search query
 - `holding` - Filter by library holdings
 
 **Example Request**:
+
 ```
 elink.fcgi?dbfrom=pubmed&db=pubmed&id=123456&cmd=neighbor&api_key=YOUR_API_KEY
 ```
 
 **Common Link Commands**:
+
 - `neighbor` - Return related records
 - `neighbor_history` - Post related records to history server
 - `prlinks` - Return provider URLs
@@ -167,15 +186,18 @@ elink.fcgi?dbfrom=pubmed&db=pubmed&id=123456&cmd=neighbor&api_key=YOUR_API_KEY
 **Purpose**: Get information about available Entrez databases or specific database fields
 
 **Parameters**:
+
 - `db` - Database name (optional; omit to list all databases)
 - `retmode` - Return format (xml, json)
 
 **Example Request**:
+
 ```
 einfo.fcgi?db=pubmed&retmode=json&api_key=YOUR_API_KEY
 ```
 
 **Returns**:
+
 - Database description
 - Record count
 - Last update date
@@ -188,9 +210,11 @@ einfo.fcgi?db=pubmed&retmode=json&api_key=YOUR_API_KEY
 **Purpose**: Search term counts across all Entrez databases
 
 **Required Parameters**:
+
 - `term` - Search query
 
 **Example Request**:
+
 ```
 egquery.fcgi?term=cancer&api_key=YOUR_API_KEY
 ```
@@ -202,10 +226,12 @@ egquery.fcgi?term=cancer&api_key=YOUR_API_KEY
 **Purpose**: Get spelling suggestions for queries
 
 **Required Parameters**:
+
 - `db` - Database name
 - `term` - Search term with potential misspelling
 
 **Example Request**:
+
 ```
 espell.fcgi?db=pubmed&term=cancre&api_key=YOUR_API_KEY
 ```
@@ -219,11 +245,13 @@ espell.fcgi?db=pubmed&term=cancre&api_key=YOUR_API_KEY
 **Request Format**: POST request with citation strings
 
 **Citation String Format**:
+
 ```
 journal|year|volume|page|author|key|
 ```
 
 **Example**:
+
 ```
 Science|2008|320|5880|1185|key1|
 Nature|2010|463|7279|318|key2|
@@ -238,11 +266,13 @@ Nature|2010|463|7279|318|key2|
 For queries returning more than 500 records, use the history server:
 
 1. **Initial Search with History**:
+
 ```
 esearch.fcgi?db=pubmed&term=cancer&usehistory=y&retmode=json&api_key=YOUR_API_KEY
 ```
 
 2. **Retrieve Records in Batches**:
+
 ```
 efetch.fcgi?db=pubmed&query_key=1&WebEnv=MCID_12345&retstart=0&retmax=500&rettype=xml&api_key=YOUR_API_KEY
 efetch.fcgi?db=pubmed&query_key=1&WebEnv=MCID_12345&retstart=500&retmax=500&rettype=xml&api_key=YOUR_API_KEY
@@ -263,6 +293,7 @@ efetch.fcgi?db=pubmed&query_key=1&WebEnv=MCID_12345&rettype=xml&api_key=YOUR_API
 ### Error Handling
 
 Common HTTP status codes:
+
 - `200` - Success
 - `400` - Bad request (check parameters)
 - `414` - URI too long (use POST or history server)
@@ -271,6 +302,7 @@ Common HTTP status codes:
 ### Caching
 
 Implement local caching to:
+
 - Reduce redundant API calls
 - Stay within rate limits
 - Improve response times

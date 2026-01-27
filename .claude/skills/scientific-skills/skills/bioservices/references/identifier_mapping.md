@@ -67,56 +67,56 @@ UniProt supports mapping between 100+ database pairs. Key ones include:
 
 #### Protein/Gene Databases
 
-| Source Format | Code | Target Format | Code |
-|---------------|------|---------------|------|
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | KEGG | `KEGG` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | Ensembl | `Ensembl` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | Ensembl Protein | `Ensembl_Protein` |
+| Source Format   | Code              | Target Format      | Code                 |
+| --------------- | ----------------- | ------------------ | -------------------- |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | KEGG               | `KEGG`               |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | Ensembl            | `Ensembl`            |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | Ensembl Protein    | `Ensembl_Protein`    |
 | UniProtKB AC/ID | `UniProtKB_AC-ID` | Ensembl Transcript | `Ensembl_Transcript` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | RefSeq Protein | `RefSeq_Protein` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | RefSeq Nucleotide | `RefSeq_Nucleotide` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | GeneID (Entrez) | `GeneID` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | HGNC | `HGNC` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | MGI | `MGI` |
-| KEGG | `KEGG` | UniProtKB | `UniProtKB` |
-| Ensembl | `Ensembl` | UniProtKB | `UniProtKB` |
-| GeneID | `GeneID` | UniProtKB | `UniProtKB` |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | RefSeq Protein     | `RefSeq_Protein`     |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | RefSeq Nucleotide  | `RefSeq_Nucleotide`  |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | GeneID (Entrez)    | `GeneID`             |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | HGNC               | `HGNC`               |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | MGI                | `MGI`                |
+| KEGG            | `KEGG`            | UniProtKB          | `UniProtKB`          |
+| Ensembl         | `Ensembl`         | UniProtKB          | `UniProtKB`          |
+| GeneID          | `GeneID`          | UniProtKB          | `UniProtKB`          |
 
 #### Structural Databases
 
-| Source | Code | Target | Code |
-|--------|------|--------|------|
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | PDB | `PDB` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | Pfam | `Pfam` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | InterPro | `InterPro` |
-| PDB | `PDB` | UniProtKB | `UniProtKB` |
+| Source          | Code              | Target    | Code        |
+| --------------- | ----------------- | --------- | ----------- |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | PDB       | `PDB`       |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | Pfam      | `Pfam`      |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | InterPro  | `InterPro`  |
+| PDB             | `PDB`             | UniProtKB | `UniProtKB` |
 
 #### Expression & Proteomics
 
-| Source | Code | Target | Code |
-|--------|------|--------|------|
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | PRIDE | `PRIDE` |
+| Source          | Code              | Target       | Code           |
+| --------------- | ----------------- | ------------ | -------------- |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | PRIDE        | `PRIDE`        |
 | UniProtKB AC/ID | `UniProtKB_AC-ID` | ProteomicsDB | `ProteomicsDB` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | PaxDb | `PaxDb` |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | PaxDb        | `PaxDb`        |
 
 #### Organism-Specific
 
-| Source | Code | Target | Code |
-|--------|------|--------|------|
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | FlyBase | `FlyBase` |
+| Source          | Code              | Target   | Code       |
+| --------------- | ----------------- | -------- | ---------- |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | FlyBase  | `FlyBase`  |
 | UniProtKB AC/ID | `UniProtKB_AC-ID` | WormBase | `WormBase` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | SGD | `SGD` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | ZFIN | `ZFIN` |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | SGD      | `SGD`      |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | ZFIN     | `ZFIN`     |
 
 #### Other Useful Mappings
 
-| Source | Code | Target | Code |
-|--------|------|--------|------|
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | GO | `GO` |
+| Source          | Code              | Target   | Code       |
+| --------------- | ----------------- | -------- | ---------- |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | GO       | `GO`       |
 | UniProtKB AC/ID | `UniProtKB_AC-ID` | Reactome | `Reactome` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | STRING | `STRING` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | BioGRID | `BioGRID` |
-| UniProtKB AC/ID | `UniProtKB_AC-ID` | OMA | `OMA` |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | STRING   | `STRING`   |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | BioGRID  | `BioGRID`  |
+| UniProtKB AC/ID | `UniProtKB_AC-ID` | OMA      | `OMA`      |
 
 ### Complete List of Database Codes
 
@@ -137,6 +137,7 @@ u = UniProt()
 ### Common Database Codes Reference
 
 **Gene/Protein Identifiers:**
+
 - `UniProtKB_AC-ID`: UniProt accession/ID
 - `UniProtKB`: UniProt accession
 - `KEGG`: KEGG gene IDs (e.g., hsa:7535)
@@ -144,10 +145,11 @@ u = UniProt()
 - `Ensembl`: Ensembl gene IDs
 - `Ensembl_Protein`: Ensembl protein IDs
 - `Ensembl_Transcript`: Ensembl transcript IDs
-- `RefSeq_Protein`: RefSeq protein IDs (NP_)
-- `RefSeq_Nucleotide`: RefSeq nucleotide IDs (NM_)
+- `RefSeq_Protein`: RefSeq protein IDs (NP\_)
+- `RefSeq_Nucleotide`: RefSeq nucleotide IDs (NM\_)
 
 **Gene Nomenclature:**
+
 - `HGNC`: Human Gene Nomenclature Committee
 - `MGI`: Mouse Genome Informatics
 - `RGD`: Rat Genome Database
@@ -157,6 +159,7 @@ u = UniProt()
 - `ZFIN`: Zebrafish database
 
 **Structure:**
+
 - `PDB`: Protein Data Bank
 - `Pfam`: Protein families
 - `InterPro`: Protein domains
@@ -164,6 +167,7 @@ u = UniProt()
 - `PROSITE`: Protein motifs
 
 **Pathways & Networks:**
+
 - `Reactome`: Reactome pathways
 - `BioCyc`: BioCyc pathways
 - `PathwayCommons`: Pathway Commons
@@ -242,18 +246,18 @@ UniChem specializes in mapping chemical compound identifiers across databases.
 
 ### Source Database IDs
 
-| Source ID | Database |
-|-----------|----------|
-| 1 | ChEMBL |
-| 2 | DrugBank |
-| 3 | PDB |
-| 4 | IUPHAR/BPS Guide to Pharmacology |
-| 5 | PubChem |
-| 6 | KEGG |
-| 7 | ChEBI |
-| 8 | NIH Clinical Collection |
-| 14 | FDA/SRS |
-| 22 | PubChem |
+| Source ID | Database                         |
+| --------- | -------------------------------- |
+| 1         | ChEMBL                           |
+| 2         | DrugBank                         |
+| 3         | PDB                              |
+| 4         | IUPHAR/BPS Guide to Pharmacology |
+| 5         | PubChem                          |
+| 6         | KEGG                             |
+| 7         | ChEBI                            |
+| 8         | NIH Clinical Collection          |
+| 14        | FDA/SRS                          |
+| 22        | PubChem                          |
 
 ### Basic Usage
 
@@ -570,6 +574,7 @@ print(result)
 **Symptom:** Mapping returns empty or None
 
 **Solutions:**
+
 1. Verify source ID exists in source database
 2. Check database code spelling
 3. Try reverse mapping
@@ -681,5 +686,6 @@ def polite_batch_mapping(ids, from_db, to_db):
 ---
 
 For complete working examples, see:
+
 - `scripts/batch_id_converter.py`: Command-line batch conversion tool
 - `workflow_patterns.md`: Integration into larger workflows

@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - One way to improve the readability and clarity of functions is to encapsulate nested if/else statements into other functions.
 - Encapsulating such logic into a function with a descriptive name clarifies its purpose and simplifies code comprehension.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

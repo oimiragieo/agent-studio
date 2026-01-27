@@ -162,6 +162,7 @@ model = scvi.model.SCVI.load(model_dir, adata=adata)
 ### Key Hyperparameters
 
 **Architecture**:
+
 - `n_latent`: Latent space dimensionality (10-50)
   - Larger for complex, heterogeneous datasets
   - Smaller for simple datasets or to prevent overfitting
@@ -171,6 +172,7 @@ model = scvi.model.SCVI.load(model_dir, adata=adata)
   - Scale with dataset size and complexity
 
 **Training**:
+
 - `max_epochs`: Training iterations (200-500)
   - Use early stopping to prevent overfitting
 - `batch_size`: Samples per batch (64-256)
@@ -178,6 +180,7 @@ model = scvi.model.SCVI.load(model_dir, adata=adata)
 - `lr`: Learning rate (0.001 default, usually good)
 
 **Model-specific**:
+
 - `gene_likelihood`: Distribution ("zinb", "nb", "poisson")
   - "zinb" for sparse data with zero-inflation
   - "nb" for less sparse data
@@ -441,11 +444,13 @@ sns.heatmap(correlation[:50, :50], cmap="coolwarm")
 ### Issue: NaN Loss During Training
 
 **Causes**:
+
 - Learning rate too high
 - Unnormalized input (must use raw counts)
 - Data quality issues
 
 **Solutions**:
+
 ```python
 # Reduce learning rate
 model.train(lr=0.0001)
@@ -461,6 +466,7 @@ model = scvi.model.SCVI(adata, gene_likelihood="nb")
 ### Issue: Poor Batch Correction
 
 **Solutions**:
+
 ```python
 # Increase batch effect modeling
 model = scvi.model.SCVI(
@@ -479,6 +485,7 @@ model = scvi.model.SCVI(adata, n_latent=50)
 ### Issue: Model Not Training (ELBO Not Decreasing)
 
 **Solutions**:
+
 ```python
 # Increase learning rate
 model.train(lr=0.005)
@@ -493,6 +500,7 @@ model.train(max_epochs=500)
 ### Issue: Out of Memory (OOM)
 
 **Solutions**:
+
 ```python
 # Reduce batch size
 model.train(batch_size=64)

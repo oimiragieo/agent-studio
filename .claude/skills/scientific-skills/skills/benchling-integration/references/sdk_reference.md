@@ -17,6 +17,7 @@ poetry add benchling-sdk --allow-prereleases
 ```
 
 ### Requirements
+
 - Python 3.7 or higher
 - API access enabled on your Benchling tenant
 
@@ -84,6 +85,7 @@ resource.archive(id="resource_id")
 ### DNA Sequences
 
 **Create:**
+
 ```python
 from benchling_sdk.models import DnaSequenceCreate
 
@@ -104,6 +106,7 @@ sequence = benchling.dna_sequences.create(
 ```
 
 **Read:**
+
 ```python
 # Get by ID
 seq = benchling.dna_sequences.get(sequence_id="seq_abc123")
@@ -122,6 +125,7 @@ for page in sequences:
 ```
 
 **Update:**
+
 ```python
 from benchling_sdk.models import DnaSequenceUpdate
 
@@ -138,6 +142,7 @@ updated = benchling.dna_sequences.update(
 ```
 
 **Archive:**
+
 ```python
 benchling.dna_sequences.archive(
     sequence_id="seq_abc123",
@@ -260,6 +265,7 @@ mixture = benchling.mixtures.create(
 ### Registry Operations
 
 **Direct Registry Registration:**
+
 ```python
 # Register entity upon creation
 registered_seq = benchling.dna_sequences.create(
@@ -276,6 +282,7 @@ print(f"Registry ID: {registered_seq.registry_id}")
 ```
 
 **Naming Strategies:**
+
 - `NEW_IDS`: Benchling generates new registry IDs
 - `IDS_FROM_NAMES`: Use entity names as registry IDs (names must be unique)
 
@@ -734,6 +741,7 @@ for page in sequences:
 ### Common Issues
 
 **Import Errors:**
+
 ```python
 # Wrong
 from benchling_sdk import Benchling  # ImportError
@@ -743,6 +751,7 @@ from benchling_sdk.benchling import Benchling
 ```
 
 **Field Validation:**
+
 ```python
 # Fields must match schema
 # Check schema field types in Benchling UI
@@ -754,6 +763,7 @@ fields = benchling.models.fields({
 ```
 
 **Pagination Exhaustion:**
+
 ```python
 # Generators can only be iterated once
 sequences = benchling.dna_sequences.list()

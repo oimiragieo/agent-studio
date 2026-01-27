@@ -24,13 +24,13 @@ Orchestrate multi-agent swarms using Queen/Worker topology for massively paralle
 
 ## When to Use
 
-| Scenario | Why Swarm | Example |
-|----------|-----------|---------|
-| **Large-scale refactoring** | Parallelize file changes | Rename across 50+ files |
-| **Multi-perspective review** | Consensus from experts | Security + Performance + Architecture review |
-| **Parallel testing** | Speed through parallelism | Run test suites across modules |
-| **Distributed code generation** | Independent implementations | Generate CRUD for 10 entities |
-| **Brainstorming/exploration** | Diverse approaches | Prototype 3 different solutions |
+| Scenario                        | Why Swarm                   | Example                                      |
+| ------------------------------- | --------------------------- | -------------------------------------------- |
+| **Large-scale refactoring**     | Parallelize file changes    | Rename across 50+ files                      |
+| **Multi-perspective review**    | Consensus from experts      | Security + Performance + Architecture review |
+| **Parallel testing**            | Speed through parallelism   | Run test suites across modules               |
+| **Distributed code generation** | Independent implementations | Generate CRUD for 10 entities                |
+| **Brainstorming/exploration**   | Diverse approaches          | Prototype 3 different solutions              |
 
 ## Topology Patterns
 
@@ -458,12 +458,12 @@ Workers emit heartbeats to indicate liveness:
 
 ### Health Check Thresholds
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| No heartbeat | 2 minutes | 5 minutes |
-| No progress | 5 minutes | 10 minutes |
-| Error rate | >10% | >50% |
-| Memory usage | >80% | >95% |
+| Metric       | Warning   | Critical   |
+| ------------ | --------- | ---------- |
+| No heartbeat | 2 minutes | 5 minutes  |
+| No progress  | 5 minutes | 10 minutes |
+| Error rate   | >10%      | >50%       |
+| Memory usage | >80%      | >95%       |
 
 ### Stall Detection
 
@@ -549,7 +549,7 @@ if (successfulWorkers / totalWorkers >= 0.5) {
   proceedWithPartialResults();
 } else {
   // Abort swarm
-  abortSwarm("Too many worker failures");
+  abortSwarm('Too many worker failures');
 }
 ```
 
@@ -559,9 +559,9 @@ if (successfulWorkers / totalWorkers >= 0.5) {
 // Exponential backoff for retries
 const retryConfig = {
   maxRetries: 3,
-  initialDelay: 1000,  // 1 second
-  maxDelay: 30000,     // 30 seconds
-  backoffMultiplier: 2
+  initialDelay: 1000, // 1 second
+  maxDelay: 30000, // 30 seconds
+  backoffMultiplier: 2,
 };
 
 function calculateDelay(attempt) {

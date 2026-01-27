@@ -7,6 +7,7 @@ This document provides detailed reference information for the BRENDA (BRaunschwe
 ## SOAP API Endpoints
 
 ### Base WSDL URL
+
 ```
 https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 ```
@@ -16,10 +17,12 @@ https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 All BRENDA API calls require authentication using email and password:
 
 **Parameters:**
+
 - `email`: Your registered BRENDA email address
 - `password`: Your BRENDA account password
 
 **Authentication Process:**
+
 1. Password is hashed using SHA-256 before transmission
 2. Email and hashed password are included as the first two parameters in every API call
 3. Legacy support for `BRENDA_EMIAL` environment variable (note the typo)
@@ -31,9 +34,10 @@ All BRENDA API calls require authentication using email and password:
 Retrieves Michaelis constant (Km) values for enzymes.
 
 **Parameters:**
+
 1. `email`: BRENDA account email
 2. `passwordHash`: SHA-256 hashed password
-3. `ecNumber*: EC number of the enzyme (wildcards allowed)
+3. `ecNumber\*: EC number of the enzyme (wildcards allowed)
 4. `organism*: Organism name (wildcards allowed, default: "*")
 5. `kmValue*: Km value field (default: "*")
 6. `kmValueMaximum*: Maximum Km value field (default: "*")
@@ -43,15 +47,18 @@ Retrieves Michaelis constant (Km) values for enzymes.
 10. `literature*: Literature reference field (default: "*")
 
 **Wildcards:**
+
 - `*`: Matches any sequence
-- Can be used with partial EC numbers (e.g., "1.1.*")
+- Can be used with partial EC numbers (e.g., "1.1.\*")
 
 **Response Format:**
+
 ```
 organism*Escherichia coli#substrate*glucose#kmValue*0.12#kmValueMaximum*#commentary*pH 7.4, 25°C#ligandStructureId*#literature*
 ```
 
 **Example Response Fields:**
+
 - `organism`: Source organism
 - `substrate`: Substrate name
 - `kmValue`: Michaelis constant value (typically in mM)
@@ -65,20 +72,23 @@ organism*Escherichia coli#substrate*glucose#kmValue*0.12#kmValueMaximum*#comment
 Retrieves reaction equations and stoichiometry for enzymes.
 
 **Parameters:**
+
 1. `email`: BRENDA account email
 2. `passwordHash`: SHA-256 hashed password
-3. `ecNumber*: EC number of the enzyme (wildcards allowed)
+3. `ecNumber\*: EC number of the enzyme (wildcards allowed)
 4. `organism*: Organism name (wildcards allowed, default: "*")
 5. `reaction*: Reaction equation (wildcards allowed, default: "*")
 6. `commentary*: Commentary field (default: "*")
 7. `literature*: Literature reference field (default: "*")
 
 **Response Format:**
+
 ```
 ecNumber*1.1.1.1#organism*Saccharomyces cerevisiae#reaction*ethanol + NAD+ <=> acetaldehyde + NADH + H+#commentary*#literature*
 ```
 
 **Example Response Fields:**
+
 - `ecNumber`: Enzyme Commission number
 - `organism`: Source organism
 - `reaction`: Balanced chemical equation (using <=> for equilibrium, -> for direction)
@@ -103,6 +113,7 @@ EC numbers follow the standard hierarchical format: `A.B.C.D`
 - **D**: Serial number
 
 **Examples:**
+
 - `1.1.1.1`: Alcohol dehydrogenase
 - `1.1.1.2`: Alcohol dehydrogenase (NADP+)
 - `3.2.1.23`: Beta-galactosidase
@@ -113,11 +124,13 @@ EC numbers follow the standard hierarchical format: `A.B.C.D`
 Organism names should use proper binomial nomenclature:
 
 **Correct Format:**
+
 - `Escherichia coli`
 - `Saccharomyces cerevisiae`
 - `Homo sapiens`
 
 **Wildcards:**
+
 - `Escherichia*`: Matches all E. coli strains
 - `*coli`: Matches all coli species
 - `*`: Matches all organisms
@@ -127,11 +140,13 @@ Organism names should use proper binomial nomenclature:
 Substrate names follow IUPAC or common biochemical conventions:
 
 **Common Formats:**
+
 - Chemical names: `glucose`, `ethanol`, `pyruvate`
 - IUPAC names: `β-D-glucose`, `ethanol`, `2-oxopropanoic acid`
 - Abbreviations: `ATP`, `NAD+`, `CoA`
 
 **Special Cases:**
+
 - Cofactors: `NAD+`, `NADH`, `NADP+`, `NADPH`
 - Metal ions: `Mg2+`, `Zn2+`, `Fe2+`
 - Inorganic compounds: `H2O`, `CO2`, `O2`
@@ -141,6 +156,7 @@ Substrate names follow IUPAC or common biochemical conventions:
 Commentary fields contain experimental conditions and other metadata:
 
 **Common Information:**
+
 - **pH**: `pH 7.4`, `pH 6.5-8.0`
 - **Temperature**: `25°C`, `37°C`, `50-60°C`
 - **Buffer systems**: `phosphate buffer`, `Tris-HCl`
@@ -149,6 +165,7 @@ Commentary fields contain experimental conditions and other metadata:
 - **Inhibition**: `inhibited by heavy metals`, `activated by Mg2+`
 
 **Examples:**
+
 - `pH 7.4, 25°C, phosphate buffer`
 - `pH 6.5-8.0 optimum, thermostable enzyme`
 - `purified enzyme, specific activity 125 U/mg`
@@ -159,18 +176,21 @@ Commentary fields contain experimental conditions and other metadata:
 Reactions use standard biochemical notation:
 
 **Symbols:**
+
 - `+`: Separate reactants/products
 - `<=>`: Reversible reactions
 - `->`: Irreversible (directional) reactions
 - `=`: Alternative notation for reactions
 
 **Common Patterns:**
+
 - **Oxidation/reduction**: `alcohol + NAD+ <=> aldehyde + NADH + H+`
 - **Phosphorylation**: `glucose + ATP <=> glucose-6-phosphate + ADP`
 - **Hydrolysis**: `ester + H2O <=> acid + alcohol`
 - **Carboxylation**: `acetyl-CoA + CO2 + H2O <=> malonyl-CoA`
 
 **Cofactor Requirements:**
+
 - **Oxidoreductases**: NAD+, NADH, NADP+, NADPH, FAD, FADH2
 - **Transferases**: ATP, ADP, GTP, GDP
 - **Ligases**: ATP, CoA
@@ -195,12 +215,14 @@ Reactions use standard biochemical notation:
 ### Error Handling
 
 **Common SOAP Errors:**
+
 - `Authentication failed`: Check email/password
 - `No data found`: Verify EC number, organism, substrate spelling
 - `Rate limit exceeded`: Reduce request frequency
 - `Invalid parameters`: Check parameter format and order
 
 **Network Errors:**
+
 - Connection timeouts
 - SSL/TLS errors
 - Service unavailable
@@ -212,26 +234,31 @@ Reactions use standard biochemical notation:
 #### Core Functions
 
 **`load_env_from_file(path=".env")`**
+
 - **Purpose**: Load environment variables from .env file
 - **Parameters**: `path` - Path to .env file (default: ".env")
 - **Returns**: None (populates os.environ)
 
 **`_get_credentials() -> tuple[str, str]`**
+
 - **Purpose**: Retrieve BRENDA credentials from environment
 - **Returns**: Tuple of (email, password)
 - **Raises**: RuntimeError if credentials missing
 
 **`_get_client() -> Client`**
+
 - **Purpose**: Initialize or retrieve SOAP client
 - **Returns**: Zeep Client instance
 - **Features**: Singleton pattern, custom transport settings
 
 **`_hash_password(password: str) -> str`**
+
 - **Purpose**: Generate SHA-256 hash of password
 - **Parameters**: `password` - Plain text password
 - **Returns**: Hexadecimal SHA-256 hash
 
 **`call_brenda(action: str, parameters: List[str]) -> str`**
+
 - **Purpose**: Execute BRENDA SOAP action
 - **Parameters**:
   - `action` - SOAP action name (e.g., "getKmValue")
@@ -241,24 +268,27 @@ Reactions use standard biochemical notation:
 #### Convenience Functions
 
 **`get_km_values(ec_number: str, organism: str = "*", substrate: str = "*") -> List[str]`**
+
 - **Purpose**: Retrieve Km values for specified enzyme
 - **Parameters**:
   - `ec_number`: Enzyme Commission number
-  - `organism`: Organism name (wildcard allowed, default: "*")
-  - `substrate`: Substrate name (wildcard allowed, default: "*")
+  - `organism`: Organism name (wildcard allowed, default: "\*")
+  - `substrate`: Substrate name (wildcard allowed, default: "\*")
 - **Returns**: List of parsed data strings
 
 **`get_reactions(ec_number: str, organism: str = "*", reaction: str = "*") -> List[str]`**
+
 - **Purpose**: Retrieve reaction data for specified enzyme
 - **Parameters**:
   - `ec_number`: Enzyme Commission number
-  - `organism`: Organism name (wildcard allowed, default: "*")
-  - `reaction`: Reaction pattern (wildcard allowed, default: "*")
+  - `organism`: Organism name (wildcard allowed, default: "\*")
+  - `reaction`: Reaction pattern (wildcard allowed, default: "\*")
 - **Returns**: List of reaction data strings
 
 #### Utility Functions
 
 **`split_entries(return_text: str) -> List[str]`**
+
 - **Purpose**: Normalize BRENDA responses to list format
 - **Parameters**: `return_text` - Raw response from BRENDA
 - **Returns**: List of individual data entries
@@ -269,6 +299,7 @@ Reactions use standard biochemical notation:
 ### Km Entry Structure
 
 **Parsed Km Entry Dictionary:**
+
 ```python
 {
     'ecNumber': '1.1.1.1',
@@ -288,6 +319,7 @@ Reactions use standard biochemical notation:
 ### Reaction Entry Structure
 
 **Parsed Reaction Entry Dictionary:**
+
 ```python
 {
     'ecNumber': '1.1.1.1',
@@ -305,6 +337,7 @@ Reactions use standard biochemical notation:
 ### Basic Queries
 
 **Get all Km values for an enzyme:**
+
 ```python
 from brenda_client import get_km_values
 
@@ -313,12 +346,14 @@ km_data = get_km_values("1.1.1.1")
 ```
 
 **Get Km values for specific organism:**
+
 ```python
 # Get human alcohol dehydrogenase Km values
 human_km = get_km_values("1.1.1.1", organism="Homo sapiens")
 ```
 
 **Get Km values for specific substrate:**
+
 ```python
 # Get Km for ethanol oxidation
 ethanol_km = get_km_values("1.1.1.1", substrate="ethanol")
@@ -327,6 +362,7 @@ ethanol_km = get_km_values("1.1.1.1", substrate="ethanol")
 ### Wildcard Searches
 
 **Search for enzyme families:**
+
 ```python
 # All alcohol dehydrogenases
 alcohol_dehydrogenases = get_km_values("1.1.1.*")
@@ -336,6 +372,7 @@ hexokinases = get_km_values("2.7.1.*")
 ```
 
 **Search for organism groups:**
+
 ```python
 # All E. coli strains
 e_coli_enzymes = get_km_values("*", organism="Escherichia coli")
@@ -347,6 +384,7 @@ bacillus_enzymes = get_km_values("*", organism="Bacillus*")
 ### Combined Searches
 
 **Specific enzyme-substrate combination:**
+
 ```python
 # Get Km values for glucose oxidation in yeast
 glucose_km = get_km_values("1.1.1.1",
@@ -357,6 +395,7 @@ glucose_km = get_km_values("1.1.1.1",
 ### Reaction Queries
 
 **Get all reactions for an enzyme:**
+
 ```python
 from brenda_client import get_reactions
 
@@ -364,6 +403,7 @@ reactions = get_reactions("1.1.1.1")
 ```
 
 **Search for reactions with specific substrates:**
+
 ```python
 # Find reactions involving glucose
 glucose_reactions = get_reactions("*", reaction="*glucose*")
@@ -374,6 +414,7 @@ glucose_reactions = get_reactions("*", reaction="*glucose*")
 ### Kinetic Parameter Analysis
 
 **Extract numeric Km values:**
+
 ```python
 from scripts.brenda_queries import parse_km_entry
 
@@ -393,6 +434,7 @@ if numeric_kms:
 ### Organism Comparison
 
 **Compare enzyme properties across organisms:**
+
 ```python
 from scripts.brenda_queries import compare_across_organisms
 
@@ -407,6 +449,7 @@ for org_data in comparison:
 ### Substrate Specificity
 
 **Analyze substrate preferences:**
+
 ```python
 from scripts.brenda_queries import get_substrate_specificity
 
@@ -421,6 +464,7 @@ for substrate_data in specificity[:5]:  # Top 5
 ### Metabolic Pathway Construction
 
 **Build enzymatic pathway:**
+
 ```python
 from scripts.enzyme_pathway_builder import find_pathway_for_product
 
@@ -435,6 +479,7 @@ for step in pathway['steps']:
 ### Enzyme Engineering Support
 
 **Find thermostable variants:**
+
 ```python
 from scripts.brenda_queries import find_thermophilic_homologs
 
@@ -447,6 +492,7 @@ for enzyme in thermophilic:
 ### Kinetic Modeling
 
 **Extract parameters for modeling:**
+
 ```python
 from scripts.brenda_queries import get_modeling_parameters
 
@@ -462,23 +508,27 @@ print(f"Optimal conditions: pH {model_data['ph']}, {model_data['temperature']}°
 ### Common Issues
 
 **Authentication Errors:**
+
 - Check BRENDA_EMAIL and BRENDA_PASSWORD environment variables
 - Verify account is active and has API access
 - Note legacy BRENDA_EMIAL support (typo in variable name)
 
 **No Data Returned:**
+
 - Verify EC number format (e.g., "1.1.1.1", not "1.1.1")
 - Check spelling of organism and substrate names
 - Try wildcards for broader searches
 - Some enzymes may have limited data in BRENDA
 
 **Rate Limiting:**
+
 - Implement delays between requests
 - Cache results locally
 - Use more specific queries to reduce data volume
 - Consider batch operations
 
 **Data Format Issues:**
+
 - Use provided parsing functions
 - Handle missing fields gracefully
 - BRENDA data format can be inconsistent
@@ -487,17 +537,20 @@ print(f"Optimal conditions: pH {model_data['ph']}, {model_data['temperature']}°
 ### Performance Optimization
 
 **Query Efficiency:**
+
 - Use specific EC numbers when known
 - Limit by organism or substrate to reduce result size
 - Cache frequently accessed data
 - Batch similar requests
 
 **Memory Management:**
+
 - Process large datasets in chunks
 - Use generators for large result sets
 - Clear parsed data when no longer needed
 
 **Network Optimization:**
+
 - Implement retry logic for network errors
 - Use appropriate timeouts
 - Monitor request frequency
@@ -534,4 +587,4 @@ print(f"Optimal conditions: pH {model_data['ph']}, {model_data['temperature']}°
 
 ---
 
-*This API reference covers the core functionality of the BRENDA SOAP API and Python client. For complete details on available data fields and query patterns, consult the official BRENDA documentation.*
+_This API reference covers the core functionality of the BRENDA SOAP API and Python client. For complete details on available data fields and query patterns, consult the official BRENDA documentation._

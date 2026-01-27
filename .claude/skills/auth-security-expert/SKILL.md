@@ -43,6 +43,7 @@ OAuth 2.1 consolidates a decade of security best practices into a single specifi
 #### Required Changes from OAuth 2.0
 
 **1. PKCE is REQUIRED for ALL Clients**
+
 - Previously optional, now MANDATORY for public AND confidential clients
 - Prevents authorization code interception and injection attacks
 - Code verifier: 43-128 cryptographically random URL-safe characters
@@ -73,6 +74,7 @@ function base64UrlEncode(buffer) {
 ```
 
 **2. Implicit Flow REMOVED**
+
 - ❌ `response_type=token` or `response_type=id_token token` - FORBIDDEN
 - Tokens exposed in URL fragments leak via:
   - Browser history
@@ -82,6 +84,7 @@ function base64UrlEncode(buffer) {
 - **Migration**: Use Authorization Code Flow + PKCE for ALL SPAs
 
 **3. Resource Owner Password Credentials (ROPC) REMOVED**
+
 - ❌ `grant_type=password` - FORBIDDEN
 - Violates delegated authorization principle
 - Increases phishing and credential theft risk
@@ -89,6 +92,7 @@ function base64UrlEncode(buffer) {
 - **Migration**: Authorization Code Flow for users, Client Credentials for services
 
 **4. Bearer Tokens in URI Query Parameters FORBIDDEN**
+
 - ❌ `GET /api/resource?access_token=xyz` - FORBIDDEN
 - Tokens leak via:
   - Server access logs
@@ -99,6 +103,7 @@ function base64UrlEncode(buffer) {
 - ✅ Or secure POST body parameter
 
 **5. Exact Redirect URI Matching REQUIRED**
+
 - No wildcards: `https://*.example.com` - FORBIDDEN
 - No partial matches or subdomain wildcards
 - MUST perform exact string comparison
@@ -114,6 +119,7 @@ function validateRedirectUri(requestedUri, registeredUris) {
 ```
 
 **6. Refresh Token Protection REQUIRED**
+
 - MUST implement ONE of:
   - **Sender-constrained tokens** (mTLS, DPoP - Demonstrating Proof-of-Possession)
   - **Refresh token rotation** with reuse detection (recommended for most apps)
@@ -124,6 +130,7 @@ function validateRedirectUri(requestedUri, registeredUris) {
 Attacker intercepts authorization request and strips `code_challenge` parameters. If authorization server allows backward compatibility with OAuth 2.0 (non-PKCE), it proceeds without PKCE protection. Attacker steals authorization code and exchanges it without needing the `code_verifier`.
 
 **Prevention (Server-Side):**
+
 ```javascript
 // Authorization endpoint - REJECT requests without PKCE
 app.get('/authorize', (req, res) => {
@@ -233,6 +240,7 @@ sessionStorage.removeItem('oauth_state');
 #### OAuth 2.1 Security Checklist
 
 **Before Production Deployment:**
+
 - [ ] PKCE enabled for ALL clients (public AND confidential)
 - [ ] PKCE downgrade prevention (reject requests without code_challenge)
 - [ ] Implicit Flow completely disabled/removed
@@ -251,18 +259,21 @@ sessionStorage.removeItem('oauth_state');
 #### Token Lifecycle Best Practices
 
 **Access Tokens:**
+
 - Lifetime: **≤15 minutes maximum** (recommended: 5-15 minutes)
 - Short-lived to limit damage from token theft
 - Stateless validation (no database lookup needed)
 - Include minimal claims (user ID, permissions, expiry)
 
 **Refresh Tokens:**
+
 - Lifetime: Days to weeks (7-30 days typical)
 - MUST implement rotation (issue new, invalidate old)
 - Stored securely server-side (hashed, like passwords)
 - Revocable (require database lookup)
 
 **ID Tokens (OpenID Connect):**
+
 - Short-lived (5-60 minutes)
 - Contains user profile information
 - MUST validate signature and claims
@@ -273,6 +284,7 @@ sessionStorage.removeItem('oauth_state');
 **✅ RECOMMENDED Algorithms:**
 
 **RS256 (RSA with SHA-256)**
+
 - Asymmetric signing (private key signs, public key verifies)
 - Best for distributed systems (API gateway can verify without private key)
 - Key size: 2048-bit minimum (4096-bit for high security)
@@ -301,6 +313,7 @@ const decoded = jwt.verify(token, publicKey, {
 ```
 
 **ES256 (ECDSA with SHA-256)**
+
 - Asymmetric signing (smaller keys than RSA, same security)
 - Faster signing/verification than RSA
 - Key size: 256-bit (equivalent to 3072-bit RSA)
@@ -321,6 +334,7 @@ const token = jwt.sign(payload, privateKey, {
 **⚠️ USE WITH CAUTION:**
 
 **HS256 (HMAC with SHA-256)**
+
 - Symmetric signing (same secret for sign and verify)
 - ONLY for single-server systems (secret must be shared to verify)
 - NEVER expose secret to clients
@@ -342,6 +356,7 @@ const decoded = jwt.verify(token, secret, {
 **❌ FORBIDDEN Algorithms:**
 
 **none (No Signature)**
+
 ```javascript
 // NEVER accept unsigned tokens
 const decoded = jwt.verify(token, null, {
@@ -352,6 +367,7 @@ const decoded = jwt.verify(token, null, {
 ```
 
 **Prevention:**
+
 ```javascript
 // ALWAYS whitelist allowed algorithms, NEVER allow 'none'
 jwt.verify(token, publicKey, {
@@ -415,6 +431,7 @@ async function validateAccessToken(token) {
 #### JWT Claims (RFC 7519)
 
 **Registered Claims (Standard):**
+
 - `iss` (issuer): Authorization server URL - VALIDATE
 - `sub` (subject): User ID (unique, immutable) - REQUIRED
 - `aud` (audience): API/service identifier - VALIDATE
@@ -424,13 +441,14 @@ async function validateAccessToken(token) {
 - `jti` (JWT ID): Unique token ID - REQUIRED for revocation
 
 **Custom Claims (Application-Specific):**
+
 ```javascript
 const payload = {
   // Standard claims
   iss: 'https://auth.example.com',
   sub: 'user_12345',
   aud: 'api.example.com',
-  exp: Math.floor(Date.now() / 1000) + (15 * 60), // 15 minutes
+  exp: Math.floor(Date.now() / 1000) + 15 * 60, // 15 minutes
   iat: Math.floor(Date.now() / 1000),
   jti: crypto.randomUUID(),
 
@@ -444,6 +462,7 @@ const payload = {
 ```
 
 **⚠️ NEVER Store Sensitive Data in JWT:**
+
 - JWTs are **base64-encoded, NOT encrypted** (anyone can decode)
 - Assume all JWT contents are public
 - Use encrypted JWE (JSON Web Encryption) if you must include sensitive data
@@ -451,6 +470,7 @@ const payload = {
 #### Token Storage Security
 
 **✅ CORRECT: HttpOnly Cookies (Server-Side)**
+
 ```javascript
 // Server sets tokens as HttpOnly cookies after OAuth callback
 app.post('/auth/callback', async (req, res) => {
@@ -458,10 +478,10 @@ app.post('/auth/callback', async (req, res) => {
 
   // Access token cookie
   res.cookie('access_token', access_token, {
-    httpOnly: true,      // Cannot be accessed by JavaScript (XSS protection)
-    secure: true,        // HTTPS only
-    sameSite: 'strict',  // CSRF protection (blocks cross-site requests)
-    maxAge: 15 * 60 * 1000,  // 15 minutes
+    httpOnly: true, // Cannot be accessed by JavaScript (XSS protection)
+    secure: true, // HTTPS only
+    sameSite: 'strict', // CSRF protection (blocks cross-site requests)
+    maxAge: 15 * 60 * 1000, // 15 minutes
     path: '/',
     domain: '.example.com', // Allow subdomains
   });
@@ -471,8 +491,8 @@ app.post('/auth/callback', async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000,  // 7 days
-    path: '/auth/refresh',  // ONLY accessible by refresh endpoint
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/auth/refresh', // ONLY accessible by refresh endpoint
     domain: '.example.com',
   });
 
@@ -486,6 +506,7 @@ fetch('https://api.example.com/user/profile', {
 ```
 
 **❌ WRONG: localStorage/sessionStorage**
+
 ```javascript
 // ❌ VULNERABLE TO XSS ATTACKS
 localStorage.setItem('access_token', token);
@@ -499,6 +520,7 @@ sessionStorage.setItem('access_token', token);
 ```
 
 **Why HttpOnly Cookies Prevent XSS Theft:**
+
 - `httpOnly: true` makes cookie inaccessible to JavaScript (document.cookie returns empty)
 - Even if XSS exists, attacker cannot read the token
 - Browser automatically includes cookie in requests (no JavaScript needed)
@@ -512,6 +534,7 @@ If attacker steals refresh token, they can generate unlimited access tokens unti
 Every refresh generates new refresh token and invalidates old one. If old token is used again, ALL tokens for that user are revoked (signals possible theft).
 
 **Server-Side Implementation:**
+
 ```javascript
 app.post('/auth/refresh', async (req, res) => {
   const oldRefreshToken = req.cookies.refresh_token;
@@ -567,7 +590,7 @@ app.post('/auth/refresh', async (req, res) => {
       {
         sub: decoded.sub,
         scope: decoded.scope,
-        exp: Math.floor(Date.now() / 1000) + (15 * 60),
+        exp: Math.floor(Date.now() / 1000) + 15 * 60,
       },
       privateKey,
       { algorithm: 'RS256' }
@@ -577,7 +600,7 @@ app.post('/auth/refresh', async (req, res) => {
       {
         sub: decoded.sub,
         scope: decoded.scope,
-        exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 days
+        exp: Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60, // 7 days
         jti: crypto.randomUUID(),
       },
       privateKey,
@@ -622,6 +645,7 @@ app.post('/auth/refresh', async (req, res) => {
 ```
 
 **Database Schema (Refresh Tokens):**
+
 ```javascript
 {
   userId: 'user_12345',
@@ -639,6 +663,7 @@ app.post('/auth/refresh', async (req, res) => {
 ### Password Hashing (2026 Best Practices)
 
 **Recommended: Argon2id**
+
 - Winner of Password Hashing Competition (2015)
 - Resistant to both GPU cracking and side-channel attacks
 - Configurable memory, time, and parallelism parameters
@@ -652,7 +677,7 @@ const hash = await argon2.hash(password, {
   type: argon2.argon2id,
   memoryCost: 19456, // 19 MiB
   timeCost: 2,
-  parallelism: 1
+  parallelism: 1,
 });
 
 // Verify password
@@ -660,6 +685,7 @@ const isValid = await argon2.verify(hash, password);
 ```
 
 **Acceptable Alternative: bcrypt**
+
 - Still secure but slower than Argon2id for same security level
 - Work factor: minimum 12 (recommended 14+ in 2026)
 
@@ -672,6 +698,7 @@ const isValid = await bcrypt.compare(password, hash);
 ```
 
 **NEVER use:**
+
 - MD5, SHA-1, SHA-256 alone (not designed for passwords)
 - Plain text storage
 - Reversible encryption
@@ -681,24 +708,29 @@ const isValid = await bcrypt.compare(password, hash);
 **Types of MFA:**
 
 **TOTP (Time-based One-Time Passwords)**
+
 - Apps: Google Authenticator, Authy, 1Password
 - 6-digit codes that rotate every 30 seconds
 - Offline-capable
 
 **WebAuthn/FIDO2 (Passkeys)**
+
 - Most secure option (phishing-resistant)
 - Hardware tokens (YubiKey) or platform authenticators (Face ID, Touch ID)
 - Public key cryptography, no shared secrets
 
 **SMS-based (Legacy - NOT recommended)**
+
 - Vulnerable to SIM swapping attacks
 - Use only as fallback, never as primary MFA
 
 **Backup Codes**
+
 - Provide one-time recovery codes during MFA enrollment
 - Store securely (hashed in database)
 
 **Implementation Best Practices:**
+
 - Allow multiple MFA methods per user
 - Enforce MFA for admin/privileged accounts
 - Provide clear enrollment and recovery flows
@@ -707,23 +739,27 @@ const isValid = await bcrypt.compare(password, hash);
 ### Passkeys / WebAuthn
 
 **Why Passkeys:**
+
 - Phishing-resistant (cryptographic binding to origin)
 - No shared secrets to leak or intercept
 - Passwordless authentication
 - Synced across devices (Apple, Google, Microsoft ecosystems)
 
 **Implementation:**
+
 - Use `@simplewebauthn/server` (Node.js) or similar libraries
 - Support both platform authenticators (biometrics) and roaming authenticators (security keys)
 - Provide fallback authentication method during transition
 
 **WebAuthn Registration Flow:**
+
 1. Server generates challenge
 2. Client creates credential with authenticator
 3. Client sends public key to server
 4. Server stores public key associated with user account
 
 **WebAuthn Authentication Flow:**
+
 1. Server generates challenge
 2. Client signs challenge with private key (stored in authenticator)
 3. Server verifies signature with stored public key
@@ -731,6 +767,7 @@ const isValid = await bcrypt.compare(password, hash);
 ### Session Management
 
 **Secure Session Practices:**
+
 - Use secure, HTTP-only cookies for session tokens
   - `Set-Cookie: session=...; Secure; HttpOnly; SameSite=Strict`
 - Implement absolute timeout (e.g., 24 hours)
@@ -739,6 +776,7 @@ const isValid = await bcrypt.compare(password, hash);
 - Provide "logout all devices" functionality
 
 **Session Storage:**
+
 - Server-side session store (Redis, database)
 - Don't store sensitive data in client-side storage
 - Implement session revocation on password change
@@ -746,6 +784,7 @@ const isValid = await bcrypt.compare(password, hash);
 ### Security Headers
 
 **Essential HTTP Security Headers:**
+
 - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (HSTS)
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY` or `SAMEORIGIN`
@@ -755,26 +794,29 @@ const isValid = await bcrypt.compare(password, hash);
 ### Common Vulnerabilities to Prevent
 
 **Injection Attacks:**
+
 - Use parameterized queries (SQL injection prevention)
 - Validate and sanitize all user input
 - Use ORMs with built-in protection
 
 **Cross-Site Scripting (XSS):**
+
 - Escape output in templates
 - Use Content Security Policy headers
 - Never use `eval()` or `innerHTML` with user input
 
 **Cross-Site Request Forgery (CSRF):**
+
 - Use CSRF tokens for state-changing operations
 - Verify origin/referer headers
 - Use SameSite cookie attribute
 
 **Broken Authentication:**
+
 - Enforce strong password policies
 - Implement account lockout after failed attempts
 - Use MFA for sensitive operations
 - Never expose user enumeration (same error for "user not found" and "invalid password")
-
 
 </instructions>
 
@@ -789,6 +831,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
+
 - auth-security-expert
 
 ## Related Skills
@@ -798,6 +841,7 @@ This expert skill consolidates 1 individual skills:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

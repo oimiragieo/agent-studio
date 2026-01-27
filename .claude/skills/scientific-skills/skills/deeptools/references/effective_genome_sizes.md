@@ -19,42 +19,43 @@ Effective genome size refers to the length of the "mappable" genome - regions th
 
 ### Using Non-N Bases Method
 
-| Organism | Assembly | Effective Size | Full Command |
-|----------|----------|----------------|--------------|
-| Human | GRCh38/hg38 | 2,913,022,398 | `--effectiveGenomeSize 2913022398` |
-| Human | GRCh37/hg19 | 2,864,785,220 | `--effectiveGenomeSize 2864785220` |
-| Mouse | GRCm39/mm39 | 2,654,621,837 | `--effectiveGenomeSize 2654621837` |
-| Mouse | GRCm38/mm10 | 2,652,783,500 | `--effectiveGenomeSize 2652783500` |
-| Zebrafish | GRCz11 | 1,368,780,147 | `--effectiveGenomeSize 1368780147` |
-| *Drosophila* | dm6 | 142,573,017 | `--effectiveGenomeSize 142573017` |
-| *C. elegans* | WBcel235/ce11 | 100,286,401 | `--effectiveGenomeSize 100286401` |
-| *C. elegans* | ce10 | 100,258,171 | `--effectiveGenomeSize 100258171` |
+| Organism     | Assembly      | Effective Size | Full Command                       |
+| ------------ | ------------- | -------------- | ---------------------------------- |
+| Human        | GRCh38/hg38   | 2,913,022,398  | `--effectiveGenomeSize 2913022398` |
+| Human        | GRCh37/hg19   | 2,864,785,220  | `--effectiveGenomeSize 2864785220` |
+| Mouse        | GRCm39/mm39   | 2,654,621,837  | `--effectiveGenomeSize 2654621837` |
+| Mouse        | GRCm38/mm10   | 2,652,783,500  | `--effectiveGenomeSize 2652783500` |
+| Zebrafish    | GRCz11        | 1,368,780,147  | `--effectiveGenomeSize 1368780147` |
+| _Drosophila_ | dm6           | 142,573,017    | `--effectiveGenomeSize 142573017`  |
+| _C. elegans_ | WBcel235/ce11 | 100,286,401    | `--effectiveGenomeSize 100286401`  |
+| _C. elegans_ | ce10          | 100,258,171    | `--effectiveGenomeSize 100258171`  |
 
 ### Human (GRCh38) by Read Length
 
 For quality-filtered reads, values vary by read length:
 
 | Read Length | Effective Size |
-|-------------|----------------|
-| 50bp | ~2.7 billion |
-| 75bp | ~2.8 billion |
-| 100bp | ~2.8 billion |
-| 150bp | ~2.9 billion |
-| 250bp | ~2.9 billion |
+| ----------- | -------------- |
+| 50bp        | ~2.7 billion   |
+| 75bp        | ~2.8 billion   |
+| 100bp       | ~2.8 billion   |
+| 150bp       | ~2.9 billion   |
+| 250bp       | ~2.9 billion   |
 
 ### Mouse (GRCm38) by Read Length
 
 | Read Length | Effective Size |
-|-------------|----------------|
-| 50bp | ~2.3 billion |
-| 75bp | ~2.5 billion |
-| 100bp | ~2.6 billion |
+| ----------- | -------------- |
+| 50bp        | ~2.3 billion   |
+| 75bp        | ~2.5 billion   |
+| 100bp       | ~2.6 billion   |
 
 ## Usage in deepTools
 
 The effective genome size is most commonly used with:
 
 ### bamCoverage with RPGC normalization
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing RPGC \
@@ -62,6 +63,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 ```
 
 ### bamCompare with RPGC normalization
+
 ```bash
 bamCompare -b1 treatment.bam -b2 control.bam \
     --outFileName comparison.bw \
@@ -70,6 +72,7 @@ bamCompare -b1 treatment.bam -b2 control.bam \
 ```
 
 ### computeGCBias / correctGCBias
+
 ```bash
 computeGCBias --bamfile input.bam \
     --effectiveGenomeSize 2913022398 \
@@ -112,5 +115,6 @@ seqtk comp genome.fa | awk '{x+=$2}END{print x}'
 ## References
 
 For the most up-to-date effective genome sizes and detailed calculation methods, see:
+
 - deepTools documentation: https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html
 - ENCODE documentation for reference genome details

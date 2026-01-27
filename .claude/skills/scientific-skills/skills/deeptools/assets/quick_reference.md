@@ -3,6 +3,7 @@
 ## Most Common Commands
 
 ### BAM to bigWig (normalized)
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing RPGC --effectiveGenomeSize 2913022398 \
@@ -10,12 +11,14 @@ bamCoverage --bam input.bam --outFileName output.bw \
 ```
 
 ### Compare two BAM files
+
 ```bash
 bamCompare -b1 treatment.bam -b2 control.bam -o ratio.bw \
     --operation log2 --scaleFactorsMethod readCount
 ```
 
 ### Correlation heatmap
+
 ```bash
 multiBamSummary bins --bamfiles *.bam -o counts.npz
 plotCorrelation -in counts.npz --corMethod pearson \
@@ -23,6 +26,7 @@ plotCorrelation -in counts.npz --corMethod pearson \
 ```
 
 ### Heatmap around TSS
+
 ```bash
 computeMatrix reference-point -S signal.bw -R genes.bed \
     -b 3000 -a 3000 --referencePoint TSS -o matrix.gz
@@ -31,6 +35,7 @@ plotHeatmap -m matrix.gz -o heatmap.png
 ```
 
 ### ChIP enrichment check
+
 ```bash
 plotFingerprint -b input.bam chip.bam -o fingerprint.png \
     --extendReads 200 --ignoreDuplicates
@@ -38,11 +43,11 @@ plotFingerprint -b input.bam chip.bam -o fingerprint.png \
 
 ## Effective Genome Sizes
 
-| Organism | Assembly | Size |
-|----------|----------|------|
-| Human | hg38 | 2913022398 |
-| Mouse | mm10 | 2652783500 |
-| Fly | dm6 | 142573017 |
+| Organism | Assembly | Size       |
+| -------- | -------- | ---------- |
+| Human    | hg38     | 2913022398 |
+| Mouse    | mm10     | 2652783500 |
+| Fly      | dm6      | 142573017  |
 
 ## Common Normalization Methods
 

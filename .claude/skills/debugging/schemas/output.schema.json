@@ -3,9 +3,7 @@
   "title": "debugging Output Schema",
   "description": "Output validation schema for debugging skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

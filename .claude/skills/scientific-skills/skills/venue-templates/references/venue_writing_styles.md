@@ -23,15 +23,15 @@ audience         depth  biology   experts    researchers    only
 
 ## Quick Style Reference
 
-| Venue Type | Audience | Tone | Voice | Abstract Style |
-|------------|----------|------|-------|----------------|
-| **Nature/Science** | Educated non-specialists | Accessible, engaging | Active, first-person OK | Flowing paragraphs, no jargon |
-| **Cell Press** | Biologists | Mechanistic, precise | Mixed | Summary + eTOC blurb + Highlights |
-| **Medical (NEJM/Lancet)** | Clinicians | Evidence-focused | Formal | Structured (Background/Methods/Results/Conclusions) |
-| **PLOS/BMC** | Researchers | Standard academic | Neutral | IMRaD structured or flowing |
-| **IEEE/ACM** | Engineers/CS | Technical | Passive common | Concise, technical |
-| **ML Conferences** | ML researchers | Dense technical | Mixed | Numbers upfront, key results |
-| **NLP Conferences** | NLP researchers | Technical | Varied | Task-focused, benchmarks |
+| Venue Type                | Audience                 | Tone                 | Voice                   | Abstract Style                                      |
+| ------------------------- | ------------------------ | -------------------- | ----------------------- | --------------------------------------------------- |
+| **Nature/Science**        | Educated non-specialists | Accessible, engaging | Active, first-person OK | Flowing paragraphs, no jargon                       |
+| **Cell Press**            | Biologists               | Mechanistic, precise | Mixed                   | Summary + eTOC blurb + Highlights                   |
+| **Medical (NEJM/Lancet)** | Clinicians               | Evidence-focused     | Formal                  | Structured (Background/Methods/Results/Conclusions) |
+| **PLOS/BMC**              | Researchers              | Standard academic    | Neutral                 | IMRaD structured or flowing                         |
+| **IEEE/ACM**              | Engineers/CS             | Technical            | Passive common          | Concise, technical                                  |
+| **ML Conferences**        | ML researchers           | Dense technical      | Mixed                   | Numbers upfront, key results                        |
+| **NLP Conferences**       | NLP researchers          | Technical            | Varied                  | Task-focused, benchmarks                            |
 
 ---
 
@@ -53,20 +53,22 @@ High-impact multidisciplinary journals prioritize **broad significance** over te
 
 **Nature/Science** vs. **Specialized Journals**:
 
-| Element | Nature/Science | Specialized Journal |
-|---------|---------------|---------------------|
-| Introduction | 3-4 paragraphs, broad → specific | Extensive literature review |
-| Methods | Often in supplement or brief | Full detail in main text |
-| Results | Organized by finding/story | Organized by experiment |
-| Discussion | Implications first, then caveats | Detailed comparison to literature |
-| Figures | Conceptual schematics valued | Raw data emphasized |
+| Element      | Nature/Science                   | Specialized Journal               |
+| ------------ | -------------------------------- | --------------------------------- |
+| Introduction | 3-4 paragraphs, broad → specific | Extensive literature review       |
+| Methods      | Often in supplement or brief     | Full detail in main text          |
+| Results      | Organized by finding/story       | Organized by experiment           |
+| Discussion   | Implications first, then caveats | Detailed comparison to literature |
+| Figures      | Conceptual schematics valued     | Raw data emphasized               |
 
 ### Example: Same Finding, Different Styles
 
 **Nature style**:
+
 > "We discovered that protein X acts as a molecular switch controlling cell fate decisions during development, resolving a longstanding question about how stem cells choose their destiny."
 
 **Specialized journal style**:
+
 > "Using CRISPR-Cas9 knockout in murine embryonic stem cells (mESCs), we demonstrate that protein X (encoded by gene ABC1) regulates the expression of pluripotency factors Oct4, Sox2, and Nanog through direct promoter binding, as confirmed by ChIP-seq analysis (n=3 biological replicates, FDR < 0.05)."
 
 ---
@@ -99,12 +101,12 @@ Conclusions: [Clinical implications, limitations acknowledged]
 
 ### Evidence Language Conventions
 
-| Study Design | Appropriate Language |
-|-------------|---------------------|
-| RCT | "Treatment X reduced mortality by..." |
+| Study Design  | Appropriate Language                                   |
+| ------------- | ------------------------------------------------------ |
+| RCT           | "Treatment X reduced mortality by..."                  |
 | Observational | "Treatment X was associated with reduced mortality..." |
-| Case series | "These findings suggest that treatment X may..." |
-| Case report | "This case illustrates that treatment X can..." |
+| Case series   | "These findings suggest that treatment X may..."       |
+| Case report   | "This case illustrates that treatment X can..."        |
 
 ---
 
@@ -220,32 +222,32 @@ When targeting Nature/Science/Cell from a specialized venue:
 
 ### Active vs. Passive Voice
 
-| Venue | Preference | Example |
-|-------|-----------|---------|
-| Nature/Science | Active encouraged | "We discovered that..." |
-| Cell | Mixed | "Our results demonstrate..." |
-| Medical | Passive common | "Patients were randomized to..." |
-| IEEE | Passive traditional | "The algorithm was implemented..." |
-| ML Conferences | Active preferred | "We propose a method that..." |
+| Venue          | Preference          | Example                            |
+| -------------- | ------------------- | ---------------------------------- |
+| Nature/Science | Active encouraged   | "We discovered that..."            |
+| Cell           | Mixed               | "Our results demonstrate..."       |
+| Medical        | Passive common      | "Patients were randomized to..."   |
+| IEEE           | Passive traditional | "The algorithm was implemented..." |
+| ML Conferences | Active preferred    | "We propose a method that..."      |
 
 ### First Person Usage
 
-| Venue | First Person | Example |
-|-------|-------------|---------|
-| Nature/Science | Yes (we) | "We show that..." |
-| Cell | Yes (we) | "We found that..." |
-| Medical | Sometimes | "We conducted a trial..." |
-| IEEE | Less common | Prefer "This paper presents..." |
-| ML Conferences | Yes (we) | "We introduce..." |
+| Venue          | First Person | Example                         |
+| -------------- | ------------ | ------------------------------- |
+| Nature/Science | Yes (we)     | "We show that..."               |
+| Cell           | Yes (we)     | "We found that..."              |
+| Medical        | Sometimes    | "We conducted a trial..."       |
+| IEEE           | Less common  | Prefer "This paper presents..." |
+| ML Conferences | Yes (we)     | "We introduce..."               |
 
 ### Hedging and Certainty
 
-| Claim Strength | Language |
-|---------------|----------|
-| Strong | "X causes Y" (only with causal evidence) |
-| Moderate | "X is associated with Y" / "X leads to Y" |
-| Tentative | "X may contribute to Y" / "X suggests that..." |
-| Speculative | "It is possible that X..." / "One interpretation is..." |
+| Claim Strength | Language                                                |
+| -------------- | ------------------------------------------------------- |
+| Strong         | "X causes Y" (only with causal evidence)                |
+| Moderate       | "X is associated with Y" / "X leads to Y"               |
+| Tentative      | "X may contribute to Y" / "X suggests that..."          |
+| Speculative    | "It is possible that X..." / "One interpretation is..." |
 
 ---
 
@@ -280,6 +282,7 @@ When targeting Nature/Science/Cell from a specialized venue:
 ## Quick Checklist Before Submission
 
 ### All Venues
+
 - [ ] Abstract matches venue style (flowing vs. structured)
 - [ ] Voice/tone appropriate for audience
 - [ ] Jargon level appropriate
@@ -287,6 +290,7 @@ When targeting Nature/Science/Cell from a specialized venue:
 - [ ] Citation style correct
 
 ### High-Impact Journals (Nature/Science/Cell)
+
 - [ ] Broad significance clear in first paragraph
 - [ ] Non-specialist can understand abstract
 - [ ] Story-driven results narrative
@@ -294,6 +298,7 @@ When targeting Nature/Science/Cell from a specialized venue:
 - [ ] Implications emphasized
 
 ### ML Conferences
+
 - [ ] Contribution list in introduction
 - [ ] Strong baselines included
 - [ ] Ablation studies present
@@ -301,6 +306,7 @@ When targeting Nature/Science/Cell from a specialized venue:
 - [ ] Limitations acknowledged
 
 ### Medical Journals
+
 - [ ] Structured abstract (if required)
 - [ ] Patient-centered language
 - [ ] Evidence strength appropriate
@@ -317,5 +323,3 @@ When targeting Nature/Science/Cell from a specialized venue:
 - `ml_conference_style.md` - NeurIPS, ICML, ICLR, CVPR conventions
 - `cs_conference_style.md` - ACL, CHI, SIGKDD guide
 - `reviewer_expectations.md` - What reviewers look for by venue
-
-

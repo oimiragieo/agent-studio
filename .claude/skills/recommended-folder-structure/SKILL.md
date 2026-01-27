@@ -35,14 +35,14 @@ When reviewing or writing code, apply these guidelines:
 The recommended folder structure is:
 
 cmd/
-  main.go
+main.go
 internal/
-  handlers/
-  models/
-  templates/
+handlers/
+models/
+templates/
 static/
-  css/
-  js/
+css/
+js/
 go.mod
 go.sum
 </instructions>
@@ -58,6 +58,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

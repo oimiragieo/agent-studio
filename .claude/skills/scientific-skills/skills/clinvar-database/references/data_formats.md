@@ -7,6 +7,7 @@ ClinVar provides bulk data downloads in multiple formats to support different re
 ## FTP Access
 
 ### Base URL
+
 ```
 ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/
 ```
@@ -50,6 +51,7 @@ pub/clinvar/
 XML provides the most comprehensive data with full submission details, evidence, and metadata.
 
 #### VCV (Variation) Files
+
 - **Purpose**: Variant-centric aggregation
 - **Location**: `xml/clinvar_variation/`
 - **Accession format**: VCV000000001.1
@@ -57,6 +59,7 @@ XML provides the most comprehensive data with full submission details, evidence,
 - **File naming**: `ClinVarVariationRelease_YYYY-MM-DD.xml.gz`
 
 **VCV Record Structure:**
+
 ```xml
 <VariationArchive VariationID="12345" VariationType="single nucleotide variant">
   <VariationName>NM_000059.3(BRCA2):c.1310_1313del (p.Lys437fs)</VariationName>
@@ -76,6 +79,7 @@ XML provides the most comprehensive data with full submission details, evidence,
 ```
 
 #### RCV (Record) Files
+
 - **Purpose**: Variant-condition pair aggregation
 - **Location**: `xml/RCV/`
 - **Accession format**: RCV000000001.1
@@ -83,11 +87,13 @@ XML provides the most comprehensive data with full submission details, evidence,
 - **File naming**: `ClinVarRCVRelease_YYYY-MM-DD.xml.gz`
 
 **Key differences from VCV:**
+
 - One RCV per variant-condition combination
 - A single variant may have multiple RCV records (different conditions)
 - More focused on clinical interpretation per disease
 
 #### SCV (Submission) Records
+
 - **Format**: Individual submissions within VCV/RCV records
 - **Accession format**: SCV000000001.1
 - **Content**: Submitter-specific interpretations and evidence
@@ -97,10 +103,12 @@ XML provides the most comprehensive data with full submission details, evidence,
 Variant Call Format files for genomic analysis pipelines.
 
 #### Locations
+
 - **GRCh37/hg19**: `vcf_GRCh37/clinvar.vcf.gz`
 - **GRCh38/hg38**: `vcf_GRCh38/clinvar.vcf.gz`
 
 #### Content Limitations
+
 - **Included**: Simple alleles with precise genomic coordinates
 - **Excluded**:
   - Variants >10 kb
@@ -112,22 +120,23 @@ Variant Call Format files for genomic analysis pipelines.
 
 Key INFO fields in ClinVar VCF:
 
-| Field | Description |
-|-------|-------------|
-| **ALLELEID** | ClinVar allele identifier |
-| **CLNSIG** | Clinical significance |
-| **CLNREVSTAT** | Review status |
-| **CLNDN** | Condition name(s) |
-| **CLNVC** | Variant type (SNV, deletion, etc.) |
-| **CLNVCSO** | Sequence ontology term |
-| **GENEINFO** | Gene symbol:gene ID |
-| **MC** | Molecular consequence |
-| **RS** | dbSNP rsID |
-| **AF_ESP** | Allele frequency (ESP) |
-| **AF_EXAC** | Allele frequency (ExAC) |
-| **AF_TGP** | Allele frequency (1000 Genomes) |
+| Field          | Description                        |
+| -------------- | ---------------------------------- |
+| **ALLELEID**   | ClinVar allele identifier          |
+| **CLNSIG**     | Clinical significance              |
+| **CLNREVSTAT** | Review status                      |
+| **CLNDN**      | Condition name(s)                  |
+| **CLNVC**      | Variant type (SNV, deletion, etc.) |
+| **CLNVCSO**    | Sequence ontology term             |
+| **GENEINFO**   | Gene symbol:gene ID                |
+| **MC**         | Molecular consequence              |
+| **RS**         | dbSNP rsID                         |
+| **AF_ESP**     | Allele frequency (ESP)             |
+| **AF_EXAC**    | Allele frequency (ExAC)            |
+| **AF_TGP**     | Allele frequency (1000 Genomes)    |
 
 #### Example VCF Line
+
 ```
 #CHROM  POS     ID      REF  ALT  QUAL  FILTER  INFO
 13      32339912  rs80357382  A    G    .     .     ALLELEID=38447;CLNDN=Breast-ovarian_cancer,_familial_2;CLNSIG=Pathogenic;CLNREVSTAT=reviewed_by_expert_panel;GENEINFO=BRCA2:675
@@ -138,9 +147,11 @@ Key INFO fields in ClinVar VCF:
 Summary files for quick analysis and database loading.
 
 #### variant_summary.txt
+
 Primary summary file with selected metadata for all genome-mapped variants.
 
 **Key Columns:**
+
 - `VariationID` - ClinVar variation identifier
 - `Type` - Variant type (SNV, indel, CNV, etc.)
 - `Name` - Variant name (typically HGVS)
@@ -160,6 +171,7 @@ Primary summary file with selected metadata for all genome-mapped variants.
 - `SubmitterCategories` - Submitter types (clinical, research, etc.)
 
 **Example Usage:**
+
 ```bash
 # Extract all pathogenic BRCA1 variants
 zcat variant_summary.txt.gz | \
@@ -168,9 +180,11 @@ zcat variant_summary.txt.gz | \
 ```
 
 #### var_citations.txt
+
 Cross-references to PubMed articles, dbSNP, and dbVar.
 
 **Columns:**
+
 - `AlleleID` - ClinVar allele ID
 - `VariationID` - ClinVar variation ID
 - `rs` - dbSNP rsID
@@ -178,9 +192,11 @@ Cross-references to PubMed articles, dbSNP, and dbVar.
 - `PubMedID` - PubMed citation
 
 #### cross_references.txt
+
 Database cross-references with modification dates.
 
 **Columns:**
+
 - `VariationID`
 - `Database` (OMIM, UniProtKB, GTR, etc.)
 - `Identifier`
@@ -189,18 +205,21 @@ Database cross-references with modification dates.
 ## Choosing the Right Format
 
 ### Use XML when:
+
 - Need complete submission details
 - Want to track evidence and criteria
 - Building comprehensive variant databases
 - Require full metadata and relationships
 
 ### Use VCF when:
+
 - Integrating with genomic analysis pipelines
 - Annotating variant calls from sequencing
 - Need genomic coordinates for overlap analysis
 - Working with standard bioinformatics tools
 
 ### Use Tab-Delimited when:
+
 - Quick database queries and filters
 - Loading into spreadsheets or databases
 - Simple data extraction and statistics
@@ -209,21 +228,25 @@ Database cross-references with modification dates.
 ## Accession Types and Identifiers
 
 ### VCV (Variation Archive)
+
 - **Format**: VCV000012345.6 (ID.version)
 - **Scope**: Aggregates all data for a single variant
 - **Versioning**: Increments when variant data changes
 
 ### RCV (Record)
+
 - **Format**: RCV000056789.4
 - **Scope**: One variant-condition interpretation
 - **Versioning**: Increments when interpretation changes
 
 ### SCV (Submission)
+
 - **Format**: SCV000098765.2
 - **Scope**: Individual submitter's interpretation
 - **Versioning**: Increments when submission updates
 
 ### Other Identifiers
+
 - **VariationID**: Stable numeric identifier for variants
 - **AlleleID**: Stable numeric identifier for alleles
 - **dbSNP rsID**: Cross-reference to dbSNP (when available)
@@ -233,6 +256,7 @@ Database cross-references with modification dates.
 ### XML Processing
 
 **Python with xml.etree:**
+
 ```python
 import gzip
 import xml.etree.ElementTree as ET
@@ -247,6 +271,7 @@ with gzip.open('ClinVarVariationRelease.xml.gz', 'rt') as f:
 ```
 
 **Command-line with xmllint:**
+
 ```bash
 # Extract pathogenic variants
 zcat ClinVarVariationRelease.xml.gz | \
@@ -256,6 +281,7 @@ zcat ClinVarVariationRelease.xml.gz | \
 ### VCF Processing
 
 **Using bcftools:**
+
 ```bash
 # Filter by clinical significance
 bcftools view -i 'INFO/CLNSIG~"Pathogenic"' clinvar.vcf.gz
@@ -268,6 +294,7 @@ bcftools annotate -a clinvar.vcf.gz -c INFO your_variants.vcf
 ```
 
 **Using PyVCF:**
+
 ```python
 import vcf
 
@@ -281,6 +308,7 @@ for record in vcf_reader:
 ### Tab-Delimited Processing
 
 **Using pandas:**
+
 ```python
 import pandas as pd
 

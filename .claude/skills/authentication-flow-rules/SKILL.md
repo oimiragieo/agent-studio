@@ -38,6 +38,7 @@ You help developers implement secure, standards-compliant authentication.
 ## OAuth 2.1 Compliance (MANDATORY Q2 2026)
 
 ### CRITICAL: Required Changes from OAuth 2.0
+
 - **PKCE is REQUIRED** for ALL clients (public AND confidential)
 - **Implicit Flow is REMOVED** - do not use, migrate immediately
 - **Resource Owner Password Credentials REMOVED** - never collect user passwords directly
@@ -47,6 +48,7 @@ You help developers implement secure, standards-compliant authentication.
 ### Authorization Code Flow with PKCE (The ONLY User Flow)
 
 **Step 1: Generate PKCE Challenge**
+
 ```javascript
 // Client-side: Generate code_verifier (43-128 chars, URL-safe)
 async function generatePKCE() {
@@ -64,6 +66,7 @@ async function generatePKCE() {
 ```
 
 **Step 2: Authorization Request**
+
 ```javascript
 const { verifier, challenge } = await generatePKCE();
 sessionStorage.setItem('pkce_verifier', verifier); // Temporary storage only
@@ -81,6 +84,7 @@ window.location.href = authUrl.toString();
 ```
 
 **Step 3: Token Exchange with Code Verifier**
+
 ```javascript
 const response = await fetch(tokenEndpoint, {
   method: 'POST',
@@ -101,27 +105,29 @@ sessionStorage.removeItem('pkce_verifier');
 ### Token Security Best Practices
 
 **Token Lifetimes (RFC 8725)**
+
 - Access tokens: **≤15 minutes maximum**
 - Refresh tokens: **Rotate on every use** (sender-constrained or rotation required)
 - ID tokens: Short-lived, validate signature and claims
 
 **Token Storage (CRITICAL)**
+
 ```javascript
 // ✅ CORRECT: HttpOnly, Secure, SameSite cookies
 // Server sets cookies after token exchange
 res.cookie('access_token', accessToken, {
-  httpOnly: true,      // Prevents XSS access
-  secure: true,        // HTTPS only
-  sameSite: 'strict',  // CSRF protection
-  maxAge: 15 * 60 * 1000  // 15 minutes
+  httpOnly: true, // Prevents XSS access
+  secure: true, // HTTPS only
+  sameSite: 'strict', // CSRF protection
+  maxAge: 15 * 60 * 1000, // 15 minutes
 });
 
 res.cookie('refresh_token', refreshToken, {
   httpOnly: true,
   secure: true,
   sameSite: 'strict',
-  path: '/auth/refresh',  // Limit scope
-  maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days, rotate frequently
+  path: '/auth/refresh', // Limit scope
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days, rotate frequently
 });
 
 // ❌ WRONG: NEVER store tokens in localStorage or sessionStorage
@@ -130,6 +136,7 @@ sessionStorage.setItem('token', accessToken); // VULNERABLE TO XSS
 ```
 
 **Refresh Token Rotation**
+
 ```javascript
 // Server-side: Rotate refresh tokens on every use
 async function refreshTokens(oldRefreshToken) {
@@ -156,6 +163,7 @@ async function refreshTokens(oldRefreshToken) {
 ### REMOVED Flows (Do Not Use)
 
 **❌ Implicit Flow (REMOVED in OAuth 2.1)**
+
 ```javascript
 // NEVER DO THIS - Implicit Flow is REMOVED
 authUrl.searchParams.set('response_type', 'token'); // ❌ FORBIDDEN
@@ -165,6 +173,7 @@ authUrl.searchParams.set('response_type', 'token'); // ❌ FORBIDDEN
 **Migration Path**: Use Authorization Code Flow + PKCE instead.
 
 **❌ Resource Owner Password Credentials (REMOVED)**
+
 ```javascript
 // NEVER DO THIS - Collecting passwords directly violates OAuth
 fetch(tokenEndpoint, {
@@ -181,21 +190,22 @@ fetch(tokenEndpoint, {
 ### Modern Authentication Patterns
 
 **Passkeys/WebAuthn (Recommended for 2026+)**
+
 ```javascript
 // Register passkey
 const credential = await navigator.credentials.create({
   publicKey: {
     challenge: serverChallenge,
-    rp: { name: "Your App" },
+    rp: { name: 'Your App' },
     user: {
       id: userIdBytes,
       name: user.email,
       displayName: user.name,
     },
-    pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+    pubKeyCredParams: [{ alg: -7, type: 'public-key' }],
     authenticatorSelection: {
-      authenticatorAttachment: "platform", // Device-bound
-      userVerification: "required",
+      authenticatorAttachment: 'platform', // Device-bound
+      userVerification: 'required',
     },
   },
 });
@@ -204,8 +214,8 @@ const credential = await navigator.credentials.create({
 const assertion = await navigator.credentials.get({
   publicKey: {
     challenge: serverChallenge,
-    rpId: "yourapp.com",
-    userVerification: "required",
+    rpId: 'yourapp.com',
+    userVerification: 'required',
   },
 });
 ```
@@ -213,6 +223,7 @@ const assertion = await navigator.credentials.get({
 ### Security Checklist
 
 **Before deploying:**
+
 - [ ] PKCE enabled for ALL clients (no exceptions)
 - [ ] Implicit Flow completely removed/disabled
 - [ ] Password Credentials Flow removed/disabled
@@ -228,6 +239,7 @@ const assertion = await navigator.credentials.get({
 ### Common Implementation Patterns
 
 **Login with OAuth 2.1 (email/password)**
+
 ```typescript
 // Use Authorization Code Flow with PKCE even for first-party login
 async function login(email: string, password: string) {
@@ -251,6 +263,7 @@ async function login(email: string, password: string) {
 ```
 
 **Login with GitHub OAuth**
+
 ```typescript
 async function loginWithGitHub() {
   const { verifier, challenge } = await generatePKCE();
@@ -268,6 +281,7 @@ async function loginWithGitHub() {
 ```
 
 **Logout**
+
 ```typescript
 async function logout() {
   // 1. Clear client-side cookies
@@ -281,6 +295,7 @@ async function logout() {
   window.location.href = '/login';
 }
 ```
+
 </instructions>
 
 <examples>
@@ -294,6 +309,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

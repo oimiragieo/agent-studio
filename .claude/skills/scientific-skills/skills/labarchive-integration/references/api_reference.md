@@ -10,11 +10,11 @@ https://<base_url>/api/<api_class>/<api_method>?<authentication_parameters>&<met
 
 ## Regional API Endpoints
 
-| Region | Base URL |
-|--------|----------|
-| US/International | `https://api.labarchives.com/api` |
-| Australia | `https://auapi.labarchives.com/api` |
-| UK | `https://ukapi.labarchives.com/api` |
+| Region           | Base URL                            |
+| ---------------- | ----------------------------------- |
+| US/International | `https://api.labarchives.com/api`   |
+| Australia        | `https://auapi.labarchives.com/api` |
+| UK               | `https://ukapi.labarchives.com/api` |
 
 ## Authentication
 
@@ -33,15 +33,18 @@ All API calls require authentication parameters:
 Retrieve user ID and notebook access information.
 
 **Parameters:**
+
 - `login_or_email` (required): User's email address or login username
 - `password` (required): User's external applications password (not regular login password)
 
 **Returns:** XML or JSON response containing:
+
 - User ID (uid)
 - List of accessible notebooks with IDs (nbid)
 - Account status and permissions
 
 **Example:**
+
 ```python
 params = {
     'login_or_email': 'researcher@university.edu',
@@ -55,9 +58,11 @@ response = client.make_call('users', 'user_access_info', params=params)
 Retrieve detailed user information by user ID.
 
 **Parameters:**
+
 - `uid` (required): User ID obtained from user_access_info
 
 **Returns:** User profile information including:
+
 - Name and email
 - Account creation date
 - Institution affiliation
@@ -65,6 +70,7 @@ Retrieve detailed user information by user ID.
 - Storage quota and usage
 
 **Example:**
+
 ```python
 params = {'uid': '12345'}
 response = client.make_call('users', 'user_info_via_id', params=params)
@@ -77,23 +83,27 @@ response = client.make_call('users', 'user_info_via_id', params=params)
 Download complete notebook data including entries, attachments, and metadata.
 
 **Parameters:**
+
 - `uid` (required): User ID
 - `nbid` (required): Notebook ID
 - `json` (optional, default: false): Return data in JSON format instead of XML
 - `no_attachments` (optional, default: false): Exclude attachments from backup
 
 **Returns:**
+
 - When `no_attachments=false`: 7z compressed archive containing all notebook data
 - When `no_attachments=true`: XML or JSON structured data with entry content
 
 **File format:**
 The returned archive includes:
+
 - Entry text content in HTML format
 - File attachments in original formats
 - Metadata XML files with timestamps, authors, and version history
 - Comment threads and annotations
 
 **Example:**
+
 ```python
 # Full backup with attachments
 params = {
@@ -127,9 +137,11 @@ notebook_data = json.loads(response.content)
 Retrieve all notebooks accessible to a user (method name may vary by API version).
 
 **Parameters:**
+
 - `uid` (required): User ID
 
 **Returns:** List of notebooks with:
+
 - Notebook ID (nbid)
 - Notebook name
 - Creation and modification dates
@@ -143,6 +155,7 @@ Retrieve all notebooks accessible to a user (method name may vary by API version
 Create a new entry in a notebook.
 
 **Parameters:**
+
 - `uid` (required): User ID
 - `nbid` (required): Notebook ID
 - `title` (required): Entry title
@@ -152,6 +165,7 @@ Create a new entry in a notebook.
 **Returns:** Entry ID and creation confirmation
 
 **Example:**
+
 ```python
 params = {
     'uid': '12345',
@@ -168,6 +182,7 @@ response = client.make_call('entries', 'create_entry', params=params)
 Add a comment to an existing entry.
 
 **Parameters:**
+
 - `uid` (required): User ID
 - `nbid` (required): Notebook ID
 - `entry_id` (required): Target entry ID
@@ -180,6 +195,7 @@ Add a comment to an existing entry.
 Add a component/part to an entry (e.g., text section, table, image).
 
 **Parameters:**
+
 - `uid` (required): User ID
 - `nbid` (required): Notebook ID
 - `entry_id` (required): Target entry ID
@@ -193,6 +209,7 @@ Add a component/part to an entry (e.g., text section, table, image).
 Upload a file attachment to an entry.
 
 **Parameters:**
+
 - `uid` (required): User ID
 - `nbid` (required): Notebook ID
 - `entry_id` (required): Target entry ID
@@ -202,6 +219,7 @@ Upload a file attachment to an entry.
 **Returns:** Attachment ID and upload confirmation
 
 **Example using requests library:**
+
 ```python
 import requests
 
@@ -227,11 +245,13 @@ Enterprise-only features for institutional reporting and analytics.
 Generate comprehensive usage statistics for the institution.
 
 **Parameters:**
+
 - `start_date` (required): Report start date (YYYY-MM-DD)
 - `end_date` (required): Report end date (YYYY-MM-DD)
 - `format` (optional): Output format (csv, json, xml)
 
 **Returns:** Usage metrics including:
+
 - User login frequency
 - Entry creation counts
 - Storage utilization
@@ -243,10 +263,12 @@ Generate comprehensive usage statistics for the institution.
 Generate detailed report on all notebooks in the institution.
 
 **Parameters:**
+
 - `include_settings` (optional, default: false): Include notebook settings
 - `include_members` (optional, default: false): Include member lists
 
 **Returns:** Notebook inventory with:
+
 - Notebook names and IDs
 - Owner information
 - Creation and last modified dates
@@ -259,10 +281,12 @@ Generate detailed report on all notebooks in the institution.
 Track PDF exports for compliance and auditing purposes.
 
 **Parameters:**
+
 - `start_date` (required): Report start date
 - `end_date` (required): Report end date
 
 **Returns:** Export activity log with:
+
 - User who generated PDF
 - Notebook and entry exported
 - Export timestamp
@@ -301,27 +325,27 @@ Retrieve institutional login URLs for SSO integration.
 
 ```json
 {
-    "uid": "12345",
-    "email": "researcher@university.edu",
-    "notebooks": [
-        {
-            "nbid": "67890",
-            "name": "Lab Notebook 2025",
-            "role": "owner"
-        }
-    ]
+  "uid": "12345",
+  "email": "researcher@university.edu",
+  "notebooks": [
+    {
+      "nbid": "67890",
+      "name": "Lab Notebook 2025",
+      "role": "owner"
+    }
+  ]
 }
 ```
 
 ## Error Codes
 
-| Code | Message | Meaning | Solution |
-|------|---------|---------|----------|
-| 401 | Unauthorized | Invalid credentials | Verify access_key_id and access_password |
-| 403 | Forbidden | Insufficient permissions | Check user role and notebook access |
-| 404 | Not Found | Resource doesn't exist | Verify uid, nbid, or entry_id are correct |
-| 429 | Too Many Requests | Rate limit exceeded | Implement exponential backoff |
-| 500 | Internal Server Error | Server-side issue | Retry request or contact support |
+| Code | Message               | Meaning                  | Solution                                  |
+| ---- | --------------------- | ------------------------ | ----------------------------------------- |
+| 401  | Unauthorized          | Invalid credentials      | Verify access_key_id and access_password  |
+| 403  | Forbidden             | Insufficient permissions | Check user role and notebook access       |
+| 404  | Not Found             | Resource doesn't exist   | Verify uid, nbid, or entry_id are correct |
+| 429  | Too Many Requests     | Rate limit exceeded      | Implement exponential backoff             |
+| 500  | Internal Server Error | Server-side issue        | Retry request or contact support          |
 
 ## Rate Limiting
 
@@ -338,5 +362,6 @@ LabArchives API is backward compatible. New methods are added without breaking e
 ## Support and Documentation
 
 For API access requests, technical questions, or feature requests:
+
 - Email: support@labarchives.com
 - Include your institution name and specific use case for faster assistance

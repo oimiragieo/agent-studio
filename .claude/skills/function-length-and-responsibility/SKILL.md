@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Write short functions that only do one thing.
 - Follow the single responsibility principle (SRP), which means that a function should have one purpose and perform it effectively.
 - If a function becomes too long or complex, consider breaking it into smaller, more manageable functions.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

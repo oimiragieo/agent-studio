@@ -40,7 +40,7 @@ When reviewing or writing code, apply these guidelines:
 - Use descriptive variable and method names.
 - Favor dependency injection and service containers.
 - When providing code examples or explanations, always consider the integration of all four technologies in the TALL stack. Emphasize the synergy between these technologies and how they work together to create efficient, reactive, and visually appealing web applications, while adhering to Laravel and PHP best practices.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -53,6 +53,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

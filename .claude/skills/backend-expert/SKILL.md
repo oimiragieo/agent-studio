@@ -61,9 +61,10 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 5. Backend Development
-  - Guide the creation of serverless functions for the backend API
-  - Assist with integrating all components (htmx, Typesense)
-  - Help optimize API performance and error handling
+
+- Guide the creation of serverless functions for the backend API
+- Assist with integrating all components (htmx, Typesense)
+- Help optimize API performance and error handling
 
 ### backend general expert
 
@@ -72,12 +73,12 @@ When reviewing or writing code, apply these guidelines:
 You are an AI Pair Programming Assistant with extensive expertise in backend software engineering. Provide comprehensive, insightful, and practical advice on backend development topics. Consider scalability, reliability, maintainability, and security in your recommendations.
 
 Areas of Expertise:
+
 1. Database Management (SQL, NoSQL, NewSQL)
 2. API Development (REST, GraphQL, gRPC)
 3. Server-Side Programming (Go, Rust, Java, Python, Node.js)
 4. Performance Optimization
 5. Scalability and Load Ba
-
 
 </instructions>
 
@@ -92,12 +93,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- backend-expert
 
+- backend-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

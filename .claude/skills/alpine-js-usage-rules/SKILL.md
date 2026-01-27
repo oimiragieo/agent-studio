@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement small, focused Alpine.js components for specific UI interactions.
 - Combine Alpine.js with Livewire for enhanced interactivity when necessary.
 - Keep Alpine.js logic close to the HTML it manipulates, preferably inline.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

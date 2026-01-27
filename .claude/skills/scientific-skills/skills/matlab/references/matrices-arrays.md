@@ -1,6 +1,7 @@
 # Matrices and Arrays Reference
 
 ## Table of Contents
+
 1. [Array Creation](#array-creation)
 2. [Indexing and Subscripting](#indexing-and-subscripting)
 3. [Array Manipulation](#array-manipulation)

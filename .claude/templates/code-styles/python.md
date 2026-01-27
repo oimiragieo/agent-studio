@@ -3,6 +3,7 @@
 This document summarizes key rules and best practices from the Google Python Style Guide.
 
 ## 1. Python Language Rules
+
 - **Linting:** Run `pylint` on your code to catch bugs and style issues.
 - **Imports:** Use `import x` for packages/modules. Use `from x import y` only when `y` is a submodule.
 - **Exceptions:** Use built-in exception classes. Do not use bare `except:` clauses.
@@ -13,6 +14,7 @@ This document summarizes key rules and best practices from the Google Python Sty
 - **Type Annotations:** Strongly encouraged for all public APIs.
 
 ## 2. Python Style Rules
+
 - **Line Length:** Maximum 80 characters.
 - **Indentation:** 4 spaces per indentation level. Never use tabs.
 - **Blank Lines:** Two blank lines between top-level definitions (classes, functions). One blank line between method definitions.
@@ -24,14 +26,16 @@ This document summarizes key rules and best practices from the Google Python Sty
 - **Imports Formatting:** Imports should be on separate lines and grouped: standard library, third-party, and your own application's imports.
 
 ## 3. Naming
+
 - **General:** `snake_case` for modules, functions, methods, and variables.
 - **Classes:** `PascalCase`.
 - **Constants:** `ALL_CAPS_WITH_UNDERSCORES`.
 - **Internal Use:** Use a single leading underscore (`_internal_variable`) for internal module/class members.
 
 ## 4. Main
+
 - All executable files should have a `main()` function that contains the main logic, called from a `if __name__ == '__main__':` block.
 
 **BE CONSISTENT.** When editing code, match the existing style.
 
-*Source: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)*
+_Source: [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)_

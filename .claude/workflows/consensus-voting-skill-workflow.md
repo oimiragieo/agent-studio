@@ -430,13 +430,13 @@ Read: .claude/context/sessions/consensus-$SESSION_ID-result.json
 
 ## Quorum Rules
 
-| Quorum Type         | Definition                  | Action                                          |
-| ------------------- | --------------------------- | ----------------------------------------------- |
-| `STRONG_CONSENSUS`  | 3/3 unanimous agreement     | Proceed with high confidence                    |
-| `MAJORITY_CONSENSUS`| 2/3 agreement               | Proceed with documented dissent                 |
-| `SPLIT_DECISION`    | No majority (1/1/1)         | Escalate to human or spawn additional workers   |
-| `ABSTAIN_HEAVY`     | >1 abstention               | Gather more information before deciding         |
-| `QUORUM_NOT_MET`    | <2 valid votes              | Retry with new workers or escalate              |
+| Quorum Type          | Definition              | Action                                        |
+| -------------------- | ----------------------- | --------------------------------------------- |
+| `STRONG_CONSENSUS`   | 3/3 unanimous agreement | Proceed with high confidence                  |
+| `MAJORITY_CONSENSUS` | 2/3 agreement           | Proceed with documented dissent               |
+| `SPLIT_DECISION`     | No majority (1/1/1)     | Escalate to human or spawn additional workers |
+| `ABSTAIN_HEAVY`      | >1 abstention           | Gather more information before deciding       |
+| `QUORUM_NOT_MET`     | <2 valid votes          | Retry with new workers or escalate            |
 
 ## Tie-Breaking Hierarchy
 
@@ -521,14 +521,14 @@ Follow the phased workflow in: .claude/workflows/consensus-voting-skill-workflow
 
 ## Agent-Skill Mapping
 
-| Worker Role        | Agent              | Required Skills                           |
-| ------------------ | ------------------ | ----------------------------------------- |
-| Queen              | swarm-coordinator  | swarm-coordination, consensus-voting      |
-| Developer Worker   | developer          | tdd, debugging                            |
-| Architect Worker   | architect          | -                                         |
-| Security Worker    | security-architect | security-architect                        |
-| QA Worker          | qa                 | tdd                                       |
-| DevOps Worker      | devops             | observability-expert                      |
+| Worker Role      | Agent              | Required Skills                      |
+| ---------------- | ------------------ | ------------------------------------ |
+| Queen            | swarm-coordinator  | swarm-coordination, consensus-voting |
+| Developer Worker | developer          | tdd, debugging                       |
+| Architect Worker | architect          | -                                    |
+| Security Worker  | security-architect | security-architect                   |
+| QA Worker        | qa                 | tdd                                  |
+| DevOps Worker    | devops             | observability-expert                 |
 
 ## Notes
 

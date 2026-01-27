@@ -1,1 +1,1 @@
-console.log("System Status: Operational");
+console.log('System Status: Operational');

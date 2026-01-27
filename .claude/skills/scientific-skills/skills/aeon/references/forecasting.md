@@ -15,26 +15,31 @@ Simple forecasting strategies for comparison:
 Classical time series forecasting methods:
 
 ### ARIMA
+
 - `ARIMA` - AutoRegressive Integrated Moving Average
   - Parameters: `p` (AR order), `d` (differencing), `q` (MA order)
   - **Use when**: Linear patterns, stationary or difference-stationary series
 
 ### Exponential Smoothing
+
 - `ETS` - Error-Trend-Seasonal decomposition
   - Parameters: `error`, `trend`, `seasonal` types
   - **Use when**: Trend and seasonal patterns present
 
 ### Threshold Autoregressive
+
 - `TAR` - Threshold Autoregressive model for regime switching
 - `AutoTAR` - Automated threshold discovery
   - **Use when**: Series exhibits different behaviors in different regimes
 
 ### Theta Method
+
 - `Theta` - Classical Theta forecasting
   - Parameters: `theta`, `weights` for decomposition
   - **Use when**: Simple but effective baseline needed
 
 ### Time-Varying Parameter
+
 - `TVP` - Time-varying parameter model with Kalman filtering
   - **Use when**: Parameters change over time
 

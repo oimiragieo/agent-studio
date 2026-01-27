@@ -21,11 +21,11 @@ updater_config:
   backup_location: .claude/context/backups/templates/
   compatibility_check: true
   registration_targets:
-    - ".claude/templates/registry.json"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/templates/registry.json'
+    - '.claude/context/memory/learnings.md'
   protected_placeholders:
-    - "{{name}}"
-    - "{{description}}"
+    - '{{name}}'
+    - '{{description}}'
 
 phases:
   evaluate:
@@ -70,11 +70,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-template'].output.template_path !== null"
         on_fail: abort
-        message: "Template does not exist. Use template-creator-workflow to create new templates."
+        message: 'Template does not exist. Use template-creator-workflow to create new templates.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes don't break template functionality
@@ -118,11 +118,11 @@ phases:
       - id: gate-validate-protected
         condition: "steps['check-protected-placeholders'].output.placeholders_intact === true"
         on_fail: abort
-        message: "Cannot remove protected placeholders ({{name}}, {{description}})"
+        message: 'Cannot remove protected placeholders ({{name}}, {{description}})'
       - id: gate-validate-consumers
         condition: "steps['check-consumer-impact'].output.consumers_affected === false"
         on_fail: warn
-        message: "Removing placeholders may break consumers. Review affected artifacts."
+        message: 'Removing placeholders may break consumers. Review affected artifacts.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -152,9 +152,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -204,17 +204,17 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-template'].output.template_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated template file"
+        message: 'Failed to write updated template file'
       - id: gate-lock-placeholders
         condition: "steps['validate-placeholders'].output.placeholders_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "Template placeholders validation failed after changes"
+        message: 'Template placeholders validation failed after changes'
 
   verify:
     description: Validate template produces valid artifacts
@@ -254,15 +254,15 @@ phases:
       - id: gate-verify-required
         condition: "steps['validate-required-placeholders'].output.required_present === true"
         on_fail: return_to_lock
-        message: "Required placeholders missing after update (name, description)"
+        message: 'Required placeholders missing after update (name, description)'
       - id: gate-verify-render
         condition: "steps['test-template-rendering'].output.rendering_successful === true"
         on_fail: return_to_lock
-        message: "Template rendering failed after update"
+        message: 'Template rendering failed after update'
       - id: gate-verify-output
         condition: "steps['validate-rendered-output'].output.output_valid === true"
         on_fail: return_to_lock
-        message: "Rendered output does not match target artifact structure"
+        message: 'Rendered output does not match target artifact structure'
 
   enable:
     description: Update registrations and record changes
@@ -315,7 +315,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Template registration verification failed after update"
+        message: 'Template registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -325,29 +325,29 @@ compensate:
       description: Restore template file from backup
   enable:
     - action: revert_registry
-      target: ".claude/templates/registry.json"
+      target: '.claude/templates/registry.json'
       description: Revert registry changes if made
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for template updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-required-placeholders
-    rule: "Cannot remove {{name}} or {{description}} placeholders"
+    rule: 'Cannot remove {{name}} or {{description}} placeholders'
     enforcement: gate-validate-protected
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: placeholders-must-remain-valid
-    rule: "All placeholders must remain well-formed after update"
+    rule: 'All placeholders must remain well-formed after update'
     enforcement: gate-lock-placeholders
   - id: template-must-render
-    rule: "Template must render successfully after update"
+    rule: 'Template must render successfully after update'
     enforcement: gate-verify-render
   - id: output-must-match-target
-    rule: "Rendered output must match target artifact structure"
+    rule: 'Rendered output must match target artifact structure'
     enforcement: gate-verify-output

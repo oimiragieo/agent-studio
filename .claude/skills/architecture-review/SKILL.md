@@ -46,6 +46,7 @@ Understand the current architecture by:
 Check adherence to fundamental principles:
 
 **SOLID Principles**:
+
 - **S**ingle Responsibility: Does each class/module have one reason to change?
 - **O**pen/Closed: Can behavior be extended without modification?
 - **L**iskov Substitution: Are subtypes substitutable for base types?
@@ -53,6 +54,7 @@ Check adherence to fundamental principles:
 - **D**ependency Inversion: Do high-level modules depend on abstractions?
 
 **Other Principles**:
+
 - **DRY**: Is logic duplicated unnecessarily?
 - **YAGNI**: Are there unused or speculative features?
 - **Separation of Concerns**: Are responsibilities properly divided?
@@ -116,18 +118,22 @@ Review the architecture of src/services/ for scalability and maintainability
 ## Architecture Review: src/services/
 
 ### Summary
+
 The service layer follows a reasonable structure but has some coupling issues...
 
 ### Strengths
+
 - Clear separation between API handlers and business logic
 - Good use of dependency injection
 
 ### Concerns
+
 1. **High Priority**: UserService has 15 methods (God Class)
 2. **Medium Priority**: Circular dependency between OrderService and InventoryService
 3. **Low Priority**: Some magic numbers in validation logic
 
 ### Recommendations
+
 1. Split UserService into UserAuthService and UserProfileService
 2. Introduce EventBus to decouple Order and Inventory
 3. Extract validation constants to configuration
@@ -137,6 +143,7 @@ The service layer follows a reasonable structure but has some coupling issues...
 </examples>
 
 ## Rules
+
 - Always provide constructive feedback with actionable recommendations
 - Prioritize issues by impact and effort to fix
 - Consider existing constraints and trade-offs
@@ -144,11 +151,13 @@ The service layer follows a reasonable structure but has some coupling issues...
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

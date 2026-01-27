@@ -5,11 +5,13 @@
 Arboreto requires gene expression data in one of two formats:
 
 ### Pandas DataFrame (Recommended)
+
 - **Rows**: Observations (cells, samples, conditions)
 - **Columns**: Genes (with gene names as column headers)
 - **Format**: Numeric expression values
 
 Example:
+
 ```python
 import pandas as pd
 
@@ -20,10 +22,12 @@ expression_matrix = pd.read_csv('expression_data.tsv', sep='\t')
 ```
 
 ### NumPy Array
+
 - **Shape**: (observations, genes)
 - **Requirement**: Separately provide gene names list matching column order
 
 Example:
+
 ```python
 import numpy as np
 
@@ -109,13 +113,14 @@ if __name__ == '__main__':
 
 Arboreto returns a Pandas DataFrame with three columns:
 
-| Column | Description |
-|--------|-------------|
-| `TF` | Transcription factor (regulator) gene name |
-| `target` | Target gene name |
+| Column       | Description                                                |
+| ------------ | ---------------------------------------------------------- |
+| `TF`         | Transcription factor (regulator) gene name                 |
+| `target`     | Target gene name                                           |
 | `importance` | Regulatory importance score (higher = stronger regulation) |
 
 Example output:
+
 ```
 TF1    gene5    0.856
 TF2    gene12   0.743
@@ -137,12 +142,14 @@ network = grnboost2(
 ## Algorithm Selection
 
 Use `grnboost2()` for most cases (faster, handles large datasets):
+
 ```python
 from arboreto.algo import grnboost2
 network = grnboost2(expression_data=expression_matrix)
 ```
 
 Use `genie3()` for comparison or specific requirements:
+
 ```python
 from arboreto.algo import genie3
 network = genie3(expression_data=expression_matrix)

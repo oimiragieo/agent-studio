@@ -122,19 +122,23 @@ Denario automatically installs key dependencies:
 For paper generation, LaTeX must be available:
 
 ### Linux
+
 ```bash
 sudo apt-get install texlive-full
 ```
 
 ### macOS
+
 ```bash
 brew install --cask mactex
 ```
 
 ### Windows
+
 Download and install [MiKTeX](https://miktex.org/download) or [TeX Live](https://tug.org/texlive/).
 
 ### Docker Alternative
+
 The Docker image includes a complete LaTeX installation, eliminating manual setup.
 
 ## Troubleshooting Installation
@@ -142,6 +146,7 @@ The Docker image includes a complete LaTeX installation, eliminating manual setu
 ### Python Version Issues
 
 Ensure Python 3.12+:
+
 ```bash
 python --version
 ```
@@ -151,11 +156,13 @@ If older, install a newer version or use pyenv for version management.
 ### Virtual Environment Activation
 
 **Linux/macOS:**
+
 ```bash
 source venv/bin/activate
 ```
 
 **Windows:**
+
 ```bash
 venv\Scripts\activate
 ```
@@ -163,6 +170,7 @@ venv\Scripts\activate
 ### Permission Errors
 
 Use `--user` flag or virtual environments:
+
 ```bash
 uv pip install --user "denario[app]"
 ```
@@ -170,6 +178,7 @@ uv pip install --user "denario[app]"
 ### Docker Port Conflicts
 
 If port 8501 is in use, map to a different port:
+
 ```bash
 docker run -p 8502:8501 --rm pablovd/denario:latest
 ```
@@ -181,16 +190,19 @@ Create a fresh virtual environment to avoid dependency conflicts.
 ## Updating Denario
 
 ### uv
+
 ```bash
 uv add --upgrade denario
 ```
 
 ### pip
+
 ```bash
 uv pip install --upgrade "denario[app]"
 ```
 
 ### Docker
+
 ```bash
 docker pull pablovd/denario:latest
 ```
@@ -198,16 +210,19 @@ docker pull pablovd/denario:latest
 ## Uninstallation
 
 ### uv
+
 ```bash
 uv remove denario
 ```
 
 ### pip
+
 ```bash
 uv pip uninstall denario
 ```
 
 ### Docker
+
 ```bash
 docker rmi pablovd/denario:latest
 ```

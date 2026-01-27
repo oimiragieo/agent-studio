@@ -9,6 +9,7 @@ PathML provides comprehensive support for loading whole-slide images (WSI) from 
 PathML supports the following slide formats:
 
 ### Brightfield Microscopy Formats
+
 - **Aperio SVS** (`.svs`) - Leica Biosystems
 - **Hamamatsu NDPI** (`.ndpi`) - Hamamatsu Photonics
 - **Leica SCN** (`.scn`) - Leica Biosystems
@@ -18,10 +19,12 @@ PathML supports the following slide formats:
 - **Generic tiled TIFF** (`.tif`, `.tiff`)
 
 ### Medical Imaging Standards
+
 - **DICOM** (`.dcm`) - Digital Imaging and Communications in Medicine
 - **OME-TIFF** (`.ome.tif`, `.ome.tiff`) - Open Microscopy Environment
 
 ### Multiparametric Imaging
+
 - **CODEX** - Spatial proteomics imaging
 - **Vectra** (`.qptiff`) - Multiplex immunofluorescence
 - **MERFISH** - Multiplexed error-robust FISH
@@ -35,6 +38,7 @@ PathML leverages OpenSlide and other specialized libraries to handle format-spec
 `SlideData` is the fundamental class for representing whole-slide images in PathML.
 
 **Loading from file:**
+
 ```python
 from pathml.core import SlideData
 
@@ -49,6 +53,7 @@ wsi = SlideData.from_slide("path/to/slide.ome.tiff", backend="bioformats")
 ```
 
 **Key attributes:**
+
 - `wsi.slide` - Backend slide object (OpenSlide, BioFormats, etc.)
 - `wsi.tiles` - Collection of image tiles
 - `wsi.metadata` - Slide metadata dictionary
@@ -56,6 +61,7 @@ wsi = SlideData.from_slide("path/to/slide.ome.tiff", backend="bioformats")
 - `wsi.level_downsamples` - Downsample factors for each pyramid level
 
 **Methods:**
+
 - `wsi.generate_tiles()` - Generate tiles from the slide
 - `wsi.read_region()` - Read a specific region at a given level
 - `wsi.get_thumbnail()` - Get a thumbnail image
@@ -79,6 +85,7 @@ SlideType.VectraQPTIFF  # For Vectra multiplex IF
 PathML provides specialized slide classes for specific imaging modalities:
 
 **CODEXSlide:**
+
 ```python
 from pathml.core import CODEXSlide
 
@@ -91,6 +98,7 @@ codex_slide = CODEXSlide(
 ```
 
 **VectraSlide:**
+
 ```python
 from pathml.core import types
 
@@ -102,6 +110,7 @@ vectra_slide = SlideData.from_slide(
 ```
 
 **MultiparametricSlide:**
+
 ```python
 from pathml.core import MultiparametricSlide
 
@@ -137,6 +146,7 @@ for tile in wsi.tiles:
 ```
 
 **Overlapping tiles:**
+
 ```python
 # Generate tiles with 50% overlap
 wsi.generate_tiles(
@@ -175,6 +185,7 @@ wsi.generate_tiles(level=2, tile_size=256)  # Use level 2 (16x downsampled)
 ```
 
 **Common pyramid levels:**
+
 - Level 0: Full resolution (e.g., 40x magnification)
 - Level 1: 4x downsampled (e.g., 10x magnification)
 - Level 2: 16x downsampled (e.g., 2.5x magnification)
@@ -220,6 +231,7 @@ for tile in dataset:
 ```
 
 **With preprocessing pipeline:**
+
 ```python
 from pathml.preprocessing import Pipeline, StainNormalizationHE
 
@@ -329,22 +341,26 @@ Balance resolution and performance by selecting appropriate pyramid levels:
 ## Common Issues and Solutions
 
 **Issue: Slide fails to load**
+
 - Verify file format is supported
 - Check file permissions and path
 - Try different backend: `backend="bioformats"` or `backend="openslide"`
 
 **Issue: Out of memory errors**
+
 - Use tile-based loading instead of full-slide loading
 - Process at lower pyramid level (e.g., level=1 or level=2)
 - Reduce tile_size parameter
 - Enable distributed processing with Dask
 
 **Issue: Color inconsistencies across slides**
+
 - Apply stain normalization preprocessing (see `preprocessing.md`)
 - Check scanner metadata for calibration information
 - Use `StainNormalizationHE` transform in preprocessing pipeline
 
 **Issue: Metadata missing or incorrect**
+
 - Different vendors store metadata in different locations
 - Use `wsi.metadata` to inspect available fields
 - Some formats may have limited metadata support

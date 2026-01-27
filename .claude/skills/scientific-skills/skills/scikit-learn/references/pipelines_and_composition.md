@@ -9,10 +9,12 @@ Pipelines chain multiple processing steps into a single estimator, preventing da
 ### Creating a Pipeline
 
 **Pipeline (`sklearn.pipeline.Pipeline`)**
+
 - Chains transformers with a final estimator
 - All intermediate steps must have fit_transform()
 - Final step can be any estimator (transformer, classifier, regressor, clusterer)
 - Example:
+
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -36,8 +38,10 @@ y_proba = pipeline.predict_proba(X_test)
 ### Using make_pipeline
 
 **make_pipeline**
+
 - Convenient constructor that auto-generates step names
 - Example:
+
 ```python
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -150,9 +154,11 @@ grid_search.fit(X_train, y_train)
 ### Basic Usage
 
 **ColumnTransformer (`sklearn.compose.ColumnTransformer`)**
+
 - Apply different preprocessing to different columns
 - Prevents data leakage in cross-validation
 - Example:
+
 ```python
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -281,9 +287,11 @@ preprocessor = ColumnTransformer([...], remainder=StandardScaler())
 ### Basic Usage
 
 **FeatureUnion (`sklearn.pipeline.FeatureUnion`)**
+
 - Concatenates results of multiple transformers
 - Transformers are applied in parallel
 - Example:
+
 ```python
 from sklearn.pipeline import FeatureUnion
 from sklearn.decomposition import PCA
@@ -416,9 +424,11 @@ middle_steps = pipeline[1:3]
 ### Basic Usage
 
 **TransformedTargetRegressor**
+
 - Transforms target variable before fitting
 - Automatically inverse-transforms predictions
 - Example:
+
 ```python
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.preprocessing import QuantileTransformer
@@ -541,12 +551,14 @@ print(pipeline.get_params())
 ## Best Practices
 
 ### Always Use Pipelines
+
 - Prevents data leakage
 - Ensures consistency between training and prediction
 - Makes code more maintainable
 - Enables easy hyperparameter tuning
 
 ### Proper Pipeline Construction
+
 ```python
 # Good: Preprocessing inside pipeline
 pipeline = Pipeline([
@@ -562,7 +574,9 @@ model.fit(X_train_scaled, y_train)
 ```
 
 ### Use ColumnTransformer for Mixed Data
+
 Always use ColumnTransformer when you have both numerical and categorical features:
+
 ```python
 preprocessor = ColumnTransformer([
     ('num', StandardScaler(), numeric_features),
@@ -571,6 +585,7 @@ preprocessor = ColumnTransformer([
 ```
 
 ### Name Your Steps Meaningfully
+
 ```python
 # Good
 pipeline = Pipeline([
@@ -590,7 +605,9 @@ pipeline = Pipeline([
 ```
 
 ### Cache Expensive Transformations
+
 For repeated fitting (e.g., during grid search), cache expensive steps:
+
 ```python
 from tempfile import mkdtemp
 
@@ -602,10 +619,13 @@ pipeline = Pipeline([
 ```
 
 ### Test Pipeline Compatibility
+
 Ensure all steps are compatible:
+
 - All intermediate steps must have fit() and transform()
 - Final step needs fit() and predict() (or transform())
 - Use set_output(transform='pandas') for DataFrame output
+
 ```python
 pipeline.set_output(transform='pandas')
 X_transformed = pipeline.transform(X)  # Returns DataFrame

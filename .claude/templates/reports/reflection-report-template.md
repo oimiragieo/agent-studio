@@ -6,31 +6,39 @@
 
 ## Quality Assessment
 
-| Criterion | Score (0-1) | Notes |
-|-----------|-------------|-------|
-| Completeness | {{completeness}} | {{completeness_notes}} |
-| Accuracy | {{accuracy}} | {{accuracy_notes}} |
-| Clarity | {{clarity}} | {{clarity_notes}} |
-| Consistency | {{consistency}} | {{consistency_notes}} |
+| Criterion     | Score (0-1)       | Notes                   |
+| ------------- | ----------------- | ----------------------- |
+| Completeness  | {{completeness}}  | {{completeness_notes}}  |
+| Accuracy      | {{accuracy}}      | {{accuracy_notes}}      |
+| Clarity       | {{clarity}}       | {{clarity_notes}}       |
+| Consistency   | {{consistency}}   | {{consistency_notes}}   |
 | Actionability | {{actionability}} | {{actionability_notes}} |
-| **Overall** | {{overall}} | |
+| **Overall**   | {{overall}}       |                         |
 
 ## Issues Found
+
 {{#issues}}
+
 - **{{severity}}**: {{description}}
-{{/issues}}
+  {{/issues}}
 
 ## Patterns Identified
+
 {{#patterns}}
+
 - {{pattern}}
-{{/patterns}}
+  {{/patterns}}
 
 ## Learnings to Record
+
 {{#learnings}}
+
 - {{learning}}
-{{/learnings}}
+  {{/learnings}}
 
 ## Recommendations
+
 {{#recommendations}}
+
 - {{recommendation}}
-{{/recommendations}}
+  {{/recommendations}}

@@ -20,7 +20,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function findProjectRoot() {
   let dir = __dirname;
   let prevDir = '';
-  while (dir !== prevDir) {  // Stop when we reach the root (dirname returns same path)
+  while (dir !== prevDir) {
+    // Stop when we reach the root (dirname returns same path)
     // Check if this directory contains a .claude folder (project root)
     if (existsSync(join(dir, '.claude'))) return dir;
     prevDir = dir;
@@ -183,7 +184,10 @@ function findExistingSkill(mcpName) {
  */
 function extractKeywords(text) {
   if (!text) return new Set();
-  const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 2);
+  const words = text
+    .toLowerCase()
+    .split(/\W+/)
+    .filter(w => w.length > 2);
   return new Set(words);
 }
 
@@ -296,7 +300,8 @@ export function getConfiguredServers() {
 
 // CLI usage - normalize paths for Windows compatibility
 const scriptPath = process.argv[1] || '';
-const isMain = import.meta.url === `file://${scriptPath}` ||
+const isMain =
+  import.meta.url === `file://${scriptPath}` ||
   import.meta.url === `file:///${scriptPath.replace(/\\/g, '/')}`;
 if (isMain) {
   const args = process.argv.slice(2);

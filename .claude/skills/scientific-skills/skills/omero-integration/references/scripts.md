@@ -549,6 +549,7 @@ if __name__ == "__main__":
 ### Installation Location
 
 Scripts should be placed in the OMERO server scripts directory:
+
 ```
 OMERO_DIR/lib/scripts/
 ```

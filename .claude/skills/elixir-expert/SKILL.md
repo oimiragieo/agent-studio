@@ -40,7 +40,6 @@ When reviewing or writing code, apply these guidelines:
 - Act as an expert senior Elixir engineer.
 - When writing code, use Elixir, Phoenix, Docker, PostgreSQL, Tailwind CSS, LeftHook, Sobelow, Credo, Ecto, ExUnit, Plug, Phoenix LiveView, Phoenix LiveDashboard, Gettext, Jason, Swoosh, Finch, DNS Cluster, File System Watcher, Release Please and ExCoveralls.
 
-
 </instructions>
 
 <examples>
@@ -54,9 +53,11 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Elixir Language Patterns
 
 ### Pattern Matching
+
 Pattern matching is fundamental to Elixir. Use it for:
 
 **Function clauses:**
+
 ```elixir
 def greet(%User{name: name, role: :admin}), do: "Hello Admin #{name}"
 def greet(%User{name: name}), do: "Hello #{name}"
@@ -64,6 +65,7 @@ def greet(_), do: "Hello stranger"
 ```
 
 **Case statements:**
+
 ```elixir
 case {status, data} do
   {:ok, %{id: id}} when id > 0 -> process(id)
@@ -73,6 +75,7 @@ end
 ```
 
 **With statements for chaining:**
+
 ```elixir
 with {:ok, user} <- fetch_user(id),
      {:ok, profile} <- fetch_profile(user),
@@ -82,6 +85,7 @@ end
 ```
 
 ### Guards
+
 Use guards to add constraints to pattern matching:
 
 ```elixir
@@ -94,6 +98,7 @@ def process_map(map) when is_map(map), do: :has_data
 ```
 
 ### Pipe Operator
+
 The pipe operator `|>` improves readability:
 
 ```elixir
@@ -109,6 +114,7 @@ result =
 ```
 
 Pipe into case for handling results:
+
 ```elixir
 user_id
 |> fetch_user()
@@ -122,6 +128,7 @@ end
 ## OTP (Open Telecom Platform) Patterns
 
 ### GenServer
+
 GenServer is the foundation for stateful processes:
 
 ```elixir
@@ -160,6 +167,7 @@ end
 ```
 
 ### Supervisor
+
 Supervisors manage process lifecycles:
 
 ```elixir
@@ -190,11 +198,13 @@ end
 ```
 
 **Supervisor strategies:**
+
 - `:one_for_one` - restart only failed child
 - `:one_for_all` - restart all children if one fails
 - `:rest_for_one` - restart failed child and those started after it
 
 ### Agent
+
 For simple state management:
 
 ```elixir
@@ -206,6 +216,7 @@ Agent.get(agent, fn state -> Map.get(state, :key) end)
 ## Phoenix Framework
 
 ### Controllers
+
 ```elixir
 defmodule MyAppWeb.UserController do
   use MyAppWeb, :controller
@@ -230,6 +241,7 @@ end
 ```
 
 ### Phoenix LiveView
+
 For real-time interactive UIs:
 
 ```elixir
@@ -259,6 +271,7 @@ end
 ```
 
 **PubSub for broadcasting:**
+
 ```elixir
 # Subscribe
 Phoenix.PubSub.subscribe(MyApp.PubSub, "updates")
@@ -274,6 +287,7 @@ end
 ```
 
 ### Channels
+
 For WebSocket communication:
 
 ```elixir
@@ -296,6 +310,7 @@ end
 ## Ecto Database Patterns
 
 ### Schemas and Changesets
+
 ```elixir
 defmodule MyApp.Accounts.User do
   use Ecto.Schema
@@ -322,6 +337,7 @@ end
 ```
 
 ### Queries
+
 ```elixir
 import Ecto.Query
 
@@ -351,6 +367,7 @@ from u in User,
 ```
 
 ### Transactions
+
 ```elixir
 Repo.transaction(fn ->
   with {:ok, user} <- create_user(params),
@@ -399,6 +416,7 @@ end
 ## Deployment Best Practices
 
 ### Releases
+
 Use Elixir releases for production:
 
 ```elixir
@@ -416,12 +434,14 @@ end
 ```
 
 Build and deploy:
+
 ```bash
 MIX_ENV=prod mix release
 _build/prod/rel/myapp/bin/myapp start
 ```
 
 ### Configuration
+
 ```elixir
 # config/runtime.exs
 import Config
@@ -437,6 +457,7 @@ end
 ```
 
 ### Health Checks
+
 ```elixir
 # In your router
 get "/health", HealthController, :check
@@ -453,12 +474,13 @@ end
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- elixir-expert
 
+- elixir-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

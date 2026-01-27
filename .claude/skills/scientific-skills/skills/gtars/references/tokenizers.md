@@ -86,7 +86,7 @@ Tokenizer configuration files support YAML format:
 ```yaml
 # tokenizer_config.yaml
 type: tree
-resolution: 1000  # Token resolution in base pairs
+resolution: 1000 # Token resolution in base pairs
 chromosomes:
   - chr1
   - chr2

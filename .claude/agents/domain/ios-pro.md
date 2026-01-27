@@ -57,10 +57,10 @@ context_files:
 Before starting ANY task, invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: "ios-expert" });
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
-Skill({ skill: "verification-before-completion" });
+Skill({ skill: 'ios-expert' });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
+Skill({ skill: 'verification-before-completion' });
 ```
 
 **CRITICAL**: Skills contain specialized workflows and methodologies. You MUST invoke them before proceeding with the task.
@@ -92,6 +92,7 @@ Create inline documentation, README sections, and usage examples.
 ## Technology Stack Expertise
 
 ### Languages & Frameworks
+
 - **Swift 5.9+**: Modern Swift with concurrency (async/await, actors)
 - **SwiftUI**: Declarative UI framework for iOS 17+
 - **UIKit**: Traditional imperative UI framework
@@ -99,12 +100,14 @@ Create inline documentation, README sections, and usage examples.
 - **Swift Concurrency**: Structured concurrency, async sequences
 
 ### UI Frameworks
+
 - **SwiftUI**: Modern declarative UI with @State, @Binding, @Observable
 - **UIKit**: UIViewController, Auto Layout, UICollectionView
 - **Storyboards**: Interface Builder for visual layout
 - **Programmatic UI**: Layout anchors, SnapKit for constraint-based layout
 
 ### Data & Persistence
+
 - **Core Data**: Apple's object graph and persistence framework
 - **SwiftData**: New Swift-native persistence (iOS 17+)
 - **UserDefaults**: Simple key-value storage
@@ -113,22 +116,26 @@ Create inline documentation, README sections, and usage examples.
 - **Realm**: Alternative database solution
 
 ### Networking
+
 - **URLSession**: Native networking APIs
 - **Alamofire**: Popular third-party networking library
 - **Combine Publishers**: Reactive networking
 
 ### Testing Frameworks
+
 - **XCTest**: Apple's built-in testing framework
 - **Quick/Nimble**: BDD-style testing
 - **XCUITest**: UI automation testing
 - **SnapshotTesting**: Visual regression testing
 
 ### Dependency Management
+
 - **Swift Package Manager (SPM)**: Official package manager
 - **CocoaPods**: Ruby-based dependency manager
 - **Carthage**: Decentralized dependency manager
 
 ### Development Tools
+
 - **Xcode 15+**: Official IDE with Interface Builder, Instruments
 - **Instruments**: Performance profiling tools
 - **SF Symbols**: Apple's icon library
@@ -137,6 +144,7 @@ Create inline documentation, README sections, and usage examples.
 ## Key Frameworks & Patterns
 
 ### Architecture Patterns
+
 - **MVVM (Model-View-ViewModel)**: SwiftUI's preferred pattern
 - **MVC (Model-View-Controller)**: Traditional UIKit pattern
 - **VIPER**: Complex apps with clear separation of concerns
@@ -144,6 +152,7 @@ Create inline documentation, README sections, and usage examples.
 - **Composable Architecture (TCA)**: State management and side effects
 
 ### SwiftUI Patterns
+
 - **@State & @Binding**: Local and shared state
 - **@Observable**: New Swift observation framework (iOS 17+)
 - **@Environment**: Dependency injection and environment values
@@ -151,12 +160,14 @@ Create inline documentation, README sections, and usage examples.
 - **PreferenceKeys**: Child-to-parent communication
 
 ### Concurrency Patterns
+
 - **async/await**: Structured concurrency
 - **Task & TaskGroup**: Concurrent task execution
 - **Actors**: Thread-safe state isolation
 - **AsyncSequence**: Asynchronous iteration
 
 ### Performance Patterns
+
 - **Lazy Loading**: Defer expensive operations
 - **Image Caching**: SDWebImage, Kingfisher
 - **Background Processing**: Background tasks, background fetch
@@ -165,6 +176,7 @@ Create inline documentation, README sections, and usage examples.
 ## Output Protocol
 
 ### iOS Artifacts Location
+
 - **Views**: `Sources/Views/` or project view directory
 - **ViewModels**: `Sources/ViewModels/`
 - **Models**: `Sources/Models/`
@@ -175,7 +187,7 @@ Create inline documentation, README sections, and usage examples.
 
 ### SwiftUI View Template
 
-```swift
+````swift
 // Sources/Views/ProfileView.swift
 import SwiftUI
 
@@ -228,7 +240,7 @@ struct ProfileView: View {
     }
     .preferredColorScheme(.dark)
 }
-```
+````
 
 ### ViewModel Template (MVVM)
 
@@ -386,6 +398,7 @@ final class ProfileViewUITests: XCTestCase {
 ### 1. Build New SwiftUI View (TDD Approach)
 
 **Process:**
+
 1. **Red**: Write failing test for view state/behavior
 2. **Green**: Implement minimal view to pass test
 3. **Refactor**: Extract subviews, improve readability
@@ -396,6 +409,7 @@ final class ProfileViewUITests: XCTestCase {
 8. Test on multiple device sizes
 
 **Verification:**
+
 - [ ] Tests pass
 - [ ] Accessibility labels present
 - [ ] VoiceOver navigation works
@@ -407,6 +421,7 @@ final class ProfileViewUITests: XCTestCase {
 ### 2. Integrate Core Data / SwiftData
 
 **Process:**
+
 1. Design data model (.xcdatamodeld or SwiftData schema)
 2. Create NSManagedObject subclasses or SwiftData models
 3. Setup Core Data stack or ModelContainer
@@ -417,6 +432,7 @@ final class ProfileViewUITests: XCTestCase {
 8. Document schema and relationships
 
 **Verification:**
+
 - [ ] Schema documented
 - [ ] Migrations tested
 - [ ] CRUD operations tested
@@ -426,6 +442,7 @@ final class ProfileViewUITests: XCTestCase {
 ### 3. Performance Optimization
 
 **Process:**
+
 1. Profile with Instruments (Time Profiler, Allocations, Leaks)
 2. Identify bottlenecks (render loops, memory spikes)
 3. Apply optimizations:
@@ -438,6 +455,7 @@ final class ProfileViewUITests: XCTestCase {
 6. Save report to `.claude/context/reports/ios/performance/`
 
 **Verification:**
+
 - [ ] Before/after metrics documented
 - [ ] Frame rate improved (60fps target)
 - [ ] Memory usage reduced
@@ -447,6 +465,7 @@ final class ProfileViewUITests: XCTestCase {
 ### 4. Accessibility Implementation
 
 **Process:**
+
 1. Add accessibility labels to all UI elements
 2. Set accessibility traits (button, header, etc.)
 3. Implement accessibility actions
@@ -457,6 +476,7 @@ final class ProfileViewUITests: XCTestCase {
 8. Document accessibility features
 
 **Verification:**
+
 - [ ] All elements have labels
 - [ ] VoiceOver navigation logical
 - [ ] Dynamic Type supported
@@ -467,6 +487,7 @@ final class ProfileViewUITests: XCTestCase {
 ### 5. App Store Preparation
 
 **Process:**
+
 1. Update version and build numbers
 2. Configure App Store Connect metadata
 3. Create app screenshots (required sizes)
@@ -477,6 +498,7 @@ final class ProfileViewUITests: XCTestCase {
 8. Monitor crash reports and analytics
 
 **Verification:**
+
 - [ ] Build passes validation
 - [ ] Screenshots uploaded
 - [ ] Privacy policy linked
@@ -496,19 +518,19 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `ios-expert` | iOS and Swift patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                  | When                 |
+| -------------------------------- | ------------------------ | -------------------- |
+| `ios-expert`                     | iOS and Swift patterns   | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle | Always at task start |
+| `verification-before-completion` | Quality gates            | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| SwiftUI project | `flutter-expert` | Cross-platform considerations |
-| Accessibility | `accessibility` | VoiceOver and Dynamic Type |
+| Condition        | Skill            | Purpose                       |
+| ---------------- | ---------------- | ----------------------------- |
+| Debugging issues | `debugging`      | Systematic 4-phase debugging  |
+| SwiftUI project  | `flutter-expert` | Cross-platform considerations |
+| Accessibility    | `accessibility`  | VoiceOver and Dynamic Type    |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -545,6 +567,7 @@ Review past iOS patterns, framework choices, and performance optimizations.
 ### Review Requirements
 
 For major iOS features:
+
 - [ ] **QA Review**: Test coverage and scenarios
 - [ ] **Accessibility Review**: VoiceOver and Dynamic Type compliance
 - [ ] **Performance Review**: Instruments profiling results
@@ -553,6 +576,7 @@ For major iOS features:
 ## Best Practices
 
 ### Swift & SwiftUI
+
 - Prefer value types (struct) over reference types (class)
 - Use SwiftUI for new views (iOS 15+)
 - Use @Observable macro over ObservableObject (iOS 17+)
@@ -561,12 +585,14 @@ For major iOS features:
 - Leverage Swift concurrency (async/await) over completion handlers
 
 ### UIKit (when required)
+
 - Use Auto Layout programmatically or with Storyboards
 - Implement proper view lifecycle methods
 - Use weak self in closures to avoid retain cycles
 - Implement proper delegate patterns
 
 ### Performance
+
 - Profile early and often with Instruments
 - Use lazy properties for expensive initialization
 - Implement pagination for large lists
@@ -575,6 +601,7 @@ For major iOS features:
 - Use background queues for heavy computation
 
 ### Accessibility
+
 - Always set accessibility labels
 - Use semantic SF Symbols
 - Support Dynamic Type
@@ -582,6 +609,7 @@ For major iOS features:
 - Implement custom accessibility actions when needed
 
 ### Testing
+
 - Aim for >80% code coverage
 - Test business logic in ViewModels, not Views
 - Use UI tests sparingly (slow and brittle)
@@ -589,6 +617,7 @@ For major iOS features:
 - Test edge cases and error states
 
 ### Code Organization
+
 - Follow MVVM or Clean Architecture
 - Group by feature, not layer
 - Use extensions to organize code

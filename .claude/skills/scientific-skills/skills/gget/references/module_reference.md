@@ -5,6 +5,7 @@ Comprehensive parameter reference for all gget modules.
 ## Reference & Gene Information Modules
 
 ### gget ref
+
 Retrieve Ensembl reference genome FTPs and metadata.
 
 **Parameters:**
@@ -26,6 +27,7 @@ Retrieve Ensembl reference genome FTPs and metadata.
 ---
 
 ### gget search
+
 Search for genes by name or description in Ensembl.
 
 **Parameters:**
@@ -44,6 +46,7 @@ Search for genes by name or description in Ensembl.
 ---
 
 ### gget info
+
 Get comprehensive gene/transcript metadata from Ensembl, UniProt, and NCBI.
 
 **Parameters:**
@@ -58,6 +61,7 @@ Get comprehensive gene/transcript metadata from Ensembl, UniProt, and NCBI.
 | `-q/--quiet` | flag | Suppress progress display | False |
 
 **Python-specific:**
+
 - `save=True`: Save output to current directory
 - `wrap_text=True`: Format dataframe with wrapped text
 
@@ -68,6 +72,7 @@ Get comprehensive gene/transcript metadata from Ensembl, UniProt, and NCBI.
 ---
 
 ### gget seq
+
 Retrieve nucleotide or amino acid sequences in FASTA format.
 
 **Parameters:**
@@ -88,6 +93,7 @@ Retrieve nucleotide or amino acid sequences in FASTA format.
 ## Sequence Analysis & Alignment Modules
 
 ### gget blast
+
 BLAST sequences against standard databases.
 
 **Parameters:**
@@ -108,6 +114,7 @@ BLAST sequences against standard databases.
 ---
 
 ### gget blat
+
 Find genomic positions using UCSC BLAT.
 
 **Parameters:**
@@ -125,6 +132,7 @@ Find genomic positions using UCSC BLAT.
 ---
 
 ### gget muscle
+
 Align multiple sequences using Muscle5.
 
 **Parameters:**
@@ -140,6 +148,7 @@ Align multiple sequences using Muscle5.
 ---
 
 ### gget diamond
+
 Fast local protein/translated DNA alignment.
 
 **Parameters:**
@@ -163,6 +172,7 @@ Fast local protein/translated DNA alignment.
 ## Structural & Protein Analysis Modules
 
 ### gget pdb
+
 Query RCSB Protein Data Bank.
 
 **Parameters:**
@@ -178,6 +188,7 @@ Query RCSB Protein Data Bank.
 ---
 
 ### gget alphafold
+
 Predict 3D protein structures using AlphaFold2.
 
 **Setup:** Requires OpenMM and `gget setup alphafold` (~4GB download)
@@ -193,6 +204,7 @@ Predict 3D protein structures using AlphaFold2.
 | `-q/--quiet` | flag | Suppress progress | False |
 
 **Python-only:**
+
 - `plot` (bool): Generate 3D visualization (default: True)
 - `show_sidechains` (bool): Include side chains (default: True)
 
@@ -203,6 +215,7 @@ Predict 3D protein structures using AlphaFold2.
 ---
 
 ### gget elm
+
 Predict Eukaryotic Linear Motifs.
 
 **Setup:** Requires `gget setup elm`
@@ -221,6 +234,7 @@ Predict Eukaryotic Linear Motifs.
 | `-q/--quiet` | flag | Suppress progress | False |
 
 **Returns:** Two outputs:
+
 1. **ortholog_df**: Motifs from orthologous proteins
 2. **regex_df**: Motifs matched in input sequence
 
@@ -229,6 +243,7 @@ Predict Eukaryotic Linear Motifs.
 ## Expression & Disease Data Modules
 
 ### gget archs4
+
 Query ARCHS4 for gene correlation or tissue expression.
 
 **Parameters:**
@@ -243,12 +258,14 @@ Query ARCHS4 for gene correlation or tissue expression.
 | `-q/--quiet` | flag | Suppress progress | False |
 
 **Returns:**
+
 - **correlation**: Gene symbols, Pearson correlation coefficients (top 100)
 - **tissue**: Tissue IDs, min/Q1/median/Q3/max expression
 
 ---
 
 ### gget cellxgene
+
 Query CZ CELLxGENE Discover Census for single-cell data.
 
 **Setup:** Requires `gget setup cellxgene`
@@ -275,6 +292,7 @@ Query CZ CELLxGENE Discover Census for single-cell data.
 ---
 
 ### gget enrichr
+
 Perform enrichment analysis using Enrichr/modEnrichr.
 
 **Parameters:**
@@ -288,9 +306,11 @@ Perform enrichment analysis using Enrichr/modEnrichr.
 | `-ko/--kegg_out` | str | KEGG pathway images directory | None |
 
 **Python-only:**
+
 - `plot` (bool): Generate graphical results
 
 **Database shortcuts:**
+
 - 'pathway' → KEGG_2021_Human
 - 'transcription' → ChEA_2016
 - 'ontology' → GO_Biological_Process_2021
@@ -302,6 +322,7 @@ Perform enrichment analysis using Enrichr/modEnrichr.
 ---
 
 ### gget bgee
+
 Retrieve orthology and expression from Bgee.
 
 **Parameters:**
@@ -316,12 +337,14 @@ Retrieve orthology and expression from Bgee.
 **Note:** Multiple IDs supported when `type='expression'`
 
 **Returns:**
+
 - **orthologs**: Genes across species with IDs, names, taxonomic info
 - **expression**: Anatomical entities, confidence scores, expression status
 
 ---
 
 ### gget opentargets
+
 Retrieve disease/drug associations from OpenTargets.
 
 **Parameters:**
@@ -335,6 +358,7 @@ Retrieve disease/drug associations from OpenTargets.
 | `-q/--quiet` | flag | Suppress progress | False |
 
 **Resource-specific filters:**
+
 - drugs: `--filter_disease`
 - pharmacogenetics: `--filter_drug`
 - expression/depmap: `--filter_tissue`, `--filter_anat_sys`, `--filter_organ`
@@ -345,6 +369,7 @@ Retrieve disease/drug associations from OpenTargets.
 ---
 
 ### gget cbio
+
 Plot cancer genomics heatmaps from cBioPortal.
 
 **Subcommands:** search, plot
@@ -375,6 +400,7 @@ Plot cancer genomics heatmaps from cBioPortal.
 ---
 
 ### gget cosmic
+
 Search COSMIC database for cancer mutations.
 
 **Important:** License fees for commercial use. Requires COSMIC account.
@@ -407,6 +433,7 @@ Search COSMIC database for cancer mutations.
 ## Additional Tools
 
 ### gget mutate
+
 Generate mutated nucleotide sequences.
 
 **Parameters:**
@@ -426,6 +453,7 @@ Generate mutated nucleotide sequences.
 ---
 
 ### gget gpt
+
 Generate text using OpenAI's API.
 
 **Setup:** Requires `gget setup gpt` and OpenAI API key
@@ -449,6 +477,7 @@ Generate text using OpenAI's API.
 ---
 
 ### gget setup
+
 Install/download dependencies for modules.
 
 **Parameters:**
@@ -459,6 +488,7 @@ Install/download dependencies for modules.
 | `-q/--quiet` | flag | Suppress progress | False |
 
 **Modules requiring setup:**
+
 - `alphafold` - Downloads ~4GB model parameters
 - `cellxgene` - Installs cellxgene-census
 - `elm` - Downloads local ELM database

@@ -7,6 +7,7 @@
 Create secrets at https://modal.com/secrets
 
 Templates available for:
+
 - Database credentials (Postgres, MongoDB)
 - Cloud providers (AWS, GCP, Azure)
 - ML platforms (Weights & Biases, Hugging Face)
@@ -85,17 +86,20 @@ Later secrets override earlier ones if keys clash.
 ### Reserved Runtime Variables
 
 **All Containers**:
+
 - `MODAL_CLOUD_PROVIDER` - Cloud provider (AWS/GCP/OCI)
 - `MODAL_IMAGE_ID` - Image ID
 - `MODAL_REGION` - Region identifier (e.g., us-east-1)
 - `MODAL_TASK_ID` - Container task ID
 
 **Function Containers**:
+
 - `MODAL_ENVIRONMENT` - Modal Environment name
 - `MODAL_IS_REMOTE` - Set to '1' in remote containers
 - `MODAL_IDENTITY_TOKEN` - OIDC token for function identity
 
 **Sandbox Containers**:
+
 - `MODAL_SANDBOX_ID` - Sandbox ID
 
 ### Setting Environment Variables

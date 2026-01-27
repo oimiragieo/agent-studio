@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Focus on easy and readability code.
 - Always use Tailwind classes for styling HTML elements; avoid using CSS or <style> tags.
 - Implement accessibility features on elements. For example, a tag should have a tabindex=“0”, aria-label, on:click, and on:keydown, and similar attributes.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

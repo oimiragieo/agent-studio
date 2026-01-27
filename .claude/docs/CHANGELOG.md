@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Router Enforcement System (ADR-006)
+
 - **NEW**: Hybrid multi-layer Router enforcement system with 5 components
   - `router-state.cjs`: Extended state tracking for complexity and spawn events
   - `router-enforcer.cjs`: Complexity classification and advisory warnings
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Documentation**: `.claude/docs/ROUTER_ENFORCEMENT.md`
 
 #### Network Security Validators (SEC-003)
+
 - **NEW**: `network-validators.cjs` with comprehensive network command validation
   - `curl`/`wget`: Allowlist of safe package registry domains, blocks piping to shell
   - `nc`/`netcat`: Blocked entirely (reverse shell risk)
@@ -33,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Threat Protection**: Information Disclosure, Tampering, Elevation of Privilege (STRIDE)
 
 #### Skill Catalog Enhancements
+
 - Added 92 missing skills across 4 new categories
   - **Project Structure** (8 skills): Project file organization patterns
   - **Java Spring Boot** (6 skills): Spring Boot specific patterns
@@ -44,12 +47,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete sub-skills reference table for all scientific skills
 
 #### Agent Standardization
+
 - All 39 agents now include `version: 1.0.0` in YAML frontmatter
 - Standardized frontmatter schema across all agents
 
 ### Security Fixes
 
 #### SEC-001: Bash Command Validator Fail-Open Vulnerability (CRITICAL)
+
 - **Severity**: Critical (P0)
 - **STRIDE Category**: Elevation of Privilege
 - **File**: `.claude/hooks/safety/bash-command-validator.cjs` (lines 166-173)
@@ -59,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Rationale**: Deny by default when security state is unknown (defense-in-depth)
 
 #### SEC-002: Shell Validator Inner Command Bypass (HIGH)
+
 - **Severity**: High (P0)
 - **STRIDE Category**: Tampering
 - **File**: `.claude/hooks/safety/validators/shell-validators.cjs` (lines 157-161)
@@ -68,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Rationale**: Nested commands must pass same security checks as top-level commands
 
 #### SEC-003: Missing Network Command Validators (HIGH)
+
 - **Severity**: High (P0)
 - **STRIDE Categories**: Information Disclosure, Tampering, Elevation of Privilege
 - **File**: `.claude/hooks/safety/validators/network-validators.cjs` (NEW)
@@ -84,16 +91,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 #### Hook Fixes
+
 - `validate-skill-invocation.cjs`: Added missing `main()` function for CLI execution
 - `validate-skill-invocation.cjs`: Now executes properly when run standalone
 
 #### Workflow Fixes
+
 - `incident-response.md`: Fixed invalid `subagent_type` values in Task tool calls
 - All workflows now have explicit `Skill()` invocations in spawn prompts
 - `conductor-setup-workflow.md`: Updated for consistency
 - `c4-architecture-workflow.md`: Updated for consistency
 
 #### Documentation Fixes
+
 - CLAUDE.md Section 3 (Agent Routing Table): Moved Creator Skills to separate subsection
 - CLAUDE.md: Documented Bash exception for git commands (Router whitelist)
 - CLAUDE.md Section 3.5: Now references router-decision.md Step 7.3 for Planning Orchestration Matrix
@@ -117,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Auto-Claude Integration
+
 - Integrated Auto-Claude autonomous coding framework (https://github.com/cyanheads/Auto-Claude)
 - **Security Validators** (6 files in `.claude/hooks/safety/validators/`):
   - `shell-validators.cjs`: Bash/sh/zsh command validation
@@ -143,6 +154,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `merge-strategies.md`: Git merge conflict strategies
 
 #### Comprehensive Skill Catalog
+
 - **Location**: `.claude/context/artifacts/skill-catalog.md`
 - **Total Skills**: 282 skills organized into 20+ categories
 - **Categories**: Core Development, Planning, Security, DevOps, Languages, Frameworks, Mobile, Data, Documentation, Git, Code Style, Creator Tools, Memory & Context, Validation, Specialized Patterns
@@ -150,6 +162,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Discovery**: Lazy-load pattern prevents stale skill references (ADR-004)
 
 #### Scientific Skills Integration
+
 - Integrated K-Dense Scientific Skills (139 sub-skills)
 - **Source**: https://github.com/K-Dense-AI/claude-scientific-skills
 - **Location**: `.claude/skills/scientific-skills/`
@@ -160,12 +173,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Usage**: `Skill({ skill: "scientific-skills/rdkit" })`
 
 #### Kubernetes Operations Skills
+
 - **k8s-manifest-generator**: Production-ready Kubernetes manifests
 - **helm-chart-scaffolding**: Helm chart creation and management
 - **gitops-workflow**: GitOps with ArgoCD and Flux CD
 - **k8s-security-policies**: Pod Security Standards, NetworkPolicy, RBAC
 
 #### Reverse Engineering Capabilities
+
 - **reverse-engineer agent**: Elite binary analysis specialist
 - **Skills**:
   - `binary-analysis-patterns`: x86-64, ARM, data structure recognition
@@ -174,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security**: Explicit authorization framework (AUTHORIZED USE ONLY)
 
 #### Enterprise Workflows
+
 - **feature-development-workflow**: End-to-end feature development (6 phases)
 - **c4-architecture-workflow**: C4 model documentation (4 phases, bottom-up)
 - **conductor-setup-workflow**: CDD project initialization
@@ -181,11 +197,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **router-decision-workflow**: Master routing workflow (9 steps)
 
 #### Hooks and Safety
+
 - `windows-null-sanitizer.cjs`: Prevents `/dev/null` creating literal files on Windows
 - `validate-skill-invocation.cjs`: Warns when agents Read() skills instead of invoking via Skill() tool
 - `memory-reminder.cjs`: Registered in settings.json UserPromptSubmit
 
 #### Creator Ecosystem
+
 - **agent-creator**: Creates new agents
 - **skill-creator**: Creates new skills
 - **hook-creator**: Creates safety/validation hooks
@@ -195,6 +213,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CLAUDE.md Section 4.1**: Complete creator ecosystem documentation
 
 #### Documentation
+
 - `.claude/docs/ARCHITECTURE.md`: Framework architecture documentation
 - `.claude/docs/HOOKS_AND_SAFETY.md`: Hooks and safety systems documentation
 - `.claude/hooks/README.md`: Comprehensive hooks and validators documentation
@@ -202,18 +221,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 #### Task Management
+
 - Added Task Synchronization Protocol to CLAUDE.md Section 2 and 5.5
 - Mandatory update triggers, metadata schema, background polling
 - Cross-session coordination with `CLAUDE_CODE_TASK_LIST_ID`
 - Three Iron Laws for task completion
 
 #### Agent Context Strategy
+
 - Standardized `context_strategy` field across 21 agents:
   - `minimal`: Router/orchestrator agents (low token usage)
   - `lazy_load`: Default for most agents (load as needed)
   - `full`: Deep analysis agents (architect, security, reverse-engineer)
 
 #### Skill Maintenance
+
 - skill-creator now enforces catalog updates (Iron Law #6)
 - Step 8 added: Update Skill Catalog (MANDATORY - BLOCKING)
 - Verification checklist includes catalog grep
@@ -222,6 +244,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 #### Cross-Platform Compatibility
+
 - Added platform-aware null device handling
 - **Library**: `.claude/lib/platform.cjs` and `.claude/lib/platform.mjs`
 - **Exports**: `NULL_DEVICE`, `isWindows`, `shellQuote`, `suppressStderr`
@@ -229,6 +252,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed `.claude/skills/skill-creator/scripts/convert.cjs`
 
 #### 7-Agent Audit Fixes
+
 - Removed Glob/Grep from router.md tools (blacklist compliance)
 - Redesigned CLAUDE.md Section 7 to reference skill-catalog.md dynamically
 - Registered memory-reminder.cjs in settings.json

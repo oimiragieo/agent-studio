@@ -9,6 +9,7 @@ PufferLib provides the PufferEnv API for creating high-performance custom enviro
 ### Core Characteristics
 
 PufferEnv is designed for performance through in-place operations:
+
 - Observations, actions, and rewards are initialized from a shared buffer object
 - All operations happen in-place to avoid creating and copying arrays
 - Native support for both single-agent and multi-agent environments
@@ -195,21 +196,25 @@ PufferLib provides the Ocean suite with 20+ pre-built environments:
 ### Available Environments
 
 #### Arcade Games
+
 - **Atari**: Classic Atari 2600 games via Arcade Learning Environment
 - **Procgen**: Procedurally generated games for generalization testing
 
 #### Grid-Based
+
 - **Minigrid**: Partially observable gridworld environments
 - **Crafter**: Open-ended survival crafting game
 - **NetHack**: Classic roguelike dungeon crawler
 - **MiniHack**: Simplified NetHack variants
 
 #### Multi-Agent
+
 - **PettingZoo**: Multi-agent environment suite (including Butterfly)
 - **MAgent**: Large-scale multi-agent scenarios
 - **Neural MMO**: Massively multi-agent survival game
 
 #### Specialized
+
 - **Pokemon Red**: Classic Pokemon game environment
 - **GPUDrive**: High-performance driving simulator
 - **Griddly**: Grid-based game engine

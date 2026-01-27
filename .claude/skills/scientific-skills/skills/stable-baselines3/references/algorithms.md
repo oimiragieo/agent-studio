@@ -4,16 +4,16 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 
 ## Algorithm Comparison Table
 
-| Algorithm | Type | Action Space | Sample Efficiency | Training Speed | Use Case |
-|-----------|------|--------------|-------------------|----------------|----------|
-| **PPO** | On-Policy | All | Medium | Fast | General-purpose, stable |
-| **A2C** | On-Policy | All | Low | Very Fast | Quick prototyping, multiprocessing |
-| **SAC** | Off-Policy | Continuous | High | Medium | Continuous control, sample-efficient |
-| **TD3** | Off-Policy | Continuous | High | Medium | Continuous control, deterministic |
-| **DDPG** | Off-Policy | Continuous | High | Medium | Continuous control (use TD3 instead) |
-| **DQN** | Off-Policy | Discrete | Medium | Medium | Discrete actions, Atari games |
-| **HER** | Off-Policy | All | Very High | Medium | Goal-conditioned tasks |
-| **RecurrentPPO** | On-Policy | All | Medium | Slow | Partial observability (POMDP) |
+| Algorithm        | Type       | Action Space | Sample Efficiency | Training Speed | Use Case                             |
+| ---------------- | ---------- | ------------ | ----------------- | -------------- | ------------------------------------ |
+| **PPO**          | On-Policy  | All          | Medium            | Fast           | General-purpose, stable              |
+| **A2C**          | On-Policy  | All          | Low               | Very Fast      | Quick prototyping, multiprocessing   |
+| **SAC**          | Off-Policy | Continuous   | High              | Medium         | Continuous control, sample-efficient |
+| **TD3**          | Off-Policy | Continuous   | High              | Medium         | Continuous control, deterministic    |
+| **DDPG**         | Off-Policy | Continuous   | High              | Medium         | Continuous control (use TD3 instead) |
+| **DQN**          | Off-Policy | Discrete     | Medium            | Medium         | Discrete actions, Atari games        |
+| **HER**          | Off-Policy | All          | Very High         | Medium         | Goal-conditioned tasks               |
+| **RecurrentPPO** | On-Policy  | All          | Medium            | Slow           | Partial observability (POMDP)        |
 
 ## Detailed Algorithm Characteristics
 
@@ -22,6 +22,7 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** General-purpose on-policy algorithm with good performance across many tasks.
 
 **Strengths:**
+
 - Stable and reliable training
 - Works with all action space types (Discrete, Box, MultiDiscrete, MultiBinary)
 - Good balance between sample efficiency and training speed
@@ -29,16 +30,19 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 - Easy to tune
 
 **Weaknesses:**
+
 - Less sample-efficient than off-policy methods
 - Requires many environment interactions
 
 **Best For:**
+
 - General-purpose RL tasks
 - When stability is important
 - When you have cheap environment simulations
 - Tasks with continuous or discrete actions
 
 **Hyperparameter Guidance:**
+
 - `n_steps`: 2048-4096 for continuous, 128-256 for Atari
 - `learning_rate`: 3e-4 is a good default
 - `n_epochs`: 10 for continuous, 4 for Atari
@@ -50,22 +54,26 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Synchronous variant of A3C, simpler than PPO but less stable.
 
 **Strengths:**
+
 - Very fast training (simpler than PPO)
 - Works with all action space types
 - Good for quick prototyping
 - Memory efficient
 
 **Weaknesses:**
+
 - Less stable than PPO
 - Requires careful hyperparameter tuning
 - Lower sample efficiency
 
 **Best For:**
+
 - Quick experimentation
 - When training speed is critical
 - Simple environments
 
 **Hyperparameter Guidance:**
+
 - `n_steps`: 5-256 depending on task
 - `learning_rate`: 7e-4
 - `gamma`: 0.99
@@ -75,6 +83,7 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Off-policy algorithm with entropy regularization, state-of-the-art for continuous control.
 
 **Strengths:**
+
 - Excellent sample efficiency
 - Very stable training
 - Automatic entropy tuning
@@ -82,17 +91,20 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 - State-of-the-art for robotics
 
 **Weaknesses:**
+
 - Only supports continuous action spaces (Box)
 - Slower wall-clock time than on-policy methods
 - More complex hyperparameters
 
 **Best For:**
+
 - Continuous control (robotics, physics simulations)
 - When sample efficiency is critical
 - Expensive environment simulations
 - Tasks requiring good exploration
 
 **Hyperparameter Guidance:**
+
 - `learning_rate`: 3e-4
 - `buffer_size`: 1M for most tasks
 - `learning_starts`: 10000
@@ -105,22 +117,26 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Improved DDPG with double Q-learning and delayed policy updates.
 
 **Strengths:**
+
 - High sample efficiency
 - Deterministic policy (good for deployment)
 - More stable than DDPG
 - Good for continuous control
 
 **Weaknesses:**
+
 - Only supports continuous action spaces (Box)
 - Less exploration than SAC
 - Requires careful tuning
 
 **Best For:**
+
 - Continuous control tasks
 - When deterministic policies are preferred
 - Sample-efficient learning
 
 **Hyperparameter Guidance:**
+
 - `learning_rate`: 1e-3
 - `buffer_size`: 1M
 - `learning_starts`: 10000
@@ -132,15 +148,18 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Early off-policy continuous control algorithm.
 
 **Strengths:**
+
 - Continuous action space support
 - Off-policy learning
 
 **Weaknesses:**
+
 - Less stable than TD3 or SAC
 - Sensitive to hyperparameters
 - Generally outperformed by TD3
 
 **Best For:**
+
 - Legacy compatibility
 - **Recommendation:** Use TD3 instead for new projects
 
@@ -149,21 +168,25 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Classic off-policy algorithm for discrete action spaces.
 
 **Strengths:**
+
 - Sample-efficient for discrete actions
 - Experience replay enables reuse of past data
 - Proven success on Atari games
 
 **Weaknesses:**
+
 - Only supports discrete action spaces
 - Can be unstable without proper tuning
 - Overestimation bias
 
 **Best For:**
+
 - Discrete action tasks
 - Atari games and similar environments
 - When sample efficiency matters
 
 **Hyperparameter Guidance:**
+
 - `learning_rate`: 1e-4
 - `buffer_size`: 100K-1M depending on task
 - `learning_starts`: 50000 for Atari
@@ -172,6 +195,7 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 - `exploration_final_eps`: 0.05
 
 **Variants:**
+
 - **QR-DQN**: Distributional RL version for better value estimates
 - **Maskable DQN**: For environments with action masking
 
@@ -180,20 +204,24 @@ This document provides detailed characteristics of all RL algorithms in Stable B
 **Overview:** Not a standalone algorithm but a replay buffer strategy for goal-conditioned tasks.
 
 **Strengths:**
+
 - Dramatically improves learning in sparse reward settings
 - Learns from failures by relabeling goals
 - Works with any off-policy algorithm (SAC, TD3, DQN)
 
 **Weaknesses:**
+
 - Only for goal-conditioned environments
 - Requires specific observation structure (Dict with "observation", "achieved_goal", "desired_goal")
 
 **Best For:**
+
 - Goal-conditioned tasks (robotics manipulation, navigation)
 - Sparse reward environments
 - Tasks where goal is clear but reward is binary
 
 **Usage:**
+
 ```python
 from stable_baselines3 import SAC, HerReplayBuffer
 
@@ -213,16 +241,19 @@ model = SAC(
 **Overview:** PPO with LSTM policy for handling partial observability.
 
 **Strengths:**
+
 - Handles partial observability (POMDP)
 - Can learn temporal dependencies
 - Good for memory-required tasks
 
 **Weaknesses:**
+
 - Slower training than standard PPO
 - More complex to tune
 - Requires sequential data
 
 **Best For:**
+
 - Partially observable environments
 - Tasks requiring memory (e.g., navigation without full map)
 - Time-series problems
@@ -314,16 +345,18 @@ model = SAC(
 Approximate expected performance (mean reward) on common benchmarks:
 
 ### Continuous Control (MuJoCo)
+
 - **HalfCheetah-v3**: PPO ~1800, SAC ~12000, TD3 ~9500
 - **Hopper-v3**: PPO ~2500, SAC ~3600, TD3 ~3600
 - **Walker2d-v3**: PPO ~3000, SAC ~5500, TD3 ~5000
 
 ### Discrete Control (Atari)
+
 - **Breakout**: PPO ~400, DQN ~300
 - **Pong**: PPO ~20, DQN ~20
 - **Space Invaders**: PPO ~1000, DQN ~800
 
-*Note: Performance varies significantly with hyperparameters and training time.*
+_Note: Performance varies significantly with hyperparameters and training time._
 
 ## Additional Resources
 

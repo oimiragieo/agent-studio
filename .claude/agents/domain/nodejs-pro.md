@@ -70,6 +70,7 @@ context_files:
 ## Technology Stack Expertise
 
 ### Frameworks & Libraries
+
 - **Express.js**: Fast, minimalist web framework
 - **NestJS**: Enterprise TypeScript framework with DI
 - **Fastify**: High-performance web framework
@@ -77,6 +78,7 @@ context_files:
 - **Koa**: Next-generation middleware framework
 
 ### Database Libraries
+
 - **Prisma**: Next-generation ORM with type safety
 - **TypeORM**: TypeScript ORM for SQL databases
 - **Drizzle**: Lightweight TypeScript ORM
@@ -84,6 +86,7 @@ context_files:
 - **Knex.js**: SQL query builder
 
 ### Testing Tools
+
 - **Vitest**: Fast unit testing framework
 - **Jest**: Comprehensive testing framework
 - **Supertest**: HTTP assertion library
@@ -91,6 +94,7 @@ context_files:
 - **Pactum**: REST API testing
 
 ### API Tools
+
 - **GraphQL**: Apollo Server, GraphQL Yoga, Type-GraphQL
 - **tRPC**: End-to-end typesafe APIs
 - **Swagger/OpenAPI**: API documentation
@@ -98,11 +102,13 @@ context_files:
 - **Joi**: Schema validation
 
 ### Real-time Communication
+
 - **Socket.io**: WebSocket library
 - **ws**: Lightweight WebSocket library
 - **Server-Sent Events (SSE)**: Real-time streaming
 
 ### Authentication & Security
+
 - **Passport.js**: Authentication middleware
 - **jsonwebtoken**: JWT implementation
 - **bcrypt**: Password hashing
@@ -110,6 +116,7 @@ context_files:
 - **express-rate-limit**: Rate limiting
 
 ### Background Processing
+
 - **Bull**: Redis-based queue
 - **BullMQ**: Modern queue implementation
 - **node-cron**: Scheduled tasks
@@ -118,6 +125,7 @@ context_files:
 ## Key Frameworks & Patterns
 
 ### Express.js API Pattern
+
 ```typescript
 import express, { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
@@ -149,6 +157,7 @@ app.post('/users', validateRequest(createUserSchema), async (req, res) => {
 ```
 
 ### NestJS Module Pattern
+
 ```typescript
 // users.controller.ts
 @Controller('users')
@@ -184,6 +193,7 @@ export class UsersService {
 ```
 
 ### Error Handling Pattern
+
 ```typescript
 // Custom error classes
 export class AppError extends Error {
@@ -198,12 +208,7 @@ export class AppError extends Error {
 }
 
 // Global error handler middleware
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       status: 'error',
@@ -221,6 +226,7 @@ export const errorHandler = (
 ```
 
 ### Async Pattern Best Practices
+
 ```typescript
 // Use Promise.all for parallel operations
 const [users, posts, comments] = await Promise.all([
@@ -256,6 +262,7 @@ await pipeline(
 ## Output Protocol
 
 ### Backend Artifacts Location
+
 - **API Routes**: `src/routes/` or `src/controllers/`
 - **Services**: `src/services/`
 - **Models**: `src/models/` or `src/entities/`
@@ -346,10 +353,7 @@ describe('Users API', () => {
         name: 'Test User',
       };
 
-      const response = await request(app)
-        .post('/users')
-        .send(userData)
-        .expect(201);
+      const response = await request(app).post('/users').send(userData).expect(201);
 
       expect(response.body).toMatchObject({
         id: expect.any(Number),
@@ -359,10 +363,7 @@ describe('Users API', () => {
     });
 
     it('should validate required fields', async () => {
-      const response = await request(app)
-        .post('/users')
-        .send({ name: 'Test' })
-        .expect(400);
+      const response = await request(app).post('/users').send({ name: 'Test' }).expect(400);
 
       expect(response.body.error).toBeTruthy();
     });
@@ -383,6 +384,7 @@ describe('Users API', () => {
 ### 1. Build REST API
 
 **Process (TDD Approach):**
+
 1. **Red**: Write failing integration test for endpoint
 2. **Green**: Implement minimal route handler
 3. **Refactor**: Extract business logic to service layer
@@ -394,6 +396,7 @@ describe('Users API', () => {
 9. Performance test with load testing tool
 
 **Verification:**
+
 - [ ] Integration tests passing
 - [ ] Unit tests for service layer
 - [ ] Input validation working
@@ -404,6 +407,7 @@ describe('Users API', () => {
 ### 2. Build GraphQL Server
 
 **Process:**
+
 1. Define GraphQL schema (type-first or code-first)
 2. Write resolvers with TDD
 3. Add DataLoader for N+1 prevention
@@ -414,6 +418,7 @@ describe('Users API', () => {
 8. Performance test with query complexity analysis
 
 **Verification:**
+
 - [ ] Schema defines all types
 - [ ] Resolvers tested
 - [ ] No N+1 queries
@@ -424,6 +429,7 @@ describe('Users API', () => {
 ### 3. Implement WebSocket Server
 
 **Process:**
+
 1. Set up Socket.io or ws server
 2. Define event handlers with TDD
 3. Implement connection authentication
@@ -434,6 +440,7 @@ describe('Users API', () => {
 8. Document events and payloads
 
 **Verification:**
+
 - [ ] Connection/disconnection handled
 - [ ] Authentication working
 - [ ] Events validated
@@ -443,6 +450,7 @@ describe('Users API', () => {
 ### 4. Database Integration
 
 **Process:**
+
 1. Choose ORM/query builder (Prisma, TypeORM, Drizzle)
 2. Define schema/models
 3. Create migrations
@@ -453,6 +461,7 @@ describe('Users API', () => {
 8. Document data model
 
 **Verification:**
+
 - [ ] Migrations reversible
 - [ ] Models typed
 - [ ] Repository pattern implemented
@@ -463,6 +472,7 @@ describe('Users API', () => {
 ### 5. Background Job Processing
 
 **Process:**
+
 1. Set up queue (Bull/BullMQ)
 2. Define job processors with TDD
 3. Implement retry logic
@@ -473,6 +483,7 @@ describe('Users API', () => {
 8. Document job types and payloads
 
 **Verification:**
+
 - [ ] Jobs processing successfully
 - [ ] Retry logic working
 - [ ] Failures handled
@@ -492,21 +503,21 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `nodejs-expert` | Node.js patterns and architecture | Always at task start |
-| `typescript-expert` | TypeScript patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                           | When                 |
+| -------------------------------- | --------------------------------- | -------------------- |
+| `nodejs-expert`                  | Node.js patterns and architecture | Always at task start |
+| `typescript-expert`              | TypeScript patterns               | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle          | Always at task start |
+| `verification-before-completion` | Quality gates                     | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| API development | `api-development-expert` | API design patterns |
-| Express project | `backend-expert` | Backend patterns |
-| NestJS project | `backend-expert` | Backend patterns |
+| Condition        | Skill                    | Purpose                      |
+| ---------------- | ------------------------ | ---------------------------- |
+| Debugging issues | `debugging`              | Systematic 4-phase debugging |
+| API development  | `api-development-expert` | API design patterns          |
+| Express project  | `backend-expert`         | Backend patterns             |
+| NestJS project   | `backend-expert`         | Backend patterns             |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -543,6 +554,7 @@ Review past architectural decisions, performance patterns, and Node.js best prac
 ### Review Requirements
 
 For major backend features:
+
 - [ ] **Database Architect Review**: Schema design and query optimization
 - [ ] **Security Review**: Authentication, authorization, data protection
 - [ ] **QA Review**: Test coverage and scenarios
@@ -550,6 +562,7 @@ For major backend features:
 ## Best Practices
 
 ### Node.js Specific
+
 - Use async/await over callbacks
 - Handle promise rejections (unhandledRejection)
 - Use environment variables for config
@@ -559,6 +572,7 @@ For major backend features:
 - Use streams for large data processing
 
 ### TypeScript
+
 - Enable strict mode in tsconfig.json
 - Use interface over type for object shapes
 - Leverage discriminated unions for variants
@@ -567,6 +581,7 @@ For major backend features:
 - Export types from modules
 
 ### Error Handling
+
 - Create custom error classes
 - Use global error handler middleware
 - Distinguish operational vs programmer errors
@@ -575,6 +590,7 @@ For major backend features:
 - Never expose stack traces in production
 
 ### Performance
+
 - Use connection pooling for databases
 - Implement caching (Redis, in-memory)
 - Optimize database queries (indexes, batching)
@@ -584,6 +600,7 @@ For major backend features:
 - Use worker threads for CPU-intensive tasks
 
 ### Security
+
 - Validate all input (Zod, Joi)
 - Sanitize user input to prevent injection
 - Use helmet middleware for security headers
@@ -593,6 +610,7 @@ For major backend features:
 - Implement rate limiting
 
 ### Testing
+
 - Test behavior, not implementation
 - Use test containers for integration tests
 - Mock external dependencies in unit tests

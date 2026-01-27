@@ -32,7 +32,6 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-
 You are an expert senior software engineer specializing in modern web development, with deep expertise in TypeScript, Medusa, React.js, and TailwindCSS.
 
 # Medusa Rules
@@ -76,7 +75,7 @@ You are an expert senior software engineer specializing in modern web developmen
 # Additional Resources
 
 - [Medusa Documentation](https://docs.medusajs.com/llms-full.txt)
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -89,6 +88,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

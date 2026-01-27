@@ -7,7 +7,9 @@ The reactions module enables programmatic application of chemical transformation
 ### Applying Chemical Reactions
 
 #### `dm.reactions.apply_reaction(rxn, reactants, as_smiles=False, sanitize=True, single_product_group=True, rm_attach=True, product_index=0)`
+
 Apply a chemical reaction to reactant molecules.
+
 - **Parameters**:
   - `rxn`: Reaction object (from SMARTS pattern)
   - `reactants`: Tuple of reactant molecules
@@ -18,6 +20,7 @@ Apply a chemical reaction to reactant molecules.
   - `product_index`: Which product to return from reaction
 - **Returns**: Product molecule(s) or SMILES
 - **Example**:
+
   ```python
   from rdkit import Chem
 
@@ -35,6 +38,7 @@ Apply a chemical reaction to reactant molecules.
 ### Creating Reactions
 
 Reactions are typically created from SMARTS patterns using RDKit:
+
 ```python
 from rdkit.Chem import rdChemReactions
 
@@ -47,6 +51,7 @@ rxn = rdChemReactions.ReactionFromSmarts(
 ### Validation Functions
 
 The module includes functions to:
+
 - **Check if molecule is reactant**: Verify if molecule matches reactant pattern
 - **Validate reaction**: Check if reaction is synthetically reasonable
 - **Process reaction files**: Load reactions from files or databases
@@ -54,6 +59,7 @@ The module includes functions to:
 ### Common Reaction Patterns
 
 **Amide formation**:
+
 ```python
 # Amine + carboxylic acid → amide
 amide_rxn = rdChemReactions.ReactionFromSmarts(
@@ -62,6 +68,7 @@ amide_rxn = rdChemReactions.ReactionFromSmarts(
 ```
 
 **Suzuki coupling**:
+
 ```python
 # Aryl halide + boronic acid → biaryl
 suzuki_rxn = rdChemReactions.ReactionFromSmarts(
@@ -70,6 +77,7 @@ suzuki_rxn = rdChemReactions.ReactionFromSmarts(
 ```
 
 **Functional group transformations**:
+
 ```python
 # Alcohol → ester
 esterification = rdChemReactions.ReactionFromSmarts(
@@ -122,7 +130,9 @@ The data module provides convenient access to curated molecular datasets for tes
 ### Available Datasets
 
 #### `dm.data.cdk2(as_df=True, mol_column='mol')`
+
 RDKit CDK2 dataset - kinase inhibitor data.
+
 - **Parameters**:
   - `as_df`: Return as DataFrame (True) or list of molecules (False)
   - `mol_column`: Name for molecule column
@@ -136,7 +146,9 @@ RDKit CDK2 dataset - kinase inhibitor data.
   ```
 
 #### `dm.data.freesolv()`
+
 FreeSolv dataset - experimental and calculated hydration free energies.
+
 - **Contents**: 642 molecules with:
   - IUPAC names
   - SMILES strings
@@ -151,11 +163,14 @@ FreeSolv dataset - experimental and calculated hydration free energies.
   ```
 
 #### `dm.data.solubility(as_df=True, mol_column='mol')`
+
 RDKit solubility dataset with train/test splits.
+
 - **Contents**: Aqueous solubility data with pre-defined splits
 - **Columns**: Includes 'split' column with 'train' or 'test' values
 - **Use case**: Testing ML workflows with proper train/test separation
 - **Example**:
+
   ```python
   sol_df = dm.data.solubility(as_df=True)
 
@@ -171,6 +186,7 @@ RDKit solubility dataset with train/test splits.
 ### Usage Guidelines
 
 **For testing and tutorials**:
+
 ```python
 # Quick dataset for testing code
 df = dm.data.cdk2()
@@ -184,6 +200,7 @@ clusters = dm.cluster_mols(mols, cutoff=0.3)
 ```
 
 **For learning workflows**:
+
 ```python
 # Complete ML pipeline example
 sol_df = dm.data.solubility()

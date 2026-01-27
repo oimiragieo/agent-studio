@@ -19,6 +19,7 @@ result = lf.filter(pl.col("age") > 25).select("name", "age").collect()
 ```
 
 **Benefits of lazy evaluation:**
+
 - Predicate pushdown (filter at source)
 - Projection pushdown (read only needed columns)
 - Query optimization
@@ -63,6 +64,7 @@ df = df.with_columns(result=pl.col("value") * 2)
 ```
 
 **When you must use custom functions:**
+
 ```python
 # If truly needed, be explicit
 df = df.with_columns(
@@ -108,6 +110,7 @@ df = pl.read_csv(
 ```
 
 **Type optimization guidelines:**
+
 - Use smallest integer type that fits your data
 - Use `Categorical` for strings with low cardinality (<50% unique)
 - Use `Date` instead of `Datetime` when time isn't needed
@@ -148,6 +151,7 @@ combined = pl.concat([df1, df2, df3], rechunk=True)
 ### Conditional Logic
 
 **Simple conditions:**
+
 ```python
 df.with_columns(
     status=pl.when(pl.col("age") >= 18)
@@ -157,6 +161,7 @@ df.with_columns(
 ```
 
 **Multiple conditions:**
+
 ```python
 df.with_columns(
     grade=pl.when(pl.col("score") >= 90)
@@ -172,6 +177,7 @@ df.with_columns(
 ```
 
 **Complex conditions:**
+
 ```python
 df.with_columns(
     category=pl.when(
@@ -189,12 +195,14 @@ df.with_columns(
 ### Null Handling
 
 **Check for nulls:**
+
 ```python
 df.filter(pl.col("value").is_null())
 df.filter(pl.col("value").is_not_null())
 ```
 
 **Fill nulls:**
+
 ```python
 # Constant value
 df.with_columns(pl.col("value").fill_null(0))
@@ -215,6 +223,7 @@ df.with_columns(
 ```
 
 **Coalesce (first non-null):**
+
 ```python
 df.with_columns(
     combined=pl.coalesce(["col1", "col2", "col3"])
@@ -224,11 +233,13 @@ df.with_columns(
 ### Column Selection Patterns
 
 **By name:**
+
 ```python
 df.select("col1", "col2", "col3")
 ```
 
 **By pattern:**
+
 ```python
 # Regex
 df.select(pl.col("^sales_.*$"))
@@ -244,6 +255,7 @@ df.select(pl.col(".*revenue.*"))
 ```
 
 **By type:**
+
 ```python
 # All numeric columns
 df.select(pl.col(pl.NUMERIC_DTYPES))
@@ -256,11 +268,13 @@ df.select(pl.col(pl.NUMERIC_DTYPES, pl.Boolean))
 ```
 
 **Exclude columns:**
+
 ```python
 df.select(pl.all().exclude("id", "timestamp"))
 ```
 
 **Transform multiple columns:**
+
 ```python
 # Apply same operation to multiple columns
 df.select(
@@ -271,6 +285,7 @@ df.select(
 ### Aggregation Patterns
 
 **Multiple aggregations:**
+
 ```python
 df.group_by("category").agg(
     pl.col("value").sum().alias("total"),
@@ -286,6 +301,7 @@ df.group_by("category").agg(
 ```
 
 **Conditional aggregations:**
+
 ```python
 df.group_by("category").agg(
     # Count high values
@@ -304,6 +320,7 @@ df.group_by("category").agg(
 ```
 
 **Grouped transformations:**
+
 ```python
 df.with_columns(
     # Group statistics
@@ -512,16 +529,19 @@ print(f"Eager: {eager_time:.2f}s, Lazy: {lazy_time:.2f}s")
 ### Choose the Right Format
 
 **Parquet:**
+
 - Best for: Large datasets, archival, data lakes
 - Pros: Excellent compression, columnar, fast reads
 - Cons: Not human-readable
 
 **CSV:**
+
 - Best for: Small datasets, human inspection, legacy systems
 - Pros: Universal, human-readable
 - Cons: Slow, large file size, no type preservation
 
 **Arrow IPC:**
+
 - Best for: Inter-process communication, temporary storage
 - Pros: Fastest, zero-copy, preserves all types
 - Cons: Less compression than Parquet

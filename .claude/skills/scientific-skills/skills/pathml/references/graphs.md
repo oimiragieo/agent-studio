@@ -9,18 +9,21 @@ PathML provides tools for constructing spatial graphs from tissue images to repr
 PathML supports construction of multiple graph types:
 
 ### Cell Graphs
+
 - Nodes represent individual cells
 - Edges represent spatial proximity or biological interactions
 - Node features include morphology, marker expression, cell type
 - Suitable for single-cell spatial analysis
 
 ### Tissue Graphs
+
 - Nodes represent tissue regions or superpixels
 - Edges represent spatial adjacency
 - Node features include tissue composition, texture features
 - Suitable for tissue-level spatial patterns
 
 ### Spatial Transcriptomics Graphs
+
 - Nodes represent spatial spots or cells
 - Edges encode spatial relationships
 - Node features include gene expression profiles
@@ -68,6 +71,7 @@ adjacency = cell_graph.adjacency_matrix  # Adjacency matrix
 ### Connectivity Methods
 
 **K-Nearest Neighbors (KNN):**
+
 ```python
 # Connect each cell to its k nearest neighbors
 graph = CellGraph.from_instance_map(
@@ -76,11 +80,13 @@ graph = CellGraph.from_instance_map(
     k=5  # Number of neighbors
 )
 ```
+
 - Fixed degree per node
 - Captures local neighborhoods
 - Simple and interpretable
 
 **Radius-based:**
+
 ```python
 # Connect cells within a distance threshold
 graph = CellGraph.from_instance_map(
@@ -90,11 +96,13 @@ graph = CellGraph.from_instance_map(
     distance_metric='euclidean'  # or 'manhattan', 'chebyshev'
 )
 ```
+
 - Variable degree based on density
 - Biologically motivated (interaction range)
 - Captures physical proximity
 
 **Delaunay Triangulation:**
+
 ```python
 # Connect cells using Delaunay triangulation
 graph = CellGraph.from_instance_map(
@@ -102,11 +110,13 @@ graph = CellGraph.from_instance_map(
     connectivity='delaunay'
 )
 ```
+
 - Creates connected graph from spatial positions
 - No isolated nodes (in convex hull)
 - Captures spatial tessellation
 
 **Contact-based:**
+
 ```python
 # Connect cells with touching boundaries
 graph = CellGraph.from_instance_map(
@@ -115,6 +125,7 @@ graph = CellGraph.from_instance_map(
     dilation=2  # Dilate boundaries to capture near-contacts
 )
 ```
+
 - Physical cell-cell contacts
 - Most biologically direct
 - Sparse edges for separated cells
@@ -147,6 +158,7 @@ cell_graph.add_node_features(morphology_features, feature_names=['area', 'perime
 ```
 
 **Available morphological features:**
+
 - **Area** - Number of pixels
 - **Perimeter** - Boundary length
 - **Eccentricity** - 0 (circle) to 1 (line)
@@ -179,6 +191,7 @@ cell_graph.add_node_features(
 ```
 
 **Available statistics:**
+
 - **mean** - Average intensity
 - **median** - Median intensity
 - **std** - Standard deviation
@@ -598,16 +611,19 @@ plt.show()
 ## Performance Considerations
 
 **Large tissue sections:**
+
 - Build graphs tile-by-tile, then merge
 - Use sparse adjacency matrices
 - Leverage GPU for feature extraction
 
 **Memory efficiency:**
+
 - Store only necessary edge features
 - Use int32/float32 instead of int64/float64
 - Batch process multiple slides
 
 **Computational efficiency:**
+
 - Parallelize feature extraction across cells
 - Use KNN for faster neighbor queries
 - Cache computed features
@@ -629,19 +645,23 @@ plt.show()
 ## Common Issues and Solutions
 
 **Issue: Too many/few edges**
+
 - Adjust k (KNN) or radius (radius-based) parameters
 - Verify pixel-to-micron conversion for biological relevance
 
 **Issue: Memory errors with large graphs**
+
 - Process tiles separately and merge graphs
 - Use sparse matrix representations
 - Reduce edge features to essential ones
 
 **Issue: Missing cells at tissue boundaries**
+
 - Apply edge_correction parameter
 - Use tissue masks to exclude invalid regions
 
 **Issue: Inconsistent feature scales**
+
 - Normalize features: `(x - mean) / std`
 - Use robust scaling for outliers
 

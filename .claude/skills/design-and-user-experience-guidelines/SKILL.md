@@ -32,14 +32,8 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  13. Design and User Experience:
-    - Implement dark mode compatibility
-    - Ensure mobile-friendly and responsive design
-    - Optimize for performance
-    - Create modern and beautiful UI
-    - Consider accessibility in all design decisions
-</instructions>
+- |- 13. Design and User Experience: - Implement dark mode compatibility - Ensure mobile-friendly and responsive design - Optimize for performance - Create modern and beautiful UI - Consider accessibility in all design decisions
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

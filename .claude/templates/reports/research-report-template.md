@@ -5,26 +5,36 @@
 **Queries Executed**: {{query_count}}
 
 ## Executive Summary
+
 {{summary}}
 
 ## Research Queries
+
 {{#queries}}
+
 ### Query {{number}}: {{query}}
+
 **Source**: {{source}}
 **Key Findings**: {{findings}}
 {{/queries}}
 
 ## Key Findings
+
 {{#findings}}
+
 - {{finding}}
-{{/findings}}
+  {{/findings}}
 
 ## Recommendations
+
 {{#recommendations}}
+
 1. {{recommendation}}
-{{/recommendations}}
+   {{/recommendations}}
 
 ## Sources
+
 {{#sources}}
+
 - [{{title}}]({{url}})
-{{/sources}}
+  {{/sources}}

@@ -3,9 +3,7 @@
   "title": "postmortem-writing Output Schema",
   "description": "Output validation schema for postmortem-writing skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

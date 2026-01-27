@@ -24,21 +24,27 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 ## Abstract
 
 ### Introduction
+
 [What is unique about this case? Why is it worth reporting? 1-2 sentences]
 
 ### Patient Concerns
+
 [Primary symptoms and chief complaint]
 
 ### Diagnosis
+
 [Final diagnosis, how it was reached]
 
 ### Interventions
+
 [Key treatments provided]
 
 ### Outcomes
+
 [Clinical outcome and follow-up status]
 
 ### Lessons
+
 [Main takeaway messages for clinicians]
 
 **Word count:** [150-250 words]
@@ -48,40 +54,47 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 [Background information - 2-4 paragraphs]
 
 **Paragraph 1:** Background on the condition
+
 - Epidemiology of the condition
 - Typical clinical presentation
 - Standard diagnostic approach
 - Current treatment guidelines
 
 **Paragraph 2:** Why this case is novel
+
 - What makes this case unusual or important
 - Gap in medical knowledge addressed
 - Literature review showing rarity or uniqueness
 - Clinical significance
 
 **Paragraph 3:** Objectives
+
 - Purpose of reporting this case
 - Learning points to be highlighted
 
 ## Patient Information
 
 **Demographics:**
+
 - Age: [e.g., "A 72-year-old" or "A woman in her 70s"]
 - Sex: [Male/Female]
 - Ethnicity: [if relevant to case]
 - Occupation: [if relevant]
 
 **Medical History:**
+
 - Past medical history: [chronic conditions]
 - Past surgical history: [prior surgeries]
 - Family history: [relevant family history]
 - Social history: [tobacco, alcohol, occupation, living situation]
 
 **Medications:**
+
 - Current medications: [list with doses]
 - Allergies: [drug allergies and reactions]
 
 **Presenting Symptoms:**
+
 - Chief complaint: ["Patient's words" or clinical presentation]
 - Duration of symptoms
 - Severity and characteristics
@@ -91,6 +104,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 ## Clinical Findings
 
 **Physical Examination:**
+
 - Vital signs: [T, BP, HR, RR, SpO2]
 - General appearance: [overall state]
 - Systematic examination by organ system:
@@ -106,17 +120,17 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 ## Timeline
 
-| Date/Time | Event |
-|-----------|-------|
-| [Day -X or Date] | [Initial symptom onset] |
-| [Day 0 or Date] | [Presentation to healthcare] |
-| [Day 0 or Date] | [Initial evaluation and tests] |
-| [Day X or Date] | [Diagnosis confirmed] |
-| [Day X or Date] | [Treatment initiated] |
-| [Day X or Date] | [Hospital discharge or follow-up] |
-| [Month X or Date] | [Long-term follow-up] |
+| Date/Time         | Event                             |
+| ----------------- | --------------------------------- |
+| [Day -X or Date]  | [Initial symptom onset]           |
+| [Day 0 or Date]   | [Presentation to healthcare]      |
+| [Day 0 or Date]   | [Initial evaluation and tests]    |
+| [Day X or Date]   | [Diagnosis confirmed]             |
+| [Day X or Date]   | [Treatment initiated]             |
+| [Day X or Date]   | [Hospital discharge or follow-up] |
+| [Month X or Date] | [Long-term follow-up]             |
 
-*Note: Use relative days (Day 0, Day 1) or approximate dates (Month 1, Month 3) to protect patient privacy*
+_Note: Use relative days (Day 0, Day 1) or approximate dates (Month 1, Month 3) to protect patient privacy_
 
 ## Diagnostic Assessment
 
@@ -128,15 +142,18 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 | [Test name] | [Value with units] | [Normal range] | [High/Low/Normal] |
 
 **Imaging Studies:**
+
 - [Modality] ([Date]): [Key findings]
 - [Include images if applicable, with labels and arrows pointing to key findings]
 
 **Other Diagnostic Procedures:**
+
 - [Procedure name] ([Date]): [Findings]
 
 ### Differential Diagnosis
 
 **Diagnoses Considered:**
+
 1. [Primary differential]
    - Supporting evidence:
    - Evidence against:
@@ -148,6 +165,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 ### Diagnostic Challenges
 
 [Describe any difficulties in reaching the diagnosis]
+
 - Atypical presentation
 - Misleading initial findings
 - Diagnostic delays
@@ -165,11 +183,13 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 ### Treatment Approach
 
 **Initial Management:**
+
 - [Immediate interventions]
 - [Supportive care]
 - [Monitoring]
 
 **Definitive Treatment:**
+
 1. **Pharmacological Interventions:**
    - [Drug name]: [Dose, route, frequency, duration]
    - Indication: [Why prescribed]
@@ -190,6 +210,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 **Changes to Interventions:**
 [Any modifications to treatment plan]
+
 - Date of change:
 - Reason for change:
 - New intervention:
@@ -198,18 +219,21 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 **Immediate Outcome:**
 [Outcome during hospitalization or initial treatment period]
+
 - Clinical response:
 - Laboratory or imaging follow-up:
 - Complications:
 - Length of hospitalization (if applicable):
 
 **Short-term Follow-up:** ([Timeframe, e.g., 1 month])
+
 - Clinical status:
 - Follow-up tests:
 - Adherence to treatment:
 - Any issues or concerns:
 
 **Long-term Follow-up:** ([Timeframe, e.g., 6 months, 1 year])
+
 - Clinical status:
 - Recovery or resolution:
 - Functional status:
@@ -226,6 +250,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 **Paragraph 2: Literature Review**
 [Review similar cases in the literature]
+
 - Number of similar cases reported
 - Comparison to this case
 - What is novel about this case
@@ -233,6 +258,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 **Paragraph 3: Clinical Implications**
 [What can clinicians learn from this case?]
+
 - Recognition of atypical presentations
 - Diagnostic pearls
 - Treatment considerations
@@ -243,6 +269,7 @@ Example: Appendicitis, Atypical presentation, Elderly, Diagnostic imaging
 
 **Paragraph 5: Strengths and Limitations**
 [Acknowledge limitations of case report]
+
 - Single case report limitations
 - Cannot establish causation
 - Generalizability concerns
@@ -343,10 +370,9 @@ Verify all HIPAA identifiers removed:
 ---
 
 **Notes:**
+
 - Adapt this template to your specific journal's requirements
 - Check word count limits (typically 1500-3000 words)
 - Follow journal's reference style
 - Include institutional review/ethics exemption if applicable
 - Consider attaching CARE checklist when submitting
-
-

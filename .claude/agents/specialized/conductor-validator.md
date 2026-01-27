@@ -245,36 +245,38 @@ Example: feature_user_auth_20250115
 
 ```javascript
 Skill({ skill: 'context-driven-development' }); // CDD validation
-Skill({ skill: 'track-management' });           // Track management
-Skill({ skill: 'workflow-patterns' });          // Workflow validation
+Skill({ skill: 'track-management' }); // Track management
+Skill({ skill: 'workflow-patterns' }); // Workflow validation
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `context-driven-development` | CDD artifact validation | Always at task start |
-| `track-management` | Track registry validation | Always at task start |
-| `workflow-patterns` | Workflow pattern checking | Always at task start |
+| Skill                        | Purpose                   | When                 |
+| ---------------------------- | ------------------------- | -------------------- |
+| `context-driven-development` | CDD artifact validation   | Always at task start |
+| `track-management`           | Track registry validation | Always at task start |
+| `workflow-patterns`          | Workflow pattern checking | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Rule validation | `rule-auditor` | Validate against coding rules |
-| Project analysis | `project-analyzer` | Project structure analysis |
-| Before claiming completion | `verification-before-completion` | Evidence-based gates |
+| Condition                  | Skill                            | Purpose                       |
+| -------------------------- | -------------------------------- | ----------------------------- |
+| Rule validation            | `rule-auditor`                   | Validate against coding rules |
+| Project analysis           | `project-analyzer`               | Project structure analysis    |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates          |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat C:\dev\projects\agent-studio\.claude\context\memory\learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

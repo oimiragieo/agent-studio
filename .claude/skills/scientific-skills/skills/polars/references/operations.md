@@ -7,6 +7,7 @@ This reference covers all common Polars operations with comprehensive examples.
 ### Select Columns
 
 **Basic selection:**
+
 ```python
 # Select specific columns
 df.select("name", "age", "city")
@@ -16,6 +17,7 @@ df.select(pl.col("name"), pl.col("age"))
 ```
 
 **Pattern-based selection:**
+
 ```python
 # All columns starting with "sales_"
 df.select(pl.col("^sales_.*$"))
@@ -28,6 +30,7 @@ df.select(pl.all().exclude("id", "timestamp"))
 ```
 
 **Computed columns:**
+
 ```python
 df.select(
     "name",
@@ -88,6 +91,7 @@ df.filter(pl.col("city") != "NY")
 ### Advanced Filtering
 
 **String operations:**
+
 ```python
 # Contains substring
 df.filter(pl.col("name").str.contains("John"))
@@ -100,6 +104,7 @@ df.filter(pl.col("phone").str.contains(r"^\d{3}-\d{3}-\d{4}$"))
 ```
 
 **Membership checks:**
+
 ```python
 # In list
 df.filter(pl.col("city").is_in(["NY", "LA", "SF"]))
@@ -109,6 +114,7 @@ df.filter(~pl.col("status").is_in(["inactive", "deleted"]))
 ```
 
 **Range filters:**
+
 ```python
 # Between values
 df.filter(pl.col("age").is_between(25, 35))
@@ -121,6 +127,7 @@ df.filter(
 ```
 
 **Null filtering:**
+
 ```python
 # Filter out nulls
 df.filter(pl.col("value").is_not_null())
@@ -154,6 +161,7 @@ df.group_by("category", maintain_order=True).agg(
 ### Aggregation Functions
 
 **Count and length:**
+
 ```python
 df.group_by("category").agg(
     pl.len().alias("count"),
@@ -163,6 +171,7 @@ df.group_by("category").agg(
 ```
 
 **Statistical aggregations:**
+
 ```python
 df.group_by("group").agg(
     pl.col("value").sum().alias("total"),
@@ -177,6 +186,7 @@ df.group_by("group").agg(
 ```
 
 **First and last:**
+
 ```python
 df.group_by("user_id").agg(
     pl.col("timestamp").first().alias("first_seen"),
@@ -186,6 +196,7 @@ df.group_by("user_id").agg(
 ```
 
 **List aggregation:**
+
 ```python
 # Collect values into lists
 df.group_by("category").agg(
@@ -237,6 +248,7 @@ Window functions apply aggregations while preserving the original row count.
 ### Basic Window Operations
 
 **Group statistics:**
+
 ```python
 # Add group mean to each row
 df.with_columns(
@@ -250,6 +262,7 @@ df.with_columns(
 ```
 
 **Ranking:**
+
 ```python
 df.with_columns(
     # Rank within groups
@@ -267,6 +280,7 @@ df.with_columns(
 
 **group_to_rows (default):**
 Preserves original row order:
+
 ```python
 df.with_columns(
     group_mean=pl.col("value").mean().over("category", mapping_strategy="group_to_rows")
@@ -275,6 +289,7 @@ df.with_columns(
 
 **explode:**
 Faster, groups rows together:
+
 ```python
 df.with_columns(
     group_mean=pl.col("value").mean().over("category", mapping_strategy="explode")
@@ -283,6 +298,7 @@ df.with_columns(
 
 **join:**
 Creates list columns:
+
 ```python
 df.with_columns(
     group_values=pl.col("value").over("category", mapping_strategy="join")
@@ -292,6 +308,7 @@ df.with_columns(
 ### Rolling Windows
 
 **Time-based rolling:**
+
 ```python
 df.with_columns(
     rolling_avg=pl.col("value").rolling_mean(
@@ -302,6 +319,7 @@ df.with_columns(
 ```
 
 **Row-based rolling:**
+
 ```python
 df.with_columns(
     rolling_sum=pl.col("value").rolling_sum(window_size=3),
@@ -356,6 +374,7 @@ df.sort(["department", "salary"], descending=[False, True])
 ### Advanced Sorting
 
 **Null handling:**
+
 ```python
 # Nulls first
 df.sort("value", nulls_last=False)
@@ -365,6 +384,7 @@ df.sort("value", nulls_last=True)
 ```
 
 **Sort by expression:**
+
 ```python
 # Sort by computed value
 df.sort(pl.col("first_name").str.len())

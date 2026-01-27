@@ -5,9 +5,11 @@ This document provides a comprehensive catalog of all datasets available in `tor
 ## Citation Networks
 
 ### Planetoid
+
 **Usage**: Node classification, semi-supervised learning
 **Networks**: Cora, CiteSeer, PubMed
 **Description**: Citation networks where nodes are papers and edges are citations
+
 - **Cora**: 2,708 nodes, 5,429 edges, 7 classes, 1,433 features
 - **CiteSeer**: 3,327 nodes, 4,732 edges, 6 classes, 3,703 features
 - **PubMed**: 19,717 nodes, 44,338 edges, 3 classes, 500 features
@@ -18,9 +20,11 @@ dataset = Planetoid(root='/tmp/Cora', name='Cora')
 ```
 
 ### Coauthor
+
 **Usage**: Node classification on collaboration networks
 **Networks**: CS, Physics
 **Description**: Co-authorship networks from Microsoft Academic Graph
+
 - **CS**: 18,333 nodes, 81,894 edges, 15 classes (computer science)
 - **Physics**: 34,493 nodes, 247,962 edges, 5 classes (physics)
 
@@ -30,9 +34,11 @@ dataset = Coauthor(root='/tmp/CS', name='CS')
 ```
 
 ### Amazon
+
 **Usage**: Node classification on product networks
 **Networks**: Computers, Photo
 **Description**: Amazon co-purchase networks where nodes are products
+
 - **Computers**: 13,752 nodes, 245,861 edges, 10 classes
 - **Photo**: 7,650 nodes, 119,081 edges, 8 classes
 
@@ -42,6 +48,7 @@ dataset = Amazon(root='/tmp/Computers', name='Computers')
 ```
 
 ### CitationFull
+
 **Usage**: Citation network analysis
 **Networks**: Cora, Cora_ML, DBLP, PubMed
 **Description**: Full citation networks without sampling
@@ -54,8 +61,10 @@ dataset = CitationFull(root='/tmp/Cora', name='Cora')
 ## Graph Classification
 
 ### TUDataset
+
 **Usage**: Graph classification, graph kernel benchmarks
 **Description**: Collection of 120+ graph classification datasets
+
 - **MUTAG**: 188 graphs, 2 classes (molecular compounds)
 - **PROTEINS**: 1,113 graphs, 2 classes (protein structures)
 - **ENZYMES**: 600 graphs, 6 classes (protein enzymes)
@@ -71,9 +80,11 @@ dataset = TUDataset(root='/tmp/ENZYMES', name='ENZYMES')
 ```
 
 ### MoleculeNet
+
 **Usage**: Molecular property prediction
 **Datasets**: Over 10 molecular benchmark datasets
 **Description**: Comprehensive molecular machine learning benchmarks
+
 - **ESOL**: Aqueous solubility (regression)
 - **FreeSolv**: Hydration free energy (regression)
 - **Lipophilicity**: Octanol/water distribution (regression)
@@ -93,8 +104,10 @@ dataset = MoleculeNet(root='/tmp/ESOL', name='ESOL')
 ## Molecular and Chemical Datasets
 
 ### QM7b
+
 **Usage**: Molecular property prediction (quantum mechanics)
 **Description**: 7,211 molecules with up to 7 heavy atoms
+
 - Properties: Atomization energies, electronic properties
 
 ```python
@@ -103,8 +116,10 @@ dataset = QM7b(root='/tmp/QM7b')
 ```
 
 ### QM9
+
 **Usage**: Molecular property prediction (quantum mechanics)
 **Description**: ~130,000 molecules with up to 9 heavy atoms (C, O, N, F)
+
 - Properties: 19 quantum chemical properties including HOMO, LUMO, gap, energy
 
 ```python
@@ -113,8 +128,10 @@ dataset = QM9(root='/tmp/QM9')
 ```
 
 ### ZINC
+
 **Usage**: Molecular generation, property prediction
 **Description**: ~250,000 drug-like molecular graphs
+
 - Properties: Constrained solubility, molecular weight
 
 ```python
@@ -123,6 +140,7 @@ dataset = ZINC(root='/tmp/ZINC', subset=True)
 ```
 
 ### AQSOL
+
 **Usage**: Aqueous solubility prediction
 **Description**: ~10,000 molecules with solubility measurements
 
@@ -132,8 +150,10 @@ dataset = AQSOL(root='/tmp/AQSOL')
 ```
 
 ### MD17
+
 **Usage**: Molecular dynamics, force field learning
 **Description**: Molecular dynamics trajectories for small molecules
+
 - Molecules: Benzene, Uracil, Naphthalene, Aspirin, Salicylic acid, etc.
 
 ```python
@@ -142,8 +162,10 @@ dataset = MD17(root='/tmp/MD17', name='benzene')
 ```
 
 ### PCQM4Mv2
+
 **Usage**: Large-scale molecular property prediction
 **Description**: 3.8M molecules from PubChem for quantum chemistry
+
 - Part of OGB Large-Scale Challenge
 
 ```python
@@ -154,8 +176,10 @@ dataset = PCQM4Mv2(root='/tmp/PCQM4Mv2')
 ## Social Networks
 
 ### Reddit
+
 **Usage**: Large-scale node classification
 **Description**: Reddit posts from September 2014
+
 - 232,965 nodes, 11,606,919 edges, 41 classes
 - Features: TF-IDF of post content
 
@@ -165,6 +189,7 @@ dataset = Reddit(root='/tmp/Reddit')
 ```
 
 ### Reddit2
+
 **Usage**: Large-scale node classification
 **Description**: Updated Reddit dataset with more posts
 
@@ -174,6 +199,7 @@ dataset = Reddit2(root='/tmp/Reddit2')
 ```
 
 ### Twitch
+
 **Usage**: Node classification, social network analysis
 **Networks**: DE, EN, ES, FR, PT, RU
 **Description**: Twitch user networks by language
@@ -184,6 +210,7 @@ dataset = Twitch(root='/tmp/Twitch', name='DE')
 ```
 
 ### Facebook
+
 **Usage**: Social network analysis, node classification
 **Description**: Facebook page-page networks
 
@@ -193,6 +220,7 @@ dataset = FacebookPagePage(root='/tmp/Facebook')
 ```
 
 ### GitHub
+
 **Usage**: Social network analysis
 **Description**: GitHub developer networks
 
@@ -204,6 +232,7 @@ dataset = GitHub(root='/tmp/GitHub')
 ## Knowledge Graphs
 
 ### Entities
+
 **Usage**: Link prediction, knowledge graph embeddings
 **Datasets**: AIFB, MUTAG, BGS, AM
 **Description**: RDF knowledge graphs with typed relations
@@ -214,8 +243,10 @@ dataset = Entities(root='/tmp/AIFB', name='AIFB')
 ```
 
 ### WordNet18
+
 **Usage**: Link prediction on semantic networks
 **Description**: Subset of WordNet with 18 relations
+
 - 40,943 entities, 151,442 triplets
 
 ```python
@@ -224,6 +255,7 @@ dataset = WordNet18(root='/tmp/WordNet18')
 ```
 
 ### WordNet18RR
+
 **Usage**: Link prediction (no inverse relations)
 **Description**: Refined version without inverse relations
 
@@ -233,8 +265,10 @@ dataset = WordNet18RR(root='/tmp/WordNet18RR')
 ```
 
 ### FB15k-237
+
 **Usage**: Link prediction on Freebase
 **Description**: Subset of Freebase with 237 relations
+
 - 14,541 entities, 310,116 triplets
 
 ```python
@@ -245,8 +279,10 @@ dataset = FB15k_237(root='/tmp/FB15k')
 ## Heterogeneous Graphs
 
 ### OGB_MAG
+
 **Usage**: Heterogeneous graph learning, node classification
 **Description**: Microsoft Academic Graph with multiple node/edge types
+
 - Node types: paper, author, institution, field of study
 - 1M+ nodes, 21M+ edges
 
@@ -256,9 +292,11 @@ dataset = OGB_MAG(root='/tmp/OGB_MAG')
 ```
 
 ### MovieLens
+
 **Usage**: Recommendation systems, link prediction
 **Versions**: 100K, 1M, 10M, 20M
 **Description**: User-movie rating networks
+
 - Node types: user, movie
 - Edge types: rates
 
@@ -268,8 +306,10 @@ dataset = MovieLens(root='/tmp/MovieLens', model_name='100k')
 ```
 
 ### IMDB
+
 **Usage**: Heterogeneous graph learning
 **Description**: IMDB movie network
+
 - Node types: movie, actor, director
 
 ```python
@@ -278,8 +318,10 @@ dataset = IMDB(root='/tmp/IMDB')
 ```
 
 ### DBLP
+
 **Usage**: Heterogeneous graph learning, node classification
 **Description**: DBLP bibliography network
+
 - Node types: author, paper, term, conference
 
 ```python
@@ -288,8 +330,10 @@ dataset = DBLP(root='/tmp/DBLP')
 ```
 
 ### LastFM
+
 **Usage**: Heterogeneous recommendation
 **Description**: LastFM music network
+
 - Node types: user, artist, tag
 
 ```python
@@ -300,6 +344,7 @@ dataset = LastFM(root='/tmp/LastFM')
 ## Temporal Graphs
 
 ### BitcoinOTC
+
 **Usage**: Temporal link prediction, trust networks
 **Description**: Bitcoin OTC trust network over time
 
@@ -309,6 +354,7 @@ dataset = BitcoinOTC(root='/tmp/BitcoinOTC')
 ```
 
 ### ICEWS18
+
 **Usage**: Temporal knowledge graph completion
 **Description**: Integrated Crisis Early Warning System events
 
@@ -318,6 +364,7 @@ dataset = ICEWS18(root='/tmp/ICEWS18')
 ```
 
 ### GDELT
+
 **Usage**: Temporal event forecasting
 **Description**: Global Database of Events, Language, and Tone
 
@@ -327,6 +374,7 @@ dataset = GDELT(root='/tmp/GDELT')
 ```
 
 ### JODIEDataset
+
 **Usage**: Dynamic graph learning
 **Datasets**: Reddit, Wikipedia, MOOC, LastFM
 **Description**: Temporal interaction networks
@@ -339,8 +387,10 @@ dataset = JODIEDataset(root='/tmp/JODIE', name='Reddit')
 ## 3D Meshes and Point Clouds
 
 ### ShapeNet
+
 **Usage**: 3D shape classification and segmentation
 **Description**: Large-scale 3D CAD model dataset
+
 - 16,881 models across 16 categories
 - Part-level segmentation labels
 
@@ -350,9 +400,11 @@ dataset = ShapeNet(root='/tmp/ShapeNet', categories=['Airplane'])
 ```
 
 ### ModelNet
+
 **Usage**: 3D shape classification
 **Versions**: ModelNet10, ModelNet40
 **Description**: CAD models for 3D object classification
+
 - ModelNet10: 4,899 models, 10 categories
 - ModelNet40: 12,311 models, 40 categories
 
@@ -362,8 +414,10 @@ dataset = ModelNet(root='/tmp/ModelNet', name='10')
 ```
 
 ### FAUST
+
 **Usage**: 3D shape matching, correspondence
 **Description**: Human body scans for shape analysis
+
 - 100 meshes of 10 people in 10 poses
 
 ```python
@@ -372,8 +426,10 @@ dataset = FAUST(root='/tmp/FAUST')
 ```
 
 ### CoMA
+
 **Usage**: 3D mesh deformation
 **Description**: Facial expression meshes
+
 - 20,466 3D face scans with expressions
 
 ```python
@@ -382,8 +438,10 @@ dataset = CoMA(root='/tmp/CoMA')
 ```
 
 ### S3DIS
+
 **Usage**: 3D semantic segmentation
 **Description**: Stanford Large-Scale 3D Indoor Spaces
+
 - 6 areas, 271 rooms, point cloud data
 
 ```python
@@ -394,8 +452,10 @@ dataset = S3DIS(root='/tmp/S3DIS', test_area=6)
 ## Image and Vision Datasets
 
 ### MNISTSuperpixels
+
 **Usage**: Graph-based image classification
 **Description**: MNIST images as superpixel graphs
+
 - 70,000 graphs (60k train, 10k test)
 
 ```python
@@ -404,8 +464,10 @@ dataset = MNISTSuperpixels(root='/tmp/MNIST')
 ```
 
 ### Flickr
+
 **Usage**: Image description, node classification
 **Description**: Flickr image network
+
 - 89,250 nodes, 899,756 edges
 
 ```python
@@ -414,8 +476,10 @@ dataset = Flickr(root='/tmp/Flickr')
 ```
 
 ### PPI
+
 **Usage**: Protein-protein interaction prediction
 **Description**: Multi-graph protein interaction networks
+
 - 24 graphs, 2,373 nodes total
 
 ```python
@@ -426,8 +490,10 @@ dataset = PPI(root='/tmp/PPI', split='train')
 ## Small Classic Graphs
 
 ### KarateClub
+
 **Usage**: Community detection, visualization
 **Description**: Zachary's karate club network
+
 - 34 nodes, 78 edges, 2 communities
 
 ```python
@@ -440,6 +506,7 @@ dataset = KarateClub()
 PyG integrates seamlessly with OGB datasets:
 
 ### Node Property Prediction
+
 - **ogbn-products**: Amazon product network (2.4M nodes)
 - **ogbn-proteins**: Protein association network (132K nodes)
 - **ogbn-arxiv**: Citation network (169K nodes)
@@ -447,6 +514,7 @@ PyG integrates seamlessly with OGB datasets:
 - **ogbn-mag**: Heterogeneous academic graph
 
 ### Link Property Prediction
+
 - **ogbl-ppa**: Protein association networks
 - **ogbl-collab**: Collaboration networks
 - **ogbl-ddi**: Drug-drug interaction network
@@ -454,6 +522,7 @@ PyG integrates seamlessly with OGB datasets:
 - **ogbl-wikikg2**: Wikidata knowledge graph
 
 ### Graph Property Prediction
+
 - **ogbg-molhiv**: Molecular HIV activity prediction
 - **ogbg-molpcba**: Molecular bioassays (multi-task)
 - **ogbg-ppa**: Protein function prediction
@@ -469,6 +538,7 @@ dataset = PygNodePropPredDataset(name='ogbn-arxiv')
 ## Synthetic Datasets
 
 ### FakeDataset
+
 **Usage**: Testing, debugging
 **Description**: Generates random graph data
 
@@ -478,6 +548,7 @@ dataset = FakeDataset(num_graphs=100, avg_num_nodes=50)
 ```
 
 ### StochasticBlockModelDataset
+
 **Usage**: Community detection benchmarks
 **Description**: Graphs generated from stochastic block models
 
@@ -487,6 +558,7 @@ dataset = StochasticBlockModelDataset(root='/tmp/SBM', num_graphs=1000)
 ```
 
 ### ExplainerDataset
+
 **Usage**: Testing explainability methods
 **Description**: Synthetic graphs with known explanation ground truth
 
@@ -498,6 +570,7 @@ dataset = ExplainerDataset(num_graphs=1000)
 ## Materials Science
 
 ### QM8
+
 **Usage**: Molecular property prediction
 **Description**: Electronic properties of small molecules
 
@@ -509,9 +582,11 @@ dataset = QM8(root='/tmp/QM8')
 ## Biological Networks
 
 ### PPI (Protein-Protein Interaction)
+
 Already listed above under Image and Vision Datasets
 
 ### STRING
+
 **Usage**: Protein interaction networks
 **Description**: Known and predicted protein-protein interactions
 
@@ -533,6 +608,7 @@ Already listed above under Image and Vision Datasets
 ## Common Patterns
 
 ### Loading with Transforms
+
 ```python
 from torch_geometric.datasets import Planetoid
 from torch_geometric.transforms import NormalizeFeatures
@@ -542,6 +618,7 @@ dataset = Planetoid(root='/tmp/Cora', name='Cora',
 ```
 
 ### Train/Val/Test Splits
+
 ```python
 # For datasets with pre-defined splits
 data = dataset[0]
@@ -557,6 +634,7 @@ train_loader = DataLoader(train_dataset, batch_size=32)
 ```
 
 ### Custom Data Loading
+
 ```python
 from torch_geometric.data import Data, Dataset
 

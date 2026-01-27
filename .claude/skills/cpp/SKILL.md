@@ -161,7 +161,6 @@ When reviewing or writing code, apply these guidelines:
 - Avoid data races by proper synchronization.
 - Use thread-safe data structures when necessary.
 
-
 </instructions>
 
 <examples>
@@ -175,6 +174,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -7,6 +7,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 ### Data Loaders
 
 #### File Format Loaders
+
 - **CSVLoader**: Load tabular data from CSV files with customizable feature handling
 - **UserCSVLoader**: User-defined CSV loading with flexible column specifications
 - **SDFLoader**: Process molecular structure files (SDF format)
@@ -14,11 +15,13 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 - **ImageLoader**: Load image data for computer vision tasks
 
 #### Biological Data Loaders
+
 - **FASTALoader**: Handle protein/DNA sequences in FASTA format
 - **FASTQLoader**: Process FASTQ sequencing data with quality scores
 - **SAMLoader/BAMLoader/CRAMLoader**: Support sequence alignment formats
 
 #### Specialized Loaders
+
 - **DFTYamlLoader**: Process density functional theory computational data
 - **InMemoryLoader**: Load data directly from Python objects
 
@@ -31,6 +34,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 ### Data Splitters
 
 #### General Splitters
+
 - **RandomSplitter**: Random dataset partitioning
 - **IndexSplitter**: Split by specified indices
 - **SpecifiedSplitter**: Use pre-defined splits
@@ -39,6 +43,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 - **TaskSplitter**: Split for multitask scenarios
 
 #### Molecule-Specific Splitters
+
 - **ScaffoldSplitter**: Divide molecules by structural scaffolds (prevents data leakage)
 - **ButinaSplitter**: Clustering-based molecular splitting
 - **FingerprintSplitter**: Split based on molecular fingerprint similarity
@@ -50,6 +55,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 ### Transformers
 
 #### Normalization
+
 - **NormalizationTransformer**: Standard normalization (mean=0, std=1)
 - **MinMaxTransformer**: Scale features to [0,1] range
 - **LogTransformer**: Apply log transformation
@@ -57,6 +63,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 - **CDFTransformer**: Cumulative distribution function normalization
 
 #### Task-Specific
+
 - **BalancingTransformer**: Address class imbalance
 - **FeaturizationTransformer**: Apply dynamic feature engineering
 - **CoulombFitTransformer**: Quantum chemistry specific
@@ -66,6 +73,7 @@ This document provides a comprehensive reference for DeepChem's core APIs, organ
 ## Molecular Featurizers
 
 ### Graph-Based Featurizers
+
 Use these with graph neural networks (GCNs, MPNNs, etc.):
 
 - **ConvMolFeaturizer**: Graph representations for graph convolutional networks
@@ -76,6 +84,7 @@ Use these with graph neural networks (GCNs, MPNNs, etc.):
 - **GroverFeaturizer**: Pre-trained molecular embeddings
 
 ### Fingerprint-Based Featurizers
+
 Use these with traditional ML (Random Forest, SVM, XGBoost):
 
 - **MACCSKeysFingerprint**: 167-bit structural keys
@@ -85,6 +94,7 @@ Use these with traditional ML (Random Forest, SVM, XGBoost):
 - **Mol2VecFingerprint**: Learned molecular vector representations
 
 ### Descriptor Featurizers
+
 Calculate molecular properties directly:
 
 - **RDKitDescriptors**: ~200 molecular descriptors (MW, LogP, H-donors, H-acceptors, TPSA, etc.)
@@ -92,6 +102,7 @@ Calculate molecular properties directly:
 - **CoulombMatrix**: Interatomic distance matrices for 3D structures
 
 ### Sequence-Based Featurizers
+
 For recurrent networks and transformers:
 
 - **SmilesToSeq**: Convert SMILES strings to sequences
@@ -100,27 +111,30 @@ For recurrent networks and transformers:
 
 ### Selection Guide
 
-| Use Case | Recommended Featurizer | Model Type |
-|----------|----------------------|------------|
-| Graph neural networks | ConvMolFeaturizer, MolGraphConvFeaturizer | GCN, MPNN, GAT |
-| Traditional ML | CircularFingerprint, RDKitDescriptors | Random Forest, XGBoost, SVM |
-| Deep learning (non-graph) | CircularFingerprint, Mol2VecFingerprint | Dense networks, CNN |
-| Sequence models | SmilesToSeq | LSTM, GRU, Transformer |
-| 3D molecular structures | CoulombMatrix | Specialized 3D models |
-| Quick baseline | RDKitDescriptors | Linear, Ridge, Lasso |
+| Use Case                  | Recommended Featurizer                    | Model Type                  |
+| ------------------------- | ----------------------------------------- | --------------------------- |
+| Graph neural networks     | ConvMolFeaturizer, MolGraphConvFeaturizer | GCN, MPNN, GAT              |
+| Traditional ML            | CircularFingerprint, RDKitDescriptors     | Random Forest, XGBoost, SVM |
+| Deep learning (non-graph) | CircularFingerprint, Mol2VecFingerprint   | Dense networks, CNN         |
+| Sequence models           | SmilesToSeq                               | LSTM, GRU, Transformer      |
+| 3D molecular structures   | CoulombMatrix                             | Specialized 3D models       |
+| Quick baseline            | RDKitDescriptors                          | Linear, Ridge, Lasso        |
 
 ## Models
 
 ### Scikit-Learn Integration
+
 - **SklearnModel**: Wrapper for any scikit-learn algorithm
   - Usage: `SklearnModel(model=RandomForestRegressor())`
 
 ### Gradient Boosting
+
 - **GBDTModel**: Gradient boosting decision trees (XGBoost, LightGBM)
 
 ### PyTorch Models
 
 #### Molecular Property Prediction
+
 - **MultitaskRegressor**: Multi-task regression with shared representations
 - **MultitaskClassifier**: Multi-task classification
 - **MultitaskFitTransformRegressor**: Regression with learned transformations
@@ -132,11 +146,13 @@ For recurrent networks and transformers:
 - **MATModel**: Molecule attention transformer
 
 #### Materials Science
+
 - **CGCNNModel**: Crystal graph convolutional networks
 - **MEGNetModel**: Materials graph networks
 - **LCNNModel**: Lattice CNN for materials
 
 #### Generative Models
+
 - **GANModel**: Generative adversarial networks
 - **WGANModel**: Wasserstein GAN
 - **BasicMolGANModel**: Molecular GAN
@@ -144,12 +160,14 @@ For recurrent networks and transformers:
 - **SeqToSeqModel**: Sequence-to-sequence models
 
 #### Physics-Informed Models
+
 - **PINNModel**: Physics-informed neural networks
 - **HNNModel**: Hamiltonian neural networks
 - **LNN**: Lagrangian neural networks
 - **FNOModel**: Fourier neural operators
 
 #### Computer Vision
+
 - **CNN**: Convolutional neural networks
 - **UNetModel**: U-Net architecture for segmentation
 - **InceptionV3Model**: Pre-trained Inception v3
@@ -165,21 +183,22 @@ For recurrent networks and transformers:
 
 ### Model Selection Guide
 
-| Task | Recommended Model | Featurizer |
-|------|------------------|------------|
-| Small dataset (<1000 samples) | SklearnModel (Random Forest) | CircularFingerprint |
-| Medium dataset (1K-100K) | GBDTModel or MultitaskRegressor | CircularFingerprint or ConvMolFeaturizer |
-| Large dataset (>100K) | GCNModel, AttentiveFPModel, or DMPNN | MolGraphConvFeaturizer |
-| Transfer learning | GroverModel, Chemberta, MoLFormer | Model-specific |
-| Materials properties | CGCNNModel, MEGNetModel | Structure-based |
-| Molecule generation | BasicMolGANModel, LSTMGenerator | SmilesToSeq |
-| Protein sequences | ProtBERT | Sequence-based |
+| Task                          | Recommended Model                    | Featurizer                               |
+| ----------------------------- | ------------------------------------ | ---------------------------------------- |
+| Small dataset (<1000 samples) | SklearnModel (Random Forest)         | CircularFingerprint                      |
+| Medium dataset (1K-100K)      | GBDTModel or MultitaskRegressor      | CircularFingerprint or ConvMolFeaturizer |
+| Large dataset (>100K)         | GCNModel, AttentiveFPModel, or DMPNN | MolGraphConvFeaturizer                   |
+| Transfer learning             | GroverModel, Chemberta, MoLFormer    | Model-specific                           |
+| Materials properties          | CGCNNModel, MEGNetModel              | Structure-based                          |
+| Molecule generation           | BasicMolGANModel, LSTMGenerator      | SmilesToSeq                              |
+| Protein sequences             | ProtBERT                             | Sequence-based                           |
 
 ## MoleculeNet Datasets
 
 Quick access to 30+ benchmark datasets via `dc.molnet.load_*()` functions.
 
 ### Classification Datasets
+
 - **load_bace()**: BACE-1 inhibitors (binary classification)
 - **load_bbbp()**: Blood-brain barrier penetration
 - **load_clintox()**: Clinical toxicity
@@ -191,6 +210,7 @@ Quick access to 30+ benchmark datasets via `dc.molnet.load_*()` functions.
 - **load_toxcast()**: EPA ToxCast screening
 
 ### Regression Datasets
+
 - **load_delaney()**: Aqueous solubility (ESOL)
 - **load_freesolv()**: Solvation free energy
 - **load_lipo()**: Lipophilicity (octanol-water partition)
@@ -198,18 +218,22 @@ Quick access to 30+ benchmark datasets via `dc.molnet.load_*()` functions.
 - **load_hopv()**: Organic photovoltaic properties
 
 ### Protein-Ligand Binding
+
 - **load_pdbbind()**: Binding affinity data
 
 ### Materials Science
+
 - **load_perovskite()**: Perovskite stability
 - **load_mp_formation_energy()**: Materials Project formation energy
 - **load_mp_metallicity()**: Metal vs. non-metal classification
 - **load_bandgap()**: Electronic bandgap prediction
 
 ### Chemical Reactions
+
 - **load_uspto()**: USPTO reaction dataset
 
 ### Usage Pattern
+
 ```python
 tasks, datasets, transformers = dc.molnet.load_bbbp(
     featurizer='GraphConv',  # or 'ECFP', 'GraphConv', 'Weave', etc.
@@ -224,6 +248,7 @@ train, valid, test = datasets
 Common evaluation metrics available in `dc.metrics`:
 
 ### Classification Metrics
+
 - **roc_auc_score**: Area under ROC curve (binary/multi-class)
 - **prc_auc_score**: Area under precision-recall curve
 - **accuracy_score**: Classification accuracy
@@ -233,6 +258,7 @@ Common evaluation metrics available in `dc.metrics`:
 - **f1_score**: F1 score
 
 ### Regression Metrics
+
 - **mean_absolute_error**: MAE
 - **mean_squared_error**: MSE
 - **root_mean_squared_error**: RMSE
@@ -241,6 +267,7 @@ Common evaluation metrics available in `dc.metrics`:
 - **spearman_correlation**: Spearman rank correlation
 
 ### Multi-Task Metrics
+
 Most metrics support multi-task evaluation by averaging over tasks.
 
 ## Training Pattern
@@ -277,6 +304,7 @@ test_score = model.evaluate(test, [metric])
 ## Common Patterns
 
 ### Pattern 1: Quick Baseline with MoleculeNet
+
 ```python
 tasks, datasets, transformers = dc.molnet.load_tox21(featurizer='ECFP')
 train, valid, test = datasets
@@ -285,6 +313,7 @@ model.fit(train)
 ```
 
 ### Pattern 2: Custom Data with Graph Networks
+
 ```python
 featurizer = dc.feat.MolGraphConvFeaturizer()
 loader = dc.data.CSVLoader(tasks=['activity'], feature_field='smiles',
@@ -296,6 +325,7 @@ model.fit(train)
 ```
 
 ### Pattern 3: Transfer Learning with Pretrained Models
+
 ```python
 model = dc.models.GroverModel(task='classification', n_tasks=1)
 model.fit(train_dataset)

@@ -5,6 +5,7 @@
 ### 1. Separate Research from Engineering
 
 **Good:**
+
 ```python
 class MyModel(L.LightningModule):
     # Research code (what the model does)
@@ -22,6 +23,7 @@ trainer = L.Trainer(
 ```
 
 **Bad:**
+
 ```python
 # Mixing research and engineering logic
 class MyModel(L.LightningModule):
@@ -42,6 +44,7 @@ class MyModel(L.LightningModule):
 ### 2. Use LightningDataModule
 
 **Good:**
+
 ```python
 class MyDataModule(L.LightningDataModule):
     def __init__(self, data_dir, batch_size):
@@ -67,6 +70,7 @@ trainer.fit(model, datamodule=dm)
 ```
 
 **Bad:**
+
 ```python
 # Scattered data logic
 train_dataset = load_data()
@@ -111,6 +115,7 @@ class MyModel(L.LightningModule):
 ### 1. Never Use Explicit CUDA Calls
 
 **Bad:**
+
 ```python
 x = x.cuda()
 model = model.cuda()
@@ -118,6 +123,7 @@ torch.cuda.set_device(0)
 ```
 
 **Good:**
+
 ```python
 # Inside LightningModule
 x = x.to(self.device)
@@ -159,6 +165,7 @@ class MyModel(L.LightningModule):
 ### 1. Always Use `save_hyperparameters()`
 
 **Good:**
+
 ```python
 class MyModel(L.LightningModule):
     def __init__(self, learning_rate, hidden_dim, dropout):
@@ -174,6 +181,7 @@ print(model.hparams.learning_rate)  # Original value preserved
 ```
 
 **Bad:**
+
 ```python
 class MyModel(L.LightningModule):
     def __init__(self, learning_rate, hidden_dim, dropout):
@@ -592,6 +600,7 @@ class MyModel(L.LightningModule):
 ### 1. Forgetting to Return Loss
 
 **Bad:**
+
 ```python
 def training_step(self, batch, batch_idx):
     loss = self.compute_loss(batch)
@@ -600,6 +609,7 @@ def training_step(self, batch, batch_idx):
 ```
 
 **Good:**
+
 ```python
 def training_step(self, batch, batch_idx):
     loss = self.compute_loss(batch)
@@ -610,12 +620,14 @@ def training_step(self, batch, batch_idx):
 ### 2. Not Syncing Metrics in DDP
 
 **Bad:**
+
 ```python
 def validation_step(self, batch, batch_idx):
     self.log("val_acc", acc)  # Wrong value with multi-GPU!
 ```
 
 **Good:**
+
 ```python
 def validation_step(self, batch, batch_idx):
     self.log("val_acc", acc, sync_dist=True)  # Correct aggregation
@@ -624,6 +636,7 @@ def validation_step(self, batch, batch_idx):
 ### 3. Manual Device Management
 
 **Bad:**
+
 ```python
 def training_step(self, batch, batch_idx):
     x = x.cuda()  # Don't do this
@@ -631,6 +644,7 @@ def training_step(self, batch, batch_idx):
 ```
 
 **Good:**
+
 ```python
 def training_step(self, batch, batch_idx):
     # Lightning handles device placement
@@ -640,6 +654,7 @@ def training_step(self, batch, batch_idx):
 ### 4. Not Using `self.log()`
 
 **Bad:**
+
 ```python
 def training_step(self, batch, batch_idx):
     loss = self.compute_loss(batch)
@@ -648,6 +663,7 @@ def training_step(self, batch, batch_idx):
 ```
 
 **Good:**
+
 ```python
 def training_step(self, batch, batch_idx):
     loss = self.compute_loss(batch)
@@ -658,6 +674,7 @@ def training_step(self, batch, batch_idx):
 ### 5. Modifying Batch In-Place
 
 **Bad:**
+
 ```python
 def training_step(self, batch, batch_idx):
     x, y = batch
@@ -665,6 +682,7 @@ def training_step(self, batch, batch_idx):
 ```
 
 **Good:**
+
 ```python
 def training_step(self, batch, batch_idx):
     x, y = batch

@@ -38,6 +38,7 @@ env.run()
 ```
 
 **Key properties:**
+
 - `capacity` - Maximum number of concurrent users (default: 1)
 - `count` - Current number of users
 - `queue` - List of queued requests
@@ -64,6 +65,7 @@ env.run()
 ```
 
 **Use cases:**
+
 - Emergency services (ambulances before regular vehicles)
 - VIP customer queues
 - Job scheduling with priorities
@@ -94,6 +96,7 @@ env.run()
 ```
 
 **Use cases:**
+
 - Operating system CPU scheduling
 - Emergency room triage
 - Network packet prioritization
@@ -126,15 +129,18 @@ env.run(until=50)
 ```
 
 **Key properties:**
+
 - `capacity` - Maximum amount (default: float('inf'))
 - `level` - Current amount
 - `init` - Initial amount (default: 0)
 
 **Operations:**
+
 - `put(amount)` - Add to container (blocks if full)
 - `get(amount)` - Remove from container (blocks if insufficient)
 
 **Use cases:**
+
 - Gas station fuel tanks
 - Buffer storage in manufacturing
 - Water reservoirs
@@ -173,10 +179,12 @@ env.run()
 ```
 
 **Key properties:**
+
 - `capacity` - Maximum number of items (default: float('inf'))
 - `items` - List of stored items
 
 **Operations:**
+
 - `put(item)` - Add item to store (blocks if full)
 - `get()` - Remove and return item (blocks if empty)
 
@@ -209,6 +217,7 @@ env.run(until=15)
 ```
 
 **Use cases:**
+
 - Warehouse item picking (specific SKUs)
 - Job queues with skill matching
 - Packet routing by destination
@@ -250,21 +259,22 @@ env.run()
 ```
 
 **Use cases:**
+
 - Task scheduling
 - Print job queues
 - Message prioritization
 
 ## Choosing the Right Resource Type
 
-| Scenario | Resource Type |
-|----------|---------------|
-| Limited servers/machines | Resource |
-| Priority-based queuing | PriorityResource |
-| Preemptive scheduling | PreemptiveResource |
-| Fuel, water, bulk materials | Container |
-| Generic item queue (FIFO) | Store |
-| Selective item retrieval | FilterStore |
-| Priority-ordered items | PriorityStore |
+| Scenario                    | Resource Type      |
+| --------------------------- | ------------------ |
+| Limited servers/machines    | Resource           |
+| Priority-based queuing      | PriorityResource   |
+| Preemptive scheduling       | PreemptiveResource |
+| Fuel, water, bulk materials | Container          |
+| Generic item queue (FIFO)   | Store              |
+| Selective item retrieval    | FilterStore        |
+| Priority-ordered items      | PriorityStore      |
 
 ## Best Practices
 

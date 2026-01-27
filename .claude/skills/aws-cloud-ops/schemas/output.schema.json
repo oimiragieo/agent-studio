@@ -3,9 +3,7 @@
   "title": "aws-cloud-ops Output Schema",
   "description": "Output validation schema for aws-cloud-ops skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

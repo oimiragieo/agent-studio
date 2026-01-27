@@ -15,6 +15,7 @@ den = Denario(project_dir="path/to/project")
 ```
 
 **Parameters:**
+
 - `project_dir` (str): Path to the research project directory where all outputs will be stored
 
 #### Methods
@@ -28,9 +29,11 @@ den.set_data_description(description: str)
 ```
 
 **Parameters:**
+
 - `description` (str): Text describing the dataset, available tools, research domain, and any relevant context
 
 **Example:**
+
 ```python
 den.set_data_description("""
 Available data: Time-series temperature measurements from 2010-2023
@@ -55,6 +58,7 @@ den.get_idea()
 **Output:** Creates a file containing the generated research question or hypothesis
 
 **Example:**
+
 ```python
 den.get_idea()
 # Generates ideas like: "Investigate the correlation between seasonal temperature
@@ -70,9 +74,11 @@ den.set_idea(idea: str)
 ```
 
 **Parameters:**
+
 - `idea` (str): The research hypothesis or question to investigate
 
 **Example:**
+
 ```python
 den.set_idea("Analyze the impact of El Niño events on regional temperature anomalies")
 ```
@@ -90,12 +96,14 @@ den.get_method()
 **Returns:** Methodology document (stored internally in project directory)
 
 **Output:** Creates a structured methodology including:
+
 - Analytical approach
 - Statistical methods to apply
 - Validation strategies
 - Expected outputs
 
 **Example:**
+
 ```python
 den.get_method()
 # Generates methodology: "Apply seasonal decomposition, compute correlation coefficients,
@@ -112,9 +120,11 @@ den.set_method(method: Path)  # Can also accept file paths
 ```
 
 **Parameters:**
+
 - `method` (str or Path): Methodology description or path to markdown file containing methodology
 
 **Example:**
+
 ```python
 # From string
 den.set_method("""
@@ -139,12 +149,14 @@ den.get_results()
 **Returns:** Results document with analysis outputs (stored internally in project directory)
 
 **Output:** Creates results including:
+
 - Computed statistics
 - Generated figures and visualizations
 - Data tables
 - Analysis findings
 
 **Example:**
+
 ```python
 den.get_results()
 # Executes the methodology, runs analyses, creates plots, compiles findings
@@ -162,9 +174,11 @@ den.set_results(results: Path)  # Can also accept file paths
 ```
 
 **Parameters:**
+
 - `results` (str or Path): Results description or path to markdown file containing results
 
 **Example:**
+
 ```python
 # From string
 den.set_results("""
@@ -190,17 +204,20 @@ den.get_paper(journal: Journal = None)
 ```
 
 **Parameters:**
+
 - `journal` (Journal, optional): Target journal for formatting. Defaults to generic format.
 
 **Returns:** LaTeX paper with proper formatting (stored in project directory)
 
 **Output:** Creates:
+
 - Complete LaTeX source file
 - Compiled PDF (if LaTeX is available)
 - Integrated figures and tables
 - Properly formatted bibliography
 
 **Example:**
+
 ```python
 from denario import Journal
 
@@ -382,6 +399,7 @@ Denario includes capabilities for literature searches to provide context for res
 ### Common Issues
 
 **Missing data description:**
+
 ```python
 den = Denario(project_dir="./project")
 den.get_idea()  # Error: must call set_data_description() first
@@ -390,6 +408,7 @@ den.get_idea()  # Error: must call set_data_description() first
 **Solution:** Always set data description before generating ideas.
 
 **Missing prerequisite stages:**
+
 ```python
 den = Denario(project_dir="./project")
 den.get_results()  # Error: must have idea and method first
@@ -398,6 +417,7 @@ den.get_results()  # Error: must have idea and method first
 **Solution:** Follow the workflow order or manually set prerequisite stages.
 
 **LaTeX compilation errors:**
+
 ```python
 den.get_paper()  # May fail if LaTeX not installed
 ```

@@ -6,20 +6,20 @@ Three major LaTeX packages dominate research poster creation: beamerposter, tikz
 
 ## Package Comparison Matrix
 
-| Feature | beamerposter | tikzposter | baposter |
-|---------|--------------|------------|----------|
-| **Learning Curve** | Easy (if familiar with Beamer) | Moderate | Moderate |
-| **Flexibility** | Moderate | High | Moderate-High |
-| **Default Aesthetics** | Traditional/Academic | Modern/Colorful | Professional/Clean |
-| **Theme Support** | Extensive (Beamer themes) | Built-in + Custom | Limited built-in |
-| **Customization** | Moderate effort | Easy with TikZ | Structured approach |
-| **Layout System** | Frame-based | Block-based | Box-based with grid |
-| **Multi-column** | Manual | Automatic | Automatic |
-| **Graphics Integration** | Standard includegraphics | TikZ + includegraphics | Standard + advanced |
-| **Community Support** | Large (Beamer community) | Growing | Smaller |
-| **Best For** | Traditional academic, institutional branding | Creative designs, custom graphics | Structured multi-column layouts |
-| **File Size** | Small | Medium-Large (TikZ overhead) | Medium |
-| **Compilation Speed** | Fast | Slower (TikZ processing) | Fast-Medium |
+| Feature                  | beamerposter                                 | tikzposter                        | baposter                        |
+| ------------------------ | -------------------------------------------- | --------------------------------- | ------------------------------- |
+| **Learning Curve**       | Easy (if familiar with Beamer)               | Moderate                          | Moderate                        |
+| **Flexibility**          | Moderate                                     | High                              | Moderate-High                   |
+| **Default Aesthetics**   | Traditional/Academic                         | Modern/Colorful                   | Professional/Clean              |
+| **Theme Support**        | Extensive (Beamer themes)                    | Built-in + Custom                 | Limited built-in                |
+| **Customization**        | Moderate effort                              | Easy with TikZ                    | Structured approach             |
+| **Layout System**        | Frame-based                                  | Block-based                       | Box-based with grid             |
+| **Multi-column**         | Manual                                       | Automatic                         | Automatic                       |
+| **Graphics Integration** | Standard includegraphics                     | TikZ + includegraphics            | Standard + advanced             |
+| **Community Support**    | Large (Beamer community)                     | Growing                           | Smaller                         |
+| **Best For**             | Traditional academic, institutional branding | Creative designs, custom graphics | Structured multi-column layouts |
+| **File Size**            | Small                                        | Medium-Large (TikZ overhead)      | Medium                          |
+| **Compilation Speed**    | Fast                                         | Slower (TikZ processing)          | Fast-Medium                     |
 
 ## 1. beamerposter
 
@@ -62,39 +62,39 @@ beamerposter extends the popular Beamer presentation class for poster-sized docu
 
 \begin{document}
 \begin{frame}[t]
-  
+
   % Title block
   \begin{block}{}
     \maketitle
   \end{block}
-  
+
   \begin{columns}[t]
     \begin{column}{.45\linewidth}
-      
+
       \begin{block}{Introduction}
         Your introduction text here...
       \end{block}
-      
+
       \begin{block}{Methods}
         Your methods text here...
       \end{block}
-      
+
     \end{column}
-    
+
     \begin{column}{.45\linewidth}
-      
+
       \begin{block}{Results}
         Your results text here...
         \includegraphics[width=\linewidth]{figure.pdf}
       \end{block}
-      
+
       \begin{block}{Conclusions}
         Your conclusions here...
       \end{block}
-      
+
     \end{column}
   \end{columns}
-  
+
 \end{frame}
 \end{document}
 ```
@@ -219,29 +219,29 @@ tikzposter is built on the powerful TikZ graphics package, offering modern desig
 % First column
 \begin{columns}
   \column{0.5}
-  
+
   \block{Introduction}{
     Your introduction text here...
   }
-  
+
   \block{Methods}{
     Your methods text here...
   }
-  
+
   % Second column
   \column{0.5}
-  
+
   \block{Results}{
     Your results text here...
     \begin{tikzfigure}
       \includegraphics[width=0.9\linewidth]{figure.pdf}
     \end{tikzfigure}
   }
-  
+
   \block{Conclusions}{
     Your conclusions here...
   }
-  
+
 \end{columns}
 
 \end{document}
@@ -518,16 +518,16 @@ baposter (Box Area Poster) uses a box-based layout system with automatic positio
   grid=false,                    % Show layout grid (debug)
   columns=3,                     % Number of columns
   colspacing=1em,                % Space between columns
-  
+
   % Background
   background=plain,              % plain, shadetb, shadelr, user
   bgColorOne=white,
   bgColorTwo=lightgray,
-  
+
   % Borders
   borderColor=blue!50,
   linewidth=2pt,
-  
+
   % Header
   headerColorOne=blue!80,
   headerColorTwo=blue!70,
@@ -536,13 +536,13 @@ baposter (Box Area Poster) uses a box-based layout system with automatic positio
   headershape=roundedright,      % rectangle, rounded, roundedright, roundedleft
   headershade=plain,             % plain, shadetb, shadelr
   headerborder=open,             % open, closed
-  
+
   % Boxes
   boxColorOne=white,
   boxColorTwo=blue!10,
   boxshade=plain,                % plain, shadetb, shadelr
   textborder=roundedleft,        % none, rectangle, rounded, roundedleft, roundedright
-  
+
   % Eye catcher
   eyecatcher=true
 }
@@ -579,6 +579,7 @@ baposter (Box Area Poster) uses a box-based layout system with automatic positio
 ## Package Selection Guide
 
 ### Choose beamerposter if:
+
 - ✅ You're already familiar with Beamer
 - ✅ You need to match institutional Beamer themes
 - ✅ You prefer traditional academic aesthetics
@@ -587,6 +588,7 @@ baposter (Box Area Poster) uses a box-based layout system with automatic positio
 - ✅ You're creating posters for conservative academic conferences
 
 ### Choose tikzposter if:
+
 - ✅ You want modern, colorful designs
 - ✅ You plan to create custom graphics with TikZ
 - ✅ You value aesthetic flexibility
@@ -595,6 +597,7 @@ baposter (Box Area Poster) uses a box-based layout system with automatic positio
 - ✅ You're presenting at design-conscious or public-facing events
 
 ### Choose baposter if:
+
 - ✅ You need structured multi-column layouts
 - ✅ You want automatic box positioning
 - ✅ You prefer clean, professional defaults
@@ -725,13 +728,13 @@ You can combine strengths of different packages:
 
 ## Performance Comparison
 
-| Package | Compile Time (A0) | PDF Size | Memory Usage |
-|---------|-------------------|----------|--------------|
-| beamerposter | ~5-10 seconds | 2-5 MB | Low |
-| tikzposter | ~15-30 seconds | 5-15 MB | Medium-High |
-| baposter | ~8-15 seconds | 3-8 MB | Medium |
+| Package      | Compile Time (A0) | PDF Size | Memory Usage |
+| ------------ | ----------------- | -------- | ------------ |
+| beamerposter | ~5-10 seconds     | 2-5 MB   | Low          |
+| tikzposter   | ~15-30 seconds    | 5-15 MB  | Medium-High  |
+| baposter     | ~8-15 seconds     | 3-8 MB   | Medium       |
 
-*Note: Times for poster with 5 figures, typical conference content*
+_Note: Times for poster with 5 figures, typical conference content_
 
 ## Conclusion
 
@@ -742,4 +745,3 @@ All three packages are excellent choices for different scenarios:
 - **baposter**: Best for structured, professional multi-section posters
 
 Choose based on your specific needs, aesthetic preferences, and time constraints. When in doubt, start with tikzposter for modern conferences or beamerposter for traditional academic venues.
-

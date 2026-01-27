@@ -21,11 +21,11 @@ updater_config:
   backup_location: .claude/context/backups/skills/
   compatibility_check: true
   registration_targets:
-    - ".claude/context/artifacts/skill-catalog.md"
-    - ".claude/CLAUDE.md"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/context/artifacts/skill-catalog.md'
+    - '.claude/CLAUDE.md'
+    - '.claude/context/memory/learnings.md'
   protected_sections:
-    - "Memory Protocol"
+    - 'Memory Protocol'
 
 phases:
   evaluate:
@@ -71,11 +71,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-skill'].output.skill_path !== null"
         on_fail: abort
-        message: "Skill does not exist. Use skill-creator-workflow to create new skills."
+        message: 'Skill does not exist. Use skill-creator-workflow to create new skills.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes don't break skill consumers
@@ -118,11 +118,11 @@ phases:
       - id: gate-validate-protected
         condition: "steps['check-protected-sections'].output.protected_intact === true"
         on_fail: abort
-        message: "Cannot remove protected sections (Memory Protocol)"
+        message: 'Cannot remove protected sections (Memory Protocol)'
       - id: gate-validate-tools
         condition: "steps['check-tool-changes'].output.removed_tools === null || steps['check-tool-changes'].output.removed_tools.length === 0"
         on_fail: warn
-        message: "Removing tools may break consumers. Review affected agents."
+        message: 'Removing tools may break consumers. Review affected agents.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -151,9 +151,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -203,12 +203,12 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-skill'].output.skill_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated skill file"
+        message: 'Failed to write updated skill file'
 
   verify:
     description: Validate updated skill meets quality standards
@@ -256,15 +256,15 @@ phases:
       - id: gate-verify-yaml
         condition: "steps['validate-yaml-frontmatter'].output.yaml_valid === true"
         on_fail: return_to_lock
-        message: "YAML frontmatter validation failed"
+        message: 'YAML frontmatter validation failed'
       - id: gate-verify-memory
         condition: "steps['check-memory-protocol'].output.memory_protocol_present === true"
         on_fail: return_to_lock
-        message: "Memory Protocol section missing after update"
+        message: 'Memory Protocol section missing after update'
       - id: gate-verify-placeholders
         condition: "steps['check-placeholders'].output.no_placeholders === true"
         on_fail: return_to_lock
-        message: "Placeholder content found after update"
+        message: 'Placeholder content found after update'
 
   enable:
     description: Update registrations and record changes
@@ -326,7 +326,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Skill registration verification failed after update"
+        message: 'Skill registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -336,29 +336,29 @@ compensate:
       description: Restore skill directory from backup
   enable:
     - action: revert_catalog
-      target: ".claude/context/artifacts/skill-catalog.md"
+      target: '.claude/context/artifacts/skill-catalog.md'
       description: Revert skill catalog changes if made
     - action: revert_claude_md
-      target: ".claude/CLAUDE.md"
+      target: '.claude/CLAUDE.md'
       description: Revert CLAUDE.md changes if made
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for skill updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-memory-protocol
-    rule: "Cannot remove Memory Protocol section"
+    rule: 'Cannot remove Memory Protocol section'
     enforcement: gate-validate-protected
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: maintain-yaml-validity
-    rule: "YAML frontmatter must remain valid after update"
+    rule: 'YAML frontmatter must remain valid after update'
     enforcement: gate-verify-yaml
   - id: warn-on-tool-removal
-    rule: "Warn when removing tools that may break consumers"
+    rule: 'Warn when removing tools that may break consumers'
     enforcement: gate-validate-tools

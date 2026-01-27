@@ -13,6 +13,7 @@ FluidSim automatically saves several types of output during simulations.
 **Contents**: Velocity, vorticity, and other physical space fields at specific times
 
 **Access**:
+
 ```python
 sim.output.phys_fields.plot()
 sim.output.phys_fields.plot("vorticity")
@@ -35,6 +36,7 @@ vorticity = sim.state.state_phys.get_var("rot")
 **Contents**: Volume-averaged quantities vs time (energy, enstrophy, etc.)
 
 **Access**:
+
 ```python
 sim.output.spatial_means.plot()
 
@@ -54,6 +56,7 @@ spatial_means_data = sim.output.spatial_means
 **Contents**: Energy and enstrophy spectra vs wavenumber
 
 **Access**:
+
 ```python
 sim.output.spectra.plot1d()  # 1D spectrum
 sim.output.spectra.plot2d()  # 2D spectrum
@@ -71,6 +74,7 @@ spectra = sim.output.spectra.load2d_mean()
 **Contents**: Energy transfer between scales
 
 **Access**:
+
 ```python
 sim.output.spect_energy_budg.plot()
 ```
@@ -128,6 +132,7 @@ sim.output.spectra.plot1d()
 For publication-quality or 3D visualization:
 
 **ParaView**: Open `.h5` files directly
+
 ```bash
 paraview simulation_dir/state_phys_t*.h5
 ```
@@ -135,6 +140,7 @@ paraview simulation_dir/state_phys_t*.h5
 **VisIt**: Similar to ParaView for large datasets
 
 **Custom Python**:
+
 ```python
 import h5py
 import matplotlib.pyplot as plt

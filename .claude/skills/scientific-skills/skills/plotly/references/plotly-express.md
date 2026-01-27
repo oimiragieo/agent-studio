@@ -37,6 +37,7 @@ fig.show()
 ## 40+ Chart Types
 
 ### Basic Charts
+
 - `px.scatter()` - Scatter plots with optional trendlines
 - `px.line()` - Line charts for time series
 - `px.bar()` - Bar charts (vertical/horizontal)
@@ -44,6 +45,7 @@ fig.show()
 - `px.pie()` - Pie charts
 
 ### Statistical Charts
+
 - `px.histogram()` - Histograms with automatic binning
 - `px.box()` - Box plots for distributions
 - `px.violin()` - Violin plots
@@ -51,12 +53,14 @@ fig.show()
 - `px.ecdf()` - Empirical cumulative distribution
 
 ### Maps
+
 - `px.scatter_geo()` - Geographic scatter plots
 - `px.choropleth()` - Choropleth maps
 - `px.scatter_mapbox()` - Mapbox scatter plots
 - `px.density_mapbox()` - Density heatmaps on maps
 
 ### Specialized
+
 - `px.sunburst()` - Hierarchical sunburst charts
 - `px.treemap()` - Treemap visualizations
 - `px.funnel()` - Funnel charts
@@ -66,6 +70,7 @@ fig.show()
 - `px.density_contour()` - Density contours
 
 ### 3D Charts
+
 - `px.scatter_3d()` - 3D scatter plots
 - `px.line_3d()` - 3D line plots
 
@@ -100,6 +105,7 @@ fig = px.scatter(
 ## Data Format
 
 Plotly Express works with:
+
 - **Long-form data** (tidy): One row per observation
 - **Wide-form data**: Multiple columns as separate traces
 
@@ -201,12 +207,14 @@ fig.add_hline(y=0, line_dash="dash")
 ## When to Use Plotly Express
 
 Use Plotly Express when:
+
 - Creating standard chart types quickly
 - Working with pandas DataFrames
 - Need automatic color/size encoding
 - Want sensible defaults with minimal code
 
 Use graph_objects when:
+
 - Building custom chart types not in px
 - Need fine-grained control over every element
 - Creating complex multi-trace figures

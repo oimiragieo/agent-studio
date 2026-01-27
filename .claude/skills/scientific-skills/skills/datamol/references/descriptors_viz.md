@@ -7,39 +7,53 @@ The descriptors module provides tools for computing molecular properties and des
 ### Specialized Descriptor Functions
 
 #### `dm.descriptors.n_aromatic_atoms(mol)`
+
 Calculate the number of aromatic atoms.
+
 - **Returns**: Integer count
 - **Use case**: Aromaticity analysis
 
 #### `dm.descriptors.n_aromatic_atoms_proportion(mol)`
+
 Calculate ratio of aromatic atoms to total heavy atoms.
+
 - **Returns**: Float between 0 and 1
 - **Use case**: Quantifying aromatic character
 
 #### `dm.descriptors.n_charged_atoms(mol)`
+
 Count atoms with nonzero formal charge.
+
 - **Returns**: Integer count
 - **Use case**: Charge distribution analysis
 
 #### `dm.descriptors.n_rigid_bonds(mol)`
+
 Count non-rotatable bonds (neither single bonds nor ring bonds).
+
 - **Returns**: Integer count
 - **Use case**: Molecular flexibility assessment
 
 #### `dm.descriptors.n_stereo_centers(mol)`
+
 Count stereogenic centers (chiral centers).
+
 - **Returns**: Integer count
 - **Use case**: Stereochemistry analysis
 
 #### `dm.descriptors.n_stereo_centers_unspecified(mol)`
+
 Count stereocenters lacking stereochemical specification.
+
 - **Returns**: Integer count
 - **Use case**: Identifying incomplete stereochemistry
 
 ### Batch Descriptor Computation
 
 #### `dm.descriptors.compute_many_descriptors(mol, properties_fn=None, add_properties=True)`
+
 Compute multiple molecular properties for a single molecule.
+
 - **Parameters**:
   - `properties_fn`: Custom list of descriptor functions
   - `add_properties`: Include additional computed properties
@@ -57,7 +71,9 @@ Compute multiple molecular properties for a single molecule.
   ```
 
 #### `dm.descriptors.batch_compute_many_descriptors(mols, properties_fn=None, add_properties=True, n_jobs=1, batch_size=None, progress=False)`
+
 Compute descriptors for multiple molecules in parallel.
+
 - **Parameters**:
   - `mols`: List of molecules
   - `n_jobs`: Number of parallel jobs (-1 for all cores)
@@ -77,7 +93,9 @@ Compute descriptors for multiple molecules in parallel.
 ### RDKit Descriptor Access
 
 #### `dm.descriptors.any_rdkit_descriptor(name)`
+
 Retrieve any descriptor function from RDKit by name.
+
 - **Parameters**: `name` - Descriptor function name (e.g., 'MolWt', 'TPSA')
 - **Returns**: RDKit descriptor function
 - **Available descriptors**: From `rdkit.Chem.Descriptors` and `rdkit.Chem.rdMolDescriptors`
@@ -90,6 +108,7 @@ Retrieve any descriptor function from RDKit by name.
 ### Common Use Cases
 
 **Drug-likeness Filtering (Lipinski's Rule of Five)**:
+
 ```python
 descriptors = dm.descriptors.compute_many_descriptors(mol)
 is_druglike = (
@@ -101,6 +120,7 @@ is_druglike = (
 ```
 
 **ADME Property Analysis**:
+
 ```python
 df = dm.descriptors.batch_compute_many_descriptors(compound_library)
 # Filter by TPSA for blood-brain barrier penetration
@@ -116,7 +136,9 @@ The viz module provides tools for rendering molecules and conformers as images.
 ### Main Visualization Function
 
 #### `dm.viz.to_image(mols, legends=None, n_cols=4, use_svg=False, mol_size=(200, 200), highlight_atom=None, highlight_bond=None, outfile=None, max_mols=None, copy=True, indices=False, ...)`
+
 Generate image grid from molecules.
+
 - **Parameters**:
   - `mols`: Single molecule or list of molecules
   - `legends`: String or list of strings as labels (one per molecule)
@@ -131,6 +153,7 @@ Generate image grid from molecules.
   - `align`: Align molecules using MCS (Maximum Common Substructure)
 - **Returns**: Image object (can be displayed in Jupyter) or saves to file
 - **Example**:
+
   ```python
   # Basic grid
   dm.viz.to_image(mols[:10], legends=[dm.to_smiles(m) for m in mols[:10]])
@@ -148,7 +171,9 @@ Generate image grid from molecules.
 ### Conformer Visualization
 
 #### `dm.viz.conformers(mol, n_confs=None, align_conf=True, n_cols=3, sync_views=True, remove_hs=True, ...)`
+
 Display multiple conformers in grid layout.
+
 - **Parameters**:
   - `mol`: Molecule with embedded conformers
   - `n_confs`: Number or list of conformer indices to display (None = all)
@@ -167,7 +192,9 @@ Display multiple conformers in grid layout.
 ### Circle Grid Visualization
 
 #### `dm.viz.circle_grid(center_mol, circle_mols, mol_size=200, circle_margin=50, act_mapper=None, ...)`
+
 Create concentric ring visualization with central molecule.
+
 - **Parameters**:
   - `center_mol`: Molecule at center
   - `circle_mols`: List of molecule lists (one list per ring)

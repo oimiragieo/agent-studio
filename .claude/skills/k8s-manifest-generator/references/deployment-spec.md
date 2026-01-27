@@ -16,12 +16,12 @@ metadata:
   namespace: production
   labels:
     app.kubernetes.io/name: my-app
-    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/version: '1.0.0'
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: my-system
   annotations:
-    description: "Main application deployment"
-    contact: "backend-team@example.com"
+    description: 'Main application deployment'
+    contact: 'backend-team@example.com'
 spec:
   # Replica management
   replicas: 3
@@ -53,8 +53,8 @@ spec:
         app: my-app
         version: v1
       annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "9090"
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '9090'
     spec:
       # Service account for RBAC
       serviceAccountName: my-app
@@ -71,7 +71,7 @@ spec:
       initContainers:
         - name: init-db
           image: busybox:1.36
-          command: ["sh", "-c", "until nc -z db-service 5432; do sleep 1; done"]
+          command: ['sh', '-c', 'until nc -z db-service 5432; do sleep 1; done']
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
@@ -118,11 +118,11 @@ spec:
           # Resource requests and limits
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
+              memory: '256Mi'
+              cpu: '250m'
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: '512Mi'
+              cpu: '500m'
 
           # Liveness probe
           livenessProbe:
@@ -184,11 +184,10 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command:
-                  ["/bin/sh", "-c", "echo Container started > /tmp/started"]
+                command: ['/bin/sh', '-c', 'echo Container started > /tmp/started']
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "sleep 15"]
+                command: ['/bin/sh', '-c', 'sleep 15']
 
       # Volumes
       volumes:
@@ -206,7 +205,7 @@ spec:
       dnsConfig:
         options:
           - name: ndots
-            value: "2"
+            value: '2'
 
       # Scheduling
       nodeSelector:
@@ -226,10 +225,10 @@ spec:
                 topologyKey: kubernetes.io/hostname
 
       tolerations:
-        - key: "app"
-          operator: "Equal"
-          value: "my-app"
-          effect: "NoSchedule"
+        - key: 'app'
+          operator: 'Equal'
+          value: 'my-app'
+          effect: 'NoSchedule'
 
       # Termination
       terminationGracePeriodSeconds: 30
@@ -359,11 +358,11 @@ ports:
 ```yaml
 resources:
   requests:
-    memory: "256Mi" # Guaranteed resources
-    cpu: "250m" # 0.25 CPU cores
+    memory: '256Mi' # Guaranteed resources
+    cpu: '250m' # 0.25 CPU cores
   limits:
-    memory: "512Mi" # Maximum allowed
-    cpu: "500m" # 0.5 CPU cores
+    memory: '512Mi' # Maximum allowed
+    cpu: '500m' # 0.5 CPU cores
 ```
 
 **QoS Classes (determined automatically):**
@@ -591,14 +590,14 @@ affinity:
 
 ```yaml
 tolerations:
-  - key: "node.kubernetes.io/unreachable"
-    operator: "Exists"
-    effect: "NoExecute"
+  - key: 'node.kubernetes.io/unreachable'
+    operator: 'Exists'
+    effect: 'NoExecute'
     tolerationSeconds: 30
-  - key: "dedicated"
-    operator: "Equal"
-    value: "database"
-    effect: "NoSchedule"
+  - key: 'dedicated'
+    operator: 'Equal'
+    value: 'database'
+    effect: 'NoSchedule'
 ```
 
 ## Common Patterns
@@ -673,7 +672,7 @@ spec:
               done
         - name: run-migrations
           image: myapp:1.0.0
-          command: ["./migrate", "up"]
+          command: ['./migrate', 'up']
           env:
             - name: DATABASE_URL
               valueFrom:
@@ -738,7 +737,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "sleep 15 && kill -SIGTERM 1"]
+                command: ['/bin/sh', '-c', 'sleep 15 && kill -SIGTERM 1']
 ```
 
 ## Troubleshooting

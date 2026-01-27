@@ -34,6 +34,7 @@ Guide viewers through content in logical order using size, color, position, and 
    - Purpose: Context and attribution
 
 **Implementation**:
+
 ```latex
 % Define hierarchy in LaTeX
 \setbeamerfont{title}{size=\VeryHuge,series=\bfseries}        % 90pt+
@@ -47,12 +48,14 @@ Guide viewers through content in logical order using size, color, position, and 
 Empty space is not wasted space—it enhances readability and guides attention.
 
 **White Space Functions**:
+
 - **Breathing room**: Prevents overwhelming viewers
 - **Grouping**: Shows which elements belong together
 - **Focus**: Draws attention to important elements
 - **Flow**: Creates visual pathways through content
 
 **Guidelines**:
+
 - Minimum 5-10% margins on all sides
 - Consistent spacing between blocks (1-2cm)
 - Space around figures equal to or greater than border width
@@ -60,6 +63,7 @@ Empty space is not wasted space—it enhances readability and guides attention.
 - Don't fill every inch—aim for 40-60% text coverage
 
 **LaTeX Implementation**:
+
 ```latex
 % beamerposter spacing
 \setbeamertemplate{block begin}{
@@ -80,18 +84,21 @@ Empty space is not wasted space—it enhances readability and guides attention.
 Proper alignment creates professional, organized appearance.
 
 **Alignment Types**:
+
 - **Left-aligned text**: Most readable for body text (Western audiences)
 - **Center-aligned**: Headers, titles, symmetric layouts
 - **Right-aligned**: Rarely used, special cases only
 - **Justified**: Avoid (creates uneven spacing)
 
 **Grid Systems**:
+
 - **2-column**: Simple, traditional, good for narrative flow
 - **3-column**: Most common, balanced, versatile
 - **4-column**: Complex, information-dense, requires careful design
 - **Asymmetric**: Creative, modern, requires expertise
 
 **Best Practices**:
+
 - Align block edges to invisible grid lines
 - Keep consistent column widths (unless intentionally asymmetric)
 - Align similar elements (all figures, all text blocks)
@@ -104,6 +111,7 @@ Design for natural eye movement and logical content progression.
 **Common Reading Patterns**:
 
 **Z-Pattern (Landscape posters)**:
+
 ```
 Start → → → Top Right
   ↓
@@ -113,6 +121,7 @@ Bottom Left → → → End
 ```
 
 **F-Pattern (Portrait posters)**:
+
 ```
 Title → → → →
 ↓
@@ -126,6 +135,7 @@ Conclusion → →
 ```
 
 **Gutenberg Diagram**:
+
 ```
 Primary Area     Strong Fallow
 (top-left)       (top-right)
@@ -135,6 +145,7 @@ Weak Fallow      Terminal Area
 ```
 
 **Implementation Strategy**:
+
 1. Place most important content in "hot zones" (top-left, center)
 2. Create visual paths with arrows, lines, or color
 3. Use numbering for sequential information (Methods steps)
@@ -148,6 +159,7 @@ Weak Fallow      Terminal Area
 **Recommended Fonts**:
 
 **Sans-Serif (Recommended for posters)**:
+
 - **Helvetica**: Clean, professional, widely available
 - **Arial**: Similar to Helvetica, universal compatibility
 - **Calibri**: Modern, friendly, good readability
@@ -156,16 +168,19 @@ Weak Fallow      Terminal Area
 - **Lato**: Warm, professional, works at all sizes
 
 **Serif (Use sparingly)**:
+
 - **Times New Roman**: Traditional, formal
 - **Garamond**: Elegant, good for humanities
 - **Georgia**: Designed for screens, readable
 
 **Avoid**:
+
 - ❌ Comic Sans (unprofessional)
 - ❌ Decorative or script fonts (illegible from distance)
 - ❌ Mixing more than 2-3 font families
 
 **LaTeX Implementation**:
+
 ```latex
 % Helvetica (sans-serif)
 \usepackage{helvet}
@@ -184,6 +199,7 @@ Weak Fallow      Terminal Area
 ### Font Sizing
 
 **Absolute Minimum Sizes** (readable from 4-6 feet):
+
 - Title: 72pt+ (85-120pt recommended)
 - Section headers: 48-72pt
 - Body text: 24-36pt (30pt+ recommended)
@@ -191,6 +207,7 @@ Weak Fallow      Terminal Area
 - References: 16-20pt minimum
 
 **Testing Readability**:
+
 - Print at 25% scale
 - Read from 2-3 feet distance
 - If legible, full-scale poster will be readable from 8-12 feet
@@ -211,6 +228,7 @@ Weak Fallow      Terminal Area
 ### Text Formatting Best Practices
 
 **Use**:
+
 - ✅ **Bold** for emphasis and headers
 - ✅ Short paragraphs (3-5 lines maximum)
 - ✅ Bullet points for lists
@@ -218,6 +236,7 @@ Weak Fallow      Terminal Area
 - ✅ High contrast (dark text on light background)
 
 **Avoid**:
+
 - ❌ Italics from distance (hard to read)
 - ❌ ALL CAPS FOR LONG TEXT (SLOW TO READ)
 - ❌ Underlines (old-fashioned, interferes with descenders)
@@ -225,6 +244,7 @@ Weak Fallow      Terminal Area
 - ❌ Light text on light backgrounds
 
 **Line Spacing**:
+
 ```latex
 % Increase line spacing for readability
 \usepackage{setspace}
@@ -242,19 +262,20 @@ Weak Fallow      Terminal Area
 
 Colors convey meaning and affect viewer perception:
 
-| Color | Associations | Use Cases |
-|-------|--------------|-----------|
-| **Blue** | Trust, professionalism, science | Academic, medical, technology |
-| **Green** | Nature, health, growth | Environmental, biology, health |
-| **Red** | Energy, urgency, passion | Attention, warnings, bold statements |
-| **Orange** | Creativity, enthusiasm | Innovative research, friendly approach |
-| **Purple** | Wisdom, creativity, luxury | Humanities, arts, premium research |
-| **Gray** | Neutral, professional, modern | Technology, minimal designs |
-| **Yellow** | Optimism, attention, caution | Highlights, energy, caution areas |
+| Color      | Associations                    | Use Cases                              |
+| ---------- | ------------------------------- | -------------------------------------- |
+| **Blue**   | Trust, professionalism, science | Academic, medical, technology          |
+| **Green**  | Nature, health, growth          | Environmental, biology, health         |
+| **Red**    | Energy, urgency, passion        | Attention, warnings, bold statements   |
+| **Orange** | Creativity, enthusiasm          | Innovative research, friendly approach |
+| **Purple** | Wisdom, creativity, luxury      | Humanities, arts, premium research     |
+| **Gray**   | Neutral, professional, modern   | Technology, minimal designs            |
+| **Yellow** | Optimism, attention, caution    | Highlights, energy, caution areas      |
 
 ### Color Scheme Types
 
 **1. Monochromatic**: Variations of single hue
+
 - **Pros**: Harmonious, professional, easy to execute
 - **Cons**: Can be boring, less visual interest
 - **Use**: Conservative conferences, institutional branding
@@ -267,6 +288,7 @@ Colors convey meaning and affect viewer perception:
 ```
 
 **2. Analogous**: Adjacent colors on color wheel
+
 - **Pros**: Harmonious, visually comfortable
 - **Cons**: Low contrast, may lack excitement
 - **Use**: Nature/biology topics, smooth gradients
@@ -279,6 +301,7 @@ Colors convey meaning and affect viewer perception:
 ```
 
 **3. Complementary**: Opposite colors on wheel
+
 - **Pros**: High contrast, vibrant, energetic
 - **Cons**: Can be overwhelming if intense
 - **Use**: Drawing attention, modern designs
@@ -290,6 +313,7 @@ Colors convey meaning and affect viewer perception:
 ```
 
 **4. Triadic**: Three evenly spaced colors
+
 - **Pros**: Balanced, vibrant, visually rich
 - **Cons**: Can appear busy if not balanced
 - **Use**: Multi-topic posters, creative fields
@@ -302,6 +326,7 @@ Colors convey meaning and affect viewer perception:
 ```
 
 **5. Split-Complementary**: Base + two adjacent to complement
+
 - **Pros**: High contrast but less tense than complementary
 - **Cons**: Complex to balance
 - **Use**: Sophisticated designs, experienced designers
@@ -311,6 +336,7 @@ Colors convey meaning and affect viewer perception:
 Ensure readability with sufficient contrast:
 
 **Excellent Contrast (Use these)**:
+
 - Dark blue on white
 - Black on white
 - White on dark blue/green/purple
@@ -318,6 +344,7 @@ Ensure readability with sufficient contrast:
 - Black on light cyan
 
 **Poor Contrast (Avoid)**:
+
 - ❌ Red on green (color-blind issue)
 - ❌ Yellow on white
 - ❌ Light gray on white
@@ -325,11 +352,13 @@ Ensure readability with sufficient contrast:
 - ❌ Any pure colors on each other
 
 **Contrast Ratio Standards**:
+
 - Minimum: 4.5:1 (WCAG AA)
 - Recommended: 7:1 (WCAG AAA)
 - Test at: https://webaim.org/resources/contrastchecker/
 
 **LaTeX Color Contrast**:
+
 ```latex
 % High contrast header
 \setbeamercolor{block title}{bg=black, fg=white}
@@ -345,12 +374,14 @@ Ensure readability with sufficient contrast:
 ~8% of males and ~0.5% of females have color vision deficiency.
 
 **Safe Color Combinations**:
+
 - Blue + Orange (most universally distinguishable)
 - Blue + Yellow
 - Blue + Red
 - Purple + Green (use with caution)
 
 **Avoid**:
+
 - ❌ Red + Green (indistinguishable to most common color blindness)
 - ❌ Green + Brown
 - ❌ Blue + Purple (can be problematic)
@@ -359,6 +390,7 @@ Ensure readability with sufficient contrast:
 **Recommended Palettes**:
 
 **IBM Color Blind Safe** (excellent accessibility):
+
 ```latex
 \definecolor{ibmblue}{RGB}{100,143,255}
 \definecolor{ibmmagenta}{RGB}{254,97,0}
@@ -367,6 +399,7 @@ Ensure readability with sufficient contrast:
 ```
 
 **Okabe-Ito Palette** (scientifically tested):
+
 ```latex
 \definecolor{okorange}{RGB}{230,159,0}
 \definecolor{okskyblue}{RGB}{86,180,233}
@@ -378,6 +411,7 @@ Ensure readability with sufficient contrast:
 ```
 
 **Paul Tol's Bright Palette**:
+
 ```latex
 \definecolor{tolblue}{RGB}{68,119,170}
 \definecolor{tolred}{RGB}{204,102,119}
@@ -411,6 +445,7 @@ Match university or department colors:
 Design posters usable by the widest range of people:
 
 **1. Visual Accessibility**:
+
 - High contrast text (minimum 4.5:1 ratio)
 - Large font sizes (24pt+ body text)
 - Color-blind safe palettes
@@ -418,6 +453,7 @@ Design posters usable by the widest range of people:
 - Avoid relying solely on color to convey information
 
 **2. Cognitive Accessibility**:
+
 - Clear, simple language
 - Logical organization
 - Consistent layout
@@ -425,6 +461,7 @@ Design posters usable by the widest range of people:
 - Avoid clutter and information overload
 
 **3. Physical Accessibility**:
+
 - Position critical content at wheelchair-accessible height (3-5 feet)
 - Include QR codes to digital versions
 - Provide printed handouts for detail viewing
@@ -438,8 +475,8 @@ Make posters accessible to screen readers (for digital versions):
 % Add alt text to figures
 \includegraphics[width=\linewidth]{figure.pdf}
 % Alternative: Include detailed caption
-\caption{Bar graph showing mean±SD of treatment outcomes. 
-Control group (blue): 45±5\%; Treatment group (orange): 78±6\%. 
+\caption{Bar graph showing mean±SD of treatment outcomes.
+Control group (blue): 45±5\%; Treatment group (orange): 78±6\%.
 Asterisks indicate significance: *p<0.05, **p<0.01.}
 ```
 
@@ -448,12 +485,14 @@ Asterisks indicate significance: *p<0.05, **p<0.01.}
 Don't rely on single sensory channel:
 
 **Use Redundant Encoding**:
+
 - Color + Shape (not just color for categories)
 - Color + Pattern (hatching, stippling)
 - Color + Label (text labels on graph elements)
 - Text + Icons (visual + verbal)
 
 **Example**:
+
 ```latex
 % Good: Color + shape + label
 \begin{tikzpicture}
@@ -481,6 +520,7 @@ Left        Right
 ```
 
 **Power Points** (intersections):
+
 - Top-left: Primary section start
 - Top-right: Logos, QR codes
 - Center: Key figure or main result
@@ -489,18 +529,21 @@ Left        Right
 ### Balance and Symmetry
 
 **Symmetric Layouts**:
+
 - Formal, traditional, stable
 - Easy to design
 - Can appear static or boring
 - Good for conservative audiences
 
 **Asymmetric Layouts**:
+
 - Dynamic, modern, interesting
 - Harder to execute well
 - More visually engaging
 - Good for creative fields
 
 **Visual Weight Balance**:
+
 - Large elements = heavy weight
 - Dark colors = heavy weight
 - Dense text = heavy weight
@@ -511,6 +554,7 @@ Left        Right
 **Gestalt Principles**:
 
 **Proximity**: Items close together are perceived as related
+
 ```
 [Introduction]  [Methods]
 
@@ -518,14 +562,17 @@ Left        Right
 ```
 
 **Similarity**: Similar items are perceived as grouped
+
 - Use consistent colors for related sections
 - Same border styles for similar content types
 
 **Continuity**: Eyes follow lines and paths
+
 - Use arrows to guide through methods
 - Align elements to create invisible lines
 
 **Closure**: Mind completes incomplete shapes
+
 - Use partial borders to group without boxing in
 
 ## Visual Elements
@@ -535,18 +582,21 @@ Left        Right
 Strategic use of icons enhances comprehension:
 
 **Benefits**:
+
 - Universal language (crosses linguistic barriers)
 - Faster processing than text
 - Adds visual interest
 - Clarifies concepts
 
 **Best Practices**:
+
 - Use consistent style (all line, all filled, all flat)
 - Appropriate size (1-3cm typical)
 - Label ambiguous icons
 - Source: Font Awesome, Noun Project, academic icon sets
 
 **LaTeX Implementation**:
+
 ```latex
 % Font Awesome icons
 \usepackage{fontawesome5}
@@ -561,18 +611,21 @@ Strategic use of icons enhances comprehension:
 ### Borders and Dividers
 
 **Use Borders To**:
+
 - Define sections
 - Group related content
 - Add visual interest
 - Match institutional branding
 
 **Border Styles**:
+
 - Solid lines: Traditional, formal
 - Dashed lines: Informal, secondary info
 - Rounded corners: Friendly, modern
 - Drop shadows: Depth, modern (use sparingly)
 
 **Guidelines**:
+
 - Keep consistent width (2-5pt typical)
 - Use sparingly (not every element needs a border)
 - Match border color to content or theme
@@ -590,7 +643,7 @@ Strategic use of icons enhances comprehension:
   bodyverticalshift=0pt, roundedcorners=10, linewidth=2pt,
   titleinnersep=8mm, bodyinnersep=8mm
 }{
-  \draw[draw=blocktitlebgcolor, fill=blockbodybgcolor, 
+  \draw[draw=blocktitlebgcolor, fill=blockbodybgcolor,
         rounded corners=\blockroundedcorners, line width=\blocklinewidth]
        (blockbody.south west) rectangle (blocktitle.north east);
 }
@@ -601,22 +654,26 @@ Strategic use of icons enhances comprehension:
 **Background Options**:
 
 **Plain (Recommended)**:
+
 - White or very light color
 - Maximum readability
 - Professional
 - Print-friendly
 
 **Gradient**:
+
 - Subtle gradients acceptable
 - Top-to-bottom or radial
 - Avoid strong contrasts that interfere with text
 
 **Textured**:
+
 - Very subtle textures only
 - Watermarks of logos/molecules (5-10% opacity)
 - Avoid patterns that create visual noise
 
 **Avoid**:
+
 - ❌ Busy backgrounds
 - ❌ Images behind text
 - ❌ High contrast backgrounds
@@ -646,28 +703,33 @@ Strategic use of icons enhances comprehension:
 ### Critical Errors
 
 **1. Too Much Text** (Most common mistake)
+
 - ❌ More than 1000 words
 - ❌ Long paragraphs (>5 lines)
 - ❌ Small font sizes to fit more content
 - ✅ Solution: Cut ruthlessly, use bullet points, focus on key messages
 
 **2. Poor Contrast**
+
 - ❌ Light text on light background
 - ❌ Colored text on colored background
 - ✅ Solution: Dark on light or light on dark, test contrast ratio
 
 **3. Font Size Too Small**
+
 - ❌ Body text under 24pt
 - ❌ Trying to fit full paper content
 - ✅ Solution: 30pt+ body text, prioritize key findings
 
 **4. Cluttered Layout**
+
 - ❌ No white space
 - ❌ Elements touching edges
 - ❌ Random placement
 - ✅ Solution: Generous margins, grid alignment, intentional white space
 
 **5. Inconsistent Styling**
+
 - ❌ Multiple font families
 - ❌ Varying header styles
 - ❌ Misaligned elements
@@ -676,27 +738,32 @@ Strategic use of icons enhances comprehension:
 ### Moderate Issues
 
 **6. Poor Figure Quality**
+
 - ❌ Pixelated images (<300 DPI)
 - ❌ Tiny axis labels
 - ❌ Unreadable legends
 - ✅ Solution: Vector graphics (PDF/SVG), large labels, clear legends
 
 **7. Color Overload**
+
 - ❌ Too many colors (>5 distinct hues)
 - ❌ Neon or overly saturated colors
 - ✅ Solution: Limit to 2-3 main colors, use tints/shades for variation
 
 **8. Ignoring Visual Hierarchy**
+
 - ❌ All text same size
 - ❌ No clear entry point
 - ✅ Solution: Vary sizes significantly, clear title, visual flow
 
 **9. Information Overload**
+
 - ❌ Trying to show everything
 - ❌ Too many figures
 - ✅ Solution: Show 3-5 key results, link to full paper via QR code
 
 **10. Poor Typography**
+
 - ❌ Justified text (uneven spacing)
 - ❌ All caps body text
 - ❌ Mixing serif and sans-serif randomly
@@ -741,6 +808,7 @@ Strategic use of icons enhances comprehension:
 Research on poster effectiveness shows:
 
 **Findings from Studies**:
+
 1. **Viewers spend 3-5 minutes average** on posters
    - Design for scanning, not deep reading
    - Most important info must be visible immediately
@@ -768,23 +836,27 @@ Research on poster effectiveness shows:
 ## Resources and Tools
 
 ### Color Tools
+
 - **Coolors.co**: Generate color palettes
 - **Adobe Color**: Color wheel and accessibility checker
 - **ColorBrewer**: Scientific visualization palettes
 - **WebAIM Contrast Checker**: Test contrast ratios
 
 ### Design Resources
+
 - **Canva**: Poster mockups and inspiration
 - **Figma**: Design prototypes before LaTeX
 - **Noun Project**: Icons and graphics
 - **Font Awesome**: Icon fonts for LaTeX
 
 ### Testing Tools
+
 - **Coblis**: Color blindness simulator
 - **Vischeck**: Another color blindness checker
 - **Accessibility Checker**: WCAG compliance
 
 ### LaTeX Packages
+
 - `xcolor`: Extended color support
 - `tcolorbox`: Colored boxes and frames
 - `fontawesome5`: Icon fonts
@@ -803,4 +875,3 @@ Effective poster design requires balancing aesthetics, readability, and scientif
 6. **Test early**: Print at reduced scale and gather feedback
 
 Remember: A poster is an advertisement for your research and a conversation starter—not a substitute for reading the full paper.
-

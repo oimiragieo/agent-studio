@@ -5,6 +5,7 @@ Practical code examples for interacting with the UniProt REST API in multiple la
 ## Python Examples
 
 ### Example 1: Basic Search
+
 ```python
 import requests
 
@@ -24,6 +25,7 @@ for result in data['results']:
 ```
 
 ### Example 2: Retrieve Protein Sequence
+
 ```python
 import requests
 
@@ -36,6 +38,7 @@ print(response.text)
 ```
 
 ### Example 3: Custom Fields
+
 ```python
 import requests
 
@@ -52,6 +55,7 @@ print(response.text)
 ```
 
 ### Example 4: ID Mapping
+
 ```python
 import requests
 import time
@@ -89,6 +93,7 @@ print(mapping)
 ```
 
 ### Example 5: Stream Large Results
+
 ```python
 import requests
 
@@ -109,6 +114,7 @@ with open("human_proteins.fasta", "w") as f:
 ```
 
 ### Example 6: Pagination
+
 ```python
 import requests
 
@@ -150,24 +156,28 @@ print(f"Found {len(results)} proteins")
 ## cURL Examples
 
 ### Example 1: Simple Search
+
 ```bash
 # Search for insulin proteins
 curl "https://rest.uniprot.org/uniprotkb/search?query=insulin&format=json&size=5"
 ```
 
 ### Example 2: Get Protein Entry
+
 ```bash
 # Get human insulin in FASTA format
 curl "https://rest.uniprot.org/uniprotkb/P01308.fasta"
 ```
 
 ### Example 3: Custom Fields
+
 ```bash
 # Get specific fields in TSV format
 curl "https://rest.uniprot.org/uniprotkb/search?query=gene:BRCA1&format=tsv&fields=accession,gene_names,length"
 ```
 
 ### Example 4: ID Mapping - Submit Job
+
 ```bash
 # Submit mapping job
 curl -X POST "https://rest.uniprot.org/idmapping/run" \
@@ -176,12 +186,14 @@ curl -X POST "https://rest.uniprot.org/idmapping/run" \
 ```
 
 ### Example 5: ID Mapping - Get Results
+
 ```bash
 # Get mapping results (replace JOB_ID)
 curl "https://rest.uniprot.org/idmapping/results/JOB_ID"
 ```
 
 ### Example 6: Download All Results
+
 ```bash
 # Download all human reviewed proteins
 curl "https://rest.uniprot.org/uniprotkb/stream?query=organism_id:9606+AND+reviewed:true&format=fasta" \
@@ -191,6 +203,7 @@ curl "https://rest.uniprot.org/uniprotkb/stream?query=organism_id:9606+AND+revie
 ## R Examples
 
 ### Example 1: Basic Search
+
 ```r
 library(httr)
 library(jsonlite)
@@ -212,6 +225,7 @@ print(proteins)
 ```
 
 ### Example 2: Get Sequences
+
 ```r
 library(httr)
 
@@ -225,6 +239,7 @@ cat(sequence)
 ```
 
 ### Example 3: Download to Data Frame
+
 ```r
 library(httr)
 library(readr)
@@ -245,6 +260,7 @@ print(data)
 ## JavaScript Examples
 
 ### Example 1: Fetch API
+
 ```javascript
 // Search for proteins
 async function searchUniProt(query) {
@@ -257,18 +273,18 @@ async function searchUniProt(query) {
 }
 
 // Usage
-searchUniProt("insulin AND organism_id:9606")
-  .then(results => console.log(results));
+searchUniProt('insulin AND organism_id:9606').then(results => console.log(results));
 ```
 
 ### Example 2: Get Protein Entry
+
 ```javascript
-async function getProtein(accession, format = "json") {
+async function getProtein(accession, format = 'json') {
   const url = `https://rest.uniprot.org/uniprotkb/${accession}.${format}`;
 
   const response = await fetch(url);
 
-  if (format === "json") {
+  if (format === 'json') {
     return await response.json();
   } else {
     return await response.text();
@@ -276,24 +292,24 @@ async function getProtein(accession, format = "json") {
 }
 
 // Usage
-getProtein("P01308", "fasta")
-  .then(sequence => console.log(sequence));
+getProtein('P01308', 'fasta').then(sequence => console.log(sequence));
 ```
 
 ### Example 3: ID Mapping
+
 ```javascript
 async function mapIds(ids, fromDb, toDb) {
   // Submit job
-  const submitUrl = "https://rest.uniprot.org/idmapping/run";
+  const submitUrl = 'https://rest.uniprot.org/idmapping/run';
   const formData = new URLSearchParams({
     from: fromDb,
     to: toDb,
-    ids: ids.join(",")
+    ids: ids.join(','),
   });
 
   const submitResponse = await fetch(submitUrl, {
-    method: "POST",
-    body: formData
+    method: 'POST',
+    body: formData,
   });
   const { jobId } = await submitResponse.json();
 
@@ -303,7 +319,7 @@ async function mapIds(ids, fromDb, toDb) {
     const statusResponse = await fetch(statusUrl);
     const status = await statusResponse.json();
 
-    if ("results" in status || "failedIds" in status) {
+    if ('results' in status || 'failedIds' in status) {
       break;
     }
 
@@ -317,13 +333,13 @@ async function mapIds(ids, fromDb, toDb) {
 }
 
 // Usage
-mapIds(["P01308", "P04637"], "UniProtKB_AC-ID", "PDB")
-  .then(mapping => console.log(mapping));
+mapIds(['P01308', 'P04637'], 'UniProtKB_AC-ID', 'PDB').then(mapping => console.log(mapping));
 ```
 
 ## Advanced Examples
 
 ### Example: Batch Processing with Rate Limiting
+
 ```python
 import requests
 import time
@@ -377,6 +393,7 @@ proteins = client.batch_get_proteins(accessions)
 ```
 
 ### Example: Download with Progress Bar
+
 ```python
 import requests
 from tqdm import tqdm

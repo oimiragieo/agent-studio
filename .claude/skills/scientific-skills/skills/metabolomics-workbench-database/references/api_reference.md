@@ -3,6 +3,7 @@
 ## Base URL
 
 All API requests use the following base URL:
+
 ```
 https://www.metabolomicsworkbench.org/rest/
 ```
@@ -10,6 +11,7 @@ https://www.metabolomicsworkbench.org/rest/
 ## API Structure
 
 The REST API follows a consistent URL pattern:
+
 ```
 /context/input_item/input_value/output_item/output_format
 ```
@@ -31,37 +33,37 @@ Retrieve metabolite structure and identification data.
 
 ### Input Items
 
-| Input Item | Description | Example |
-|------------|-------------|---------|
-| `regno` | Metabolomics Workbench registry number | 11 |
-| `pubchem_cid` | PubChem Compound ID | 5281365 |
-| `inchi_key` | International Chemical Identifier Key | WQZGKKKJIJFFOK-GASJEMHNSA-N |
-| `formula` | Molecular formula | C6H12O6 |
-| `lm_id` | LIPID MAPS ID | LM... |
-| `hmdb_id` | Human Metabolome Database ID | HMDB0000122 |
-| `kegg_id` | KEGG Compound ID | C00031 |
+| Input Item    | Description                            | Example                     |
+| ------------- | -------------------------------------- | --------------------------- |
+| `regno`       | Metabolomics Workbench registry number | 11                          |
+| `pubchem_cid` | PubChem Compound ID                    | 5281365                     |
+| `inchi_key`   | International Chemical Identifier Key  | WQZGKKKJIJFFOK-GASJEMHNSA-N |
+| `formula`     | Molecular formula                      | C6H12O6                     |
+| `lm_id`       | LIPID MAPS ID                          | LM...                       |
+| `hmdb_id`     | Human Metabolome Database ID           | HMDB0000122                 |
+| `kegg_id`     | KEGG Compound ID                       | C00031                      |
 
 ### Output Items
 
-| Output Item | Description |
-|-------------|-------------|
-| `all` | All available compound data |
-| `classification` | Compound classification |
-| `regno` | Registry number |
-| `formula` | Molecular formula |
-| `exactmass` | Exact mass |
-| `inchi_key` | InChI Key |
-| `name` | Common name |
-| `sys_name` | Systematic name |
-| `smiles` | SMILES notation |
-| `lm_id` | LIPID MAPS ID |
-| `pubchem_cid` | PubChem CID |
-| `hmdb_id` | HMDB ID |
-| `kegg_id` | KEGG ID |
-| `chebi_id` | ChEBI ID |
-| `metacyc_id` | MetaCyc ID |
-| `molfile` | MOL file structure |
-| `png` | PNG image of structure |
+| Output Item      | Description                 |
+| ---------------- | --------------------------- |
+| `all`            | All available compound data |
+| `classification` | Compound classification     |
+| `regno`          | Registry number             |
+| `formula`        | Molecular formula           |
+| `exactmass`      | Exact mass                  |
+| `inchi_key`      | InChI Key                   |
+| `name`           | Common name                 |
+| `sys_name`       | Systematic name             |
+| `smiles`         | SMILES notation             |
+| `lm_id`          | LIPID MAPS ID               |
+| `pubchem_cid`    | PubChem CID                 |
+| `hmdb_id`        | HMDB ID                     |
+| `kegg_id`        | KEGG ID                     |
+| `chebi_id`       | ChEBI ID                    |
+| `metacyc_id`     | MetaCyc ID                  |
+| `molfile`        | MOL file structure          |
+| `png`            | PNG image of structure      |
 
 ### Example Requests
 
@@ -88,36 +90,36 @@ Access metabolomics research study metadata and experimental results.
 
 ### Input Items
 
-| Input Item | Description | Example |
-|------------|-------------|---------|
-| `study_id` | Study identifier | ST000001 |
-| `analysis_id` | Analysis identifier | AN000001 |
-| `study_title` | Keywords in study title | diabetes |
-| `institute` | Institute name | UCSD |
-| `last_name` | Investigator last name | Smith |
-| `metabolite_id` | Metabolite registry number | 11 |
-| `refmet_name` | RefMet standardized name | Glucose |
-| `kegg_id` | KEGG compound ID | C00031 |
+| Input Item      | Description                | Example  |
+| --------------- | -------------------------- | -------- |
+| `study_id`      | Study identifier           | ST000001 |
+| `analysis_id`   | Analysis identifier        | AN000001 |
+| `study_title`   | Keywords in study title    | diabetes |
+| `institute`     | Institute name             | UCSD     |
+| `last_name`     | Investigator last name     | Smith    |
+| `metabolite_id` | Metabolite registry number | 11       |
+| `refmet_name`   | RefMet standardized name   | Glucose  |
+| `kegg_id`       | KEGG compound ID           | C00031   |
 
 ### Output Items
 
-| Output Item | Description |
-|-------------|-------------|
-| `summary` | Study overview and metadata |
-| `factors` | Experimental factors and design |
-| `analysis` | Analysis methods and parameters |
-| `metabolites` | List of measured metabolites |
-| `data` | Complete experimental data |
-| `mwtab` | Complete study in mwTab format |
-| `number_of_metabolites` | Count of metabolites measured |
-| `species` | Organism species |
-| `disease` | Disease studied |
-| `source` | Sample source/tissue type |
-| `untarg_studies` | Untargeted study information |
-| `untarg_factors` | Untargeted study factors |
-| `untarg_data` | Untargeted experimental data |
-| `datatable` | Formatted data table |
-| `available` | List available studies (use with ST as input_value) |
+| Output Item             | Description                                         |
+| ----------------------- | --------------------------------------------------- |
+| `summary`               | Study overview and metadata                         |
+| `factors`               | Experimental factors and design                     |
+| `analysis`              | Analysis methods and parameters                     |
+| `metabolites`           | List of measured metabolites                        |
+| `data`                  | Complete experimental data                          |
+| `mwtab`                 | Complete study in mwTab format                      |
+| `number_of_metabolites` | Count of metabolites measured                       |
+| `species`               | Organism species                                    |
+| `disease`               | Disease studied                                     |
+| `source`                | Sample source/tissue type                           |
+| `untarg_studies`        | Untargeted study information                        |
+| `untarg_factors`        | Untargeted study factors                            |
+| `untarg_data`           | Untargeted experimental data                        |
+| `datatable`             | Formatted data table                                |
+| `available`             | List available studies (use with ST as input_value) |
 
 ### Example Requests
 
@@ -150,35 +152,35 @@ Query the standardized metabolite nomenclature database with hierarchical classi
 
 ### Input Items
 
-| Input Item | Description | Example |
-|------------|-------------|---------|
-| `name` | Metabolite name | glucose |
-| `inchi_key` | InChI Key | WQZGKKKJIJFFOK-GASJEMHNSA-N |
-| `pubchem_cid` | PubChem CID | 5793 |
-| `exactmass` | Exact mass | 180.0634 |
-| `formula` | Molecular formula | C6H12O6 |
-| `super_class` | Super class name | Organic compounds |
-| `main_class` | Main class name | Carbohydrates |
-| `sub_class` | Sub class name | Monosaccharides |
-| `match` | Name matching/standardization | citrate |
-| `refmet_id` | RefMet identifier | 12345 |
-| `all` | Retrieve all RefMet entries | (no value needed) |
+| Input Item    | Description                   | Example                     |
+| ------------- | ----------------------------- | --------------------------- |
+| `name`        | Metabolite name               | glucose                     |
+| `inchi_key`   | InChI Key                     | WQZGKKKJIJFFOK-GASJEMHNSA-N |
+| `pubchem_cid` | PubChem CID                   | 5793                        |
+| `exactmass`   | Exact mass                    | 180.0634                    |
+| `formula`     | Molecular formula             | C6H12O6                     |
+| `super_class` | Super class name              | Organic compounds           |
+| `main_class`  | Main class name               | Carbohydrates               |
+| `sub_class`   | Sub class name                | Monosaccharides             |
+| `match`       | Name matching/standardization | citrate                     |
+| `refmet_id`   | RefMet identifier             | 12345                       |
+| `all`         | Retrieve all RefMet entries   | (no value needed)           |
 
 ### Output Items
 
-| Output Item | Description |
-|-------------|-------------|
-| `all` | All available RefMet data |
-| `name` | Standardized RefMet name |
-| `inchi_key` | InChI Key |
-| `pubchem_cid` | PubChem CID |
-| `exactmass` | Exact mass |
-| `formula` | Molecular formula |
-| `sys_name` | Systematic name |
+| Output Item   | Description                |
+| ------------- | -------------------------- |
+| `all`         | All available RefMet data  |
+| `name`        | Standardized RefMet name   |
+| `inchi_key`   | InChI Key                  |
+| `pubchem_cid` | PubChem CID                |
+| `exactmass`   | Exact mass                 |
+| `formula`     | Molecular formula          |
+| `sys_name`    | Systematic name            |
 | `super_class` | Super class classification |
-| `main_class` | Main class classification |
-| `sub_class` | Sub class classification |
-| `refmet_id` | RefMet identifier |
+| `main_class`  | Main class classification  |
+| `sub_class`   | Sub class classification   |
+| `refmet_id`   | RefMet identifier          |
 
 ### Example Requests
 
@@ -223,16 +225,16 @@ Filter studies by analytical and biological parameters using semicolon-delimited
 
 ### Parameters
 
-| Position | Parameter | Options |
-|----------|-----------|---------|
-| 1 | Analysis Type | LCMS, GCMS, NMR, MS, ICPMS |
-| 2 | Polarity | POSITIVE, NEGATIVE |
-| 3 | Chromatography | HILIC, RP (Reverse Phase), GC, IC |
-| 4 | Species | Human, Mouse, Rat, etc. |
-| 5 | Sample Source | Blood, Plasma, Serum, Urine, Liver, etc. |
-| 6 | Disease | Diabetes, Cancer, Alzheimer, etc. |
-| 7 | KEGG ID | C00031, etc. |
-| 8 | RefMet Name | Glucose, Tyrosine, etc. |
+| Position | Parameter      | Options                                  |
+| -------- | -------------- | ---------------------------------------- |
+| 1        | Analysis Type  | LCMS, GCMS, NMR, MS, ICPMS               |
+| 2        | Polarity       | POSITIVE, NEGATIVE                       |
+| 3        | Chromatography | HILIC, RP (Reverse Phase), GC, IC        |
+| 4        | Species        | Human, Mouse, Rat, etc.                  |
+| 5        | Sample Source  | Blood, Plasma, Serum, Urine, Liver, etc. |
+| 6        | Disease        | Diabetes, Cancer, Alzheimer, etc.        |
+| 7        | KEGG ID        | C00031, etc.                             |
+| 8        | RefMet Name    | Glucose, Tyrosine, etc.                  |
 
 **Note**: Use empty positions (consecutive semicolons) to skip parameters. All parameters are optional.
 
@@ -281,36 +283,36 @@ Perform mass spectrometry precursor ion searches by m/z value.
 
 #### Positive Mode Adducts
 
-| Adduct | Description | Example Use |
-|--------|-------------|-------------|
-| `M+H` | Protonated molecule | Most common positive ESI |
-| `M+Na` | Sodium adduct | Common in ESI |
-| `M+K` | Potassium adduct | Less common ESI |
-| `M+NH4` | Ammonium adduct | Common with ammonium salts |
-| `M+2H` | Doubly protonated | Multiply charged ions |
-| `M+H-H2O` | Dehydrated protonated | Loss of water |
-| `M+2Na-H` | Disodium minus hydrogen | Multiple sodium |
-| `M+CH3OH+H` | Methanol adduct | Methanol in mobile phase |
-| `M+ACN+H` | Acetonitrile adduct | ACN in mobile phase |
-| `M+ACN+Na` | ACN + sodium | ACN and sodium |
+| Adduct      | Description             | Example Use                |
+| ----------- | ----------------------- | -------------------------- |
+| `M+H`       | Protonated molecule     | Most common positive ESI   |
+| `M+Na`      | Sodium adduct           | Common in ESI              |
+| `M+K`       | Potassium adduct        | Less common ESI            |
+| `M+NH4`     | Ammonium adduct         | Common with ammonium salts |
+| `M+2H`      | Doubly protonated       | Multiply charged ions      |
+| `M+H-H2O`   | Dehydrated protonated   | Loss of water              |
+| `M+2Na-H`   | Disodium minus hydrogen | Multiple sodium            |
+| `M+CH3OH+H` | Methanol adduct         | Methanol in mobile phase   |
+| `M+ACN+H`   | Acetonitrile adduct     | ACN in mobile phase        |
+| `M+ACN+Na`  | ACN + sodium            | ACN and sodium             |
 
 #### Negative Mode Adducts
 
-| Adduct | Description | Example Use |
-|--------|-------------|-------------|
-| `M-H` | Deprotonated molecule | Most common negative ESI |
-| `M+Cl` | Chloride adduct | Chlorinated mobile phases |
-| `M+FA-H` | Formate adduct | Formic acid in mobile phase |
-| `M+HAc-H` | Acetate adduct | Acetic acid in mobile phase |
-| `M-H-H2O` | Deprotonated minus water | Water loss |
-| `M-2H` | Doubly deprotonated | Multiply charged ions |
-| `M+Na-2H` | Sodium minus two protons | Mixed charge states |
+| Adduct    | Description              | Example Use                 |
+| --------- | ------------------------ | --------------------------- |
+| `M-H`     | Deprotonated molecule    | Most common negative ESI    |
+| `M+Cl`    | Chloride adduct          | Chlorinated mobile phases   |
+| `M+FA-H`  | Formate adduct           | Formic acid in mobile phase |
+| `M+HAc-H` | Acetate adduct           | Acetic acid in mobile phase |
+| `M-H-H2O` | Deprotonated minus water | Water loss                  |
+| `M-2H`    | Doubly deprotonated      | Multiply charged ions       |
+| `M+Na-2H` | Sodium minus two protons | Mixed charge states         |
 
 #### Uncharged
 
-| Adduct | Description |
-|--------|-------------|
-| `M` | Uncharged molecule | Direct ionization methods |
+| Adduct | Description        |
+| ------ | ------------------ | ------------------------- |
+| `M`    | Uncharged molecule | Direct ionization methods |
 
 ### Example Requests
 
@@ -337,31 +339,31 @@ Access gene information from the Metabolome Gene/Protein (MGP) database.
 
 ### Input Items
 
-| Input Item | Description | Example |
-|------------|-------------|---------|
-| `mgp_id` | MGP database ID | MGP001 |
-| `gene_id` | NCBI Gene ID | 31 |
-| `gene_name` | Full gene name | acetyl-CoA carboxylase |
-| `gene_symbol` | Gene symbol | ACACA |
-| `taxid` | Taxonomy ID | 9606 (human) |
+| Input Item    | Description     | Example                |
+| ------------- | --------------- | ---------------------- |
+| `mgp_id`      | MGP database ID | MGP001                 |
+| `gene_id`     | NCBI Gene ID    | 31                     |
+| `gene_name`   | Full gene name  | acetyl-CoA carboxylase |
+| `gene_symbol` | Gene symbol     | ACACA                  |
+| `taxid`       | Taxonomy ID     | 9606 (human)           |
 
 ### Output Items
 
-| Output Item | Description |
-|-------------|-------------|
-| `all` | All gene information |
-| `mgp_id` | MGP identifier |
-| `gene_id` | NCBI Gene ID |
-| `gene_name` | Full gene name |
-| `gene_symbol` | Gene symbol |
-| `gene_synonyms` | Alternative names |
-| `alt_names` | Alternative nomenclature |
-| `chromosome` | Chromosomal location |
-| `map_location` | Genetic map position |
-| `summary` | Gene description |
-| `taxid` | Taxonomy ID |
-| `species` | Species short name |
-| `species_long` | Full species name |
+| Output Item     | Description              |
+| --------------- | ------------------------ |
+| `all`           | All gene information     |
+| `mgp_id`        | MGP identifier           |
+| `gene_id`       | NCBI Gene ID             |
+| `gene_name`     | Full gene name           |
+| `gene_symbol`   | Gene symbol              |
+| `gene_synonyms` | Alternative names        |
+| `alt_names`     | Alternative nomenclature |
+| `chromosome`    | Chromosomal location     |
+| `map_location`  | Genetic map position     |
+| `summary`       | Gene description         |
+| `taxid`         | Taxonomy ID              |
+| `species`       | Species short name       |
+| `species_long`  | Full species name        |
 
 ### Example Requests
 
@@ -382,41 +384,41 @@ Retrieve protein sequence and annotation data.
 
 ### Input Items
 
-| Input Item | Description | Example |
-|------------|-------------|---------|
-| `mgp_id` | MGP database ID | MGP001 |
-| `gene_id` | NCBI Gene ID | 31 |
-| `gene_name` | Gene name | acetyl-CoA carboxylase |
-| `gene_symbol` | Gene symbol | ACACA |
-| `taxid` | Taxonomy ID | 9606 |
-| `mrna_id` | mRNA identifier | NM_001093.3 |
-| `refseq_id` | RefSeq ID | NP_001084 |
-| `protein_gi` | GenInfo Identifier | 4557237 |
-| `uniprot_id` | UniProt ID | Q13085 |
-| `protein_entry` | Protein entry name | ACACA_HUMAN |
-| `protein_name` | Protein name | Acetyl-CoA carboxylase |
+| Input Item      | Description        | Example                |
+| --------------- | ------------------ | ---------------------- |
+| `mgp_id`        | MGP database ID    | MGP001                 |
+| `gene_id`       | NCBI Gene ID       | 31                     |
+| `gene_name`     | Gene name          | acetyl-CoA carboxylase |
+| `gene_symbol`   | Gene symbol        | ACACA                  |
+| `taxid`         | Taxonomy ID        | 9606                   |
+| `mrna_id`       | mRNA identifier    | NM_001093.3            |
+| `refseq_id`     | RefSeq ID          | NP_001084              |
+| `protein_gi`    | GenInfo Identifier | 4557237                |
+| `uniprot_id`    | UniProt ID         | Q13085                 |
+| `protein_entry` | Protein entry name | ACACA_HUMAN            |
+| `protein_name`  | Protein name       | Acetyl-CoA carboxylase |
 
 ### Output Items
 
-| Output Item | Description |
-|-------------|-------------|
-| `all` | All protein information |
-| `mgp_id` | MGP identifier |
-| `gene_id` | NCBI Gene ID |
-| `gene_name` | Gene name |
-| `gene_symbol` | Gene symbol |
-| `taxid` | Taxonomy ID |
-| `species` | Species short name |
-| `species_long` | Full species name |
-| `mrna_id` | mRNA identifier |
-| `refseq_id` | RefSeq protein ID |
-| `protein_gi` | GenInfo Identifier |
-| `uniprot_id` | UniProt accession |
-| `protein_entry` | Protein entry name |
-| `protein_name` | Full protein name |
-| `seqlength` | Sequence length |
-| `seq` | Amino acid sequence |
-| `is_identical_to` | Identical sequences |
+| Output Item       | Description             |
+| ----------------- | ----------------------- |
+| `all`             | All protein information |
+| `mgp_id`          | MGP identifier          |
+| `gene_id`         | NCBI Gene ID            |
+| `gene_name`       | Gene name               |
+| `gene_symbol`     | Gene symbol             |
+| `taxid`           | Taxonomy ID             |
+| `species`         | Species short name      |
+| `species_long`    | Full species name       |
+| `mrna_id`         | mRNA identifier         |
+| `refseq_id`       | RefSeq protein ID       |
+| `protein_gi`      | GenInfo Identifier      |
+| `uniprot_id`      | UniProt accession       |
+| `protein_entry`   | Protein entry name      |
+| `protein_name`    | Full protein name       |
+| `seqlength`       | Sequence length         |
+| `seq`             | Amino acid sequence     |
+| `is_identical_to` | Identical sequences     |
 
 ### Example Requests
 

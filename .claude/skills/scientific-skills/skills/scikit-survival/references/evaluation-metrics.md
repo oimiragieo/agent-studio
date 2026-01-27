@@ -3,6 +3,7 @@
 ## Overview
 
 Evaluating survival models requires specialized metrics that account for censored data. scikit-survival provides three main categories of metrics:
+
 1. Concordance Index (C-index)
 2. Time-dependent ROC and AUC
 3. Brier Score
@@ -14,6 +15,7 @@ Evaluating survival models requires specialized metrics that account for censore
 The concordance index measures the rank correlation between predicted risk scores and observed event times. It represents the probability that, for a random pair of subjects, the model correctly orders their survival times.
 
 **Range**: 0 to 1
+
 - 0.5 = random predictions
 - 1.0 = perfect concordance
 - Typical good performance: 0.7-0.8
@@ -25,11 +27,13 @@ The concordance index measures the rank correlation between predicted risk score
 The traditional estimator, simpler but has limitations.
 
 **When to Use:**
+
 - Low censoring rates (< 40%)
 - Quick evaluation during development
 - Comparing models on same dataset
 
 **Limitations:**
+
 - Becomes increasingly biased with high censoring rates
 - Overestimates performance starting at approximately 49% censoring
 
@@ -47,12 +51,14 @@ print(f"Harrell's C-index: {c_index:.3f}")
 Inverse probability of censoring weighted (IPCW) estimator that corrects for censoring bias.
 
 **When to Use:**
+
 - Moderate to high censoring rates (> 40%)
 - Need unbiased estimates
 - Comparing models across different datasets
 - Publishing results (more robust)
 
 **Advantages:**
+
 - Remains stable even with high censoring
 - More reliable estimates
 - Less biased
@@ -71,12 +77,14 @@ print(f"Uno's C-index: {c_index:.3f}")
 ### Choosing Between Harrell's and Uno's
 
 **Use Uno's C-index when:**
+
 - Censoring rate > 40%
 - Need most accurate estimates
 - Comparing models from different studies
 - Publishing research
 
 **Use Harrell's C-index when:**
+
 - Low censoring rates
 - Quick model comparisons during development
 - Computational efficiency is critical
@@ -100,7 +108,7 @@ print(f"Uno's C-index: {uno:.3f}")
 
 ### What It Measures
 
-Time-dependent AUC evaluates model discrimination at specific time points. It distinguishes subjects who experience events by time *t* from those who don't.
+Time-dependent AUC evaluates model discrimination at specific time points. It distinguishes subjects who experience events by time _t_ from those who don't.
 
 **Question answered**: "How well does the model predict who will have an event by time t?"
 
@@ -167,6 +175,7 @@ Brier score extends mean squared error to survival data with censoring. It measu
 where S(t|x_i) is predicted survival probability at time t for subject i.
 
 **Range**: 0 to 1
+
 - 0 = perfect predictions
 - Lower is better
 - Typical good performance: < 0.2
@@ -356,23 +365,27 @@ results = evaluate_survival_model(model, X_train, X_test, y_train, y_test)
 ### Decision Guide
 
 **Use C-index (Uno's) when:**
+
 - Primary goal is ranking/discrimination
 - Don't need calibrated probabilities
 - Standard survival analysis setting
 - Most common choice
 
 **Use Time-dependent AUC when:**
+
 - Need discrimination at specific time points
 - Clinical decisions at specific horizons
 - Want to understand how performance varies over time
 
 **Use Brier Score when:**
+
 - Need calibrated probability estimates
 - Both discrimination AND calibration important
 - Clinical decision-making requiring probabilities
 - Want comprehensive assessment
 
 **Best Practice**: Report multiple metrics for comprehensive evaluation. At minimum, report:
+
 - Uno's C-index (discrimination)
 - Integrated Brier Score (discrimination + calibration)
 - Time-dependent AUC at clinically relevant time points

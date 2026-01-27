@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Follow communication and problem-solving guidelines.
 - Consider platform thinking.
 - Handle uncertainty and limitations responsibly.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

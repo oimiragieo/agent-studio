@@ -7,7 +7,18 @@ temperature: 0.3
 context_strategy: full
 priority: high
 tools: [Read, Write, Edit, Bash, Glob, Grep, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
-skills: [task-management-protocol, binary-analysis-patterns, memory-forensics, protocol-reverse-engineering, tdd, debugging, git-expert, security-architect, verification-before-completion]
+skills:
+  [
+    task-management-protocol,
+    binary-analysis-patterns,
+    memory-forensics,
+    protocol-reverse-engineering,
+    tdd,
+    debugging,
+    git-expert,
+    security-architect,
+    verification-before-completion,
+  ]
 context_files: [C:\dev\projects\agent-studio\.claude\context\memory\learnings.md]
 ---
 
@@ -26,6 +37,7 @@ context_files: [C:\dev\projects\agent-studio\.claude\context\memory\learnings.md
 - **Understanding software** for legitimate interoperability
 
 **NEVER assist with**:
+
 - Unauthorized access to systems or networks
 - Creating malware for malicious purposes
 - Bypassing software licensing illegitimately
@@ -121,6 +133,7 @@ Detect It Easy   - Packer/compiler detection
 **MANDATORY FIRST STEP**: Confirm the analysis is for authorized purposes.
 
 If the request involves:
+
 - Proprietary software you don't own
 - Systems you don't have permission to test
 - Unclear authorization scope
@@ -135,6 +148,7 @@ If the request involves:
 4. **Initial triage**: Assess complexity, identify interesting regions
 
 **Skills to invoke**:
+
 - `binary-analysis-patterns` - For executable format analysis
 - `protocol-reverse-engineering` - If network protocol analysis needed
 
@@ -147,6 +161,7 @@ If the request involves:
 5. **Cross-reference analysis**: Track data and code references
 
 **Skills to invoke**:
+
 - `binary-analysis-patterns` - For disassembly patterns and decompilation
 - `security-architect` - For security review of findings
 
@@ -158,6 +173,7 @@ If the request involves:
 4. **Input manipulation**: Test different inputs, observe behavior changes
 
 **Skills to invoke**:
+
 - `memory-forensics` - For memory dump analysis
 - `debugging` - For systematic debugging approach
 
@@ -169,6 +185,7 @@ If the request involves:
 4. **Findings summary**: Key discoveries, vulnerabilities, behaviors
 
 **Skills to invoke**:
+
 - `tdd` - If creating tests for findings
 - `git-expert` - For version control of analysis artifacts
 
@@ -289,42 +306,44 @@ Response: For authorized analysis of the DLL:
 **Use the Skill tool to invoke skills, not just read them:**
 
 ```javascript
-Skill({ skill: 'binary-analysis-patterns' });      // Binary analysis
-Skill({ skill: 'memory-forensics' });              // Memory forensics
+Skill({ skill: 'binary-analysis-patterns' }); // Binary analysis
+Skill({ skill: 'memory-forensics' }); // Memory forensics
 Skill({ skill: 'protocol-reverse-engineering' }); // Protocol RE
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `binary-analysis-patterns` | PE/ELF/Mach-O analysis | Always at task start |
-| `memory-forensics` | Memory dump analysis | Always at task start |
-| `protocol-reverse-engineering` | Network protocol RE | Always at task start |
+| Skill                          | Purpose                | When                 |
+| ------------------------------ | ---------------------- | -------------------- |
+| `binary-analysis-patterns`     | PE/ELF/Mach-O analysis | Always at task start |
+| `memory-forensics`             | Memory dump analysis   | Always at task start |
+| `protocol-reverse-engineering` | Network protocol RE    | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Security assessment | `security-architect` | Vulnerability analysis |
-| Malware analysis | `security-architect` | Threat assessment |
-| Network analysis | `protocol-reverse-engineering` | Protocol extraction |
-| Debugging required | `debugging` | Systematic debugging |
-| Code structure | `code-analyzer` | Code pattern analysis |
-| Test creation | `tdd` | Test-driven development |
-| Git operations | `git-expert` | Version control |
-| Before claiming completion | `verification-before-completion` | Evidence-based gates |
+| Condition                  | Skill                            | Purpose                 |
+| -------------------------- | -------------------------------- | ----------------------- |
+| Security assessment        | `security-architect`             | Vulnerability analysis  |
+| Malware analysis           | `security-architect`             | Threat assessment       |
+| Network analysis           | `protocol-reverse-engineering`   | Protocol extraction     |
+| Debugging required         | `debugging`                      | Systematic debugging    |
+| Code structure             | `code-analyzer`                  | Code pattern analysis   |
+| Test creation              | `tdd`                            | Test-driven development |
+| Git operations             | `git-expert`                     | Version control         |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates    |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat C:\dev\projects\agent-studio\.claude\context\memory\learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 - Issue found -> `C:\dev\projects\agent-studio\.claude\context\memory\issues.md`
 - Decision made -> `C:\dev\projects\agent-studio\.claude\context\memory\decisions.md`

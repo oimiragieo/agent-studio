@@ -13,14 +13,21 @@
     },
     "state": {
       "type": "string",
-      "enum": ["idle", "evaluating", "validating", "obtaining", "locking", "verifying", "enabling", "blocked", "aborted"],
+      "enum": [
+        "idle",
+        "evaluating",
+        "validating",
+        "obtaining",
+        "locking",
+        "verifying",
+        "enabling",
+        "blocked",
+        "aborted"
+      ],
       "description": "Current state of the evolution system. Terminal states: blocked (evolution cannot proceed due to conflict/error), aborted (evolution was explicitly cancelled)"
     },
     "currentEvolution": {
-      "oneOf": [
-        { "type": "null" },
-        { "$ref": "#/$defs/activeEvolution" }
-      ],
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/activeEvolution" }],
       "description": "Currently active evolution operation, or null if idle"
     },
     "evolutions": {
@@ -87,10 +94,7 @@
           "description": "When this evolution started"
         },
         "blockedReason": {
-          "oneOf": [
-            { "type": "null" },
-            { "type": "string" }
-          ],
+          "oneOf": [{ "type": "null" }, { "type": "string" }],
           "description": "Reason if evolution is blocked, null otherwise"
         },
         "metadata": {

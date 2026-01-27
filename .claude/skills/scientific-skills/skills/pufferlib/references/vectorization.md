@@ -80,6 +80,7 @@ vec_env = Serial(
 ```
 
 **When to use:**
+
 - Development and debugging
 - Very fast environments (< 1μs per step)
 - Small number of environments (< 32)
@@ -105,6 +106,7 @@ vec_env = Multiprocessing(
 ```
 
 **When to use:**
+
 - Production training
 - CPU-intensive environments
 - Large-scale parallel simulation
@@ -129,6 +131,7 @@ vec_env = Multiprocessing(
 ```
 
 **When to use:**
+
 - Variable environment step times
 - Maximizing GPU utilization
 - Network-based environments

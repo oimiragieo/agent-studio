@@ -85,6 +85,7 @@ c_icrs.transform_to(FK5(equinox='J1975'))  # Custom frame parameters
 ## Common Coordinate Frames
 
 ### Celestial Frames
+
 - **ICRS**: International Celestial Reference System (default, most common)
 - **FK5**: Fifth Fundamental Catalogue (equinox J2000.0 by default)
 - **FK4**: Fourth Fundamental Catalogue (older, requires equinox specification)
@@ -92,15 +93,18 @@ c_icrs.transform_to(FK5(equinox='J1975'))  # Custom frame parameters
 - **CIRS**: Celestial Intermediate Reference System
 
 ### Galactic Frames
+
 - **Galactic**: IAU 1958 galactic coordinates
 - **Supergalactic**: De Vaucouleurs supergalactic coordinates
 - **Galactocentric**: Galactic center-based 3D coordinates
 
 ### Horizontal Frames
+
 - **AltAz**: Altitude-azimuth (observer-dependent)
 - **HADec**: Hour angle-declination
 
 ### Ecliptic Frames
+
 - **GeocentricMeanEcliptic**: Geocentric mean ecliptic
 - **BarycentricMeanEcliptic**: Barycentric mean ecliptic
 - **HeliocentricMeanEcliptic**: Heliocentric mean ecliptic

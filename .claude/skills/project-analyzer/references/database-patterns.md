@@ -8,31 +8,35 @@ This document contains patterns for detecting database models and schemas across
 
 ## Supported ORMs
 
-| ORM | Language | Configuration Files |
-|-----|----------|---------------------|
-| SQLAlchemy | Python | Any .py with Base class |
-| Django ORM | Python | models.py, models/*.py |
-| Prisma | Node.js/Python | prisma/schema.prisma |
-| TypeORM | TypeScript | *.entity.ts, entities/*.ts |
-| Drizzle | TypeScript | schema.ts, db/schema.ts |
-| Mongoose | JavaScript/TypeScript | models/*.js, models/*.ts |
+| ORM        | Language              | Configuration Files        |
+| ---------- | --------------------- | -------------------------- |
+| SQLAlchemy | Python                | Any .py with Base class    |
+| Django ORM | Python                | models.py, models/\*.py    |
+| Prisma     | Node.js/Python        | prisma/schema.prisma       |
+| TypeORM    | TypeScript            | _.entity.ts, entities/_.ts |
+| Drizzle    | TypeScript            | schema.ts, db/schema.ts    |
+| Mongoose   | JavaScript/TypeScript | models/_.js, models/_.ts   |
 
 ## SQLAlchemy Detection
 
 ### File Pattern
+
 All `.py` files in the project.
 
 ### Class Pattern
+
 ```regex
 class\s+(\w+)\([^)]*(?:Base|db\.Model|DeclarativeBase)[^)]*\):
 ```
 
 Matches classes inheriting from:
+
 - `Base` (common SQLAlchemy pattern)
 - `db.Model` (Flask-SQLAlchemy)
 - `DeclarativeBase` (SQLAlchemy 2.0+)
 
 ### Table Name Detection
+
 ```regex
 __tablename__\s*=\s*["\'](\w+)["\']
 ```
@@ -40,6 +44,7 @@ __tablename__\s*=\s*["\'](\w+)["\']
 Default table name if not specified: model_name.lower() + "s"
 
 ### Column Detection
+
 ```regex
 (\w+)\s*=\s*Column\((.*?)\)
 ```
@@ -52,11 +57,13 @@ Default table name if not specified: model_name.lower() + "s"
 | `nullable=False` | NOT NULL |
 
 **Type Detection:**
+
 ```regex
 (Integer|String|Text|Boolean|DateTime|Float|JSON)
 ```
 
 ### Example
+
 ```python
 class User(Base):
     __tablename__ = "users"
@@ -70,15 +77,18 @@ class User(Base):
 ## Django ORM Detection
 
 ### File Patterns
+
 - `**/models.py`
 - `**/models/*.py`
 
 ### Class Pattern
+
 ```regex
 class\s+(\w+)\(models\.Model\):
 ```
 
 ### Field Detection
+
 ```regex
 (\w+)\s*=\s*models\.(\w+Field)\((.*?)\)
 ```
@@ -90,6 +100,7 @@ class\s+(\w+)\(models\.Model\):
 | `null=True` | Nullable |
 
 ### Example
+
 ```python
 class User(models.Model):
     email = models.EmailField(unique=True)
@@ -100,14 +111,17 @@ class User(models.Model):
 ## Prisma Detection
 
 ### File Pattern
+
 `prisma/schema.prisma`
 
 ### Model Pattern
+
 ```regex
 model\s+(\w+)\s*\{([^}]+)\}
 ```
 
 ### Field Pattern
+
 ```regex
 (\w+)\s+(\w+)([^/\n]*)
 ```
@@ -120,6 +134,7 @@ model\s+(\w+)\s*\{([^}]+)\}
 | `?` in type | Nullable (optional) |
 
 ### Example
+
 ```prisma
 model User {
   id        Int      @id @default(autoincrement())
@@ -133,15 +148,18 @@ model User {
 ## TypeORM Detection
 
 ### File Patterns
+
 - `**/*.entity.ts`
 - `**/entities/*.ts`
 
 ### Entity Pattern
+
 ```regex
 @Entity\([^)]*\)\s*(?:export\s+)?class\s+(\w+)
 ```
 
 ### Column Pattern
+
 ```regex
 @(PrimaryGeneratedColumn|Column)\(([^)]*)\)\s+(\w+):\s*(\w+)
 ```
@@ -153,6 +171,7 @@ model User {
 | `unique: true` | Unique constraint |
 
 ### Example
+
 ```typescript
 @Entity()
 export class User {
@@ -170,15 +189,18 @@ export class User {
 ## Drizzle Detection
 
 ### File Patterns
+
 - `**/schema.ts`
 - `**/db/schema.ts`
 
 ### Table Pattern
+
 ```regex
 export\s+const\s+(\w+)\s*=\s*(?:pg|mysql|sqlite)Table\(["\'](\w+)["\']
 ```
 
 ### Example
+
 ```typescript
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -190,20 +212,23 @@ export const users = pgTable('users', {
 ## Mongoose Detection
 
 ### File Patterns
+
 - `**/models/*.js`
 - `**/models/*.ts`
 
 ### Model Pattern
+
 ```regex
 mongoose\.model\(["\'](\w+)["\']
 ```
 
 ### Example
+
 ```javascript
 const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
   name: String,
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model('User', userSchema);
@@ -213,27 +238,28 @@ module.exports = mongoose.model('User', userSchema);
 
 ### Configuration Files
 
-| File | Database Type |
-|------|---------------|
-| `prisma/schema.prisma` | Prisma-supported (PostgreSQL, MySQL, SQLite, MongoDB) |
-| `ormconfig.json` | TypeORM configuration |
-| `knexfile.js` | Knex.js migrations |
-| `alembic.ini` | SQLAlchemy migrations |
-| `docker-compose.yml` with db service | Various (parse service image) |
+| File                                 | Database Type                                         |
+| ------------------------------------ | ----------------------------------------------------- |
+| `prisma/schema.prisma`               | Prisma-supported (PostgreSQL, MySQL, SQLite, MongoDB) |
+| `ormconfig.json`                     | TypeORM configuration                                 |
+| `knexfile.js`                        | Knex.js migrations                                    |
+| `alembic.ini`                        | SQLAlchemy migrations                                 |
+| `docker-compose.yml` with db service | Various (parse service image)                         |
 
 ### Connection String Patterns
 
-| Prefix | Database |
-|--------|----------|
+| Prefix                         | Database   |
+| ------------------------------ | ---------- |
 | `postgres://`, `postgresql://` | PostgreSQL |
-| `mysql://` | MySQL |
-| `mongodb://`, `mongodb+srv://` | MongoDB |
-| `redis://` | Redis |
-| `sqlite://` | SQLite |
+| `mysql://`                     | MySQL      |
+| `mongodb://`, `mongodb+srv://` | MongoDB    |
+| `redis://`                     | Redis      |
+| `sqlite://`                    | SQLite     |
 
 ### Environment Variable Patterns
 
 Common database environment variable names:
+
 ```
 DATABASE_URL, DB_URL, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD,
 POSTGRES_URL, MYSQL_URL, MONGO_URL, MONGODB_URI, REDIS_URL
@@ -243,13 +269,13 @@ POSTGRES_URL, MYSQL_URL, MONGO_URL, MONGODB_URI, REDIS_URL
 
 ### Migration Directories
 
-| Directory | ORM/Tool |
-|-----------|----------|
-| `prisma/migrations/` | Prisma |
-| `alembic/` | SQLAlchemy/Alembic |
-| `migrations/` | Django, Knex, TypeORM |
-| `db/migrate/` | Rails ActiveRecord |
-| `database/migrations/` | Laravel |
+| Directory              | ORM/Tool              |
+| ---------------------- | --------------------- |
+| `prisma/migrations/`   | Prisma                |
+| `alembic/`             | SQLAlchemy/Alembic    |
+| `migrations/`          | Django, Knex, TypeORM |
+| `db/migrate/`          | Rails ActiveRecord    |
+| `database/migrations/` | Laravel               |
 
 ## Output Schema
 
@@ -286,6 +312,7 @@ When using these patterns with project-analyzer skill:
 ## Memory Protocol (MANDATORY)
 
 **After using these patterns:**
+
 - Record new ORM patterns in `.claude/context/memory/learnings.md`
 - Document detection edge cases in `.claude/context/memory/issues.md`
 

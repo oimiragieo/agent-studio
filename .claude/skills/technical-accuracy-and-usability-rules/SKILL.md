@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Test all procedures and instructions to ensure they work as expected.
 - Provide clear and concise instructions that are easy to follow.
 - Use visuals to illustrate complex concepts and procedures.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

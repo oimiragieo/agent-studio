@@ -36,36 +36,37 @@ This file provides rules and context for generating or understanding Go code rel
 
 **Activity Structure and Naming:**
 
-*   Activities should be methods on a struct (e.g., `SampleActivities`).
-*   Activity functions must accept `ctx context.Context` as the first argument.
-*   Use descriptive names for activities (e.g., `SampleActivity1`, `ProcessOrderActivity`).
-*   Follow the typical signature: `func (a *StructName) ActivityName(ctx context.Context, input ArgType) (ResultType, error)`.
+- Activities should be methods on a struct (e.g., `SampleActivities`).
+- Activity functions must accept `ctx context.Context` as the first argument.
+- Use descriptive names for activities (e.g., `SampleActivity1`, `ProcessOrderActivity`).
+- Follow the typical signature: `func (a *StructName) ActivityName(ctx context.Context, input ArgType) (ResultType, error)`.
 
 **Accessing Activity Info:**
 
-*   Use `activity.GetInfo(ctx)` to retrieve activity metadata like its name.
-*   Example: `name := activity.GetInfo(ctx).ActivityType.Name`
+- Use `activity.GetInfo(ctx)` to retrieve activity metadata like its name.
+- Example: `name := activity.GetInfo(ctx).ActivityType.Name`
 
 **Logging:**
 
-*   You **must** use Temporal `activity.GetLogger(ctx)` for logging within activities.
-*   Always include the activity name in log messages for better context.
+- You **must** use Temporal `activity.GetLogger(ctx)` for logging within activities.
+- Always include the activity name in log messages for better context.
 
 **Return Values:**
 
-*   Activities must return a result value and an error.
-*   Return `nil` for the error upon successful execution.
-*   Construct meaningful result values, potentially incorporating information derived during the activity's execution.
+- Activities must return a result value and an error.
+- Return `nil` for the error upon successful execution.
+- Construct meaningful result values, potentially incorporating information derived during the activity's execution.
 
 **Context Handling:**
 
-*   Ensure the `ctx context.Context` is propagated to any Temporal SDK calls or other functions that require context.
+- Ensure the `ctx context.Context` is propagated to any Temporal SDK calls or other functions that require context.
 
 **Best Practices:**
 
-*   Strive to make activities idempotent.
-*   Keep activities focused on a single task and relatively short-lived.
-*   Avoid embedding complex business logic directly within activities. Orchestrate logic in workflows and utilize activities primarily for side effects or computations.
+- Strive to make activities idempotent.
+- Keep activities focused on a single task and relatively short-lived.
+- Avoid embedding complex business logic directly within activities. Orchestrate logic in workflows and utilize activities primarily for side effects or computations.
+
 ```go
 package dsl
 
@@ -113,9 +114,11 @@ func (a *SampleActivities) SampleActivity5(ctx context.Context, input []string) 
 <examples>
 Example usage:
 ```
+
 User: "Review this code for activities compliance"
 Agent: [Analyzes code against guidelines and provides specific feedback]
-```
+
+````
 </examples>
 
 ## Memory Protocol (MANDATORY)
@@ -123,7 +126,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 **Before starting:**
 ```bash
 cat .claude/context/memory/learnings.md
-```
+````
 
 **After completing:** Record any new patterns or exceptions discovered.
 

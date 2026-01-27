@@ -28,18 +28,21 @@ circuit.append([
 ### Qubit Types
 
 **GridQubit**: 2D grid topology for hardware-like layouts
+
 ```python
 qubits = cirq.GridQubit.square(2)  # 2x2 grid
 qubit = cirq.GridQubit(row=0, col=1)
 ```
 
 **LineQubit**: 1D linear topology
+
 ```python
 qubits = cirq.LineQubit.range(5)  # 5 qubits in a line
 qubit = cirq.LineQubit(3)
 ```
 
 **NamedQubit**: Custom-named qubits
+
 ```python
 qubit = cirq.NamedQubit('my_qubit')
 ```

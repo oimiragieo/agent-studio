@@ -3,6 +3,7 @@
 This document provides complete workflows for common tasks using the ETE Toolkit.
 
 ## Table of Contents
+
 1. [Basic Tree Operations](#basic-tree-operations)
 2. [Phylogenetic Analysis](#phylogenetic-analysis)
 3. [Tree Comparison](#tree-comparison)

@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Use Composer for dependency management.
 - Ensure dependencies are properly declared in composer.json.
 - Update dependencies regularly.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -11,11 +11,13 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 ## Data Access
 
 ### Authentication
+
 - **Academic users**: Free access (registration required)
 - **Commercial users**: License required (contact QIAGEN)
 - **Registration**: https://cancer.sanger.ac.uk/cosmic/register
 
 ### Download Methods
+
 1. **Web Browser**: Interactive search at https://cancer.sanger.ac.uk/cosmic
 2. **File Downloads**: Programmatic access via download API
 3. **Data Files**: TSV, CSV, and VCF formats
@@ -23,13 +25,16 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 ## Available Data Types
 
 ### 1. Core Mutation Data
+
 **Main Files**:
+
 - `CosmicMutantExport.tsv.gz` - Complete coding mutations
 - `CosmicCodingMuts.vcf.gz` - Mutations in VCF format
 - `CosmicNonCodingVariants.vcf.gz` - Non-coding variants
 - `CosmicMutantExportCensus.tsv.gz` - Mutations in Cancer Gene Census genes only
 
 **Content**:
+
 - Point mutations (SNVs)
 - Small insertions and deletions (indels)
 - Genomic coordinates
@@ -38,9 +43,11 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 - Tumor type associations
 
 ### 2. Cancer Gene Census
+
 **File**: `cancer_gene_census.csv`
 
 **Content**:
+
 - Expert-curated list of cancer genes
 - ~700+ genes with substantial evidence of involvement in cancer
 - Gene roles (oncogene, tumor suppressor, fusion)
@@ -49,7 +56,9 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 - Molecular genetics information
 
 ### 3. Mutational Signatures
+
 **Files**: Available in `signatures/` directory
+
 - `signatures.tsv` - Signature definitions
 - Single Base Substitution (SBS) signatures
 - Doublet Base Substitution (DBS) signatures
@@ -58,14 +67,17 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 **Current Version**: v3.4 (released in COSMIC v98)
 
 **Content**:
+
 - Signature profiles (96-channel, 78-channel, 83-channel)
 - Etiology annotations
 - Reference signatures for signature analysis
 
 ### 4. Structural Variants
+
 **File**: `CosmicStructExport.tsv.gz`
 
 **Content**:
+
 - Gene fusions
 - Structural breakpoints
 - Translocation events
@@ -73,43 +85,53 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 - Complex rearrangements
 
 ### 5. Copy Number Variations
+
 **File**: `CosmicCompleteCNA.tsv.gz`
 
 **Content**:
+
 - Copy number gains and losses
 - Amplifications and deletions
 - Segment-level data
 - Gene-level annotations
 
 ### 6. Gene Expression
+
 **File**: `CosmicCompleteGeneExpression.tsv.gz`
 
 **Content**:
+
 - Over/under-expression data
 - Gene expression Z-scores
 - Tissue-specific expression patterns
 
 ### 7. Resistance Mutations
+
 **File**: `CosmicResistanceMutations.tsv.gz`
 
 **Content**:
+
 - Drug resistance mutations
 - Treatment associations
 - Clinical relevance
 
 ### 8. Cell Lines Project
+
 **Files**: Various cell line-specific files
 
 **Content**:
+
 - Mutations in cancer cell lines
 - Copy number data for cell lines
 - Fusion genes in cell lines
 - Microsatellite instability status
 
 ### 9. Sample Information
+
 **File**: `CosmicSample.tsv.gz`
 
 **Content**:
+
 - Sample metadata
 - Tumor site/histology
 - Sample sources
@@ -118,6 +140,7 @@ COSMIC (Catalogue of Somatic Mutations in Cancer) is the world's largest and mos
 ## Genome Assemblies
 
 All genomic data is available for two reference genomes:
+
 - **GRCh37** (hg19) - Legacy assembly
 - **GRCh38** (hg38) - Current assembly (recommended)
 
@@ -126,12 +149,14 @@ File paths use the pattern: `{assembly}/cosmic/{version}/{filename}`
 ## File Formats
 
 ### TSV/CSV Format
+
 - Tab or comma-separated values
 - Column headers included
 - Gzip compressed (.gz)
 - Can be read with pandas, awk, or standard tools
 
 ### VCF Format
+
 - Standard Variant Call Format
 - Version 4.x specification
 - Includes INFO fields with COSMIC annotations
@@ -176,6 +201,7 @@ GRCh38/cosmic/latest/CosmicSample.tsv.gz
 ## Key Data Fields
 
 ### Mutation Data Fields
+
 - **Gene name** - HGNC gene symbol
 - **Accession Number** - Transcript identifier
 - **COSMIC ID** - Unique mutation identifier
@@ -189,6 +215,7 @@ GRCh38/cosmic/latest/CosmicSample.tsv.gz
 - **Pubmed ID** - Literature references
 
 ### Cancer Gene Census Fields
+
 - **Gene Symbol** - Official gene name
 - **Entrez GeneId** - NCBI gene identifier
 - **Role in Cancer** - Oncogene, TSG, fusion
@@ -202,6 +229,7 @@ GRCh38/cosmic/latest/CosmicSample.tsv.gz
 ## Data Updates
 
 COSMIC is updated quarterly with new releases. Each release includes:
+
 - New mutation data from literature and databases
 - Updated Cancer Gene Census annotations
 - Revised mutational signatures if applicable

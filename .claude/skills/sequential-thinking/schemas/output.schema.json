@@ -3,9 +3,7 @@
   "title": "sequential-thinking Output Schema",
   "description": "Output validation schema for sequential-thinking skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

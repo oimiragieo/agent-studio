@@ -36,6 +36,7 @@ poscar_string = struct.to(fmt="poscar")
 ## Structure File Formats
 
 ### CIF (Crystallographic Information File)
+
 Standard format for crystallographic data.
 
 ```python
@@ -55,12 +56,14 @@ struct.to(filename="output.cif")
 ```
 
 **Key features:**
+
 - Supports symmetry information
 - Can contain multiple structures
 - Preserves space group and symmetry operations
 - Handles partial occupancies
 
 ### POSCAR/CONTCAR (VASP)
+
 VASP's structure format.
 
 ```python
@@ -80,11 +83,13 @@ struct.to(filename="POSCAR")
 ```
 
 **Key features:**
+
 - Supports selective dynamics
 - Can include velocities (XDATCAR format)
 - Preserves lattice and coordinate precision
 
 ### XYZ
+
 Simple molecular coordinates format.
 
 ```python
@@ -97,6 +102,7 @@ struct.to(filename="structure.xyz")
 ```
 
 ### PDB (Protein Data Bank)
+
 Common format for biomolecules.
 
 ```python
@@ -105,6 +111,7 @@ mol.to(filename="output.pdb")
 ```
 
 ### JSON/YAML
+
 Serialization via dictionaries.
 
 ```python
@@ -457,13 +464,17 @@ transmuter = PoscarTransmuter.from_filenames(
 ## Supported Format Summary
 
 ### Structure formats:
+
 CIF, POSCAR/CONTCAR, XYZ, PDB, XSF, PWMAT, Res, CSSR, JSON, YAML
 
 ### Electronic structure codes:
+
 VASP, Gaussian, LAMMPS, Quantum ESPRESSO, ABINIT, CP2K, FEFF, Q-Chem, LMTO, Exciting, NWChem, AIMS, Crystallographic data formats
 
 ### Molecular formats:
+
 XYZ, PDB, MOL, SDF, PQR, via OpenBabel (many additional formats)
 
 ### Special purpose:
+
 Phonopy, ASE, Zeo++, Lobster, BoltzTraP

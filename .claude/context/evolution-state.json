@@ -16,8 +16,24 @@
       ],
       "researchReport": ".claude/context/artifacts/research-reports/gamedev-pro-research.md",
       "phases": ["E", "V", "O", "L", "V", "E"],
-      "skills": ["gamedev-expert", "tdd", "debugging", "git-expert", "verification-before-completion", "cpp"],
-      "domains": ["Unity", "Unreal Engine", "Godot", "ECS", "Game Physics", "Shaders", "Game AI", "Cross-platform"]
+      "skills": [
+        "gamedev-expert",
+        "tdd",
+        "debugging",
+        "git-expert",
+        "verification-before-completion",
+        "cpp"
+      ],
+      "domains": [
+        "Unity",
+        "Unreal Engine",
+        "Godot",
+        "ECS",
+        "Game Physics",
+        "Shaders",
+        "Game AI",
+        "Cross-platform"
+      ]
     },
     {
       "type": "agent",
@@ -34,8 +50,25 @@
       ],
       "researchReport": ".claude/context/artifacts/research-reports/web3-blockchain-expert-research.md",
       "phases": ["E", "V", "O", "L", "V", "E"],
-      "skills": ["web3-expert", "security-architect", "auth-security-expert", "tdd", "debugging", "git-expert", "verification-before-completion"],
-      "domains": ["Solidity", "DeFi", "Smart Contracts", "Gas Optimization", "OWASP SC Top 10", "Hardhat", "Foundry", "OpenZeppelin"]
+      "skills": [
+        "web3-expert",
+        "security-architect",
+        "auth-security-expert",
+        "tdd",
+        "debugging",
+        "git-expert",
+        "verification-before-completion"
+      ],
+      "domains": [
+        "Solidity",
+        "DeFi",
+        "Smart Contracts",
+        "Gas Optimization",
+        "OWASP SC Top 10",
+        "Hardhat",
+        "Foundry",
+        "OpenZeppelin"
+      ]
     },
     {
       "type": "agent",
@@ -50,8 +83,22 @@
       ],
       "researchReport": ".claude/context/artifacts/research-reports/android-pro-research.md",
       "phases": ["E", "V", "O", "L", "V", "E"],
-      "skills": ["android-expert", "testing-expert", "tdd", "debugging", "verification-before-completion"],
-      "domains": ["Kotlin", "Jetpack Compose", "Android SDK", "Hilt", "Room", "Retrofit", "Material Design 3"]
+      "skills": [
+        "android-expert",
+        "testing-expert",
+        "tdd",
+        "debugging",
+        "verification-before-completion"
+      ],
+      "domains": [
+        "Kotlin",
+        "Jetpack Compose",
+        "Android SDK",
+        "Hilt",
+        "Room",
+        "Retrofit",
+        "Material Design 3"
+      ]
     },
     {
       "type": "agent",
@@ -88,12 +135,36 @@
         "CLAUDE.md routing table (python-pro agent)"
       ],
       "phases": {
-        "evaluate": { "completed": true, "retroactive": true, "note": "Need confirmed: 139 scientific skills for research workflows" },
-        "validate": { "completed": true, "retroactive": true, "note": "No conflicts with existing skills" },
-        "obtain": { "completed": true, "retroactive": true, "researchReport": "scientific-skills-retroactive-research.md" },
-        "lock": { "completed": true, "retroactive": true, "note": "Integrated from K-Dense v2.17.0" },
-        "verify": { "completed": true, "retroactive": true, "note": "Structure validated, SKILL.md complete" },
-        "enable": { "completed": true, "retroactive": true, "note": "Router keywords added, catalog updated" }
+        "evaluate": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Need confirmed: 139 scientific skills for research workflows"
+        },
+        "validate": {
+          "completed": true,
+          "retroactive": true,
+          "note": "No conflicts with existing skills"
+        },
+        "obtain": {
+          "completed": true,
+          "retroactive": true,
+          "researchReport": "scientific-skills-retroactive-research.md"
+        },
+        "lock": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Integrated from K-Dense v2.17.0"
+        },
+        "verify": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Structure validated, SKILL.md complete"
+        },
+        "enable": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Router keywords added, catalog updated"
+        }
       },
       "outcome": "success",
       "notes": "Retroactive EVOLVE compliance applied to manually-integrated K-Dense scientific-skills library. Research report created documenting best practices validation."
@@ -107,9 +178,17 @@
       "description": "Core utility modules for security and reliability fixes",
       "registrations": [],
       "phases": {
-        "evaluate": { "completed": true, "retroactive": true, "note": "Created to fix SEC-007, BUG-001" },
+        "evaluate": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Created to fix SEC-007, BUG-001"
+        },
         "validate": { "completed": true, "retroactive": true, "note": "No conflicts" },
-        "obtain": { "completed": true, "retroactive": true, "note": "Based on security audit findings" },
+        "obtain": {
+          "completed": true,
+          "retroactive": true,
+          "note": "Based on security audit findings"
+        },
         "lock": { "completed": true, "retroactive": true, "note": "All files have tests" },
         "verify": { "completed": true, "retroactive": true, "note": "Tests passing" },
         "enable": { "completed": true, "retroactive": true, "note": "Integrated into hooks" }

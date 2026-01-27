@@ -9,22 +9,26 @@ PyTorch Lightning provides several strategies for training large models efficien
 ### When to Use Each Strategy
 
 **Regular Training (Single Device)**
+
 - Model size: Any size that fits in single GPU memory
 - Use case: Prototyping, small models, debugging
 
 **DDP (Distributed Data Parallel)**
+
 - Model size: <500M parameters (e.g., ResNet50 ~80M parameters)
 - When: Weights, activations, optimizer states, and gradients all fit in GPU memory
 - Goal: Scale batch size and speed across multiple GPUs
 - Best for: Most standard deep learning models
 
 **FSDP (Fully Sharded Data Parallel)**
+
 - Model size: 500M+ parameters (e.g., large transformers like BERT-Large, GPT)
 - When: Model doesn't fit in single GPU memory
 - Recommended for: Users new to model parallelism or migrating from DDP
 - Features: Activation checkpointing, CPU parameter offloading
 
 **DeepSpeed**
+
 - Model size: 500M+ parameters
 - When: Need cutting-edge features or already familiar with DeepSpeed
 - Features: CPU/disk parameter offloading, distributed checkpoints, fine-grained control
@@ -84,12 +88,14 @@ trainer = L.Trainer(strategy="ddp_spawn", accelerator="gpu", devices=4)
 ### Best Practices for DDP
 
 1. **Batch size:** Multiply by number of GPUs
+
    ```python
    # If using 4 GPUs, effective batch size = batch_size * 4
    dm = MyDataModule(batch_size=32)  # 32 * 4 = 128 effective batch size
    ```
 
 2. **Learning rate:** Often scaled with batch size
+
    ```python
    # Linear scaling rule
    base_lr = 0.001
@@ -98,11 +104,13 @@ trainer = L.Trainer(strategy="ddp_spawn", accelerator="gpu", devices=4)
    ```
 
 3. **Synchronization:** Use `sync_dist=True` for metrics
+
    ```python
    self.log("val_loss", loss, sync_dist=True)
    ```
 
 4. **Rank-specific operations:** Use decorators for main process only
+
    ```python
    from lightning.pytorch.utilities import rank_zero_only
 
@@ -156,20 +164,24 @@ trainer = L.Trainer(
 ### Sharding Strategies
 
 **FULL_SHARD (default)**
+
 - Shards optimizer states, gradients, and parameters
 - Maximum memory savings
 - More communication overhead
 
 **SHARD_GRAD_OP**
+
 - Shards optimizer states and gradients only
 - Parameters kept on all devices
 - Less memory savings but faster
 
 **NO_SHARD**
+
 - No sharding (equivalent to DDP)
 - For comparison or when sharding not needed
 
 **HYBRID_SHARD**
+
 - Combines FULL_SHARD within nodes and NO_SHARD across nodes
 - Good for multi-node setups
 
@@ -263,6 +275,7 @@ trainer = L.Trainer(
 ### DeepSpeed Stages
 
 **Stage 1: Optimizer State Sharding**
+
 - Shards optimizer states
 - Moderate memory savings
 
@@ -271,6 +284,7 @@ trainer = L.Trainer(strategy="deepspeed_stage_1")
 ```
 
 **Stage 2: Optimizer + Gradient Sharding**
+
 - Shards optimizer states and gradients
 - Good memory savings
 
@@ -279,6 +293,7 @@ trainer = L.Trainer(strategy="deepspeed_stage_2")
 ```
 
 **Stage 3: Full Model Sharding (ZeRO-3)**
+
 - Shards optimizer states, gradients, and model parameters
 - Maximum memory savings
 - Can train very large models
@@ -288,6 +303,7 @@ trainer = L.Trainer(strategy="deepspeed_stage_3")
 ```
 
 **Stage 2 with Offloading**
+
 - Offload to CPU or NVMe
 
 ```python
@@ -353,15 +369,15 @@ trainer = L.Trainer(
 
 ## Comparison Table
 
-| Feature | DDP | FSDP | DeepSpeed |
-|---------|-----|------|-----------|
-| Model Size | <500M params | 500M+ params | 500M+ params |
-| Memory Efficiency | Low | High | Very High |
-| Speed | Fastest | Fast | Fast |
-| Setup Complexity | Simple | Medium | Complex |
-| Offloading | No | CPU | CPU + Disk |
-| Best For | Standard models | Large models | Very large models |
-| Configuration | Minimal | Moderate | Extensive |
+| Feature           | DDP             | FSDP         | DeepSpeed         |
+| ----------------- | --------------- | ------------ | ----------------- |
+| Model Size        | <500M params    | 500M+ params | 500M+ params      |
+| Memory Efficiency | Low             | High         | Very High         |
+| Speed             | Fastest         | Fast         | Fast              |
+| Setup Complexity  | Simple          | Medium       | Complex           |
+| Offloading        | No              | CPU          | CPU + Disk        |
+| Best For          | Standard models | Large models | Very large models |
+| Configuration     | Minimal         | Moderate     | Extensive         |
 
 ## Mixed Precision Training
 
@@ -435,11 +451,13 @@ trainer = L.Trainer(
 ### Manual Multi-Node Setup
 
 Node 0 (master):
+
 ```bash
 python train.py --num_nodes=2 --node_rank=0 --master_addr=192.168.1.1 --master_port=12345
 ```
 
 Node 1:
+
 ```bash
 python train.py --num_nodes=2 --node_rank=1 --master_addr=192.168.1.1 --master_port=12345
 ```
@@ -527,6 +545,7 @@ trainer = L.Trainer(strategy="ddp", accelerator="gpu", devices=4)
 ### CUDA Out of Memory
 
 Solutions:
+
 1. Enable gradient checkpointing
 2. Reduce batch size
 3. Use FSDP or DeepSpeed
@@ -582,6 +601,7 @@ trainer = L.Trainer(
 ## Best Practices
 
 ### 1. Start with Single GPU
+
 Test your code on single GPU before scaling:
 
 ```python
@@ -593,11 +613,13 @@ trainer = L.Trainer(accelerator="gpu", devices=4, strategy="ddp")
 ```
 
 ### 2. Use Appropriate Strategy
+
 - <500M params: Use DDP
 - 500M-10B params: Use FSDP
-- >10B params: Use DeepSpeed Stage 3
+- > 10B params: Use DeepSpeed Stage 3
 
 ### 3. Enable Mixed Precision
+
 Always use mixed precision for modern GPUs:
 
 ```python
@@ -606,6 +628,7 @@ trainer = L.Trainer(precision="16-mixed")    # V100, T4
 ```
 
 ### 4. Scale Hyperparameters
+
 Adjust learning rate and batch size when scaling:
 
 ```python
@@ -614,6 +637,7 @@ lr = base_lr * num_gpus
 ```
 
 ### 5. Sync Metrics
+
 Always sync metrics in distributed training:
 
 ```python
@@ -621,6 +645,7 @@ self.log("val_loss", loss, sync_dist=True)
 ```
 
 ### 6. Use Rank-Zero Operations
+
 File I/O and expensive operations on main process only:
 
 ```python
@@ -632,6 +657,7 @@ def save_predictions(self):
 ```
 
 ### 7. Checkpoint Regularly
+
 Save checkpoints to resume from failures:
 
 ```python

@@ -70,6 +70,7 @@ context_files:
 ## Technology Stack Expertise
 
 ### Frameworks
+
 - **Laravel 11+**: Full-stack PHP framework
 - **Symfony**: Enterprise PHP framework
 - **Lumen**: Laravel micro-framework for APIs
@@ -77,6 +78,7 @@ context_files:
 - **CodeIgniter 4**: Simple, fast PHP framework
 
 ### Laravel Ecosystem
+
 - **Laravel Jetstream**: Application scaffolding
 - **Laravel Breeze**: Lightweight authentication
 - **Laravel Sanctum**: API token authentication
@@ -88,6 +90,7 @@ context_files:
 - **Inertia.js**: SPA adapter for Laravel
 
 ### Database & ORM
+
 - **Eloquent ORM**: Laravel's ORM
 - **Query Builder**: Fluent interface for database queries
 - **Migrations**: Version control for database
@@ -95,6 +98,7 @@ context_files:
 - **Doctrine**: Advanced ORM alternative
 
 ### Testing Tools
+
 - **PHPUnit**: Traditional PHP testing framework
 - **Pest**: Elegant testing framework
 - **Laravel Dusk**: Browser testing
@@ -102,16 +106,19 @@ context_files:
 - **Faker**: Test data generation
 
 ### Package Management
+
 - **Composer**: Dependency management
 - **Packagist**: PHP package repository
 
 ### API Tools
+
 - **Laravel API Resources**: Transform models for JSON responses
 - **Spatie Laravel Query Builder**: API filtering and sorting
 - **Laravel Sanctum**: SPA and mobile authentication
 - **OpenAPI/Swagger**: API documentation
 
 ### Caching & Queue
+
 - **Redis**: Caching and queue backend
 - **Memcached**: Memory caching
 - **Laravel Queue**: Background job processing
@@ -120,6 +127,7 @@ context_files:
 ## Key Frameworks & Patterns
 
 ### Laravel Controller Pattern
+
 ```php
 <?php
 
@@ -162,6 +170,7 @@ class UserController extends Controller
 ```
 
 ### Service Layer Pattern
+
 ```php
 <?php
 
@@ -196,6 +205,7 @@ class UserService
 ```
 
 ### Repository Pattern
+
 ```php
 <?php
 
@@ -238,6 +248,7 @@ class UserRepository
 ```
 
 ### Modern PHP 8.x Features
+
 ```php
 <?php
 
@@ -301,6 +312,7 @@ $country = $user?->profile?->address?->country;
 ```
 
 ### Laravel Eloquent Patterns
+
 ```php
 <?php
 
@@ -358,6 +370,7 @@ class Post extends Model
 ## Output Protocol
 
 ### PHP Artifacts Location
+
 - **Controllers**: `app/Http/Controllers/`
 - **Models**: `app/Models/`
 - **Services**: `app/Services/`
@@ -551,6 +564,7 @@ class UserControllerTest extends TestCase
 ### 1. Build Laravel REST API
 
 **Process (TDD Approach):**
+
 1. **Red**: Write failing feature test for endpoint
 2. **Green**: Create route, controller, and model
 3. **Refactor**: Extract business logic to service layer
@@ -562,6 +576,7 @@ class UserControllerTest extends TestCase
 9. Test performance
 
 **Verification:**
+
 - [ ] Feature tests passing
 - [ ] Unit tests for services
 - [ ] Validation working
@@ -572,6 +587,7 @@ class UserControllerTest extends TestCase
 ### 2. Implement Service Layer
 
 **Process:**
+
 1. Identify business logic in controllers
 2. Create service class with TDD
 3. Move logic from controller to service
@@ -581,6 +597,7 @@ class UserControllerTest extends TestCase
 7. Document service methods
 
 **Verification:**
+
 - [ ] Controllers thin (only HTTP concerns)
 - [ ] Business logic in services
 - [ ] Unit tests passing
@@ -590,6 +607,7 @@ class UserControllerTest extends TestCase
 ### 3. Create Eloquent Models & Relationships
 
 **Process:**
+
 1. Design database schema
 2. Create migration files
 3. Define Eloquent model with TDD
@@ -601,6 +619,7 @@ class UserControllerTest extends TestCase
 9. Run migrations
 
 **Verification:**
+
 - [ ] Migrations reversible
 - [ ] Models have fillable/guarded
 - [ ] Relationships defined
@@ -611,6 +630,7 @@ class UserControllerTest extends TestCase
 ### 4. Implement Queue Jobs
 
 **Process:**
+
 1. Create job class with TDD
 2. Implement handle() method
 3. Add retry logic and timeouts
@@ -621,6 +641,7 @@ class UserControllerTest extends TestCase
 8. Document job behavior
 
 **Verification:**
+
 - [ ] Job processes successfully
 - [ ] Retry logic working
 - [ ] Tests passing
@@ -630,6 +651,7 @@ class UserControllerTest extends TestCase
 ### 5. Add Caching
 
 **Process:**
+
 1. Identify slow queries/operations
 2. Implement cache with TDD
 3. Add cache tags for grouped invalidation
@@ -640,6 +662,7 @@ class UserControllerTest extends TestCase
 8. Measure performance improvement
 
 **Verification:**
+
 - [ ] Caching working
 - [ ] Cache invalidation strategy implemented
 - [ ] Tests passing
@@ -658,22 +681,22 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `php-expert` | PHP and Laravel patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                  | When                 |
+| -------------------------------- | ------------------------ | -------------------- |
+| `php-expert`                     | PHP and Laravel patterns | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle | Always at task start |
+| `verification-before-completion` | Quality gates            | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| API development | `api-development-expert` | API design patterns |
-| Documentation | `doc-generator` | Documentation generation |
-| Laravel project | `livewire-implementation-rules` | Livewire patterns |
-| Laravel project | `tall-stack-general` | TALL stack patterns |
-| Composer management | `composer-dependency-management` | Dependency management |
+| Condition           | Skill                            | Purpose                      |
+| ------------------- | -------------------------------- | ---------------------------- |
+| Debugging issues    | `debugging`                      | Systematic 4-phase debugging |
+| API development     | `api-development-expert`         | API design patterns          |
+| Documentation       | `doc-generator`                  | Documentation generation     |
+| Laravel project     | `livewire-implementation-rules`  | Livewire patterns            |
+| Laravel project     | `tall-stack-general`             | TALL stack patterns          |
+| Composer management | `composer-dependency-management` | Dependency management        |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -710,6 +733,7 @@ Review past architectural decisions, performance patterns, and Laravel best prac
 ### Review Requirements
 
 For major backend features:
+
 - [ ] **Database Architect Review**: Schema design and query optimization
 - [ ] **Security Review**: Authentication, authorization, data protection
 - [ ] **QA Review**: Test coverage and scenarios
@@ -717,6 +741,7 @@ For major backend features:
 ## Best Practices
 
 ### Laravel Specific
+
 - Use route model binding
 - Leverage service containers and DI
 - Use form requests for validation
@@ -726,6 +751,7 @@ For major backend features:
 - Use events and listeners for decoupled logic
 
 ### Modern PHP
+
 - Use type declarations for all parameters
 - Use return type declarations
 - Leverage union types and nullable types
@@ -735,6 +761,7 @@ For major backend features:
 - Use match expressions over switch
 
 ### Testing
+
 - Use database transactions in tests (RefreshDatabase)
 - Use factories for test data
 - Test edge cases and validation
@@ -744,6 +771,7 @@ For major backend features:
 - Use Pest for readable tests
 
 ### Performance
+
 - Eager load relationships (prevent N+1)
 - Use query builder for complex queries
 - Implement caching (Redis)
@@ -753,6 +781,7 @@ For major backend features:
 - Profile with Laravel Telescope
 
 ### Security
+
 - Validate all input (Form Requests)
 - Use parameterized queries (Eloquent does this)
 - Hash passwords (Hash facade)
@@ -762,6 +791,7 @@ For major backend features:
 - Use Laravel Sanctum for API authentication
 
 ### Code Organization
+
 - Follow PSR-12 coding standard
 - Use service layer for business logic
 - Keep controllers thin

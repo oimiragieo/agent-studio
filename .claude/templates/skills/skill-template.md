@@ -24,12 +24,14 @@ streaming: supported
 ### Step 6: Update CLAUDE.md (BLOCKING)
 
 Add skill to appropriate section:
+
 - Section 8.5 for user-invocable workflow skills
 - Section 8.6 for enterprise workflows
 - Section 8.7 for domain/expert skills
 
 **Entry format:**
-```markdown
+
+````markdown
 ### {{SKILL_DISPLAY_NAME}}
 
 Use when {{TRIGGER_CONDITION}}:
@@ -37,29 +39,32 @@ Use when {{TRIGGER_CONDITION}}:
 ```javascript
 Skill({ skill: '{{SKILL_NAME}}' });
 ```
+````
 
 {{BRIEF_DESCRIPTION}}
-```
+
+````
 
 **Verify:**
 ```bash
 grep "{{SKILL_NAME}}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED - BLOCKING!"
-```
+````
 
 ### Step 7: Assign to Agents (BLOCKING)
 
 Update matching agents' `skills:` array based on domain:
 
-| Domain | Agents |
-|--------|--------|
-| Testing | qa, developer |
-| Security | security-architect |
-| Planning | planner, architect |
-| Coding | developer |
-| Documentation | technical-writer |
-| DevOps | devops |
+| Domain        | Agents             |
+| ------------- | ------------------ |
+| Testing       | qa, developer      |
+| Security      | security-architect |
+| Planning      | planner, architect |
+| Coding        | developer          |
+| Documentation | technical-writer   |
+| DevOps        | devops             |
 
 **Verify:**
+
 ```bash
 grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BLOCKING!"
 ```
@@ -85,11 +90,13 @@ grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BL
 ## When to Use
 
 **Always:**
+
 - {{TRIGGER_CONDITION_1}}
 - {{TRIGGER_CONDITION_2}}
 - {{TRIGGER_CONDITION_3}}
 
 **Exceptions:**
+
 - {{EXCEPTION_1}}
 - {{EXCEPTION_2}}
 
@@ -102,6 +109,7 @@ grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BL
 {{EXPLANATION_OF_WHY_THIS_LAW_EXISTS}}
 
 **No exceptions:**
+
 - {{RULE_1}}
 - {{RULE_2}}
 
@@ -112,11 +120,13 @@ grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BL
 {{DESCRIPTION_OF_PHASE_1}}
 
 **Steps:**
+
 1. {{STEP_1}}
 2. {{STEP_2}}
 3. {{STEP_3}}
 
 **Example:**
+
 ```{{LANGUAGE}}
 {{EXAMPLE_CODE_OR_COMMAND}}
 ```
@@ -126,6 +136,7 @@ grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BL
 {{DESCRIPTION_OF_PHASE_2}}
 
 **Steps:**
+
 1. {{STEP_1}}
 2. {{STEP_2}}
 3. {{STEP_3}}
@@ -135,6 +146,7 @@ grep -r "{{SKILL_NAME}}" .claude/agents/ || echo "ERROR: No agents assigned - BL
 {{DESCRIPTION_OF_PHASE_3}}
 
 **Steps:**
+
 1. {{STEP_1}}
 2. {{STEP_2}}
 3. {{STEP_3}}
@@ -176,6 +188,7 @@ This skill works well with:
 **Input:** {{INPUT_DESCRIPTION}}
 
 **Process:**
+
 ```{{LANGUAGE}}
 {{EXAMPLE_PROCESS}}
 ```
@@ -187,6 +200,7 @@ This skill works well with:
 **Input:** {{INPUT_DESCRIPTION}}
 
 **Process:**
+
 ```{{LANGUAGE}}
 {{EXAMPLE_PROCESS}}
 ```
@@ -211,10 +225,10 @@ This skill works well with:
 
 This skill has been assigned to the following agents:
 
-| Agent | Role | Assignment Reason |
-|-------|------|-------------------|
-| {{AGENT_1}} | {{AGENT_1_ROLE}} | {{REASON_1}} |
-| {{AGENT_2}} | {{AGENT_2_ROLE}} | {{REASON_2}} |
+| Agent       | Role             | Assignment Reason |
+| ----------- | ---------------- | ----------------- |
+| {{AGENT_1}} | {{AGENT_1_ROLE}} | {{REASON_1}}      |
+| {{AGENT_2}} | {{AGENT_2_ROLE}} | {{REASON_2}}      |
 
 **To add this skill to another agent:**
 
@@ -230,6 +244,7 @@ This skill has been assigned to the following agents:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

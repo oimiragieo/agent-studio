@@ -27,48 +27,56 @@ pipe = pipeline("text-classification", model="distilbert-base-uncased-finetuned-
 ### Natural Language Processing
 
 **text-generation**: Generate text continuations
+
 ```python
 generator = pipeline("text-generation", model="gpt2")
 output = generator("Once upon a time", max_length=50, num_return_sequences=2)
 ```
 
 **text-classification**: Classify text into categories
+
 ```python
 classifier = pipeline("text-classification")
 result = classifier("I love this product!")  # Returns label and score
 ```
 
 **token-classification**: Label individual tokens (NER, POS tagging)
+
 ```python
 ner = pipeline("token-classification", model="dslim/bert-base-NER")
 entities = ner("Hugging Face is based in New York City")
 ```
 
 **question-answering**: Extract answers from context
+
 ```python
 qa = pipeline("question-answering")
 result = qa(question="What is the capital?", context="Paris is the capital of France.")
 ```
 
 **fill-mask**: Predict masked tokens
+
 ```python
 unmasker = pipeline("fill-mask", model="bert-base-uncased")
 result = unmasker("Paris is the [MASK] of France")
 ```
 
 **summarization**: Summarize long texts
+
 ```python
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 summary = summarizer("Long article text...", max_length=130, min_length=30)
 ```
 
 **translation**: Translate between languages
+
 ```python
 translator = pipeline("translation_en_to_fr", model="Helsinki-NLP/opus-mt-en-fr")
 result = translator("Hello, how are you?")
 ```
 
 **zero-shot-classification**: Classify without training data
+
 ```python
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 result = classifier(
@@ -78,6 +86,7 @@ result = classifier(
 ```
 
 **sentiment-analysis**: Alias for text-classification focused on sentiment
+
 ```python
 sentiment = pipeline("sentiment-analysis")
 result = sentiment("This product exceeded my expectations!")
@@ -86,6 +95,7 @@ result = sentiment("This product exceeded my expectations!")
 ### Computer Vision
 
 **image-classification**: Classify images
+
 ```python
 classifier = pipeline("image-classification", model="google/vit-base-patch16-224")
 result = classifier("path/to/image.jpg")
@@ -95,24 +105,28 @@ result = classifier(Image.open("image.jpg"))
 ```
 
 **object-detection**: Detect objects in images
+
 ```python
 detector = pipeline("object-detection", model="facebook/detr-resnet-50")
 results = detector("image.jpg")  # Returns bounding boxes and labels
 ```
 
 **image-segmentation**: Segment images
+
 ```python
 segmenter = pipeline("image-segmentation", model="facebook/detr-resnet-50-panoptic")
 segments = segmenter("image.jpg")
 ```
 
 **depth-estimation**: Estimate depth from images
+
 ```python
 depth = pipeline("depth-estimation", model="Intel/dpt-large")
 result = depth("image.jpg")
 ```
 
 **zero-shot-image-classification**: Classify images without training
+
 ```python
 classifier = pipeline("zero-shot-image-classification", model="openai/clip-vit-base-patch32")
 result = classifier("image.jpg", candidate_labels=["cat", "dog", "bird"])
@@ -121,18 +135,21 @@ result = classifier("image.jpg", candidate_labels=["cat", "dog", "bird"])
 ### Audio
 
 **automatic-speech-recognition**: Transcribe speech
+
 ```python
 asr = pipeline("automatic-speech-recognition", model="openai/whisper-base")
 text = asr("audio.mp3")
 ```
 
 **audio-classification**: Classify audio
+
 ```python
 classifier = pipeline("audio-classification", model="MIT/ast-finetuned-audioset-10-10-0.4593")
 result = classifier("audio.wav")
 ```
 
 **text-to-speech**: Generate speech from text (with specific models)
+
 ```python
 tts = pipeline("text-to-speech", model="microsoft/speecht5_tts")
 audio = tts("Hello, this is a test")
@@ -141,18 +158,21 @@ audio = tts("Hello, this is a test")
 ### Multimodal
 
 **visual-question-answering**: Answer questions about images
+
 ```python
 vqa = pipeline("visual-question-answering", model="dandelin/vilt-b32-finetuned-vqa")
 result = vqa(image="image.jpg", question="What color is the car?")
 ```
 
 **document-question-answering**: Answer questions about documents
+
 ```python
 doc_qa = pipeline("document-question-answering", model="impira/layoutlm-document-qa")
 result = doc_qa(image="document.png", question="What is the invoice number?")
 ```
 
 **image-to-text**: Generate captions for images
+
 ```python
 captioner = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
 caption = captioner("image.jpg")
@@ -163,33 +183,39 @@ caption = captioner("image.jpg")
 ### Common Parameters
 
 **model**: Model identifier or path
+
 ```python
 pipe = pipeline("task", model="model-id")
 ```
 
 **device**: GPU device index (-1 for CPU, 0+ for GPU)
+
 ```python
 pipe = pipeline("task", device=0)  # Use first GPU
 ```
 
 **device_map**: Automatic device allocation for large models
+
 ```python
 pipe = pipeline("task", model="large-model", device_map="auto")
 ```
 
 **dtype**: Model precision (reduces memory)
+
 ```python
 import torch
 pipe = pipeline("task", torch_dtype=torch.float16)
 ```
 
 **batch_size**: Process multiple inputs at once
+
 ```python
 pipe = pipeline("task", batch_size=8)
 results = pipe(["text1", "text2", "text3"])
 ```
 
 **framework**: Choose PyTorch or TensorFlow
+
 ```python
 pipe = pipeline("task", framework="pt")  # or "tf"
 ```
@@ -222,6 +248,7 @@ for output in pipe(KeyDataset(dataset, "text")):
 ### GPU Acceleration
 
 Always specify device for GPU usage:
+
 ```python
 pipe = pipeline("task", device=0)
 ```
@@ -229,6 +256,7 @@ pipe = pipeline("task", device=0)
 ### Mixed Precision
 
 Use float16 for 2x speedup on supported GPUs:
+
 ```python
 import torch
 pipe = pipeline("task", torch_dtype=torch.float16, device=0)
@@ -288,12 +316,14 @@ pipe = pipeline("text-classification", model="model-id", pipeline_class=CustomPi
 Pipelines accept various input types:
 
 **Text tasks**: Strings or lists of strings
+
 ```python
 pipe("single text")
 pipe(["text1", "text2"])
 ```
 
 **Image tasks**: URLs, file paths, PIL Images, or numpy arrays
+
 ```python
 pipe("https://example.com/image.jpg")
 pipe("local/path/image.png")
@@ -302,6 +332,7 @@ pipe(numpy_array)
 ```
 
 **Audio tasks**: File paths, numpy arrays, or raw waveforms
+
 ```python
 pipe("audio.mp3")
 pipe(audio_array)

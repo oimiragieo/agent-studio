@@ -6,15 +6,24 @@ phases: 6
 enforced: true
 state_machine: true
 agents: [evolution-orchestrator, planner, developer, qa]
-skills: [research-synthesis, agent-creator, skill-creator, workflow-creator, hook-creator, schema-creator, template-creator]
+skills:
+  [
+    research-synthesis,
+    agent-creator,
+    skill-creator,
+    workflow-creator,
+    hook-creator,
+    schema-creator,
+    template-creator,
+  ]
 triggers:
-  - "create new agent"
-  - "create new skill"
-  - "need a .*agent"
-  - "need a .*skill"
-  - "no matching agent"
-  - "capability gap"
-  - "evolve"
+  - 'create new agent'
+  - 'create new skill'
+  - 'need a .*agent'
+  - 'need a .*skill'
+  - 'no matching agent'
+  - 'capability gap'
+  - 'evolve'
 ---
 
 # EVOLVE Workflow
@@ -48,6 +57,7 @@ E → V → O → L → V → E
 ```
 
 **Verification:**
+
 ```bash
 grep "evolution-workflow" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 ```
@@ -80,34 +90,34 @@ stateDiagram-v2
 
 ### States
 
-| State | Description | Valid Actions |
-|-------|-------------|---------------|
-| `IDLE` | No evolution in progress | Start new evolution |
-| `EVALUATING` | Checking if evolution is needed | Analyze gap, check existing artifacts |
-| `VALIDATING` | Checking for conflicts | Verify naming, check capability overlap |
-| `OBTAINING` | Researching best practices (MANDATORY) | Execute queries, analyze codebase |
-| `LOCKING` | Creating the artifact | Invoke creator skill, validate schema |
-| `VERIFYING` | Quality assurance | Check completeness, verify protocols |
-| `ENABLING` | Deploying to ecosystem | Update routing, catalogs, memory |
-| `ABORTED` | Evolution cancelled | Document reason, recommend alternative |
-| `BLOCKED` | Gate failed, awaiting resolution | Fix blocker, retry phase |
+| State        | Description                            | Valid Actions                           |
+| ------------ | -------------------------------------- | --------------------------------------- |
+| `IDLE`       | No evolution in progress               | Start new evolution                     |
+| `EVALUATING` | Checking if evolution is needed        | Analyze gap, check existing artifacts   |
+| `VALIDATING` | Checking for conflicts                 | Verify naming, check capability overlap |
+| `OBTAINING`  | Researching best practices (MANDATORY) | Execute queries, analyze codebase       |
+| `LOCKING`    | Creating the artifact                  | Invoke creator skill, validate schema   |
+| `VERIFYING`  | Quality assurance                      | Check completeness, verify protocols    |
+| `ENABLING`   | Deploying to ecosystem                 | Update routing, catalogs, memory        |
+| `ABORTED`    | Evolution cancelled                    | Document reason, recommend alternative  |
+| `BLOCKED`    | Gate failed, awaiting resolution       | Fix blocker, retry phase                |
 
 ### Transitions
 
-| From | To | Condition | Enforcement Hook |
-|------|----|-----------|------------------|
-| `IDLE` | `EVALUATING` | Evolution triggered | `evolution-trigger-detector.cjs` |
-| `EVALUATING` | `VALIDATING` | Gap confirmed | - |
-| `EVALUATING` | `ABORTED` | No gap / Existing solution | - |
-| `VALIDATING` | `OBTAINING` | No conflicts | `conflict-detector.cjs` |
-| `VALIDATING` | `ABORTED` | Naming/capability conflict | - |
-| `OBTAINING` | `LOCKING` | Research complete (3+ queries) | `research-enforcement.cjs` |
-| `OBTAINING` | `OBTAINING` | More research needed | - |
-| `LOCKING` | `VERIFYING` | Schema validation passes | `evolution-state-guard.cjs` |
-| `LOCKING` | `LOCKING` | Schema validation fails (retry) | - |
-| `VERIFYING` | `ENABLING` | Quality gate passes | `quality-gate-validator.cjs` |
-| `VERIFYING` | `LOCKING` | Quality issues (fix) | - |
-| `ENABLING` | `IDLE` | Deployment complete | `evolution-audit.cjs` |
+| From         | To           | Condition                       | Enforcement Hook                 |
+| ------------ | ------------ | ------------------------------- | -------------------------------- |
+| `IDLE`       | `EVALUATING` | Evolution triggered             | `evolution-trigger-detector.cjs` |
+| `EVALUATING` | `VALIDATING` | Gap confirmed                   | -                                |
+| `EVALUATING` | `ABORTED`    | No gap / Existing solution      | -                                |
+| `VALIDATING` | `OBTAINING`  | No conflicts                    | `conflict-detector.cjs`          |
+| `VALIDATING` | `ABORTED`    | Naming/capability conflict      | -                                |
+| `OBTAINING`  | `LOCKING`    | Research complete (3+ queries)  | `research-enforcement.cjs`       |
+| `OBTAINING`  | `OBTAINING`  | More research needed            | -                                |
+| `LOCKING`    | `VERIFYING`  | Schema validation passes        | `evolution-state-guard.cjs`      |
+| `LOCKING`    | `LOCKING`    | Schema validation fails (retry) | -                                |
+| `VERIFYING`  | `ENABLING`   | Quality gate passes             | `quality-gate-validator.cjs`     |
+| `VERIFYING`  | `LOCKING`    | Quality issues (fix)            | -                                |
+| `ENABLING`   | `IDLE`       | Deployment complete             | `evolution-audit.cjs`            |
 
 ---
 
@@ -120,6 +130,7 @@ stateDiagram-v2
 **State**: `EVALUATING`
 
 **Entry Conditions**:
+
 - User request for new capability
 - Router detects no matching agent/skill
 - Pattern analyzer suggests evolution
@@ -129,48 +140,51 @@ stateDiagram-v2
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "evaluating",
+Edit('.claude/context/evolution-state.json', {
+  state: 'evaluating',
   currentEvolution: {
-    type: "agent|skill|workflow|hook|schema|template",
-    name: "proposed-name",
-    phase: "evaluate",
+    type: 'agent|skill|workflow|hook|schema|template',
+    name: 'proposed-name',
+    phase: 'evaluate',
     startedAt: new Date().toISOString(),
-    gatePassed: false
-  }
+    gatePassed: false,
+  },
 });
 
 // 2. Check if similar artifact exists
-Glob(".claude/agents/**/*.md");
-Glob(".claude/skills/*/SKILL.md");
-Glob(".claude/workflows/**/*.md");
-Grep("similar-capability-pattern", ".claude/");
+Glob('.claude/agents/**/*.md');
+Glob('.claude/skills/*/SKILL.md');
+Glob('.claude/workflows/**/*.md');
+Grep('similar-capability-pattern', '.claude/');
 
 // 3. Read skill catalog for existing solutions
-Read(".claude/context/artifacts/skill-catalog.md");
+Read('.claude/context/artifacts/skill-catalog.md');
 
 // 4. Analyze the gap using structured thinking
 // (Use mcp__sequential-thinking__sequentialthinking if available)
 ```
 
 **Exit Conditions** (ALL required):
+
 - [ ] Gap clearly identified and documented
 - [ ] No existing artifact meets the need (verified with Glob/Grep)
 - [ ] Request is within ecosystem scope (not external integration)
 - [ ] Evolution state updated to `EVALUATING`
 
 **Failure Mode**:
+
 - If existing solution found: ABORT with recommendation to use existing artifact
 - Document path to existing artifact for user
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 1 validation
 const gate1 = {
-  gapIdentified: true,           // Must document what's missing
-  noExistingSolution: true,      // Glob/Grep confirmed no match
-  withinScope: true,             // Not external API/integration
-  stateUpdated: true             // evolution-state.json reflects EVALUATING
+  gapIdentified: true, // Must document what's missing
+  noExistingSolution: true, // Glob/Grep confirmed no match
+  withinScope: true, // Not external API/integration
+  stateUpdated: true, // evolution-state.json reflects EVALUATING
 };
 const gate1Passed = Object.values(gate1).every(v => v === true);
 ```
@@ -184,6 +198,7 @@ const gate1Passed = Object.values(gate1).every(v => v === true);
 **State**: `VALIDATING`
 
 **Entry Conditions**:
+
 - Phase 1 gates passed
 - Evolution state is `EVALUATING` with `gatePassed: true`
 
@@ -191,16 +206,16 @@ const gate1Passed = Object.values(gate1).every(v => v === true);
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "validating",
-  currentEvolution: { phase: "validate" }
+Edit('.claude/context/evolution-state.json', {
+  state: 'validating',
+  currentEvolution: { phase: 'validate' },
 });
 
 // 2. Check naming conflicts
-Read(".claude/context/artifacts/skill-catalog.md");
-Grep("proposed-name", ".claude/agents/");
-Grep("proposed-name", ".claude/skills/");
-Grep("proposed-name", ".claude/workflows/");
+Read('.claude/context/artifacts/skill-catalog.md');
+Grep('proposed-name', '.claude/agents/');
+Grep('proposed-name', '.claude/skills/');
+Grep('proposed-name', '.claude/workflows/');
 
 // 3. Check capability overlaps
 // Read similar artifacts and compare capabilities section
@@ -208,10 +223,11 @@ Grep("proposed-name", ".claude/workflows/");
 // 4. Verify naming conventions
 // Pattern: [a-z][a-z0-9-]* (kebab-case, lowercase)
 const namePattern = /^[a-z][a-z0-9-]*$/;
-const isValidName = namePattern.test("proposed-name");
+const isValidName = namePattern.test('proposed-name');
 ```
 
 **Exit Conditions** (ALL required):
+
 - [ ] No naming conflicts with existing artifacts
 - [ ] No capability conflicts that would cause routing ambiguity
 - [ ] Name follows ecosystem conventions (`[a-z][a-z0-9-]*`)
@@ -219,26 +235,28 @@ const isValidName = namePattern.test("proposed-name");
 
 **Naming Conventions**:
 
-| Artifact | Convention | Example | Regex |
-|----------|------------|---------|-------|
-| Agent | `<domain>-<role>` | `mobile-ux-reviewer`, `data-engineer` | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
-| Skill | `<verb>-<object>` or `<domain>` | `code-analyzer`, `tdd`, `github-mcp` | `^[a-z]+(-[a-z]+)*$` |
-| Workflow | `<process>-workflow` | `feature-development-workflow` | `^[a-z]+-workflow$` |
-| Hook | `<trigger>-<action>` | `pre-commit-validator`, `security-guard` | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
-| Schema | `<artifact>-schema` | `agent-schema`, `skill-schema` | `^[a-z]+-schema$` |
+| Artifact | Convention                      | Example                                  | Regex                       |
+| -------- | ------------------------------- | ---------------------------------------- | --------------------------- |
+| Agent    | `<domain>-<role>`               | `mobile-ux-reviewer`, `data-engineer`    | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
+| Skill    | `<verb>-<object>` or `<domain>` | `code-analyzer`, `tdd`, `github-mcp`     | `^[a-z]+(-[a-z]+)*$`        |
+| Workflow | `<process>-workflow`            | `feature-development-workflow`           | `^[a-z]+-workflow$`         |
+| Hook     | `<trigger>-<action>`            | `pre-commit-validator`, `security-guard` | `^[a-z]+-[a-z]+(-[a-z]+)*$` |
+| Schema   | `<artifact>-schema`             | `agent-schema`, `skill-schema`           | `^[a-z]+-schema$`           |
 
 **Failure Mode**:
+
 - If naming conflict: ABORT or propose alternative name
 - If capability conflict: ABORT and recommend enhancing existing artifact
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 2 validation
 const gate2 = {
-  noNamingConflicts: true,       // Grep returned no matches
-  noCapabilityOverlap: true,     // No routing ambiguity
-  conventionCompliant: true,     // Name matches pattern
-  uniqueInEcosystem: true        // Not a duplicate
+  noNamingConflicts: true, // Grep returned no matches
+  noCapabilityOverlap: true, // No routing ambiguity
+  conventionCompliant: true, // Name matches pattern
+  uniqueInEcosystem: true, // Not a duplicate
 };
 const gate2Passed = Object.values(gate2).every(v => v === true);
 ```
@@ -255,6 +273,7 @@ const gate2Passed = Object.values(gate2).every(v => v === true);
 **State**: `OBTAINING`
 
 **Entry Conditions**:
+
 - Phase 2 gates passed
 - Evolution state is `VALIDATING` with `gatePassed: true`
 
@@ -262,13 +281,13 @@ const gate2Passed = Object.values(gate2).every(v => v === true);
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "obtaining",
-  currentEvolution: { phase: "obtain" }
+Edit('.claude/context/evolution-state.json', {
+  state: 'obtaining',
+  currentEvolution: { phase: 'obtain' },
 });
 
 // 2. INVOKE research-synthesis skill (MANDATORY)
-Skill({ skill: "research-synthesis" });
+Skill({ skill: 'research-synthesis' });
 
 // The skill will execute:
 // - Minimum 3 Exa/WebSearch queries
@@ -278,14 +297,15 @@ Skill({ skill: "research-synthesis" });
 
 **Research Protocol** (from research-synthesis skill):
 
-| Query # | Purpose | Example |
-|---------|---------|---------|
-| 1 | Best practices for artifact type in domain | "GraphQL schema validation best practices 2025" |
-| 2 | Implementation patterns and real-world examples | "GraphQL schema validator implementation patterns" |
-| 3 | Claude/AI agent specific patterns | "AI agent GraphQL review automation" |
-| 4+ | Additional domain-specific research | Custom queries as needed |
+| Query # | Purpose                                         | Example                                            |
+| ------- | ----------------------------------------------- | -------------------------------------------------- |
+| 1       | Best practices for artifact type in domain      | "GraphQL schema validation best practices 2025"    |
+| 2       | Implementation patterns and real-world examples | "GraphQL schema validator implementation patterns" |
+| 3       | Claude/AI agent specific patterns               | "AI agent GraphQL review automation"               |
+| 4+      | Additional domain-specific research             | Custom queries as needed                           |
 
 **Codebase Analysis** (MANDATORY):
+
 - Examine 2+ similar artifacts in ecosystem
 - Document patterns used in existing artifacts
 - Note any established conventions
@@ -293,6 +313,7 @@ Skill({ skill: "research-synthesis" });
 **Research Report Location**: `.claude/context/artifacts/research-reports/<artifact-name>-research.md`
 
 **Exit Conditions** (ALL required):
+
 - [ ] Minimum 3 research queries executed (with evidence in report)
 - [ ] Minimum 3 external sources consulted (URLs documented)
 - [ ] Existing codebase patterns documented (2+ similar artifacts analyzed)
@@ -301,20 +322,22 @@ Skill({ skill: "research-synthesis" });
 - [ ] Risk assessment completed with mitigations
 
 **Failure Mode**:
+
 - CANNOT PROCEED without completing research
 - Hook `research-enforcement.cjs` blocks Phase 4 entry
 - Must complete all research requirements before advancing
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 3 validation - STRICT ENFORCEMENT
 const gate3 = {
-  queriesExecuted: 3,            // Minimum 3 queries
-  sourcesConsulted: 3,           // Minimum 3 external sources
+  queriesExecuted: 3, // Minimum 3 queries
+  sourcesConsulted: 3, // Minimum 3 external sources
   codebasePatternsDocumented: 2, // Minimum 2 similar artifacts analyzed
-  researchReportExists: true,    // Report saved to correct location
+  researchReportExists: true, // Report saved to correct location
   designDecisionsDocumented: true, // Each decision has rationale + source
-  riskAssessmentCompleted: true  // Risks identified with mitigations
+  riskAssessmentCompleted: true, // Risks identified with mitigations
 };
 const gate3Passed =
   gate3.queriesExecuted >= 3 &&
@@ -334,6 +357,7 @@ const gate3Passed =
 **State**: `LOCKING`
 
 **Entry Conditions**:
+
 - Phase 3 gates passed
 - Research report exists at correct location
 - Evolution state is `OBTAINING` with `gatePassed: true`
@@ -342,30 +366,30 @@ const gate3Passed =
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "locking",
-  currentEvolution: { phase: "lock" }
+Edit('.claude/context/evolution-state.json', {
+  state: 'locking',
+  currentEvolution: { phase: 'lock' },
 });
 
 // 2. Invoke the appropriate creator skill
 switch (artifactType) {
-  case "agent":
-    Skill({ skill: "agent-creator" });
+  case 'agent':
+    Skill({ skill: 'agent-creator' });
     break;
-  case "skill":
-    Skill({ skill: "skill-creator" });
+  case 'skill':
+    Skill({ skill: 'skill-creator' });
     break;
-  case "workflow":
-    Skill({ skill: "workflow-creator" });
+  case 'workflow':
+    Skill({ skill: 'workflow-creator' });
     break;
-  case "hook":
-    Skill({ skill: "hook-creator" });
+  case 'hook':
+    Skill({ skill: 'hook-creator' });
     break;
-  case "schema":
-    Skill({ skill: "schema-creator" });
+  case 'schema':
+    Skill({ skill: 'schema-creator' });
     break;
-  case "template":
-    Skill({ skill: "template-creator" });
+  case 'template':
+    Skill({ skill: 'template-creator' });
     break;
 }
 
@@ -378,16 +402,17 @@ switch (artifactType) {
 
 **Artifact Locations**:
 
-| Artifact | Location Pattern |
-|----------|------------------|
-| Agent | `.claude/agents/<category>/<name>.md` |
-| Skill | `.claude/skills/<name>/SKILL.md` |
+| Artifact | Location Pattern                         |
+| -------- | ---------------------------------------- |
+| Agent    | `.claude/agents/<category>/<name>.md`    |
+| Skill    | `.claude/skills/<name>/SKILL.md`         |
 | Workflow | `.claude/workflows/<category>/<name>.md` |
-| Hook | `.claude/hooks/<category>/<name>.cjs` |
-| Schema | `.claude/schemas/<name>.json` |
-| Template | `.claude/templates/<name>.md` |
+| Hook     | `.claude/hooks/<category>/<name>.cjs`    |
+| Schema   | `.claude/schemas/<name>.json`            |
+| Template | `.claude/templates/<name>.md`            |
 
 **Exit Conditions** (ALL required):
+
 - [ ] Artifact file created at correct location
 - [ ] YAML frontmatter passes schema validation
 - [ ] All required fields present (see creator skill for specific requirements)
@@ -398,32 +423,34 @@ switch (artifactType) {
 
 **Required Sections for Agents**:
 
-| Section | Required Content |
-|---------|------------------|
-| Core Persona | Identity, Style, Approach, Values |
-| Responsibilities | At least 3 numbered items |
-| Workflow | Step 0 (Load Skills) + numbered execution steps |
-| Task Progress Protocol | Iron Laws + code examples |
-| Memory Protocol | Before/After/During sections |
+| Section                | Required Content                                |
+| ---------------------- | ----------------------------------------------- |
+| Core Persona           | Identity, Style, Approach, Values               |
+| Responsibilities       | At least 3 numbered items                       |
+| Workflow               | Step 0 (Load Skills) + numbered execution steps |
+| Task Progress Protocol | Iron Laws + code examples                       |
+| Memory Protocol        | Before/After/During sections                    |
 
 **Failure Mode**:
+
 - If schema validation fails: RETRY with fixes
 - If required fields missing: RETRY with additions
 - Maximum 3 retries before ABORT
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 4 validation
 const gate4 = {
-  artifactExists: true,          // File at correct location
-  schemaValidation: "passed",    // YAML frontmatter valid
-  requiredFieldsComplete: true,  // All required fields present
-  taskToolsPresent: true,        // TaskUpdate, TaskList, etc. in tools
-  taskManagementProtocol: true,  // In skills array
-  memoryProtocolSection: true,   // Section exists in body
-  taskProgressSection: true      // Section exists in body
+  artifactExists: true, // File at correct location
+  schemaValidation: 'passed', // YAML frontmatter valid
+  requiredFieldsComplete: true, // All required fields present
+  taskToolsPresent: true, // TaskUpdate, TaskList, etc. in tools
+  taskManagementProtocol: true, // In skills array
+  memoryProtocolSection: true, // Section exists in body
+  taskProgressSection: true, // Section exists in body
 };
-const gate4Passed = Object.values(gate4).every(v => v === true || v === "passed");
+const gate4Passed = Object.values(gate4).every(v => v === true || v === 'passed');
 ```
 
 ---
@@ -435,6 +462,7 @@ const gate4Passed = Object.values(gate4).every(v => v === true || v === "passed"
 **State**: `VERIFYING`
 
 **Entry Conditions**:
+
 - Phase 4 gates passed
 - Artifact exists and is schema-valid
 - Evolution state is `LOCKING` with `gatePassed: true`
@@ -443,23 +471,23 @@ const gate4Passed = Object.values(gate4).every(v => v === true || v === "passed"
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "verifying",
-  currentEvolution: { phase: "verify" }
+Edit('.claude/context/evolution-state.json', {
+  state: 'verifying',
+  currentEvolution: { phase: 'verify' },
 });
 
 // 2. Read the created artifact
-Read("created-artifact-path");
+Read('created-artifact-path');
 
 // 3. Check for placeholder content
 const placeholderPatterns = [
-  "TODO",
-  "TBD",
-  "[FILL IN]",
-  "...",
-  "<fill-in>",
-  "[placeholder]",
-  "FIXME"
+  'TODO',
+  'TBD',
+  '[FILL IN]',
+  '...',
+  '<fill-in>',
+  '[placeholder]',
+  'FIXME',
 ];
 // Grep for each pattern - any match = FAIL
 
@@ -467,7 +495,7 @@ const placeholderPatterns = [
 // Check that code examples are complete, not pseudo-code
 
 // 5. For agents, verify assigned skills exist
-Glob(".claude/skills/*/SKILL.md");
+Glob('.claude/skills/*/SKILL.md');
 // Compare against agent's skills array
 
 // 6. Run validation tools
@@ -476,27 +504,28 @@ Bash("node .claude/tools/validate-agents.mjs 2>&1 | grep '<agent-name>'");
 
 **Verification Checklist**:
 
-| Check | Criteria | Failure Action |
-|-------|----------|----------------|
-| Placeholders | No TODO, TBD, FIXME, etc. | Return to LOCK |
-| Task Progress Protocol | Complete with Iron Laws | Return to LOCK |
-| Memory Protocol | All sections present | Return to LOCK |
-| Assigned Skills | All exist in `.claude/skills/` | Return to LOCK or remove skill |
-| Referenced Tools | All are valid Claude tools | Return to LOCK |
-| Examples | Complete and executable | Return to LOCK |
-| Documentation | Explains when/why to use | Return to LOCK |
+| Check                  | Criteria                       | Failure Action                 |
+| ---------------------- | ------------------------------ | ------------------------------ |
+| Placeholders           | No TODO, TBD, FIXME, etc.      | Return to LOCK                 |
+| Task Progress Protocol | Complete with Iron Laws        | Return to LOCK                 |
+| Memory Protocol        | All sections present           | Return to LOCK                 |
+| Assigned Skills        | All exist in `.claude/skills/` | Return to LOCK or remove skill |
+| Referenced Tools       | All are valid Claude tools     | Return to LOCK                 |
+| Examples               | Complete and executable        | Return to LOCK                 |
+| Documentation          | Explains when/why to use       | Return to LOCK                 |
 
 **Quality Standards**:
 
-| Section | Minimum Requirement |
-|---------|---------------------|
-| Core Persona | 4 fields: Identity, Style, Approach, Values |
-| Responsibilities | At least 3 numbered items |
-| Workflow | Step 0 + at least 3 execution steps |
-| Task Progress Protocol | Iron Laws + 2 code examples |
-| Memory Protocol | Before/After/During sections |
+| Section                | Minimum Requirement                         |
+| ---------------------- | ------------------------------------------- |
+| Core Persona           | 4 fields: Identity, Style, Approach, Values |
+| Responsibilities       | At least 3 numbered items                   |
+| Workflow               | Step 0 + at least 3 execution steps         |
+| Task Progress Protocol | Iron Laws + 2 code examples                 |
+| Memory Protocol        | Before/After/During sections                |
 
 **Exit Conditions** (ALL required):
+
 - [ ] All sections complete (no placeholders)
 - [ ] Task Progress Protocol complete with Iron Laws
 - [ ] Memory Protocol complete with file paths
@@ -506,21 +535,23 @@ Bash("node .claude/tools/validate-agents.mjs 2>&1 | grep '<agent-name>'");
 - [ ] Documentation is comprehensive
 
 **Failure Mode**:
+
 - If quality issues found: RETURN to LOCK for fixes
 - Document specific issues for fix iteration
 - Maximum 5 fix iterations before ABORT
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 5 validation
 const gate5 = {
-  noPlaceholders: true,           // No TODO, TBD, etc.
-  taskProtocolComplete: true,     // Iron Laws + examples
-  memoryProtocolComplete: true,   // All sections present
-  skillsValid: true,              // All assigned skills exist
-  toolsValid: true,               // All tools are real
-  examplesComplete: true,         // No pseudo-code
-  documentationComplete: true     // When/why documented
+  noPlaceholders: true, // No TODO, TBD, etc.
+  taskProtocolComplete: true, // Iron Laws + examples
+  memoryProtocolComplete: true, // All sections present
+  skillsValid: true, // All assigned skills exist
+  toolsValid: true, // All tools are real
+  examplesComplete: true, // No pseudo-code
+  documentationComplete: true, // When/why documented
 };
 const gate5Passed = Object.values(gate5).every(v => v === true);
 ```
@@ -534,6 +565,7 @@ const gate5Passed = Object.values(gate5).every(v => v === true);
 **State**: `ENABLING`
 
 **Entry Conditions**:
+
 - Phase 5 gates passed
 - Artifact verified and quality-approved
 - Evolution state is `VERIFYING` with `gatePassed: true`
@@ -542,17 +574,17 @@ const gate5Passed = Object.values(gate5).every(v => v === true);
 
 ```javascript
 // 1. Update evolution state
-Edit(".claude/context/evolution-state.json", {
-  state: "enabling",
-  currentEvolution: { phase: "enable" }
+Edit('.claude/context/evolution-state.json', {
+  state: 'enabling',
+  currentEvolution: { phase: 'enable' },
 });
 
 // 2. Update CLAUDE.md routing table (for agents)
-if (artifactType === "agent") {
-  Edit(".claude/CLAUDE.md", {
+if (artifactType === 'agent') {
+  Edit('.claude/CLAUDE.md', {
     // Add to routing table in Section 3
-    old_string: "| System routing",
-    new_string: `| ${requestType} | \`${agentName}\` | \`.claude/agents/${category}/${agentName}.md\` |\n| System routing`
+    old_string: '| System routing',
+    new_string: `| ${requestType} | \`${agentName}\` | \`.claude/agents/${category}/${agentName}.md\` |\n| System routing`,
   });
 
   // Verify update
@@ -560,34 +592,37 @@ if (artifactType === "agent") {
 }
 
 // 3. Update skill catalog (for skills)
-if (artifactType === "skill") {
-  Edit(".claude/context/artifacts/skill-catalog.md", "new skill entry");
+if (artifactType === 'skill') {
+  Edit('.claude/context/artifacts/skill-catalog.md', 'new skill entry');
 }
 
 // 4. Update workflow table (for workflows)
-if (artifactType === "workflow") {
-  Edit(".claude/CLAUDE.md", {
+if (artifactType === 'workflow') {
+  Edit('.claude/CLAUDE.md', {
     // Add to Section 8.6 Enterprise Workflows
   });
 }
 
 // 5. Record in evolution state history
-Edit(".claude/context/evolution-state.json", {
-  state: "idle",
+Edit('.claude/context/evolution-state.json', {
+  state: 'idle',
   currentEvolution: null,
-  evolutions: [...existingEvolutions, {
-    type: artifactType,
-    name: artifactName,
-    path: artifactPath,
-    completedAt: new Date().toISOString(),
-    researchReport: researchReportPath,
-    registrations: ["CLAUDE.md", "other-registrations"]
-  }]
+  evolutions: [
+    ...existingEvolutions,
+    {
+      type: artifactType,
+      name: artifactName,
+      path: artifactPath,
+      completedAt: new Date().toISOString(),
+      researchReport: researchReportPath,
+      registrations: ['CLAUDE.md', 'other-registrations'],
+    },
+  ],
 });
 
 // 6. Record in memory files
-Edit(".claude/context/memory/learnings.md", "evolution record");
-Edit(".claude/context/memory/decisions.md", "ADR for design decisions");
+Edit('.claude/context/memory/learnings.md', 'evolution record');
+Edit('.claude/context/memory/decisions.md', 'ADR for design decisions');
 ```
 
 **Post-Enable Verification**:
@@ -604,6 +639,7 @@ grep "<workflow-name>" .claude/CLAUDE.md || echo "FAILED: Not in workflow table"
 ```
 
 **Exit Conditions** (ALL required):
+
 - [ ] CLAUDE.md routing table updated (if agent)
 - [ ] Skill catalog updated (if skill)
 - [ ] Workflow table updated (if workflow)
@@ -612,20 +648,22 @@ grep "<workflow-name>" .claude/CLAUDE.md || echo "FAILED: Not in workflow table"
 - [ ] Artifact is discoverable by Router (grep verification passes)
 
 **Failure Mode**:
+
 - If CLAUDE.md update fails: ROLLBACK and retry
 - If verification fails: Fix registration and re-verify
 - Never leave artifact unregistered (invisible to Router)
 
 **Gate Validation Script**:
+
 ```javascript
 // Gate 6 validation
 const gate6 = {
-  claudeMdUpdated: true,         // Routing/workflow table updated
-  catalogUpdated: true,          // Skill catalog if skill
-  evolutionStateUpdated: true,   // History recorded
-  learningsRecorded: true,       // learnings.md updated
-  decisionsRecorded: true,       // decisions.md updated
-  discoverableByRouter: true     // grep verification passes
+  claudeMdUpdated: true, // Routing/workflow table updated
+  catalogUpdated: true, // Skill catalog if skill
+  evolutionStateUpdated: true, // History recorded
+  learningsRecorded: true, // learnings.md updated
+  decisionsRecorded: true, // decisions.md updated
+  discoverableByRouter: true, // grep verification passes
 };
 const gate6Passed = Object.values(gate6).every(v => v === true);
 ```
@@ -634,41 +672,42 @@ const gate6Passed = Object.values(gate6).every(v => v === true);
 
 ## Enforcement Hooks
 
-| Hook | Phase | Type | Trigger | Action |
-|------|-------|------|---------|--------|
-| `evolution-trigger-detector.cjs` | IDLE→EVALUATE | PostToolUse | Detects evolution keywords | Initiates EVOLVE workflow |
-| `conflict-detector.cjs` | VALIDATE | PreToolUse | Before creator skill invocation | Blocks if naming/capability conflict |
-| `research-enforcement.cjs` | OBTAIN→LOCK | PreToolUse | Before Write/Edit for artifacts | Blocks creation without research report |
-| `evolution-state-guard.cjs` | ALL | PreToolUse | Any phase transition | Enforces state machine, prevents skipping |
-| `quality-gate-validator.cjs` | VERIFY | PreToolUse | Before ENABLE transition | Blocks incomplete/placeholder artifacts |
-| `evolution-audit.cjs` | ENABLE | PostToolUse | After deployment | Logs all evolutions, verifies registration |
+| Hook                             | Phase         | Type        | Trigger                         | Action                                     |
+| -------------------------------- | ------------- | ----------- | ------------------------------- | ------------------------------------------ |
+| `evolution-trigger-detector.cjs` | IDLE→EVALUATE | PostToolUse | Detects evolution keywords      | Initiates EVOLVE workflow                  |
+| `conflict-detector.cjs`          | VALIDATE      | PreToolUse  | Before creator skill invocation | Blocks if naming/capability conflict       |
+| `research-enforcement.cjs`       | OBTAIN→LOCK   | PreToolUse  | Before Write/Edit for artifacts | Blocks creation without research report    |
+| `evolution-state-guard.cjs`      | ALL           | PreToolUse  | Any phase transition            | Enforces state machine, prevents skipping  |
+| `quality-gate-validator.cjs`     | VERIFY        | PreToolUse  | Before ENABLE transition        | Blocks incomplete/placeholder artifacts    |
+| `evolution-audit.cjs`            | ENABLE        | PostToolUse | After deployment                | Logs all evolutions, verifies registration |
 
 ### Hook Implementation Pattern
 
 ```javascript
 // research-enforcement.cjs (example)
 module.exports = {
-  name: "research-enforcement",
-  triggers: ["PreToolUse"],
-  tools: ["Write", "Edit"],
+  name: 'research-enforcement',
+  triggers: ['PreToolUse'],
+  tools: ['Write', 'Edit'],
 
   async handler(context) {
     const { tool, input } = context;
 
     // Check if creating artifact file
-    const artifactPaths = [".claude/agents/", ".claude/skills/", ".claude/workflows/"];
+    const artifactPaths = ['.claude/agents/', '.claude/skills/', '.claude/workflows/'];
     const isArtifactCreation = artifactPaths.some(p => input.file_path?.includes(p));
 
     if (!isArtifactCreation) return { allow: true };
 
     // Check evolution state
-    const state = JSON.parse(fs.readFileSync(".claude/context/evolution-state.json"));
+    const state = JSON.parse(fs.readFileSync('.claude/context/evolution-state.json'));
 
     // Verify research completed
-    if (state.state !== "locking" || !state.currentEvolution?.researchReport) {
+    if (state.state !== 'locking' || !state.currentEvolution?.researchReport) {
       return {
         allow: false,
-        error: "BLOCKED: Cannot create artifact without completing OBTAIN phase. Research report required."
+        error:
+          'BLOCKED: Cannot create artifact without completing OBTAIN phase. Research report required.',
       };
     }
 
@@ -676,12 +715,12 @@ module.exports = {
     if (!fs.existsSync(state.currentEvolution.researchReport)) {
       return {
         allow: false,
-        error: `BLOCKED: Research report not found at ${state.currentEvolution.researchReport}`
+        error: `BLOCKED: Research report not found at ${state.currentEvolution.researchReport}`,
       };
     }
 
     return { allow: true };
-  }
+  },
 };
 ```
 
@@ -765,6 +804,7 @@ These rules are INVIOLABLE. Violations break the workflow.
 **User Request**: "I need an agent to review GraphQL schemas"
 
 **Router Analysis**:
+
 ```
 [ROUTER] Analyzing: "I need an agent to review GraphQL schemas"
 - Intent: Capability gap
@@ -777,6 +817,7 @@ These rules are INVIOLABLE. Violations break the workflow.
 ```
 
 **Router Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'evolution-orchestrator',
@@ -801,7 +842,7 @@ Create agent for: "GraphQL schema review"
 1. Read .claude/context/memory/learnings.md first
 2. Update evolution-state.json at every phase transition
 3. Record decisions to .claude/context/memory/decisions.md
-`
+`,
 });
 ```
 
@@ -876,14 +917,14 @@ Research: .claude/context/artifacts/research-reports/graphql-schema-reviewer-res
 
 ### If Phase Fails
 
-| Phase | Failure | Recovery |
-|-------|---------|----------|
+| Phase    | Failure                 | Recovery                           |
+| -------- | ----------------------- | ---------------------------------- |
 | EVALUATE | Existing solution found | ABORT, recommend existing artifact |
-| VALIDATE | Naming conflict | ABORT or propose alternative name |
-| OBTAIN | Research incomplete | STAY in OBTAIN, complete queries |
-| LOCK | Schema validation fails | RETRY with fixes (max 3 attempts) |
-| VERIFY | Quality issues found | RETURN to LOCK, fix issues |
-| ENABLE | Registration fails | RETRY registration, verify grep |
+| VALIDATE | Naming conflict         | ABORT or propose alternative name  |
+| OBTAIN   | Research incomplete     | STAY in OBTAIN, complete queries   |
+| LOCK     | Schema validation fails | RETRY with fixes (max 3 attempts)  |
+| VERIFY   | Quality issues found    | RETURN to LOCK, fix issues         |
+| ENABLE   | Registration fails      | RETRY registration, verify grep    |
 
 ### State Recovery Protocol
 
@@ -891,9 +932,9 @@ If evolution is interrupted (context reset, error):
 
 ```javascript
 // 1. Check evolution state
-const state = JSON.parse(fs.readFileSync(".claude/context/evolution-state.json"));
+const state = JSON.parse(fs.readFileSync('.claude/context/evolution-state.json'));
 
-if (state.state !== "idle" && state.currentEvolution) {
+if (state.state !== 'idle' && state.currentEvolution) {
   // 2. Resume from current phase
   const currentPhase = state.currentEvolution.phase;
 
@@ -924,6 +965,7 @@ When state is `BLOCKED`:
 ```
 
 Resolution:
+
 1. Read `blockedReason` and `recommendedAction`
 2. Take recommended action (use existing, rename, abort)
 3. Update state to continue or abort
@@ -934,23 +976,23 @@ Resolution:
 
 This workflow integrates with:
 
-| Workflow | Integration Point |
-|----------|-------------------|
-| Router Decision | Router triggers EVOLVE when capability gap detected |
-| Artifact Lifecycle | EVOLVE is specialized lifecycle for new artifacts |
-| External Integration | External artifacts may trigger evolution needs |
+| Workflow             | Integration Point                                   |
+| -------------------- | --------------------------------------------------- |
+| Router Decision      | Router triggers EVOLVE when capability gap detected |
+| Artifact Lifecycle   | EVOLVE is specialized lifecycle for new artifacts   |
+| External Integration | External artifacts may trigger evolution needs      |
 
 **Related Skills**:
 
-| Skill | Used In Phase |
-|-------|---------------|
+| Skill                | Used In Phase      |
+| -------------------- | ------------------ |
 | `research-synthesis` | OBTAIN (MANDATORY) |
-| `agent-creator` | LOCK |
-| `skill-creator` | LOCK |
-| `workflow-creator` | LOCK |
-| `hook-creator` | LOCK |
-| `schema-creator` | LOCK |
-| `template-creator` | LOCK |
+| `agent-creator`      | LOCK               |
+| `skill-creator`      | LOCK               |
+| `workflow-creator`   | LOCK               |
+| `hook-creator`       | LOCK               |
+| `schema-creator`     | LOCK               |
+| `template-creator`   | LOCK               |
 
 ---
 

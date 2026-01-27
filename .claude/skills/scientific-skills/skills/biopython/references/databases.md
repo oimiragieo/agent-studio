@@ -29,6 +29,7 @@ Entrez.api_key = "your_api_key_here"
 ### Rate Limiting
 
 Biopython automatically respects NCBI rate limits:
+
 - **Without API key**: 3 requests per second
 - **With API key**: 10 requests per second
 
@@ -125,15 +126,18 @@ print(record.description)
 Different databases support different return types:
 
 **Nucleotide/Protein:**
+
 - `rettype="fasta"` - FASTA format
 - `rettype="gb"` or `"genbank"` - GenBank format
 - `rettype="gp"` - GenPept format (proteins)
 
 **PubMed:**
+
 - `rettype="medline"` - MEDLINE format
 - `rettype="abstract"` - Abstract text
 
 **Common modes:**
+
 - `retmode="text"` - Plain text
 - `retmode="xml"` - XML format
 

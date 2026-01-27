@@ -7,6 +7,7 @@
 ## Executive Summary
 
 This plan outlines a comprehensive 9-phase analysis of the `.claude` framework to identify:
+
 - Security vulnerabilities (3 OPEN issues + new discoveries)
 - Code quality issues and bugs
 - Pointer gaps (missing agent-skill-workflow connections)
@@ -15,51 +16,55 @@ This plan outlines a comprehensive 9-phase analysis of the `.claude` framework t
 
 ## Scope Summary
 
-| Category | Directory | Files | Key Components |
-|----------|-----------|-------|----------------|
-| **Hooks** | `.claude/hooks/` | ~50 files | routing (25), safety (9), memory (8), reflection (6), evolution (12), self-healing (6), session (1) |
-| **Libraries** | `.claude/lib/` | ~30 files | memory (10), workflow (18), integration (3), utils (6), self-healing (6), context (2) |
-| **Tools** | `.claude/tools/` | ~20 items | cli (5), analysis (4 dirs), runtime (3 dirs), optimization (2 dirs), visualization (2 dirs), integrations (4 dirs) |
-| **Agents** | `.claude/agents/` | ~45 agents | core, domain, specialized, orchestrators |
-| **Skills** | `.claude/skills/` | 280+ skills | Various categories |
-| **Workflows** | `.claude/workflows/` | ~15 workflows | core, enterprise, operations, creators |
-| **Schemas** | `.claude/schemas/` | 13 schemas | Validation for agents, skills, hooks, workflows, etc. |
+| Category      | Directory            | Files         | Key Components                                                                                                     |
+| ------------- | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Hooks**     | `.claude/hooks/`     | ~50 files     | routing (25), safety (9), memory (8), reflection (6), evolution (12), self-healing (6), session (1)                |
+| **Libraries** | `.claude/lib/`       | ~30 files     | memory (10), workflow (18), integration (3), utils (6), self-healing (6), context (2)                              |
+| **Tools**     | `.claude/tools/`     | ~20 items     | cli (5), analysis (4 dirs), runtime (3 dirs), optimization (2 dirs), visualization (2 dirs), integrations (4 dirs) |
+| **Agents**    | `.claude/agents/`    | ~45 agents    | core, domain, specialized, orchestrators                                                                           |
+| **Skills**    | `.claude/skills/`    | 280+ skills   | Various categories                                                                                                 |
+| **Workflows** | `.claude/workflows/` | ~15 workflows | core, enterprise, operations, creators                                                                             |
+| **Schemas**   | `.claude/schemas/`   | 13 schemas    | Validation for agents, skills, hooks, workflows, etc.                                                              |
 
 ## Known Issues (Pre-existing)
 
 ### OPEN Security Issues (P0)
-| ID | Severity | Description |
-|----|----------|-------------|
-| SEC-008 | High | Security hooks fail-open on errors |
-| SEC-009 | High | execSync command injection risk |
-| SEC-010 | High | Environment variable security overrides |
+
+| ID      | Severity | Description                             |
+| ------- | -------- | --------------------------------------- |
+| SEC-008 | High     | Security hooks fail-open on errors      |
+| SEC-009 | High     | execSync command injection risk         |
+| SEC-010 | High     | Environment variable security overrides |
 
 ### Other Open Issues
-| ID | Severity | Description |
-|----|----------|-------------|
-| TEST-001 | Medium | Broken npm test command (references non-existent file) |
-| WF-001 | High | Phase 6 rollback assumes uncommitted changes |
-| WF-002 | High | Version comparison logic unspecified |
-| WF-003 | Medium | Related workflows reference non-existent files |
+
+| ID       | Severity | Description                                            |
+| -------- | -------- | ------------------------------------------------------ |
+| TEST-001 | Medium   | Broken npm test command (references non-existent file) |
+| WF-001   | High     | Phase 6 rollback assumes uncommitted changes           |
+| WF-002   | High     | Version comparison logic unspecified                   |
+| WF-003   | Medium   | Related workflows reference non-existent files         |
 
 ## Phase Breakdown
 
 ### Phase 1: Security Deep Dive (Task #2)
+
 **Priority**: P0 (Immediate)
 **Status**: Pending
 **Blocked By**: None
 
 **Objective**: Remediate 3 OPEN security issues
 
-| Issue | Files | Fix Strategy |
-|-------|-------|--------------|
-| SEC-008 | task-create-guard.cjs, loop-prevention.cjs, auto-rerouter.cjs | Change fail-open to fail-closed |
-| SEC-009 | swarm-coordination.cjs, format-memory.cjs, create.cjs | Replace execSync with spawn() |
-| SEC-010 | file-placement-guard.cjs, router-write-guard.cjs, task-create-guard.cjs | Add audit logging |
+| Issue   | Files                                                                   | Fix Strategy                    |
+| ------- | ----------------------------------------------------------------------- | ------------------------------- |
+| SEC-008 | task-create-guard.cjs, loop-prevention.cjs, auto-rerouter.cjs           | Change fail-open to fail-closed |
+| SEC-009 | swarm-coordination.cjs, format-memory.cjs, create.cjs                   | Replace execSync with spawn()   |
+| SEC-010 | file-placement-guard.cjs, router-write-guard.cjs, task-create-guard.cjs | Add audit logging               |
 
 **Agent Assignment**: SECURITY-ARCHITECT (primary), CODE-REVIEWER (secondary)
 
 **Deliverables**:
+
 1. Security analysis report
 2. Remediation code changes
 3. Test coverage for fixes
@@ -68,11 +73,13 @@ This plan outlines a comprehensive 9-phase analysis of the `.claude` framework t
 ---
 
 ### Phase 2: Hook Code Quality Audit (Task #3)
+
 **Priority**: P1
 **Status**: Pending
 **Blocked By**: Phase 1
 
 **Directories to Analyze**:
+
 ```
 hooks/
 ├── routing/   (25 files - 12 hooks, 13 tests)
@@ -85,6 +92,7 @@ hooks/
 ```
 
 **Review Criteria**:
+
 - [ ] Error handling patterns (fail-open vs fail-closed)
 - [ ] Input validation completeness
 - [ ] State file integrity protection
@@ -100,11 +108,13 @@ hooks/
 ---
 
 ### Phase 3: Library Code Quality Audit (Task #4)
+
 **Priority**: P1
 **Status**: Pending
 **Blocked By**: Phase 1
 
 **Directories to Analyze**:
+
 ```
 lib/
 ├── memory/      (10 files - manager, scheduler, tiers, dashboard, pruner)
@@ -116,6 +126,7 @@ lib/
 ```
 
 **Review Criteria**:
+
 - [ ] API contract consistency
 - [ ] Error propagation patterns
 - [ ] Memory leaks
@@ -130,11 +141,13 @@ lib/
 ---
 
 ### Phase 4: Pointer Gap Analysis (Task #5)
+
 **Priority**: P2
 **Status**: Pending
 **Blocked By**: Phases 2, 3
 
 **Analysis Areas**:
+
 1. **Agent-to-Skill Mapping**
    - Cross-reference agent-skill-matrix.json
    - Verify skill invocation protocols
@@ -159,11 +172,13 @@ lib/
 ---
 
 ### Phase 5: Tools and CLI Quality Audit (Task #7)
+
 **Priority**: P2
 **Status**: Pending
 **Blocked By**: Phases 2, 3
 
 **Directories to Analyze**:
+
 ```
 tools/
 ├── cli/           (5 files)
@@ -179,11 +194,13 @@ tools/
 ---
 
 ### Phase 6: Performance Optimization Analysis (Task #6)
+
 **Priority**: P2
 **Status**: Pending
 **Blocked By**: Phases 2, 3
 
 **Analysis Areas**:
+
 1. Hook execution latency
 2. File I/O patterns
 3. JSON parsing overhead
@@ -191,6 +208,7 @@ tools/
 5. Token optimization
 
 **Key Files to Profile**:
+
 - router-state.cjs (high frequency)
 - memory-manager.cjs (I/O heavy)
 - workflow-engine.cjs (complex logic)
@@ -201,17 +219,20 @@ tools/
 ---
 
 ### Phase 7: Process Enhancement (Task #8)
+
 **Priority**: P3
 **Status**: Pending
 **Blocked By**: Phase 4
 
 **Workflow Analysis**:
+
 - Core workflows (router-decision, evolution, skill-lifecycle)
 - Enterprise workflows (feature-development, c4-architecture)
 - Operations workflows (incident-response)
 - Creator workflows
 
 **Process Improvements**:
+
 - Task handoff patterns
 - Error recovery procedures
 - Memory protocol compliance
@@ -222,11 +243,13 @@ tools/
 ---
 
 ### Phase 8: Test Infrastructure Fix (Task #10)
+
 **Priority**: P2
 **Status**: Pending
 **Blocked By**: Phases 1, 2, 3
 
 **Issues to Fix**:
+
 1. Broken npm test command
 2. Test parallelization verification
 3. Test coverage gaps
@@ -236,11 +259,13 @@ tools/
 ---
 
 ### Phase 9: Final Report (Task #9)
+
 **Priority**: P3
 **Status**: Pending
 **Blocked By**: All phases (1-8)
 
 **Report Sections**:
+
 1. Executive Summary
 2. Security Findings
 3. Code Quality Findings
@@ -249,6 +274,7 @@ tools/
 6. Process Findings
 
 **Roadmap Format**:
+
 - P0: Security Critical
 - P1: Bugs causing failures
 - P2: Quality improvements
@@ -302,28 +328,28 @@ tools/
 
 ## Parallel Execution Opportunities
 
-| Wave | Phases | Prerequisites |
-|------|--------|---------------|
-| Wave 1 | Phase 1 | None |
-| Wave 2 | Phases 2, 3 | Phase 1 complete |
+| Wave   | Phases         | Prerequisites        |
+| ------ | -------------- | -------------------- |
+| Wave 1 | Phase 1        | None                 |
+| Wave 2 | Phases 2, 3    | Phase 1 complete     |
 | Wave 3 | Phases 4, 5, 6 | Phases 2, 3 complete |
-| Wave 4 | Phase 7, 8 | Wave 3 complete |
-| Wave 5 | Phase 9 | All complete |
+| Wave 4 | Phase 7, 8     | Wave 3 complete      |
+| Wave 5 | Phase 9        | All complete         |
 
 ## Estimated Effort
 
-| Phase | Agent Sessions | Hours |
-|-------|----------------|-------|
-| Phase 1 | 1-2 | 2-4 |
-| Phase 2 | 2-3 | 4-6 |
-| Phase 3 | 2-3 | 4-6 |
-| Phase 4 | 1-2 | 2-4 |
-| Phase 5 | 1-2 | 2-4 |
-| Phase 6 | 1-2 | 2-4 |
-| Phase 7 | 1-2 | 2-4 |
-| Phase 8 | 1-2 | 2-4 |
-| Phase 9 | 1-2 | 2-4 |
-| **Total** | **11-20** | **22-40** |
+| Phase     | Agent Sessions | Hours     |
+| --------- | -------------- | --------- |
+| Phase 1   | 1-2            | 2-4       |
+| Phase 2   | 2-3            | 4-6       |
+| Phase 3   | 2-3            | 4-6       |
+| Phase 4   | 1-2            | 2-4       |
+| Phase 5   | 1-2            | 2-4       |
+| Phase 6   | 1-2            | 2-4       |
+| Phase 7   | 1-2            | 2-4       |
+| Phase 8   | 1-2            | 2-4       |
+| Phase 9   | 1-2            | 2-4       |
+| **Total** | **11-20**      | **22-40** |
 
 ## Success Criteria
 
@@ -337,13 +363,13 @@ tools/
 
 ## Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Security fixes break functionality | Write tests before fixes, run full test suite |
-| Scope creep | Strict phase boundaries, defer new discoveries to backlog |
-| False positives in code analysis | Manual review of critical findings |
-| Performance regressions | Baseline before changes, compare after |
+| Risk                               | Mitigation                                                |
+| ---------------------------------- | --------------------------------------------------------- |
+| Security fixes break functionality | Write tests before fixes, run full test suite             |
+| Scope creep                        | Strict phase boundaries, defer new discoveries to backlog |
+| False positives in code analysis   | Manual review of critical findings                        |
+| Performance regressions            | Baseline before changes, compare after                    |
 
 ---
 
-*Plan created by PLANNER agent following ADR-018*
+_Plan created by PLANNER agent following ADR-018_

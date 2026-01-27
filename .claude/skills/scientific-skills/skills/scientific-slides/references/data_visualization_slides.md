@@ -9,12 +9,14 @@ Effective data visualization in presentations differs fundamentally from journal
 ### 1. Simplify, Don't Replicate
 
 **The Core Difference**:
+
 - **Journal figures**: Dense, detailed, for careful study
 - **Presentation figures**: Clear, simplified, for quick understanding
 
 **Simplification Strategies**:
 
 **Remove Non-Essential Elements**:
+
 - ❌ Minor gridlines
 - ❌ Detailed legends (label directly instead)
 - ❌ Multiple panels (split into separate slides)
@@ -22,12 +24,14 @@ Effective data visualization in presentations differs fundamentally from journal
 - ❌ Dense tick marks and minor labels
 
 **Focus on Key Message**:
+
 - Show only the data supporting your current point
 - Subset data if full dataset is overwhelming
 - Highlight the specific comparison you're discussing
 - Remove context that isn't immediately relevant
 
 **Example Transformation**:
+
 ```
 Journal Figure:
 - 6 panels (A-F)
@@ -47,6 +51,7 @@ Presentation Version:
 ### 2. Emphasize Visual Hierarchy
 
 **Guide Attention**:
+
 - Make key result visually dominant
 - De-emphasize background or comparison data
 - Use size, color, and position strategically
@@ -54,6 +59,7 @@ Presentation Version:
 **Techniques**:
 
 **Color Emphasis**:
+
 ```
 Main Result: Bold, saturated color (e.g., blue)
 Comparison: Muted gray or desaturated color
@@ -61,6 +67,7 @@ Background: Very light gray or white
 ```
 
 **Size Emphasis**:
+
 ```
 Key line/bar: Thicker (3-4pt)
 Reference lines: Thinner (1-2pt)
@@ -68,6 +75,7 @@ Grid lines: Very thin (0.5pt) or remove
 ```
 
 **Annotation**:
+
 ```
 Add text callouts: "34% increase" with arrow
 Add shapes: Circle key region
@@ -77,6 +85,7 @@ Add color highlights: Background shading for important area
 ### 3. Maximize Readability
 
 **Font Sizes for Presentations**:
+
 - **Axis labels**: 18-24pt minimum
 - **Tick labels**: 16-20pt minimum
 - **Title**: 24-32pt
@@ -84,11 +93,13 @@ Add color highlights: Background shading for important area
 - **Annotations**: 18-24pt
 
 **The Distance Test**:
+
 - If your figure isn't readable at 2-3 feet from your laptop screen, it won't work in a presentation
 - Test by stepping back from screen
 - Better to split into multiple simpler figures
 
 **Line and Marker Sizes**:
+
 - **Lines**: 2-4pt thickness (thicker than journal figures)
 - **Markers**: 8-12pt size
 - **Error bars**: 1.5-2pt thickness
@@ -99,6 +110,7 @@ Add color highlights: Background shading for important area
 **Build Complex Figures Incrementally**:
 
 Instead of showing complete figure at once:
+
 1. **Baseline**: Show axes and basic setup
 2. **Data Group 1**: Add first dataset
 3. **Data Group 2**: Add comparison dataset
@@ -106,12 +118,14 @@ Instead of showing complete figure at once:
 5. **Interpretation**: Add annotation with finding
 
 **Benefits**:
+
 - Controls audience attention
 - Prevents information overload
 - Guides interpretation
 - Emphasizes narrative structure
 
 **Implementation**:
+
 - PowerPoint: Use animation to reveal layers
 - Beamer: Use `\pause` or overlays
 - Static: Create sequence of slides building the figure
@@ -121,11 +135,13 @@ Instead of showing complete figure at once:
 ### Bar Charts
 
 **Best For**:
+
 - Comparing discrete categories
 - Showing counts or frequencies
 - Highlighting differences between groups
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Large, clear bars with adequate spacing
@@ -142,6 +158,7 @@ Instead of showing complete figure at once:
 ```
 
 **Example Enhancement**:
+
 ```
 Before: 12 categories, small fonts, legend
 After: Top 6 categories only, large fonts, direct labels, key bar highlighted
@@ -150,11 +167,13 @@ After: Top 6 categories only, large fonts, direct labels, key bar highlighted
 ### Line Graphs
 
 **Best For**:
+
 - Trends over time
 - Continuous data relationships
 - Comparing trajectories
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Thick lines (2-4pt)
@@ -172,6 +191,7 @@ After: Top 6 categories only, large fonts, direct labels, key bar highlighted
 ```
 
 **Time Series Tips**:
+
 - Mark key events or interventions with vertical lines
 - Annotate important time points
 - Use shaded regions for different phases
@@ -179,12 +199,14 @@ After: Top 6 categories only, large fonts, direct labels, key bar highlighted
 ### Scatter Plots
 
 **Best For**:
+
 - Relationships between two variables
 - Correlations
 - Distributions
 - Outliers
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Large, distinct markers (8-12pt)
@@ -201,6 +223,7 @@ After: Top 6 categories only, large fonts, direct labels, key bar highlighted
 ```
 
 **Overplotting Solutions**:
+
 - Transparency (alpha) for overlapping points
 - Hexbin or density plots for very large datasets
 - Random jitter for discrete data
@@ -209,11 +232,13 @@ After: Top 6 categories only, large fonts, direct labels, key bar highlighted
 ### Box Plots / Violin Plots
 
 **Best For**:
+
 - Distribution comparisons
 - Showing variability and outliers
 - Multiple group comparisons
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Large, clear boxes
@@ -235,11 +260,13 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ### Heatmaps
 
 **Best For**:
+
 - Matrix data
 - Gene expression or correlation patterns
 - Large datasets with patterns
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Large cells (readable grid)
@@ -257,6 +284,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ```
 
 **Simplification**:
+
 - Show subset of most interesting rows/columns
 - Zoom to relevant region
 - Split large heatmap across multiple slides
@@ -264,11 +292,13 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ### Network Diagrams
 
 **Best For**:
+
 - Relationships and connections
 - Pathways and networks
 - Hierarchical structures
 
 **Presentation Optimization**:
+
 ```
 ✅ DO:
 - Large nodes and labels
@@ -286,6 +316,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ```
 
 **Build Strategy**:
+
 1. Show simplified structure
 2. Add key nodes progressively
 3. Highlight path or subnetwork of interest
@@ -294,6 +325,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ### Statistical Plots
 
 **Kaplan-Meier Survival Curves**:
+
 ```
 ✅ Optimize:
 - Thick lines (3-4pt)
@@ -304,6 +336,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ```
 
 **Forest Plots**:
+
 ```
 ✅ Optimize:
 - Large markers (diamonds or squares)
@@ -314,6 +347,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 ```
 
 **ROC Curves**:
+
 ```
 ✅ Optimize:
 - Thick curve line
@@ -330,12 +364,14 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 **When to Use**: Ordered data (low to high)
 
 **Good Palettes**:
+
 - Blues: Light blue → Dark blue
-- Greens: Light green → Dark green  
+- Greens: Light green → Dark green
 - Grays: Light gray → Black
 - Viridis: Yellow → Purple (perceptually uniform)
 
 **Avoid**:
+
 - Rainbow scales (non-uniform perception)
 - Red-green scales (color blindness)
 
@@ -344,6 +380,7 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 **When to Use**: Data with meaningful midpoint (e.g., +/− change, correlation from -1 to +1)
 
 **Good Palettes**:
+
 - Blue → White → Red
 - Purple → White → Orange
 - Blue → Gray → Orange
@@ -355,12 +392,14 @@ If your audience may be unfamiliar, briefly explain: "Box shows middle 50% of da
 **When to Use**: Distinct groups with no order
 
 **Good Practices**:
+
 - Maximum 5-7 colors for clarity
 - High contrast between adjacent categories
 - Color-blind safe combinations
 - Consistent color mapping across slides
 
 **Example Set**:
+
 ```
 Blue (#0173B2)
 Orange (#DE8F05)
@@ -380,6 +419,7 @@ Background: Very light gray or white
 ```
 
 **Example Application**:
+
 - Bar chart: Key bar in blue, others in light gray
 - Line plot: Main line in bold blue, reference lines in thin gray
 - Scatter: Group of interest in color, others faded
@@ -391,12 +431,14 @@ Background: Very light gray or white
 **Problem**: Showing too much data at once
 
 **Example**:
+
 - Figure with 12 panels
 - Each panel has 6 experimental conditions
 - Tiny fonts and dense layout
 - Audience has 10 seconds to process
 
 **Solution**:
+
 - Split into 3-4 slides
 - One comparison per slide
 - Focus on key result
@@ -407,12 +449,14 @@ Background: Very light gray or white
 **Problem**: Text too small to read
 
 **Common Issues**:
+
 - 8-10pt axis labels (need ≥18pt)
 - Tiny legend text
 - Subscripts and superscripts disappear
 - Fine-print p-values
 
 **Solution**:
+
 - Recreate figures for presentation (don't use journal versions directly)
 - Test readability from distance
 - Remove or enlarge small text
@@ -423,6 +467,7 @@ Background: Very light gray or white
 **Problem**: Unnecessary decorative elements
 
 **Examples**:
+
 - 3D effects on 2D data
 - Excessive gridlines
 - Distracting backgrounds
@@ -430,6 +475,7 @@ Background: Very light gray or white
 - Animation for decoration only
 
 **Solution**:
+
 - Remove all non-data ink
 - Maximize data-ink ratio
 - Clean, minimal design
@@ -440,12 +486,14 @@ Background: Very light gray or white
 **Problem**: Visual representation distorts data
 
 **Examples**:
+
 - Bar charts not starting at zero
 - Truncated y-axes exaggerating differences
 - Inconsistent scales between panels
 - Log scales without clear labeling
 
 **Solution**:
+
 - Bar charts: Always start at zero
 - Line charts: Can truncate, but make clear
 - Label log scales explicitly
@@ -456,12 +504,14 @@ Background: Very light gray or white
 **Problem**: Colors reduce clarity or accessibility
 
 **Examples**:
+
 - Red-green for color-blind audience
 - Low contrast (yellow on white)
 - Too many colors
 - Inconsistent color meaning
 
 **Solution**:
+
 - Use color-blind safe palettes
 - Test contrast (minimum 4.5:1)
 - Limit to 5-7 colors maximum
@@ -472,6 +522,7 @@ Background: Very light gray or white
 **Problem**: Audience can't interpret visualization
 
 **Missing Elements**:
+
 - Axis labels or units
 - Sample sizes (n)
 - Error bar meaning (SEM vs SD vs CI)
@@ -479,6 +530,7 @@ Background: Very light gray or white
 - Scale or reference points
 
 **Solution**:
+
 - Label everything clearly
 - Define abbreviations
 - Report key statistics on plot
@@ -489,12 +541,14 @@ Background: Very light gray or white
 **Problem**: Wrong visualization for data type
 
 **Examples**:
+
 - Pie chart for >5 categories (use bar chart)
 - 3D pie chart (especially bad)
 - Dual y-axes (confusing)
 - Line plot for discrete categories (use bar chart)
 
 **Solution**:
+
 - Match chart type to data type
 - Consider what comparison you're showing
 - Choose format that makes pattern obvious
@@ -507,6 +561,7 @@ Background: Very light gray or white
 **Scenario**: Showing multi-panel experimental result
 
 **Approach 1: Sequential Panels**
+
 ```
 Slide 1: Panel A only (baseline condition)
 Slide 2: Panels A+B (add treatment effect)
@@ -515,6 +570,7 @@ Slide 4: All panels with interpretation overlay
 ```
 
 **Approach 2: Layered Data**
+
 ```
 Slide 1: Axes and experimental design schematic
 Slide 2: Add control group data
@@ -523,6 +579,7 @@ Slide 4: Highlight difference, show statistics
 ```
 
 **Approach 3: Zoom and Context**
+
 ```
 Slide 1: Full dataset overview
 Slide 2: Zoom to interesting region
@@ -532,12 +589,14 @@ Slide 3: Highlight specific points in zoomed view
 ### Animation vs. Multiple Slides
 
 **Use Animation** (PowerPoint/Beamer overlays):
+
 - Building bullet points
 - Adding layers to same plot
 - Highlighting different regions sequentially
 - Smooth transitions within a concept
 
 **Use Separate Slides**:
+
 - Different data or experiments
 - Major conceptual shifts
 - Want to return to previous view
@@ -548,12 +607,14 @@ Slide 3: Highlight specific points in zoomed view
 ### Step 1: Start with High-Quality Source
 
 **For Generated Figures**:
+
 - Export at high resolution (300 DPI minimum)
 - Vector formats preferred (PDF, SVG)
 - Large size (can scale down, not up)
 - Clean, professional appearance
 
 **For Published Figures**:
+
 - Request high-resolution versions from authors/publishers
 - Recreate if source not available
 - Check reuse permissions
@@ -561,6 +622,7 @@ Slide 3: Highlight specific points in zoomed view
 ### Step 2: Simplify for Presentation
 
 **Edit in Graphics Software**:
+
 - Remove non-essential panels
 - Enlarge fonts and labels
 - Increase line widths and marker sizes
@@ -569,6 +631,7 @@ Slide 3: Highlight specific points in zoomed view
 - Remove excess gridlines
 
 **Tools**:
+
 - Adobe Illustrator (vector editing)
 - Inkscape (free vector editing)
 - PowerPoint/Keynote (basic editing)
@@ -577,6 +640,7 @@ Slide 3: Highlight specific points in zoomed view
 ### Step 3: Optimize for Projection
 
 **Check**:
+
 - ✅ Readable from 10 feet away
 - ✅ High contrast between elements
 - ✅ Large enough to fill significant slide area
@@ -584,6 +648,7 @@ Slide 3: Highlight specific points in zoomed view
 - ✅ Works in various lighting conditions
 
 **Test**:
+
 - View on different screens
 - Project if possible before talk
 - Print at small scale (simulates distance)
@@ -592,6 +657,7 @@ Slide 3: Highlight specific points in zoomed view
 ### Step 4: Add Context and Annotations
 
 **Enhancements**:
+
 - Arrows pointing to key features
 - Text boxes with key findings ("p < 0.001")
 - Circles or rectangles highlighting regions
@@ -599,6 +665,7 @@ Slide 3: Highlight specific points in zoomed view
 - Reference lines or benchmarks
 
 **Verbal Integration**:
+
 - Plan what you'll say about each element
 - Use "Notice that..." or "Here you can see..."
 - Point to specific features during talk
@@ -609,6 +676,7 @@ Slide 3: Highlight specific points in zoomed view
 ### When to Recreate
 
 **Recreate When**:
+
 - Original has small fonts
 - Too many panels for one slide
 - Multiple comparisons to parse
@@ -616,6 +684,7 @@ Slide 3: Highlight specific points in zoomed view
 - Data available to you
 
 **Reuse When**:
+
 - Already simple and clear
 - Appropriate font sizes
 - Single focused message
@@ -625,6 +694,7 @@ Slide 3: Highlight specific points in zoomed view
 ### Recreation Tools
 
 **Python (matplotlib, seaborn)**:
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -640,6 +710,7 @@ plt.rcParams['figure.figsize'] = (10, 6)
 ```
 
 **R (ggplot2)**:
+
 ```r
 library(ggplot2)
 
@@ -657,12 +728,14 @@ ggplot(data, aes(x, y)) + geom_point(size=4) + theme_presentation
 ```
 
 **GraphPad Prism**:
+
 - Increase font sizes in Format Axes
 - Thicken lines in Format Graph
 - Enlarge symbols
 - Export as high-resolution image
 
 **Excel/PowerPoint**:
+
 - Select chart, Format → Text Options → Size (increase to 18-24pt)
 - Format → Line → Width (increase to 2-3pt)
 - Format → Marker → Size (increase to 10-12pt)
@@ -672,36 +745,42 @@ ggplot(data, aes(x, y)) + geom_point(size=4) + theme_presentation
 Before including a figure in your presentation:
 
 **Clarity**:
+
 - [ ] One clear message per figure
 - [ ] Immediately understandable (< 5 seconds)
 - [ ] Appropriate chart type for data
 - [ ] Simplified from journal version (if applicable)
 
 **Readability**:
+
 - [ ] Font sizes ≥18pt for labels
 - [ ] Thick lines (2-4pt) and large markers (8-12pt)
 - [ ] High contrast colors
 - [ ] Readable from back of room
 
 **Design**:
+
 - [ ] Minimal chart junk (removed gridlines, simplify)
 - [ ] Axes clearly labeled with units
 - [ ] Color-blind friendly palette
 - [ ] Consistent style with other figures
 
 **Context**:
+
 - [ ] Sample sizes indicated (n)
 - [ ] Statistical results shown (p-values, CI)
 - [ ] Error bars defined (SE, SD, or CI?)
 - [ ] Key finding annotated or highlighted
 
 **Technical Quality**:
+
 - [ ] High resolution (300 DPI minimum)
 - [ ] Vector format preferred
 - [ ] Properly sized for slide
 - [ ] Quality maintained when projected
 
 **Progressive Disclosure** (if complex):
+
 - [ ] Plan for building figure incrementally
 - [ ] Each step adds one new element
 - [ ] Final version shows complete picture

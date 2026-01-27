@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - Must be of type record, unless specified in a prompt otherwise.
 - Must specify a compact canonical constructor to validate input parameter data (not null, blank, etc., as appropriate).
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

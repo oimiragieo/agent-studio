@@ -21,12 +21,12 @@ updater_config:
   backup_location: .claude/context/backups/agents/
   compatibility_check: true
   registration_targets:
-    - ".claude/CLAUDE.md"
-    - ".claude/hooks/routing/router-enforcer.cjs"
-    - ".claude/context/memory/learnings.md"
+    - '.claude/CLAUDE.md'
+    - '.claude/hooks/routing/router-enforcer.cjs'
+    - '.claude/context/memory/learnings.md'
   protected_sections:
-    - "Task Progress Protocol"
-    - "Memory Protocol"
+    - 'Task Progress Protocol'
+    - 'Memory Protocol'
 
 phases:
   evaluate:
@@ -71,11 +71,11 @@ phases:
       - id: gate-evaluate-exists
         condition: "steps['load-existing-agent'].output.agent_path !== null"
         on_fail: abort
-        message: "Agent does not exist. Use agent-creator-workflow to create new agents."
+        message: 'Agent does not exist. Use agent-creator-workflow to create new agents.'
       - id: gate-evaluate-justified
         condition: "steps['validate-change-justification'].output.justification_valid === true"
         on_fail: abort
-        message: "Changes must be justified with clear rationale."
+        message: 'Changes must be justified with clear rationale.'
 
   validate:
     description: Check changes don't break compatibility
@@ -117,11 +117,11 @@ phases:
       - id: gate-validate-protected
         condition: "steps['check-protected-sections'].output.protected_intact === true"
         on_fail: abort
-        message: "Cannot remove protected sections (Task Progress Protocol, Memory Protocol)"
+        message: 'Cannot remove protected sections (Task Progress Protocol, Memory Protocol)'
       - id: gate-validate-dependencies
         condition: "steps['check-dependency-impact'].output.dependencies_found === false || steps['check-dependency-impact'].output.affected_artifacts.length === 0"
         on_fail: warn
-        message: "Changes may affect dependent artifacts. Review dependencies."
+        message: 'Changes may affect dependent artifacts. Review dependencies.'
 
   obtain:
     description: Research best practices for the change type (optional)
@@ -150,9 +150,9 @@ phases:
         description: Update evolution-state.json to obtaining
     gates:
       - id: gate-obtain
-        condition: "true"
+        condition: 'true'
         on_fail: pass
-        message: "Research phase is optional for updates"
+        message: 'Research phase is optional for updates'
 
   lock:
     description: Create backup and apply changes
@@ -203,12 +203,12 @@ phases:
       - id: gate-lock-backup
         condition: "steps['create-backup'].output.backup_id !== null"
         on_fail: abort
-        message: "Backup must be created before modification"
+        message: 'Backup must be created before modification'
       - id: gate-lock-write
         condition: "steps['write-updated-agent'].output.agent_updated === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to write updated agent file"
+        message: 'Failed to write updated agent file'
 
   verify:
     description: Validate updated agent meets quality standards
@@ -257,15 +257,15 @@ phases:
       - id: gate-verify-yaml
         condition: "steps['validate-yaml-frontmatter'].output.yaml_valid === true"
         on_fail: return_to_lock
-        message: "YAML frontmatter validation failed"
+        message: 'YAML frontmatter validation failed'
       - id: gate-verify-sections
         condition: "steps['check-required-sections'].output.sections_complete === true"
         on_fail: return_to_lock
-        message: "Required sections missing after update"
+        message: 'Required sections missing after update'
       - id: gate-verify-placeholders
         condition: "steps['check-placeholders'].output.no_placeholders === true"
         on_fail: return_to_lock
-        message: "Placeholder content found after update"
+        message: 'Placeholder content found after update'
 
   enable:
     description: Update registrations and record changes
@@ -317,7 +317,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Agent registration verification failed after update"
+        message: 'Agent registration verification failed after update'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -326,30 +326,30 @@ compensate:
       target: backup_id
       description: Restore agent from backup
     - action: revert_routing
-      target: ".claude/hooks/routing/router-enforcer.cjs"
+      target: '.claude/hooks/routing/router-enforcer.cjs'
       description: Revert routing changes if made
   enable:
     - action: revert_claude_md
-      target: ".claude/CLAUDE.md"
+      target: '.claude/CLAUDE.md'
       description: Revert CLAUDE.md changes if made
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove update entry from learnings
 
 # Iron Laws for agent updates
 iron_laws:
   - id: no-update-without-backup
-    rule: "Every update MUST create a backup first"
+    rule: 'Every update MUST create a backup first'
     enforcement: gate-lock-backup
   - id: no-removal-of-protected
-    rule: "Cannot remove Task Progress Protocol or Memory Protocol sections"
+    rule: 'Cannot remove Task Progress Protocol or Memory Protocol sections'
     enforcement: gate-validate-protected
   - id: no-update-without-justification
-    rule: "Changes must be justified with clear rationale"
+    rule: 'Changes must be justified with clear rationale'
     enforcement: gate-evaluate-justified
   - id: maintain-yaml-validity
-    rule: "YAML frontmatter must remain valid after update"
+    rule: 'YAML frontmatter must remain valid after update'
     enforcement: gate-verify-yaml
   - id: maintain-required-sections
-    rule: "All required sections must be present after update"
+    rule: 'All required sections must be present after update'
     enforcement: gate-verify-sections

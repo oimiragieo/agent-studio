@@ -7,6 +7,7 @@ IMRAD (Introduction, Methods, Results, And Discussion) is the predominant organi
 ## Why IMRAD?
 
 The IMRAD structure mirrors the scientific method:
+
 - **Introduction**: What question did you ask?
 - **Methods**: How did you study it?
 - **Results**: What did you find?
@@ -32,9 +33,11 @@ A full scientific manuscript typically includes these sections in order:
 ## Title
 
 ### Purpose
+
 Attract readers and accurately represent the paper's content.
 
 ### Guidelines
+
 - Be concise yet descriptive (typically 10-15 words)
 - Include key variables and the relationship studied
 - Avoid abbreviations, jargon, and question formats (unless the journal allows)
@@ -42,6 +45,7 @@ Attract readers and accurately represent the paper's content.
 - Include key search terms for discoverability
 
 ### Examples
+
 - Good: "Effects of High-Intensity Interval Training on Cardiovascular Function in Older Adults"
 - Too vague: "Exercise and Health"
 - Too detailed: "A Randomized Controlled Trial Examining the Effects of High-Intensity Interval Training Compared to Moderate Continuous Training on Cardiovascular Function Measured by VO2 Max in Adults Aged 60-75 Years"
@@ -49,34 +53,42 @@ Attract readers and accurately represent the paper's content.
 ## Abstract
 
 ### Purpose
+
 Provide a complete, standalone summary enabling readers to decide if the full paper is relevant to them.
 
 ### Structure
+
 Most journals now require **structured abstracts** with labeled sections:
 
 **Background/Objective**: Why was the study needed? What was the aim?
+
 - 1-2 sentences
 - State the research problem and objective
 
 **Methods**: How was it done?
+
 - 2-4 sentences
 - Study design, participants, key procedures, analysis methods
 
 **Results**: What was found?
+
 - 3-5 sentences
 - Main findings with key statistics
 - Present the most important numerical data
 
 **Conclusions**: What does it mean?
+
 - 1-2 sentences
 - Interpretation and implications
 - Avoid overstating or adding new information
 
 ### Length
+
 - Typically 100-250 words (check journal requirements)
 - Some journals allow up to 300 words
 
 ### Key Rules
+
 - Write the abstract **last** (after completing all other sections)
 - Make it fully understandable without reading the paper
 - Do not cite references in the abstract
@@ -85,6 +97,7 @@ Most journals now require **structured abstracts** with labeled sections:
 - Include key quantitative results with statistical measures
 
 ### Example Structure
+
 ```
 Background: Hospital-acquired infections remain a major cause of morbidity. This study
 evaluated the effectiveness of a new disinfection protocol in reducing infection rates.
@@ -106,44 +119,52 @@ control programs.
 ## Introduction
 
 ### Purpose
+
 Convince readers that the research addresses an important question using an appropriate approach.
 
 ### Structure and Content
 
 **Paragraph 1: The Big Picture**
+
 - Establish the broad research area
 - Explain why this topic matters
 - Use present tense for established facts
 - Keep it accessible to non-specialists
 
 **Paragraphs 2-3: Narrowing Down**
+
 - Review relevant prior research
 - Show what is already known
 - Identify controversies or limitations in existing work
 - Create a logical progression toward the gap
 
 **Paragraph 4: The Gap**
+
 - Explicitly identify what remains unknown
 - Explain why this knowledge gap is problematic
 - Connect the gap to the big picture importance
 
 **Final Paragraph: This Study**
+
 - State the specific research question or hypothesis
 - Describe the overall approach briefly
 - Explain how this study addresses the gap
 - Optional: Preview key findings (some journals discourage this)
 
 ### Length
+
 - Typically 1.5-2 pages (depending on journal)
 - Usually 4-5 paragraphs
 - Shorter for letters/brief communications
 
 ### Verb Tense
+
 - **Present tense**: Established facts ("Exercise improves cardiovascular health")
 - **Past tense**: Previous studies and their findings ("Smith et al. found that...")
 - **Present/past tense**: Your study aims ("This study investigates..." or "This study investigated...")
 
 ### Common Mistakes to Avoid
+
 - Starting too broad (e.g., "Since the beginning of time...")
 - Exhaustive literature review (save for review articles)
 - Citing irrelevant or outdated references
@@ -153,6 +174,7 @@ Convince readers that the research addresses an important question using an appr
 - Including methods or results (these belong in later sections)
 
 ### Key Questions to Answer
+
 1. What do we know about this topic?
 2. What don't we know? (the gap)
 3. Why does this gap matter?
@@ -161,19 +183,23 @@ Convince readers that the research addresses an important question using an appr
 ## Methods
 
 ### Purpose
+
 Provide sufficient detail for others to replicate the study and evaluate its validity.
 
 ### Key Principle
+
 Another expert in the field should be able to repeat your experiment exactly as you performed it.
 
 ### Standard Subsections
 
 #### Study Design
+
 - State the overall design (e.g., randomized controlled trial, cohort study, cross-sectional survey)
 - Justify the design choice if not obvious
 - Mention blinding, randomization, or controls if applicable
 
 #### Participants/Subjects/Sample
+
 - Define the population of interest
 - Describe inclusion and exclusion criteria precisely
 - Report sample size and how it was determined (power analysis)
@@ -181,12 +207,14 @@ Another expert in the field should be able to repeat your experiment exactly as 
 - For animals: specify species, strain, age, sex, housing conditions
 
 #### Materials and Equipment
+
 - List all materials, reagents, and equipment used
 - Include manufacturer names and locations (in parentheses)
 - Specify catalog numbers for specialized items
 - Report software names and versions
 
 #### Procedures
+
 - Describe what was done in chronological order
 - Include sufficient detail for replication
 - Use subheadings to organize complex procedures
@@ -194,12 +222,14 @@ Another expert in the field should be able to repeat your experiment exactly as 
 - For surveys/interviews: describe instruments, validation, administration
 
 #### Measurements and Outcomes
+
 - Define all variables measured
 - Specify primary and secondary outcomes
 - Describe measurement instruments and their validity
 - Include units of measurement
 
 #### Statistical Analysis
+
 - Name all statistical tests used
 - Justify test selection
 - State significance level (typically α = 0.05)
@@ -209,20 +239,24 @@ Another expert in the field should be able to repeat your experiment exactly as 
 - Mention adjustments for multiple comparisons if applicable
 
 #### Ethical Considerations
+
 - State IRB/ethics committee approval (with approval number)
 - Mention informed consent procedures
 - For human studies: state adherence to Helsinki Declaration
 - For animal studies: state adherence to relevant guidelines (e.g., ARRIVE)
 
 ### Length
+
 - Typically 2-4 pages
 - Proportional to study complexity
 
 ### Verb Tense
+
 - **Past tense** for actions you performed ("We measured...", "Participants completed...")
 - **Present tense** for established procedures ("PCR amplifies...", "The questionnaire contains...")
 
 ### Common Mistakes
+
 - Insufficient detail for replication
 - Methods appearing for the first time in Results
 - Including results or discussion
@@ -233,25 +267,30 @@ Another expert in the field should be able to repeat your experiment exactly as 
 ## Results
 
 ### Purpose
+
 Present the findings objectively without interpretation.
 
 ### Key Principle
+
 Show, don't interpret. Save interpretation for the Discussion.
 
 ### Structure and Content
 
 **Opening Paragraph**
+
 - Describe the participants/sample characteristics
 - Report recruitment flow (e.g., screened, enrolled, completed)
 - Consider including a CONSORT-style flow diagram
 
 **Subsequent Paragraphs**
+
 - Present results in logical order (usually primary outcome first)
 - Follow the order of objectives stated in Introduction
 - Organize by theme or by chronology, depending on what's clearest
 - Reference figures and tables by number
 
 **Each Finding Should Include:**
+
 - The observed result
 - The direction of the effect
 - The magnitude of the effect
@@ -263,26 +302,30 @@ Show, don't interpret. Save interpretation for the Discussion.
 ### Integration with Figures and Tables
 
 **When to Use:**
+
 - **Figures**: Trends, patterns, distributions, comparisons, relationships
 - **Tables**: Precise values, demographic data, multiple variables
 
 **How to Reference:**
+
 - "Figure 1 shows the distribution of..." (not "Figure 1 below")
 - "Table 2 presents baseline characteristics..."
 - Don't repeat all table data in text; highlight key findings
 - Each figure/table should be referenced in text
 
 ### Figures and Tables Guidelines
+
 - Number consecutively in order of mention
 - Include complete, standalone captions
 - Define all abbreviations in caption or footnote
 - Report sample sizes (n)
-- Indicate statistical significance (*, p-values)
+- Indicate statistical significance (\*, p-values)
 - Use consistent formatting
 
 ### Statistical Reporting
 
 **Required Elements:**
+
 - Test statistic (t, F, χ², etc.)
 - Degrees of freedom
 - p-value (exact if p > 0.001, otherwise report as "p < 0.001")
@@ -292,13 +335,16 @@ Show, don't interpret. Save interpretation for the Discussion.
 **Example**: "Groups differed significantly on test performance (t(48) = 3.21, p = 0.002, Cohen's d = 0.87, 95% CI: 0.34-1.40)."
 
 ### Length
+
 - Typically 2-4 pages
 - Roughly equivalent to Methods length
 
 ### Verb Tense
+
 - **Past tense** for your findings ("The mean was...", "Participants showed...")
 
 ### Common Mistakes
+
 - Interpreting results (save for Discussion)
 - Repeating all table/figure data in text
 - Presenting new methods
@@ -310,6 +356,7 @@ Show, don't interpret. Save interpretation for the Discussion.
 ### Organization Strategies
 
 **By Objective:**
+
 ```
 Effect of intervention on primary outcome
 Effect of intervention on secondary outcome A
@@ -317,6 +364,7 @@ Effect of intervention on secondary outcome B
 ```
 
 **By Analysis Type:**
+
 ```
 Descriptive statistics
 Univariate analyses
@@ -324,6 +372,7 @@ Multivariate analyses
 ```
 
 **Chronological:**
+
 ```
 Baseline characteristics
 Short-term outcomes (1 month)
@@ -333,17 +382,20 @@ Long-term outcomes (6 months)
 ## Discussion
 
 ### Purpose
+
 Interpret findings, relate them to existing knowledge, acknowledge limitations, and propose future directions.
 
 ### Structure and Content
 
 **Paragraph 1: Summary of Main Findings**
+
 - Restate the primary objective or hypothesis
 - Summarize the principal findings in 2-4 sentences
 - Avoid repeating details from Results
 - State clearly whether the hypothesis was supported
 
 **Paragraphs 2-4: Interpretation in Context**
+
 - Compare your findings with previous research
 - Explain agreements and disagreements with prior work
 - Propose mechanisms or explanations for findings
@@ -352,27 +404,32 @@ Interpret findings, relate them to existing knowledge, acknowledge limitations, 
 - Address whether findings support or refute existing theories
 
 **Paragraph 5: Strengths and Limitations**
+
 - Acknowledge study limitations honestly
 - Explain how limitations might affect interpretation
 - Mention study strengths (design, sample, methods)
 - Avoid generic limitations ("larger sample needed")—be specific
 
 **Paragraph 6: Implications**
+
 - Clinical implications (for medical research)
 - Practical applications
 - Policy implications
 - Theoretical contributions
 
 **Final Paragraph: Conclusions and Future Directions**
+
 - Summarize the take-home message
 - Suggest specific future research to address gaps or limitations
 - End with a strong concluding statement
 
 ### Length
+
 - Typically 3-5 pages
 - Usually the longest section
 
 ### Verb Tense
+
 - **Past tense**: Your study findings ("We found that...", "The results showed...")
 - **Present tense**: Established facts and your interpretations ("This suggests that...", "These findings indicate...")
 - **Future tense**: Implications and future research ("Future studies should investigate...")
@@ -380,6 +437,7 @@ Interpret findings, relate them to existing knowledge, acknowledge limitations, 
 ### Discussion Strategies
 
 **Comparing to Prior Work:**
+
 ```
 "Our finding of a 30% reduction in symptoms aligns with Smith et al. (2023), who
 reported a 28% reduction using a similar intervention. However, Jones et al. (2022)
@@ -387,6 +445,7 @@ found no significant effect, possibly due to their use of a less intensive proto
 ```
 
 **Proposing Mechanisms:**
+
 ```
 "The observed improvement in cognitive function may result from increased cerebral
 blood flow, as evidenced by the concurrent increase in functional MRI signals in the
@@ -395,6 +454,7 @@ cognitive enhancement."
 ```
 
 **Acknowledging Limitations:**
+
 ```
 "The cross-sectional design prevents causal inference. Additionally, the convenience
 sample from a single academic medical center may limit generalizability to community
@@ -403,6 +463,7 @@ minimize this through structured interviews."
 ```
 
 ### Common Mistakes
+
 - Simply repeating results without interpretation
 - Over-interpreting findings or claiming causation without warrant
 - Ignoring inconsistent or negative findings
@@ -413,6 +474,7 @@ minimize this through structured interviews."
 - Missing the "so what?"—failing to explain significance
 
 ### Key Questions to Answer
+
 1. What do these findings mean?
 2. How do they compare to prior research?
 3. Why might differences exist?
@@ -424,12 +486,15 @@ minimize this through structured interviews."
 ## Conclusion
 
 ### Purpose
+
 Provide a concise summary of key findings and their significance.
 
 ### Placement
+
 - May be a separate section or the final paragraph of Discussion (check journal requirements)
 
 ### Content
+
 - 1-2 paragraphs maximum
 - Restate the main finding(s)
 - Emphasize the significance or implications
@@ -437,6 +502,7 @@ Provide a concise summary of key findings and their significance.
 - Do NOT introduce new information
 
 ### Example
+
 ```
 This randomized trial demonstrates that a 12-week mindfulness intervention significantly
 reduces anxiety symptoms in college students, with effects persisting at 6-month follow-up.
@@ -449,18 +515,21 @@ crisis in higher education.
 ## Additional Sections
 
 ### Acknowledgments
+
 - Thank funding sources (with grant numbers)
 - Acknowledge substantial contributions not qualifying for authorship
 - Thank those who provided materials, equipment, or assistance
 - Declare any conflicts of interest
 
 ### References
+
 - Format according to journal style (see `citation_styles.md`)
 - Verify all citations are accurate
 - Ensure all citations appear in text and vice versa
 - Typical range: 20-50 references for original research
 
 ### Supplementary Materials
+
 - Additional figures, tables, or data sets
 - Detailed protocols or questionnaires
 - Video or audio files
@@ -468,56 +537,63 @@ crisis in higher education.
 
 ## Tense Usage Summary
 
-| Section | Verb Tense |
-|---------|-----------|
-| Abstract - Background | Present (established facts) or past (prior studies) |
-| Abstract - Methods | Past |
-| Abstract - Results | Past |
-| Abstract - Conclusions | Present |
-| Introduction - General background | Present |
-| Introduction - Prior studies | Past |
-| Introduction - Your objectives | Present or past |
-| Methods | Past (your actions), present (general procedures) |
-| Results | Past |
-| Discussion - Your findings | Past |
-| Discussion - Interpretations | Present |
-| Discussion - Prior work | Present or past |
-| Conclusion | Present |
+| Section                           | Verb Tense                                          |
+| --------------------------------- | --------------------------------------------------- |
+| Abstract - Background             | Present (established facts) or past (prior studies) |
+| Abstract - Methods                | Past                                                |
+| Abstract - Results                | Past                                                |
+| Abstract - Conclusions            | Present                                             |
+| Introduction - General background | Present                                             |
+| Introduction - Prior studies      | Past                                                |
+| Introduction - Your objectives    | Present or past                                     |
+| Methods                           | Past (your actions), present (general procedures)   |
+| Results                           | Past                                                |
+| Discussion - Your findings        | Past                                                |
+| Discussion - Interpretations      | Present                                             |
+| Discussion - Prior work           | Present or past                                     |
+| Conclusion                        | Present                                             |
 
 ## IMRAD Variations
 
 ### Combined Results and Discussion
+
 - Some journals allow or require this format
 - Interweaves presentation and interpretation
 - Each result is presented then immediately discussed
 - Useful for complex studies with multiple experiments
 
 ### IMRaD without separate Conclusion
+
 - Conclusion integrated into final Discussion paragraph
 - Common in many journals
 
 ### Extended IMRAD (ILMRaD)
+
 - Adds "Literature Review" as separate section
 - More common in theses and dissertations
 
 ## Adapting IMRAD to Different Study Types
 
 ### Clinical Trials
+
 - Add CONSORT flow diagram in Results
 - Include trial registration number in Methods
 - Report adverse events in Results
 
 ### Systematic Reviews/Meta-Analyses
+
 - Methods describes search strategy and inclusion criteria
 - Results includes PRISMA flow diagram and synthesis
 - May have additional sections (risk of bias assessment)
 
 ### Case Reports
+
 - Introduction: background on the condition
 - Case Presentation: replaces Methods and Results
 - Discussion: relates case to literature
 
 ### Observational Studies
+
 - Follow STROBE guidelines
 - Careful attention to potential confounders in Methods
 - Discussion addresses causality limitations
@@ -526,16 +602,17 @@ crisis in higher education.
 
 ### Journal vs. Conference Formats
 
-| Venue Type | Length | Structure | Methods Placement | Key Focus |
-|-----------|--------|-----------|-------------------|-----------|
-| **Nature/Science** | 2,000-4,500 words | Modified IMRAD | Supplement | Broad significance |
-| **Medical** | 2,700-3,500 words | Strict IMRAD | Main text | Clinical outcomes |
-| **Field journals** | 3,000-6,000 words | Standard IMRAD | Main text | Technical depth |
+| Venue Type         | Length                   | Structure                           | Methods Placement   | Key Focus          |
+| ------------------ | ------------------------ | ----------------------------------- | ------------------- | ------------------ |
+| **Nature/Science** | 2,000-4,500 words        | Modified IMRAD                      | Supplement          | Broad significance |
+| **Medical**        | 2,700-3,500 words        | Strict IMRAD                        | Main text           | Clinical outcomes  |
+| **Field journals** | 3,000-6,000 words        | Standard IMRAD                      | Main text           | Technical depth    |
 | **ML conferences** | 8-9 pages (~6,000 words) | Intro-Method-Experiments-Conclusion | Main text (concise) | Novel contribution |
 
 ### ML Conference Structure (NeurIPS/ICML/ICLR)
 
 **Typical 8-page structure:**
+
 1. **Abstract** (150-200 words): Problem, method, key results
 2. **Introduction** (1 page): Motivation, contribution summary, related work overview
 3. **Method** (2-3 pages): Technical approach, architecture, algorithms
@@ -546,6 +623,7 @@ crisis in higher education.
 8. **Appendix/Supplement** (unlimited): Additional experiments, proofs, details
 
 **Key differences from journals:**
+
 - **Contribution bullets**: Often numbered list in intro (e.g., "Our contributions are: (1)... (2)... (3)...")
 - **No separate Results/Discussion**: Integrated in Experiments section
 - **Ablation studies**: Critical component showing what matters
@@ -554,20 +632,22 @@ crisis in higher education.
 
 ### Section Length Proportions
 
-| Venue | Intro | Methods | Results/Experiments | Discussion/Conclusion |
-|-------|-------|---------|---------------------|----------------------|
-| **Nature/Science** | 10% | 15%* | 40% | 35% |
-| **Medical (NEJM/JAMA)** | 10% | 25% | 30% | 35% |
-| **Field journals** | 20% | 25% | 30% | 25% |
-| **ML conferences** | 12-15% | 30-35% | 40-45% | 5-8% |
+| Venue                   | Intro  | Methods | Results/Experiments | Discussion/Conclusion |
+| ----------------------- | ------ | ------- | ------------------- | --------------------- |
+| **Nature/Science**      | 10%    | 15%\*   | 40%                 | 35%                   |
+| **Medical (NEJM/JAMA)** | 10%    | 25%     | 30%                 | 35%                   |
+| **Field journals**      | 20%    | 25%     | 30%                 | 25%                   |
+| **ML conferences**      | 12-15% | 30-35%  | 40-45%              | 5-8%                  |
 
-*Methods often in supplement for Nature/Science
+\*Methods often in supplement for Nature/Science
 
 **Key medical journal features:**
+
 - NEJM/Lancet/JAMA: Strict IMRAD; clinical focus; structured Discussion; CONSORT/STROBE compliance
 - Clear primary/secondary outcomes; statistical pre-specification
 
 **Key ML conference features:**
+
 - Numbered contribution list in intro
 - Method details with pseudocode/equations
 - Extensive experiments: main results, ablations, analysis
@@ -576,14 +656,15 @@ crisis in higher education.
 
 ### Writing Style by Venue
 
-| Venue | Audience | Intro Focus | Methods Detail | Results/Experiments | Discussion/Conclusion |
-|-------|----------|-------------|----------------|---------------------|----------------------|
-| **Nature/Science** | Non-specialists | Broad significance | Brief, supplement | Story-driven | Broad implications |
-| **Medical** | Clinicians | Clinical problem | Comprehensive | Primary outcome first | Clinical relevance |
-| **Specialized** | Experts | Field context | Full technical | By experiment | Mechanistic depth |
-| **ML conferences** | ML researchers | Novel contribution | Reproducible | Baselines, ablations | Brief, limitations |
+| Venue              | Audience        | Intro Focus        | Methods Detail    | Results/Experiments   | Discussion/Conclusion |
+| ------------------ | --------------- | ------------------ | ----------------- | --------------------- | --------------------- |
+| **Nature/Science** | Non-specialists | Broad significance | Brief, supplement | Story-driven          | Broad implications    |
+| **Medical**        | Clinicians      | Clinical problem   | Comprehensive     | Primary outcome first | Clinical relevance    |
+| **Specialized**    | Experts         | Field context      | Full technical    | By experiment         | Mechanistic depth     |
+| **ML conferences** | ML researchers  | Novel contribution | Reproducible      | Baselines, ablations  | Brief, limitations    |
 
 **ML conference emphasis:**
+
 - **Introduction**: Clear problem statement; numbered contributions; positioning vs. prior work
 - **Method**: Mathematical notation; pseudocode; architecture diagrams; complexity analysis
 - **Experiments**: Datasets described; multiple baselines; ablation studies; error analysis
@@ -592,6 +673,7 @@ crisis in higher education.
 ### Evaluation Across Venues
 
 **What gets checked:**
+
 - **Fit**: Appropriate for venue scope and audience
 - **Length**: Within limits (strict for conferences)
 - **Clarity**: Writing quality sufficient; claims supported
@@ -599,6 +681,7 @@ crisis in higher education.
 - **Completeness**: All outcomes reported; limitations acknowledged
 
 **Common rejection reasons:**
+
 - Insufficient significance for venue
 - Methods lack detail for reproduction
 - Results don't support claims
@@ -606,6 +689,7 @@ crisis in higher education.
 - Page/word limits exceeded (conferences strict)
 
 **ML conference specific evaluation:**
+
 - Clear problem formulation and motivation
 - Novelty and contribution well-articulated
 - Baselines comprehensive and fair
@@ -616,6 +700,7 @@ crisis in higher education.
 ### Quick Adaptation Guide
 
 **Journal → ML conference:**
+
 - Condense intro; add numbered contributions
 - Methods: keep concise, add pseudocode
 - Combine Results+Discussion → Experiments section
@@ -623,6 +708,7 @@ crisis in higher education.
 - Brief conclusion with limitations
 
 **ML conference → Journal:**
+
 - Expand introduction with more background
 - Separate Methods section with full details
 - Split Experiments into Results and Discussion
@@ -630,12 +716,14 @@ crisis in higher education.
 - Expand limitations discussion
 
 **Specialist → Broad journal:**
+
 - Simplify intro; emphasize broad significance
 - Move technical methods to supplement
 - Story-driven results organization
 - Lead discussion with implications
 
 **Broad → Specialist:**
+
 - Add detailed literature review
 - Full methods in main text
 - Organize results by experiment
@@ -644,6 +732,7 @@ crisis in higher education.
 ### Pre-Submission Structure Checklist
 
 **All venues:**
+
 - [ ] Word/page count within limits
 - [ ] Section proportions appropriate
 - [ ] Writing style matches venue
@@ -651,6 +740,7 @@ crisis in higher education.
 - [ ] Limitations acknowledged
 
 **ML conferences add:**
+
 - [ ] Contributions clearly listed
 - [ ] Ablation studies included
 - [ ] Baselines comprehensive

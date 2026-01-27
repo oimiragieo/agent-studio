@@ -37,13 +37,12 @@ When reviewing or writing code, apply these comprehensive Expo framework guideli
 ### Core Expo Modules
 
 **FileSystem:**
+
 ```typescript
 import * as FileSystem from 'expo-file-system';
 
 // Read file
-const content = await FileSystem.readAsStringAsync(
-  FileSystem.documentDirectory + 'file.txt'
-);
+const content = await FileSystem.readAsStringAsync(FileSystem.documentDirectory + 'file.txt');
 
 // Download file
 const download = await FileSystem.downloadAsync(
@@ -53,6 +52,7 @@ const download = await FileSystem.downloadAsync(
 ```
 
 **Camera:**
+
 ```typescript
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
@@ -73,6 +73,7 @@ function CameraScreen() {
 ```
 
 **Location:**
+
 ```typescript
 import * as Location from 'expo-location';
 
@@ -92,6 +93,7 @@ const getLocation = async () => {
 ```
 
 **Notifications:**
+
 ```typescript
 import * as Notifications from 'expo-notifications';
 
@@ -115,6 +117,7 @@ await Notifications.scheduleNotificationAsync({
 ```
 
 ### Asset Management
+
 ```typescript
 import { Image } from 'expo-image';
 import { Asset } from 'expo-asset';
@@ -135,6 +138,7 @@ await Asset.loadAsync([
 ```
 
 ### SQLite Database
+
 ```typescript
 import * as SQLite from 'expo-sqlite';
 
@@ -150,10 +154,7 @@ await db.execAsync(`
 `);
 
 // Insert data
-await db.runAsync(
-  'INSERT INTO users (name, email) VALUES (?, ?)',
-  'John', 'john@example.com'
-);
+await db.runAsync('INSERT INTO users (name, email) VALUES (?, ?)', 'John', 'john@example.com');
 
 // Query data
 const users = await db.getAllAsync('SELECT * FROM users');
@@ -162,6 +163,7 @@ const users = await db.getAllAsync('SELECT * FROM users');
 ## EAS Build and Submit
 
 ### eas.json Configuration
+
 ```json
 {
   "cli": {
@@ -207,6 +209,7 @@ const users = await db.getAllAsync('SELECT * FROM users');
 ```
 
 ### Build Commands
+
 ```bash
 # Development build
 eas build --profile development --platform ios
@@ -222,6 +225,7 @@ eas build --profile production --auto-submit
 ```
 
 ### Build Environment Variables
+
 ```json
 {
   "build": {
@@ -236,6 +240,7 @@ eas build --profile production --auto-submit
 ```
 
 Access in app:
+
 ```typescript
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 ```
@@ -243,6 +248,7 @@ const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 ## Over-the-Air (OTA) Updates
 
 ### EAS Update Configuration
+
 ```json
 {
   "expo": {
@@ -257,6 +263,7 @@ const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 ```
 
 ### Publishing Updates
+
 ```bash
 # Publish to production channel
 eas update --channel production --message "Fix login bug"
@@ -269,6 +276,7 @@ eas update:list --channel production
 ```
 
 ### Update Channels Strategy
+
 ```javascript
 // Different channels for different environments
 production -> main branch
@@ -277,6 +285,7 @@ preview -> feature branches
 ```
 
 ### Checking for Updates in App
+
 ```typescript
 import * as Updates from 'expo-updates';
 
@@ -293,7 +302,7 @@ async function checkForUpdates() {
 
 // Check on app focus
 useEffect(() => {
-  const subscription = AppState.addEventListener('change', (state) => {
+  const subscription = AppState.addEventListener('change', state => {
     if (state === 'active') {
       checkForUpdates();
     }
@@ -304,6 +313,7 @@ useEffect(() => {
 ```
 
 ### Runtime Version Management
+
 ```json
 {
   "expo": {
@@ -317,6 +327,7 @@ Only compatible OTA updates will be delivered to builds with matching runtime ve
 ## Native Module Integration
 
 ### Custom Native Modules with Expo Modules API
+
 ```typescript
 // ios/MyModule.swift
 import ExpoModulesCore
@@ -346,14 +357,15 @@ const greeting = MyModule.hello('World');
 ```
 
 ### Config Plugins
+
 Create custom config plugin for native configuration:
 
 ```javascript
 // app-plugin.js
 const { withAndroidManifest } = require('@expo/config-plugins');
 
-const withCustomManifest = (config) => {
-  return withAndroidManifest(config, async (config) => {
+const withCustomManifest = config => {
+  return withAndroidManifest(config, async config => {
     const androidManifest = config.modResults;
 
     // Modify manifest
@@ -367,6 +379,7 @@ module.exports = withCustomManifest;
 ```
 
 Apply in app.json:
+
 ```json
 {
   "expo": {
@@ -378,11 +391,13 @@ Apply in app.json:
 ### Using Third-Party Native Libraries
 
 **Without Custom Native Code (Recommended):**
+
 ```bash
 npx expo install react-native-reanimated
 ```
 
 **With Custom Native Code:**
+
 ```bash
 npx expo install react-native-camera
 npx expo prebuild
@@ -391,6 +406,7 @@ npx expo prebuild
 ## App Configuration (app.json / app.config.js)
 
 ### Static Configuration (app.json)
+
 ```json
 {
   "expo": {
@@ -422,10 +438,7 @@ npx expo prebuild
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "CAMERA",
-        "ACCESS_FINE_LOCATION"
-      ]
+      "permissions": ["CAMERA", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -448,6 +461,7 @@ npx expo prebuild
 ```
 
 ### Dynamic Configuration (app.config.js)
+
 ```javascript
 export default ({ config }) => {
   const isProduction = process.env.APP_ENV === 'production';
@@ -457,28 +471,23 @@ export default ({ config }) => {
     name: isProduction ? 'My App' : 'My App (Dev)',
     slug: 'my-app',
     extra: {
-      apiUrl: isProduction
-        ? 'https://api.production.com'
-        : 'https://api.staging.com',
+      apiUrl: isProduction ? 'https://api.production.com' : 'https://api.staging.com',
       ...config.extra,
     },
     ios: {
       ...config.ios,
-      bundleIdentifier: isProduction
-        ? 'com.company.myapp'
-        : 'com.company.myapp.dev',
+      bundleIdentifier: isProduction ? 'com.company.myapp' : 'com.company.myapp.dev',
     },
     android: {
       ...config.android,
-      package: isProduction
-        ? 'com.company.myapp'
-        : 'com.company.myapp.dev',
+      package: isProduction ? 'com.company.myapp' : 'com.company.myapp.dev',
     },
   };
 };
 ```
 
 ### Environment-Specific Configuration
+
 ```javascript
 // app.config.js
 const getEnvironment = () => {
@@ -503,6 +512,7 @@ export default {
 ```
 
 Access in app:
+
 ```typescript
 import Constants from 'expo-constants';
 
@@ -512,12 +522,14 @@ const apiUrl = Constants.expoConfig?.extra?.apiUrl;
 ## Best Practices
 
 ### Performance Optimization
+
 - Use `expo-image` instead of React Native `Image` for better performance
 - Enable Hermes for Android: `"jsEngine": "hermes"`
 - Use `react-native-reanimated` for smooth animations
 - Lazy load screens with `React.lazy()`
 
 ### Code Splitting
+
 ```typescript
 import { lazy, Suspense } from 'react';
 
@@ -533,6 +545,7 @@ function App() {
 ```
 
 ### Error Boundaries
+
 ```typescript
 import * as Sentry from '@sentry/react-native';
 
@@ -545,7 +558,9 @@ export default Sentry.wrap(App);
 ```
 
 ### Expo Doctor
+
 Run before building:
+
 ```bash
 npx expo-doctor
 ```
@@ -565,6 +580,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

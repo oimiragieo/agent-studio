@@ -25,6 +25,7 @@ Medical devices are classified into three categories based on risk:
 **Data Source**: Manufacturer and User Facility Device Experience (MAUDE) database
 
 **Key Fields**:
+
 - `device.brand_name` - Brand name of device
 - `device.generic_name` - Generic device name
 - `device.manufacturer_d_name` - Manufacturer name
@@ -40,6 +41,7 @@ Medical devices are classified into three categories based on risk:
 - `remedial_action` - Actions taken (recall, repair, replace, etc.)
 
 **Common Use Cases**:
+
 - Post-market surveillance
 - Safety signal detection
 - Device comparison studies
@@ -47,6 +49,7 @@ Medical devices are classified into three categories based on risk:
 - Quality improvement
 
 **Example Queries**:
+
 ```python
 import requests
 
@@ -92,6 +95,7 @@ params = {
 **Data Source**: 510(k) Premarket Notifications
 
 **Key Fields**:
+
 - `k_number` - 510(k) number (unique identifier)
 - `applicant` - Company submitting 510(k)
 - `device_name` - Name of device
@@ -109,6 +113,7 @@ params = {
 - `openfda.regulation_number` - CFR regulation number
 
 **Common Use Cases**:
+
 - Regulatory pathway research
 - Predicate device identification
 - Market entry analysis
@@ -116,6 +121,7 @@ params = {
 - Device development planning
 
 **Example Queries**:
+
 ```python
 # Find 510(k) clearances by company
 params = {
@@ -155,6 +161,7 @@ params = {
 **Data Source**: FDA Device Classification Database
 
 **Key Fields**:
+
 - `product_code` - Three-letter FDA product code
 - `device_name` - Official device name
 - `device_class` - Class (1, 2, or 3)
@@ -171,6 +178,7 @@ params = {
 - `life_sustain_support_flag` - Whether life-sustaining/supporting
 
 **Common Use Cases**:
+
 - Device identification
 - Regulatory requirement determination
 - Product code lookup
@@ -178,6 +186,7 @@ params = {
 - Device categorization
 
 **Example Queries**:
+
 ```python
 # Look up device by product code
 params = {
@@ -216,6 +225,7 @@ params = {
 **Data Source**: FDA Enforcement Reports
 
 **Key Fields**:
+
 - `status` - Current status (Ongoing, Completed, Terminated)
 - `recall_number` - Unique recall identifier
 - `classification` - Class I, II, or III
@@ -230,6 +240,7 @@ params = {
 - `product_res_number` - Product problem number
 
 **Common Use Cases**:
+
 - Quality monitoring
 - Supply chain risk management
 - Patient safety tracking
@@ -237,6 +248,7 @@ params = {
 - Device surveillance
 
 **Example Queries**:
+
 ```python
 # Find all Class I device recalls (most serious)
 params = {
@@ -267,6 +279,7 @@ params = {
 **Data Source**: FDA Recalls Database
 
 **Key Fields**:
+
 - `res_event_number` - Recall event number
 - `product_code` - FDA product code
 - `openfda.device_name` - Device name
@@ -278,12 +291,14 @@ params = {
 - `root_cause_description` - Root cause of issue
 
 **Common Use Cases**:
+
 - Recall tracking
 - Quality investigation
 - Root cause analysis
 - Trend identification
 
 **Example Queries**:
+
 ```python
 # Search recalls by product code
 params = {
@@ -304,6 +319,7 @@ response = requests.get("https://api.fda.gov/device/recall.json", params=params)
 **Data Source**: PMA Database
 
 **Key Fields**:
+
 - `pma_number` - PMA application number (e.g., P850005)
 - `supplement_number` - Supplement number if applicable
 - `applicant` - Company name
@@ -319,6 +335,7 @@ response = requests.get("https://api.fda.gov/device/recall.json", params=params)
 - `openfda.regulation_number` - Regulation number
 
 **Common Use Cases**:
+
 - High-risk device research
 - Approval timeline analysis
 - Regulatory strategy
@@ -326,6 +343,7 @@ response = requests.get("https://api.fda.gov/device/recall.json", params=params)
 - Clinical trial planning
 
 **Example Queries**:
+
 ```python
 # Find PMA approvals by company
 params = {
@@ -355,6 +373,7 @@ params = {
 **Data Source**: Device Registration and Listing Database
 
 **Key Fields**:
+
 - `registration.fei_number` - Facility establishment identifier
 - `registration.name` - Facility name
 - `registration.registration_number` - Registration number
@@ -372,6 +391,7 @@ params = {
 - `establishment_type` - Types of operations (manufacturer, etc.)
 
 **Common Use Cases**:
+
 - Manufacturer identification
 - Facility location lookup
 - Supply chain mapping
@@ -379,6 +399,7 @@ params = {
 - Market analysis
 
 **Example Queries**:
+
 ```python
 # Find registered facilities by country
 params = {
@@ -408,6 +429,7 @@ params = {
 **Data Source**: GUDID
 
 **Key Fields**:
+
 - `identifiers.id` - Device identifier (DI)
 - `identifiers.issuing_agency` - Issuing agency (GS1, HIBCC, ICCBBA)
 - `identifiers.type` - Primary or Package DI
@@ -433,6 +455,7 @@ params = {
 - `customer_contacts` - Contact information
 
 **Common Use Cases**:
+
 - Device identification and verification
 - Supply chain tracking
 - Adverse event reporting
@@ -440,6 +463,7 @@ params = {
 - Procurement
 
 **Example Queries**:
+
 ```python
 # Look up device by UDI
 params = {
@@ -478,6 +502,7 @@ params = {
 **Data Source**: FDA COVID-19 Serology Test Performance
 
 **Key Fields**:
+
 - `manufacturer` - Test manufacturer
 - `device` - Device/test name
 - `authorization_status` - EUA status
@@ -488,12 +513,14 @@ params = {
 - `sample_specificity_report_two` - Specificity data (second report)
 
 **Common Use Cases**:
+
 - Test performance comparison
 - Diagnostic accuracy assessment
 - Procurement decision support
 - Quality assurance
 
 **Example Queries**:
+
 ```python
 # Find tests by manufacturer
 params = {

@@ -7,15 +7,18 @@ Denario requires API credentials from supported LLM providers to power its multi
 ## Supported LLM Providers
 
 ### Google Vertex AI
+
 - Full integration with Google's Vertex AI platform
 - Supports Gemini and PaLM models
 - Requires Google Cloud project setup
 
 ### OpenAI
+
 - GPT-4, GPT-3.5, and other OpenAI models
 - Direct API integration
 
 ### Other Providers
+
 - Any LLM compatible with AG2/LangGraph frameworks
 - Anthropic Claude (via compatible interfaces)
 - Azure OpenAI
@@ -65,6 +68,7 @@ Denario requires API credentials from supported LLM providers to power its multi
 ### Method 1: Environment Variables (Recommended)
 
 **Linux/macOS:**
+
 ```bash
 export OPENAI_API_KEY="your-key-here"
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"
@@ -73,6 +77,7 @@ export GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"
 Add to `~/.bashrc`, `~/.zshrc`, or `~/.bash_profile` for persistence.
 
 **Windows:**
+
 ```bash
 set OPENAI_API_KEY=your-key-here
 ```
@@ -126,12 +131,14 @@ docker run -p 8501:8501 \
 ## Vertex AI Detailed Setup
 
 ### Prerequisites
+
 - Google Cloud account with billing enabled
 - gcloud CLI installed (optional but recommended)
 
 ### Step-by-Step Configuration
 
 1. **Install Google Cloud SDK (if not using Docker)**
+
    ```bash
    # Linux/macOS
    curl https://sdk.cloud.google.com | bash
@@ -140,22 +147,26 @@ docker run -p 8501:8501 \
    ```
 
 2. **Authenticate gcloud**
+
    ```bash
    gcloud auth application-default login
    ```
 
 3. **Set project**
+
    ```bash
    gcloud config set project YOUR_PROJECT_ID
    ```
 
 4. **Enable required APIs**
+
    ```bash
    gcloud services enable aiplatform.googleapis.com
    gcloud services enable compute.googleapis.com
    ```
 
 5. **Create service account (alternative to gcloud auth)**
+
    ```bash
    gcloud iam service-accounts create denario-service-account \
      --display-name="Denario AI Service Account"
@@ -169,6 +180,7 @@ docker run -p 8501:8501 \
    ```
 
 6. **Configure denario to use Vertex AI**
+
    ```python
    import os
    os.environ['GOOGLE_CLOUD_PROJECT'] = 'YOUR_PROJECT_ID'
@@ -223,6 +235,7 @@ Check denario's documentation for specific model selection APIs.
 ### Do NOT commit API keys to version control
 
 Add to `.gitignore`:
+
 ```gitignore
 .env
 *.json  # If storing credentials
@@ -231,35 +244,42 @@ service-account-key.json
 ```
 
 ### Rotate keys regularly
+
 - Generate new API keys periodically
 - Revoke old keys after rotation
 
 ### Use least privilege access
+
 - Grant only necessary permissions to service accounts
 - Use separate keys for development and production
 
 ### Encrypt sensitive files
+
 - Store credential files in encrypted volumes
 - Use cloud secret management services for production
 
 ## Troubleshooting
 
 ### "API key not found" errors
+
 - Verify environment variables are set: `echo $OPENAI_API_KEY`
 - Check `.env` file is in correct directory
 - Ensure `load_dotenv()` is called before importing denario
 
 ### Vertex AI authentication failures
+
 - Verify `GOOGLE_APPLICATION_CREDENTIALS` points to valid JSON file
 - Check service account has required permissions
 - Ensure APIs are enabled in Google Cloud project
 
 ### Rate limiting issues
+
 - Implement exponential backoff
 - Reduce concurrent requests
 - Upgrade API plan if needed
 
 ### Docker environment variable issues
+
 - Use `docker run --env-file .env` to pass environment
 - Mount credential files with `-v` flag
 - Check environment inside container: `docker exec <container> env`

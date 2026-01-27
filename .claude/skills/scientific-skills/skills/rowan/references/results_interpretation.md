@@ -35,13 +35,13 @@ elif workflow.status == "failed":
 
 ### Workflow Status Values
 
-| Status | Description |
-|--------|-------------|
-| `pending` | Queued, waiting for resources |
-| `running` | Currently executing |
-| `completed` | Successfully finished |
-| `failed` | Execution failed |
-| `stopped` | Manually stopped |
+| Status      | Description                   |
+| ----------- | ----------------------------- |
+| `pending`   | Queued, waiting for resources |
+| `running`   | Currently executing           |
+| `completed` | Successfully finished         |
+| `failed`    | Execution failed              |
+| `stopped`   | Manually stopped              |
 
 ### Credits Charged
 
@@ -79,6 +79,7 @@ for smiles, pop in tautomers.items():
 ```
 
 **Interpretation:**
+
 - pKa < 0: Strong acid
 - pKa 0-7: Acidic
 - pKa 7-14: Basic
@@ -99,6 +100,7 @@ print(f"Reduction: {reduction_potential:.2f} V vs SHE")
 ```
 
 **Interpretation:**
+
 - Higher oxidation potential = harder to oxidize
 - Lower reduction potential = harder to reduce
 - Compare to reference compounds for context
@@ -118,6 +120,7 @@ print(f"Classification: {classification}")  # "High", "Medium", "Low"
 ```
 
 **Interpretation:**
+
 - Log S > -1: High solubility (>0.1 M)
 - Log S -1 to -3: Medium solubility
 - Log S < -3: Low solubility (<0.001 M)
@@ -140,6 +143,7 @@ for i, (fp, fm, fd) in enumerate(zip(fukui_plus, fukui_minus, fukui_dual)):
 ```
 
 **Interpretation:**
+
 - High f+ = susceptible to nucleophilic attack
 - High f- = susceptible to electrophilic attack
 - Dual > 0 = electrophilic character, Dual < 0 = nucleophilic character
@@ -183,6 +187,7 @@ for i, w in enumerate(weights):
 ```
 
 **Interpretation:**
+
 - Conformers within 3 kcal/mol are typically accessible at room temperature
 - Lowest energy conformer may not be most populated in solution
 - Consider ensemble averaging for properties
@@ -213,9 +218,10 @@ print(f"Gibbs free energy: {gibbs:.6f} Hartree")
 ```
 
 **Interpretation:**
+
 - 0 imaginary frequencies = minimum
 - 1 imaginary frequency = transition state
-- >1 imaginary frequencies = higher-order saddle point
+- > 1 imaginary frequencies = higher-order saddle point
 
 ---
 
@@ -269,6 +275,7 @@ workflow.download_sdf_file("docked_poses.sdf")
 ```
 
 **Interpretation:**
+
 - Vina scores typically -12 to -6 kcal/mol for drug-like molecules
 - More negative = stronger predicted binding
 - Ligand strain > 3 kcal/mol suggests unlikely binding mode
@@ -295,6 +302,7 @@ for r in sorted_results[:10]:
 ```
 
 **Scoring Function Differences:**
+
 - **Vina**: Original scoring function
 - **Vinardo**: Updated parameters, often more accurate
 
@@ -324,23 +332,25 @@ with open("complex.pdb", "w") as f:
 
 **Confidence Score Interpretation:**
 
-| Score Range | Confidence | Recommendation |
-|-------------|------------|----------------|
-| > 0.8 | High | Likely accurate |
-| 0.5 - 0.8 | Moderate | Use with caution |
-| < 0.5 | Low | Validate experimentally |
+| Score Range | Confidence | Recommendation          |
+| ----------- | ---------- | ----------------------- |
+| > 0.8       | High       | Likely accurate         |
+| 0.5 - 0.8   | Moderate   | Use with caution        |
+| < 0.5       | Low        | Validate experimentally |
 
 ---
 
 ### Interpreting Low Confidence
 
 Low confidence may indicate:
+
 - Novel protein fold not well-represented in training data
 - Flexible or disordered regions
 - Unusual ligand (large, charged, or complex)
 - Multiple possible binding modes
 
 **Recommendations for low confidence:**
+
 1. Try multiple models (Chai-1, Boltz-1, Boltz-2)
 2. Compare predictions across models
 3. Use docking for binding pose refinement
@@ -405,13 +415,13 @@ def validate_docking(data):
 
 ### Experimental Validation Guidelines
 
-| Property | Validation Method |
-|----------|-------------------|
-| pKa | Potentiometric titration, UV spectroscopy |
-| Solubility | Shake-flask, nephelometry |
-| Docking pose | X-ray crystallography, cryo-EM |
-| Binding affinity | SPR, ITC, fluorescence polarization |
-| Cofolding | X-ray, NMR, HDX-MS |
+| Property         | Validation Method                         |
+| ---------------- | ----------------------------------------- |
+| pKa              | Potentiometric titration, UV spectroscopy |
+| Solubility       | Shake-flask, nephelometry                 |
+| Docking pose     | X-ray crystallography, cryo-EM            |
+| Binding affinity | SPR, ITC, fluorescence polarization       |
+| Cofolding        | X-ray, NMR, HDX-MS                        |
 
 ---
 

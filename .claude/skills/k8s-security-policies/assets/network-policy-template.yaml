@@ -1,5 +1,4 @@
 # Network Policy Templates
-
 ---
 # Template 1: Default Deny All (Start Here)
 apiVersion: networking.k8s.io/v1
@@ -10,8 +9,8 @@ metadata:
 spec:
   podSelector: {}
   policyTypes:
-  - Ingress
-  - Egress
+    - Ingress
+    - Egress
 
 ---
 # Template 2: Allow DNS (Essential)
@@ -23,15 +22,15 @@ metadata:
 spec:
   podSelector: {}
   policyTypes:
-  - Egress
+    - Egress
   egress:
-  - to:
-    - namespaceSelector:
-        matchLabels:
-          name: kube-system
-    ports:
-    - protocol: UDP
-      port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
 
 ---
 # Template 3: Frontend to Backend
@@ -46,18 +45,18 @@ spec:
       app: backend
       tier: backend
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: frontend
-          tier: frontend
-    ports:
-    - protocol: TCP
-      port: 8080
-    - protocol: TCP
-      port: 9090
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+              tier: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 9090
 
 ---
 # Template 4: Allow Ingress Controller
@@ -71,17 +70,17 @@ spec:
     matchLabels:
       app: web
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: ingress-nginx
-    ports:
-    - protocol: TCP
-      port: 80
-    - protocol: TCP
-      port: 443
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
 
 ---
 # Template 5: Allow Monitoring (Prometheus)
@@ -93,17 +92,17 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      prometheus.io/scrape: "true"
+      prometheus.io/scrape: 'true'
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          name: monitoring
-    ports:
-    - protocol: TCP
-      port: 9090
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: monitoring
+      ports:
+        - protocol: TCP
+          port: 9090
 
 ---
 # Template 6: Allow External HTTPS
@@ -117,16 +116,16 @@ spec:
     matchLabels:
       app: api-client
   policyTypes:
-  - Egress
+    - Egress
   egress:
-  - to:
-    - ipBlock:
-        cidr: 0.0.0.0/0
-        except:
-        - 169.254.169.254/32  # Block metadata service
-    ports:
-    - protocol: TCP
-      port: 443
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 169.254.169.254/32 # Block metadata service
+      ports:
+        - protocol: TCP
+          port: 443
 
 ---
 # Template 7: Database Access
@@ -141,15 +140,15 @@ spec:
       app: postgres
       tier: database
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          tier: backend
-    ports:
-    - protocol: TCP
-      port: 5432
+    - from:
+        - podSelector:
+            matchLabels:
+              tier: backend
+      ports:
+        - protocol: TCP
+          port: 5432
 
 ---
 # Template 8: Cross-Namespace Communication
@@ -163,15 +162,15 @@ spec:
     matchLabels:
       app: api
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          environment: production
-      podSelector:
-        matchLabels:
-          app: frontend
-    ports:
-    - protocol: TCP
-      port: 8080
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              environment: production
+          podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - protocol: TCP
+          port: 8080

@@ -35,13 +35,13 @@ Rule Auditor - Validates code against coding standards and best practices from e
 
 Find relevant expert skills based on the code being audited:
 
-| File Type | Expert Skills |
-|-----------|---------------|
+| File Type     | Expert Skills                   |
+| ------------- | ------------------------------- |
 | `.ts`, `.tsx` | typescript-expert, react-expert |
-| `.py` | python-backend-expert |
-| `.go` | go-expert |
-| `.java` | java-expert |
-| `*.test.*` | testing-expert |
+| `.py`         | python-backend-expert           |
+| `.go`         | go-expert                       |
+| `.java`       | java-expert                     |
+| `*.test.*`    | testing-expert                  |
 
 ### Step 2: Load Best Practices
 
@@ -62,6 +62,7 @@ Analyze the target files for violations:
 3. **Identify issues**: Note file, line, and violation type
 
 Common checks:
+
 - Naming conventions
 - Code structure
 - Import patterns
@@ -81,6 +82,7 @@ Create a structured compliance report:
 **Date**: YYYY-MM-DD
 
 ### Summary
+
 - **Pass**: 12 rules
 - **Warn**: 3 rules
 - **Fail**: 2 rules
@@ -88,11 +90,13 @@ Create a structured compliance report:
 ### Violations
 
 #### FAIL: Avoid using `any` type
+
 - **File**: src/components/UserAuth.tsx:45
 - **Issue**: `const user: any = await getUser()`
 - **Fix**: Define proper User interface
 
 #### WARN: Use Server Components by default
+
 - **File**: src/components/UserAuth.tsx:1
 - **Issue**: Missing 'use client' directive but uses useState
 - **Fix**: Add 'use client' or refactor to Server Component
@@ -137,6 +141,7 @@ Audit src/components/ for TypeScript and React best practices
    - Fix: Add 'use client' directive at top
 
 ### Passed Checks
+
 - Component naming (PascalCase) ✓
 - Hook usage patterns ✓
 - Import organization ✓
@@ -146,6 +151,7 @@ Audit src/components/ for TypeScript and React best practices
 </examples>
 
 ## Rules
+
 - Always check relevant expert skills for standards
 - Provide line numbers and specific fixes
 - Prioritize security and type safety issues
@@ -153,11 +159,13 @@ Audit src/components/ for TypeScript and React best practices
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

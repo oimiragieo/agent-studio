@@ -1,6 +1,7 @@
 # Known Issues and Blockers
 
 ## Format
+
 ```
 ## [ISSUE-XXX] Title
 - **Date**: YYYY-MM-DD
@@ -18,16 +19,16 @@
 ## [2026-01-24] Test Infrastructure Issue
 
 ### Issue: Broken npm test command
+
 - **File**: package.json
 - **Problem**: References non-existent .claude/tests/test-all-hooks.mjs
 - **Impact**: npm test fails completely
 - **Status**: RESOLVED (2026-01-26)
 - **Resolution**: Fixed by QA Agent (Task #10)
-  - Updated test:tools pattern to use recursive globs: ".claude/tools/**/*.test.mjs" ".claude/tools/**/*.test.cjs"
+  - Updated test:tools pattern to use recursive globs: ".claude/tools/**/\*.test.mjs" ".claude/tools/**/\*.test.cjs"
   - Updated test:all to run: pnpm test && pnpm test:framework && pnpm test:tools
   - Excluded .test.js files (Jest format) to avoid ESM/CJS conflicts
   - All 203 tests now passing (21 main + 164 framework + 18 tools)
-
 
 ## 2026-01-24: External Integration Workflow Issues
 
@@ -36,6 +37,7 @@
 ### Important Issues
 
 **1. Phase 6 Rollback Assumes Uncommitted Changes**
+
 - **Location:** Lines 902-1044 (Rollback Procedure section)
 - **Issue:** Uses `git restore` which only works for uncommitted changes
 - **Impact:** If agent commits mid-phase, rollback fails to revert changes
@@ -45,6 +47,7 @@
 - **Resolution:** Added Rollback Strategy Selection section with decision tree for committed vs uncommitted changes. Now uses git revert for committed changes and git restore for uncommitted. Added safety rules preventing destructive commands like git reset --hard. See lines 906-1044.
 
 **2. Security Review Missing Script Execution Checks**
+
 - **Location:** Lines 403-430 (security review checklist) - NOW ENHANCED
 - **Issue:** Checklist does not explicitly cover script command injection, permissions, sandboxing
 - **Impact:** Malicious scripts in external skills could execute arbitrary commands
@@ -59,6 +62,7 @@
   - Added BLOCKING severity rules: script execution vulns, CVSS>=7.0, data exfil patterns
 
 **3. Version Comparison Logic Unspecified**
+
 - **Location:** Lines 136-170 (Phase 0 pre-check)
 - **Issue:** Mentions version comparison but does not specify method or format
 - **Impact:** Incorrect artifact status determination (skip needed updates or duplicate integrations)
@@ -70,6 +74,7 @@
 ### Minor Issues
 
 **4. Related Workflows Reference Non-Existent File**
+
 - **Location:** Lines 1046-1052
 - **Issue:** References "Codebase Integration Workflow" which does not exist
 - **Fix:** Update to reference actual workflows: skill-lifecycle.md, feature-development-workflow.md, router-decision.md
@@ -80,6 +85,7 @@
 ---
 
 ## [SEC-001] RESOLVED: Bash Command Validator Fail-Open Vulnerability
+
 - **Date**: 2026-01-25
 - **Severity**: Critical
 - **Status**: Resolved
@@ -90,6 +96,7 @@
 - **Resolution**: Changed `process.exit(0)` to `process.exit(2)` (block) in the catch block. Added security rationale comments explaining defense-in-depth principle: "deny by default when security state is unknown."
 
 ## [SEC-002] RESOLVED: Shell Validator Inner Command Bypass
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: Resolved
@@ -100,6 +107,7 @@
 - **Resolution**: Added recursive validation using `const { validateCommand } = require('./registry.cjs')` to re-validate extracted inner commands. The inner command is now blocked if any validator rejects it.
 
 ## [SEC-003] RESOLVED: Missing Network Command Validators
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: Resolved
@@ -120,6 +128,7 @@
 - **Registry Update**: All 8 commands registered in `registry.cjs`
 
 ## [SEC-004] RESOLVED: Security Review Guard Hook Implemented
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: Resolved
@@ -147,6 +156,7 @@
 ---
 
 ## [SEC-005] RESOLVED: Code Injection via new Function() in Workflow Engine
+
 - **Date**: 2026-01-25
 - **Severity**: Critical
 - **Status**: Resolved
@@ -165,6 +175,7 @@
   - All tests passing (19/19 security + 29/29 validators + 55/55 workflow engine)
 
 ## [SEC-006] RESOLVED: Missing Path Validation in Rollback Manager
+
 - **Date**: 2026-01-25
 - **Severity**: Critical
 - **Status**: Resolved
@@ -180,6 +191,7 @@
   - Created 16 tests covering path traversal prevention
 
 ## [SEC-007] RESOLVED: State File Poisoning via Unvalidated JSON Parsing
+
 - **Date**: 2026-01-25
 - **Severity**: Critical
 - **Status**: Resolved
@@ -200,6 +212,7 @@
   - Created 17 tests covering JSON schema validation
 
 ## [SEC-008] RESOLVED: Security Hooks Fail-Open on Errors
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: Resolved
@@ -218,6 +231,7 @@
   - Note: `auto-rerouter.cjs` is advisory-only (never blocks), fail-open is acceptable by design
 
 ## [SEC-009] RESOLVED: execSync Command Injection Risk
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: RESOLVED
@@ -241,6 +255,7 @@
 - **Verification**: `grep -n execSync create.cjs` returns no matches
 
 ## [BUG-001] RESOLVED: Nested .claude Folders Created by process.cwd() Default
+
 - **Date**: 2026-01-25
 - **Severity**: Medium
 - **Status**: Resolved
@@ -266,6 +281,7 @@
   - Created 6 tests for project root resolution
 
 ## [SEC-010] MITIGATED: Environment Variable Security Overrides
+
 - **Date**: 2026-01-25
 - **Severity**: High
 - **Status**: Mitigated (Audit Logging Added)
@@ -283,11 +299,18 @@
   - Overrides remain functional (by design) but are now auditable
 - **Audit Log Format**:
   ```json
-  {"hook":"<hook-name>","event":"security_override_used","override":"<ENV_VAR>=<value>","timestamp":"...","warning":"..."}
+  {
+    "hook": "<hook-name>",
+    "event": "security_override_used",
+    "override": "<ENV_VAR>=<value>",
+    "timestamp": "...",
+    "warning": "..."
+  }
   ```
 - **Remaining Risk**: Overrides still exist by design; recommendation to monitor audit logs in production
 
 ## [FIX-001] RESOLVED: File Placement Guard Default Mode
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: Resolved
@@ -296,6 +319,7 @@
 - **Resolution**: Changed default from 'warn' to 'block'. Added 4 tests for getEnforcementMode(). All 37 tests passing.
 
 ## [FIX-002] RESOLVED: Test Parallelization Interference
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: Resolved
@@ -303,6 +327,7 @@
 - **Resolution**: Added `test:framework` scripts to package.json that use `--test-concurrency=1` to run tests sequentially. All 164 framework tests now pass.
 
 ## [FIX-003] RESOLVED: Retroactive EVOLVE Compliance for Utility Files
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: Resolved
@@ -317,6 +342,7 @@
 **Report**: `.claude/context/artifacts/reports/security-review-evolve-auto-start.md`
 
 ### SEC-AS-001: Circuit Breaker State File Tampering
+
 - **Date**: 2026-01-26
 - **Severity**: High
 - **Status**: RESOLVED (2026-01-26)
@@ -327,6 +353,7 @@
 - **Test Coverage**: 4 new tests in SEC-AS-001 test suite
 
 ### SEC-AS-002: Clock Manipulation Rate Limit Bypass
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: RESOLVED (2026-01-26)
@@ -336,6 +363,7 @@
 - **Files Modified**: `.claude/hooks/safety/file-placement-guard.cjs`
 
 ### SEC-AS-004: Recursive Evolution Spawn Loop
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: RESOLVED (2026-01-26)
@@ -346,6 +374,7 @@
 - **Test Coverage**: 3 new tests in SEC-AS-004 test suite
 
 ### SEC-SF-001: Evolution State JSON.parse Vulnerability
+
 - **Date**: 2026-01-26
 - **Severity**: High
 - **Status**: RESOLVED (2026-01-26)
@@ -361,6 +390,7 @@
 - **Test Coverage**: 4 new tests in SEC-SF-001 test suite
 
 ### SEC-IV-001: Unsanitized Path in Spawn Prompt
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: RESOLVED (2026-01-26)
@@ -374,6 +404,7 @@
 - **Test Coverage**: 7 new tests in SEC-IV-001 test suite
 
 ### SEC-IV-002: Sensitive Path Auto-Spawn
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: RESOLVED (2026-01-26)
@@ -395,6 +426,7 @@
 **Report**: `.claude/context/artifacts/security-audit-findings.md`
 
 ### SEC-AUDIT-001: planner-first-guard.cjs Fail-Open
+
 - **Date**: 2026-01-26
 - **Severity**: CRITICAL
 - **Status**: RESOLVED (2026-01-26)
@@ -405,6 +437,7 @@
 - **Resolution**: Changed catch block to fail closed with `process.exit(2)`. Added `HOOK_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
 
 ### SEC-AUDIT-002: security-review-guard.cjs Fail-Open
+
 - **Date**: 2026-01-26
 - **Severity**: CRITICAL
 - **Status**: RESOLVED (2026-01-26)
@@ -415,6 +448,7 @@
 - **Resolution**: Changed catch block to fail closed with `process.exit(2)`. Added `HOOK_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
 
 ### SEC-AUDIT-003: router-write-guard.cjs Missing Error Handling
+
 - **Date**: 2026-01-26
 - **Severity**: HIGH
 - **Status**: RESOLVED (2026-01-26)
@@ -425,6 +459,7 @@
 - **Resolution**: Wrapped entire main() body in try-catch with fail-closed behavior (`process.exit(2)`). Added `ROUTER_WRITE_GUARD_FAIL_OPEN=true` env var for debugging override. Added JSON audit logging for both error and override events.
 
 ### SEC-AUDIT-004: task-create-guard.cjs Fail-Open on No Input
+
 - **Date**: 2026-01-26
 - **Severity**: HIGH
 - **Status**: RESOLVED (2026-01-26)
@@ -435,6 +470,7 @@
 - **Resolution**: Changed to fail closed with `process.exit(2)` when no input is available. Added `TASK_CREATE_GUARD_ALLOW_NO_INPUT=true` env var for debugging override. Added JSON audit logging for both no-input and override events.
 
 ### SEC-AUDIT-005: loop-prevention.cjs TOCTOU Race Condition
+
 - **Date**: 2026-01-26
 - **Severity**: HIGH
 - **Status**: RESOLVED (2026-01-26)
@@ -445,6 +481,7 @@
 - **Resolution**: Implemented file locking using exclusive file creation (`fs.writeFileSync` with `flag: 'wx'`). Added `acquireLock()` and `releaseLock()` functions. Lock operations use `.lock` suffix files with stale lock detection (5 second timeout) and retry logic (50ms intervals, 2s max wait).
 
 ### SEC-AUDIT-006: safe-json.cjs Incomplete Deep Copy
+
 - **Date**: 2026-01-26
 - **Severity**: HIGH
 - **Status**: RESOLVED (2026-01-26)
@@ -455,6 +492,7 @@
 - **Resolution**: Added deep copy for ALL nested objects using `JSON.parse(JSON.stringify())`. Both arrays and objects now use this pattern with try-catch fallback to schema defaults on circular reference errors.
 
 ### SEC-AUDIT-007: security-review-guard.cjs Silent Fail
+
 - **Date**: 2026-01-26
 - **Severity**: MEDIUM
 - **Status**: RESOLVED (2026-01-26)
@@ -465,6 +503,7 @@
 - **Resolution**: Changed `readState()` to fail closed - now returns `{requiresSecurityReview: true, securitySpawned: false}` on error, forcing security review when state is unknown. Added JSON audit logging for state read errors.
 
 ### SEC-AUDIT-008: planner-first-guard.cjs Missing Audit Log for Off Mode
+
 - **Date**: 2026-01-26
 - **Severity**: MEDIUM
 - **Status**: RESOLVED (2026-01-26)
@@ -475,6 +514,7 @@
 - **Resolution**: Added JSON audit log to stderr when `PLANNER_FIRST_ENFORCEMENT=off`. Log includes hook name, event type (`security_override_used`), override variable, timestamp, and warning message. Consistent with SEC-010 audit pattern.
 
 ### SEC-AUDIT-009: router-state.cjs Missing Audit Log for Override
+
 - **Date**: 2026-01-26
 - **Severity**: MEDIUM
 - **Status**: RESOLVED (2026-01-26)
@@ -485,6 +525,7 @@
 - **Resolution**: Added JSON audit log to stderr when `ALLOW_ROUTER_WRITE=true`. Log includes hook name, event type (`security_override_used`), override variable, timestamp, and warning message. Consistent with SEC-010 audit pattern.
 
 ### SEC-AUDIT-010: file-placement-guard.cjs Unvalidated Command-Line JSON
+
 - **Date**: 2026-01-26
 - **Severity**: MEDIUM
 - **Status**: RESOLVED (2026-01-26)
@@ -495,6 +536,7 @@
 - **Resolution**: Added `HOOK_INPUT_SCHEMA` constant with expected fields and defaults. Added `validateHookInput()` function that strips dangerous keys (`__proto__`, `constructor`, `prototype`), validates object structure, and deep-copies nested objects. Returns null on parse error (fail closed).
 
 ### SEC-AUDIT-011: router-state.cjs Non-Atomic Read-Modify-Write
+
 - **Date**: 2026-01-26
 - **Severity**: LOW
 - **Status**: OPEN
@@ -512,6 +554,7 @@
 **Report**: `.claude/context/artifacts/architecture-review-findings.md`
 
 ### [ARCH-001] Missing ROUTER_KEYWORD_GUIDE.md File
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: RESOLVED (2026-01-26)
@@ -520,6 +563,7 @@
 - **Resolution**: File now exists at `.claude/docs/ROUTER_KEYWORD_GUIDE.md` (36873 bytes). Contains complete routing keyword documentation extracted from router-enforcer.cjs intentKeywords and INTENT_TO_AGENT mappings.
 
 ### [ARCH-002] Undocumented Skill Workflows
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -535,6 +579,7 @@
 - **Recommendation**: Add to CLAUDE.md Section 8.6 or create workflows/skills/ subdirectory
 
 ### [ARCH-003] Inconsistent Workflow Placement
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN
@@ -543,6 +588,7 @@
 - **Recommendation**: Standardize by moving all skill workflows to workflows/skills/ or keeping all in root
 
 ### [ARCH-004] Deprecated Skill Reference in technical-writer.md
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN
@@ -559,6 +605,7 @@
 **Report**: `.claude/context/artifacts/security-review-implementation.md`
 
 ### [SEC-IMPL-001] Task #3 State Merging DoS Risk
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: CONDITIONALLY_APPROVED
@@ -570,6 +617,7 @@
 - **Implementation Condition**: Fail-closed after max retries (throw error, don't silently succeed)
 
 ### [SEC-IMPL-002] Task #3 Version Field Manipulation
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: CONDITIONALLY_APPROVED
@@ -580,6 +628,7 @@
 - **Required Safeguard**: Validate version as positive integer, auto-reset to 1 if corrupted
 
 ### [SEC-IMPL-003] Task #2 Memory Exhaustion Risk
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: CONDITIONALLY_APPROVED
@@ -590,6 +639,7 @@
 - **Required Safeguard**: Maximum 100 handlers per event, use Set for deduplication
 
 ### [SEC-IMPL-004] Task #8 TOCTOU Race Conditions
+
 - **Date**: 2026-01-26
 - **Severity**: High
 - **Status**: CONDITIONALLY_APPROVED
@@ -600,6 +650,7 @@
 - **Required Safeguard**: Eliminate exists() checks, use try/catch with ENOENT handling
 
 ### [SEC-IMPL-005] Task #8 Async Error Handling
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: CONDITIONALLY_APPROVED
@@ -610,6 +661,7 @@
 - **Required Safeguard**: Explicit error handling for ALL async operations, log before returning defaults
 
 ### [SEC-IMPL-006] Task #8 Atomic Write Preservation
+
 - **Date**: 2026-01-26
 - **Severity**: High
 - **Status**: CONDITIONALLY_APPROVED
@@ -619,18 +671,19 @@
 - **Description**: Async writes must preserve atomic write pattern (temp + rename) to prevent corruption
 - **Required Safeguard**: Implement async atomic write (await writeFile temp, await rename)
 
-
 ## Library Code Quality Audit (2026-01-26)
 
 ### Critical Issues Requiring Immediate Fix
 
 **CRITICAL-001: Missing Input Validation in CLI Interfaces**
+
 - **Files**: memory-manager.cjs, memory-scheduler.cjs, smart-pruner.cjs
 - **Risk**: Path traversal, command injection
 - **Fix**: Add path.normalize() and traversal checks before file operations
 - **Estimated Fix Time**: < 1 hour
 
 **CRITICAL-003: Silent Error Swallowing in Metrics Collection**
+
 - **File**: memory-dashboard.cjs (multiple catch blocks)
 - **Risk**: Failures invisible, incorrect health scores
 - **Fix**: Add debug logging with METRICS_DEBUG env var
@@ -639,14 +692,17 @@
 ### Important Issues for Next Sprint
 
 **IMP-001: Missing JSDoc Documentation**
+
 - Affects 25+ public API functions across memory-manager, memory-tiers, smart-pruner
 - Add JSDoc comments with @param, @returns, @throws tags
 
 **IMP-006: Missing Error Path Test Coverage**
+
 - Test files exist but don't cover error conditions
 - Add tests for module not found, permission errors, corrupted JSON
 
 **IMP-007: workflow-validator Missing Step Schema Validation**
+
 - Only validates phases, not step structure
 - Add validation for required step fields (id, handler)
 
@@ -664,6 +720,7 @@
 **Ready to Merge**: YES (with follow-up deduplication tasks)
 
 **Key Metrics:**
+
 - Dead Code: 0 instances
 - Code Duplication: ~45% (parseHookInput across 40+ files)
 - Security Compliance: 95% (5% legacy JSON.parse remaining)
@@ -672,6 +729,7 @@
 ### Important Issues (Should Fix)
 
 **HOOK-001: Massive Code Duplication - parseHookInput()**
+
 - **Severity**: High
 - **Impact**: ~2000 lines duplicated across 40+ hooks
 - **Files**: task-create-guard.cjs, session-memory-extractor.cjs, task-completion-reflection.cjs, loop-prevention.cjs, research-enforcement.cjs, +35 more
@@ -680,6 +738,7 @@
 - **Status**: OPEN
 
 **HOOK-002: findProjectRoot() Duplication**
+
 - **Severity**: Medium
 - **Impact**: ~200 lines duplicated across 20+ hooks
 - **Files**: router-state.cjs, file-placement-guard.cjs, session-memory-extractor.cjs, task-completion-reflection.cjs, loop-prevention.cjs, +15 more
@@ -688,6 +747,7 @@
 - **Status**: OPEN
 
 **HOOK-003: research-enforcement.cjs Missing SEC-007**
+
 - **Severity**: High
 - **CWE**: CWE-20 (Improper Input Validation)
 - **File**: `.claude/hooks/evolution/research-enforcement.cjs` line 88
@@ -697,6 +757,7 @@
 - **Status**: OPEN
 
 **HOOK-004: State Cache Integration Incomplete**
+
 - **Severity**: Medium
 - **Files**: file-placement-guard.cjs, loop-prevention.cjs, research-enforcement.cjs
 - **Issue**: evolution-state.json and loop-state.json read without caching
@@ -707,6 +768,7 @@
 - **Note**: router-state.cjs already uses state cache internally, consumers benefit automatically
 
 **HOOK-005: Inconsistent Exit Code - router-write-guard.cjs**
+
 - **Severity**: Low
 - **File**: `.claude/hooks/safety/router-write-guard.cjs` line 207
 - **Issue**: Uses `process.exit(1)` instead of `process.exit(2)` for blocking
@@ -716,6 +778,7 @@
 - **Status**: OPEN
 
 **HOOK-006: Inconsistent Audit Logging Format**
+
 - **Severity**: Low
 - **Files**: session-memory-extractor.cjs, multiple reflection hooks
 - **Issue**: Some hooks use plain console.error, others use JSON.stringify
@@ -727,12 +790,14 @@
 ### Minor Issues (Nice to Have)
 
 **HOOK-007: Magic Numbers - Timeout Values**
+
 - **Files**: task-completion-reflection.cjs (L183), session-memory-extractor.cjs (L156), loop-prevention.cjs (L48)
 - **Issue**: Hardcoded timeout values (100ms, 300000ms) without named constants
 - **Fix**: Extract to module-level constants with documentation
 - **Status**: OPEN
 
 **HOOK-008: Missing JSDoc on Exported Functions**
+
 - **Files**: Most hooks
 - **Issue**: No JSDoc comments on module.exports functions
 - **Impact**: Harder for developers to understand API
@@ -740,6 +805,7 @@
 - **Status**: OPEN
 
 **HOOK-009: Inconsistent Module Exports**
+
 - **Issue**: 60% of hooks export for testing, 40% don't
 - **Fix**: Standardize on always exporting main/parseHookInput for testing
 - **Status**: OPEN
@@ -747,12 +813,14 @@
 ### Test Coverage Gaps
 
 **HOOK-TEST-001: session-memory-extractor.cjs Missing Tests**
+
 - **File**: `.claude/hooks/memory/session-memory-extractor.cjs`
 - **Current Coverage**: 0 tests
 - **Target**: 10+ tests covering extractPatterns, extractGotchas, extractDiscoveries
 - **Status**: OPEN
 
 **HOOK-TEST-002: Untested Routing Hooks**
+
 - **Files**: agent-context-tracker.cjs, agent-context-pre-tracker.cjs, documentation-routing-guard.cjs
 - **Impact**: 3/12 routing hooks untested (25% gap)
 - **Status**: OPEN
@@ -760,6 +828,7 @@
 ### Performance Opportunities
 
 **HOOK-PERF-001: Hook Consolidation**
+
 - **Current**: 80 hook files
 - **Potential**: ~55 hook files (-31%)
 - **Strategy**: Consolidate related hooks (router guards, reflection hooks, routing guards)
@@ -771,23 +840,16 @@
 ### Recommendations
 
 **Immediate (Priority 1):**
+
 1. Extract parseHookInput() to shared utility (HOOK-001)
 2. Apply SEC-007 to research-enforcement.cjs (HOOK-003)
 3. Fix router-write-guard.cjs exit code (HOOK-005)
 
-**Short-Term (Priority 2):**
-4. Create hook-input.cjs, enforcement-mode.cjs shared utilities
-5. Add tests for session-memory-extractor.cjs (HOOK-TEST-001)
-6. Apply SEC-007 safe JSON parsing to ALL state file reads
+**Short-Term (Priority 2):** 4. Create hook-input.cjs, enforcement-mode.cjs shared utilities 5. Add tests for session-memory-extractor.cjs (HOOK-TEST-001) 6. Apply SEC-007 safe JSON parsing to ALL state file reads
 
-**Medium-Term (Priority 3):**
-7. Consolidate related hooks (HOOK-PERF-001)
-8. Create HOOK_DEVELOPMENT_GUIDE.md
-9. Standardize audit logging format (HOOK-006)
+**Medium-Term (Priority 3):** 7. Consolidate related hooks (HOOK-PERF-001) 8. Create HOOK_DEVELOPMENT_GUIDE.md 9. Standardize audit logging format (HOOK-006)
 
-**Long-Term (Priority 4):**
-10. Implement evolution-state.json and loop-state.json caching (HOOK-004)
-11. Add JSDoc to all exported functions (HOOK-008)
+**Long-Term (Priority 4):** 10. Implement evolution-state.json and loop-state.json caching (HOOK-004) 11. Add JSDoc to all exported functions (HOOK-008)
 
 ---
 
@@ -797,6 +859,7 @@
 **Analyst**: PLANNER Agent
 
 ### [PROC-001] Missing Hook Consolidation Workflow
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -814,6 +877,7 @@
   6. Cleanup phase (remove deprecated hooks, update settings.json)
 
 ### [PROC-002] Missing Code Deduplication Process
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -829,6 +893,7 @@
   4. Add to code review checklist: "Check for duplicated utilities"
 
 ### [PROC-003] Missing Automated Security Review Trigger
+
 - **Date**: 2026-01-26
 - **Severity**: High
 - **Status**: OPEN
@@ -846,6 +911,7 @@
   3. Log security-sensitive change detection to audit trail
 
 ### [PROC-004] Missing Error Recovery Standardization
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -854,7 +920,7 @@
   - Some use fail-closed (exit 2) - correct
   - Some use fail-open (exit 0) - incorrect for security hooks
   - Some have no error handling - dangerous
-  Inconsistency documented in SEC-008, SEC-AUDIT-001 through SEC-AUDIT-004.
+    Inconsistency documented in SEC-008, SEC-AUDIT-001 through SEC-AUDIT-004.
 - **Expected Benefit**: Consistent security posture, easier auditing
 - **Implementation Complexity**: Low
 - **Priority**: P1
@@ -865,6 +931,7 @@
   4. Debug override pattern (HOOK_FAIL_OPEN env var)
 
 ### [PROC-005] Missing Agent Spawning Verification
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -880,6 +947,7 @@
   4. Generate report of completion rate by agent type
 
 ### [PROC-006] Missing Workflow Skill Documentation
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN (Related to ARCH-002)
@@ -897,6 +965,7 @@
 - **Recommendation**: Either add to CLAUDE.md Section 8.6 or create `.claude/workflows/skills/` directory to distinguish skill-specific workflows from core workflows.
 
 ### [PROC-007] Missing State Cache Integration for Evolution Hooks
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN (Related to PERF-004)
@@ -912,6 +981,7 @@
   ```
 
 ### [PROC-008] Missing Test Isolation Pattern for State-Dependent Tests
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN (Related to FIX-002)
@@ -927,6 +997,7 @@
   4. Update tests to use isolated state directories
 
 ### [PROC-009] Missing Pre-Commit Hook for Security Compliance
+
 - **Date**: 2026-01-26
 - **Severity**: Medium
 - **Status**: OPEN
@@ -945,6 +1016,7 @@
   4. Integrate with git pre-commit hook
 
 ### [PROC-010] Missing Documentation for Hooks Development
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN (Related to HOOK-008)
@@ -979,6 +1051,7 @@ Cross-reference analysis of agent-skill-workflow connections identified 6 pointe
 ### Agent-Skill Connection Analysis
 
 **Skills Referenced by Agents (Complete List)**:
+
 - task-management-protocol (38 agents - UNIVERSAL)
 - verification-before-completion (35 agents)
 - tdd (23 agents)
@@ -1000,6 +1073,7 @@ Cross-reference analysis of agent-skill-workflow connections identified 6 pointe
 All major skills referenced by agents exist in `.claude/skills/` directory.
 
 ### [POINTER-001] Deprecated `writing` Skill Still Referenced
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: OPEN (Related to ARCH-004)
@@ -1010,6 +1084,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Effort**: 5 minutes
 
 ### [POINTER-002] `gamedev-expert` Skill Exists - VERIFIED
+
 - **Date**: 2026-01-26
 - **Severity**: None
 - **Status**: VERIFIED (Skill exists)
@@ -1018,6 +1093,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Result**: No action needed - skill properly connected
 
 ### [POINTER-003] `database-expert` Skill Exists - VERIFIED
+
 - **Date**: 2026-01-26
 - **Severity**: None
 - **Status**: VERIFIED (Skill exists)
@@ -1026,6 +1102,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Result**: No action needed - skill properly connected
 
 ### [POINTER-004] `sentry-monitoring` Skill Exists - VERIFIED
+
 - **Date**: 2026-01-26
 - **Severity**: None
 - **Status**: VERIFIED (Skill exists)
@@ -1034,6 +1111,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Result**: No action needed - skill properly connected
 
 ### [POINTER-005] `recovery` Skill Exists - VERIFIED
+
 - **Date**: 2026-01-26
 - **Severity**: None
 - **Status**: VERIFIED (Skill exists)
@@ -1044,6 +1122,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 - **Result**: No action needed - skill properly connected
 
 ### [POINTER-006] Orphaned Skills Not Referenced by Any Agent
+
 - **Date**: 2026-01-26
 - **Severity**: Low
 - **Status**: INFORMATIONAL
@@ -1057,6 +1136,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 ### Agent-Workflow Connection Analysis
 
 **Workflows Referenced by Agents**:
+
 - Most agents do not directly reference workflows in frontmatter
 - Workflows are invoked via Router based on task type (see `router-decision.md`)
 - Core workflows (router-decision.md, skill-lifecycle.md) are properly connected
@@ -1067,15 +1147,15 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 
 ### Summary Statistics
 
-| Metric | Count |
-|--------|-------|
-| Total Agents | 46 |
-| Total Skills Referenced | 85+ unique |
-| Missing Skills | 0 (all verified to exist) |
-| Deprecated References | 1 (POINTER-001 - `writing` skill) |
-| Orphaned Skills | Many (by design - available via Skill() tool) |
-| Circular Dependencies | 0 |
-| ARCH Issues Resolved | 1 (ARCH-001) |
+| Metric                  | Count                                         |
+| ----------------------- | --------------------------------------------- |
+| Total Agents            | 46                                            |
+| Total Skills Referenced | 85+ unique                                    |
+| Missing Skills          | 0 (all verified to exist)                     |
+| Deprecated References   | 1 (POINTER-001 - `writing` skill)             |
+| Orphaned Skills         | Many (by design - available via Skill() tool) |
+| Circular Dependencies   | 0                                             |
+| ARCH Issues Resolved    | 1 (ARCH-001)                                  |
 
 ### Recommended Priority
 
@@ -1085,6 +1165,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 ### Overall Assessment
 
 **HEALTHY** - Agent-skill-workflow connections are well-maintained:
+
 - All referenced skills exist
 - ARCH-001 (ROUTER_KEYWORD_GUIDE.md) has been resolved
 - Only one deprecated reference found (minor)
@@ -1101,6 +1182,7 @@ All major skills referenced by agents exist in `.claude/skills/` directory.
 ### Executive Summary
 
 This analysis identifies performance optimization opportunities across the .claude framework infrastructure, specifically focusing on:
+
 1. Hook consolidation to reduce process spawn overhead
 2. State cache integration to reduce redundant I/O
 3. Code deduplication to improve maintainability
@@ -1113,17 +1195,20 @@ This analysis identifies performance optimization opportunities across the .clau
 ### [PERF-001] Hook Consolidation - Routing Guards
 
 **Current State:**
+
 - 5 routing guard hooks fire on PreToolUse(Task): task-create-guard.cjs, planner-first-guard.cjs, security-review-guard.cjs, documentation-routing-guard.cjs, router-self-check.cjs
 - Each hook spawns a separate Node.js process (~50-100ms startup)
 - All 5 hooks read the same router-state.json file
 - Total overhead: ~500-1000ms per Task spawn
 
 **Target State:**
+
 - Single unified-routing-guard.cjs combining all routing checks
 - One process spawn for all routing validation
 - Single state file read (already cached by router-state.cjs)
 
 **Estimated Improvement:**
+
 - Process spawns: 5 -> 1 (80% reduction)
 - Latency: 500ms -> 100ms (80% reduction)
 - I/O calls: 15 -> 3 (80% reduction)
@@ -1131,6 +1216,7 @@ This analysis identifies performance optimization opportunities across the .clau
 **Effort**: 4-6 hours
 
 **Implementation Notes:**
+
 - All hooks share: parseHookInput(), routerState.getState(), enforcement mode pattern
 - Each hook has unique validation logic that should be preserved as functions
 - Exit codes must remain consistent (0 allow, 2 block)
@@ -1140,16 +1226,19 @@ This analysis identifies performance optimization opportunities across the .clau
 ### [PERF-002] Hook Consolidation - Evolution Guards
 
 **Current State:**
+
 - 5 evolution hooks fire on PreToolUse(Edit/Write): evolution-state-guard.cjs, conflict-detector.cjs, quality-gate-validator.cjs, research-enforcement.cjs, evolution-trigger-detector.cjs
 - Each reads evolution-state.json independently (no caching)
 - Total overhead: ~300-500ms per Edit/Write
 
 **Target State:**
+
 - Single unified-evolution-guard.cjs
 - Shared evolution state read with state-cache.cjs integration
 - Combines state validation, conflict detection, quality gates, research checks
 
 **Estimated Improvement:**
+
 - Process spawns: 5 -> 1 (80% reduction)
 - Latency: 300ms -> 80ms (73% reduction)
 
@@ -1160,15 +1249,18 @@ This analysis identifies performance optimization opportunities across the .clau
 ### [PERF-003] Hook Consolidation - Reflection/Memory Hooks
 
 **Current State:**
+
 - 3 reflection hooks: task-completion-reflection.cjs, error-recovery-reflection.cjs, session-end-reflection.cjs
 - 2 memory hooks: session-memory-extractor.cjs, session-end-recorder.cjs
 - Similar input parsing, queue file handling patterns
 
 **Target State:**
+
 - unified-reflection-handler.cjs with event-based routing
 - Shared reflection queue writer
 
 **Estimated Improvement:**
+
 - Process spawns: 5 -> 2 (60% reduction)
 - Code deduplication: ~800 lines saved
 
@@ -1179,6 +1271,7 @@ This analysis identifies performance optimization opportunities across the .clau
 ### [PERF-004] State Cache Integration - evolution-state.json
 
 **Current State (from HOOK-004):**
+
 - `.claude/hooks/safety/file-placement-guard.cjs` - getEvolutionState() reads without caching
 - `.claude/hooks/evolution/research-enforcement.cjs` - reads evolution-state.json without caching
 - `.claude/hooks/evolution/evolution-state-guard.cjs` - getEvolutionState() without caching
@@ -1186,6 +1279,7 @@ This analysis identifies performance optimization opportunities across the .clau
 - `.claude/hooks/evolution/quality-gate-validator.cjs` - reads without caching
 
 **Files Reading evolution-state.json Without Caching:**
+
 1. file-placement-guard.cjs (line 173)
 2. research-enforcement.cjs (line 88)
 3. evolution-state-guard.cjs (line 110)
@@ -1194,14 +1288,17 @@ This analysis identifies performance optimization opportunities across the .clau
 6. evolution-trigger-detector.cjs (line varies)
 
 **Target State:**
+
 - All evolution hooks use getCachedState() from state-cache.cjs
 - Single read per TTL window (1 second default)
 
 **Estimated Improvement:**
+
 - I/O reduction: 5-6 reads -> 1 read per TTL (83% reduction)
 - Latency per hook: ~10ms -> ~2ms
 
 **Implementation:**
+
 ```javascript
 // Before (each hook)
 const content = fs.readFileSync(EVOLUTION_STATE_PATH, 'utf8');
@@ -1219,14 +1316,17 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ### [PERF-005] State Cache Integration - loop-state.json
 
 **Current State:**
+
 - `.claude/hooks/self-healing/loop-prevention.cjs` - getState() reads synchronously with locking
 - File locking adds ~100-200ms overhead per read
 
 **Target State:**
+
 - Use state-cache.cjs with TTL for frequently-read state
 - Keep file locking only for writes (already atomic)
 
 **Estimated Improvement:**
+
 - Read latency: 100-200ms -> 10ms (when cached)
 - Note: Write operations must remain locked for concurrency safety
 
@@ -1237,11 +1337,13 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ### [PERF-006] Code Deduplication - parseHookInput()
 
 **Current State (from HOOK-001):**
+
 - ~40 files contain nearly identical parseHookInput() function
 - ~50 lines x 40 files = 2000 duplicated lines
 - Patterns vary slightly (timeout values, error handling)
 
 **Files with parseHookInput() Duplication:**
+
 1. task-create-guard.cjs (lines 36-90)
 2. planner-first-guard.cjs (lines 79-133)
 3. security-review-guard.cjs (lines 87-141)
@@ -1255,12 +1357,14 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 11. (30+ more hooks)
 
 **Target State:**
+
 - Create `.claude/lib/utils/hook-input.cjs` with:
   - parseHookInput(options) - stdin/argv JSON parsing
   - validateHookInput(input, schema) - schema validation
   - getToolInput(hookInput) - extract tool_input safely
 
 **Estimated Improvement:**
+
 - Code reduction: 2000 lines -> 200 lines (90% reduction)
 - Maintenance: Single point of change for input handling
 - Testing: Single test file for shared utility
@@ -1272,11 +1376,13 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ### [PERF-007] Code Deduplication - findProjectRoot()
 
 **Current State (from HOOK-002):**
+
 - ~20 files contain findProjectRoot() function
 - ~15 lines x 20 files = 300 duplicated lines
 - `.claude/lib/utils/project-root.cjs` already exists but not used in hooks
 
 **Files with findProjectRoot() Duplication:**
+
 1. router-state.cjs (lines 69-78)
 2. file-placement-guard.cjs
 3. evolution-state-guard.cjs (lines 62-71)
@@ -1286,10 +1392,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 7. (14+ more hooks)
 
 **Target State:**
+
 - All hooks import from `.claude/lib/utils/project-root.cjs`
 - Remove duplicated findProjectRoot() functions
 
 **Estimated Improvement:**
+
 - Code reduction: 300 lines -> 20 lines (93% reduction)
 - Consistency: Single source of truth for project root
 
@@ -1300,10 +1408,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ### [PERF-008] Critical Fix - Silent Error Swallowing in Metrics
 
 **Location (from CRITICAL-003):**
+
 - File: `.claude/lib/memory/memory-dashboard.cjs`
 - Multiple catch blocks with empty or minimal handling
 
 **Current State:**
+
 ```javascript
 } catch (e) {
   // Empty catch or console.error only
@@ -1311,6 +1421,7 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ```
 
 **Target State:**
+
 ```javascript
 } catch (e) {
   if (process.env.METRICS_DEBUG === 'true') {
@@ -1325,6 +1436,7 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ```
 
 **Impact:**
+
 - Debugging: Errors visible when METRICS_DEBUG=true
 - Production: Silent failure with safe defaults (current behavior)
 
@@ -1335,10 +1447,12 @@ const state = getCachedState(EVOLUTION_STATE_PATH, { state: 'idle' });
 ### [PERF-009] Critical Fix - Path Traversal in CLI
 
 **Location (from CRITICAL-001):**
+
 - Files: memory-manager.cjs, memory-scheduler.cjs, smart-pruner.cjs
 - Functions accepting file paths without validation
 
 **Current State:**
+
 ```javascript
 function readMemoryFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
@@ -1347,6 +1461,7 @@ function readMemoryFile(filePath) {
 ```
 
 **Target State:**
+
 ```javascript
 function readMemoryFile(filePath) {
   const normalized = path.normalize(filePath);
@@ -1359,6 +1474,7 @@ function readMemoryFile(filePath) {
 ```
 
 **Impact:**
+
 - Security: Prevents ../../../etc/passwd style attacks
 - Compatibility: No behavior change for legitimate paths
 
@@ -1368,50 +1484,54 @@ function readMemoryFile(filePath) {
 
 ### Optimization Priority Matrix
 
-| ID | Optimization | Impact | Effort | Priority |
-|-----|-------------|--------|--------|----------|
-| PERF-001 | Routing Guard Consolidation | High (80% spawn reduction) | 4-6h | **P1** |
-| PERF-006 | parseHookInput() Deduplication | High (maintainability) | 3-4h | **P1** |
-| PERF-004 | evolution-state.json Caching | Medium (83% I/O reduction) | 2h | **P1** |
-| PERF-002 | Evolution Guard Consolidation | High (73% latency) | 4-6h | **P2** |
-| PERF-007 | findProjectRoot() Deduplication | Medium (maintainability) | 1.5h | **P2** |
-| PERF-009 | CLI Path Traversal Fix | High (security) | 1h | **P2** |
-| PERF-003 | Reflection/Memory Consolidation | Medium (60% spawn) | 3-4h | **P3** |
-| PERF-005 | loop-state.json Caching | Low (single file) | 1h | **P3** |
-| PERF-008 | Metrics Error Logging | Low (debugging) | 30m | **P3** |
+| ID       | Optimization                    | Impact                     | Effort | Priority |
+| -------- | ------------------------------- | -------------------------- | ------ | -------- |
+| PERF-001 | Routing Guard Consolidation     | High (80% spawn reduction) | 4-6h   | **P1**   |
+| PERF-006 | parseHookInput() Deduplication  | High (maintainability)     | 3-4h   | **P1**   |
+| PERF-004 | evolution-state.json Caching    | Medium (83% I/O reduction) | 2h     | **P1**   |
+| PERF-002 | Evolution Guard Consolidation   | High (73% latency)         | 4-6h   | **P2**   |
+| PERF-007 | findProjectRoot() Deduplication | Medium (maintainability)   | 1.5h   | **P2**   |
+| PERF-009 | CLI Path Traversal Fix          | High (security)            | 1h     | **P2**   |
+| PERF-003 | Reflection/Memory Consolidation | Medium (60% spawn)         | 3-4h   | **P3**   |
+| PERF-005 | loop-state.json Caching         | Low (single file)          | 1h     | **P3**   |
+| PERF-008 | Metrics Error Logging           | Low (debugging)            | 30m    | **P3**   |
 
 ---
 
 ### Implementation Roadmap
 
 **Phase 1: Quick Wins (1 day)**
+
 1. PERF-006: Create hook-input.cjs shared utility
 2. PERF-007: Consolidate findProjectRoot() usage
 3. PERF-008: Add debug logging to metrics
 
 **Phase 2: Cache Integration (0.5 days)**
+
 1. PERF-004: Add state-cache to evolution hooks
 2. PERF-005: Add state-cache to loop-prevention
 
 **Phase 3: Hook Consolidation (2-3 days)**
+
 1. PERF-001: Create unified-routing-guard.cjs
 2. PERF-002: Create unified-evolution-guard.cjs
 3. Update settings.json hook registrations
 
 **Phase 4: Security Fixes (0.5 days)**
+
 1. PERF-009: Add path traversal protection
 
 ---
 
 ### Total Estimated Savings
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Edit/Write latency | ~1000ms | ~400ms | **60%** |
-| Task spawn latency | ~500ms | ~100ms | **80%** |
-| State file I/O | 15-20 reads | 3-5 reads | **75%** |
-| Duplicated code lines | ~2300 | ~220 | **90%** |
-| Hook processes per session | 80+ | ~35 | **56%** |
+| Metric                     | Before      | After     | Improvement |
+| -------------------------- | ----------- | --------- | ----------- |
+| Edit/Write latency         | ~1000ms     | ~400ms    | **60%**     |
+| Task spawn latency         | ~500ms      | ~100ms    | **80%**     |
+| State file I/O             | 15-20 reads | 3-5 reads | **75%**     |
+| Duplicated code lines      | ~2300       | ~220      | **90%**     |
+| Hook processes per session | 80+         | ~35       | **56%**     |
 
 ---
 
@@ -1467,11 +1587,13 @@ atomicWriteJSONSync(STATE_FILE, merged);
 **Risk Level**: LOW (single-user CLI tool, not high-concurrency server)
 
 **Recommendations for DEVELOPER**:
+
 1. The current implementation is ACCEPTABLE for the use case (CLI tool)
 2. If stricter guarantees needed in future, use file locking via `proper-lockfile` npm package
 3. Consider adding audit logging when retry exhaustion occurs (currently throws, but could leak)
 
 **Verification Command (for DEVELOPER)**:
+
 ```bash
 node -e "const rs = require('./.claude/hooks/routing/router-state.cjs'); console.log('MAX_RETRIES:', rs.MAX_RETRIES); console.log('saveStateWithRetry exists:', typeof rs.saveStateWithRetry === 'function');"
 ```
@@ -1485,13 +1607,15 @@ node -e "const rs = require('./.claude/hooks/routing/router-state.cjs'); console
 File: `C:\dev\projects\agent-studio\.claude\hooks\evolution\research-enforcement.cjs`
 
 **Line 88** contains the vulnerability:
+
 ```javascript
 return JSON.parse(content);
 ```
 
 This raw JSON.parse is susceptible to prototype pollution via malicious JSON like:
+
 ```json
-{"__proto__": {"isAdmin": true}}
+{ "__proto__": { "isAdmin": true } }
 ```
 
 **Risk Level**: HIGH for evolution system integrity
@@ -1505,6 +1629,7 @@ const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
 ```
 
 And replace line 88:
+
 ```javascript
 // BEFORE (vulnerable):
 return JSON.parse(content);
@@ -1514,12 +1639,14 @@ return safeParseJSON(content, 'evolution-state');
 ```
 
 **Security Controls in safe-json.cjs**:
+
 - Creates objects with `Object.create(null)` to prevent prototype chain pollution
-- Only copies known schema properties (strips __proto__, constructor, prototype)
+- Only copies known schema properties (strips **proto**, constructor, prototype)
 - Uses deep copy via JSON.parse(JSON.stringify()) for nested objects
 - Returns schema defaults on parse error (fail-safe)
 
 **Verification Command (for DEVELOPER)**:
+
 ```bash
 node -e "require('./.claude/hooks/evolution/research-enforcement.cjs'); console.log('import ok')" && grep -n "safeParseJSON" .claude/hooks/evolution/research-enforcement.cjs
 ```
@@ -1531,6 +1658,7 @@ node -e "require('./.claude/hooks/evolution/research-enforcement.cjs'); console.
 **Current State Analysis:**
 
 Files affected:
+
 - `C:\dev\projects\agent-studio\.claude\lib\memory\memory-manager.cjs`
 - `C:\dev\projects\agent-studio\.claude\lib\memory\memory-scheduler.cjs`
 - `C:\dev\projects\agent-studio\.claude\lib\memory\smart-pruner.cjs`
@@ -1538,9 +1666,10 @@ Files affected:
 These files use `PROJECT_ROOT` from project-root.cjs (good), but functions like `getMemoryDir(projectRoot)` accept external `projectRoot` parameter without validation.
 
 **Attack Vector**:
+
 ```javascript
 // Malicious call could escape memory directory:
-getMemoryDir('../../etc')
+getMemoryDir('../../etc');
 // Results in: ../../etc/.claude/context/memory
 ```
 
@@ -1558,12 +1687,14 @@ Create or use a path validation utility:
 function validatePathWithinRoot(targetPath, projectRoot) {
   const normalizedTarget = path.resolve(targetPath);
   const normalizedRoot = path.resolve(projectRoot);
-  return normalizedTarget.startsWith(normalizedRoot + path.sep) ||
-         normalizedTarget === normalizedRoot;
+  return (
+    normalizedTarget.startsWith(normalizedRoot + path.sep) || normalizedTarget === normalizedRoot
+  );
 }
 ```
 
 Apply to all functions accepting external paths:
+
 - `saveSession(insights, projectRoot)`
 - `checkAndArchiveLearnings(projectRoot)`
 - `getMemoryDir(projectRoot)`
@@ -1574,6 +1705,7 @@ Apply to all functions accepting external paths:
 **OWASP Reference**: A01:2021-Broken Access Control, CWE-22 (Path Traversal)
 
 **Verification Command (for DEVELOPER)**:
+
 ```bash
 pnpm test:framework -- --test-name-pattern "path"
 ```
@@ -1587,6 +1719,7 @@ pnpm test:framework -- --test-name-pattern "path"
 File: `C:\dev\projects\agent-studio\.claude\lib\memory\memory-dashboard.cjs`
 
 Multiple catch blocks with empty or minimal handling (lines 82-83, 99-101, 113-114):
+
 ```javascript
 } catch (e) { /* ignore */ }
 ```
@@ -1612,12 +1745,14 @@ Replace empty catches with conditional debug logging:
 ```
 
 **Key Requirements**:
+
 1. Use JSON format to stderr (consistent with hook audit logging)
 2. Never log sensitive data (file contents, credentials)
 3. Include context (function name, file path, timestamp)
 4. Make debug logging opt-in via `METRICS_DEBUG` env var
 
 **Verification Command (for DEVELOPER)**:
+
 ```bash
 METRICS_DEBUG=true node -e "require('./.claude/lib/memory/memory-dashboard.cjs')" 2>&1 | head -5
 ```
@@ -1631,16 +1766,19 @@ METRICS_DEBUG=true node -e "require('./.claude/lib/memory/memory-dashboard.cjs')
 File: `C:\dev\projects\agent-studio\.claude\hooks\safety\router-write-guard.cjs`
 
 **Line 207** (in block mode):
+
 ```javascript
 process.exit(1);
 ```
 
 However, **line 236** (fail-closed error handling) correctly uses:
+
 ```javascript
 process.exit(2);
 ```
 
 **Hook Exit Code Convention**:
+
 - `0` = Allow operation (continue)
 - `2` = Block operation (halt execution)
 - `1` = Generic error (ambiguous in hook context)
@@ -1650,11 +1788,13 @@ process.exit(2);
 **Required Fix**:
 
 Change line 207 from `process.exit(1)` to `process.exit(2)` for consistency with:
+
 - Line 236 (same file, fail-closed behavior)
 - research-enforcement.cjs line 215 (blocking exit)
 - Other hooks using exit(2) for blocking
 
 **Verification Command (for DEVELOPER)**:
+
 ```bash
 grep -n "process.exit(1)" .claude/hooks/safety/router-write-guard.cjs
 # Should return 0 lines after fix
@@ -1667,13 +1807,13 @@ grep -n "process.exit(2)" .claude/hooks/safety/router-write-guard.cjs
 
 ### Security Review Summary
 
-| Issue | Severity | Current State | Required Action |
-|-------|----------|---------------|-----------------|
-| SEC-AUDIT-011 | LOW | Partially fixed (atomic write done, minor TOCTOU) | Accept current implementation |
-| HOOK-003 | HIGH | Open (raw JSON.parse) | Import safeParseJSON with evolution-state schema |
-| CRITICAL-001 | MEDIUM | Open (no path validation) | Add validatePathWithinRoot() checks |
-| CRITICAL-003 | MEDIUM | Open (silent catches) | Add METRICS_DEBUG conditional logging |
-| HOOK-005 | LOW | Open (exit(1) vs exit(2)) | Change line 207 to exit(2) |
+| Issue         | Severity | Current State                                     | Required Action                                  |
+| ------------- | -------- | ------------------------------------------------- | ------------------------------------------------ |
+| SEC-AUDIT-011 | LOW      | Partially fixed (atomic write done, minor TOCTOU) | Accept current implementation                    |
+| HOOK-003      | HIGH     | Open (raw JSON.parse)                             | Import safeParseJSON with evolution-state schema |
+| CRITICAL-001  | MEDIUM   | Open (no path validation)                         | Add validatePathWithinRoot() checks              |
+| CRITICAL-003  | MEDIUM   | Open (silent catches)                             | Add METRICS_DEBUG conditional logging            |
+| HOOK-005      | LOW      | Open (exit(1) vs exit(2))                         | Change line 207 to exit(2)                       |
 
 ### Additional Security Observations
 
@@ -1690,6 +1830,7 @@ grep -n "process.exit(2)" .claude/hooks/safety/router-write-guard.cjs
 ### Follow-Up Tasks
 
 If DEVELOPER encounters issues or makes design changes:
+
 1. Document in `.claude/context/memory/learnings.md`
 2. Update this review section with resolution details
 3. Run verification commands before marking complete
@@ -1702,26 +1843,29 @@ If DEVELOPER encounters issues or makes design changes:
 ---
 
 ## [RESOLVED] SEC-007: Safe JSON Parsing
+
 **Date Resolved**: 2026-01-26
 **Original Issue**: Raw JSON.parse without prototype pollution protection
 **Fix Applied**: safeReadJSON()/safeParseJSON() pattern
 **Files Fixed**: dashboard.cjs, system-registration-handler.cjs
 
 ## [RESOLVED] SEC-008: Fail-Closed Pattern
+
 **Date Resolved**: 2026-01-26
 **Original Issue**: Security hooks exiting 0 on errors (fail-open)
 **Fix Applied**: Exit code 2 on all error paths
 **Files Fixed**: task-create-guard.cjs, router-write-guard.cjs
 
 ## [RESOLVED] SEC-009: Command Injection Prevention
+
 **Date Resolved**: 2026-01-26
 **Original Issue**: execSync() with string commands
 **Fix Applied**: spawnSync() with array arguments and shell:false
 **Files Fixed**: convert.cjs, validate-all.cjs, skills-core.js
 
 ## [RESOLVED] PERF-NEW-002: routing-guard.cjs Not Activated
+
 **Date Resolved**: 2026-01-26
 **Original Issue**: Hook created but not registered in settings.json
 **Fix Applied**: Added to settings.json hooks array
 **Result**: 80% Task spawn latency reduction
-

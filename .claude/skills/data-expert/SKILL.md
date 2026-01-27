@@ -48,13 +48,13 @@ When reviewing or writing code, apply these guidelines:
 - For data fetching in server components (in .tsx files):
   tsx
   async function getData() {
-    const res = await fetch('<https://api.example.com/data>', { next: { revalidate: 3600 } })
-    if (!res.ok) throw new Error('Failed to fetch data')
-    return res.json()
+  const res = await fetch('<https://api.example.com/data>', { next: { revalidate: 3600 } })
+  if (!res.ok) throw new Error('Failed to fetch data')
+  return res.json()
   }
   export default async function Page() {
-    const data = await getData()
-    // Render component using data
+  const data = await getData()
+  // Render component using data
   }
 
 ### data pipeline management with dvc
@@ -84,8 +84,7 @@ When reviewing or writing code, apply these guidelines:
 
 When reviewing or writing code, apply these guidelines:
 
-- **Data Validation:** Use Pydantic models for rigorous 
-
+- **Data Validation:** Use Pydantic models for rigorous
 
 </instructions>
 
@@ -100,12 +99,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- data-expert
 
+- data-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

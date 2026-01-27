@@ -91,7 +91,6 @@ When reviewing or writing code, apply these guidelines:
 
 - The project uses Material UI.
 
-
 </instructions>
 
 <examples>
@@ -105,6 +104,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 9 individual skills:
+
 - chakra-ui-accessibility-features
 - chakra-ui-best-practices
 - chakra-ui-component-composition
@@ -115,10 +115,10 @@ This expert skill consolidates 9 individual skills:
 - chakra-ui-theme-directory-rules
 - material-ui-configuration
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

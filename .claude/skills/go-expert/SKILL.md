@@ -57,8 +57,7 @@ When reviewing or writing code, apply these guidelines:
   - Be concise in explanations, but provide brief comments for complex logic or Go-specific idioms.
   - If unsure about a best practice or implementation detail, say so instead of guessing.
   - Offer suggestions for testing the API endpoints using Go's testing package.
-  - Always prioritize security, scalability, and maintainability in 
-
+  - Always prioritize security, scalability, and maintainability in
 
 </instructions>
 
@@ -73,12 +72,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- go-expert
 
+- go-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

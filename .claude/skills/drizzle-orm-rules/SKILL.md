@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - Follow best practices for Drizzle ORM usage, including schema definition and query building.
 - Ensure proper data validation and error handling when interacting with the database.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -5,26 +5,31 @@ This reference provides practical examples of common PubMed search patterns for 
 ## General Research Queries
 
 ### Finding Recent Research on a Topic
+
 ```
 breast cancer[tiab] AND 2023:2024[dp]
 ```
 
 ### Systematic Reviews on a Topic
+
 ```
 (diabetes[tiab] OR diabetes mellitus[mh]) AND systematic review[pt]
 ```
 
 ### Meta-Analyses
+
 ```
 hypertension[tiab] AND meta-analysis[pt] AND 2020:2024[dp]
 ```
 
 ### Clinical Trials
+
 ```
 alzheimer disease[mh] AND randomized controlled trial[pt]
 ```
 
 ### Finding Guidelines
+
 ```
 asthma[tiab] AND (guideline[pt] OR practice guideline[pt])
 ```
@@ -32,6 +37,7 @@ asthma[tiab] AND (guideline[pt] OR practice guideline[pt])
 ## Disease-Specific Queries
 
 ### Cancer Research
+
 ```
 # General cancer screening
 cancer screening[tiab] AND systematic review[pt] AND 2020:2024[dp]
@@ -44,6 +50,7 @@ breast neoplasms[mh] AND BRCA1[tiab] AND genetic testing[tiab]
 ```
 
 ### Cardiovascular Disease
+
 ```
 # Heart disease prevention
 (heart disease[tiab] OR cardiovascular disease[mh]) AND prevention[tiab] AND 2022:2024[dp]
@@ -56,6 +63,7 @@ hypertension[mh]/drug therapy AND comparative effectiveness[tiab]
 ```
 
 ### Infectious Diseases
+
 ```
 # COVID-19 research
 COVID-19[tiab] AND (vaccine[tiab] OR vaccination[tiab]) AND 2023:2024[dp]
@@ -68,6 +76,7 @@ tuberculosis[mh]/drug therapy AND (multidrug-resistant[tiab] OR MDR-TB[tiab])
 ```
 
 ### Neurological Disorders
+
 ```
 # Alzheimer's disease
 alzheimer disease[mh] AND (diagnosis[sh] OR biomarkers[tiab]) AND 2020:2024[dp]
@@ -80,6 +89,7 @@ multiple sclerosis[mh] AND disease modifying[tiab] AND review[pt]
 ```
 
 ### Diabetes
+
 ```
 # Type 2 diabetes management
 diabetes mellitus, type 2[mh] AND (lifestyle[tiab] OR diet[tiab]) AND randomized controlled trial[pt]
@@ -94,6 +104,7 @@ diabetes mellitus, type 2[mh] AND (GLP-1[tiab] OR SGLT2[tiab]) AND 2022:2024[dp]
 ## Drug and Treatment Research
 
 ### Drug Efficacy Studies
+
 ```
 # Compare two drugs
 (drug A[nm] OR drug B[nm]) AND condition[mh] AND comparative effectiveness[tiab]
@@ -106,6 +117,7 @@ medication name[nm] AND (adverse effects[sh] OR side effects[tiab])
 ```
 
 ### Treatment Comparisons
+
 ```
 # Surgery vs medication
 condition[mh] AND (surgery[tiab] OR surgical[tiab]) AND (medication[tiab] OR drug therapy[sh]) AND comparative study[pt]
@@ -115,6 +127,7 @@ procedure[tiab] AND (laparoscopic[tiab] OR open surgery[tiab]) AND outcomes[tiab
 ```
 
 ### Alternative Medicine
+
 ```
 # Herbal supplements
 (herbal medicine[mh] OR phytotherapy[mh]) AND condition[tiab] AND clinical trial[pt]
@@ -126,6 +139,7 @@ acupuncture[mh] AND pain[tiab] AND randomized controlled trial[pt]
 ## Diagnostic Research
 
 ### Diagnostic Tests
+
 ```
 # Sensitivity and specificity
 test name[tiab] AND condition[tiab] AND (sensitivity[tiab] AND specificity[tiab])
@@ -138,6 +152,7 @@ biomarker name[tiab] AND disease[tiab] AND (diagnostic[tiab] OR screening[tiab])
 ```
 
 ### Screening Programs
+
 ```
 # Cancer screening
 cancer type[tiab] AND screening[tiab] AND (cost effectiveness[tiab] OR benefit[tiab])
@@ -149,6 +164,7 @@ condition[tiab] AND mass screening[mh] AND public health[tiab]
 ## Population-Specific Queries
 
 ### Pediatric Research
+
 ```
 # Children with specific condition
 condition[tiab] AND (child[mh] OR pediatric[tiab]) AND treatment[tiab]
@@ -161,6 +177,7 @@ drug name[nm] AND pediatric[tiab] AND (dosing[tiab] OR dose[tiab])
 ```
 
 ### Geriatric Research
+
 ```
 # Elderly population
 condition[tiab] AND (aged[mh] OR elderly[tiab] OR geriatric[tiab])
@@ -173,6 +190,7 @@ polypharmacy[tiab] AND elderly[tiab] AND adverse effects[tiab]
 ```
 
 ### Pregnant Women
+
 ```
 # Pregnancy and medications
 drug name[nm] AND (pregnancy[mh] OR pregnant women[tiab]) AND safety[tiab]
@@ -182,6 +200,7 @@ pregnancy complication[tiab] AND management[tiab]
 ```
 
 ### Sex-Specific Research
+
 ```
 # Female-specific
 condition[tiab] AND female[mh] AND hormones[tiab]
@@ -196,26 +215,31 @@ condition[tiab] AND (sex factors[mh] OR gender differences[tiab])
 ## Epidemiology and Public Health
 
 ### Prevalence Studies
+
 ```
 disease[tiab] AND (prevalence[tiab] OR epidemiology[sh]) AND country/region[tiab]
 ```
 
 ### Incidence Studies
+
 ```
 condition[tiab] AND incidence[tiab] AND population[tiab] AND 2020:2024[dp]
 ```
 
 ### Risk Factors
+
 ```
 disease[mh] AND (risk factors[mh] OR etiology[sh]) AND cohort study[tiab]
 ```
 
 ### Global Health
+
 ```
 disease[tiab] AND (developing countries[mh] OR low income[tiab]) AND burden[tiab]
 ```
 
 ### Health Disparities
+
 ```
 condition[tiab] AND (health disparities[tiab] OR health equity[tiab]) AND minority groups[tiab]
 ```
@@ -225,21 +249,25 @@ condition[tiab] AND (health disparities[tiab] OR health equity[tiab]) AND minori
 ### Research Methodology
 
 #### Cohort Studies
+
 ```
 condition[tiab] AND cohort study[tiab] AND prospective[tiab]
 ```
 
 #### Case-Control Studies
+
 ```
 disease[tiab] AND case-control studies[mh] AND risk factors[tiab]
 ```
 
 #### Cross-Sectional Studies
+
 ```
 condition[tiab] AND cross-sectional studies[mh] AND prevalence[tiab]
 ```
 
 ### Statistical Methods
+
 ```
 # Machine learning in medicine
 (machine learning[tiab] OR artificial intelligence[tiab]) AND diagnosis[tiab] AND validation[tiab]
@@ -249,6 +277,7 @@ condition[tiab] AND bayes theorem[mh] AND clinical decision[tiab]
 ```
 
 ### Genetic and Molecular Research
+
 ```
 # GWAS studies
 disease[tiab] AND (genome-wide association study[tiab] OR GWAS[tiab])
@@ -266,6 +295,7 @@ CRISPR[tiab] AND (gene editing[tiab] OR genome editing[tiab]) AND 2020:2024[dp]
 ## Author and Institution Queries
 
 ### Finding Work by Specific Author
+
 ```
 # Single author
 smith ja[au] AND cancer[tiab] AND 2023:2024[dp]
@@ -278,6 +308,7 @@ jones m[1au] AND cardiology[tiab]
 ```
 
 ### Institution-Specific Research
+
 ```
 # University affiliation
 harvard[affil] AND cancer research[tiab] AND 2023:2024[dp]
@@ -292,6 +323,7 @@ japan[affil] AND robotics[tiab] AND surgery[tiab]
 ## Journal-Specific Queries
 
 ### High-Impact Journals
+
 ```
 # Specific journal
 nature[ta] AND genetics[tiab] AND 2024[dp]
@@ -306,6 +338,7 @@ nature[ta] AND genetics[tiab] AND 2024[dp]
 ## Citation and Reference Queries
 
 ### Finding Specific Articles
+
 ```
 # By PMID
 12345678[pmid]
@@ -318,6 +351,7 @@ smith ja[1au] AND 2023[dp] AND cancer[tiab]
 ```
 
 ### Finding Cited Work
+
 ```
 # Related articles
 Similar Articles feature from any PubMed result
@@ -329,6 +363,7 @@ Use "Cited by" links when available
 ## Advanced Combination Queries
 
 ### Comprehensive Literature Review
+
 ```
 (disease name[tiab] OR disease name[mh]) AND
 ((treatment[tiab] OR therapy[tiab] OR management[tiab]) OR
@@ -339,6 +374,7 @@ Use "Cited by" links when available
 ```
 
 ### Precision Medicine Query
+
 ```
 (precision medicine[tiab] OR personalized medicine[tiab] OR pharmacogenomics[mh]) AND
 cancer[tiab] AND
@@ -348,6 +384,7 @@ clinical application[tiab] AND
 ```
 
 ### Translational Research
+
 ```
 (basic science[tiab] OR bench to bedside[tiab] OR translational medical research[mh]) AND
 disease[tiab] AND
@@ -358,6 +395,7 @@ disease[tiab] AND
 ## Quality Filters
 
 ### High-Quality Evidence
+
 ```
 condition[tiab] AND
 (randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]) AND
@@ -367,11 +405,13 @@ english[la] AND
 ```
 
 ### Free Full Text Articles
+
 ```
 topic[tiab] AND free full text[sb] AND 2023:2024[dp]
 ```
 
 ### Articles with Abstracts
+
 ```
 condition[tiab] AND hasabstract[text] AND review[pt]
 ```
@@ -379,16 +419,19 @@ condition[tiab] AND hasabstract[text] AND review[pt]
 ## Staying Current
 
 ### Latest Publications
+
 ```
 topic[tiab] AND 2024[dp] AND english[la]
 ```
 
 ### Preprints and Early Access
+
 ```
 topic[tiab] AND (epub ahead of print[tiab] OR publisher[sb])
 ```
 
 ### Setting Up Alerts
+
 ```
 # Create search and save to My NCBI
 # Enable email alerts for new matching articles
@@ -398,6 +441,7 @@ topic[tiab] AND (randomized controlled trial[pt] OR systematic review[pt])
 ## COVID-19 Specific Queries
 
 ### Vaccine Research
+
 ```
 (COVID-19[tiab] OR SARS-CoV-2[tiab]) AND
 (vaccine[tiab] OR vaccination[tiab]) AND
@@ -406,12 +450,14 @@ topic[tiab] AND (randomized controlled trial[pt] OR systematic review[pt])
 ```
 
 ### Long COVID
+
 ```
 (long covid[tiab] OR post-acute covid[tiab] OR PASC[tiab]) AND
 (symptoms[tiab] OR treatment[tiab])
 ```
 
 ### COVID Treatment
+
 ```
 COVID-19[tiab] AND
 (antiviral[tiab] OR monoclonal antibody[tiab] OR treatment[tiab]) AND
@@ -421,6 +467,7 @@ randomized controlled trial[pt]
 ## Tips for Constructing Queries
 
 ### 1. PICO Framework
+
 Use PICO (Population, Intervention, Comparison, Outcome) to structure clinical queries:
 
 ```
@@ -433,7 +480,9 @@ Query: diabetes mellitus, type 2[mh] AND (metformin[nm] OR lifestyle modificatio
 ```
 
 ### 2. Iterative Refinement
+
 Start broad, review results, refine:
+
 ```
 1. diabetes → too broad
 2. diabetes mellitus type 2 → better
@@ -442,7 +491,9 @@ Start broad, review results, refine:
 ```
 
 ### 3. Use Search History
+
 Combine previous searches in Advanced Search:
+
 ```
 #1: diabetes mellitus, type 2[mh]
 #2: cardiovascular disease[mh]
@@ -450,4 +501,5 @@ Combine previous searches in Advanced Search:
 ```
 
 ### 4. Save Effective Searches
+
 Create My NCBI account to save successful queries for future use and set up automatic alerts.

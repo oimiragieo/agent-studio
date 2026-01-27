@@ -1,6 +1,7 @@
 # Resource Configuration
 
 ## Overview
+
 Latch SDK provides flexible resource configuration for workflow tasks, enabling efficient execution on appropriate compute infrastructure including CPU, GPU, and memory-optimized instances.
 
 ## Task Resource Decorators
@@ -10,7 +11,9 @@ Latch SDK provides flexible resource configuration for workflow tasks, enabling 
 The SDK provides pre-configured task decorators for common resource requirements:
 
 #### @small_task
+
 Default configuration for lightweight tasks:
+
 ```python
 from latch import small_task
 
@@ -21,13 +24,16 @@ def lightweight_processing():
 ```
 
 **Use cases:**
+
 - File parsing and manipulation
 - Simple data transformations
 - Quick QC checks
 - Metadata operations
 
 #### @large_task
+
 Increased CPU and memory for intensive computations:
+
 ```python
 from latch import large_task
 
@@ -38,13 +44,16 @@ def intensive_computation():
 ```
 
 **Use cases:**
+
 - Large file processing
 - Complex statistical analyses
 - Assembly tasks
 - Multi-threaded operations
 
 #### @small_gpu_task
+
 GPU-enabled with minimal resources:
+
 ```python
 from latch import small_gpu_task
 
@@ -55,12 +64,15 @@ def gpu_inference():
 ```
 
 **Use cases:**
+
 - Neural network inference
 - Small-scale ML predictions
 - GPU-accelerated libraries
 
 #### @large_gpu_task
+
 GPU-enabled with maximum resources:
+
 ```python
 from latch import large_gpu_task
 
@@ -71,6 +83,7 @@ def gpu_training():
 ```
 
 **Use cases:**
+
 - Deep learning model training
 - Protein structure prediction (AlphaFold)
 - Large-scale GPU computations
@@ -126,6 +139,7 @@ def alphafold_prediction():
 ### GPU Types
 
 Available GPU options:
+
 - **nvidia-tesla-k80**: Basic GPU for testing
 - **nvidia-tesla-v100**: High-performance for training
 - **nvidia-tesla-a100**: Latest generation for maximum performance
@@ -151,6 +165,7 @@ def multi_gpu_training():
 ### By Computational Requirements
 
 **Memory-Intensive Tasks:**
+
 ```python
 @custom_task(cpu=4, memory=128)  # High memory, moderate CPU
 def genome_assembly():
@@ -158,6 +173,7 @@ def genome_assembly():
 ```
 
 **CPU-Intensive Tasks:**
+
 ```python
 @custom_task(cpu=64, memory=32)  # High CPU, moderate memory
 def parallel_alignment():
@@ -165,6 +181,7 @@ def parallel_alignment():
 ```
 
 **I/O-Intensive Tasks:**
+
 ```python
 @custom_task(cpu=8, memory=16, storage_gib=1000)  # Large ephemeral storage
 def data_preprocessing():
@@ -174,6 +191,7 @@ def data_preprocessing():
 ### By Workflow Phase
 
 **Quick Validation:**
+
 ```python
 @small_task
 def validate_inputs():
@@ -182,6 +200,7 @@ def validate_inputs():
 ```
 
 **Main Computation:**
+
 ```python
 @large_task
 def primary_analysis():
@@ -190,6 +209,7 @@ def primary_analysis():
 ```
 
 **Result Aggregation:**
+
 ```python
 @small_task
 def aggregate_results():
@@ -325,6 +345,7 @@ def intensive_analysis():  # Appropriate
 ### Resource Usage Monitoring
 
 During workflow execution, monitor:
+
 - CPU utilization
 - Memory usage
 - GPU utilization (if applicable)
@@ -334,6 +355,7 @@ During workflow execution, monitor:
 ### Common Resource Issues
 
 **Out of Memory (OOM):**
+
 ```python
 # Solution: Increase memory allocation
 @custom_task(cpu=8, memory=64)  # Increased from 32 to 64 GB
@@ -342,6 +364,7 @@ def memory_intensive_task():
 ```
 
 **Timeout:**
+
 ```python
 # Solution: Increase timeout
 @custom_task(cpu=8, memory=32, timeout=14400)  # 4 hours
@@ -350,6 +373,7 @@ def long_task():
 ```
 
 **Insufficient Storage:**
+
 ```python
 # Solution: Increase ephemeral storage
 @custom_task(cpu=8, memory=32, storage_gib=1000)
@@ -405,6 +429,7 @@ def process_large(file: LatchFile) -> LatchFile:
 ### Available Resources
 
 Latch platform provides:
+
 - CPU instances: Up to 96 cores
 - Memory: Up to 768 GB
 - GPUs: K80, V100, A100 variants
@@ -413,6 +438,7 @@ Latch platform provides:
 ### Resource Limits
 
 Check current platform limits:
+
 - Maximum CPUs per task
 - Maximum memory per task
 - Maximum GPU allocation
@@ -421,6 +447,7 @@ Check current platform limits:
 ### Quotas and Limits
 
 Be aware of workspace quotas:
+
 - Total concurrent executions
 - Total resource allocation
 - Storage limits

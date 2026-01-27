@@ -5,50 +5,59 @@ Aeon provides algorithms to partition time series into regions with distinct cha
 ## Segmentation Algorithms
 
 ### Binary Segmentation
+
 - `BinSegmenter` - Recursive binary segmentation
   - Iteratively splits series at most significant change points
   - Parameters: `n_segments`, `cost_function`
   - **Use when**: Known number of segments, hierarchical structure
 
 ### Classification-Based
+
 - `ClaSPSegmenter` - Classification Score Profile
   - Uses classification performance to identify boundaries
   - Discovers segments where classification distinguishes neighbors
   - **Use when**: Segments have different temporal patterns
 
 ### Fast Pattern-Based
+
 - `FLUSSSegmenter` - Fast Low-cost Unipotent Semantic Segmentation
   - Efficient semantic segmentation using arc crossings
   - Based on matrix profile
   - **Use when**: Large time series, need speed and pattern discovery
 
 ### Information Theory
+
 - `InformationGainSegmenter` - Information gain maximization
   - Finds boundaries maximizing information gain
   - **Use when**: Statistical differences between segments
 
 ### Gaussian Modeling
+
 - `GreedyGaussianSegmenter` - Greedy Gaussian approximation
   - Models segments as Gaussian distributions
   - Incrementally adds change points
   - **Use when**: Segments follow Gaussian distributions
 
 ### Hierarchical Agglomerative
+
 - `EAggloSegmenter` - Bottom-up merging approach
   - Estimates change points via agglomeration
   - **Use when**: Want hierarchical segmentation structure
 
 ### Hidden Markov Models
+
 - `HMMSegmenter` - HMM with Viterbi decoding
   - Probabilistic state-based segmentation
   - **Use when**: Segments represent hidden states
 
 ### Dimensionality-Based
+
 - `HidalgoSegmenter` - Heterogeneous Intrinsic Dimensionality Algorithm
   - Detects changes in local dimensionality
   - **Use when**: Dimensionality shifts between segments
 
 ### Baseline
+
 - `RandomSegmenter` - Random change point generation
   - **Use when**: Need null hypothesis baseline
 
@@ -94,6 +103,7 @@ Segmenters return change point indices:
 ## Common Use Cases
 
 ### Regime Change Detection
+
 Identify when time series behavior fundamentally changes:
 
 ```python
@@ -104,6 +114,7 @@ change_points = segmenter.fit_predict(stock_prices)
 ```
 
 ### Activity Segmentation
+
 Segment sensor data into activities:
 
 ```python
@@ -114,6 +125,7 @@ boundaries = segmenter.fit_predict(accelerometer_data)
 ```
 
 ### Seasonal Boundary Detection
+
 Find season transitions in time series:
 
 ```python

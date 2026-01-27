@@ -25,14 +25,14 @@ This workflow provides a systematic approach to security assessment that covers 
 
 ## When to Use
 
-| Trigger | Description | Recommended Frequency |
-|---------|-------------|----------------------|
-| **Pre-Release** | Before deploying to production | Every release |
-| **Post-Incident** | After security breach or near-miss | Immediately after incident |
-| **Periodic Audit** | Scheduled security review | Quarterly |
-| **New Feature** | Major feature with security implications | Before feature GA |
-| **Dependency Update** | After major dependency changes | As needed |
-| **Compliance** | Regulatory or certification requirements | Per compliance schedule |
+| Trigger               | Description                              | Recommended Frequency      |
+| --------------------- | ---------------------------------------- | -------------------------- |
+| **Pre-Release**       | Before deploying to production           | Every release              |
+| **Post-Incident**     | After security breach or near-miss       | Immediately after incident |
+| **Periodic Audit**    | Scheduled security review                | Quarterly                  |
+| **New Feature**       | Major feature with security implications | Before feature GA          |
+| **Dependency Update** | After major dependency changes           | As needed                  |
+| **Compliance**        | Regulatory or certification requirements | Per compliance schedule    |
 
 ## Configuration Options
 
@@ -461,12 +461,12 @@ Create actionable security fix tickets from remediation plan.
 
 ## Severity Classification
 
-| Severity | CVSS Range | SLA | Blocks Release | Example |
-|----------|------------|-----|----------------|---------|
-| **CRITICAL** | 9.0 - 10.0 | 24 hours | YES | RCE, SQL injection with data exfil |
-| **HIGH** | 7.0 - 8.9 | 7 days | YES | Auth bypass, sensitive data exposure |
-| **MEDIUM** | 4.0 - 6.9 | 30 days | NO | XSS, CSRF, limited information disclosure |
-| **LOW** | 0.1 - 3.9 | 90 days | NO | Information disclosure (non-sensitive) |
+| Severity     | CVSS Range | SLA      | Blocks Release | Example                                   |
+| ------------ | ---------- | -------- | -------------- | ----------------------------------------- |
+| **CRITICAL** | 9.0 - 10.0 | 24 hours | YES            | RCE, SQL injection with data exfil        |
+| **HIGH**     | 7.0 - 8.9  | 7 days   | YES            | Auth bypass, sensitive data exposure      |
+| **MEDIUM**   | 4.0 - 6.9  | 30 days  | NO             | XSS, CSRF, limited information disclosure |
+| **LOW**      | 0.1 - 3.9  | 90 days  | NO             | Information disclosure (non-sensitive)    |
 
 ## Security Gates
 
@@ -474,13 +474,13 @@ Create actionable security fix tickets from remediation plan.
 
 The following conditions BLOCK deployment:
 
-| Gate | Condition | Override Authority |
-|------|-----------|-------------------|
-| **CRITICAL CVE** | Any CRITICAL severity finding | CISO only |
-| **HIGH CVE** | Unpatched HIGH severity CVE | Security Lead |
-| **Auth Failure** | Authentication bypass confirmed | Security Lead |
-| **Data Exposure** | PII/secrets exposure confirmed | CISO only |
-| **Injection** | Confirmed SQL/Command injection | Security Lead |
+| Gate              | Condition                       | Override Authority |
+| ----------------- | ------------------------------- | ------------------ |
+| **CRITICAL CVE**  | Any CRITICAL severity finding   | CISO only          |
+| **HIGH CVE**      | Unpatched HIGH severity CVE     | Security Lead      |
+| **Auth Failure**  | Authentication bypass confirmed | Security Lead      |
+| **Data Exposure** | PII/secrets exposure confirmed  | CISO only          |
+| **Injection**     | Confirmed SQL/Command injection | Security Lead      |
 
 ### Gate Override Process
 
@@ -492,18 +492,18 @@ The following conditions BLOCK deployment:
 
 ## OWASP Top 10 Coverage Matrix
 
-| OWASP Category | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 |
-|---------------|---------|---------|---------|---------|---------|
-| A01: Broken Access Control | X | X | | X | X |
-| A02: Cryptographic Failures | X | X | | X | X |
-| A03: Injection | | X | | X | X |
-| A04: Insecure Design | X | | | | X |
-| A05: Security Misconfiguration | X | X | | X | X |
-| A06: Vulnerable Components | | | X | | X |
-| A07: Authentication Failures | X | X | | X | X |
-| A08: Software/Data Integrity | | | X | | X |
-| A09: Security Logging Failures | | X | | | X |
-| A10: SSRF | | X | | X | X |
+| OWASP Category                 | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Phase 5 |
+| ------------------------------ | ------- | ------- | ------- | ------- | ------- |
+| A01: Broken Access Control     | X       | X       |         | X       | X       |
+| A02: Cryptographic Failures    | X       | X       |         | X       | X       |
+| A03: Injection                 |         | X       |         | X       | X       |
+| A04: Insecure Design           | X       |         |         |         | X       |
+| A05: Security Misconfiguration | X       | X       |         | X       | X       |
+| A06: Vulnerable Components     |         |         | X       |         | X       |
+| A07: Authentication Failures   | X       | X       |         | X       | X       |
+| A08: Software/Data Integrity   |         |         | X       |         | X       |
+| A09: Security Logging Failures |         | X       |         |         | X       |
+| A10: SSRF                      |         | X       |         | X       | X       |
 
 ## Success Criteria
 

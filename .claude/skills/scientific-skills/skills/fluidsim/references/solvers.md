@@ -9,6 +9,7 @@ FluidSim provides multiple solvers for different fluid dynamics equations. All s
 **Solver key**: `ns2d`
 
 **Import**:
+
 ```python
 from fluidsim.solvers.ns2d.solver import Simul
 # or dynamically
@@ -24,6 +25,7 @@ Simul = fluidsim.import_simul_class_from_key("ns2d")
 **Solver key**: `ns3d`
 
 **Import**:
+
 ```python
 from fluidsim.solvers.ns3d.solver import Simul
 ```
@@ -37,6 +39,7 @@ from fluidsim.solvers.ns3d.solver import Simul
 **Solver keys**: `ns2d.strat`, `ns3d.strat`
 
 **Import**:
+
 ```python
 from fluidsim.solvers.ns2d.strat.solver import Simul  # 2D
 from fluidsim.solvers.ns3d.strat.solver import Simul  # 3D
@@ -53,6 +56,7 @@ from fluidsim.solvers.ns3d.strat.solver import Simul  # 3D
 **Solver key**: `sw1l` (one-layer)
 
 **Import**:
+
 ```python
 from fluidsim.solvers.sw1l.solver import Simul
 ```
@@ -68,6 +72,7 @@ from fluidsim.solvers.sw1l.solver import Simul
 **Solver key**: `fvk` (elastic plate equations)
 
 **Import**:
+
 ```python
 from fluidsim.solvers.fvk.solver import Simul
 ```
@@ -87,6 +92,7 @@ Choose a solver based on the physical problem:
 ## Modified Versions
 
 Many solvers have modified versions with additional physics:
+
 - Forcing terms
 - Different boundary conditions
 - Additional scalar fields

@@ -51,7 +51,7 @@ Register for an API key at: https://account.uspto.gov/api-manager/
 - **`/drawing_description_text`** - Drawing descriptions
 - **`/detail_description_text`** - Detailed description text
 
-*Note: Text endpoints are in beta with data primarily from 2023 onward. Historical backfilling is in progress.*
+_Note: Text endpoints are in beta with data primarily from 2023 onward. Historical backfilling is in progress._
 
 ### Supporting Endpoints
 
@@ -125,7 +125,7 @@ Orders results by specified fields. Optional.
 **Format:** JSON array with field name and direction
 
 ```json
-[{"patent_date": "desc"}]
+[{ "patent_date": "desc" }]
 ```
 
 ### 4. Options (`o`)

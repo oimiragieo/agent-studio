@@ -18,27 +18,27 @@ Comprehensive reference for the European Nucleotide Archive REST APIs.
 
 **Parameters:**
 
-| Parameter | Required | Description | Example |
-|-----------|----------|-------------|---------|
-| `result` | Yes | Data type to search | `sample`, `study`, `read_run`, `assembly`, `sequence`, `analysis`, `taxon` |
-| `query` | Yes | Search query using ENA query syntax | `tax_eq(9606)`, `study_accession="PRJNA123456"` |
-| `format` | No | Output format (default: tsv) | `json`, `tsv`, `xml` |
-| `fields` | No | Comma-separated list of fields to return | `accession,sample_title,scientific_name` |
-| `limit` | No | Maximum number of results (default: 100000) | `10`, `1000` |
-| `offset` | No | Result offset for pagination | `0`, `100` |
-| `sortFields` | No | Fields to sort by (comma-separated) | `accession`, `collection_date` |
-| `sortOrder` | No | Sort direction | `asc`, `desc` |
-| `dataPortal` | No | Restrict to specific data portal | `ena`, `pathogen`, `metagenome` |
-| `download` | No | Trigger file download | `true`, `false` |
-| `includeAccessions` | No | Comma-separated accessions to include | `SAMN01,SAMN02` |
-| `excludeAccessions` | No | Comma-separated accessions to exclude | `SAMN03,SAMN04` |
+| Parameter           | Required | Description                                 | Example                                                                    |
+| ------------------- | -------- | ------------------------------------------- | -------------------------------------------------------------------------- |
+| `result`            | Yes      | Data type to search                         | `sample`, `study`, `read_run`, `assembly`, `sequence`, `analysis`, `taxon` |
+| `query`             | Yes      | Search query using ENA query syntax         | `tax_eq(9606)`, `study_accession="PRJNA123456"`                            |
+| `format`            | No       | Output format (default: tsv)                | `json`, `tsv`, `xml`                                                       |
+| `fields`            | No       | Comma-separated list of fields to return    | `accession,sample_title,scientific_name`                                   |
+| `limit`             | No       | Maximum number of results (default: 100000) | `10`, `1000`                                                               |
+| `offset`            | No       | Result offset for pagination                | `0`, `100`                                                                 |
+| `sortFields`        | No       | Fields to sort by (comma-separated)         | `accession`, `collection_date`                                             |
+| `sortOrder`         | No       | Sort direction                              | `asc`, `desc`                                                              |
+| `dataPortal`        | No       | Restrict to specific data portal            | `ena`, `pathogen`, `metagenome`                                            |
+| `download`          | No       | Trigger file download                       | `true`, `false`                                                            |
+| `includeAccessions` | No       | Comma-separated accessions to include       | `SAMN01,SAMN02`                                                            |
+| `excludeAccessions` | No       | Comma-separated accessions to exclude       | `SAMN03,SAMN04`                                                            |
 
 **Query Syntax:**
 
 ENA uses a specialized query language with operators:
 
 - **Equality:** `field_name="value"` or `field_name=value`
-- **Wildcards:** `field_name="*partial*"` (use * for wildcard)
+- **Wildcards:** `field_name="*partial*"` (use \* for wildcard)
 - **Range:** `field_name>=value AND field_name<=value`
 - **Logical:** `query1 AND query2`, `query1 OR query2`, `NOT query`
 - **Taxonomy:** `tax_eq(taxon_id)` - exact match, `tax_tree(taxon_id)` - includes descendants
@@ -101,10 +101,10 @@ response = requests.get(url, params=params)
 
 **Parameters:**
 
-| Parameter | Required | Description | Example |
-|-----------|----------|-------------|---------|
-| `result` | Yes | Data type | `sample`, `study`, `assembly` |
-| `dataPortal` | No | Filter by data portal | `ena`, `pathogen` |
+| Parameter    | Required | Description           | Example                       |
+| ------------ | -------- | --------------------- | ----------------------------- |
+| `result`     | Yes      | Data type             | `sample`, `study`, `assembly` |
+| `dataPortal` | No       | Filter by data portal | `ena`, `pathogen`             |
 
 **Example:**
 
@@ -141,12 +141,12 @@ response = requests.get(url)
 
 **Parameters:**
 
-| Parameter | Required | Description | Example |
-|-----------|----------|-------------|---------|
-| `accession` | Yes | Run or analysis accession | `ERR123456` |
-| `result` | Yes | Must be `read_run` or `analysis` | `read_run` |
-| `format` | No | Output format | `json`, `tsv` |
-| `fields` | No | Fields to include | `run_accession,fastq_ftp,fastq_md5` |
+| Parameter   | Required | Description                      | Example                             |
+| ----------- | -------- | -------------------------------- | ----------------------------------- |
+| `accession` | Yes      | Run or analysis accession        | `ERR123456`                         |
+| `result`    | Yes      | Must be `read_run` or `analysis` | `read_run`                          |
+| `format`    | No       | Output format                    | `json`, `tsv`                       |
+| `fields`    | No       | Fields to include                | `run_accession,fastq_ftp,fastq_md5` |
 
 **Common File Report Fields:**
 
@@ -194,11 +194,11 @@ for ftp_url in file_info[0]['fastq_ftp'].split(';'):
 
 **Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `accession` | Path | Record accession number | `PRJNA123456`, `SAMEA123456`, `ERR123456` |
-| `download` | Query | Set to `true` to trigger download | `true` |
-| `includeLinks` | Query | Include cross-reference links | `true`, `false` |
+| Parameter      | Type  | Description                       | Example                                   |
+| -------------- | ----- | --------------------------------- | ----------------------------------------- |
+| `accession`    | Path  | Record accession number           | `PRJNA123456`, `SAMEA123456`, `ERR123456` |
+| `download`     | Query | Set to `true` to trigger download | `true`                                    |
+| `includeLinks` | Query | Include cross-reference links     | `true`, `false`                           |
 
 **Example:**
 
@@ -225,12 +225,12 @@ response = requests.get(url, params=params)
 
 **Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `accession` | Path | Sequence accession | `LN847353` |
-| `download` | Query | Trigger download | `true` |
-| `expandDataclasses` | Query | Include related data classes | `true` |
-| `lineLimit` | Query | Limit output lines | `1000` |
+| Parameter           | Type  | Description                  | Example    |
+| ------------------- | ----- | ---------------------------- | ---------- |
+| `accession`         | Path  | Sequence accession           | `LN847353` |
+| `download`          | Query | Trigger download             | `true`     |
+| `expandDataclasses` | Query | Include related data classes | `true`     |
+| `lineLimit`         | Query | Limit output lines           | `1000`     |
 
 **Example:**
 
@@ -251,12 +251,12 @@ embl_format = response.text
 
 **Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `accession` | Path | Sequence accession | `LN847353` |
-| `download` | Query | Trigger download | `true` |
-| `range` | Query | Subsequence range | `100-500` |
-| `lineLimit` | Query | Limit output lines | `1000` |
+| Parameter   | Type  | Description        | Example    |
+| ----------- | ----- | ------------------ | ---------- |
+| `accession` | Path  | Sequence accession | `LN847353` |
+| `download`  | Query | Trigger download   | `true`     |
+| `range`     | Query | Subsequence range  | `100-500`  |
+| `lineLimit` | Query | Limit output lines | `1000`     |
 
 **Example:**
 
@@ -282,11 +282,11 @@ response = requests.get(url, params=params)
 
 **Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `source` | Path | Source database type | `sample`, `study`, `sequence` |
-| `accession` | Path | Accession number | `SAMEA123456` |
-| `target` | Query | Target database filter | `sra`, `biosample` |
+| Parameter   | Type  | Description            | Example                       |
+| ----------- | ----- | ---------------------- | ----------------------------- |
+| `source`    | Path  | Source database type   | `sample`, `study`, `sequence` |
+| `accession` | Path  | Accession number       | `SAMEA123456`                 |
+| `target`    | Query | Target database filter | `sra`, `biosample`            |
 
 **Example:**
 
@@ -371,10 +371,10 @@ response = requests.get(url)
 
 **Parameters:**
 
-| Parameter | Type | Description | Example |
-|-----------|------|-------------|---------|
-| `source` | Path | Source database | `ena`, `sra` |
-| `accession` | Path | Accession number | `SRR000001` |
+| Parameter   | Type | Description      | Example      |
+| ----------- | ---- | ---------------- | ------------ |
+| `source`    | Path | Source database  | `ena`, `sra` |
+| `accession` | Path | Accession number | `SRR000001`  |
 
 **Example:**
 
@@ -412,6 +412,7 @@ reference_fasta = response.text
 ## Rate Limiting and Error Handling
 
 **Rate Limits:**
+
 - Maximum: 50 requests per second
 - Exceeding limit returns HTTP 429 (Too Many Requests)
 - Implement exponential backoff when receiving 429 responses
@@ -460,6 +461,7 @@ For downloading large numbers of files or large datasets:
    - Aspera for high-speed: `era-fasp@fasp.sra.ebi.ac.uk:`
 
 2. **Use enaBrowserTools** command-line utility
+
    ```bash
    # Download by accession
    enaDataGet ERR123456
@@ -469,6 +471,7 @@ For downloading large numbers of files or large datasets:
    ```
 
 3. **Batch API requests** with proper delays
+
    ```python
    import time
 

@@ -39,8 +39,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the INCIDENT-RESPONDER agent. Read .claude/agents/specialized/incident-responder.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'debugging' }), Skill({ skill: 'sentry-monitoring' })
 2. URGENT: Detect and classify incident: $ARGUMENTS. Analyze alerts from PagerDuty/Opsgenie/monitoring. Determine: 1) Incident severity (P0-P3), 2) Affected services and dependencies, 3) User impact and business risk, 4) Initial incident command structure needed. Check error budgets and SLO violations."
+
 - Output: Severity classification, impact assessment, incident command assignments, SLO status
 - Context: Initial alerts, monitoring dashboards, recent changes
 
@@ -50,8 +52,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the DEVOPS-TROUBLESHOOTER agent. Read .claude/agents/specialized/devops-troubleshooter.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'debugging' }), Skill({ skill: 'sentry-monitoring' })
 2. Perform rapid observability sweep for incident: $ARGUMENTS. Query: 1) Distributed tracing (OpenTelemetry/Jaeger), 2) Metrics correlation (Prometheus/Grafana/DataDog), 3) Log aggregation (ELK/Splunk), 4) APM data, 5) Real User Monitoring. Identify anomalies, error patterns, and service degradation points."
+
 - Output: Observability findings, anomaly detection, service health matrix, trace analysis
 - Context: Severity level from step 1, affected services
 
@@ -61,8 +65,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the INCIDENT-RESPONDER agent. Read .claude/agents/specialized/incident-responder.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'debugging' })
 2. Implement immediate mitigation for P$SEVERITY incident: $ARGUMENTS. Actions: 1) Traffic throttling/rerouting if needed, 2) Feature flag disabling for affected features, 3) Circuit breaker activation, 4) Rollback assessment for recent deployments, 5) Scale resources if capacity-related. Prioritize user experience restoration."
+
 - Output: Mitigation actions taken, temporary fixes applied, rollback decisions
 - Context: Observability findings, severity classification
 
@@ -74,8 +80,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the DEVOPS-TROUBLESHOOTER agent. Read .claude/agents/specialized/devops-troubleshooter.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'debugging' }), Skill({ skill: 'sentry-monitoring' })
 2. Conduct deep debugging for incident: $ARGUMENTS using observability data. Investigate: 1) Stack traces and error logs, 2) Database query performance and locks, 3) Network latency and timeouts, 4) Memory leaks and CPU spikes, 5) Dependency failures and cascading errors. Apply Five Whys analysis."
+
 - Output: Root cause identification, contributing factors, dependency impact map
 - Context: Observability analysis, mitigation status
 
@@ -85,8 +93,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the SECURITY-ARCHITECT agent. Read .claude/agents/specialized/security-architect.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'security-architect' })
 2. Assess security implications of incident: $ARGUMENTS. Check: 1) DDoS attack indicators, 2) Authentication/authorization failures, 3) Data exposure risks, 4) Certificate issues, 5) Suspicious access patterns. Review WAF logs, security groups, and audit trails."
+
 - Output: Security assessment, breach analysis, vulnerability identification
 - Context: Root cause findings, system logs
 
@@ -105,8 +115,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the DEVELOPER agent. Read .claude/agents/core/developer.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'tdd' }), Skill({ skill: 'debugging' })
 2. Design and implement production fix for incident: $ARGUMENTS based on root cause. Requirements: 1) Minimal viable fix for rapid deployment, 2) Risk assessment and rollback capability, 3) Staged rollout plan with monitoring, 4) Validation criteria and health checks. Consider both immediate fix and long-term solution."
+
 - Output: Fix implementation, deployment strategy, validation plan, rollback procedures
 - Context: Root cause analysis, performance findings, security assessment
 
@@ -148,8 +160,10 @@ Orchestrate multi-agent incident response with modern SRE practices for rapid re
 - Prompt: "You are the DEVOPS-TROUBLESHOOTER agent. Read .claude/agents/specialized/devops-troubleshooter.md
 
 ## Instructions
+
 1. Invoke skills: Skill({ skill: 'debugging' }), Skill({ skill: 'sentry-monitoring' })
 2. Enhance monitoring to prevent recurrence of: $ARGUMENTS. Implement: 1) New alerts for early detection, 2) SLI/SLO adjustments if needed, 3) Dashboard improvements for visibility, 4) Runbook automation opportunities, 5) Chaos engineering scenarios for testing. Ensure alerts are actionable and reduce noise."
+
 - Output: New monitoring configuration, alert rules, dashboard updates, runbook automation
 - Context: Postmortem findings, root cause analysis
 

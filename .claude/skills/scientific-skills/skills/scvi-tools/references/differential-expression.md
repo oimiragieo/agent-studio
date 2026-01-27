@@ -27,17 +27,20 @@ Where μ_A and μ_B are the mean expression levels in conditions A and B.
 ### Three-Stage Process
 
 **Stage 1: Estimating Expression Levels**
+
 - Sample from posterior distribution of cellular states
 - Generate expression values from the learned generative model
 - Aggregate across cells to get population-level estimates
 
 **Stage 2: Detecting Relevant Features (Hypothesis Testing)**
+
 - Test for differential expression using Bayesian framework
 - Two testing modes available:
   - **"vanilla" mode**: Point null hypothesis (β = 0)
   - **"change" mode**: Composite hypothesis (|β| ≤ δ)
 
 **Stage 3: Controlling False Discovery**
+
 - Posterior expected False Discovery Proportion (FDP) control
 - Selects maximum number of discoveries ensuring E[FDP] ≤ α
 
@@ -96,6 +99,7 @@ for ct1 in cell_types:
 ## Key Parameters
 
 ### `groupby` (required)
+
 Column in `adata.obs` defining groups to compare.
 
 ```python
@@ -104,6 +108,7 @@ de_results = model.differential_expression(groupby="cell_type")
 ```
 
 ### `group1` and `group2`
+
 Groups to compare. If `group2` is None, compares `group1` to all others.
 
 ```python
@@ -117,10 +122,12 @@ de = model.differential_expression(groupby="cell_type", group1="T cells")
 ### `mode` (Hypothesis Testing Mode)
 
 **"vanilla" mode** (default): Point null hypothesis
+
 - Tests if β = 0 exactly
 - More sensitive, but may find trivially small effects
 
 **"change" mode**: Composite null hypothesis
+
 - Tests if |β| ≤ δ
 - Requires biologically meaningful change
 - Reduces false discoveries of tiny effects
@@ -137,7 +144,9 @@ de = model.differential_expression(
 ```
 
 ### `delta`
+
 Minimum effect size threshold for "change" mode.
+
 - Typical values: 0.25, 0.5, 0.7 (log scale)
 - log2(1.5) ≈ 0.58 (1.5-fold change)
 - log2(2) = 1.0 (2-fold change)
@@ -154,6 +163,7 @@ de = model.differential_expression(
 ```
 
 ### `fdr_target`
+
 False discovery rate threshold (default: 0.05)
 
 ```python
@@ -166,6 +176,7 @@ de = model.differential_expression(
 ```
 
 ### `batch_correction`
+
 Whether to perform batch correction during DE testing (default: True)
 
 ```python
@@ -179,7 +190,9 @@ de = model.differential_expression(
 ```
 
 ### `n_samples`
+
 Number of posterior samples for estimation (default: 5000)
+
 - More samples = more accurate but slower
 - Reduce for speed, increase for precision
 
@@ -199,6 +212,7 @@ de = model.differential_expression(
 The results DataFrame contains several important columns:
 
 **Effect Size Estimates**:
+
 - `lfc_mean`: Mean log fold-change
 - `lfc_median`: Median log fold-change
 - `lfc_std`: Standard deviation of log fold-change
@@ -206,13 +220,15 @@ The results DataFrame contains several important columns:
 - `lfc_max`: Upper bound of effect size
 
 **Statistical Significance**:
+
 - `bayes_factor`: Bayes factor for differential expression
   - Higher values = stronger evidence
-  - >3 often considered meaningful
+  - > 3 often considered meaningful
 - `is_de_fdr_0.05`: Boolean indicating if gene is DE at FDR 0.05
 - `is_de_fdr_0.1`: Boolean indicating if gene is DE at FDR 0.1
 
 **Expression Levels**:
+
 - `mean1`: Mean expression in group 1
 - `mean2`: Mean expression in group 2
 - `non_zeros_proportion1`: Proportion of non-zero cells in group 1
@@ -385,6 +401,7 @@ wilcox_results = sc.get.rank_genes_groups_df(adata, group="T cells", key="wilcox
 ```
 
 **Advantages of scvi-tools**:
+
 - Accounts for batch effects automatically
 - Handles zero-inflation properly
 - Provides uncertainty quantification
@@ -392,6 +409,7 @@ wilcox_results = sc.get.rank_genes_groups_df(adata, group="T cells", key="wilcox
 - Better statistical properties
 
 **When to use Wilcoxon**:
+
 - Very quick exploratory analysis
 - Comparison with published results using Wilcoxon
 

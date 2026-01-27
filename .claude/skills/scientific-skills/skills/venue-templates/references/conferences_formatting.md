@@ -14,7 +14,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (December)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Main paper: 8 pages (excluding references)
   - References: Unlimited
   - Appendix/Supplementary: Unlimited (optional, reviewed at discretion)
@@ -30,14 +31,14 @@ Comprehensive formatting requirements and submission guidelines for major academ
   - Remove acknowledgments revealing identity
 - **Citations**: Numbered in square brackets [1], [2-4]
 - **References**: Any consistent style (commonly uses numbered references)
-- **Figures**: 
+- **Figures**:
   - High resolution (300+ dpi)
   - Colorblind-friendly palettes recommended
   - Can span both columns if needed
 - **Tables**: Clear, readable at publication size
 - **Equations**: Numbered if referenced
 - **LaTeX Class**: `neurips_2024.sty` (updated annually)
-- **Supplementary Materials**: 
+- **Supplementary Materials**:
   - Code strongly encouraged (GitHub, anonymous repo for review)
   - Additional experiments, proofs
   - Not counted toward page limit
@@ -45,6 +46,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **LaTeX Template**: `assets/journals/neurips_article.tex`
 
 **Submission Notes**:
+
 - Use official style file (changes yearly)
 - Paper ID on first page (auto-generated during submission)
 - Include "broader impact" statement (varies by year)
@@ -60,7 +62,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (July)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Main paper: 8 pages (excluding references and appendix)
   - References: Unlimited
   - Appendix: Unlimited (optional)
@@ -78,6 +81,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **LaTeX Template**: `assets/journals/icml_article.tex`
 
 **Submission Notes**:
+
 - Must use official ICML style file
 - Checklist for reproducibility
 - Ethics statement if applicable
@@ -92,7 +96,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (April/May)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Main paper: 8 pages (excluding references, appendix, ethics statement)
   - References: Unlimited
   - Appendix: Unlimited
@@ -107,6 +112,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **LaTeX Template**: `assets/journals/iclr_article.tex`
 
 **Unique Features**:
+
 - OpenReview platform (transparent review process)
 - Author-reviewer discussion during review
 - Camera-ready can exceed 8 pages
@@ -121,7 +127,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (June)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Main paper: 8 pages (including figures and tables, excluding references)
   - References: Unlimited (separate section)
 - **Format**: Two-column
@@ -133,7 +140,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 - **Citations**: Numbered [1]
 - **Figures**: High resolution, can be color
 - **LaTeX Template**: CVPR official template (changes yearly)
-- **Supplementary Material**: 
+- **Supplementary Material**:
   - Video demonstrations encouraged
   - Additional results, code
   - 100 MB limit for all supplementary files
@@ -150,7 +157,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (February)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Technical papers: 7 pages (excluding references)
   - References: Unlimited
 - **Format**: Two-column
@@ -173,6 +181,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual
 
 **Formatting Requirements**:
+
 - **Page Limit**: 7 pages (excluding references)
 - **Format**: Two-column
 - **Font**: Times, 10pt
@@ -189,7 +198,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (April/May)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Papers: 10 pages (excluding references)
   - Late-Breaking Work: 4 pages
 - **Format**: Single-column ACM format
@@ -212,7 +222,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (August)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Research Track: 9 pages (excluding references)
   - Applied Data Science: 9 pages
 - **Format**: Two-column
@@ -234,7 +245,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (November/December)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Long papers: 8 pages (+ unlimited references and appendix)
   - Short papers: 4 pages (+ unlimited references)
 - **Format**: Two-column
@@ -259,6 +271,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (July)
 
 **Formatting Requirements**:
+
 - **Page Limit**: 8 pages (long), 4 pages (short), excluding references
 - **Format**: Two-column
 - **Font**: Times, 11pt
@@ -275,7 +288,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (August)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Papers: No strict limit (typically 15-20 pages including everything)
   - Well-written, concise papers preferred
 - **Format**: Two-column
@@ -297,7 +311,8 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (July)
 
 **Formatting Requirements**:
-- **Page Limit**: 
+
+- **Page Limit**:
   - Full papers: 10 pages (excluding references)
   - Short papers: 4 pages (excluding references)
 - **Format**: Single-column ACM format
@@ -317,8 +332,9 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (July)
 
 **Formatting Requirements**:
-- **Publication**: Proceedings published in *Bioinformatics* journal
-- **Page Limit**: 
+
+- **Publication**: Proceedings published in _Bioinformatics_ journal
+- **Page Limit**:
   - Typically 7-8 pages including figures and references
 - **Format**: Two-column
 - **Font**: Times, 10pt
@@ -340,8 +356,9 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (April/May)
 
 **Formatting Requirements**:
+
 - **Publication**: Proceedings published as Springer LNCS (Lecture Notes in Computer Science)
-- **Page Limit**: 
+- **Page Limit**:
   - Extended abstracts: 12-15 pages (including references)
 - **Format**: Single-column
 - **Font**: Based on Springer LNCS template
@@ -362,6 +379,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 **Frequency**: Annual (January)
 
 **Formatting Requirements**:
+
 - **Page Limit**: 12 pages including figures and references
 - **Format**: Single-column
 - **Font**: Times, 11pt
@@ -382,6 +400,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### IEEE International Conference on Robotics and Automation (ICRA)
 
 **Formatting Requirements**:
+
 - **Page Limit**: 8 pages (including figures and references)
 - **Format**: Two-column
 - **Font**: Times, 10pt
@@ -403,6 +422,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### International Conference on Computer-Aided Design (ICCAD)
 
 **Formatting Requirements**:
+
 - **Page Limit**: 8 pages
 - **Format**: Two-column
 - **LaTeX Class**: IEEE template
@@ -413,6 +433,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### Design Automation Conference (DAC)
 
 **Formatting Requirements**:
+
 - **Page Limit**: 6 pages
 - **Format**: Two-column
 - **Font**: Times, 10pt
@@ -431,18 +452,18 @@ Comprehensive formatting requirements and submission guidelines for major academ
 
 ## Quick Reference Table
 
-| Conference | Pages | Format | Blind | Citations | Template |
-|------------|-------|--------|-------|-----------|----------|
-| **NeurIPS** | 8 + refs | Two-col | Double | [1] | `neurips_article.tex` |
-| **ICML** | 8 + refs | Two-col | Double | [1] | `icml_article.tex` |
-| **ICLR** | 8 + refs | Two-col | Double | [1] | `iclr_article.tex` |
-| **CVPR** | 8 + refs | Two-col | Double | [1] | `cvpr_article.tex` |
-| **AAAI** | 7 + refs | Two-col | Double | Various | `aaai_article.tex` |
-| **CHI** | 10 + refs | Single-col | Double | ACM | `chi_article.tex` |
-| **SIGKDD** | 9 + refs | Two-col | Double | ACM [1] | `kdd_article.tex` |
-| **EMNLP** | 8 + refs | Two-col | Double | Named | `emnlp_article.tex` |
-| **ISMB** | 7-8 pages | Two-col | Single | [1] | `ismb_article.tex` |
-| **RECOMB** | 12-15 pages | Single-col | Double | Springer | `recomb_article.tex` |
+| Conference  | Pages       | Format     | Blind  | Citations | Template              |
+| ----------- | ----------- | ---------- | ------ | --------- | --------------------- |
+| **NeurIPS** | 8 + refs    | Two-col    | Double | [1]       | `neurips_article.tex` |
+| **ICML**    | 8 + refs    | Two-col    | Double | [1]       | `icml_article.tex`    |
+| **ICLR**    | 8 + refs    | Two-col    | Double | [1]       | `iclr_article.tex`    |
+| **CVPR**    | 8 + refs    | Two-col    | Double | [1]       | `cvpr_article.tex`    |
+| **AAAI**    | 7 + refs    | Two-col    | Double | Various   | `aaai_article.tex`    |
+| **CHI**     | 10 + refs   | Single-col | Double | ACM       | `chi_article.tex`     |
+| **SIGKDD**  | 9 + refs    | Two-col    | Double | ACM [1]   | `kdd_article.tex`     |
+| **EMNLP**   | 8 + refs    | Two-col    | Double | Named     | `emnlp_article.tex`   |
+| **ISMB**    | 7-8 pages   | Two-col    | Single | [1]       | `ismb_article.tex`    |
+| **RECOMB**  | 12-15 pages | Single-col | Double | Springer  | `recomb_article.tex`  |
 
 ---
 
@@ -451,17 +472,20 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### Anonymization Best Practices (Double-Blind Review)
 
 **Remove**:
+
 - Author names, affiliations, emails from title page
 - Acknowledgments section
 - Funding information that reveals identity
 - Any "our previous work" citations that make identity obvious
 
 **Anonymize**:
+
 - Self-citations: "Smith et al. [5]" → "Anonymous et al. [5]" or "Prior work [5]"
 - Institution-specific details: "our university" → "a large research university"
 - Dataset names if they reveal identity
 
 **Keep Anonymous**:
+
 - Code repositories (use anonymous GitHub for review)
 - Supplementary materials
 - Any URLs or links
@@ -469,6 +493,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### Supplementary Materials
 
 **Common Inclusions**:
+
 - Source code (GitHub repository, zip file)
 - Additional experimental results
 - Proofs and derivations
@@ -478,6 +503,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 - Interactive demos
 
 **Best Practices**:
+
 - Keep supplementary well-organized
 - Reference supplementary clearly from main paper
 - Ensure supplementary is anonymized for blind review
@@ -486,6 +512,7 @@ Comprehensive formatting requirements and submission guidelines for major academ
 ### Camera-Ready Preparation
 
 After acceptance:
+
 1. **De-anonymize**: Add author names, affiliations
 2. **Add acknowledgments**: Funding, contributions
 3. **Copyright**: Add conference copyright notice
@@ -496,6 +523,7 @@ After acceptance:
 ### Accessibility Considerations
 
 **For All Conferences**:
+
 - Use colorblind-safe color palettes
 - Ensure sufficient contrast
 - Provide alt text for figures (where supported)
@@ -520,12 +548,14 @@ After acceptance:
 ## Getting Official Templates
 
 **Where to Find Official Templates**:
+
 1. **Conference website**: "Call for Papers" or "Author Instructions"
 2. **GitHub**: Many conferences host templates on GitHub
 3. **Overleaf**: Many official templates available on Overleaf
 4. **CTAN**: LaTeX class files often on CTAN repository
 
 **Template Naming**:
+
 - Conferences often update templates yearly
 - Use the correct year's template (e.g., `neurips_2024.sty`)
 - Check for "camera-ready" vs. "submission" versions
@@ -535,7 +565,7 @@ After acceptance:
 ## Notes
 
 1. **Annual updates**: Conference requirements change; always check current year's CFP
-2. **Deadline types**: 
+2. **Deadline types**:
    - Abstract deadline (often 1 week before paper deadline)
    - Paper deadline (firm, no extensions typically)
    - Supplementary deadline (may be a few days after paper)
@@ -547,18 +577,21 @@ After acceptance:
 ## Conference Tiers (Informal)
 
 **Machine Learning**:
+
 - **Tier 1**: NeurIPS, ICML, ICLR
 - **Tier 2**: AAAI, IJCAI, UAI
 
 **Computer Vision**:
+
 - **Tier 1**: CVPR, ICCV, ECCV
 
 **Natural Language Processing**:
+
 - **Tier 1**: ACL, EMNLP, NAACL
 
 **Bioinformatics**:
+
 - **Tier 1**: RECOMB, ISMB
 - **Tier 2**: PSB, WABI
 
 (Tiers are informal and field-dependent; not official rankings)
-

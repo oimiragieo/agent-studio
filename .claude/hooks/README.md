@@ -5,6 +5,7 @@ Agent Studio provides a hooks system for enforcing safety rules, routing protoco
 ## Overview
 
 Hooks are JavaScript modules that execute at specific points in the agent lifecycle. They provide:
+
 - **Safety validation** - Command validation before execution
 - **Routing enforcement** - Ensure Router-First protocol compliance
 - **Session management** - Memory reminders and session state
@@ -17,6 +18,7 @@ Hooks are JavaScript modules that execute at specific points in the agent lifecy
 Located in `.claude/hooks/safety/`
 
 #### TDD Check (`tdd-check.cjs`)
+
 Validates that code changes follow Test-Driven Development workflow.
 
 **When it runs:** Before code edits
@@ -27,6 +29,7 @@ Validates that code changes follow Test-Driven Development workflow.
 Command validation system integrated from Auto-Claude. Provides pre-execution validation for potentially dangerous commands.
 
 **Available validators:**
+
 - `shell-validators.cjs` - Bash/sh/zsh command validation
 - `database-validators.cjs` - PostgreSQL, MySQL, Redis, MongoDB protection
 - `filesystem-validators.cjs` - chmod, rm, dangerous file operations
@@ -39,6 +42,7 @@ Command validation system integrated from Auto-Claude. Provides pre-execution va
 Located in `.claude/hooks/routing/`
 
 #### Router Enforcer (`router-enforcer.cjs`)
+
 Enforces Router-First protocol for all user interactions.
 
 **When it runs:** On user message receipt
@@ -49,6 +53,7 @@ Enforces Router-First protocol for all user interactions.
 Located in `.claude/hooks/session/`
 
 #### Memory Reminder (`memory-reminder.cjs`)
+
 Reminds agents to read and update memory files.
 
 **When it runs:** Session start, periodic intervals
@@ -59,6 +64,7 @@ Reminds agents to read and update memory files.
 Located in `.claude/hooks/memory/`
 
 #### Format Memory (`format-memory.cjs`)
+
 Ensures memory files maintain consistent format and structure.
 
 **When it runs:** After memory file updates
@@ -94,23 +100,28 @@ if (!result.valid) {
 The validator system protects against dangerous operations in:
 
 **Shell Interpreters:**
+
 - `bash`, `sh`, `zsh` - Blocks destructive flags, eval injection
 
 **Databases:**
+
 - `dropdb`, `dropuser`, `psql` - PostgreSQL protection
 - `mysql`, `mysqladmin` - MySQL protection
 - `redis-cli` - Redis FLUSHDB/FLUSHALL protection
 - `mongosh`, `mongo` - MongoDB dropDatabase protection
 
 **Filesystem:**
+
 - `chmod` - Prevents 777, recursive dangerous perms
 - `rm` - Blocks recursive deletion of critical paths
 
 **Git:**
+
 - `git config` - Prevents credential.helper modification
 - `git push --force` - Blocks force push without confirmation
 
 **Process Management:**
+
 - `kill`, `pkill`, `killall` - Prevents system process termination
 
 ### Adding Custom Validators
@@ -121,7 +132,7 @@ Register new validators in `registry.cjs`:
 const { registerValidator } = require('./registry.cjs');
 
 // Add custom validator
-registerValidator('mycommand', (commandString) => {
+registerValidator('mycommand', commandString => {
   if (commandString.includes('--dangerous')) {
     return { valid: false, error: 'Dangerous flag detected' };
   }

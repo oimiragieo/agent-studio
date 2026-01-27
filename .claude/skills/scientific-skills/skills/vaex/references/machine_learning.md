@@ -5,6 +5,7 @@ This reference covers Vaex's machine learning capabilities including transformer
 ## Overview
 
 Vaex provides a comprehensive ML framework (`vaex.ml`) that works seamlessly with large datasets. The framework includes:
+
 - Transformers for feature scaling and engineering
 - Encoders for categorical variables
 - Dimensionality reduction (PCA)

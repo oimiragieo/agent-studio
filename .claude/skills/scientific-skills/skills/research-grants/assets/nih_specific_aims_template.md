@@ -34,7 +34,7 @@ Prior studies have identified numerous genetic and environmental risk factors fo
 
 **Objective**: The objective of this application is to [specific goal of THIS grant - what you will accomplish].
 
-**Central hypothesis**: [Testable prediction that unifies your aims]. 
+**Central hypothesis**: [Testable prediction that unifies your aims].
 
 This hypothesis is based on [rationale]: our preliminary data showing [key finding 1], [key finding 2], and [key finding 3] (Figures 1-2, Table 1). [Why this evidence supports the hypothesis].
 
@@ -49,7 +49,7 @@ Our long-term goal is to develop precision medicine approaches for type 2 diabet
 
 **Working hypothesis**: [Testable prediction for this aim]
 
-**Approach**: We will (1) [first set of experiments/methods], (2) [second set], and (3) [third set]. [Key model systems, sample sizes, or technical approaches]. 
+**Approach**: We will (1) [first set of experiments/methods], (2) [second set], and (3) [third set]. [Key model systems, sample sizes, or technical approaches].
 
 **Expected outcomes**: We expect to [specific predictions], which will [how this advances knowledge or enables subsequent aims].
 
@@ -134,7 +134,7 @@ The proposed research is significant because it will establish a molecular taxon
 - [ ] 11-point Arial/Helvetica or equivalent
 - [ ] Readable line spacing
 - [ ] Aim statements are bold or underlined
-- [ ] Gene names italicized (*TP53*)
+- [ ] Gene names italicized (_TP53_)
 - [ ] Figures (if included) are legible
 - [ ] All abbreviations defined at first use
 
@@ -163,4 +163,3 @@ The proposed research is significant because it will establish a molecular taxon
 4. **Study funded examples** - Look at successful aims pages in your field
 5. **Test on non-experts** - Can someone in a different field understand the importance?
 6. **Check every word** - Every sentence must earn its place on this precious page
-

@@ -9,11 +9,14 @@ This document provides detailed workflows for common DeepChem use cases.
 ### Step-by-Step Process
 
 #### 1. Prepare Your Data
+
 Data should be in CSV format with at minimum:
+
 - A column with SMILES strings
 - One or more columns with property values (targets)
 
 Example CSV structure:
+
 ```csv
 smiles,solubility,toxicity
 CCO,-0.77,0
@@ -21,13 +24,16 @@ CC(=O)OC1=CC=CC=C1C(=O)O,-1.19,1
 ```
 
 #### 2. Choose Featurizer
+
 Decision tree:
+
 - **Small dataset (<1K)**: Use `CircularFingerprint` or `RDKitDescriptors`
 - **Medium dataset (1K-100K)**: Use `CircularFingerprint` or `MolGraphConvFeaturizer`
 - **Large dataset (>100K)**: Use graph-based featurizers (`MolGraphConvFeaturizer`, `DMPNNFeaturizer`)
 - **Transfer learning**: Use pretrained model featurizers (`GroverFeaturizer`)
 
 #### 3. Load and Featurize Data
+
 ```python
 import deepchem as dc
 
@@ -45,6 +51,7 @@ dataset = loader.create_dataset('data.csv')
 ```
 
 #### 4. Split Data
+
 **Critical**: Use `ScaffoldSplitter` for drug discovery to prevent data leakage.
 
 ```python
@@ -58,6 +65,7 @@ train, valid, test = splitter.train_valid_test_split(
 ```
 
 #### 5. Transform Data (Optional but Recommended)
+
 ```python
 transformers = [
     dc.trans.NormalizationTransformer(
@@ -73,6 +81,7 @@ for transformer in transformers:
 ```
 
 #### 6. Select and Train Model
+
 ```python
 # For fingerprints
 model = dc.models.MultitaskRegressor(
@@ -96,6 +105,7 @@ model.fit(train, nb_epoch=50)
 ```
 
 #### 7. Evaluate
+
 ```python
 metric = dc.metrics.Metric(dc.metrics.r2_score)
 train_score = model.evaluate(train, [metric])
@@ -108,6 +118,7 @@ print(f"Test R²: {test_score}")
 ```
 
 #### 8. Make Predictions
+
 ```python
 # Predict on new molecules
 new_smiles = ['CCO', 'CC(C)O', 'c1ccccc1']
@@ -129,6 +140,7 @@ predictions = model.predict(new_dataset)
 **Goal**: Quickly train and evaluate models on standard benchmarks.
 
 ### Quick Start
+
 ```python
 import deepchem as dc
 
@@ -153,7 +165,9 @@ print(f"Test ROC-AUC: {test_score}")
 ```
 
 ### Available Featurizer Options
+
 When calling `load_*()` functions:
+
 - `'ECFP'`: Extended-connectivity fingerprints (circular fingerprints)
 - `'GraphConv'`: Graph convolution features
 - `'Weave'`: Weave features
@@ -161,6 +175,7 @@ When calling `load_*()` functions:
 - `'smiles2img'`: 2D molecular images
 
 ### Available Splitter Options
+
 - `'scaffold'`: Scaffold-based splitting (recommended for drug discovery)
 - `'random'`: Random splitting
 - `'stratified'`: Stratified splitting (preserves class distributions)
@@ -173,6 +188,7 @@ When calling `load_*()` functions:
 **Goal**: Find optimal model hyperparameters systematically.
 
 ### Using GridHyperparamOpt
+
 ```python
 import deepchem as dc
 import numpy as np
@@ -223,6 +239,7 @@ print(f"Best validation score: {all_results['best_validation_score']}")
 **Goal**: Leverage pretrained models for improved performance on small datasets.
 
 ### Using ChemBERTa
+
 ```python
 import deepchem as dc
 from transformers import AutoTokenizer
@@ -254,6 +271,7 @@ predictions = model.predict(test)
 ```
 
 ### Using GROVER
+
 ```python
 # GROVER: pre-trained on molecular graphs
 model = dc.models.GroverModel(
@@ -273,6 +291,7 @@ model.fit(train_dataset, nb_epoch=20)
 **Goal**: Generate novel molecules with desired properties.
 
 ### Basic MolGAN
+
 ```python
 import deepchem as dc
 
@@ -304,6 +323,7 @@ generated_molecules = gan.predict_gan_generator(1000)
 ```
 
 ### Conditional Generation
+
 ```python
 # For property-targeted generation
 from deepchem.models.optimizers import ExponentialDecay
@@ -331,6 +351,7 @@ molecules = gan.predict_gan_generator(
 **Goal**: Predict properties of crystalline materials.
 
 ### Using Crystal Graph Convolutional Networks
+
 ```python
 import deepchem as dc
 
@@ -365,6 +386,7 @@ test_score = model.evaluate(test, [metric])
 **Goal**: Predict protein properties from sequences.
 
 ### Using ProtBERT
+
 ```python
 import deepchem as dc
 
@@ -395,6 +417,7 @@ predictions = model.predict(test)
 **Goal**: Use your own PyTorch/scikit-learn models with DeepChem.
 
 ### Wrapping Scikit-Learn Models
+
 ```python
 from sklearn.ensemble import RandomForestRegressor
 import deepchem as dc
@@ -419,6 +442,7 @@ score = model.evaluate(test, [metric])
 ```
 
 ### Creating Custom PyTorch Models
+
 ```python
 import torch
 import torch.nn as nn
@@ -456,35 +480,44 @@ model.fit(train, nb_epoch=50)
 ## Common Pitfalls and Solutions
 
 ### Issue 1: Data Leakage in Drug Discovery
+
 **Problem**: Using random splitting allows similar molecules in train and test sets.
 **Solution**: Always use `ScaffoldSplitter` for molecular datasets.
 
 ### Issue 2: Imbalanced Classification
+
 **Problem**: Poor performance on minority class.
 **Solution**: Use `BalancingTransformer` or weighted metrics.
+
 ```python
 transformer = dc.trans.BalancingTransformer(dataset=train)
 train = transformer.transform(train)
 ```
 
 ### Issue 3: Memory Issues with Large Datasets
+
 **Problem**: Dataset doesn't fit in memory.
 **Solution**: Use `DiskDataset` instead of `NumpyDataset`.
+
 ```python
 dataset = dc.data.DiskDataset.from_numpy(X, y, w, ids)
 ```
 
 ### Issue 4: Overfitting on Small Datasets
+
 **Problem**: Model memorizes training data.
 **Solutions**:
+
 1. Use stronger regularization (increase dropout)
 2. Use simpler models (Random Forest, Ridge)
 3. Apply transfer learning (pretrained models)
 4. Collect more data
 
 ### Issue 5: Poor Graph Neural Network Performance
+
 **Problem**: GNN performs worse than fingerprints.
 **Solutions**:
+
 1. Check if dataset is large enough (GNNs need >10K samples typically)
 2. Increase training epochs
 3. Try different GNN architectures (AttentiveFP, DMPNN)

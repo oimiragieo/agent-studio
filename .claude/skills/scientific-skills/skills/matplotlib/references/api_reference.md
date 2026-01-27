@@ -9,6 +9,7 @@ This document provides a quick reference for the most commonly used matplotlib c
 The top-level container for all plot elements.
 
 **Creation:**
+
 ```python
 fig = plt.figure(figsize=(10, 6), dpi=100, facecolor='white')
 fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 6))
@@ -16,6 +17,7 @@ fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 ```
 
 **Key Methods:**
+
 - `fig.add_subplot(nrows, ncols, index)` - Add a subplot
 - `fig.add_axes([left, bottom, width, height])` - Add axes at specific position
 - `fig.savefig(filename, dpi=300, bbox_inches='tight')` - Save figure
@@ -26,6 +28,7 @@ fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 - `plt.close(fig)` - Close figure to free memory
 
 **Key Attributes:**
+
 - `fig.axes` - List of all axes in the figure
 - `fig.dpi` - Resolution in dots per inch
 - `fig.figsize` - Figure dimensions in inches (width, height)
@@ -35,6 +38,7 @@ fig, axes = plt.subplots(2, 2, figsize=(12, 10))
 The actual plotting area where data is visualized.
 
 **Creation:**
+
 ```python
 fig, ax = plt.subplots()  # Single axes
 ax = fig.add_subplot(111)  # Alternative method
@@ -43,64 +47,77 @@ ax = fig.add_subplot(111)  # Alternative method
 **Plotting Methods:**
 
 **Line plots:**
+
 - `ax.plot(x, y, **kwargs)` - Line plot
 - `ax.step(x, y, where='pre'/'mid'/'post')` - Step plot
 - `ax.errorbar(x, y, yerr, xerr)` - Error bars
 
 **Scatter plots:**
+
 - `ax.scatter(x, y, s=size, c=color, marker='o', alpha=0.5)` - Scatter plot
 
 **Bar charts:**
+
 - `ax.bar(x, height, width=0.8, align='center')` - Vertical bar chart
 - `ax.barh(y, width)` - Horizontal bar chart
 
 **Statistical plots:**
+
 - `ax.hist(data, bins=10, density=False)` - Histogram
 - `ax.boxplot(data, labels=None)` - Box plot
 - `ax.violinplot(data)` - Violin plot
 
 **2D plots:**
+
 - `ax.imshow(array, cmap='viridis', aspect='auto')` - Display image/matrix
 - `ax.contour(X, Y, Z, levels=10)` - Contour lines
 - `ax.contourf(X, Y, Z, levels=10)` - Filled contours
 - `ax.pcolormesh(X, Y, Z)` - Pseudocolor plot
 
 **Filling:**
+
 - `ax.fill_between(x, y1, y2, alpha=0.3)` - Fill between curves
 - `ax.fill_betweenx(y, x1, x2)` - Fill between vertical curves
 
 **Text and annotations:**
+
 - `ax.text(x, y, text, fontsize=12)` - Add text
 - `ax.annotate(text, xy=(x, y), xytext=(x2, y2), arrowprops={})` - Annotate with arrow
 
 **Customization Methods:**
 
 **Labels and titles:**
+
 - `ax.set_xlabel(label, fontsize=12)` - Set x-axis label
 - `ax.set_ylabel(label, fontsize=12)` - Set y-axis label
 - `ax.set_title(title, fontsize=14)` - Set axes title
 
 **Limits and scales:**
+
 - `ax.set_xlim(left, right)` - Set x-axis limits
 - `ax.set_ylim(bottom, top)` - Set y-axis limits
 - `ax.set_xscale('linear'/'log'/'symlog')` - Set x-axis scale
 - `ax.set_yscale('linear'/'log'/'symlog')` - Set y-axis scale
 
 **Ticks:**
+
 - `ax.set_xticks(positions)` - Set x-tick positions
 - `ax.set_xticklabels(labels)` - Set x-tick labels
 - `ax.tick_params(axis='both', labelsize=10)` - Customize tick appearance
 
 **Grid and spines:**
+
 - `ax.grid(True, alpha=0.3, linestyle='--')` - Add grid
 - `ax.spines['top'].set_visible(False)` - Hide top spine
 - `ax.spines['right'].set_visible(False)` - Hide right spine
 
 **Legend:**
+
 - `ax.legend(loc='best', fontsize=10, frameon=True)` - Add legend
 - `ax.legend(handles, labels)` - Custom legend
 
 **Aspect and layout:**
+
 - `ax.set_aspect('equal'/'auto'/ratio)` - Set aspect ratio
 - `ax.invert_xaxis()` - Invert x-axis
 - `ax.invert_yaxis()` - Invert y-axis
@@ -110,11 +127,13 @@ ax = fig.add_subplot(111)  # Alternative method
 High-level interface for quick plotting.
 
 **Figure creation:**
+
 - `plt.figure()` - Create new figure
 - `plt.subplots()` - Create figure and axes
 - `plt.subplot()` - Add subplot to current figure
 
 **Plotting (uses current axes):**
+
 - `plt.plot()` - Line plot
 - `plt.scatter()` - Scatter plot
 - `plt.bar()` - Bar chart
@@ -122,15 +141,18 @@ High-level interface for quick plotting.
 - (All axes methods available)
 
 **Display and save:**
+
 - `plt.show()` - Display figure
 - `plt.savefig()` - Save figure
 - `plt.close()` - Close figure
 
 **Style:**
+
 - `plt.style.use(style_name)` - Apply style sheet
 - `plt.style.available` - List available styles
 
 **State management:**
+
 - `plt.gca()` - Get current axes
 - `plt.gcf()` - Get current figure
 - `plt.sca(ax)` - Set current axes
@@ -140,6 +162,7 @@ High-level interface for quick plotting.
 ## Line and Marker Styles
 
 ### Line Styles
+
 - `'-'` or `'solid'` - Solid line
 - `'--'` or `'dashed'` - Dashed line
 - `'-.'` or `'dashdot'` - Dash-dot line
@@ -147,6 +170,7 @@ High-level interface for quick plotting.
 - `''` or `' '` or `'None'` - No line
 
 ### Marker Styles
+
 - `'.'` - Point marker
 - `'o'` - Circle marker
 - `'v'`, `'^'`, `'<'`, `'>'` - Triangle markers
@@ -161,6 +185,7 @@ High-level interface for quick plotting.
 ### Color Specifications
 
 **Single character shortcuts:**
+
 - `'b'` - Blue
 - `'g'` - Green
 - `'r'` - Red
@@ -171,10 +196,12 @@ High-level interface for quick plotting.
 - `'w'` - White
 
 **Named colors:**
+
 - `'steelblue'`, `'coral'`, `'teal'`, etc.
 - See full list: https://matplotlib.org/stable/gallery/color/named_colors.html
 
 **Other formats:**
+
 - Hex: `'#FF5733'`
 - RGB tuple: `(0.1, 0.2, 0.3)`
 - RGBA tuple: `(0.1, 0.2, 0.3, 0.5)`

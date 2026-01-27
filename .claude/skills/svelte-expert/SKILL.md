@@ -76,7 +76,6 @@ When reviewing or writing code, apply these guidelines:
 - Use Svelte's bind:this for managing focus programmatically.
 - Embrace Svelte's simplicity and avoid over-engineering solutions
 
-
 </instructions>
 
 <examples>
@@ -90,12 +89,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- svelte-expert
 
+- svelte-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

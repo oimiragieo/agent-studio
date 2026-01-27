@@ -25,6 +25,7 @@ outvcf = pysam.VariantFile("output.vcf", "w", header=vcf.header)
 ## VariantFile Properties
 
 **Header Information:**
+
 - `header` - Complete VCF header with metadata
 - `header.contigs` - Dictionary of contigs/chromosomes
 - `header.samples` - List of sample names
@@ -77,6 +78,7 @@ for variant in vcf.fetch("chr1:1000000-2000000"):
 Each variant is represented as a `VariantRecord` object:
 
 ### Position Information
+
 - `chrom` - Chromosome/contig name
 - `pos` - Position (1-based)
 - `start` - Start position (0-based)
@@ -84,11 +86,13 @@ Each variant is represented as a `VariantRecord` object:
 - `id` - Variant ID (e.g., rsID)
 
 ### Allele Information
+
 - `ref` - Reference allele
 - `alts` - Tuple of alternate alleles
 - `alleles` - Tuple of all alleles (ref + alts)
 
 ### Quality and Filtering
+
 - `qual` - Quality score (QUAL field)
 - `filter` - Filter status
 
@@ -141,6 +145,7 @@ for variant in vcf:
 ```
 
 **Genotype representation:**
+
 - `(0, 0)` - Homozygous reference
 - `(0, 1)` - Heterozygous
 - `(1, 1)` - Homozygous alternate

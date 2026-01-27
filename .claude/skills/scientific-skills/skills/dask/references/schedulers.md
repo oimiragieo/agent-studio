@@ -13,18 +13,21 @@ Dask provides multiple task schedulers, each suited to different workloads. The 
 **Description**: The threaded scheduler executes computations with a local `concurrent.futures.ThreadPoolExecutor`.
 
 **When to Use**:
+
 - Numeric computations in NumPy, Pandas, scikit-learn
 - Libraries that release the GIL (Global Interpreter Lock)
 - Operations benefit from shared memory access
 - Default for Dask Arrays and DataFrames
 
 **Characteristics**:
+
 - Low overhead
 - Shared memory between threads
 - Best for GIL-releasing operations
 - Poor for pure Python code (GIL contention)
 
 **Example**:
+
 ```python
 import dask.array as da
 
@@ -34,6 +37,7 @@ result = x.mean().compute()  # Computed with threads
 ```
 
 **Explicit Configuration**:
+
 ```python
 import dask
 
@@ -49,18 +53,21 @@ result = x.mean().compute(scheduler='threads')
 **Description**: Multiprocessing scheduler that uses `concurrent.futures.ProcessPoolExecutor`.
 
 **When to Use**:
+
 - Pure Python code with GIL contention
 - Text processing and Python collections
 - Operations that benefit from process isolation
 - CPU-bound Python code
 
 **Characteristics**:
+
 - Bypasses GIL limitations
 - Incurs data transfer costs between processes
 - Higher overhead than threads
 - Ideal for linear workflows with small inputs/outputs
 
 **Example**:
+
 ```python
 import dask.bag as db
 
@@ -70,6 +77,7 @@ result = bag.map(complex_python_function).compute(scheduler='processes')
 ```
 
 **Explicit Configuration**:
+
 ```python
 import dask
 
@@ -81,6 +89,7 @@ result = computation.compute(scheduler='processes')
 ```
 
 **Limitations**:
+
 - Data must be serializable (pickle)
 - Overhead from process creation
 - Memory overhead from data copying
@@ -90,18 +99,21 @@ result = computation.compute(scheduler='processes')
 **Description**: The single-threaded synchronous scheduler executes all computations in the local thread with no parallelism at all.
 
 **When to Use**:
+
 - Debugging with pdb
 - Profiling with standard Python tools
 - Understanding errors in detail
 - Development and testing
 
 **Characteristics**:
+
 - No parallelism
 - Easy debugging
 - No overhead
 - Deterministic execution
 
 **Example**:
+
 ```python
 import dask
 
@@ -113,6 +125,7 @@ result = computation.compute()  # Runs in single thread
 ```
 
 **Debugging with IPython**:
+
 ```python
 # In IPython/Jupyter
 %pdb on
@@ -128,6 +141,7 @@ result = problematic_computation.compute()  # Drops into debugger on error
 **Description**: Despite its name, this scheduler runs effectively on personal machines using the distributed scheduler infrastructure.
 
 **When to Use**:
+
 - Need diagnostic dashboard
 - Asynchronous APIs
 - Better data locality handling than multiprocessing
@@ -135,12 +149,14 @@ result = problematic_computation.compute()  # Drops into debugger on error
 - Want distributed features on single machine
 
 **Characteristics**:
+
 - Provides dashboard for monitoring
 - Better memory management
 - More overhead than threads/processes
 - Can scale to cluster later
 
 **Example**:
+
 ```python
 from dask.distributed import Client
 import dask.dataframe as dd
@@ -160,6 +176,7 @@ client.close()
 ```
 
 **Configuration Options**:
+
 ```python
 # Control resources
 client = Client(
@@ -174,18 +191,21 @@ client = Client(
 **Description**: For scaling across multiple machines using the distributed scheduler.
 
 **When to Use**:
+
 - Data exceeds single machine capacity
 - Need computational power beyond one machine
 - Production deployments
 - Cluster computing environments (HPC, cloud)
 
 **Characteristics**:
+
 - Scales to hundreds of machines
 - Requires cluster setup
 - Network communication overhead
 - Advanced features (adaptive scaling, task prioritization)
 
 **Example with Dask-Jobqueue (HPC)**:
+
 ```python
 from dask_jobqueue import SLURMCluster
 from dask.distributed import Client
@@ -211,6 +231,7 @@ client.close()
 ```
 
 **Example with Dask on Kubernetes**:
+
 ```python
 from dask_kubernetes import KubeCluster
 from dask.distributed import Client
@@ -277,38 +298,42 @@ client.close()
 
 ### Decision Matrix
 
-| Workload Type | Recommended Scheduler | Rationale |
-|--------------|----------------------|-----------|
-| NumPy/Pandas operations | Threads (default) | GIL-releasing, shared memory |
-| Pure Python objects | Processes | Avoids GIL contention |
-| Text/log processing | Processes | Python-heavy operations |
-| Debugging | Synchronous | Easy debugging, deterministic |
-| Need dashboard | Local Distributed | Monitoring and diagnostics |
-| Multi-machine | Cluster Distributed | Exceeds single machine capacity |
-| Small data, quick tasks | Threads | Lowest overhead |
-| Large data, single machine | Local Distributed | Better memory management |
+| Workload Type              | Recommended Scheduler | Rationale                       |
+| -------------------------- | --------------------- | ------------------------------- |
+| NumPy/Pandas operations    | Threads (default)     | GIL-releasing, shared memory    |
+| Pure Python objects        | Processes             | Avoids GIL contention           |
+| Text/log processing        | Processes             | Python-heavy operations         |
+| Debugging                  | Synchronous           | Easy debugging, deterministic   |
+| Need dashboard             | Local Distributed     | Monitoring and diagnostics      |
+| Multi-machine              | Cluster Distributed   | Exceeds single machine capacity |
+| Small data, quick tasks    | Threads               | Lowest overhead                 |
+| Large data, single machine | Local Distributed     | Better memory management        |
 
 ### Performance Considerations
 
 **Threads**:
+
 - Overhead: ~10 µs per task
 - Best for: Numeric operations
 - Memory: Shared
 - GIL: Affected by GIL
 
 **Processes**:
+
 - Overhead: ~10 ms per task
 - Best for: Python operations
 - Memory: Copied between processes
 - GIL: Not affected
 
 **Synchronous**:
+
 - Overhead: ~1 µs per task
 - Best for: Debugging
 - Memory: No parallelism
 - GIL: Not relevant
 
 **Distributed**:
+
 - Overhead: ~1 ms per task
 - Best for: Complex workflows, monitoring
 - Memory: Managed by scheduler
@@ -331,11 +356,13 @@ client = Client(
 ### Recommended Configuration
 
 **For Numeric Workloads**:
+
 - Aim for roughly 4 threads per process
 - Balance between parallelism and overhead
 - Example: 8 cores → 2 workers with 4 threads each
 
 **For Python Workloads**:
+
 - Use more workers with fewer threads
 - Example: 8 cores → 8 workers with 1 thread each
 
@@ -488,17 +515,21 @@ client.register_worker_plugin(CustomPlugin())
 ## Troubleshooting
 
 ### Slow Performance with Threads
+
 **Problem**: Pure Python code slow with threaded scheduler
 **Solution**: Switch to processes or distributed scheduler
 
 ### Memory Errors with Processes
+
 **Problem**: Data too large to pickle/copy between processes
 **Solution**: Use threaded or distributed scheduler
 
 ### Debugging Difficult
+
 **Problem**: Can't use pdb with parallel schedulers
 **Solution**: Use synchronous scheduler for debugging
 
 ### Task Overhead High
+
 **Problem**: Many tiny tasks causing overhead
 **Solution**: Use threaded scheduler (lowest overhead) or increase chunk sizes

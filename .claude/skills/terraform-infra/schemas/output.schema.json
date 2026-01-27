@@ -3,9 +3,7 @@
   "title": "terraform-infra Output Schema",
   "description": "Output validation schema for terraform-infra skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

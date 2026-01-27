@@ -9,10 +9,12 @@ Pymoo provides eight visualization types for analyzing multi-objective optimizat
 ## Core Visualization Types
 
 ### 1. Scatter Plots
+
 **Purpose:** Visualize objective space for 2D, 3D, or higher dimensions
 **Best for:** Pareto fronts, solution distributions, algorithm comparisons
 
 **Usage:**
+
 ```python
 from pymoo.visualization.scatter import Scatter
 
@@ -29,12 +31,14 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `title`: Plot title
 - `figsize`: Figure size tuple (width, height)
 - `legend`: Show legend (default: True)
 - `labels`: Axis labels list
 
 **Add method parameters:**
+
 - `color`: Color specification
 - `alpha`: Transparency (0-1)
 - `s`: Marker size
@@ -45,12 +49,14 @@ plot.show()
 For >3 objectives, automatically creates scatter plot matrix
 
 ### 2. Parallel Coordinate Plots (PCP)
+
 **Purpose:** Compare multiple solutions across many objectives
 **Best for:** Many-objective problems, comparing algorithm performance
 
 **Mechanism:** Each vertical axis represents one objective, lines connect objective values for each solution
 
 **Usage:**
+
 ```python
 from pymoo.visualization.pcp import PCP
 
@@ -61,6 +67,7 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `title`: Plot title
 - `figsize`: Figure size
 - `labels`: Objective labels
@@ -68,15 +75,18 @@ plot.show()
 - `normalize_each_axis`: Normalize to [0,1] per axis (default: True)
 
 **Best practices:**
+
 - Normalize for different objective scales
 - Use transparency for overlapping lines
 - Limit number of solutions for clarity (<1000)
 
 ### 3. Heatmap
+
 **Purpose:** Show solution density and distribution patterns
 **Best for:** Understanding solution clustering, identifying gaps
 
 **Usage:**
+
 ```python
 from pymoo.visualization.heatmap import Heatmap
 
@@ -86,22 +96,26 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `bins`: Number of bins per dimension (default: 20)
 - `cmap`: Colormap name (e.g., "viridis", "plasma", "hot")
 - `norm`: Normalization method
 
 **Interpretation:**
+
 - Bright regions: High solution density
 - Dark regions: Few or no solutions
 - Reveals distribution uniformity
 
 ### 4. Petal Diagram
+
 **Purpose:** Radial representation of multiple objectives
 **Best for:** Comparing individual solutions across objectives
 
 **Structure:** Each "petal" represents one objective, length indicates objective value
 
 **Usage:**
+
 ```python
 from pymoo.visualization.petal import Petal
 
@@ -112,21 +126,25 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `bounds`: [min, max] per objective for normalization
 - `labels`: Objective names
 - `reverse`: Reverse specific objectives (for minimization display)
 
 **Use cases:**
+
 - Decision making between few solutions
 - Presenting trade-offs to stakeholders
 
 ### 5. Radar Charts
+
 **Purpose:** Multi-criteria performance profiles
 **Best for:** Comparing solution characteristics
 
 **Similar to:** Petal diagram but with connected vertices
 
 **Usage:**
+
 ```python
 from pymoo.visualization.radar import Radar
 
@@ -137,12 +155,14 @@ plot.show()
 ```
 
 ### 6. Radviz
+
 **Purpose:** Dimensional reduction for visualization
 **Best for:** High-dimensional data exploration, pattern recognition
 
 **Mechanism:** Projects high-dimensional points onto 2D circle, dimension anchors on perimeter
 
 **Usage:**
+
 ```python
 from pymoo.visualization.radviz import Radviz
 
@@ -152,21 +172,25 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `endpoint_style`: Anchor point visualization
 - `labels`: Dimension labels
 
 **Interpretation:**
+
 - Points near anchor: High value in that dimension
 - Central points: Balanced across dimensions
 - Clusters: Similar solutions
 
 ### 7. Star Coordinates
+
 **Purpose:** Alternative high-dimensional visualization
 **Best for:** Comparing multi-dimensional datasets
 
 **Mechanism:** Each dimension as axis from origin, points plotted based on values
 
 **Usage:**
+
 ```python
 from pymoo.visualization.star_coordinate import StarCoordinate
 
@@ -176,15 +200,18 @@ plot.show()
 ```
 
 **Parameters:**
+
 - `axis_style`: Axis appearance
 - `axis_extension`: Axis length beyond max value
 - `labels`: Dimension labels
 
 ### 8. Video/Animation
+
 **Purpose:** Show optimization progress over time
 **Best for:** Understanding convergence behavior, presentations
 
 **Usage:**
+
 ```python
 from pymoo.visualization.video import Video
 
@@ -194,10 +221,12 @@ anim.save("optimization_progress.mp4")
 ```
 
 **Requirements:**
+
 - Algorithm must store history (use `save_history=True` in minimize)
 - ffmpeg installed for video export
 
 **Customization:**
+
 - Frame rate
 - Plot type per frame
 - Overlay information (generation, hypervolume, etc.)
@@ -259,17 +288,18 @@ plot.save("my_plot.png", dpi=300)
 
 **Choose visualization based on:**
 
-| Problem Type | Primary Plot | Secondary Plot |
-|--------------|--------------|----------------|
-| 2-objective | Scatter | Heatmap |
-| 3-objective | 3D Scatter | Parallel Coordinates |
-| Many-objective (4-10) | Parallel Coordinates | Radviz |
-| Many-objective (>10) | Radviz | Star Coordinates |
-| Solution comparison | Petal/Radar | Parallel Coordinates |
-| Algorithm convergence | Video | Scatter (final) |
-| Distribution analysis | Heatmap | Scatter |
+| Problem Type          | Primary Plot         | Secondary Plot       |
+| --------------------- | -------------------- | -------------------- |
+| 2-objective           | Scatter              | Heatmap              |
+| 3-objective           | 3D Scatter           | Parallel Coordinates |
+| Many-objective (4-10) | Parallel Coordinates | Radviz               |
+| Many-objective (>10)  | Radviz               | Star Coordinates     |
+| Solution comparison   | Petal/Radar          | Parallel Coordinates |
+| Algorithm convergence | Video                | Scatter (final)      |
+| Distribution analysis | Heatmap              | Scatter              |
 
 **Combinations:**
+
 - Scatter + Heatmap: Overall distribution + density
 - PCP + Petal: Population overview + individual solutions
 - Scatter + Video: Final result + convergence process
@@ -277,6 +307,7 @@ plot.save("my_plot.png", dpi=300)
 ## Common Visualization Workflows
 
 ### 1. Algorithm Comparison
+
 ```python
 from pymoo.visualization.scatter import Scatter
 
@@ -288,6 +319,7 @@ plot.show()
 ```
 
 ### 2. Many-objective Analysis
+
 ```python
 from pymoo.visualization.pcp import PCP
 
@@ -301,6 +333,7 @@ plot.show()
 ```
 
 ### 3. Decision Making
+
 ```python
 from pymoo.visualization.petal import Petal
 
@@ -318,6 +351,7 @@ plot.show()
 ```
 
 ### 4. Convergence Visualization
+
 ```python
 from pymoo.optimize import minimize
 

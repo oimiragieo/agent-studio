@@ -83,7 +83,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Implement robust data loading and pre
 
-
 </instructions>
 
 <examples>
@@ -97,12 +96,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- ai-ml-expert
 
+- ai-ml-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

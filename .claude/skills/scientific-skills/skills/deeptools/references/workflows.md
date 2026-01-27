@@ -34,6 +34,7 @@ plotPCA \
 ```
 
 **Expected Results:**
+
 - Replicates should cluster together
 - Input samples should be distinct from ChIP samples
 
@@ -109,6 +110,7 @@ plotFingerprint \
 ```
 
 **Interpretation:**
+
 - Strong ChIP: Steep rise in cumulative curve
 - Weak enrichment: Curve close to diagonal (input-like)
 
@@ -427,26 +429,34 @@ plotHeatmap \
 ## Troubleshooting Common Issues
 
 ### Issue: Out of Memory
+
 **Solution:** Use `--region` parameter to process chromosomes individually:
+
 ```bash
 bamCoverage --bam input.bam -o chr1.bw --region chr1
 ```
 
 ### Issue: BAM Index Missing
+
 **Solution:** Index BAM files before running deepTools:
+
 ```bash
 samtools index input.bam
 ```
 
 ### Issue: Slow Processing
+
 **Solution:** Increase `--numberOfProcessors`:
+
 ```bash
 # Use 8 cores instead of default
 --numberOfProcessors 8
 ```
 
 ### Issue: bigWig Files Too Large
+
 **Solution:** Increase bin size:
+
 ```bash
 --binSize 50  # or larger (default is 10-50)
 ```

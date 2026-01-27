@@ -384,6 +384,7 @@ with MPRester() as mpr:
 ### Rate Limits
 
 The Materials Project API has rate limits to ensure fair usage:
+
 - Be mindful of request frequency
 - Use batch queries when possible
 - Cache results locally for repeated analysis

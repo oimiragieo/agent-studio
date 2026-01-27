@@ -1,6 +1,7 @@
 # Quantum Machine Learning with PennyLane
 
 ## Table of Contents
+
 1. [Hybrid Quantum-Classical Models](#hybrid-quantum-classical-models)
 2. [Framework Integration](#framework-integration)
 3. [Quantum Neural Networks](#quantum-neural-networks)

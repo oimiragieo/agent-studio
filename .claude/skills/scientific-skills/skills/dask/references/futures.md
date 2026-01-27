@@ -7,6 +7,7 @@ Dask futures extend Python's `concurrent.futures` interface, enabling immediate 
 ## Core Concept
 
 Futures represent real-time task execution:
+
 - Tasks execute immediately when submitted (not lazy)
 - Each future represents a remote computation result
 - Automatic dependency tracking between futures
@@ -16,15 +17,19 @@ Futures represent real-time task execution:
 ## Key Capabilities
 
 ### Real-Time Execution
+
 - Tasks run immediately when submitted
 - No need for explicit `.compute()` call
 - Get results with `.result()` method
 
 ### Automatic Dependency Management
+
 When you submit tasks with future inputs, Dask automatically handles dependency tracking. Once all input futures have completed, they will be moved onto a single worker for efficient computation.
 
 ### Dynamic Workflows
+
 Build computations that evolve based on intermediate results:
+
 - Submit new tasks based on previous results
 - Conditional execution paths
 - Iterative algorithms with varying structure
@@ -32,6 +37,7 @@ Build computations that evolve based on intermediate results:
 ## When to Use Futures
 
 **Use Futures When**:
+
 - Building dynamic, evolving workflows
 - Need immediate task execution (not lazy)
 - Computations depend on runtime conditions
@@ -40,6 +46,7 @@ Build computations that evolve based on intermediate results:
 - Need stateful computations (with actors)
 
 **Use Other Collections When**:
+
 - Static, predefined computation graphs (use delayed, DataFrames, Arrays)
 - Simple data parallelism on large collections (use Bags, DataFrames)
 - Standard array/dataframe operations suffice
@@ -64,6 +71,7 @@ client = Client('scheduler-address:8786')
 ## Submitting Tasks
 
 ### Basic Submit
+
 ```python
 from dask.distributed import Client
 
@@ -81,6 +89,7 @@ print(result)  # 3
 ```
 
 ### Multiple Tasks
+
 ```python
 # Submit multiple independent tasks
 futures = []
@@ -93,6 +102,7 @@ results = client.gather(futures)  # Efficient parallel gathering
 ```
 
 ### Map Over Inputs
+
 ```python
 # Apply function to multiple inputs
 def square(x):
@@ -110,6 +120,7 @@ results = client.gather(futures)
 ## Working with Futures
 
 ### Check Status
+
 ```python
 future = client.submit(expensive_function, arg)
 
@@ -121,6 +132,7 @@ print(future.status)  # 'pending', 'running', 'finished', or 'error'
 ```
 
 ### Non-Blocking Result Retrieval
+
 ```python
 # Non-blocking check
 if future.done():
@@ -136,6 +148,7 @@ future.add_done_callback(handle_result)
 ```
 
 ### Error Handling
+
 ```python
 def might_fail(x):
     if x < 0:
@@ -153,6 +166,7 @@ except ValueError as e:
 ## Task Dependencies
 
 ### Automatic Dependency Tracking
+
 ```python
 # Submit task
 future1 = client.submit(add, 1, 2)
@@ -168,6 +182,7 @@ result = future3.result()  # 113
 ```
 
 ### Complex Dependencies
+
 ```python
 # Multiple dependencies
 a = client.submit(func1, x)
@@ -180,6 +195,7 @@ result = c.result()
 ## Data Movement Optimization
 
 ### Scatter Data
+
 Pre-scatter important data to avoid repeated transfers:
 
 ```python
@@ -194,6 +210,7 @@ results = client.gather(futures)
 ```
 
 ### Efficient Gathering
+
 Use `client.gather()` for concurrent result collection:
 
 ```python
@@ -225,19 +242,23 @@ fire_and_forget(future)
 ## Performance Characteristics
 
 ### Task Overhead
+
 - ~1ms overhead per task
 - Good for: Thousands of tasks
 - Not suitable for: Millions of tiny tasks
 
 ### Worker-to-Worker Communication
+
 - Direct worker-to-worker data transfer
 - Roundtrip latency: ~1ms
 - Efficient for task dependencies
 
 ### Memory Management
+
 Dask tracks active futures locally. When a future is garbage collected by your local Python session, Dask will feel free to delete that data.
 
 **Keep References**:
+
 ```python
 # Keep reference to prevent deletion
 important_result = client.submit(expensive_calc, data)
@@ -252,6 +273,7 @@ future2 = client.submit(process2, important_result)
 ### Distributed Primitives
 
 **Queues**:
+
 ```python
 from dask.distributed import Queue
 
@@ -274,6 +296,7 @@ results = result_future.result()
 ```
 
 **Locks**:
+
 ```python
 from dask.distributed import Lock
 
@@ -286,6 +309,7 @@ def critical_section():
 ```
 
 **Events**:
+
 ```python
 from dask.distributed import Event
 
@@ -307,6 +331,7 @@ result = wait_future.result()  # Waits for setter to complete
 ```
 
 **Variables**:
+
 ```python
 from dask.distributed import Variable
 
@@ -328,6 +353,7 @@ print(future.result())  # 42
 For stateful, rapidly-changing workflows, actors enable worker-to-worker roundtrip latency around 1ms while bypassing scheduler coordination.
 
 ### Creating Actors
+
 ```python
 from dask.distributed import Client
 
@@ -355,6 +381,7 @@ print(result)  # 2
 ```
 
 ### Actor Use Cases
+
 - Stateful services (databases, caches)
 - Rapidly changing state
 - Complex coordination patterns
@@ -363,6 +390,7 @@ print(result)  # 2
 ## Common Patterns
 
 ### Embarrassingly Parallel Tasks
+
 ```python
 from dask.distributed import Client
 
@@ -381,6 +409,7 @@ results = client.gather(futures)
 ```
 
 ### Dynamic Task Submission
+
 ```python
 def recursive_compute(data, depth):
     if depth == 0:
@@ -400,6 +429,7 @@ result = result_future.result()
 ```
 
 ### Parameter Sweep
+
 ```python
 from itertools import product
 
@@ -422,6 +452,7 @@ for future in as_completed(futures):
 ```
 
 ### Pipeline with Dependencies
+
 ```python
 # Stage 1: Load data
 load_futures = [client.submit(load_data, file) for file in files]
@@ -437,6 +468,7 @@ result = agg_future.result()
 ```
 
 ### Iterative Algorithm
+
 ```python
 # Initialize
 state = client.scatter(initial_state)
@@ -458,6 +490,7 @@ final_state = state.result()
 ## Best Practices
 
 ### 1. Pre-scatter Large Data
+
 ```python
 # Upload once, use many times
 large_data = client.scatter(big_dataset)
@@ -465,6 +498,7 @@ futures = [client.submit(process, large_data, i) for i in range(100)]
 ```
 
 ### 2. Use Gather for Bulk Retrieval
+
 ```python
 # Efficient: Parallel gathering
 results = client.gather(futures)
@@ -474,6 +508,7 @@ results = [f.result() for f in futures]
 ```
 
 ### 3. Manage Memory with References
+
 ```python
 # Keep important futures
 important = client.submit(expensive_calc, data)
@@ -487,6 +522,7 @@ del important
 ```
 
 ### 4. Handle Errors Appropriately
+
 ```python
 futures = client.map(might_fail, inputs)
 
@@ -501,6 +537,7 @@ for future in as_completed(futures):
 ```
 
 ### 5. Use as_completed for Progressive Processing
+
 ```python
 from dask.distributed import as_completed
 
@@ -515,13 +552,16 @@ for future in as_completed(futures):
 ## Debugging Tips
 
 ### Monitor Dashboard
+
 View the Dask dashboard to see:
+
 - Task progress
 - Worker utilization
 - Memory usage
 - Task dependencies
 
 ### Check Task Status
+
 ```python
 # Inspect future
 print(future.status)
@@ -535,6 +575,7 @@ except Exception:
 ```
 
 ### Profile Tasks
+
 ```python
 # Get performance data
 client.profile(filename='profile.html')

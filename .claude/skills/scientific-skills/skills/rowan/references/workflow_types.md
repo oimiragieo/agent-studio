@@ -24,6 +24,7 @@ workflow = rowan.submit_pka_workflow(
 ```
 
 **Output:**
+
 - `strongest_acid`: pKa of most acidic proton
 - `strongest_base`: pKa of most basic site
 - `microscopic_pkas`: List of site-specific pKa values
@@ -43,6 +44,7 @@ workflow = rowan.submit_redox_potential_workflow(
 ```
 
 **Output:**
+
 - `oxidation_potential`: E° for oxidation (V vs SHE)
 - `reduction_potential`: E° for reduction (V vs SHE)
 
@@ -60,6 +62,7 @@ workflow = rowan.submit_solubility_workflow(
 ```
 
 **Output:**
+
 - `aqueous_solubility`: Log S in water
 - `solubility_class`: "High", "Medium", or "Low"
 
@@ -79,6 +82,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `hb_basicity`: pKBHX value
 
 ---
@@ -96,6 +100,7 @@ workflow = rowan.submit_bde_workflow(
 ```
 
 **Output:**
+
 - `bde`: Bond dissociation energy (kcal/mol)
 - `radical_stability`: Stability of resulting radicals
 
@@ -113,6 +118,7 @@ workflow = rowan.submit_fukui_workflow(
 ```
 
 **Output:**
+
 - `fukui_plus`: Electrophilic attack susceptibility per atom
 - `fukui_minus`: Nucleophilic attack susceptibility per atom
 - `fukui_dual`: Dual descriptor per atom
@@ -133,6 +139,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `spin_state_energies`: Energy of each multiplicity
 - `ground_state`: Lowest energy multiplicity
 
@@ -152,6 +159,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - Various ADMET descriptors including:
   - `logP`, `logD`
   - `herg_inhibition`
@@ -176,6 +184,7 @@ workflow = rowan.submit_basic_calculation_workflow(
 ```
 
 **Output:**
+
 - `energy`: Total energy (Hartree)
 - `dipole`: Dipole moment vector
 - `mulliken_charges`: Atomic partial charges
@@ -195,6 +204,7 @@ workflow = rowan.submit_basic_calculation_workflow(
 ```
 
 **Output:**
+
 - `final_molecule`: Optimized structure
 - `energy`: Final energy (Hartree)
 - `convergence`: Optimization details
@@ -214,6 +224,7 @@ workflow = rowan.submit_basic_calculation_workflow(
 ```
 
 **Output:**
+
 - `frequencies`: Vibrational frequencies (cm⁻¹)
 - `ir_intensities`: IR intensities
 - `zpe`: Zero-point energy
@@ -234,6 +245,7 @@ workflow = rowan.submit_conformer_search_workflow(
 ```
 
 **Output:**
+
 - `conformers`: List of conformer structures with energies
 - `lowest_energy_conformer`: Global minimum structure
 - `boltzmann_weights`: Population weights at 298 K
@@ -252,6 +264,7 @@ workflow = rowan.submit_tautomer_search_workflow(
 ```
 
 **Output:**
+
 - `tautomers`: List of tautomer structures
 - `energies`: Relative energies
 - `populations`: Boltzmann populations
@@ -271,6 +284,7 @@ workflow = rowan.submit_dihedral_scan_workflow(
 ```
 
 **Output:**
+
 - `angles`: Dihedral angles scanned (degrees)
 - `energies`: Energy at each angle
 - `barrier_height`: Rotation barrier (kcal/mol)
@@ -293,6 +307,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `final_molecule`: Optimized structure
 - `stage_energies`: Energy after each stage
 
@@ -310,6 +325,7 @@ workflow = rowan.submit_ts_search_workflow(
 ```
 
 **Output:**
+
 - `ts_structure`: Transition state geometry
 - `imaginary_frequency`: Single imaginary frequency
 - `barrier_height`: Activation energy
@@ -330,6 +346,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `strain_energy`: Conformational strain (kcal/mol)
 - `reference_energy`: Lowest energy conformer energy
 
@@ -349,6 +366,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `homo_energy`: HOMO energy (eV)
 - `lumo_energy`: LUMO energy (eV)
 - `homo_lumo_gap`: Band gap (eV)
@@ -381,6 +399,7 @@ workflow = rowan.submit_docking_workflow(
 ```
 
 **Output:**
+
 - `docking_score`: Best Vina score (kcal/mol)
 - `poses`: List of docked poses with scores
 - `ligand_strain`: Strain energy of bound conformer
@@ -404,6 +423,7 @@ workflow = rowan.submit_batch_docking_workflow(
 ```
 
 **Output:**
+
 - `results`: List of docking results per ligand
 - `rankings`: Sorted by score
 
@@ -427,11 +447,13 @@ workflow = rowan.submit_protein_cofolding_workflow(
 ```
 
 **Models:**
+
 - `chai_1r`: Chai-1 model (~2 min)
 - `boltz_1x`: Boltz-1 model (~2 min)
 - `boltz_2`: Boltz-2 model (latest, recommended)
 
 **Output:**
+
 - `structure_pdb`: Predicted complex structure
 - `ptm_score`: Predicted TM score (0-1, higher = more confident)
 - `interface_ptm`: Interface prediction confidence
@@ -457,6 +479,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `trajectory`: MD trajectory file
 - `rmsd_over_time`: Ligand RMSD
 - `interactions`: Protein-ligand interactions
@@ -477,6 +500,7 @@ workflow = rowan.submit_nmr_workflow(
 ```
 
 **Output:**
+
 - `h_shifts`: ¹H chemical shifts (ppm)
 - `c_shifts`: ¹³C chemical shifts (ppm)
 - `coupling_constants`: J-coupling values
@@ -495,6 +519,7 @@ workflow = rowan.submit_ion_mobility_workflow(
 ```
 
 **Output:**
+
 - `ccs`: Collision cross-section (Å²)
 - `conformer_ccs`: CCS per conformer
 
@@ -514,6 +539,7 @@ workflow = rowan.submit_descriptors_workflow(
 ```
 
 **Output:**
+
 - 2D descriptors (RDKit-based)
 - 3D descriptors (xTB-based)
 - Electronic descriptors
@@ -532,6 +558,7 @@ workflow = rowan.submit_msa_workflow(
 ```
 
 **Output:**
+
 - `msa`: Multiple sequence alignment
 - `coverage`: Sequence coverage
 
@@ -553,6 +580,7 @@ workflow = rowan.submit_workflow(
 ```
 
 **Output:**
+
 - `designed_sequences`: Binder sequences
 - `confidence_scores`: Per-design confidence
 
@@ -564,11 +592,11 @@ workflow = rowan.submit_workflow(
 
 All workflow submission functions accept:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `name` | str | Workflow name (optional) |
-| `folder_uuid` | str | Organize in folder |
-| `max_credits` | float | Credit limit |
+| Parameter     | Type  | Description              |
+| ------------- | ----- | ------------------------ |
+| `name`        | str   | Workflow name (optional) |
+| `folder_uuid` | str   | Organize in folder       |
+| `max_credits` | float | Credit limit             |
 
 ### Method Selection
 
@@ -586,6 +614,7 @@ workflow = rowan.submit_basic_calculation_workflow(
 ```
 
 **Available Methods:**
+
 - Neural network: `aimnet2`, `egret`
 - Semiempirical: `gfn1_xtb`, `gfn2_xtb`
 - DFT: `b3lyp`, `pbe`, `wb97x`

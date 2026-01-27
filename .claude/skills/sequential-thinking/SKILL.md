@@ -41,12 +41,13 @@ Use the MCP sequential thinking tool directly:
 
 ```javascript
 // Via MCP tool
-mcp__sequential-thinking__sequentialthinking({
-  thought: "First, let me analyze the problem...",
-  thoughtNumber: 1,
-  totalThoughts: 5,
-  nextThoughtNeeded: true
-})
+mcp__sequential -
+  thinking__sequentialthinking({
+    thought: 'First, let me analyze the problem...',
+    thoughtNumber: 1,
+    totalThoughts: 5,
+    nextThoughtNeeded: true,
+  });
 ```
 
 ## Tool: sequentialthinking
@@ -93,12 +94,13 @@ The sequential thinking tool is available via MCP. Use it directly in your respo
 
 ```javascript
 // Execute a thinking step
-mcp__sequential-thinking__sequentialthinking({
-  thought: "Your analysis here...",
-  thoughtNumber: 1,
-  totalThoughts: 5,
-  nextThoughtNeeded: true
-})
+mcp__sequential -
+  thinking__sequentialthinking({
+    thought: 'Your analysis here...',
+    thoughtNumber: 1,
+    totalThoughts: 5,
+    nextThoughtNeeded: true,
+  });
 ```
 
 ## Configuration
@@ -118,6 +120,7 @@ MCP server configuration stored in `config.json`:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

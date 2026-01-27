@@ -1,4 +1,5 @@
 # Clinical Study Report (CSR) Template
+
 ## ICH-E3 Format
 
 ---
@@ -42,6 +43,7 @@
 [State primary objective clearly and concisely]
 
 **Secondary Objectives:**
+
 - [Secondary objective 1]
 - [Secondary objective 2]
 
@@ -51,16 +53,19 @@
 [Randomized, double-blind, placebo-controlled, parallel-group, etc.]
 
 **Study Population:**
+
 - Target population: [Patient population]
 - Key inclusion criteria: [Main criteria]
 - Key exclusion criteria: [Main criteria]
 
 **Sample Size:**
+
 - Planned: [N participants]
 - Randomized: [N participants]
 - Completed: [N participants]
 
 **Treatment:**
+
 - Treatment A: [Drug name, dose, route, frequency]
 - Treatment B: [Comparator/placebo]
 - Treatment duration: [Weeks/months]
@@ -69,9 +74,11 @@
 **Endpoints:**
 
 Primary:
+
 - [Primary endpoint definition and timepoint]
 
 Secondary:
+
 - [Secondary endpoint 1]
 - [Secondary endpoint 2]
 
@@ -81,6 +88,7 @@ Secondary:
 ## Results
 
 **Participant Disposition:**
+
 - Screened: [N]
 - Randomized: [N Treatment A, N Treatment B]
 - Completed: [N Treatment A, N Treatment B]
@@ -92,12 +100,15 @@ Secondary:
 **Efficacy Results:**
 
 Primary Endpoint:
+
 - [Result for Treatment A vs B, effect size, 95% CI, p-value]
 
 Secondary Endpoints:
+
 - [Results for each secondary endpoint]
 
 **Safety Results:**
+
 - Any AE: [% Treatment A vs B]
 - Treatment-related AE: [% Treatment A vs B]
 - Serious AE: [% Treatment A vs B]
@@ -119,20 +130,20 @@ Secondary Endpoints:
 
 # LIST OF ABBREVIATIONS
 
-| Abbreviation | Definition |
-|--------------|------------|
-| AE | Adverse Event |
-| ANCOVA | Analysis of Covariance |
-| CI | Confidence Interval |
-| CSR | Clinical Study Report |
-| FAS | Full Analysis Set |
-| GCP | Good Clinical Practice |
-| ICF | Informed Consent Form |
-| ITT | Intent-to-Treat |
-| PP | Per-Protocol |
-| SAE | Serious Adverse Event |
-| SD | Standard Deviation |
-| [Add study-specific abbreviations] | |
+| Abbreviation                       | Definition             |
+| ---------------------------------- | ---------------------- |
+| AE                                 | Adverse Event          |
+| ANCOVA                             | Analysis of Covariance |
+| CI                                 | Confidence Interval    |
+| CSR                                | Clinical Study Report  |
+| FAS                                | Full Analysis Set      |
+| GCP                                | Good Clinical Practice |
+| ICF                                | Informed Consent Form  |
+| ITT                                | Intent-to-Treat        |
+| PP                                 | Per-Protocol           |
+| SAE                                | Serious Adverse Event  |
+| SD                                 | Standard Deviation     |
+| [Add study-specific abbreviations] |                        |
 
 ---
 
@@ -142,13 +153,14 @@ Secondary Endpoints:
 
 [List of all IECs/IRBs that approved the study]
 
-| Site Number | Institution | IRB/IEC Name | Approval Date |
-|-------------|------------|--------------|---------------|
-| 001 | [Institution] | [IRB name] | [MM/DD/YYYY] |
+| Site Number | Institution   | IRB/IEC Name | Approval Date |
+| ----------- | ------------- | ------------ | ------------- |
+| 001         | [Institution] | [IRB name]   | [MM/DD/YYYY]  |
 
 ## 2.2 Ethical Conduct of the Study
 
 This study was conducted in accordance with:
+
 - ICH Good Clinical Practice (GCP) E6(R2)
 - Declaration of Helsinki (current version)
 - Applicable regulatory requirements
@@ -157,6 +169,7 @@ This study was conducted in accordance with:
 ## 2.3 Patient Information and Consent
 
 Informed consent was obtained from all participants before any study-specific procedures. The informed consent process included:
+
 - Written information about study purpose, procedures, risks, and benefits
 - Opportunity to ask questions
 - Voluntary participation with right to withdraw
@@ -171,20 +184,22 @@ Informed consent was obtained from all participants before any study-specific pr
 
 [Table listing all investigators, sites, and enrollment]
 
-| Site No. | Investigator | Institution | City, Country | Subjects Enrolled |
-|----------|--------------|-------------|---------------|-------------------|
-| 001 | [Name, MD] | [Institution] | [City, Country] | [N] |
+| Site No. | Investigator | Institution   | City, Country   | Subjects Enrolled |
+| -------- | ------------ | ------------- | --------------- | ----------------- |
+| 001      | [Name, MD]   | [Institution] | [City, Country] | [N]               |
 
 **Coordinating Investigator:** [Name, if applicable]
 
 ## 3.2 Study Administrative Structure
 
 **Sponsor:**
+
 - Medical Monitor: [Name, credentials]
 - Project Manager: [Name]
 - Biostatistician: [Name, credentials]
 
 **Contract Research Organization (CRO):** [Name, if applicable]
+
 - [Responsibilities]
 
 ## 3.3 Responsibilities of Parties Involved
@@ -224,10 +239,12 @@ Informed consent was obtained from all participants before any study-specific pr
 [Detailed endpoint definition, measurement method, timepoint]
 
 **Secondary Objectives:**
+
 1. [Objective]
 2. [Objective]
 
 **Secondary Endpoints:**
+
 1. [Endpoint definition]
 2. [Endpoint definition]
 
@@ -246,16 +263,19 @@ Informed consent was obtained from all participants before any study-specific pr
 ## 5.3 Study Population
 
 **Key Inclusion Criteria:**
+
 1. [Criterion]
 2. [Criterion]
 
 **Key Exclusion Criteria:**
+
 1. [Criterion]
 2. [Criterion]
 
 ## 5.4 Treatments
 
 **Investigational Product:**
+
 - Name: [Generic, trade, code]
 - Formulation: [Tablet, capsule, injection]
 - Dose: [Dose and regimen]
@@ -273,6 +293,7 @@ Informed consent was obtained from all participants before any study-specific pr
 **Target Sample Size:** [N per group, N total]
 
 **Justification:**
+
 - Assumed effect size: [Value]
 - Variability (SD): [Value]
 - Type I error (α): [0.05]
@@ -283,11 +304,13 @@ Informed consent was obtained from all participants before any study-specific pr
 ## 5.6 Statistical Analysis Plan
 
 **Analysis Populations:**
+
 - Full Analysis Set (FAS): [Definition]
 - Per-Protocol Set (PPS): [Definition]
 - Safety Analysis Set: [Definition]
 
 **Statistical Methods:**
+
 - Primary endpoint: [Method - e.g., ANCOVA with baseline as covariate]
 - Secondary endpoints: [Methods]
 - Handling of missing data: [Approach]
@@ -308,19 +331,19 @@ Informed consent was obtained from all participants before any study-specific pr
 
 **Summary Table:**
 
-| Category | Treatment A | Treatment B | Total |
-|----------|-------------|-------------|-------|
-| Screened | N | N | N |
-| Screen failures | N (%) | N (%) | N (%) |
-| Randomized | N | N | N |
-| Received treatment | N (%) | N (%) | N (%) |
-| Completed | N (%) | N (%) | N (%) |
-| Discontinued | N (%) | N (%) | N (%) |
-| - Adverse event | N (%) | N (%) | N (%) |
-| - Lack of efficacy | N (%) | N (%) | N (%) |
-| - Lost to follow-up | N (%) | N (%) | N (%) |
-| - Withdrawal of consent | N (%) | N (%) | N (%) |
-| - Other | N (%) | N (%) | N (%) |
+| Category                | Treatment A | Treatment B | Total |
+| ----------------------- | ----------- | ----------- | ----- |
+| Screened                | N           | N           | N     |
+| Screen failures         | N (%)       | N (%)       | N (%) |
+| Randomized              | N           | N           | N     |
+| Received treatment      | N (%)       | N (%)       | N (%) |
+| Completed               | N (%)       | N (%)       | N (%) |
+| Discontinued            | N (%)       | N (%)       | N (%) |
+| - Adverse event         | N (%)       | N (%)       | N (%) |
+| - Lack of efficacy      | N (%)       | N (%)       | N (%) |
+| - Lost to follow-up     | N (%)       | N (%)       | N (%) |
+| - Withdrawal of consent | N (%)       | N (%)       | N (%) |
+| - Other                 | N (%)       | N (%)       | N (%) |
 
 ## 6.2 Protocol Deviations
 
@@ -329,12 +352,12 @@ Informed consent was obtained from all participants before any study-specific pr
 
 **Important Protocol Deviations by Category:**
 
-| Deviation Type | Treatment A | Treatment B | Total |
-|----------------|-------------|-------------|-------|
-| Inclusion/exclusion criteria | N (%) | N (%) | N (%) |
-| Dosing errors | N (%) | N (%) | N (%) |
-| Prohibited medications | N (%) | N (%) | N (%) |
-| Missed visits | N (%) | N (%) | N (%) |
+| Deviation Type               | Treatment A | Treatment B | Total |
+| ---------------------------- | ----------- | ----------- | ----- |
+| Inclusion/exclusion criteria | N (%)       | N (%)       | N (%) |
+| Dosing errors                | N (%)       | N (%)       | N (%) |
+| Prohibited medications       | N (%)       | N (%)       | N (%) |
+| Missed visits                | N (%)       | N (%)       | N (%) |
 
 ---
 
@@ -343,11 +366,10 @@ Informed consent was obtained from all participants before any study-specific pr
 ---
 
 **Note:** This is an abbreviated template. A complete CSR following ICH-E3 is typically 50-300 pages with extensive appendices. Key sections to complete:
+
 - Section 7: Efficacy Evaluation
 - Section 8: Safety Evaluation
 - Section 9: Discussion and Overall Conclusions
 - Section 10: Tables, Figures, and Graphs
 - Section 11: References
 - Section 12-14: Appendices (Protocol, CRFs, Investigator list, etc.)
-
-

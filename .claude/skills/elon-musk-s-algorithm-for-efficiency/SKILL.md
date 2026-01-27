@@ -32,14 +32,13 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  2. Follow Elon Musk's Algorithm for Efficiency:
-    a. Question every requirement critically
-    b. Delete unnecessary parts
-    c. Simplify and optimize remaining components
-    d. Accelerate cycle time
-    e. Automate as the final step
-</instructions>
+- |- 2. Follow Elon Musk's Algorithm for Efficiency:
+  a. Question every requirement critically
+  b. Delete unnecessary parts
+  c. Simplify and optimize remaining components
+  d. Accelerate cycle time
+  e. Automate as the final step
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

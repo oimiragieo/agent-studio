@@ -5,6 +5,7 @@ Arboreto provides two algorithms for gene regulatory network (GRN) inference, bo
 ## Algorithm Overview
 
 Both algorithms follow the same inference strategy:
+
 1. For each target gene in the dataset, train a regression model
 2. Identify the most important features (potential regulators) from the model
 3. Emit these features as candidate regulators with importance scores
@@ -16,16 +17,19 @@ The key difference is **computational efficiency** and the underlying regression
 **Purpose**: Fast GRN inference for large-scale datasets using gradient boosting.
 
 ### When to Use
+
 - **Large datasets**: Tens of thousands of observations (e.g., single-cell RNA-seq)
 - **Time-constrained analysis**: Need faster results than GENIE3
 - **Default choice**: GRNBoost2 is the flagship algorithm and recommended for most use cases
 
 ### Technical Details
+
 - **Method**: Stochastic gradient boosting with early-stopping regularization
 - **Performance**: Significantly faster than GENIE3 on large datasets
 - **Output**: Same format as GENIE3 (TF-target-importance triplets)
 
 ### Usage
+
 ```python
 from arboreto.algo import grnboost2
 
@@ -37,6 +41,7 @@ network = grnboost2(
 ```
 
 ### Parameters
+
 ```python
 grnboost2(
     expression_data,           # Required: pandas DataFrame or numpy array
@@ -53,16 +58,19 @@ grnboost2(
 **Purpose**: Classic Random Forest-based GRN inference, serving as the conceptual blueprint.
 
 ### When to Use
+
 - **Smaller datasets**: When dataset size allows for longer computation
 - **Comparison studies**: When comparing with published GENIE3 results
 - **Validation**: To validate GRNBoost2 results
 
 ### Technical Details
+
 - **Method**: Random Forest or ExtraTrees regression
 - **Foundation**: Original multiple regression GRN inference strategy
 - **Trade-off**: More computationally expensive but well-established
 
 ### Usage
+
 ```python
 from arboreto.algo import genie3
 
@@ -74,6 +82,7 @@ network = genie3(
 ```
 
 ### Parameters
+
 ```python
 genie3(
     expression_data,           # Required: pandas DataFrame or numpy array
@@ -87,14 +96,14 @@ genie3(
 
 ## Algorithm Comparison
 
-| Feature | GRNBoost2 | GENIE3 |
-|---------|-----------|--------|
-| **Speed** | Fast (optimized for large data) | Slower |
-| **Method** | Gradient boosting | Random Forest |
-| **Best for** | Large-scale data (10k+ observations) | Small-medium datasets |
-| **Output format** | Same | Same |
-| **Inference strategy** | Multiple regression | Multiple regression |
-| **Recommended** | Yes (default choice) | For comparison/validation |
+| Feature                | GRNBoost2                            | GENIE3                    |
+| ---------------------- | ------------------------------------ | ------------------------- |
+| **Speed**              | Fast (optimized for large data)      | Slower                    |
+| **Method**             | Gradient boosting                    | Random Forest             |
+| **Best for**           | Large-scale data (10k+ observations) | Small-medium datasets     |
+| **Output format**      | Same                                 | Same                      |
+| **Inference strategy** | Multiple regression                  | Multiple regression       |
+| **Recommended**        | Yes (default choice)                 | For comparison/validation |
 
 ## Advanced: Custom Regressor Parameters
 

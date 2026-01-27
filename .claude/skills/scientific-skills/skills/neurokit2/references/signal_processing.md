@@ -18,34 +18,43 @@ filtered = nk.signal_filter(signal, sampling_rate=1000, lowcut=None, highcut=Non
 **Filter types (via lowcut/highcut combinations):**
 
 **Lowpass** (highcut only):
+
 ```python
 lowpass = nk.signal_filter(signal, sampling_rate=1000, highcut=50)
 ```
+
 - Removes frequencies above highcut
 - Smooths signal, removes high-frequency noise
 
 **Highpass** (lowcut only):
+
 ```python
 highpass = nk.signal_filter(signal, sampling_rate=1000, lowcut=0.5)
 ```
+
 - Removes frequencies below lowcut
 - Removes baseline drift, DC offset
 
 **Bandpass** (both lowcut and highcut):
+
 ```python
 bandpass = nk.signal_filter(signal, sampling_rate=1000, lowcut=0.5, highcut=50)
 ```
+
 - Retains frequencies between lowcut and highcut
 - Isolates specific frequency band
 
 **Bandstop/Notch** (powerline removal):
+
 ```python
 notch = nk.signal_filter(signal, sampling_rate=1000, method='powerline', powerline=50)
 ```
+
 - Removes 50 or 60 Hz powerline noise
 - Narrow notch filter
 
 **Methods:**
+
 - `'butterworth'` (default): Smooth frequency response, flat passband
 - `'bessel'`: Linear phase, minimal ringing
 - `'chebyshev1'`: Steeper rolloff, ripple in passband
@@ -54,6 +63,7 @@ notch = nk.signal_filter(signal, sampling_rate=1000, method='powerline', powerli
 - `'powerline'`: Notch filter for 50/60 Hz
 
 **Order parameter:**
+
 - Higher order: Steeper transition, more ringing
 - Lower order: Gentler transition, less ringing
 - Typical: 2-5 for physiological signals
@@ -67,6 +77,7 @@ clean_signal = nk.signal_sanitize(signal, interpolate=True)
 ```
 
 **Use cases:**
+
 - Handle missing data points
 - Remove artifacts marked as NaN
 - Prepare signal for algorithms requiring continuous data
@@ -81,11 +92,13 @@ resampled = nk.signal_resample(signal, sampling_rate=1000, desired_sampling_rate
 ```
 
 **Methods:**
+
 - `'interpolation'`: Cubic spline interpolation
 - `'FFT'`: Frequency-domain resampling
 - `'poly'`: Polyphase filtering (best for downsampling)
 
 **Use cases:**
+
 - Match sampling rates across multi-modal recordings
 - Reduce data size (downsample)
 - Increase temporal resolution (upsample)
@@ -99,6 +112,7 @@ filled = nk.signal_fillmissing(signal, method='linear')
 ```
 
 **Methods:**
+
 - `'linear'`: Linear interpolation
 - `'nearest'`: Nearest neighbor
 - `'pad'`: Forward/backward fill
@@ -116,11 +130,13 @@ detrended = nk.signal_detrend(signal, method='polynomial', order=1)
 ```
 
 **Methods:**
+
 - `'polynomial'`: Fit and subtract polynomial (order 1 = linear)
 - `'loess'`: Locally weighted regression
 - `'tarvainen2002'`: Smoothness priors detrending
 
 **Use cases:**
+
 - Remove baseline drift
 - Stabilize mean before analysis
 - Prepare for stationarity-assuming algorithms
@@ -136,29 +152,36 @@ components = nk.signal_decompose(signal, sampling_rate=1000, method='emd')
 **Methods:**
 
 **Empirical Mode Decomposition (EMD):**
+
 ```python
 components = nk.signal_decompose(signal, sampling_rate=1000, method='emd')
 ```
+
 - Data-adaptive decomposition into Intrinsic Mode Functions (IMFs)
 - Each IMF represents different frequency content (high to low)
 - No predefined basis functions
 
 **Singular Spectrum Analysis (SSA):**
+
 ```python
 components = nk.signal_decompose(signal, method='ssa')
 ```
+
 - Decomposes into trend, oscillations, and noise
 - Based on eigenvalue decomposition of trajectory matrix
 
 **Wavelet decomposition:**
+
 - Time-frequency representation
 - Localized in both time and frequency
 
 **Returns:**
+
 - Dictionary with component signals
 - Trend, oscillatory components, residual
 
 **Use cases:**
+
 - Isolate physiological rhythms
 - Separate signal from noise
 - Multi-scale analysis
@@ -172,6 +195,7 @@ reconstructed = nk.signal_recompose(components, indices=[1, 2, 3])
 ```
 
 **Use case:**
+
 - Selective reconstruction after decomposition
 - Remove specific IMFs or components
 - Adaptive filtering
@@ -185,12 +209,14 @@ binary = nk.signal_binarize(signal, method='threshold', threshold=0.5)
 ```
 
 **Methods:**
+
 - `'threshold'`: Simple threshold
 - `'median'`: Median-based
 - `'mean'`: Mean-based
 - `'quantile'`: Percentile-based
 
 **Use case:**
+
 - Event detection from continuous signal
 - Trigger extraction
 - State classification
@@ -205,12 +231,14 @@ distorted = nk.signal_distort(signal, sampling_rate=1000, noise_amplitude=0.1,
 ```
 
 **Parameters:**
+
 - `noise_amplitude`: Gaussian noise level
 - `noise_frequency`: Sinusoidal interference (e.g., powerline)
 - `artifacts_amplitude`: Random spike artifacts
 - `artifacts_number`: Number of artifacts to add
 
 **Use cases:**
+
 - Algorithm robustness testing
 - Preprocessing method evaluation
 - Realistic data simulation
@@ -224,11 +252,13 @@ interpolated = nk.signal_interpolate(x_values, y_values, x_new=None, method='qua
 ```
 
 **Methods:**
+
 - `'linear'`, `'quadratic'`, `'cubic'`: Polynomial interpolation
 - `'nearest'`: Nearest neighbor
 - `'monotone_cubic'`: Preserves monotonicity
 
 **Use case:**
+
 - Convert irregular samples to regular grid
 - Upsample for visualization
 - Align signals with different time bases
@@ -242,6 +272,7 @@ merged = nk.signal_merge(signal1, signal2, time1=None, time2=None, sampling_rate
 ```
 
 **Use case:**
+
 - Multi-modal signal integration
 - Combine data from different devices
 - Synchronize based on timestamps
@@ -255,6 +286,7 @@ flatline_mask = nk.signal_flatline(signal, duration=5.0, sampling_rate=1000)
 ```
 
 **Returns:**
+
 - Binary mask where True indicates flatline periods
 - Duration threshold prevents false positives from normal stability
 
@@ -268,6 +300,7 @@ noisy = nk.signal_noise(signal, sampling_rate=1000, noise_type='gaussian',
 ```
 
 **Noise types:**
+
 - `'gaussian'`: White noise
 - `'pink'`: 1/f noise (common in physiological signals)
 - `'brown'`: Brownian (random walk)
@@ -282,11 +315,13 @@ surrogate = nk.signal_surrogate(signal, method='IAAFT')
 ```
 
 **Methods:**
+
 - `'IAAFT'`: Iterated Amplitude Adjusted Fourier Transform
   - Preserves amplitude distribution and power spectrum
 - `'random_shuffle'`: Random permutation (null hypothesis testing)
 
 **Use case:**
+
 - Nonlinearity testing
 - Null hypothesis generation for statistical tests
 
@@ -302,18 +337,21 @@ peaks_dict = nk.signal_findpeaks(signal, height_min=None, height_max=None,
 ```
 
 **Key parameters:**
+
 - `height_min/max`: Absolute amplitude thresholds
 - `relative_height_min/max`: Relative to signal range (0-1)
 - `threshold`: Minimum prominence
 - `distance`: Minimum samples between peaks
 
 **Returns:**
+
 - Dictionary with:
   - `'Peaks'`: Peak indices
   - `'Height'`: Peak amplitudes
   - `'Distance'`: Inter-peak intervals
 
 **Use cases:**
+
 - Generic peak detection for any signal
 - R-peaks, respiratory peaks, pulse peaks
 - Event detection
@@ -328,16 +366,19 @@ corrected = nk.signal_fixpeaks(peaks, sampling_rate=1000, iterative=True,
 ```
 
 **Methods:**
+
 - `'Kubios'`: Kubios HRV software method (default)
 - `'Malik1996'`: Task Force Standards (1996)
 - `'Kamath1993'`: Kamath's approach
 
 **Corrections:**
+
 - Remove physiologically implausible intervals
 - Interpolate missing peaks
 - Remove extra detected peaks (duplicates)
 
 **Use case:**
+
 - Artifact correction in R-R intervals
 - Improve HRV analysis quality
 - Respiratory or pulse peak correction
@@ -353,11 +394,13 @@ rate = nk.signal_rate(peaks, sampling_rate=1000, desired_length=None)
 ```
 
 **Method:**
+
 - Calculate inter-event intervals
 - Convert to events per minute
 - Interpolate to match desired length
 
 **Use case:**
+
 - Heart rate from R-peaks
 - Breathing rate from respiratory peaks
 - Any periodic event rate
@@ -372,14 +415,17 @@ period = nk.signal_period(signal, sampling_rate=1000, method='autocorrelation',
 ```
 
 **Methods:**
+
 - `'autocorrelation'`: Peak in autocorrelation function
 - `'powerspectraldensity'`: Peak in frequency spectrum
 
 **Returns:**
+
 - Period in samples or seconds
 - Frequency (1/period) in Hz
 
 **Use case:**
+
 - Detect dominant rhythm
 - Estimate fundamental frequency
 - Breathing rate, heart rate estimation
@@ -393,13 +439,16 @@ phase = nk.signal_phase(signal, method='hilbert')
 ```
 
 **Methods:**
+
 - `'hilbert'`: Hilbert transform (analytic signal)
 - `'wavelet'`: Wavelet-based phase
 
 **Returns:**
+
 - Phase in radians (-π to π) or 0 to 1 (normalized)
 
 **Use cases:**
+
 - Phase-locked analysis
 - Synchronization measures
 - Phase-amplitude coupling
@@ -414,16 +463,19 @@ psd, freqs = nk.signal_psd(signal, sampling_rate=1000, method='welch',
 ```
 
 **Methods:**
+
 - `'welch'`: Welch's periodogram (windowed FFT, default)
 - `'multitapers'`: Multitaper method (superior spectral estimation)
 - `'lomb'`: Lomb-Scargle (unevenly sampled data)
 - `'burg'`: Autoregressive (parametric)
 
 **Returns:**
+
 - `psd`: Power at each frequency (units²/Hz)
 - `freqs`: Frequency bins (Hz)
 
 **Use case:**
+
 - Frequency content analysis
 - HRV frequency domain
 - Spectral signatures
@@ -441,10 +493,12 @@ power_dict = nk.signal_power(signal, sampling_rate=1000, frequency_bands={
 ```
 
 **Returns:**
+
 - Dictionary with absolute and relative power per band
 - Peak frequencies
 
 **Use case:**
+
 - HRV frequency analysis
 - EEG band power
 - Rhythm quantification
@@ -458,11 +512,13 @@ autocorr = nk.signal_autocor(signal, lag=1000, show=False)
 ```
 
 **Interpretation:**
+
 - High autocorrelation at lag: signal repeats every lag samples
 - Periodic signals: peaks at multiples of period
 - Random signals: rapid decay to zero
 
 **Use cases:**
+
 - Detect periodicity
 - Assess temporal structure
 - Memory in signal
@@ -476,10 +532,12 @@ n_crossings = nk.signal_zerocrossings(signal)
 ```
 
 **Interpretation:**
+
 - More crossings: higher frequency content
 - Related to dominant frequency (rough estimate)
 
 **Use case:**
+
 - Simple frequency estimation
 - Signal regularity assessment
 
@@ -492,17 +550,21 @@ changepoints = nk.signal_changepoints(signal, penalty=10, method='pelt', show=Fa
 ```
 
 **Methods:**
+
 - `'pelt'`: Pruned Exact Linear Time (fast, exact)
 - `'binseg'`: Binary segmentation (faster, approximate)
 
 **Parameters:**
+
 - `penalty`: Controls sensitivity (higher = fewer changepoints)
 
 **Returns:**
+
 - Indices of detected changepoints
 - Segments between changepoints
 
 **Use cases:**
+
 - Segment signal into states
 - Detect transitions (e.g., sleep stages, arousal states)
 - Automatic epoch definition
@@ -516,12 +578,14 @@ sync = nk.signal_synchrony(signal1, signal2, method='correlation')
 ```
 
 **Methods:**
+
 - `'correlation'`: Pearson correlation
 - `'coherence'`: Frequency-domain coherence
 - `'mutual_information'`: Information-theoretic measure
 - `'phase'`: Phase locking value
 
 **Use cases:**
+
 - Heart-brain coupling
 - Inter-brain synchrony
 - Multi-channel coordination
@@ -535,17 +599,20 @@ smoothed = nk.signal_smooth(signal, method='convolution', kernel='boxzen', size=
 ```
 
 **Methods:**
+
 - `'convolution'`: Apply kernel (boxcar, Gaussian, etc.)
 - `'median'`: Median filter (robust to outliers)
 - `'savgol'`: Savitzky-Golay filter (preserves peaks)
 - `'loess'`: Locally weighted regression
 
 **Kernel types (for convolution):**
+
 - `'boxcar'`: Simple moving average
 - `'gaussian'`: Gaussian-weighted average
 - `'hann'`, `'hamming'`, `'blackman'`: Windowing functions
 
 **Use cases:**
+
 - Noise reduction
 - Trend extraction
 - Visualization enhancement
@@ -560,15 +627,18 @@ tf, time, freq = nk.signal_timefrequency(signal, sampling_rate=1000, method='stf
 ```
 
 **Methods:**
+
 - `'stft'`: Short-Time Fourier Transform
 - `'cwt'`: Continuous Wavelet Transform
 
 **Returns:**
+
 - `tf`: Time-frequency matrix (power at each time-frequency point)
 - `time`: Time bins
 - `freq`: Frequency bins
 
 **Use cases:**
+
 - Non-stationary signal analysis
 - Time-varying frequency content
 - EEG/MEG time-frequency analysis
@@ -585,12 +655,14 @@ signal = nk.signal_simulate(duration=10, sampling_rate=1000, frequency=[5, 10],
 ```
 
 **Signal types:**
+
 - Sinusoidal oscillations (specify frequencies)
 - Multiple frequency components
 - Gaussian noise
 - Combinations
 
 **Use cases:**
+
 - Algorithm testing
 - Method validation
 - Educational demonstrations
@@ -606,6 +678,7 @@ nk.signal_plot(signal, sampling_rate=1000, peaks=None, show=True)
 ```
 
 **Features:**
+
 - Time axis in seconds
 - Peak markers
 - Multiple subplots for signal arrays
@@ -613,22 +686,26 @@ nk.signal_plot(signal, sampling_rate=1000, peaks=None, show=True)
 ## Practical Tips
 
 **Choosing filter parameters:**
+
 - **Lowcut**: Set below lowest frequency of interest
 - **Highcut**: Set above highest frequency of interest
 - **Order**: Start with 2-5, increase if transition too slow
 - **Method**: Butterworth is safe default
 
 **Handling edge effects:**
+
 - Filtering introduces artifacts at signal edges
 - Pad signal before filtering, then trim
 - Or discard initial/final seconds
 
 **Dealing with gaps:**
+
 - Small gaps: `signal_fillmissing()` with interpolation
 - Large gaps: Segment signal, analyze separately
 - Mark gaps as NaN, use interpolation carefully
 
 **Combining operations:**
+
 ```python
 # Typical preprocessing pipeline
 signal = nk.signal_sanitize(raw_signal)  # Remove invalid values
@@ -637,6 +714,7 @@ signal = nk.signal_detrend(signal, method='polynomial', order=1)  # Remove linea
 ```
 
 **Performance considerations:**
+
 - Filtering: FFT-based methods faster for long signals
 - Resampling: Downsample early in pipeline to speed up
 - Large datasets: Process in chunks if memory-limited

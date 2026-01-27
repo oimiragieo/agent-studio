@@ -297,6 +297,7 @@ predictions = loaded_model.predict(X_new)
 ## Common Gotchas and Solutions
 
 ### Data Leakage
+
 ```python
 # WRONG: Fitting scaler on all data
 scaler = StandardScaler()
@@ -319,6 +320,7 @@ pipeline.fit(X_train, y_train)  # No leakage!
 ```
 
 ### Stratified Splitting for Classification
+
 ```python
 # Always use stratify for classification
 X_train, X_test, y_train, y_test = train_test_split(
@@ -327,18 +329,21 @@ X_train, X_test, y_train, y_test = train_test_split(
 ```
 
 ### Random State for Reproducibility
+
 ```python
 # Set random_state for reproducibility
 model = RandomForestClassifier(n_estimators=100, random_state=42)
 ```
 
 ### Handling Unknown Categories
+
 ```python
 # Use handle_unknown='ignore' for OneHotEncoder
 encoder = OneHotEncoder(handle_unknown='ignore')
 ```
 
 ### Feature Names with Pipelines
+
 ```python
 # Get feature names after transformation
 preprocessor.fit(X_train)
@@ -349,46 +354,47 @@ feature_names = preprocessor.get_feature_names_out()
 
 ### Classification
 
-| Problem | Algorithm | When to Use |
-|---------|-----------|-------------|
-| Binary/Multiclass | Logistic Regression | Fast baseline, interpretability |
-| Binary/Multiclass | Random Forest | Good default, robust |
-| Binary/Multiclass | Gradient Boosting | Best accuracy, willing to tune |
-| Binary/Multiclass | SVM | Small data, complex boundaries |
-| Binary/Multiclass | Naive Bayes | Text classification, fast |
-| High dimensions | Linear SVM or Logistic | Text, many features |
+| Problem           | Algorithm              | When to Use                     |
+| ----------------- | ---------------------- | ------------------------------- |
+| Binary/Multiclass | Logistic Regression    | Fast baseline, interpretability |
+| Binary/Multiclass | Random Forest          | Good default, robust            |
+| Binary/Multiclass | Gradient Boosting      | Best accuracy, willing to tune  |
+| Binary/Multiclass | SVM                    | Small data, complex boundaries  |
+| Binary/Multiclass | Naive Bayes            | Text classification, fast       |
+| High dimensions   | Linear SVM or Logistic | Text, many features             |
 
 ### Regression
 
-| Problem | Algorithm | When to Use |
-|---------|-----------|-------------|
+| Problem           | Algorithm         | When to Use                     |
+| ----------------- | ----------------- | ------------------------------- |
 | Continuous target | Linear Regression | Fast baseline, interpretability |
-| Continuous target | Ridge/Lasso | Regularization needed |
-| Continuous target | Random Forest | Good default, non-linear |
-| Continuous target | Gradient Boosting | Best accuracy |
-| Continuous target | SVR | Small data, non-linear |
+| Continuous target | Ridge/Lasso       | Regularization needed           |
+| Continuous target | Random Forest     | Good default, non-linear        |
+| Continuous target | Gradient Boosting | Best accuracy                   |
+| Continuous target | SVR               | Small data, non-linear          |
 
 ### Clustering
 
-| Problem | Algorithm | When to Use |
-|---------|-----------|-------------|
-| Known K, spherical | K-Means | Fast, simple |
-| Unknown K, arbitrary shapes | DBSCAN | Noise/outliers present |
-| Hierarchical structure | Agglomerative | Need dendrogram |
-| Soft clustering | Gaussian Mixture | Probability estimates |
+| Problem                     | Algorithm        | When to Use            |
+| --------------------------- | ---------------- | ---------------------- |
+| Known K, spherical          | K-Means          | Fast, simple           |
+| Unknown K, arbitrary shapes | DBSCAN           | Noise/outliers present |
+| Hierarchical structure      | Agglomerative    | Need dendrogram        |
+| Soft clustering             | Gaussian Mixture | Probability estimates  |
 
 ### Dimensionality Reduction
 
-| Problem | Algorithm | When to Use |
-|---------|-----------|-------------|
-| Linear reduction | PCA | Variance explanation |
-| Visualization | t-SNE | 2D/3D plots |
-| Non-negative data | NMF | Images, text |
-| Sparse data | TruncatedSVD | Text, recommender systems |
+| Problem           | Algorithm    | When to Use               |
+| ----------------- | ------------ | ------------------------- |
+| Linear reduction  | PCA          | Variance explanation      |
+| Visualization     | t-SNE        | 2D/3D plots               |
+| Non-negative data | NMF          | Images, text              |
+| Sparse data       | TruncatedSVD | Text, recommender systems |
 
 ## Performance Tips
 
 ### Speed Up Training
+
 ```python
 # Use n_jobs=-1 for parallel processing
 model = RandomForestClassifier(n_estimators=100, n_jobs=-1)
@@ -407,6 +413,7 @@ for X_batch, y_batch in batches:
 ```
 
 ### Memory Efficiency
+
 ```python
 # Use sparse matrices
 from scipy.sparse import csr_matrix

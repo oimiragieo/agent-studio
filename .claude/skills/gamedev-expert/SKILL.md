@@ -64,7 +64,6 @@ When reviewing or writing code, apply these guidelines:
 - Use Ruby's expressive syntax (e.g., unless, ||=, &.)
 - Prefer single quotes for strings unless interpolation is needed.
 
-
 </instructions>
 
 <examples>
@@ -78,15 +77,16 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 4 individual skills:
+
 - dragonruby-error-handling
 - dragonruby-general-ruby-rules
 - dragonruby-naming-conventions
 - dragonruby-syntax-and-formatting
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

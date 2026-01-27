@@ -1,6 +1,7 @@
 # Professional Treatment Plan Styling - Quick Reference
 
 ## File Location
+
 `medical_treatment_plan.sty` - Available in the assets directory
 
 ## Quick Start
@@ -20,51 +21,63 @@
 ## Custom Box Environments
 
 ### 1. Info Box (Blue) - General Information
+
 ```latex
 \begin{infobox}[Title]
   Content
 \end{infobox}
 ```
+
 **Use for:** Clinical assessments, monitoring schedules, titration protocols
 
 ### 2. Warning Box (Yellow/Red) - Critical Alerts
+
 ```latex
 \begin{warningbox}[Title]
   Critical information
 \end{warningbox}
 ```
+
 **Use for:** Safety protocols, decision points, contraindications
 
 ### 3. Goal Box (Green) - Treatment Goals
+
 ```latex
 \begin{goalbox}[Title]
   Goals and targets
 \end{goalbox}
 ```
+
 **Use for:** SMART goals, target outcomes, success metrics
 
 ### 4. Key Points Box (Light Blue) - Highlights
+
 ```latex
 \begin{keybox}[Title]
   Important highlights
 \end{keybox}
 ```
+
 **Use for:** Executive summaries, key takeaways, essential recommendations
 
 ### 5. Emergency Box (Red) - Emergency Info
+
 ```latex
 \begin{emergencybox}
   Emergency contacts
 \end{emergencybox}
 ```
+
 **Use for:** Emergency contacts, urgent protocols
 
 ### 6. Patient Info Box (White/Blue) - Demographics
+
 ```latex
 \begin{patientinfo}
   Patient information
 \end{patientinfo}
 ```
+
 **Use for:** Patient demographics and baseline data
 
 ## Professional Tables
@@ -116,6 +129,7 @@ xelatex document.tex
 **Option 1:** Copy `assets/medical_treatment_plan.sty` to your document directory
 
 **Option 2:** Install to user TeX directory
+
 ```bash
 mkdir -p ~/texmf/tex/latex/medical_treatment_plan
 cp assets/medical_treatment_plan.sty ~/texmf/tex/latex/medical_treatment_plan/
@@ -123,7 +137,9 @@ texhash ~/texmf
 ```
 
 ## Required Packages
+
 All automatically loaded by the style:
+
 - tcolorbox, tikz, xcolor
 - fancyhdr, titlesec, enumitem
 - booktabs, longtable, array, colortbl
@@ -167,19 +183,21 @@ All automatically loaded by the style:
 ## Troubleshooting
 
 **Missing packages:**
+
 ```bash
 sudo tlmgr install tcolorbox tikz pgf
 ```
 
 **Special characters not showing:**
+
 - Use XeLaTeX instead of PDFLaTeX
 - Or use LaTeX commands: `$\checkmark$`, `$\geq$`
 
 **Header warnings:**
+
 - Already set to 22pt in style file
 - Adjust if needed
 
 ---
 
 For complete documentation, see the "Professional Document Styling" section in SKILL.md
-

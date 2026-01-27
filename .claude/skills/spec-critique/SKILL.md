@@ -1,6 +1,6 @@
 ---
 name: spec-critique
-description: "Self-critique specification documents using extended thinking. Use when a spec is complete and needs validation before implementation."
+description: 'Self-critique specification documents using extended thinking. Use when a spec is complete and needs validation before implementation.'
 version: 1.0.0
 model: opus
 extended_thinking: true
@@ -27,12 +27,14 @@ Critically review specification documents for accuracy, completeness, and feasib
 ## When to Use
 
 **Always:**
+
 - After spec writing is complete
 - Before implementation planning begins
 - When spec involves external integrations
 - For complex features with multiple components
 
 **Exceptions:**
+
 - Simple specs for trivial changes
 - Specs already reviewed by another agent
 
@@ -68,6 +70,7 @@ cat .claude/context/tech-stack.md
 ```
 
 Understand:
+
 - What the spec claims
 - What the user originally requested
 - What patterns exist in the codebase
@@ -86,6 +89,7 @@ Compare spec against requirements and codebase:
 - **Configuration**: Are env vars and config options correct?
 
 **Check for common spec errors:**
+
 - Wrong package name (e.g., "react-query" vs "@tanstack/react-query")
 - Outdated API patterns (e.g., using deprecated functions)
 - Incorrect function signatures (e.g., wrong parameter order)
@@ -145,16 +149,19 @@ Create a list of all issues found:
 ## Issues Found
 
 ### 1. [SEVERITY: HIGH] Package name incorrect
+
 - **Spec says**: "[incorrect]"
 - **Should be**: "[correct]"
 - **Location**: Line 45, Requirements section
 
 ### 2. [SEVERITY: MEDIUM] Missing edge case
+
 - **Requirement**: "Handle connection failures"
 - **Spec**: No error handling specified
 - **Location**: Implementation Notes section
 
 ### 3. [SEVERITY: LOW] Inconsistent terminology
+
 - **Issue**: Uses both "memory" and "episode" for same concept
 - **Location**: Throughout document
 ```
@@ -164,6 +171,7 @@ Create a list of all issues found:
 For each issue found, fix it directly in the spec:
 
 **For each fix**:
+
 1. Make the change in spec
 2. Verify the change was applied
 3. Document what was changed
@@ -178,32 +186,38 @@ For each issue found, fix it directly in the spec:
 
 ## Summary
 
-| Category | Status | Issues |
-|----------|--------|--------|
-| Technical Accuracy | PASS/FAIL | [count] |
-| Completeness | PASS/FAIL | [count] |
-| Consistency | PASS/FAIL | [count] |
-| Feasibility | PASS/FAIL | [count] |
+| Category               | Status    | Issues  |
+| ---------------------- | --------- | ------- |
+| Technical Accuracy     | PASS/FAIL | [count] |
+| Completeness           | PASS/FAIL | [count] |
+| Consistency            | PASS/FAIL | [count] |
+| Feasibility            | PASS/FAIL | [count] |
 | Requirements Alignment | PASS/FAIL | [count] |
 
 ## Issues Found and Fixed
 
 ### High Severity
+
 1. [Issue] - FIXED: [what was changed]
 
 ### Medium Severity
+
 1. [Issue] - FIXED: [what was changed]
 
 ### Low Severity
+
 1. [Issue] - FIXED: [what was changed]
 
 ## No Issues Found (if applicable)
+
 Spec is well-written with no significant issues found.
 
 ## Confidence Level
+
 [HIGH/MEDIUM/LOW]
 
 ## Recommendations
+
 - [Any remaining concerns or suggestions]
 ```
 
@@ -224,18 +238,21 @@ grep -E "^##? Success Criteria" spec.md
 ## Severity Guidelines
 
 **HIGH** - Will cause implementation failure:
+
 - Wrong package names
 - Incorrect API signatures
 - Missing critical requirements
 - Invalid configuration
 
 **MEDIUM** - May cause issues:
+
 - Missing edge cases
 - Incomplete error handling
 - Unclear integration points
 - Inconsistent patterns
 
 **LOW** - Minor improvements:
+
 - Terminology inconsistencies
 - Documentation gaps
 - Style issues
@@ -309,6 +326,7 @@ This skill works well with:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

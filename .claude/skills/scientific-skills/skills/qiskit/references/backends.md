@@ -5,11 +5,13 @@ Qiskit is backend-agnostic and supports execution on simulators and real quantum
 ## Backend Types
 
 ### Local Simulators
+
 - Run on your machine
 - No account required
 - Perfect for development and testing
 
 ### Cloud-Based Hardware
+
 - IBM Quantum (100+ qubit systems)
 - IonQ (trapped ion)
 - Amazon Braket (Rigetti, IonQ, Oxford Quantum Circuits)
@@ -166,6 +168,7 @@ with Session(backend=backend) as session:
 ```
 
 Session benefits:
+
 - Reduced queue waiting between iterations
 - Guaranteed backend availability during session
 - Better for variational algorithms
@@ -393,12 +396,14 @@ result = job.result()
 ## Troubleshooting
 
 ### Issue: "Backend not found"
+
 ```python
 # List available backends
 print([b.name for b in service.backends()])
 ```
 
 ### Issue: "Invalid credentials"
+
 ```python
 # Re-save credentials
 QiskitRuntimeService.save_account(
@@ -409,6 +414,7 @@ QiskitRuntimeService.save_account(
 ```
 
 ### Issue: Long queue times
+
 ```python
 # Use least busy backend
 backend = service.least_busy(min_num_qubits=5)
@@ -417,6 +423,7 @@ backend = service.least_busy(min_num_qubits=5)
 ```
 
 ### Issue: Job fails with "Circuit too large"
+
 ```python
 # Reduce circuit complexity
 # Use higher transpilation optimization
@@ -425,9 +432,9 @@ qc_opt = transpile(qc, backend=backend, optimization_level=3)
 
 ## Backend Comparison
 
-| Provider | Connectivity | Gate Set | Notes |
-|----------|-------------|----------|--------|
-| IBM Quantum | Limited | CX, RZ, SX, X | 100+ qubit systems, high quality |
-| IonQ | All-to-all | GPI, GPI2, MS | Trapped ion, low error rates |
-| Rigetti | Limited | CZ, RZ, RX | Superconducting qubits |
-| Oxford Quantum Circuits | Limited | ECR, RZ, SX | Coaxmon technology |
+| Provider                | Connectivity | Gate Set      | Notes                            |
+| ----------------------- | ------------ | ------------- | -------------------------------- |
+| IBM Quantum             | Limited      | CX, RZ, SX, X | 100+ qubit systems, high quality |
+| IonQ                    | All-to-all   | GPI, GPI2, MS | Trapped ion, low error rates     |
+| Rigetti                 | Limited      | CZ, RZ, RX    | Superconducting qubits           |
+| Oxford Quantum Circuits | Limited      | ECR, RZ, SX   | Coaxmon technology               |

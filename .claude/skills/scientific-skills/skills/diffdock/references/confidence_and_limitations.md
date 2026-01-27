@@ -8,11 +8,11 @@ DiffDock generates a confidence score for each predicted binding pose. This scor
 
 ### Score Ranges
 
-| Score Range | Confidence Level | Interpretation |
-|------------|------------------|----------------|
-| **> 0** | High confidence | Strong prediction, likely accurate binding pose |
-| **-1.5 to 0** | Moderate confidence | Reasonable prediction, may need validation |
-| **< -1.5** | Low confidence | Uncertain prediction, requires careful validation |
+| Score Range   | Confidence Level    | Interpretation                                    |
+| ------------- | ------------------- | ------------------------------------------------- |
+| **> 0**       | High confidence     | Strong prediction, likely accurate binding pose   |
+| **-1.5 to 0** | Moderate confidence | Reasonable prediction, may need validation        |
+| **< -1.5**    | Low confidence      | Uncertain prediction, requires careful validation |
 
 ### Important Notes on Confidence Scores
 
@@ -40,11 +40,13 @@ DiffDock generates a confidence score for each predicted binding pose. This scor
 ## What DiffDock Predicts
 
 ### ✅ DiffDock DOES Predict
+
 - **Binding poses**: 3D spatial orientation of ligand in protein binding site
 - **Confidence scores**: Model's certainty about predictions
 - **Multiple conformations**: Various possible binding modes
 
 ### ❌ DiffDock DOES NOT Predict
+
 - **Binding affinity**: Strength of protein-ligand interaction (ΔG, Kd, Ki)
 - **Binding kinetics**: On/off rates, residence time
 - **ADMET properties**: Absorption, distribution, metabolism, excretion, toxicity
@@ -53,12 +55,14 @@ DiffDock generates a confidence score for each predicted binding pose. This scor
 ## Scope and Limitations
 
 ### Designed For
+
 - **Small molecule docking**: Organic compounds typically 100-1000 Da
 - **Protein targets**: Single or multi-chain proteins
 - **Small peptides**: Short peptide ligands (< ~20 residues)
 - **Small nucleic acids**: Short oligonucleotides
 
 ### NOT Designed For
+
 - **Large biomolecules**: Full protein-protein interactions
   - Use DiffDock-PP, AlphaFold-Multimer, or RoseTTAFold2NA instead
 - **Large peptides/proteins**: >20 residues as ligands
@@ -69,10 +73,12 @@ DiffDock generates a confidence score for each predicted binding pose. This scor
 ### Training Data Considerations
 
 DiffDock was trained on:
+
 - **PDBBind**: Diverse protein-ligand complexes
 - **BindingMOAD**: Multi-domain protein structures
 
 **Implications**:
+
 - Best performance on proteins/ligands similar to training data
 - May underperform on:
   - Novel protein families
@@ -150,16 +156,19 @@ DiffDock should be combined with these tools for affinity prediction:
 ## Common Issues and Troubleshooting
 
 ### Low Confidence Scores
+
 - **Large/flexible ligands**: Consider splitting into fragments or use alternative methods
 - **Multiple binding sites**: May predict multiple locations with distributed confidence
 - **Protein flexibility**: Consider using ensemble of protein conformations
 
 ### Unrealistic Predictions
+
 - **Clashes**: May indicate need for protein preparation or refinement
 - **Surface binding**: Check if true binding site is blocked or unclear
 - **Unusual poses**: Consider increasing samples to explore more conformations
 
 ### Slow Performance
+
 - **Use GPU**: Essential for reasonable runtime
 - **Pre-compute embeddings**: Reuse ESM embeddings for same protein
 - **Batch processing**: More efficient than sequential individual predictions

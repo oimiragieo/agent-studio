@@ -66,14 +66,12 @@ When reviewing or writing code, apply these guidelines:
   const cookieStore = await cookies()
   const headersList = await headers()
   const { isEnabled } = await draftMode()
-  
 - Handle async params in layouts/pages:
   typescript
   const params = await props.params
   const searchParams = await props.searchParams
 
 ### next js 15 component architec
-
 
 </instructions>
 
@@ -88,12 +86,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- nextjs-expert
 
+- nextjs-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

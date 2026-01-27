@@ -183,11 +183,13 @@ lamin close
 ### Local Storage
 
 **Advantages:**
+
 - Fast access
 - No internet required
 - Simple setup
 
 **Setup:**
+
 ```bash
 lamin init --storage ./data
 ```
@@ -195,11 +197,13 @@ lamin init --storage ./data
 ### AWS S3 Storage
 
 **Advantages:**
+
 - Scalable
 - Collaborative
 - Durable
 
 **Setup:**
+
 ```bash
 # Set credentials
 export AWS_ACCESS_KEY_ID=your_key_id
@@ -212,22 +216,15 @@ lamin init --storage s3://my-bucket/project-data \
 ```
 
 **S3 Permissions Required:**
+
 ```json
 {
   "Version": "2012-10-17",
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject",
-        "s3:ListBucket"
-      ],
-      "Resource": [
-        "arn:aws:s3:::my-bucket/*",
-        "arn:aws:s3:::my-bucket"
-      ]
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject", "s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::my-bucket/*", "arn:aws:s3:::my-bucket"]
     }
   ]
 }
@@ -236,6 +233,7 @@ lamin init --storage s3://my-bucket/project-data \
 ### Google Cloud Storage
 
 **Setup:**
+
 ```bash
 # Authenticate
 gcloud auth application-default login
@@ -271,15 +269,18 @@ lamin init --storage 's3://bucket?endpoint_url=https://account-id.r2.cloudflares
 ### SQLite (Default)
 
 **Advantages:**
+
 - No separate database server
 - Simple setup
 - Good for development
 
 **Limitations:**
+
 - Not suitable for concurrent writes
 - Limited scalability
 
 **Setup:**
+
 ```bash
 # SQLite is default
 lamin init --storage ./data
@@ -289,11 +290,13 @@ lamin init --storage ./data
 ### PostgreSQL
 
 **Advantages:**
+
 - Production-ready
 - Concurrent access
 - Better performance at scale
 
 **Setup:**
+
 ```bash
 # Full connection string
 lamin init --storage s3://bucket/path \
@@ -353,11 +356,13 @@ sudo nano /system/settings/system.env
 ```
 
 Add to `system.env`:
+
 ```bash
 lamindb_cache_path=/shared/cache/lamindb
 ```
 
 Ensure permissions:
+
 ```bash
 sudo chmod 755 /shared/cache/lamindb
 sudo chown -R shared-user:shared-group /shared/cache/lamindb
@@ -477,12 +482,14 @@ lamin delete --force instance-name
 ### Pattern 1: Local Development → Cloud Production
 
 **Development:**
+
 ```bash
 # Local development
 lamin init --storage ./dev-data --modules bionty
 ```
 
 **Production:**
+
 ```bash
 # Cloud production
 lamin init --storage s3://prod-bucket/data \
@@ -492,6 +499,7 @@ lamin init --storage s3://prod-bucket/data \
 ```
 
 **Migration:** Export artifacts from dev, import to prod
+
 ```python
 # Export from dev
 artifacts = ln.Artifact.filter().all()
@@ -646,6 +654,7 @@ lamin export metadata_backup.json
 ### Common Issues
 
 **Issue: Cannot connect to instance**
+
 ```bash
 # Check instance exists
 lamin ls
@@ -658,6 +667,7 @@ lamin connect instance-name
 ```
 
 **Issue: Storage permissions denied**
+
 ```bash
 # Check AWS credentials
 aws s3 ls s3://your-bucket/
@@ -669,6 +679,7 @@ gsutil ls gs://your-bucket/
 ```
 
 **Issue: Database connection error**
+
 ```bash
 # Test PostgreSQL connection
 psql postgresql://user:pwd@host:5432/db
@@ -678,6 +689,7 @@ lamin migrate check
 ```
 
 **Issue: Cache full**
+
 ```python
 # Clear cache
 import lamindb as ln

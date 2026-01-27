@@ -39,6 +39,7 @@ Example: "72-year-old woman with enlarging pigmented lesion on left forearm. Cli
 **Specimen A labeled "[Specimen label]":**
 
 **Description:**
+
 - Received [fresh/in formalin]
 - Consists of [specimen type] measuring [dimensions in cm]
 - [External surface description]
@@ -48,18 +49,20 @@ Example: "72-year-old woman with enlarging pigmented lesion on left forearm. Cli
 - [Inking for margins]
 
 **Sampling:**
+
 - [How specimen was sectioned]
 - [Cassette labeling]
 - [Percent of tissue submitted]
 
 **Example:**
+
 ```
 Specimen A labeled "Skin, left forearm, excisional biopsy":
-Received fresh is an oriented ellipse of skin measuring 3.5 x 1.2 x 0.8 cm with a 
-suture indicating superior. The epidermis contains a 1.1 cm diameter irregularly 
-pigmented lesion located 1.5 cm from superior, 1.2 cm from inferior, 0.8 cm from  
-medial, and 1.2 cm from lateral margins. Inking: superior blue, inferior black, 
-medial green, lateral red, deep yellow. Serially sectioned perpendicular to long 
+Received fresh is an oriented ellipse of skin measuring 3.5 x 1.2 x 0.8 cm with a
+suture indicating superior. The epidermis contains a 1.1 cm diameter irregularly
+pigmented lesion located 1.5 cm from superior, 1.2 cm from inferior, 0.8 cm from
+medial, and 1.2 cm from lateral margins. Inking: superior blue, inferior black,
+medial green, lateral red, deep yellow. Serially sectioned perpendicular to long
 axis into 10 slices. Entirely submitted in cassettes A1-A4.
 ```
 
@@ -82,13 +85,14 @@ axis into 10 slices. Entirely submitted in cassettes A1-A4.
 [Results of special stains or immunostains]
 
 **Example:**
+
 ```
-Sections show skin with an asymmetric melanocytic proliferation composed of 
-epithelioid and spindled melanocytes arranged in irregular nests at the 
+Sections show skin with an asymmetric melanocytic proliferation composed of
+epithelioid and spindled melanocytes arranged in irregular nests at the
 dermoepidermal junction with extension into the papillary and reticular dermis.
 Melanocytes show marked cytologic atypia with nuclear enlargement, hyperchromasia,
-and prominent nucleoli. Mitotic activity is present with 4 mitoses per mm². 
-No ulceration identified. The lesion extends to a Breslow depth of 1.8 mm 
+and prominent nucleoli. Mitotic activity is present with 4 mitoses per mm².
+No ulceration identified. The lesion extends to a Breslow depth of 1.8 mm
 (Clark level IV). Margins are free of tumor (closest margin: deep, 0.3 cm).
 ```
 
@@ -101,6 +105,7 @@ No ulceration identified. The lesion extends to a Breslow depth of 1.8 mm
 **[DIAGNOSIS IN CAPITAL LETTERS]**
 
 **Example Format:**
+
 ```
 MALIGNANT MELANOMA, SUPERFICIAL SPREADING TYPE
 
@@ -147,8 +152,8 @@ Additional Findings: [Other relevant findings]
 
 **Immunohistochemistry:**
 
-| Antibody | Result | Interpretation |
-|----------|--------|----------------|
+| Antibody      | Result                       | Interpretation          |
+| ------------- | ---------------------------- | ----------------------- |
 | [Marker name] | [Positive/Negative, pattern] | [Clinical significance] |
 
 **Example:**
@@ -161,6 +166,7 @@ Additional Findings: [Other relevant findings]
 
 **Molecular/Genetic Testing:**
 [Results of molecular tests if performed]
+
 - BRAF mutation: [Detected/Not detected]
 - [Other relevant tests]
 
@@ -171,10 +177,11 @@ Additional Findings: [Other relevant findings]
 [Additional interpretive information, differential diagnosis, recommendations]
 
 **Example:**
+
 ```
-The morphologic and immunohistochemical findings are diagnostic of melanoma. The 
+The morphologic and immunohistochemical findings are diagnostic of melanoma. The
 Breslow thickness of 1.8 mm places this tumor in the T2 category (AJCC 8th edition).
-Sentinel lymph node biopsy is recommended for staging. BRAF mutation testing may be 
+Sentinel lymph node biopsy is recommended for staging. BRAF mutation testing may be
 considered for treatment planning. Close clinical follow-up is recommended.
 ```
 
@@ -199,6 +206,7 @@ considered for treatment planning. Close clinical follow-up is recommended.
 ### Breast Biopsy
 
 **Key Elements:**
+
 - Histologic type (invasive ductal, lobular, etc.)
 - Nottingham grade (tubule formation, nuclear grade, mitotic count)
 - Size of invasive component
@@ -210,6 +218,7 @@ considered for treatment planning. Close clinical follow-up is recommended.
 ### Colon Resection
 
 **Key Elements:**
+
 - Tumor site and size
 - Histologic type and grade
 - Depth of invasion (T stage)
@@ -222,6 +231,7 @@ considered for treatment planning. Close clinical follow-up is recommended.
 ### Prostate Biopsy/Resection
 
 **Key Elements:**
+
 - Gleason score (pattern 1 + pattern 2 = total)
 - Grade group (1-5)
 - Percent involvement per core/specimen
@@ -245,5 +255,3 @@ considered for treatment planning. Close clinical follow-up is recommended.
 **Note:** Permanent sections to follow.
 
 **Final Diagnosis:** [State if concordant or discordant with frozen]
-
-

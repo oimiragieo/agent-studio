@@ -13,21 +13,25 @@ Tractability evaluates the druggability potential of a target across different m
 #### Modalities Assessed:
 
 **Small Molecule**
+
 - Prediction of small molecule druggability
 - Based on structural features, chemical precedence
 - Buckets: Clinical precedence, Discovery precedence, Predicted tractable
 
 **Antibody**
+
 - Likelihood of antibody-based therapeutic success
 - Cell surface/secreted protein location
 - Precedence categories similar to small molecules
 
 **PROTAC (Protein Degradation)**
+
 - Assessment for targeted protein degradation
 - E3 ligase compatibility
 - Emerging modality category
 
 **Other Modalities**
+
 - Gene therapy, RNA-based therapeutics
 - Oligonucleotide approaches
 
@@ -45,19 +49,23 @@ Safety information aggregated from multiple sources to identify potential toxici
 #### Data Sources:
 
 **ToxCast**
+
 - High-throughput toxicology screening data
 - In vitro assay results
 - Toxicity pathway activation
 
 **AOPWiki (Adverse Outcome Pathways)**
+
 - Mechanistic pathways from molecular initiating event to adverse outcome
 - Systems toxicology frameworks
 
 **PharmGKB**
+
 - Pharmacogenomic relationships
 - Genetic variants affecting drug response and toxicity
 
 **Published Literature**
+
 - Expert-curated safety concerns from publications
 - Clinical trial adverse events
 
@@ -75,16 +83,19 @@ Gene/protein expression across tissues and cell types from multiple sources.
 #### Data Sources:
 
 **Expression Atlas**
+
 - RNA-Seq expression across tissues/conditions
 - Normalized expression levels (TPM, FPKM)
 - Differential expression studies
 
 **GTEx (Genotype-Tissue Expression)**
+
 - Comprehensive tissue expression from healthy donors
 - Median TPM across 53 tissues
 - Expression variation analysis
 
 **Human Protein Atlas**
+
 - Protein expression via immunohistochemistry
 - Subcellular localization
 - Tissue specificity classifications
@@ -103,16 +114,19 @@ Protein-protein interactions, complex memberships, and molecular partnerships.
 #### Interaction Types:
 
 **Physical Interactions**
+
 - Direct protein-protein binding
 - Complex components
 - Sources: IntAct, BioGRID, STRING
 
 **Pathway Membership**
+
 - Biological pathways from Reactome
 - Functional relationships
 - Upstream/downstream regulators
 
 **Target Interactors**
+
 - Direct interactors relevant to disease associations
 - Context-specific interactions
 
@@ -123,11 +137,13 @@ Dependency data indicating if gene is essential for cell survival.
 #### Data Sources:
 
 **Project Score**
+
 - CRISPR-Cas9 fitness screens
 - 300+ cancer cell lines
 - Scaled essentiality scores (0-1)
 
 **DepMap Portal**
+
 - Large-scale cancer dependency data
 - Genetic and pharmacological perturbations
 - Common essential genes identification
@@ -145,16 +161,19 @@ High-quality small molecules for target validation.
 #### Sources:
 
 **Probes & Drugs Portal**
+
 - Chemical probes with characterized selectivity
 - Quality ratings and annotations
 - Target engagement data
 
 **Structural Genomics Consortium (SGC)**
+
 - Target Enabling Packages (TEPs)
 - Comprehensive target reagents
 - Freely available to academia
 
 **Probe Criteria:**
+
 - Potency (typically IC50 < 100 nM)
 - Selectivity (>30-fold vs. off-targets)
 - Cell activity demonstrated
@@ -167,12 +186,14 @@ Genetic variants affecting drug response for drugs targeting the gene.
 #### Data Source: ClinPGx
 
 **Information Included:**
+
 - Variant-drug pairs
 - Clinical annotations (dosing, efficacy, toxicity)
 - Evidence level and sources
 - PharmGKB cross-references
 
 **Clinical Utility:**
+
 - Dosing adjustments based on genotype
 - Contraindications for specific variants
 - Efficacy predictors
@@ -186,19 +207,23 @@ Measures of negative selection against variants in the gene.
 **Metrics:**
 
 **pLI (probability of Loss-of-function Intolerance)**
+
 - Range: 0-1
 - pLI > 0.9 indicates intolerant to LoF variants
 - High pLI suggests essentiality
 
 **LOEUF (Loss-of-function Observed/Expected Upper bound Fraction)**
+
 - Lower values indicate greater constraint
 - More interpretable than pLI across range
 
 **Missense Constraint**
+
 - Z-scores for missense depletion
 - O/E ratios for missense variants
 
 **Interpretation:**
+
 - High constraint suggests important biological function
 - May indicate safety concerns if inhibited
 - Essential genes often show high constraint
@@ -210,11 +235,13 @@ Cross-species gene conservation and ortholog information.
 #### Data Source: Ensembl Compara
 
 **Ortholog Data:**
+
 - Mouse, rat, zebrafish, other model organisms
 - Orthology confidence (1:1, 1:many, many:many)
 - Percent identity and similarity
 
 **Utility:**
+
 - Model organism studies transferability
 - Functional conservation assessment
 - Evolution and selective pressure
@@ -226,16 +253,19 @@ Cancer-specific target features for oncology indications.
 #### Data Sources:
 
 **Cancer Gene Census**
+
 - Role in cancer (oncogene, TSG, fusion)
 - Tier classification (1 = established, 2 = emerging)
 - Tumor types and mutation types
 
 **Cancer Hallmarks**
+
 - Functional roles in cancer biology
 - Hallmarks: proliferation, apoptosis evasion, metastasis, etc.
 - Links to specific cancer processes
 
 **Oncology Clinical Trials**
+
 - Drugs in development targeting gene for cancer
 - Trial phases and indications
 
@@ -246,11 +276,13 @@ Phenotypes from mouse knockout/mutation studies.
 #### Data Source: MGI (Mouse Genome Informatics)
 
 **Phenotype Data:**
+
 - Knockout phenotypes
 - Disease model associations
 - Mammalian Phenotype Ontology (MP) terms
 
 **Utility:**
+
 - Predict on-target effects
 - Safety liability identification
 - Mechanism of action insights
@@ -262,11 +294,13 @@ Biological pathway annotations placing target in functional context.
 #### Data Source: Reactome
 
 **Pathway Information:**
+
 - Curated biological pathways
 - Hierarchical organization
 - Pathway diagrams with target position
 
 **Applications:**
+
 - Mechanism hypothesis generation
 - Related target identification
 - Systems biology analysis

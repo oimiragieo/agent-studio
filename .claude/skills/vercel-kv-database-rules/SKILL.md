@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Use Vercel's KV database to store and retrieve session data.
 - Utilize `kv.set`, `kv.get`, and `kv.delete` to manage data.
 - Ensure the database operations are asynchronous to avoid blocking server-side rendering (SSR).
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

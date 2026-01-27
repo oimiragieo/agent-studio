@@ -11,17 +11,20 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 ### Benefits
 
 **For authors:**
+
 - Ensures nothing important is forgotten
 - Increases acceptance rates
 - Improves manuscript organization
 - Reduces reviewer requests for additional information
 
 **For readers and reviewers:**
+
 - Enables critical appraisal of study validity
 - Facilitates systematic reviews and meta-analyses
 - Improves understanding of what was actually done
 
 **For science:**
+
 - Enhances reproducibility
 - Reduces research waste
 - Improves transparency
@@ -45,10 +48,12 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** CONSORT 2010 (updated statement)
 
 **Key components:**
+
 - **Checklist**: 25 items covering title, abstract, introduction, methods, results, discussion
 - **Flow diagram**: Participant flow through enrollment, allocation, follow-up, and analysis
 
 **Main checklist items:**
+
 1. Title identifies study as randomized trial
 2. Structured abstract
 3. Scientific background and rationale
@@ -76,6 +81,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 25. Funding sources
 
 **Extensions for specific designs:**
+
 - CONSORT for cluster randomized trials
 - CONSORT for non-inferiority and equivalence trials
 - CONSORT for pragmatic trials
@@ -94,11 +100,13 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** STROBE 2007 (widely adopted standard)
 
 **Key study designs covered:**
+
 - **Cohort**: Follow exposed and unexposed groups forward in time
 - **Case-control**: Compare exposure history between cases and controls
 - **Cross-sectional**: Measure exposure and outcome simultaneously
 
 **Main checklist items (22 items):**
+
 1. Title and abstract indicate study design
 2. Background and rationale
 3. Objectives
@@ -123,6 +131,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 22. Funding sources and role
 
 **Extensions:**
+
 - STROBE-ME (Molecular Epidemiology)
 - RECORD (Routinely collected health data)
 - STROBE-RDS (Respondent-driven sampling)
@@ -138,10 +147,12 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** PRISMA 2020 (significant update)
 
 **Key components:**
+
 - **Checklist**: 27 items covering all sections
 - **Flow diagram**: Study selection process
 
 **Main sections:**
+
 1. **Title**: Identify as systematic review/meta-analysis
 2. **Abstract**: Structured summary
 3. **Introduction**: Rationale and objectives
@@ -170,6 +181,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
    - Implications
 
 **Extensions:**
+
 - PRISMA for Abstracts
 - PRISMA for Protocols (PRISMA-P)
 - PRISMA for Network Meta-Analyses
@@ -191,6 +203,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Purpose:** Ensure trial protocols contain complete descriptions before trial begins
 
 **Main checklist items (33 items):**
+
 - Administrative information (title, trial registration, funding)
 - Introduction (background, rationale, objectives)
 - Methods: Trial design
@@ -226,6 +239,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** STARD 2015
 
 **Main checklist items (30 items):**
+
 1. Study design identification
 2. Background information and objectives
 3. Study design description
@@ -255,12 +269,14 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** TRIPOD 2015
 
 **Types of studies:**
+
 - Model development only
 - Model development with validation
 - External validation of existing model
 - Model update
 
 **Main checklist items (22 items):**
+
 1. Title identifies study as prediction model study
 2. Abstract summarizes key elements
 3. Background and objectives
@@ -291,6 +307,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Two sets of items:**
 
 **ARRIVE Essential 10** (minimum requirements):
+
 1. Study design
 2. Sample size calculation
 3. Inclusion and exclusion criteria
@@ -303,6 +320,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 10. Results and interpretation
 
 **ARRIVE Recommended Set** (additional items for full reporting):
+
 - Abstract, background, objectives
 - Ethics statement
 - Housing and husbandry
@@ -322,6 +340,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** CARE 2013
 
 **Main checklist items (13 items):**
+
 1. Title with "case report"
 2. Abstract summarizing case
 3. Introduction with case background
@@ -346,6 +365,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** SQUIRE 2.0 (2015)
 
 **Main sections (18 items):**
+
 1. Title and abstract
 2. Introduction (problem description, available knowledge, rationale, objectives)
 3. Methods (context, intervention, study design, measures, analysis, ethical review)
@@ -364,6 +384,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** CHEERS 2022 (major update from 2013)
 
 **Main checklist items (28 items):**
+
 1. Title identification as economic evaluation
 2. Abstract
 3. Background and objectives
@@ -392,6 +413,7 @@ The EQUATOR Network (Enhancing the QUAlity and Transparency Of health Research) 
 **Latest version:** SRQR 2014
 
 **Main sections:**
+
 - Title and abstract
 - Introduction (problem formulation, purpose)
 - Methods (qualitative approach, researcher characteristics, context, sampling strategy, ethical issues, data collection, data analysis, trustworthiness)
@@ -440,6 +462,7 @@ Page 6, lines 112-125: "Participants were community-dwelling adults aged 60-85 y
 **Website:** https://www.equator-network.org/
 
 **How to use:**
+
 1. Select your study design from the wizard
 2. Browse by health research category
 3. Search for specific keywords
@@ -447,29 +470,31 @@ Page 6, lines 112-125: "Participants were community-dwelling adults aged 60-85 y
 
 ### By Study Design
 
-| If your study is a... | Use this guideline |
-|----------------------|-------------------|
-| Randomized controlled trial | CONSORT |
-| Cohort, case-control, or cross-sectional study | STROBE |
-| Systematic review or meta-analysis | PRISMA |
-| Protocol for a trial | SPIRIT |
-| Diagnostic accuracy study | STARD |
-| Prediction model study | TRIPOD |
-| Animal study | ARRIVE |
-| Case report | CARE |
-| Quality improvement study | SQUIRE |
-| Economic evaluation | CHEERS |
-| Qualitative research | SRQR or COREQ |
+| If your study is a...                          | Use this guideline |
+| ---------------------------------------------- | ------------------ |
+| Randomized controlled trial                    | CONSORT            |
+| Cohort, case-control, or cross-sectional study | STROBE             |
+| Systematic review or meta-analysis             | PRISMA             |
+| Protocol for a trial                           | SPIRIT             |
+| Diagnostic accuracy study                      | STARD              |
+| Prediction model study                         | TRIPOD             |
+| Animal study                                   | ARRIVE             |
+| Case report                                    | CARE               |
+| Quality improvement study                      | SQUIRE             |
+| Economic evaluation                            | CHEERS             |
+| Qualitative research                           | SRQR or COREQ      |
 
 ### Multiple Guidelines
 
 **Some studies may require multiple guidelines:**
 
 **Example 1:** Pilot RCT with qualitative component
+
 - CONSORT for quantitative arm
 - SRQR for qualitative component
 
 **Example 2:** Systematic review of diagnostic tests
+
 - PRISMA for review methods
 - STARD considerations for included studies
 
@@ -503,12 +528,14 @@ Many reporting guidelines have extensions for specific contexts:
 ### CONSORT Flow Diagram
 
 **Four stages:**
+
 1. **Enrollment**: Assessed for eligibility
 2. **Allocation**: Randomly assigned to groups
 3. **Follow-up**: Received intervention, lost to follow-up
 4. **Analysis**: Included in analysis
 
 **Example:**
+
 ```
 Assessed for eligibility (n=250)
     ↓
@@ -534,11 +561,13 @@ Analyzed          Analyzed          Analyzed
 ### PRISMA Flow Diagram
 
 **Stages:**
+
 1. **Identification**: Records from databases and registers
 2. **Screening**: Records screened, excluded
 3. **Included**: Studies included in review and synthesis
 
 **New features in PRISMA 2020:**
+
 - Separate tracking for database and register searches
 - Tracking of duplicate removal
 - Clear distinction between reports and studies
@@ -639,18 +668,21 @@ checklist is provided as Supplementary File 1."
 ## Checklist: Using Reporting Guidelines
 
 **Before starting your study:**
+
 - [ ] Identified appropriate reporting guideline(s)
 - [ ] Reviewed checklist items requiring prospective planning
 - [ ] Designed study to capture all required elements
 - [ ] Registered protocol if applicable
 
 **During manuscript drafting:**
+
 - [ ] Downloaded latest version of guideline checklist
 - [ ] Systematically addressed each checklist item
 - [ ] Created required flow diagram
 - [ ] Noted where each item is addressed (page/line)
 
 **Before submission:**
+
 - [ ] Completed formal checklist with page numbers
 - [ ] Verified all items adequately addressed
 - [ ] Included adherence statement in Methods
@@ -662,16 +694,17 @@ checklist is provided as Supplementary File 1."
 
 ### Reporting Standards by Venue Type
 
-| Venue Type | Guideline Use | Transparency Requirements |
-|-----------|--------------|---------------------------|
+| Venue Type           | Guideline Use                     | Transparency Requirements        |
+| -------------------- | --------------------------------- | -------------------------------- |
 | **Medical journals** | Mandatory (CONSORT, STROBE, etc.) | Checklist required at submission |
-| **PLOS/BMC** | Mandatory for study types | Checklist uploaded as supplement |
-| **Nature/Science** | Recommended | Methods completeness emphasized |
-| **ML conferences** | No formal guidelines | Reproducibility details required |
+| **PLOS/BMC**         | Mandatory for study types         | Checklist uploaded as supplement |
+| **Nature/Science**   | Recommended                       | Methods completeness emphasized  |
+| **ML conferences**   | No formal guidelines              | Reproducibility details required |
 
 ### ML Conference Reporting Standards
 
 **NeurIPS/ICML/ICLR reproducibility requirements:**
+
 - **Datasets**: Names, versions, access methods, preprocessing
 - **Code**: Availability statement; GitHub common
 - **Hyperparameters**: All settings reported (learning rate, batch size, etc.)
@@ -681,6 +714,7 @@ checklist is provided as Supplementary File 1."
 - **Broader Impact** statement (NeurIPS): Societal implications
 
 **What to include (typically in appendix):**
+
 - Complete hyperparameter settings
 - Training details and convergence criteria
 - Hardware specifications
@@ -691,12 +725,14 @@ checklist is provided as Supplementary File 1."
 ### Enforcement and Evaluation
 
 **What gets checked:**
+
 - **Medical journals**: Checklist uploaded; adherence statement in Methods; systematic completeness
 - **PLOS/BMC**: Mandatory checklists for certain designs; reproducibility emphasized
 - **High-impact**: Methods sufficiency for replication (checklist often not required)
 - **ML conferences**: Reproducibility checklist (NeurIPS); code availability increasingly expected
 
 **Common issues leading to rejection:**
+
 - Missing required checklists (medical journals)
 - Insufficient methods detail for reproduction
 - Missing key information (randomization, blinding, power calculation)
@@ -705,11 +741,13 @@ checklist is provided as Supplementary File 1."
 **Methods statement examples:**
 
 **Journal (STROBE):**
+
 ```
 This study followed STROBE reporting guidelines. Checklist provided in Supplement 1.
 ```
 
 **ML conference (reproducibility):**
+
 ```
 Code available at github.com/user/project. All hyperparameters in Appendix A.
 Training used 4×A100 GPUs (~20 hours). Seeds: {42, 123, 456}.
@@ -718,6 +756,7 @@ Training used 4×A100 GPUs (~20 hours). Seeds: {42, 123, 456}.
 ### Pre-Submission Reporting Checklist
 
 **For clinical trials (medical journals):**
+
 - [ ] CONSORT checklist complete with page numbers
 - [ ] Trial registration number in abstract and methods
 - [ ] CONSORT flow diagram included
@@ -725,6 +764,7 @@ Training used 4×A100 GPUs (~20 hours). Seeds: {42, 123, 456}.
 - [ ] Adherence statement in Methods
 
 **For observational studies (medical/epidemiology):**
+
 - [ ] STROBE checklist complete
 - [ ] Study design clearly stated
 - [ ] Statistical methods detailed
@@ -732,6 +772,7 @@ Training used 4×A100 GPUs (~20 hours). Seeds: {42, 123, 456}.
 - [ ] Adherence statement in Methods
 
 **For systematic reviews:**
+
 - [ ] PRISMA checklist complete
 - [ ] PRISMA flow diagram included
 - [ ] Protocol registered (PROSPERO)
@@ -739,6 +780,7 @@ Training used 4×A100 GPUs (~20 hours). Seeds: {42, 123, 456}.
 - [ ] Risk of bias assessment included
 
 **For ML conference papers:**
+
 - [ ] All datasets named with versions
 - [ ] Code availability stated (GitHub link if available)
 - [ ] Hyperparameters listed (appendix acceptable)

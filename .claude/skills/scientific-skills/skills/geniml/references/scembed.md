@@ -7,6 +7,7 @@ scEmbed trains Region2Vec models on single-cell ATAC-seq datasets to generate ce
 ## When to Use
 
 Use scEmbed when working with:
+
 - Single-cell ATAC-seq (scATAC-seq) data requiring clustering
 - Cell-type annotation tasks
 - Dimensionality reduction for single-cell chromatin accessibility
@@ -52,6 +53,7 @@ tokenize_cells(
 ```
 
 **Benefits of pre-tokenization:**
+
 - Faster training iterations
 - Reduced memory requirements
 - Reusable tokenized data for multiple training runs
@@ -126,14 +128,14 @@ sc.pl.umap(adata, color='leiden')
 
 ### Training Parameters
 
-| Parameter | Description | Typical Range |
-|-----------|-------------|---------------|
-| `embedding_dim` | Dimension of cell embeddings | 50 - 200 |
-| `window_size` | Context window for training | 3 - 10 |
-| `negative_samples` | Number of negative samples | 5 - 20 |
-| `epochs` | Training epochs | 50 - 200 |
-| `batch_size` | Training batch size | 128 - 512 |
-| `learning_rate` | Initial learning rate | 0.01 - 0.05 |
+| Parameter          | Description                  | Typical Range |
+| ------------------ | ---------------------------- | ------------- |
+| `embedding_dim`    | Dimension of cell embeddings | 50 - 200      |
+| `window_size`      | Context window for training  | 3 - 10        |
+| `negative_samples` | Number of negative samples   | 5 - 20        |
+| `epochs`           | Training epochs              | 50 - 200      |
+| `batch_size`       | Training batch size          | 128 - 512     |
+| `learning_rate`    | Initial learning rate        | 0.01 - 0.05   |
 
 ### Tokenization Parameters
 
@@ -166,6 +168,7 @@ embeddings = model.encode(adata)
 ## Example Dataset
 
 The 10x Genomics PBMC 10k dataset (10,000 peripheral blood mononuclear cells) serves as a standard benchmark:
+
 - Contains diverse immune cell types
 - Well-characterized cell populations
 - Available from 10x Genomics website
@@ -191,6 +194,7 @@ adata.obs['cell_type'] = annotations
 ## Output
 
 scEmbed produces:
+
 - Low-dimensional cell embeddings (stored in `adata.obsm`)
 - Trained model files for reuse
 - Compatible format for scanpy downstream analysis

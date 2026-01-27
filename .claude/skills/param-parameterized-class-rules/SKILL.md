@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Use Param to create parameterized classes.
 - Param should handle type validation, default values, and constraints.
 - Use Param's reactivity features (event handlers) to catch changes.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

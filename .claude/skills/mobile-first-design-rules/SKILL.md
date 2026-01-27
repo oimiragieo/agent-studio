@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Use Tailwind's responsive prefixes (sm:, md:, lg:, xl:) to adjust layouts for different screen sizes.
 - Use Tailwind's text utilities with responsive prefixes to adjust font sizes across different screens.
 - Consider using a fluid typography system for seamless scaling.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

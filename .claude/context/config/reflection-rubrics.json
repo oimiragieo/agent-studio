@@ -81,7 +81,7 @@
       ]
     },
     "actionability": {
-      "weight": 0.20,
+      "weight": 0.2,
       "description": "Clear next steps defined, implementable without ambiguity",
       "scoring": {
         "0": "No actionable items or completely vague",
@@ -112,14 +112,10 @@
   "output_types": {
     "agent_output": {
       "description": "General agent task completion output",
-      "required_sections": [
-        "summary",
-        "changes_made",
-        "verification"
-      ],
+      "required_sections": ["summary", "changes_made", "verification"],
       "category_weights": {
         "completeness": 0.25,
-        "accuracy": 0.30,
+        "accuracy": 0.3,
         "clarity": 0.15,
         "consistency": 0.15,
         "actionability": 0.15
@@ -133,19 +129,13 @@
     },
     "plan_output": {
       "description": "Planning phase output (from planner agent)",
-      "required_sections": [
-        "overview",
-        "phases",
-        "tasks",
-        "dependencies",
-        "risks"
-      ],
+      "required_sections": ["overview", "phases", "tasks", "dependencies", "risks"],
       "category_weights": {
-        "completeness": 0.30,
-        "accuracy": 0.20,
-        "clarity": 0.20,
-        "consistency": 0.10,
-        "actionability": 0.20
+        "completeness": 0.3,
+        "accuracy": 0.2,
+        "clarity": 0.2,
+        "consistency": 0.1,
+        "actionability": 0.2
       },
       "specific_checks": [
         "All phases have clear deliverables",
@@ -157,17 +147,13 @@
     },
     "code_output": {
       "description": "Code implementation output",
-      "required_sections": [
-        "implementation",
-        "tests",
-        "documentation"
-      ],
+      "required_sections": ["implementation", "tests", "documentation"],
       "category_weights": {
-        "completeness": 0.20,
+        "completeness": 0.2,
         "accuracy": 0.35,
         "clarity": 0.15,
-        "consistency": 0.20,
-        "actionability": 0.10
+        "consistency": 0.2,
+        "actionability": 0.1
       },
       "specific_checks": [
         "Code compiles/parses without errors",
@@ -180,15 +166,11 @@
     },
     "documentation_output": {
       "description": "Documentation and technical writing output",
-      "required_sections": [
-        "overview",
-        "content",
-        "examples"
-      ],
+      "required_sections": ["overview", "content", "examples"],
       "category_weights": {
         "completeness": 0.25,
         "accuracy": 0.25,
-        "clarity": 0.30,
+        "clarity": 0.3,
         "consistency": 0.15,
         "actionability": 0.05
       },
@@ -202,16 +184,12 @@
     },
     "security_review_output": {
       "description": "Security audit and review output",
-      "required_sections": [
-        "threat_model",
-        "findings",
-        "recommendations"
-      ],
+      "required_sections": ["threat_model", "findings", "recommendations"],
       "category_weights": {
-        "completeness": 0.30,
-        "accuracy": 0.30,
+        "completeness": 0.3,
+        "accuracy": 0.3,
         "clarity": 0.15,
-        "consistency": 0.10,
+        "consistency": 0.1,
         "actionability": 0.15
       },
       "specific_checks": [
@@ -224,18 +202,13 @@
     },
     "architecture_output": {
       "description": "Architecture design and review output",
-      "required_sections": [
-        "context",
-        "design",
-        "tradeoffs",
-        "decisions"
-      ],
+      "required_sections": ["context", "design", "tradeoffs", "decisions"],
       "category_weights": {
         "completeness": 0.25,
         "accuracy": 0.25,
         "clarity": 0.25,
         "consistency": 0.15,
-        "actionability": 0.10
+        "actionability": 0.1
       },
       "specific_checks": [
         "Requirements traced to design decisions",

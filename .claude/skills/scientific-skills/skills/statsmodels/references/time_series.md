@@ -5,6 +5,7 @@ This document provides comprehensive guidance on time series models in statsmode
 ## Overview
 
 Statsmodels offers extensive time series capabilities:
+
 - **Univariate models**: AR, ARIMA, SARIMAX, Exponential Smoothing
 - **Multivariate models**: VAR, VARMAX, Dynamic Factor Models
 - **State space framework**: Custom models, Kalman filtering
@@ -18,6 +19,7 @@ Statsmodels offers extensive time series capabilities:
 Autoregressive model: current value depends on past values.
 
 **When to use:**
+
 - Univariate time series
 - Past values predict future
 - Stationary series
@@ -36,6 +38,7 @@ print(results.summary())
 ```
 
 **With exogenous regressors:**
+
 ```python
 # AR with exogenous variables (ARX)
 model = AutoReg(y, lags=5, exog=X_exog)
@@ -43,6 +46,7 @@ results = model.fit()
 ```
 
 **Seasonal AR:**
+
 ```python
 # Seasonal lags (e.g., monthly data with yearly seasonality)
 model = AutoReg(y, lags=12, seasonal=True)
@@ -54,11 +58,13 @@ results = model.fit()
 Combines AR, differencing (I), and MA components.
 
 **When to use:**
+
 - Non-stationary time series (needs differencing)
 - Past values and errors predict future
 - Flexible model for many time series
 
 **Model**: ARIMA(p,d,q)
+
 - p: AR order (lags)
 - d: differencing order (to achieve stationarity)
 - q: MA order (lagged forecast errors)
@@ -76,6 +82,7 @@ print(results.summary())
 **Choosing p, d, q:**
 
 1. **Determine d (differencing order)**:
+
 ```python
 from statsmodels.tsa.stattools import adfuller
 
@@ -102,6 +109,7 @@ if not check_stationarity(y):
 ```
 
 2. **Determine p and q (ACF/PACF)**:
+
 ```python
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 import matplotlib.pyplot as plt
@@ -127,6 +135,7 @@ plt.show()
 ```
 
 3. **Model selection (AIC/BIC)**:
+
 ```python
 # Grid search for best (p,q) given d
 import numpy as np
@@ -153,11 +162,13 @@ print(f"Best order: {best_order} with AIC: {best_aic:.2f}")
 Extends ARIMA with seasonality and exogenous regressors.
 
 **When to use:**
+
 - Seasonal patterns (monthly, quarterly data)
 - External variables influence series
 - Most flexible univariate model
 
 **Model**: SARIMAX(p,d,q)(P,D,Q,s)
+
 - (p,d,q): Non-seasonal ARIMA
 - (P,D,Q,s): Seasonal ARIMA with period s
 
@@ -174,6 +185,7 @@ print(results.summary())
 ```
 
 **With exogenous variables:**
+
 ```python
 # SARIMAX with external predictors
 model = SARIMAX(y,
@@ -184,6 +196,7 @@ results = model.fit()
 ```
 
 **Example: Monthly sales with trend and seasonality**
+
 ```python
 # Typical for monthly data: (p,d,q)(P,D,Q,12)
 # Start with (1,1,1)(1,1,1,12) or (0,1,1)(0,1,1,12)
@@ -201,11 +214,13 @@ results = model.fit()
 Weighted averages of past observations with exponentially decreasing weights.
 
 **When to use:**
+
 - Simple, interpretable forecasts
 - Trend and/or seasonality present
 - No need for explicit model specification
 
 **Types:**
+
 - Simple Exponential Smoothing: no trend, no seasonality
 - Holt's method: with trend
 - Holt-Winters: with trend and seasonality
@@ -232,6 +247,7 @@ print(results.summary())
 ```
 
 **Additive vs Multiplicative:**
+
 ```python
 # Additive: constant seasonal variation
 # yₜ = Level + Trend + Seasonal + Error
@@ -245,6 +261,7 @@ print(results.summary())
 ```
 
 **Innovations state space (ETS):**
+
 ```python
 from statsmodels.tsa.exponential_smoothing.ets import ETSModel
 
@@ -264,11 +281,13 @@ results = model.fit()
 System of equations where each variable depends on past values of all variables.
 
 **When to use:**
+
 - Multiple interrelated time series
 - Bidirectional relationships
 - Granger causality testing
 
 **Model**: Each variable is AR on all variables:
+
 - y₁ₜ = c₁ + φ₁₁y₁ₜ₋₁ + φ₁₂y₂ₜ₋₁ + ... + ε₁ₜ
 - y₂ₜ = c₂ + φ₂₁y₁ₜ₋₁ + φ₂₂y₂ₜ₋₁ + ... + ε₂ₜ
 
@@ -293,6 +312,7 @@ print(results.summary())
 ```
 
 **Granger causality testing:**
+
 ```python
 # Test if series1 Granger-causes series2
 from statsmodels.tsa.stattools import grangercausalitytests
@@ -311,6 +331,7 @@ for lag in range(1, max_lag + 1):
 ```
 
 **Impulse Response Functions (IRF):**
+
 ```python
 # Trace effect of shock through system
 irf = results.irf(10)  # 10 periods ahead
@@ -325,6 +346,7 @@ plt.show()
 ```
 
 **Forecast Error Variance Decomposition:**
+
 ```python
 # Contribution of each variable to forecast error variance
 fevd = results.fevd(10)  # 10 periods ahead
@@ -337,6 +359,7 @@ plt.show()
 Extends VAR with MA component and external regressors.
 
 **When to use:**
+
 - VAR inadequate (MA component needed)
 - External variables affect system
 - More flexible multivariate model
@@ -358,6 +381,7 @@ print(results.summary())
 Flexible framework for custom time series models.
 
 **When to use:**
+
 - Custom model specification
 - Unobserved components
 - Kalman filtering/smoothing
@@ -371,6 +395,7 @@ from statsmodels.tsa.statespace.mlemodel import MLEModel
 ```
 
 **Dynamic Factor Models:**
+
 ```python
 from statsmodels.tsa.statespace.dynamic_factor import DynamicFactor
 

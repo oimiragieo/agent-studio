@@ -3,9 +3,7 @@
   "title": "kubernetes-flux Output Schema",
   "description": "Output validation schema for kubernetes-flux skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

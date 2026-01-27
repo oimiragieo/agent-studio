@@ -17,6 +17,7 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 ```
 
 Load from local path:
+
 ```python
 tokenizer = AutoTokenizer.from_pretrained("./local/tokenizer/path")
 ```
@@ -65,6 +66,7 @@ print(inputs)
 ```
 
 Multiple texts:
+
 ```python
 texts = ["Hello", "How are you?"]
 inputs = tokenizer(texts, padding=True, truncation=True)
@@ -75,6 +77,7 @@ inputs = tokenizer(texts, padding=True, truncation=True)
 ### Return Tensors
 
 **return_tensors**: Output format ("pt", "tf", "np")
+
 ```python
 # PyTorch tensors
 inputs = tokenizer("text", return_tensors="pt")
@@ -89,6 +92,7 @@ inputs = tokenizer("text", return_tensors="np")
 ### Padding
 
 **padding**: Pad sequences to same length
+
 ```python
 # Pad to longest sequence in batch
 inputs = tokenizer(texts, padding=True)
@@ -101,6 +105,7 @@ inputs = tokenizer(texts, padding=False)
 ```
 
 **pad_to_multiple_of**: Pad to multiple of specified value
+
 ```python
 inputs = tokenizer(texts, padding=True, pad_to_multiple_of=8)
 ```
@@ -108,6 +113,7 @@ inputs = tokenizer(texts, padding=True, pad_to_multiple_of=8)
 ### Truncation
 
 **truncation**: Limit sequence length
+
 ```python
 # Truncate to max_length
 inputs = tokenizer(text, truncation=True, max_length=512)
@@ -125,6 +131,7 @@ inputs = tokenizer(text1, text2, truncation="longest_first", max_length=512)
 ### Max Length
 
 **max_length**: Maximum sequence length
+
 ```python
 inputs = tokenizer(text, max_length=512, truncation=True)
 ```
@@ -132,21 +139,25 @@ inputs = tokenizer(text, max_length=512, truncation=True)
 ### Additional Outputs
 
 **return_attention_mask**: Include attention mask (default True)
+
 ```python
 inputs = tokenizer(text, return_attention_mask=True)
 ```
 
 **return_token_type_ids**: Segment IDs for sentence pairs
+
 ```python
 inputs = tokenizer(text1, text2, return_token_type_ids=True)
 ```
 
 **return_offsets_mapping**: Character position mapping (Fast tokenizers only)
+
 ```python
 inputs = tokenizer(text, return_offsets_mapping=True)
 ```
 
 **return_length**: Include sequence lengths
+
 ```python
 inputs = tokenizer(texts, padding=True, return_length=True)
 ```
@@ -156,6 +167,7 @@ inputs = tokenizer(texts, padding=True, return_length=True)
 ### Predefined Special Tokens
 
 Access special tokens:
+
 ```python
 print(tokenizer.cls_token)      # [CLS] or <s>
 print(tokenizer.sep_token)      # [SEP] or </s>
@@ -173,6 +185,7 @@ print(tokenizer.sep_token_id)
 ### Add Special Tokens
 
 Manual control:
+
 ```python
 # Automatically add special tokens (default True)
 inputs = tokenizer(text, add_special_tokens=True)
@@ -248,6 +261,7 @@ tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased", use_fast=False)
 ### Fast Tokenizer Features
 
 **Offset mapping** (character positions):
+
 ```python
 inputs = tokenizer("Hello world", return_offsets_mapping=True)
 print(inputs["offset_mapping"])
@@ -255,6 +269,7 @@ print(inputs["offset_mapping"])
 ```
 
 **Token to word mapping**:
+
 ```python
 encoding = tokenizer("Hello world")
 word_ids = encoding.word_ids()
@@ -264,11 +279,13 @@ print(word_ids)  # [None, 0, 1, None]  # [CLS]=None, "Hello"=0, "world"=1, [SEP]
 ## Saving Tokenizers
 
 Save locally:
+
 ```python
 tokenizer.save_pretrained("./my_tokenizer")
 ```
 
 Push to Hub:
+
 ```python
 tokenizer.push_to_hub("username/my-tokenizer")
 ```
@@ -278,6 +295,7 @@ tokenizer.push_to_hub("username/my-tokenizer")
 ### Vocabulary
 
 Access vocabulary:
+
 ```python
 vocab = tokenizer.get_vocab()
 vocab_size = len(vocab)
@@ -419,18 +437,21 @@ tokenized_dataset = dataset.map(tokenize_function, batched=True)
 ## Common Issues
 
 **Padding token not set:**
+
 ```python
 if tokenizer.pad_token is None:
     tokenizer.pad_token = tokenizer.eos_token
 ```
 
 **Sequence too long:**
+
 ```python
 # Enable truncation
 inputs = tokenizer(text, truncation=True, max_length=512)
 ```
 
 **Mismatched vocabulary:**
+
 ```python
 # Always load tokenizer and model from same checkpoint
 tokenizer = AutoTokenizer.from_pretrained("model-id")
@@ -438,6 +459,7 @@ model = AutoModel.from_pretrained("model-id")
 ```
 
 **Attention mask issues:**
+
 ```python
 # Ensure attention_mask is passed
 outputs = model(

@@ -7,6 +7,7 @@ The Resolve API identifies Data Commons IDs (DCIDs) for entities in the knowledg
 ## Key Capabilities
 
 The endpoint currently supports **place entities only** and allows resolution through multiple methods:
+
 - **By name**: Search using descriptive terms like "San Francisco, CA"
 - **By Wikidata ID**: Lookup using external identifiers (e.g., "Q30" for USA)
 - **By coordinates**: Locate places via latitude/longitude
@@ -19,10 +20,12 @@ The endpoint currently supports **place entities only** and allows resolution th
 General resolution using relation expressions—most flexible method.
 
 **Parameters:**
+
 - `nodes`: List of search terms or identifiers
 - `property`: Property to search (e.g., "name", "wikidataId")
 
 **Example Usage:**
+
 ```python
 from datacommons_client import DataCommonsClient
 
@@ -40,12 +43,14 @@ response = client.resolve.fetch(
 Name-based lookup with optional type filtering—most commonly used method.
 
 **Parameters:**
+
 - `names`: List of place names to resolve
 - `entity_type`: Optional type filter (e.g., "City", "State", "County")
 
 **Returns:** `ResolveResponse` object with candidates for each name
 
 **Example Usage:**
+
 ```python
 # Basic name resolution
 response = client.resolve.fetch_dcids_by_name(
@@ -68,9 +73,11 @@ for name, result in response.to_dict().items():
 Wikidata ID resolution for entities with known Wikidata identifiers.
 
 **Parameters:**
+
 - `wikidata_ids`: List of Wikidata IDs (e.g., "Q30", "Q99")
 
 **Example Usage:**
+
 ```python
 # Resolve Wikidata IDs
 response = client.resolve.fetch_dcids_by_wikidata_id(
@@ -83,12 +90,14 @@ response = client.resolve.fetch_dcids_by_wikidata_id(
 Geographic coordinate lookup to find the place at specific lat/long coordinates.
 
 **Parameters:**
+
 - `latitude`: Latitude coordinate
 - `longitude`: Longitude coordinate
 
 **Returns:** Single DCID string for the place at those coordinates
 
 **Example Usage:**
+
 ```python
 # Find place at coordinates
 dcid = client.resolve.fetch_dcid_by_coordinates(
@@ -101,6 +110,7 @@ dcid = client.resolve.fetch_dcid_by_coordinates(
 ## Response Structure
 
 All methods (except `fetch_dcid_by_coordinates`) return a `ResolveResponse` object containing:
+
 - **node**: The search term provided
 - **candidates**: List of matching DCIDs with optional metadata
   - Each candidate may include `dominantType` field for disambiguation
@@ -110,6 +120,7 @@ All methods (except `fetch_dcid_by_coordinates`) return a `ResolveResponse` obje
   - `to_flat_dict()`: Simplified format with just DCIDs
 
 **Example Response:**
+
 ```python
 response = client.resolve.fetch_dcids_by_name(names=["Springfield"])
 
@@ -130,6 +141,7 @@ response = client.resolve.fetch_dcids_by_name(names=["Springfield"])
 ### Use Case 1: Resolve Place Names Before Querying
 
 Most workflows start by resolving names to DCIDs:
+
 ```python
 # Step 1: Resolve names
 resolve_response = client.resolve.fetch_dcids_by_name(
@@ -153,6 +165,7 @@ data_response = client.observation.fetch(
 ### Use Case 2: Handle Ambiguous Names
 
 When multiple candidates exist, use `dominantType` or be more specific:
+
 ```python
 # Ambiguous name
 response = client.resolve.fetch_dcids_by_name(names=["Springfield"])
@@ -171,6 +184,7 @@ response = client.resolve.fetch_dcids_by_name(
 ### Use Case 3: Batch Resolution
 
 Resolve multiple entities efficiently:
+
 ```python
 places = [
     "San Francisco, CA",
@@ -191,6 +205,7 @@ for name, result in response.to_dict().items():
 ### Use Case 4: Coordinate-Based Queries
 
 Find the administrative place for a location:
+
 ```python
 # User provides coordinates, find the place
 latitude, longitude = 37.7749, -122.4194
@@ -210,6 +225,7 @@ response = client.observation.fetch(
 ### Use Case 5: External ID Integration
 
 When working with external datasets that use Wikidata IDs:
+
 ```python
 # External dataset has Wikidata IDs
 wikidata_ids = ["Q30", "Q99", "Q1384"]  # USA, California, New York

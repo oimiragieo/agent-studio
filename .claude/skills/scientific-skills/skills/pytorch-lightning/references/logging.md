@@ -11,11 +11,13 @@ PyTorch Lightning supports multiple logging integrations for experiment tracking
 Logs to local or remote file system in TensorBoard format.
 
 **Installation:**
+
 ```bash
 pip install tensorboard
 ```
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -30,6 +32,7 @@ trainer = L.Trainer(logger=tb_logger)
 ```
 
 **View logs:**
+
 ```bash
 tensorboard --logdir logs/
 ```
@@ -39,11 +42,13 @@ tensorboard --logdir logs/
 Weights & Biases integration for cloud-based experiment tracking.
 
 **Installation:**
+
 ```bash
 pip install wandb
 ```
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -58,6 +63,7 @@ trainer = L.Trainer(logger=wandb_logger)
 ```
 
 **Features:**
+
 - Cloud-based experiment tracking
 - Model versioning
 - Artifact management
@@ -69,11 +75,13 @@ trainer = L.Trainer(logger=wandb_logger)
 MLflow tracking integration.
 
 **Installation:**
+
 ```bash
 pip install mlflow
 ```
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -91,11 +99,13 @@ trainer = L.Trainer(logger=mlflow_logger)
 Comet.ml experiment tracking.
 
 **Installation:**
+
 ```bash
 pip install comet-ml
 ```
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -113,11 +123,13 @@ trainer = L.Trainer(logger=comet_logger)
 Neptune.ai integration.
 
 **Installation:**
+
 ```bash
 pip install neptune
 ```
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -135,6 +147,7 @@ trainer = L.Trainer(logger=neptune_logger)
 Log to local file system in YAML and CSV format.
 
 **Usage:**
+
 ```python
 from lightning.pytorch import loggers as pl_loggers
 
@@ -148,6 +161,7 @@ trainer = L.Trainer(logger=csv_logger)
 ```
 
 **Output files:**
+
 - `metrics.csv` - All logged metrics
 - `hparams.yaml` - Hyperparameters
 
@@ -183,6 +197,7 @@ class MyModel(L.LightningModule):
 ### Logging Parameters
 
 #### `on_step` (bool)
+
 Log at current step. Default: True in training_step, False otherwise.
 
 ```python
@@ -190,6 +205,7 @@ self.log("loss", loss, on_step=True)
 ```
 
 #### `on_epoch` (bool)
+
 Accumulate and log at epoch end. Default: False in training_step, True otherwise.
 
 ```python
@@ -197,6 +213,7 @@ self.log("loss", loss, on_epoch=True)
 ```
 
 #### `prog_bar` (bool)
+
 Display in progress bar. Default: False.
 
 ```python
@@ -204,6 +221,7 @@ self.log("train_loss", loss, prog_bar=True)
 ```
 
 #### `logger` (bool)
+
 Send to logger backends. Default: True.
 
 ```python
@@ -211,6 +229,7 @@ self.log("internal_metric", value, logger=False)  # Don't log to external logger
 ```
 
 #### `reduce_fx` (str or callable)
+
 Reduction function: "mean", "sum", "max", "min". Default: "mean".
 
 ```python
@@ -218,6 +237,7 @@ self.log("batch_size", batch.size(0), reduce_fx="sum")
 ```
 
 #### `sync_dist` (bool)
+
 Synchronize metric across devices in distributed training. Default: False.
 
 ```python
@@ -225,6 +245,7 @@ self.log("loss", loss, sync_dist=True)
 ```
 
 #### `rank_zero_only` (bool)
+
 Only log from rank 0 process. Default: False.
 
 ```python

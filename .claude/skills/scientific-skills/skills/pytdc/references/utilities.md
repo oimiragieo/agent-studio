@@ -5,6 +5,7 @@ This document provides comprehensive documentation for TDC's data processing, ev
 ## Overview
 
 TDC provides utilities organized into four main categories:
+
 1. **Dataset Splits** - Train/validation/test partitioning strategies
 2. **Model Evaluation** - Standardized performance metrics
 3. **Data Processing** - Molecule conversion, filtering, and transformation
@@ -36,6 +37,7 @@ split = data.get_split(
 ### Split Methods
 
 #### Random Split
+
 Random shuffling of data - suitable for general ML tasks.
 
 ```python
@@ -43,15 +45,18 @@ split = data.get_split(method='random', seed=1)
 ```
 
 **When to use:**
+
 - Baseline model evaluation
 - When chemical/temporal structure is not important
 - Quick prototyping
 
 **Not recommended for:**
+
 - Realistic drug discovery scenarios
 - Evaluating generalization to new chemical matter
 
 #### Scaffold Split
+
 Splits based on molecular scaffolds (Bemis-Murcko scaffolds) - ensures test molecules are structurally distinct from training.
 
 ```python
@@ -59,43 +64,53 @@ split = data.get_split(method='scaffold', seed=1)
 ```
 
 **When to use:**
+
 - Default for most single prediction tasks
 - Evaluating generalization to new chemical series
 - Realistic drug discovery scenarios
 
 **How it works:**
+
 1. Extract Bemis-Murcko scaffold from each molecule
 2. Group molecules by scaffold
 3. Assign scaffolds to train/valid/test sets
 4. Ensures test molecules have unseen scaffolds
 
 #### Cold Splits (DTI/DDI Tasks)
+
 For multi-instance prediction, cold splits ensure test set contains unseen drugs, targets, or both.
 
 **Cold Drug Split:**
+
 ```python
 from tdc.multi_pred import DTI
 data = DTI(name='BindingDB_Kd')
 split = data.get_split(method='cold_drug', seed=1)
 ```
+
 - Test set contains drugs not seen during training
 - Evaluates generalization to new compounds
 
 **Cold Target Split:**
+
 ```python
 split = data.get_split(method='cold_target', seed=1)
 ```
+
 - Test set contains targets not seen during training
 - Evaluates generalization to new proteins
 
 **Cold Drug-Target Split:**
+
 ```python
 split = data.get_split(method='cold_drug_target', seed=1)
 ```
+
 - Test set contains novel drug-target pairs
 - Most challenging evaluation scenario
 
 #### Temporal Split
+
 For datasets with temporal information - ensures test data is from later time points.
 
 ```python
@@ -103,6 +118,7 @@ split = data.get_split(method='temporal', seed=1)
 ```
 
 **When to use:**
+
 - Datasets with time stamps
 - Simulating prospective prediction
 - Clinical trial outcome prediction
@@ -146,6 +162,7 @@ score = evaluator(y_true, y_pred)
 ### Classification Metrics
 
 #### ROC-AUC
+
 Receiver Operating Characteristic - Area Under Curve
 
 ```python
@@ -154,6 +171,7 @@ score = evaluator(y_true, y_pred_proba)
 ```
 
 **Best for:**
+
 - Binary classification
 - Imbalanced datasets
 - Overall discriminative ability
@@ -161,6 +179,7 @@ score = evaluator(y_true, y_pred_proba)
 **Range:** 0-1 (higher is better, 0.5 is random)
 
 #### PR-AUC
+
 Precision-Recall Area Under Curve
 
 ```python
@@ -169,6 +188,7 @@ score = evaluator(y_true, y_pred_proba)
 ```
 
 **Best for:**
+
 - Highly imbalanced datasets
 - When positive class is rare
 - Complements ROC-AUC
@@ -176,6 +196,7 @@ score = evaluator(y_true, y_pred_proba)
 **Range:** 0-1 (higher is better)
 
 #### F1 Score
+
 Harmonic mean of precision and recall
 
 ```python
@@ -184,12 +205,14 @@ score = evaluator(y_true, y_pred_binary)
 ```
 
 **Best for:**
+
 - Balance between precision and recall
 - Multi-class classification
 
 **Range:** 0-1 (higher is better)
 
 #### Accuracy
+
 Fraction of correct predictions
 
 ```python
@@ -198,12 +221,14 @@ score = evaluator(y_true, y_pred_binary)
 ```
 
 **Best for:**
+
 - Balanced datasets
 - Simple baseline metric
 
 **Not recommended for:** Imbalanced datasets
 
 #### Cohen's Kappa
+
 Agreement between predictions and ground truth, accounting for chance
 
 ```python
@@ -216,42 +241,49 @@ score = evaluator(y_true, y_pred_binary)
 ### Regression Metrics
 
 #### RMSE - Root Mean Squared Error
+
 ```python
 evaluator = Evaluator(name='RMSE')
 score = evaluator(y_true, y_pred)
 ```
 
 **Best for:**
+
 - Continuous predictions
 - Penalizes large errors heavily
 
 **Range:** 0-∞ (lower is better)
 
 #### MAE - Mean Absolute Error
+
 ```python
 evaluator = Evaluator(name='MAE')
 score = evaluator(y_true, y_pred)
 ```
 
 **Best for:**
+
 - Continuous predictions
 - More robust to outliers than RMSE
 
 **Range:** 0-∞ (lower is better)
 
 #### R² - Coefficient of Determination
+
 ```python
 evaluator = Evaluator(name='R2')
 score = evaluator(y_true, y_pred)
 ```
 
 **Best for:**
+
 - Variance explained by model
 - Comparing different models
 
 **Range:** -∞ to 1 (higher is better, 1 is perfect)
 
 #### MSE - Mean Squared Error
+
 ```python
 evaluator = Evaluator(name='MSE')
 score = evaluator(y_true, y_pred)
@@ -262,6 +294,7 @@ score = evaluator(y_true, y_pred)
 ### Ranking Metrics
 
 #### Spearman Correlation
+
 Rank correlation coefficient
 
 ```python
@@ -270,6 +303,7 @@ score = evaluator(y_true, y_pred)
 ```
 
 **Best for:**
+
 - Ranking tasks
 - Non-linear relationships
 - Ordinal data
@@ -277,6 +311,7 @@ score = evaluator(y_true, y_pred)
 **Range:** -1 to 1 (higher is better)
 
 #### Pearson Correlation
+
 Linear correlation coefficient
 
 ```python
@@ -285,6 +320,7 @@ score = evaluator(y_true, y_pred)
 ```
 
 **Best for:**
+
 - Linear relationships
 - Continuous data
 
@@ -345,12 +381,14 @@ fingerprint = converter('CC(C)Cc1ccc(cc1)C(C)C(O)=O')
 ```
 
 **Available formats:**
+
 - **Text**: SMILES, SELFIES, InChI
 - **Fingerprints**: ECFP (Morgan), MACCS, RDKit, AtomPair, TopologicalTorsion
 - **Graphs**: PyG (PyTorch Geometric), DGL (Deep Graph Library)
 - **3D**: Graph3D, Coulomb Matrix, Distance Matrix
 
 **Batch conversion:**
+
 ```python
 converter = MolConvert(src='SMILES', dst='PyG')
 graphs = converter(['SMILES1', 'SMILES2', 'SMILES3'])
@@ -379,6 +417,7 @@ filtered_smiles = mol_filter(smiles_list)
 ```
 
 **Available filter rules:**
+
 - `PAINS` - Pan-Assay Interference Compounds
 - `BMS` - Bristol-Myers Squibb HTS deck filters
 - `Glaxo` - GlaxoSmithKline filters
@@ -426,6 +465,7 @@ y_nM = label_transform(y_uM, from_unit='uM', to_unit='nM')
 ```
 
 **Available conversions:**
+
 - Binding affinity: nM, μM, pKd, pKi, pIC50
 - Log transformations
 - Natural log conversions
@@ -486,6 +526,7 @@ negative_pairs = negative_sample(
 ```
 
 **Use cases:**
+
 - Drug-target interaction prediction
 - Drug-drug interaction tasks
 - Creating balanced datasets
@@ -495,6 +536,7 @@ negative_pairs = negative_sample(
 Convert between database identifiers.
 
 #### PubChem CID to SMILES
+
 ```python
 from tdc.utils import cid2smiles
 
@@ -503,6 +545,7 @@ smiles = cid2smiles(2244)  # Aspirin
 ```
 
 #### UniProt ID to Amino Acid Sequence
+
 ```python
 from tdc.utils import uniprot2seq
 
@@ -511,6 +554,7 @@ sequence = uniprot2seq('P12345')
 ```
 
 #### Batch Retrieval
+
 ```python
 # Multiple CIDs
 smiles_list = [cid2smiles(cid) for cid in [2244, 5090, 6323]]

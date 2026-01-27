@@ -29,10 +29,10 @@
 
 ## Beta Headers
 
-| Model Version | Beta Header |
-|---------------|-------------|
+| Model Version | Beta Header               |
+| ------------- | ------------------------- |
 | Sonnet, Haiku | `computer-use-2025-01-24` |
-| Opus 4.5 | `computer-use-2025-11-24` |
+| Opus 4.5      | `computer-use-2025-11-24` |
 
 ## Actions Reference
 
@@ -61,9 +61,9 @@ Click the left mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -78,9 +78,9 @@ Click the right mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -95,9 +95,9 @@ Click the middle mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -112,9 +112,9 @@ Double-click the left mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -129,9 +129,9 @@ Triple-click the left mouse button at a coordinate (typically selects a line).
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -146,9 +146,9 @@ Type a string of text.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| text | string | Yes | Text to type |
+| Parameter | Type   | Required | Description  |
+| --------- | ------ | -------- | ------------ |
+| text      | string | Yes      | Text to type |
 
 **Note**: Special characters are typed literally. For key combinations, use `key` action.
 
@@ -165,11 +165,12 @@ Press a key or key combination.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| text | string | Yes | Key or combination (e.g., "enter", "ctrl+c", "alt+tab") |
+| Parameter | Type   | Required | Description                                             |
+| --------- | ------ | -------- | ------------------------------------------------------- |
+| text      | string | Yes      | Key or combination (e.g., "enter", "ctrl+c", "alt+tab") |
 
 **Common Keys**:
+
 - Modifiers: `ctrl`, `alt`, `shift`, `super` (Windows/Cmd key)
 - Navigation: `up`, `down`, `left`, `right`, `home`, `end`, `pageup`, `pagedown`
 - Function: `f1` through `f12`
@@ -190,9 +191,9 @@ Move the mouse cursor to a coordinate without clicking.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -209,11 +210,11 @@ Scroll the view at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] scroll position |
-| scroll_direction | string | Yes | "up", "down", "left", "right" |
-| scroll_amount | int | Yes | Number of scroll units |
+| Parameter        | Type       | Required | Description                   |
+| ---------------- | ---------- | -------- | ----------------------------- |
+| coordinate       | [int, int] | Yes      | [x, y] scroll position        |
+| scroll_direction | string     | Yes      | "up", "down", "left", "right" |
+| scroll_amount    | int        | Yes      | Number of scroll units        |
 
 ---
 
@@ -229,10 +230,10 @@ Click and drag from one coordinate to another.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| start_coordinate | [int, int] | Yes | Starting [x, y] position |
-| coordinate | [int, int] | Yes | Ending [x, y] position |
+| Parameter        | Type       | Required | Description              |
+| ---------------- | ---------- | -------- | ------------------------ |
+| start_coordinate | [int, int] | Yes      | Starting [x, y] position |
+| coordinate       | [int, int] | Yes      | Ending [x, y] position   |
 
 ---
 
@@ -247,9 +248,9 @@ Press and hold the left mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 **Note**: Must be followed by `left_mouse_up` to release.
 
@@ -266,9 +267,9 @@ Release the left mouse button at a coordinate.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] pixel position |
+| Parameter  | Type       | Required | Description           |
+| ---------- | ---------- | -------- | --------------------- |
+| coordinate | [int, int] | Yes      | [x, y] pixel position |
 
 ---
 
@@ -284,10 +285,10 @@ Hold a key for a specified duration.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| text | string | Yes | Key to hold |
-| duration | float | Yes | Seconds to hold the key |
+| Parameter | Type   | Required | Description             |
+| --------- | ------ | -------- | ----------------------- |
+| text      | string | Yes      | Key to hold             |
+| duration  | float  | Yes      | Seconds to hold the key |
 
 ---
 
@@ -302,9 +303,9 @@ Wait for a specified duration.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| duration | float | Yes | Seconds to wait |
+| Parameter | Type  | Required | Description     |
+| --------- | ----- | -------- | --------------- |
+| duration  | float | Yes      | Seconds to wait |
 
 ---
 
@@ -321,11 +322,11 @@ Zoom in or out at a coordinate. Requires `enable_zoom: true` in tool config.
 }
 ```
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| coordinate | [int, int] | Yes | [x, y] zoom center |
-| zoom_direction | string | Yes | "in" or "out" |
-| zoom_amount | int | Yes | Zoom level units |
+| Parameter      | Type       | Required | Description        |
+| -------------- | ---------- | -------- | ------------------ |
+| coordinate     | [int, int] | Yes      | [x, y] zoom center |
+| zoom_direction | string     | Yes      | "in" or "out"      |
+| zoom_amount    | int        | Yes      | Zoom level units   |
 
 ---
 
@@ -365,12 +366,12 @@ Always return a screenshot after executing an action:
 
 ## Resolution Guidelines
 
-| Resolution | Aspect Ratio | Use Case | Accuracy |
-|------------|--------------|----------|----------|
-| 1024x768 | 4:3 | Default, general use | Best |
-| 1280x800 | 16:10 | Wide content | Good |
-| 1366x768 | ~16:9 | Common laptops | Good |
-| 1920x1080 | 16:9 | High detail needed | Fair |
+| Resolution | Aspect Ratio | Use Case             | Accuracy |
+| ---------- | ------------ | -------------------- | -------- |
+| 1024x768   | 4:3          | Default, general use | Best     |
+| 1280x800   | 16:10        | Wide content         | Good     |
+| 1366x768   | ~16:9        | Common laptops       | Good     |
+| 1920x1080  | 16:9         | High detail needed   | Fair     |
 
 **Recommendation**: Start with 1024x768 and only increase if task requires it.
 
@@ -398,36 +399,34 @@ Always return a screenshot after executing an action:
 ```javascript
 // Click a text field, then type
 [
-  { "action": "left_click", "coordinate": [300, 200] },
-  { "action": "type", "text": "username@example.com" }
-]
+  { action: 'left_click', coordinate: [300, 200] },
+  { action: 'type', text: 'username@example.com' },
+];
 ```
 
 ### Select All and Copy
 
 ```javascript
 [
-  { "action": "key", "text": "ctrl+a" },
-  { "action": "key", "text": "ctrl+c" }
-]
+  { action: 'key', text: 'ctrl+a' },
+  { action: 'key', text: 'ctrl+c' },
+];
 ```
 
 ### Scroll to Find Element
 
 ```javascript
 [
-  { "action": "scroll", "coordinate": [512, 400], "scroll_direction": "down", "scroll_amount": 5 },
-  { "action": "wait", "duration": 0.5 },
-  { "action": "screenshot" }
-]
+  { action: 'scroll', coordinate: [512, 400], scroll_direction: 'down', scroll_amount: 5 },
+  { action: 'wait', duration: 0.5 },
+  { action: 'screenshot' },
+];
 ```
 
 ### Drag and Drop
 
 ```javascript
-[
-  { "action": "left_click_drag", "start_coordinate": [100, 100], "coordinate": [400, 400] }
-]
+[{ action: 'left_click_drag', start_coordinate: [100, 100], coordinate: [400, 400] }];
 ```
 
 ## API Endpoint Examples
@@ -436,17 +435,19 @@ Always return a screenshot after executing an action:
 
 ```javascript
 const response = await anthropic.messages.create({
-  model: "claude-sonnet-4-20250514",
+  model: 'claude-sonnet-4-20250514',
   max_tokens: 4096,
-  tools: [{
-    type: "computer_20250124",
-    name: "computer",
-    display_width_px: 1024,
-    display_height_px: 768,
-    display_number: 1
-  }],
-  messages: [{ role: "user", content: "Click the submit button" }],
-  betas: ["computer-use-2025-01-24"]
+  tools: [
+    {
+      type: 'computer_20250124',
+      name: 'computer',
+      display_width_px: 1024,
+      display_height_px: 768,
+      display_number: 1,
+    },
+  ],
+  messages: [{ role: 'user', content: 'Click the submit button' }],
+  betas: ['computer-use-2025-01-24'],
 });
 ```
 

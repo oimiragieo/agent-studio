@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - Begin each feature with detailed pseudocode.
 - Example: Provide pseudocode for the weekly scoring process, detailing steps from game result input to entry status updates.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

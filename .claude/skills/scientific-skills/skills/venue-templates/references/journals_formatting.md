@@ -15,6 +15,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Impact Factor**: ~64 (varies by year)
 
 **Formatting Requirements**:
+
 - **Length**: Articles ~3,000 words (excluding Methods, References, Figure Legends)
 - **Structure**: Title, Authors, Affiliations, Abstract (≤200 words), Main text, Methods, References, Acknowledgements, Author Contributions, Competing Interests, Figure Legends
 - **Format**: Single column for submission (final published version is two-column)
@@ -24,9 +25,9 @@ Comprehensive formatting requirements and submission guidelines for major scient
 - **Page numbers**: Required on all pages
 - **Citations**: Numbered sequentially in superscript¹'²'³
 - **References**: Nature style (abbreviated journal names)
-  - Format: Author, A. A., Author, B. B. & Author, C. C. Article title. *Journal Abbrev.* **vol**, pages (year).
-  - Example: Watson, J. D. & Crick, F. H. C. Molecular structure of nucleic acids. *Nature* **171**, 737–738 (1953).
-- **Figures**: 
+  - Format: Author, A. A., Author, B. B. & Author, C. C. Article title. _Journal Abbrev._ **vol**, pages (year).
+  - Example: Watson, J. D. & Crick, F. H. C. Molecular structure of nucleic acids. _Nature_ **171**, 737–738 (1953).
+- **Figures**:
   - Format: TIFF, EPS, PDF (vector preferred)
   - Resolution: 300-600 dpi for photos, 1000 dpi for line art
   - Color: RGB or CMYK
@@ -47,6 +48,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Nature Publishing Group
 
 **Formatting Requirements**:
+
 - **Length**: No strict limit (typically 5,000-8,000 words)
 - **Structure**: Same as Nature (Title, Abstract, Main text, Methods, References, etc.)
 - **Format**: Single column
@@ -68,6 +70,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Formatting**: Same as Nature Communications (Nature family journals share similar formatting)
 
 **Discipline-Specific Notes**:
+
 - **Nature Methods**: Emphasize methodological innovation and validation
 - **Nature Biotechnology**: Focus on biotechnology applications and translation
 - **Nature Machine Intelligence**: AI/ML applications across disciplines
@@ -82,7 +85,8 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: American Association for the Advancement of Science (AAAS)
 
 **Formatting Requirements**:
-- **Length**: 
+
+- **Length**:
   - Research Articles: 2,500 words (text only, excluding refs/figs)
   - Reports: 2,500 words maximum
 - **Structure**: Title, Authors, Affiliations, Abstract (≤125 words), Main text, Materials and Methods, References, Acknowledgments, Supplementary Materials
@@ -92,9 +96,9 @@ Comprehensive formatting requirements and submission guidelines for major scient
 - **Margins**: 1 inch all sides
 - **Citations**: Numbered sequentially in parentheses (1, 2, 3)
 - **References**: Science style (no article titles in main refs, moved to supplementary)
-  - Format: A. Author, B. Author, *Journal Abbrev.* **vol**, pages (year).
-  - Example: J. D. Watson, F. H. C. Crick, *Nature* **171**, 737 (1953).
-- **Figures**: 
+  - Format: A. Author, B. Author, _Journal Abbrev._ **vol**, pages (year).
+  - Example: J. D. Watson, F. H. C. Crick, _Nature_ **171**, 737 (1953).
+- **Figures**:
   - Format: PDF, EPS, TIFF
   - Resolution: 300 dpi minimum
   - Color: RGB
@@ -115,6 +119,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: AAAS
 
 **Formatting Requirements**:
+
 - **Length**: No strict word limit (but concise writing encouraged)
 - **Structure**: Similar to Science (more flexible)
 - **Format**: Single column
@@ -136,6 +141,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Public Library of Science
 
 **Formatting Requirements**:
+
 - **Length**: No maximum length
 - **Structure**: Title, Authors, Affiliations, Abstract, Introduction, Materials and Methods, Results, Discussion, Conclusions (optional), References, Supporting Information
 - **Format**: Editable file (LaTeX, Word, RTF)
@@ -167,6 +173,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Formatting**: Similar to PLOS ONE with discipline-specific variations
 
 **Key Differences**:
+
 - PLOS Biology: More selective, emphasizes broad significance
 - PLOS Comp Bio: Focus on computational methods and models
 
@@ -180,7 +187,8 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Cell Press (Elsevier)
 
 **Formatting Requirements**:
-- **Length**: 
+
+- **Length**:
   - Articles: ~5,000 words (excluding Methods, References)
   - Short Articles: ~2,500 words
 - **Structure**: Summary (≤150 words), Keywords, Introduction, Results, Discussion, Experimental Procedures, Acknowledgments, Author Contributions, Declaration of Interests, References
@@ -189,8 +197,8 @@ Comprehensive formatting requirements and submission guidelines for major scient
 - **Margins**: 1 inch all sides
 - **Citations**: Author-year format (Smith et al., 2023)
 - **References**: Cell style
-  - Format: Author, A.A., and Author, B.B. (Year). Title. *Journal* vol, pages.
-  - Example: Watson, J.D., and Crick, F.H. (1953). Molecular structure of nucleic acids. *Nature* 171, 737-738.
+  - Format: Author, A.A., and Author, B.B. (Year). Title. _Journal_ vol, pages.
+  - Example: Watson, J.D., and Crick, F.H. (1953). Molecular structure of nucleic acids. _Nature_ 171, 737-738.
 - **Figures**:
   - Format: TIFF, EPS preferred
   - Resolution: 300 dpi photos, 1000 dpi line art
@@ -220,19 +228,20 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Institute of Electrical and Electronics Engineers
 
 **Formatting Requirements**:
+
 - **Length**: Varies by transaction (typically 8-12 pages in final format)
 - **Structure**: Abstract, Index Terms, Introduction, [Body sections], Conclusion, Acknowledgment, References, Biographies
 - **Format**: Two-column
 - **Font**: Times New Roman, 10pt
 - **Column spacing**: 0.17 inch (4.23 mm)
-- **Margins**: 
+- **Margins**:
   - Top: 19 mm (0.75 in)
   - Bottom: 25 mm (1 in)
   - Side: 17 mm (0.67 in)
 - **Citations**: Numbered in square brackets [1], [2], [3]
 - **References**: IEEE style
-  - Format: [1] A. A. Author, "Title of paper," *Journal Abbrev.*, vol. x, no. x, pp. xxx-xxx, Mon. Year.
-  - Example: [1] J. D. Watson and F. H. C. Crick, "Molecular structure of nucleic acids," *Nature*, vol. 171, pp. 737-738, Apr. 1953.
+  - Format: [1] A. A. Author, "Title of paper," _Journal Abbrev._, vol. x, no. x, pp. xxx-xxx, Mon. Year.
+  - Example: [1] J. D. Watson and F. H. C. Crick, "Molecular structure of nucleic acids," _Nature_, vol. 171, pp. 737-738, Apr. 1953.
 - **Figures**:
   - Format: EPS, PDF (vector), TIFF (raster)
   - Resolution: 600-1200 dpi line art, 300 dpi grayscale/color
@@ -253,6 +262,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: IEEE
 
 **Formatting**: Similar to IEEE Transactions
+
 - **Length**: No page limits
 - **Open Access**: All articles open access
 - **Rapid publication**: Faster review than Transactions
@@ -269,6 +279,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Association for Computing Machinery
 
 **Formatting Requirements**:
+
 - **Length**: No strict limit
 - **Structure**: Abstract, CCS Concepts, Keywords, ACM Reference Format, Introduction, [Body], Conclusion, Acknowledgments, References
 - **Format**: Two-column (final), single-column for submission OK
@@ -295,6 +306,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Springer Nature
 
 **Formatting Requirements**:
+
 - **Length**: Varies by journal (check specific journal)
 - **Format**: Single column for submission (LaTeX or Word)
 - **Font**: 10-12pt
@@ -320,6 +332,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Elsevier
 
 **Formatting Requirements**:
+
 - **Length**: Varies widely by journal
 - **Format**: Single column (LaTeX or Word)
 - **Font**: 12pt
@@ -344,6 +357,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: BioMed Central (Springer Nature)
 
 **Formatting Requirements**:
+
 - **Length**: No maximum length
 - **Structure**: Abstract (structured), Keywords, Background, [Methods/Results/Discussion], Conclusions, Abbreviations, Declarations (Ethics, Consent, Availability, Competing interests, Funding, Authors' contributions, Acknowledgements), References
 - **Format**: Single column
@@ -369,6 +383,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: Frontiers Media
 
 **Formatting Requirements**:
+
 - **Length**: Varies by article type (Research Article ~12 pages, Brief Research Report ~4 pages)
 - **Structure**: Abstract, Keywords, Introduction, Materials and Methods, Results, Discussion, Conclusion, Data Availability Statement, Ethics Statement, Author Contributions, Funding, Acknowledgments, Conflict of Interest, References
 - **Format**: Single column
@@ -376,8 +391,8 @@ Comprehensive formatting requirements and submission guidelines for major scient
 - **Line spacing**: Double
 - **Citations**: Numbered (Frontiers style)
 - **References**: Frontiers format
-  - Format: Author A., Author B., Author C. (Year). Title. *Journal Abbrev.* vol:pages. doi
-  - Example: Watson J. D., Crick F. H. C. (1953). Molecular structure of nucleic acids. *Nature* 171:737-738. doi:10.1038/171737a0
+  - Format: Author A., Author B., Author C. (Year). Title. _Journal Abbrev._ vol:pages. doi
+  - Example: Watson J. D., Crick F. H. C. (1953). Molecular structure of nucleic acids. _Nature_ 171:737-738. doi:10.1038/171737a0
 - **Figures**: TIFF, EPS; 300 dpi minimum
 - **Tables**: Editable
 - **Open Access**: All Frontiers journals are open access
@@ -394,6 +409,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 ### PNAS (Proceedings of the National Academy of Sciences)
 
 **Formatting Requirements**:
+
 - **Length**: 6 pages (text, figures, tables combined)
 - **Abstract**: 250 words max
 - **Significance Statement**: 120 words max (required)
@@ -412,6 +428,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 **Publisher**: American Physical Society
 
 **Formatting Requirements**:
+
 - **Length**: 4 pages (including figures and references)
 - **Format**: Two-column (REVTeX 4.2)
 - **Abstract**: No more than 600 characters
@@ -426,6 +443,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 ### New England Journal of Medicine (NEJM)
 
 **Formatting Requirements**:
+
 - **Length**: Original Articles ~3,000 words
 - **Structure**: Abstract (structured, 250 words), Introduction, Methods, Results, Discussion, References
 - **Format**: Double-spaced
@@ -439,6 +457,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 ### The Lancet
 
 **Formatting Requirements**:
+
 - **Length**: Articles ~3,000 words
 - **Abstract**: Structured, 300 words
 - **Structure**: Panel (summary box), Introduction, Methods, Results, Discussion, References
@@ -450,17 +469,17 @@ Comprehensive formatting requirements and submission guidelines for major scient
 
 ## Quick Reference Table
 
-| Journal | Max Length | Format | Citations | Template |
-|---------|-----------|--------|-----------|----------|
-| **Nature** | ~3,000 words | Single col | Superscript | `nature_article.tex` |
-| **Science** | 2,500 words | Single col | (1) brackets | `science_article.tex` |
-| **PLOS ONE** | Unlimited | Single col | [1] Vancouver | `plos_one.tex` |
-| **Cell** | ~5,000 words | Double sp | (Author, year) | `cell_article.tex` |
-| **IEEE Trans** | 8-12 pages | Two col | [1] IEEE | `ieee_trans.tex` |
-| **ACM Trans** | Variable | Two col | [1] or author-yr | `acm_article.tex` |
-| **Springer** | Variable | Single col | Numbered/author-yr | `springer_article.tex` |
-| **BMC** | Unlimited | Single col | [1] Vancouver | `bmc_article.tex` |
-| **Frontiers** | ~12 pages | Single col | Numbered | `frontiers_article.tex` |
+| Journal        | Max Length   | Format     | Citations          | Template                |
+| -------------- | ------------ | ---------- | ------------------ | ----------------------- |
+| **Nature**     | ~3,000 words | Single col | Superscript        | `nature_article.tex`    |
+| **Science**    | 2,500 words  | Single col | (1) brackets       | `science_article.tex`   |
+| **PLOS ONE**   | Unlimited    | Single col | [1] Vancouver      | `plos_one.tex`          |
+| **Cell**       | ~5,000 words | Double sp  | (Author, year)     | `cell_article.tex`      |
+| **IEEE Trans** | 8-12 pages   | Two col    | [1] IEEE           | `ieee_trans.tex`        |
+| **ACM Trans**  | Variable     | Two col    | [1] or author-yr   | `acm_article.tex`       |
+| **Springer**   | Variable     | Single col | Numbered/author-yr | `springer_article.tex`  |
+| **BMC**        | Unlimited    | Single col | [1] Vancouver      | `bmc_article.tex`       |
+| **Frontiers**  | ~12 pages    | Single col | Numbered           | `frontiers_article.tex` |
 
 ---
 
@@ -476,6 +495,7 @@ Comprehensive formatting requirements and submission guidelines for major scient
 ## Getting Official Templates
 
 Many journals provide official LaTeX templates:
+
 - **Nature**: Download from journal website
 - **IEEE**: IEEEtran class (widely available)
 - **ACM**: acmart class (CTAN)
@@ -483,4 +503,3 @@ Many journals provide official LaTeX templates:
 - **Springer**: svjour3 class (journal website)
 
 Check journal's "For Authors" or "Submit" page for the most current templates.
-

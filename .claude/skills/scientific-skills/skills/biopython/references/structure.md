@@ -220,6 +220,7 @@ for residue_key in dssp:
 ```
 
 Secondary structure codes:
+
 - `H` - Alpha helix
 - `B` - Beta bridge
 - `E` - Strand

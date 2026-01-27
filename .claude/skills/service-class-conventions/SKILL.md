@@ -39,7 +39,7 @@ When reviewing or writing code, apply these guidelines:
 - Return objects of ServiceImpl methods should be DTOs, not entity classes, unless absolutely necessary.
 - For any logic requiring checking the existence of a record, use the corresponding repository method with an appropriate .orElseThrow lambda method.
 - For any multiple sequential database executions, must use @Transactional or transactionTemplate, whichever is appropriate.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

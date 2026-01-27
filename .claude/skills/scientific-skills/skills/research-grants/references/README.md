@@ -3,6 +3,7 @@
 ## Overview
 
 Comprehensive skill for writing competitive research grant proposals focused on four major U.S. funding agencies:
+
 - **NSF** (National Science Foundation)
 - **NIH** (National Institutes of Health)
 - **DOE** (Department of Energy)
@@ -13,6 +14,7 @@ Comprehensive skill for writing competitive research grant proposals focused on 
 ### Agency-Specific Guidance
 
 Detailed reference materials for each funding agency including:
+
 - Mission and priorities
 - Review criteria and scoring
 - Proposal structure and page limits
@@ -31,6 +33,7 @@ Detailed reference materials for each funding agency including:
 ### Templates
 
 Ready-to-use templates for:
+
 - NSF Project Summary
 - NIH Specific Aims Page
 - Budget Justifications
@@ -107,12 +110,14 @@ For in-depth help on specific components:
 ## Reference Materials
 
 ### Agency Guidelines
+
 - `references/nsf_guidelines.md` - Comprehensive NSF guidance
 - `references/nih_guidelines.md` - NIH mechanisms and review criteria
 - `references/doe_guidelines.md` - DOE offices and programs
 - `references/darpa_guidelines.md` - DARPA structure and strategy
 
 ### Specialized Guides
+
 - `references/broader_impacts.md` - NSF broader impacts strategies
 - `references/specific_aims_guide.md` - NIH Specific Aims page mastery
 - `references/budget_preparation.md` - Budget development (coming soon)
@@ -120,6 +125,7 @@ For in-depth help on specific components:
 - `references/timeline_planning.md` - Project management (coming soon)
 
 ### Templates
+
 - `assets/nsf_project_summary_template.md`
 - `assets/nih_specific_aims_template.md`
 - `assets/budget_justification_template.md`
@@ -127,6 +133,7 @@ For in-depth help on specific components:
 ## Success Metrics
 
 Typical success rates by agency:
+
 - **NSF**: 15-30% (varies by program)
 - **NIH R01**: ~20% overall (~27% for Early Stage Investigators)
 - **DOE Office of Science**: 20-40% (varies by program)
@@ -136,12 +143,14 @@ Typical success rates by agency:
 ## Common Use Cases
 
 ### First-Time Applicants
+
 ```
 > I've never written a grant before. Help me understand NSF proposal structure.
 > What are the most common mistakes in first NIH R01 applications?
 ```
 
 ### Experienced Investigators
+
 ```
 > Help me strengthen the innovation section for my NIH resubmission
 > I need to address broader impacts more substantively for NSF
@@ -149,12 +158,14 @@ Typical success rates by agency:
 ```
 
 ### Career Development
+
 ```
 > Help me write a competitive NSF CAREER proposal
 > What should I emphasize in an NIH K99/R00 application?
 ```
 
 ### Multi-Agency Strategy
+
 ```
 > Should I submit this to NSF or NIH?
 > Can I submit similar proposals to DOE and DARPA?
@@ -163,16 +174,19 @@ Typical success rates by agency:
 ## Best Practices
 
 ### Start Early
+
 - NSF/NIH proposals: Start 3-6 months before deadline
 - DOE/DARPA proposals: 4-6 months (especially if involving national labs)
 
 ### Get Feedback
+
 - Mock review sessions
 - Colleagues in and outside your field
 - Institutional grant support offices
 - Program officers (when appropriate)
 
 ### Understand Review Criteria
+
 - NSF: Intellectual Merit + Broader Impacts (equal weight)
 - NIH: Significance, Investigator, Innovation, Approach, Environment (scored 1-9)
 - DOE: Technical merit, qualifications, budget, relevance
@@ -192,6 +206,7 @@ Typical success rates by agency:
 ## Integration with Other Skills
 
 This skill works well with:
+
 - **Scientific Writing**: For clear, compelling prose
 - **Literature Review**: For background sections
 - **Research Lookup**: For finding relevant citations
@@ -200,12 +215,14 @@ This skill works well with:
 ## Updates and Additions
 
 This skill is continuously updated with:
+
 - Current agency priorities
 - Recent policy changes
 - New funding mechanisms
 - Additional templates and examples
 
 ### Coming Soon
+
 - More budget examples
 - Timeline templates
 - Collaboration letter templates
@@ -215,6 +232,7 @@ This skill is continuously updated with:
 ## Tips for Maximum Effectiveness
 
 ### For NSF Proposals
+
 1. Start with Specific Aims/Objectives (even though not required)
 2. Develop broader impacts with same rigor as research plan
 3. Use figures and diagrams liberally (make it skimmable)
@@ -222,6 +240,7 @@ This skill is continuously updated with:
 5. Get feedback from outside your immediate field
 
 ### For NIH Proposals
+
 1. Perfect your Specific Aims page first (10+ drafts)
 2. Include substantial preliminary data
 3. Address rigor and reproducibility explicitly
@@ -229,6 +248,7 @@ This skill is continuously updated with:
 5. Make sure your aims are independent but synergistic
 
 ### For DOE Proposals
+
 1. Emphasize energy relevance and impact
 2. Include quantitative metrics (cost, efficiency, emissions)
 3. Develop pathway to deployment or commercialization
@@ -236,6 +256,7 @@ This skill is continuously updated with:
 5. Address technology readiness levels
 
 ### For DARPA Proposals
+
 1. Contact the Program Manager early (essential!)
 2. Attend Proposers Day events
 3. Focus on breakthrough innovation (10x, not 10%)
@@ -245,18 +266,21 @@ This skill is continuously updated with:
 ## Resources Beyond This Skill
 
 ### Official Resources
+
 - NSF: https://www.nsf.gov/funding/
 - NIH: https://grants.nih.gov/
 - DOE: https://science.osti.gov/grants/
 - DARPA: https://www.darpa.mil/work-with-us/opportunities
 
 ### Institutional Resources
+
 - Your institution's Office of Sponsored Research
 - Grant writing workshops
 - Internal review programs
 - Successful proposal archives
 
 ### Professional Development
+
 - Grant writing courses and webinars
 - Agency-specific guidance documents
 - Professional society resources

@@ -9,6 +9,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 #### Core Radiology Report Components
 
 **1. Patient Demographics**
+
 - Patient name and/or unique identifier
 - Date of birth or age
 - Sex
@@ -17,6 +18,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Referring physician
 
 **2. Procedure/Examination**
+
 - Specific examination performed
 - Anatomical region
 - Laterality (right, left, bilateral)
@@ -24,6 +26,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Example: "MRI Brain without and with Contrast"
 
 **3. Clinical Indication**
+
 - Reason for examination
 - Relevant clinical history
 - Specific clinical question
@@ -31,6 +34,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Example: "Headache and visual disturbances. Rule out intracranial mass."
 
 **4. Comparison**
+
 - Prior relevant imaging studies
 - Dates of prior studies
 - Modality of prior studies
@@ -38,6 +42,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Example: "Comparison: CT head without contrast from 6 months prior (January 15, 2023)"
 
 **5. Technique**
+
 - Imaging parameters and protocol
 - Contrast administration details:
   - Type (iodinated, gadolinium)
@@ -55,6 +60,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
   ```
 
 **6. Findings**
+
 - Systematic description of imaging findings
 - Organized by anatomical region or organ system
 - Measurements of abnormalities (size, volume)
@@ -64,12 +70,14 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Comparison to prior studies when available
 
 **Organization approaches:**
+
 - Organ-by-organ (for abdomen/pelvis)
 - Region-by-region (for chest)
 - System-by-system (for spine)
 - Compartment-by-compartment (for musculoskeletal)
 
 **7. Impression/Conclusion**
+
 - Summary of key findings
 - Diagnosis or differential diagnosis
 - Answers to clinical question
@@ -79,6 +87,7 @@ The ACR provides comprehensive practice parameters for diagnostic imaging report
 - Clear and concise (often numbered list)
 
 Example:
+
 ```
 IMPRESSION:
 1. 3.2 cm enhancing mass in the right frontal lobe with surrounding vasogenic
@@ -89,6 +98,7 @@ IMPRESSION:
 ```
 
 **8. Critical Results Communication**
+
 - Urgent or unexpected findings requiring immediate action
 - Direct communication to ordering provider documented
 - Time, date, and recipient of verbal communication
@@ -101,6 +111,7 @@ IMPRESSION:
 Used for lung cancer screening CT interpretation.
 
 **Categories:**
+
 - **Lung-RADS 0**: Incomplete - additional imaging needed
 - **Lung-RADS 1**: Negative - no nodules, definitely benign nodules
 - **Lung-RADS 2**: Benign appearance or behavior - nodules with very low likelihood of malignancy
@@ -116,6 +127,7 @@ Used for lung cancer screening CT interpretation.
 Standardized lexicon for breast imaging (mammography, ultrasound, MRI).
 
 **Categories:**
+
 - **BI-RADS 0**: Incomplete - need additional imaging
 - **BI-RADS 1**: Negative - no abnormalities
 - **BI-RADS 2**: Benign findings
@@ -128,6 +140,7 @@ Standardized lexicon for breast imaging (mammography, ultrasound, MRI).
 - **BI-RADS 6**: Known biopsy-proven malignancy
 
 **Descriptors:**
+
 - Mass: Shape, margin, density
 - Calcifications: Morphology, distribution
 - Asymmetry: Type and characteristics
@@ -138,6 +151,7 @@ Standardized lexicon for breast imaging (mammography, ultrasound, MRI).
 For reporting liver observations in patients at risk for hepatocellular carcinoma.
 
 **Categories:**
+
 - **LI-RADS 1**: Definitely benign
 - **LI-RADS 2**: Probably benign
 - **LI-RADS 3**: Intermediate probability of malignancy
@@ -147,6 +161,7 @@ For reporting liver observations in patients at risk for hepatocellular carcinom
 - **LI-RADS TIV**: Tumor in vein
 
 **Major features assessed:**
+
 - Size
 - Enhancement pattern (arterial phase hyperenhancement, washout)
 - Capsule appearance
@@ -157,6 +172,7 @@ For reporting liver observations in patients at risk for hepatocellular carcinom
 For multiparametric MRI of the prostate.
 
 **Assessment categories:**
+
 - **PI-RADS 1**: Very low - clinically significant cancer highly unlikely
 - **PI-RADS 2**: Low - clinically significant cancer unlikely
 - **PI-RADS 3**: Intermediate - equivocal
@@ -164,6 +180,7 @@ For multiparametric MRI of the prostate.
 - **PI-RADS 5**: Very high - clinically significant cancer highly likely
 
 **Evaluation:**
+
 - Peripheral zone: DWI/ADC primary determinant
 - Transition zone: T2-weighted primary determinant
 - DCE (dynamic contrast-enhanced): Used for PI-RADS 3 lesions in peripheral zone
@@ -173,6 +190,7 @@ For multiparametric MRI of the prostate.
 **RadLex** is a comprehensive lexicon for radiology developed by the Radiological Society of North America (RSNA).
 
 **Benefits:**
+
 - Standardized terminology
 - Improved communication
 - Enables data mining and analytics
@@ -180,6 +198,7 @@ For multiparametric MRI of the prostate.
 - Consistent report structure
 
 **Common RadLex terms:**
+
 - Anatomical structures
 - Imaging observations
 - Disease entities
@@ -188,17 +207,20 @@ For multiparametric MRI of the prostate.
 ### Radiological Measurements
 
 **Linear measurements:**
+
 - Use bidimensional (length × width) or tridimensional (length × width × height)
 - Report largest dimension for nodules/masses
 - Consistent measurement methodology for follow-up
 - Perpendicular measurements when possible
 
 **Volumetric measurements:**
+
 - More accurate for follow-up of irregular lesions
 - Automated or semi-automated software
 - Particularly useful for lung nodules
 
 **Response assessment:**
+
 - RECIST 1.1 (Response Evaluation Criteria in Solid Tumors)
   - Target lesions: sum of longest diameters (maximum 5 lesions, 2 per organ)
   - Complete response, partial response, stable disease, progressive disease
@@ -214,58 +236,69 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 **Core elements for all cancer specimens:**
 
 **1. Specimen Information**
+
 - Procedure type (biopsy, excision, resection)
 - Specimen laterality
 - Specimen integrity and adequacy
 
 **2. Tumor Site**
+
 - Anatomical site and subsite
 - Precise location within organ
 
 **3. Tumor Size**
+
 - Greatest dimension in cm
 - Additional dimensions if 3D measurement relevant
 - Method of measurement (gross vs. microscopic)
 
 **4. Histologic Type**
+
 - WHO classification
 - Specific subtype
 - Percentage of each component in mixed tumors
 
 **5. Histologic Grade**
+
 - Grading system used (e.g., Nottingham, Fuhrman, Gleason)
 - Grade category (well, moderately, poorly differentiated OR G1, G2, G3)
 - Individual component scores if applicable
 
 **6. Extent of Invasion**
+
 - Depth of invasion (measured in mm)
 - Involvement of adjacent structures
 - Lymphovascular invasion (present/not identified)
 - Perineural invasion (present/not identified)
 
 **7. Margins**
+
 - Closest margin distance
 - Margin status for each margin assessed (negative/positive)
 - Specific margin(s) involved if positive
 
 **8. Lymph Nodes**
+
 - Number of lymph nodes examined
 - Number of lymph nodes with metastasis
 - Size of largest metastatic deposit
 - Extranodal extension (present/absent)
 
 **9. Pathologic Stage (pTNM)**
+
 - pT: Primary tumor extent
 - pN: Regional lymph nodes
 - pM: Distant metastasis (if known)
 - AJCC Cancer Staging Manual edition used
 
 **10. Additional Findings**
+
 - Treatment effect (if post-neoadjuvant therapy)
 - Associated lesions (dysplasia, carcinoma in situ)
 - Background tissue (cirrhosis, inflammation)
 
 **11. Ancillary Studies**
+
 - Immunohistochemistry results
 - Molecular/genetic testing results
 - Biomarker status (e.g., ER, PR, HER2 for breast; MSI for colon)
@@ -274,6 +307,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 #### Organ-Specific CAP Protocols
 
 **Breast Cancer:**
+
 - Histologic type (invasive ductal, lobular, special types)
 - Nottingham grade (tubule formation, nuclear pleomorphism, mitotic count)
 - ER/PR status (percentage and intensity)
@@ -283,6 +317,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 - Response to neoadjuvant therapy (residual cancer burden)
 
 **Colorectal Cancer:**
+
 - Histologic type (adenocarcinoma, mucinous, etc.)
 - Grade
 - Depth of invasion (into submucosa, muscularis propria, pericolic tissue, etc.)
@@ -293,6 +328,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 - KRAS, NRAS, BRAF mutations
 
 **Prostate Cancer:**
+
 - Gleason score (primary + secondary pattern)
 - Grade group (1-5)
 - Percentage of tissue involved
@@ -302,6 +338,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 - Lymph nodes if sampled
 
 **Lung Cancer:**
+
 - Histologic type (adenocarcinoma, squamous, small cell, etc.)
 - Grade (for NSCLC)
 - Invasion depth
@@ -313,6 +350,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 ### Gross Pathology Description
 
 **Essential elements:**
+
 - Specimen labeling and identification
 - Type of specimen
 - Dimensions and weight
@@ -329,6 +367,7 @@ CAP cancer protocols provide standardized synoptic reporting templates for cance
 - Sampling approach (how tissue was sectioned and submitted)
 
 **Example:**
+
 ```
 GROSS DESCRIPTION:
 Received fresh, labeled with patient name and "left breast, lumpectomy" is an
@@ -345,6 +384,7 @@ posterior margin.
 ### Microscopic Description
 
 **Key elements:**
+
 - Architectural pattern
 - Cellular characteristics
   - Cell type
@@ -362,12 +402,14 @@ posterior margin.
 ### Frozen Section Reporting
 
 **Indications:**
+
 - Intraoperative diagnosis
 - Margin assessment
 - Lymph node evaluation
 - Tissue triage
 
 **Report format:**
+
 - "Frozen section diagnosis" clearly labeled
 - Intraoperative consultation note
 - Time of frozen section
@@ -376,6 +418,7 @@ posterior margin.
 - Note: "Permanent sections to follow"
 
 **Frozen section disclaimers:**
+
 - Limited by frozen artifact
 - Final diagnosis on permanent sections
 - Defer to permanent sections for definitive diagnosis
@@ -383,21 +426,25 @@ posterior margin.
 ### Diagnostic Certainty Language
 
 **Definitive:**
+
 - "Consistent with..."
 - "Diagnostic of..."
 - "Positive for..."
 
 **Probable:**
+
 - "Consistent with..."
 - "Favor..."
 - "Most likely..."
 
 **Possible:**
+
 - "Suggestive of..."
 - "Cannot exclude..."
 - "Differential diagnosis includes..."
 
 **Defer:**
+
 - "Defer to..."
 - "Recommend..."
 - "Additional studies pending..."
@@ -411,12 +458,14 @@ CLSI provides standards for laboratory testing and reporting.
 #### Laboratory Report Components
 
 **1. Patient Demographics**
+
 - Patient name and identifier
 - Date of birth or age
 - Sex
 - Ordering provider
 
 **2. Specimen Information**
+
 - Specimen type (blood, serum, plasma, urine, CSF, etc.)
 - Collection date and time
 - Received date and time
@@ -424,12 +473,14 @@ CLSI provides standards for laboratory testing and reporting.
 - Fasting status (if relevant)
 
 **3. Test Information**
+
 - Test name (full, not just abbreviation)
 - Test code
 - Methodology
 - Accession or specimen number
 
 **4. Results**
+
 - Quantitative value with units
 - Qualitative result (positive/negative, detected/not detected)
 - Reference range or interval
@@ -439,6 +490,7 @@ CLSI provides standards for laboratory testing and reporting.
   - Critical or panic values highlighted
 
 **5. Reference Intervals**
+
 - Age-specific
 - Sex-specific
 - Population-specific (when relevant)
@@ -446,6 +498,7 @@ CLSI provides standards for laboratory testing and reporting.
 - Units clearly stated
 
 **Example:**
+
 ```
 Test: Hemoglobin A1c
 Result: 8.2%  (H)
@@ -455,12 +508,14 @@ Interpretation: Consistent with poorly controlled diabetes
 ```
 
 **6. Interpretative Comments**
+
 - When result requires context
 - Suggests additional testing
 - Explains interferences or limitations
 - Provides clinical guidance
 
 **7. Quality Control**
+
 - Delta checks (comparison to prior values)
 - Critical values and read-back procedure
 - Specimen quality issues (hemolysis, lipemia, icterus)
@@ -472,6 +527,7 @@ Interpretation: Consistent with poorly controlled diabetes
 Standard coding system for laboratory and clinical observations.
 
 **LOINC code components:**
+
 - Component (analyte measured)
 - Property (mass, substance concentration, etc.)
 - Timing (point in time, 24-hour)
@@ -480,6 +536,7 @@ Standard coding system for laboratory and clinical observations.
 - Method (when relevant)
 
 **Example:**
+
 - Hemoglobin A1c in Blood: 4548-4
 - Glucose in Serum/Plasma: 2345-7
 - Creatinine in Serum/Plasma: 2160-0
@@ -489,6 +546,7 @@ Standard coding system for laboratory and clinical observations.
 **Definition:** Results that indicate life-threatening conditions requiring immediate clinical action.
 
 **Critical value examples:**
+
 - Glucose: <40 mg/dL or >500 mg/dL
 - Potassium: <2.5 mEq/L or >6.5 mEq/L
 - Sodium: <120 mEq/L or >160 mEq/L
@@ -501,6 +559,7 @@ Standard coding system for laboratory and clinical observations.
 - Positive CSF culture or gram stain
 
 **Critical value procedure:**
+
 1. Result identified by laboratory
 2. Immediate contact with ordering provider or designee
 3. Read-back verification
@@ -514,6 +573,7 @@ Standard coding system for laboratory and clinical observations.
 ### Microbiology Reporting
 
 **Culture reports:**
+
 - Specimen type and source
 - Organisms identified
 - Quantity (light, moderate, heavy growth)
@@ -522,16 +582,19 @@ Standard coding system for laboratory and clinical observations.
 - MIC values when applicable
 
 **Gram stain reports:**
+
 - Bacteria present (Gram-positive/negative, morphology)
 - Quantity and cellular context
 - WBCs or other cells present
 
 **Preliminary reports:**
+
 - Issued before final identification
 - Clearly labeled "PRELIMINARY"
 - Final report to follow
 
 **Final reports:**
+
 - Definitive organism identification
 - Complete susceptibility panel
 - Interpretative comments
@@ -539,6 +602,7 @@ Standard coding system for laboratory and clinical observations.
 ### Molecular Pathology/Genomics Reporting
 
 **Components:**
+
 - Gene(s) tested
 - Variant(s) detected
 - Classification (pathogenic, likely pathogenic, VUS, likely benign, benign)
@@ -550,6 +614,7 @@ Standard coding system for laboratory and clinical observations.
 - Limitations of testing
 
 **Example:**
+
 ```
 Test: BRCA1/BRCA2 Full Gene Sequencing
 Result: PATHOGENIC VARIANT DETECTED
@@ -564,6 +629,7 @@ Family testing should be considered.
 ### Point-of-Care Testing (POCT)
 
 **Requirements:**
+
 - Same quality standards as central laboratory
 - Operator competency documentation
 - Quality control documentation
@@ -571,6 +637,7 @@ Family testing should be considered.
 - Result documentation in medical record
 
 **Common POCT:**
+
 - Blood glucose
 - Hemoglobin/hematocrit
 - INR
@@ -591,6 +658,7 @@ Family testing should be considered.
 - Referring physician satisfaction
 
 **Benchmarks:**
+
 - Routine reports: <24 hours
 - Urgent reports: <4 hours
 - STAT reports: <1 hour
@@ -605,6 +673,7 @@ Family testing should be considered.
 - Immunohistochemistry QC
 
 **TAT benchmarks:**
+
 - Surgical pathology routine: 2-3 days
 - Surgical pathology complex: 5-7 days
 - Cytology: 1-2 days
@@ -619,6 +688,7 @@ Family testing should be considered.
 - Delta check failure rate
 
 **TAT benchmarks:**
+
 - STAT laboratory: <60 minutes
 - Routine laboratory: 2-4 hours
 - Send-out tests: Per reference laboratory
@@ -626,4 +696,3 @@ Family testing should be considered.
 ---
 
 This reference provides comprehensive standards for diagnostic reporting across radiology, pathology, and laboratory medicine. Refer to these guidelines to ensure reports meet professional standards and regulatory requirements.
-

@@ -75,7 +75,6 @@ When reviewing or writing code, apply these guidelines:
 
 - Integrate Novo Elements from the novo-elements
 
-
 </instructions>
 
 <examples>
@@ -89,12 +88,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- angular-expert
 
+- angular-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

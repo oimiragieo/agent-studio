@@ -41,7 +41,7 @@ When reviewing or writing code, apply these guidelines:
   import { t } from '@inlang/paraglide-js';
   <br />
   - Support multiple languages and RTL layouts.
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -54,6 +54,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -9,11 +9,13 @@ Benchling supports three authentication methods, each suited for different use c
 **Best for:** Personal scripts, prototyping, single-user integrations
 
 **How it works:**
+
 - Use your API key as the username in HTTP Basic authentication
 - Leave the password field empty
 - All requests must use HTTPS
 
 **Obtaining an API Key:**
+
 1. Log in to your Benchling account
 2. Navigate to Profile Settings
 3. Find the API Key section
@@ -21,6 +23,7 @@ Benchling supports three authentication methods, each suited for different use c
 5. Store it securely (it will only be shown once)
 
 **Python SDK Usage:**
+
 ```python
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.api_key_auth import ApiKeyAuth
@@ -32,6 +35,7 @@ benchling = Benchling(
 ```
 
 **Direct HTTP Usage:**
+
 ```bash
 curl -X GET \
   https://your-tenant.benchling.com/api/v2/dna-sequences \
@@ -41,6 +45,7 @@ curl -X GET \
 Note the colon after the API key with no password.
 
 **Environment Variable Pattern:**
+
 ```python
 import os
 from benchling_sdk.benchling import Benchling
@@ -60,6 +65,7 @@ benchling = Benchling(
 **Best for:** Multi-user applications, service accounts, production integrations
 
 **How it works:**
+
 1. Register an application in Benchling's Developer Console
 2. Obtain client ID and client secret
 3. Exchange credentials for an access token
@@ -67,6 +73,7 @@ benchling = Benchling(
 5. Refresh token when expired
 
 **Registering an App:**
+
 1. Log in to Benchling as an admin
 2. Navigate to Developer Console
 3. Create a new App
@@ -74,6 +81,7 @@ benchling = Benchling(
 5. Configure OAuth redirect URIs and permissions
 
 **Python SDK Usage:**
+
 ```python
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.client_credentials_oauth2 import ClientCredentialsOAuth2
@@ -92,6 +100,7 @@ benchling = Benchling(
 The SDK automatically handles token refresh.
 
 **Direct HTTP Token Flow:**
+
 ```bash
 # Get access token
 curl -X POST \
@@ -119,24 +128,28 @@ curl -X GET \
 **Best for:** Enterprise integrations with existing identity providers, SSO scenarios
 
 **How it works:**
+
 - Authenticate users through your identity provider (Okta, Azure AD, etc.)
 - Identity provider issues an ID token with email claim
 - Benchling verifies the token against the OpenID configuration endpoint
 - Matches authenticated user by email
 
 **Requirements:**
+
 - Enterprise Benchling account
 - Configured identity provider (IdP)
 - IdP must issue tokens with email claims
 - Email in token must match Benchling user email
 
 **Identity Provider Configuration:**
+
 1. Configure your IdP to issue OpenID Connect tokens
 2. Ensure tokens include the `email` claim
 3. Provide Benchling with your IdP's OpenID configuration URL
 4. Benchling will verify tokens against this configuration
 
 **Python Usage:**
+
 ```python
 # Assuming you have an ID token from your IdP
 from benchling_sdk.benchling import Benchling
@@ -151,6 +164,7 @@ benchling = Benchling(
 ```
 
 **Direct HTTP Usage:**
+
 ```bash
 curl -X GET \
   https://your-tenant.benchling.com/api/v2/dna-sequences \
@@ -162,18 +176,21 @@ curl -X GET \
 ### Credential Storage
 
 **DO:**
+
 - Store credentials in environment variables
 - Use password managers or secret management services (AWS Secrets Manager, HashiCorp Vault)
 - Encrypt credentials at rest
 - Use different credentials for dev/staging/production
 
 **DON'T:**
+
 - Commit credentials to version control
 - Hardcode credentials in source files
 - Share credentials via email or chat
 - Store credentials in plain text files
 
 **Example with Environment Variables:**
+
 ```python
 import os
 from dotenv import load_dotenv  # python-dotenv package
@@ -188,12 +205,14 @@ tenant = os.environ["BENCHLING_TENANT_URL"]
 ### Credential Rotation
 
 **API Key Rotation:**
+
 1. Generate a new API key in Profile Settings
 2. Update your application to use the new key
 3. Verify the new key works
 4. Delete the old API key
 
 **App Secret Rotation:**
+
 1. Navigate to Developer Console
 2. Select your app
 3. Generate new client secret
@@ -205,12 +224,14 @@ tenant = os.environ["BENCHLING_TENANT_URL"]
 ### Access Control
 
 **Principle of Least Privilege:**
+
 - Grant only the minimum necessary permissions
 - Use service accounts (apps) instead of personal accounts for automation
 - Review and audit permissions regularly
 
 **App Permissions:**
 Apps require explicit access grants to:
+
 - Organizations
 - Teams
 - Projects
@@ -220,6 +241,7 @@ Configure these in the Developer Console when setting up your app.
 
 **User Permissions:**
 API access mirrors UI permissions:
+
 - Users can only access data they have permission to view/edit in the UI
 - Suspended users lose API access
 - Archived apps lose API access until unarchived
@@ -234,6 +256,7 @@ Some enterprise accounts can restrict API access to specific IP ranges. Contact 
 
 **Rate Limiting:**
 Benchling implements rate limiting to prevent abuse:
+
 - Default: 100 requests per 10 seconds per user/app
 - 429 status code returned when rate limit exceeded
 - SDK automatically retries with exponential backoff
@@ -241,6 +264,7 @@ Benchling implements rate limiting to prevent abuse:
 ### Audit Logging
 
 **Tracking API Usage:**
+
 - All API calls are logged with user/app identity
 - OAuth apps show proper audit trails with user attribution
 - API key calls are attributed to the key owner
@@ -254,30 +278,36 @@ Use OAuth instead of API keys when multiple users interact through your app. Thi
 ### Common Authentication Errors
 
 **401 Unauthorized:**
+
 - Invalid or expired credentials
 - API key not properly formatted
 - Missing "Authorization" header
 
 **Solution:**
+
 - Verify credentials are correct
 - Check API key is not expired or deleted
 - Ensure proper header format: `Authorization: Bearer <token>`
 
 **403 Forbidden:**
+
 - Valid credentials but insufficient permissions
 - User doesn't have access to the requested resource
 - App not granted access to the organization/project
 
 **Solution:**
+
 - Check user/app permissions in Benchling
 - Grant necessary access in Developer Console (for apps)
 - Verify the resource exists and user has access
 
 **429 Too Many Requests:**
+
 - Rate limit exceeded
 - Too many requests in short time period
 
 **Solution:**
+
 - Implement exponential backoff
 - SDK handles this automatically
 - Consider caching results
@@ -286,6 +316,7 @@ Use OAuth instead of API keys when multiple users interact through your app. Thi
 ### Testing Authentication
 
 **Quick Test with curl:**
+
 ```bash
 # Test API key
 curl -X GET \
@@ -303,6 +334,7 @@ curl -X GET \
 The `/users/me` endpoint returns the authenticated user's information and is useful for verifying credentials.
 
 **Python SDK Test:**
+
 ```python
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.api_key_auth import ApiKeyAuth

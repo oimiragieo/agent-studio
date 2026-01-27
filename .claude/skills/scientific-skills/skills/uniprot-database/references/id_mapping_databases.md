@@ -13,6 +13,7 @@ databases = response.json()
 ## UniProt Databases
 
 ### UniProtKB
+
 - `UniProtKB_AC-ID` - UniProt accession and ID
 - `UniProtKB` - UniProt Knowledgebase
 - `UniProtKB-Swiss-Prot` - Reviewed (Swiss-Prot)
@@ -25,12 +26,14 @@ databases = response.json()
 ## Sequence Databases
 
 ### Nucleotide Sequence
+
 - `EMBL` - EMBL/GenBank/DDBJ
 - `EMBL-CDS` - EMBL coding sequences
 - `RefSeq_Nucleotide` - RefSeq nucleotide sequences
 - `CCDS` - Consensus CDS
 
 ### Protein Sequence
+
 - `RefSeq_Protein` - RefSeq protein sequences
 - `PIR` - Protein Information Resource
 
@@ -45,6 +48,7 @@ databases = response.json()
 ## Genome Databases
 
 ### General
+
 - `Ensembl` - Ensembl
 - `EnsemblGenomes` - Ensembl Genomes
 - `EnsemblGenomes_PRO` - Ensembl Genomes protein
@@ -53,6 +57,7 @@ databases = response.json()
 - `Ensembl_TRS` - Ensembl transcript
 
 ### Organism-Specific
+
 - `KEGG` - KEGG Genes
 - `PATRIC` - PATRIC
 - `UCSC` - UCSC Genome Browser
@@ -86,6 +91,7 @@ databases = response.json()
 ## Organism-Specific Databases
 
 ### Model Organisms
+
 - `MGI` - Mouse Genome Informatics
 - `RGD` - Rat Genome Database
 - `FlyBase` - FlyBase (Drosophila)
@@ -99,6 +105,7 @@ databases = response.json()
 - `TAIR` - The Arabidopsis Information Resource
 
 ### Human-Specific
+
 - `HGNC` - HUGO Gene Nomenclature Committee
 - `CCDS` - Consensus Coding Sequence Database
 
@@ -177,27 +184,33 @@ databases = response.json()
 ## Other Specialized Databases
 
 ### Glycosylation
+
 - `GlyConnect` - GlyConnect
 - `GlyGen` - GlyGen
 
 ### Protein Modifications
+
 - `PhosphoSitePlus` - PhosphoSitePlus
 - `iPTMnet` - iPTMnet
 
 ### Antibodies
+
 - `Antibodypedia` - Antibodypedia
 - `DNASU` - DNASU
 
 ### Protein Localization
+
 - `COMPARTMENTS` - COMPARTMENTS
 - `NeXtProt` - NeXtProt (human proteins)
 
 ### Evolution and Phylogeny
+
 - `eggNOG` - eggNOG
 - `GeneTree` - Ensembl GeneTree
 - `InParanoid` - InParanoid
 
 ### Technical Resources
+
 - `PRO` - Protein Ontology
 - `GenomeRNAi` - GenomeRNAi
 - `PubMed` - PubMed literature references
@@ -205,6 +218,7 @@ databases = response.json()
 ## Common Mapping Scenarios
 
 ### Example 1: UniProt to PDB
+
 ```python
 from_db = "UniProtKB_AC-ID"
 to_db = "PDB"
@@ -212,6 +226,7 @@ ids = ["P01308", "P04637"]
 ```
 
 ### Example 2: Gene Name to UniProt
+
 ```python
 from_db = "Gene_Name"
 to_db = "UniProtKB"
@@ -219,6 +234,7 @@ ids = ["BRCA1", "TP53", "INSR"]
 ```
 
 ### Example 3: UniProt to Ensembl
+
 ```python
 from_db = "UniProtKB_AC-ID"
 to_db = "Ensembl"
@@ -226,6 +242,7 @@ ids = ["P12345"]
 ```
 
 ### Example 4: RefSeq to UniProt
+
 ```python
 from_db = "RefSeq_Protein"
 to_db = "UniProtKB"
@@ -233,6 +250,7 @@ ids = ["NP_000207.1"]
 ```
 
 ### Example 5: UniProt to GO Terms
+
 ```python
 from_db = "UniProtKB_AC-ID"
 to_db = "GO"
@@ -256,11 +274,13 @@ ids = ["P01308"]
 ## API Endpoints
 
 ### Get available databases
+
 ```
 GET https://rest.uniprot.org/configure/idmapping/fields
 ```
 
 ### Submit mapping job
+
 ```
 POST https://rest.uniprot.org/idmapping/run
 Content-Type: application/x-www-form-urlencoded
@@ -269,11 +289,13 @@ from={from_db}&to={to_db}&ids={comma_separated_ids}
 ```
 
 ### Check job status
+
 ```
 GET https://rest.uniprot.org/idmapping/status/{jobId}
 ```
 
 ### Get results
+
 ```
 GET https://rest.uniprot.org/idmapping/results/{jobId}
 ```

@@ -5,6 +5,7 @@ Arboreto leverages Dask for parallelized computation, enabling efficient GRN inf
 ## Computation Architecture
 
 GRN inference is inherently parallelizable:
+
 - Each target gene's regression model can be trained independently
 - Arboreto represents computation as a Dask task graph
 - Tasks are distributed across available computational resources
@@ -54,6 +55,7 @@ if __name__ == '__main__':
 ```
 
 ### Benefits of Custom Client
+
 - **Resource control**: Limit CPU and memory usage
 - **Multiple runs**: Reuse same client for different parameter sets
 - **Monitoring**: Access Dask dashboard for performance insights
@@ -104,17 +106,20 @@ if __name__ == '__main__':
 For very large datasets, connect to a remote Dask distributed scheduler running on a cluster:
 
 ### Step 1: Set Up Dask Scheduler (on cluster head node)
+
 ```bash
 dask-scheduler
 # Output: Scheduler at tcp://10.118.224.134:8786
 ```
 
 ### Step 2: Start Dask Workers (on cluster compute nodes)
+
 ```bash
 dask-worker tcp://10.118.224.134:8786
 ```
 
 ### Step 3: Connect from Client
+
 ```python
 from distributed import Client
 from arboreto.algo import grnboost2
@@ -137,6 +142,7 @@ if __name__ == '__main__':
 ### Cluster Configuration Best Practices
 
 **Worker configuration**:
+
 ```bash
 dask-worker tcp://scheduler:8786 \
     --nprocs 4 \              # Number of processes per node
@@ -145,6 +151,7 @@ dask-worker tcp://scheduler:8786 \
 ```
 
 **For large-scale inference**:
+
 - Use more workers with moderate memory rather than fewer workers with large memory
 - Set `threads_per_worker=1` to avoid GIL contention in scikit-learn
 - Monitor memory usage to prevent workers from being killed
@@ -163,6 +170,7 @@ client = Client()  # Prints dashboard URL
 ```
 
 The dashboard shows:
+
 - **Task progress**: Number of tasks completed/pending
 - **Resource usage**: CPU, memory per worker
 - **Task stream**: Real-time visualization of computation
@@ -183,20 +191,25 @@ network = grnboost2(
 ## Performance Optimization Tips
 
 ### 1. Data Format
+
 - **Use Pandas DataFrame when possible**: More efficient than NumPy for Dask operations
 - **Reduce data size**: Filter low-variance genes before inference
 
 ### 2. Worker Configuration
+
 - **CPU-bound tasks**: Set `threads_per_worker=1`, increase `n_workers`
 - **Memory-bound tasks**: Increase `memory_limit` per worker
 
 ### 3. Cluster Setup
+
 - **Network**: Ensure high-bandwidth, low-latency network between nodes
 - **Storage**: Use shared filesystem or object storage for large datasets
 - **Scheduling**: Allocate dedicated nodes to avoid resource contention
 
 ### 4. Transcription Factor Filtering
+
 - **Limit TF list**: Providing specific TF names reduces computation
+
 ```python
 # Full search (slow)
 network = grnboost2(expression_data=matrix)

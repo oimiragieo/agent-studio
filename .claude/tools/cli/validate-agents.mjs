@@ -91,7 +91,7 @@ function parseFrontmatter(content) {
         result[currentKey] = value
           .slice(1, -1)
           .split(',')
-          .map((s) => s.trim());
+          .map(s => s.trim());
         inArray = false;
       } else {
         result[currentKey] = value;

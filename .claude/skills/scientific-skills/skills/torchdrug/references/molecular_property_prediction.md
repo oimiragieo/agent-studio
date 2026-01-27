@@ -9,6 +9,7 @@ Molecular property prediction involves predicting chemical, physical, or biologi
 ### Drug Discovery Datasets
 
 **Classification Tasks:**
+
 - **BACE** (1,513 molecules): Binary classification for β-secretase inhibition
 - **BBBP** (2,039 molecules): Blood-brain barrier penetration prediction
 - **HIV** (41,127 molecules): Ability to inhibit HIV replication
@@ -19,6 +20,7 @@ Molecular property prediction involves predicting chemical, physical, or biologi
 - **MUV** (93,087 molecules): Maximum unbiased validation for virtual screening
 
 **Regression Tasks:**
+
 - **ESOL** (1,128 molecules): Water solubility prediction
 - **FreeSolv** (642 molecules): Hydration free energy
 - **Lipophilicity** (4,200 molecules): Octanol/water distribution coefficient
@@ -39,6 +41,7 @@ Molecular property prediction involves predicting chemical, physical, or biologi
 Standard task for graph-level property prediction supporting both classification and regression.
 
 **Key Parameters:**
+
 - `model`: Graph representation model (GNN)
 - `task`: "node", "edge", or "graph" level prediction
 - `criterion`: Loss function ("mse", "bce", "ce")
@@ -46,6 +49,7 @@ Standard task for graph-level property prediction supporting both classification
 - `num_mlp_layer`: Number of MLP layers for readout
 
 **Example Workflow:**
+
 ```python
 import torch
 from torchdrug import core, models, tasks, datasets
@@ -70,6 +74,7 @@ task = tasks.PropertyPrediction(model, task=dataset.tasks,
 Specialized task for multi-label scenarios where each molecule can have multiple binary labels (e.g., Tox21, SIDER).
 
 **Key Features:**
+
 - Handles missing labels gracefully
 - Computes metrics per label and averaged
 - Supports weighted loss for imbalanced datasets
@@ -79,20 +84,24 @@ Specialized task for multi-label scenarios where each molecule can have multiple
 ### Recommended Models by Task
 
 **Small Molecules (< 1000 molecules):**
+
 - GIN (Graph Isomorphism Network)
 - SchNet (for 3D structures)
 
 **Medium Datasets (1k-100k molecules):**
+
 - GCN, GAT, or GIN
 - NFP (Neural Fingerprint)
 - MPNN (Message Passing Neural Network)
 
 **Large Datasets (> 100k molecules):**
+
 - Pre-trained models with fine-tuning
 - InfoGraph or MultiviewContrast for self-supervised pre-training
 - GIN with deeper architectures
 
 **3D Structure Available:**
+
 - SchNet (continuous-filter convolutions)
 - GearNet (geometry-aware relational graph)
 
@@ -101,6 +110,7 @@ Specialized task for multi-label scenarios where each molecule can have multiple
 ### Node Features
 
 TorchDrug automatically extracts atom features:
+
 - Atom type
 - Formal charge
 - Explicit/implicit hydrogens
@@ -111,6 +121,7 @@ TorchDrug automatically extracts atom features:
 ### Edge Features
 
 Bond features include:
+
 - Bond type (single, double, triple, aromatic)
 - Stereochemistry
 - Conjugation
@@ -119,6 +130,7 @@ Bond features include:
 ### Custom Features
 
 Add custom node/edge features using transforms:
+
 ```python
 from torchdrug import data, transforms
 
@@ -157,13 +169,17 @@ dataset = datasets.BBBP("~/molecule-datasets/",
 ## Common Issues and Solutions
 
 **Issue: Poor performance on imbalanced datasets**
+
 - Solution: Use weighted loss, focal loss, or over/under-sampling
 
 **Issue: Overfitting on small datasets**
+
 - Solution: Increase regularization, use simpler models, apply data augmentation, or pre-train on larger datasets
 
 **Issue: Large memory consumption**
+
 - Solution: Reduce batch size, use gradient accumulation, or implement graph sampling
 
 **Issue: Slow training**
+
 - Solution: Use GPU acceleration, optimize data loading with multiple workers, or use mixed precision training

@@ -43,6 +43,7 @@ class ConstrainedProblem(ElementwiseProblem):
 ```
 
 **Constraint formulation rules:**
+
 - Inequality: `g(x) <= 0` (feasible when negative or zero)
 - Equality: `h(x) = 0` (feasible when zero)
 - Convert `g(x) >= 0` to `-g(x) <= 0`
@@ -50,13 +51,16 @@ class ConstrainedProblem(ElementwiseProblem):
 ### Constraint Handling Techniques
 
 #### 1. Feasibility First (Default)
+
 **Mechanism:** Always prefer feasible over infeasible solutions
 **Comparison:**
+
 1. Both feasible → compare by objective values
 2. One feasible, one infeasible → feasible wins
 3. Both infeasible → compare by constraint violation
 
 **Usage:**
+
 ```python
 from pymoo.algorithms.moo.nsga2 import NSGA2
 
@@ -65,19 +69,23 @@ algorithm = NSGA2(pop_size=100)
 ```
 
 **Advantages:**
+
 - Works with any sorting-based algorithm
 - Simple and effective
 - No parameter tuning
 
 **Disadvantages:**
+
 - May struggle with small feasible regions
 - Can ignore good infeasible solutions
 
 #### 2. Penalty Methods
+
 **Mechanism:** Add penalty to objective based on constraint violation
 **Formula:** `F_penalized = F + penalty_factor * violation`
 
 **Usage:**
+
 ```python
 from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.constraints.as_penalty import ConstraintsAsPenalty
@@ -89,21 +97,26 @@ algorithm = GA(pop_size=100)
 ```
 
 **Parameters:**
+
 - `penalty`: Penalty coefficient (tune based on problem scale)
 
 **Advantages:**
+
 - Converts constrained to unconstrained problem
 - Works with any optimization algorithm
 
 **Disadvantages:**
+
 - Penalty parameter sensitive
 - May need problem-specific tuning
 
 #### 3. Constraint as Objective
+
 **Mechanism:** Treat constraint violation as additional objective
 **Result:** Multi-objective problem with M+1 objectives (M original + constraint)
 
 **Usage:**
+
 ```python
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.constraints.as_obj import ConstraintsAsObjective
@@ -115,31 +128,38 @@ algorithm = NSGA2(pop_size=100)
 ```
 
 **Advantages:**
+
 - No parameter tuning
 - Maintains infeasible solutions that may be useful
 - Works well when feasible region is small
 
 **Disadvantages:**
+
 - Increases problem dimensionality
 - More complex Pareto front analysis
 
 #### 4. Epsilon-Constraint Handling
+
 **Mechanism:** Dynamic feasibility threshold
 **Concept:** Gradually tighten constraint tolerance over generations
 
 **Advantages:**
+
 - Smooth transition to feasible region
 - Helps with difficult constraint landscapes
 
 **Disadvantages:**
+
 - Algorithm-specific implementation
 - Requires parameter tuning
 
 #### 5. Repair Operators
+
 **Mechanism:** Modify infeasible solutions to satisfy constraints
 **Application:** After crossover/mutation, repair offspring
 
 **Usage:**
+
 ```python
 from pymoo.core.repair import Repair
 
@@ -156,10 +176,12 @@ algorithm = GA(pop_size=100, repair=MyRepair())
 ```
 
 **Advantages:**
+
 - Maintains feasibility throughout optimization
 - Can encode domain knowledge
 
 **Disadvantages:**
+
 - Requires problem-specific implementation
 - May restrict search
 
@@ -168,10 +190,12 @@ algorithm = GA(pop_size=100, repair=MyRepair())
 Some algorithms have built-in constraint handling:
 
 #### SRES (Stochastic Ranking Evolution Strategy)
+
 **Purpose:** Single-objective constrained optimization
 **Mechanism:** Stochastic ranking balances objectives and constraints
 
 **Usage:**
+
 ```python
 from pymoo.algorithms.soo.nonconvex.sres import SRES
 
@@ -179,10 +203,12 @@ algorithm = SRES()
 ```
 
 #### ISRES (Improved SRES)
+
 **Purpose:** Enhanced constrained optimization
 **Improvements:** Better parameter adaptation
 
 **Usage:**
+
 ```python
 from pymoo.algorithms.soo.nonconvex.isres import ISRES
 
@@ -193,14 +219,14 @@ algorithm = ISRES()
 
 **Choose technique based on:**
 
-| Problem Characteristic | Recommended Technique |
-|------------------------|----------------------|
-| Large feasible region | Feasibility First |
-| Small feasible region | Constraint as Objective, Repair |
-| Heavily constrained | SRES/ISRES, Epsilon-constraint |
-| Linear constraints | Repair (projection) |
-| Nonlinear constraints | Feasibility First, Penalty |
-| Known feasible solutions | Biased initialization |
+| Problem Characteristic   | Recommended Technique           |
+| ------------------------ | ------------------------------- |
+| Large feasible region    | Feasibility First               |
+| Small feasible region    | Constraint as Objective, Repair |
+| Heavily constrained      | SRES/ISRES, Epsilon-constraint  |
+| Linear constraints       | Repair (projection)             |
+| Nonlinear constraints    | Feasibility First, Penalty      |
+| Known feasible solutions | Biased initialization           |
 
 ## Multi-Criteria Decision Making (MCDM)
 
@@ -209,6 +235,7 @@ After obtaining a Pareto front, MCDM helps select preferred solution(s).
 ### Decision Making Context
 
 **Pareto front characteristics:**
+
 - Multiple non-dominated solutions
 - Each represents different trade-off
 - No objectively "best" solution
@@ -217,10 +244,12 @@ After obtaining a Pareto front, MCDM helps select preferred solution(s).
 ### MCDM Methods in Pymoo
 
 #### 1. Pseudo-Weights
+
 **Concept:** Weight each objective, select solution minimizing weighted sum
 **Formula:** `score = w1*f1 + w2*f2 + ... + wM*fM`
 
 **Usage:**
+
 ```python
 from pymoo.mcdm.pseudo_weights import PseudoWeights
 
@@ -233,20 +262,24 @@ best_solution = result.X[best_idx]
 ```
 
 **When to use:**
+
 - Clear preference articulation available
 - Objectives commensurable
 - Linear trade-offs acceptable
 
 **Limitations:**
+
 - Requires weight specification
 - Linear assumption may not capture preferences
 - Sensitive to objective scaling
 
 #### 2. Compromise Programming
+
 **Concept:** Select solution closest to ideal point
 **Metric:** Distance to ideal (e.g., Euclidean, Tchebycheff)
 
 **Usage:**
+
 ```python
 from pymoo.mcdm.compromise_programming import CompromiseProgramming
 
@@ -255,19 +288,23 @@ best_idx = dm.do(result.F, ideal=ideal_point, nadir=nadir_point)
 ```
 
 **When to use:**
+
 - Ideal objective values known or estimable
 - Balanced consideration of all objectives
 - No clear weight preferences
 
 #### 3. Interactive Decision Making
+
 **Concept:** Iterative preference refinement
 **Process:**
+
 1. Show representative solutions to decision maker
 2. Gather feedback on preferences
 3. Focus search on preferred regions
 4. Repeat until satisfactory solution found
 
 **Approaches:**
+
 - Reference point methods
 - Trade-off analysis
 - Progressive preference articulation
@@ -275,12 +312,14 @@ best_idx = dm.do(result.F, ideal=ideal_point, nadir=nadir_point)
 ### Decision Making Workflow
 
 **Step 1: Normalize objectives**
+
 ```python
 # Normalize to [0, 1] for fair comparison
 F_norm = (result.F - result.F.min(axis=0)) / (result.F.max(axis=0) - result.F.min(axis=0))
 ```
 
 **Step 2: Analyze trade-offs**
+
 ```python
 from pymoo.visualization.scatter import Scatter
 
@@ -292,6 +331,7 @@ plot.show()
 ```
 
 **Step 3: Apply MCDM method**
+
 ```python
 from pymoo.mcdm.pseudo_weights import PseudoWeights
 
@@ -301,6 +341,7 @@ selected = dm.do(F_norm)
 ```
 
 **Step 4: Validate selection**
+
 ```python
 # Visualize selected solution
 from pymoo.visualization.petal import Petal
@@ -314,9 +355,11 @@ plot.show()
 ### Advanced MCDM Techniques
 
 #### Knee Point Detection
+
 **Concept:** Solutions where small improvement in one objective causes large degradation in others
 
 **Usage:**
+
 ```python
 from pymoo.mcdm.knee import KneePoint
 
@@ -326,15 +369,18 @@ knee_solutions = result.X[knee_idx]
 ```
 
 **When to use:**
+
 - No clear preferences
 - Balanced trade-offs desired
 - Convex Pareto fronts
 
 #### Hypervolume Contribution
+
 **Concept:** Select solutions contributing most to hypervolume
 **Use case:** Maintain diverse subset of solutions
 
 **Usage:**
+
 ```python
 from pymoo.indicators.hv import HV
 
@@ -351,15 +397,16 @@ selected_solutions = result.X[top_indices]
 
 **When decision maker has:**
 
-| Preference Information | Recommended Method |
-|------------------------|-------------------|
-| Clear objective weights | Pseudo-Weights |
-| Ideal target values | Compromise Programming |
-| No prior preferences | Knee Point, Visual inspection |
-| Conflicting criteria | Interactive methods |
-| Need diverse subset | Hypervolume contribution |
+| Preference Information  | Recommended Method            |
+| ----------------------- | ----------------------------- |
+| Clear objective weights | Pseudo-Weights                |
+| Ideal target values     | Compromise Programming        |
+| No prior preferences    | Knee Point, Visual inspection |
+| Conflicting criteria    | Interactive methods           |
+| Need diverse subset     | Hypervolume contribution      |
 
 **Best practices:**
+
 1. **Normalize objectives** before MCDM
 2. **Visualize Pareto front** to understand trade-offs
 3. **Consider multiple methods** for robust selection

@@ -7,6 +7,7 @@ Pysam provides the `AlignmentFile` class for reading and writing SAM/BAM/CRAM fo
 ## Opening Alignment Files
 
 Specify format via mode qualifier:
+
 - `"rb"` - Read BAM (binary)
 - `"r"` - Read SAM (text)
 - `"rc"` - Read CRAM (compressed)
@@ -41,6 +42,7 @@ outfile = pysam.AlignmentFile('-', 'w', template=infile)
 ## AlignmentFile Properties
 
 **Header Information:**
+
 - `references` - List of chromosome/contig names
 - `lengths` - Corresponding lengths for each reference
 - `header` - Complete header as dictionary
@@ -72,6 +74,7 @@ for read in samfile.fetch(until_eof=True):
 ```
 
 **Important Notes:**
+
 - Requires index (.bai/.crai) for random access
 - Returns reads that **overlap** the region (may extend beyond boundaries)
 - Use `until_eof=True` for non-indexed files or sequential reading
@@ -114,12 +117,14 @@ a_counts, c_counts, g_counts, t_counts = coverage
 Each read is represented as an `AlignedSegment` object with these key attributes:
 
 ### Read Information
+
 - `query_name` - Read name/ID
 - `query_sequence` - Read sequence (bases)
 - `query_qualities` - Base quality scores (ASCII-encoded)
 - `query_length` - Length of the read
 
 ### Mapping Information
+
 - `reference_name` - Chromosome/contig name
 - `reference_start` - Start position (0-based, inclusive)
 - `reference_end` - End position (0-based, exclusive)
@@ -128,6 +133,7 @@ Each read is represented as an `AlignedSegment` object with these key attributes
 - `cigartuples` - CIGAR as list of (operation, length) tuples
 
 **Important:** `cigartuples` format differs from SAM specification. Operations are integers:
+
 - 0 = M (match/mismatch)
 - 1 = I (insertion)
 - 2 = D (deletion)
@@ -139,6 +145,7 @@ Each read is represented as an `AlignedSegment` object with these key attributes
 - 8 = X (sequence mismatch)
 
 ### Flags and Status
+
 - `flag` - SAM flag as integer
 - `is_paired` - Is read paired?
 - `is_proper_pair` - Is read in a proper pair?
@@ -154,6 +161,7 @@ Each read is represented as an `AlignedSegment` object with these key attributes
 - `is_supplementary` - Is supplementary alignment?
 
 ### Tags and Optional Fields
+
 - `get_tag(tag)` - Get value of optional field
 - `set_tag(tag, value)` - Set optional field
 - `has_tag(tag)` - Check if tag exists
@@ -228,6 +236,7 @@ for pileupcolumn in samfile.pileup("chr1", 1000, 2000):
 ```
 
 **Key attributes:**
+
 - `pileupcolumn.pos` - 0-based reference position
 - `pileupcolumn.nsegments` - Number of reads covering position
 - `pileupread.alignment` - The AlignedSegment object
@@ -240,11 +249,13 @@ for pileupcolumn in samfile.pileup("chr1", 1000, 2000):
 ## Coordinate System
 
 **Critical:** Pysam uses **0-based, half-open** coordinates (Python convention):
+
 - `reference_start` is 0-based (first base is 0)
 - `reference_end` is exclusive (not included in range)
 - Region from 1000-2000 includes bases 1000-1999
 
 **Exception:** Region strings in `fetch()` and `pileup()` follow samtools conventions (1-based):
+
 ```python
 # These are equivalent:
 samfile.fetch("chr1", 999, 2000)  # Python style: 0-based
@@ -254,11 +265,13 @@ samfile.fetch("chr1:1000-2000")   # samtools style: 1-based
 ## Indexing
 
 Create BAM index:
+
 ```python
 pysam.index("example.bam")
 ```
 
 Or use command-line interface:
+
 ```python
 pysam.samtools.index("example.bam")
 ```

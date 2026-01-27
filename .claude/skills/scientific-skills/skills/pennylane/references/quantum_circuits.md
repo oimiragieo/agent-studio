@@ -1,6 +1,7 @@
 # Quantum Circuits in PennyLane
 
 ## Table of Contents
+
 1. [Basic Gates and Operations](#basic-gates-and-operations)
 2. [Multi-Qubit Gates](#multi-qubit-gates)
 3. [Controlled Operations](#controlled-operations)

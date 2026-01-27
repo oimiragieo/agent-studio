@@ -3,9 +3,7 @@
   "title": "mcp-converter Output Schema",
   "description": "Output validation schema for mcp-converter skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

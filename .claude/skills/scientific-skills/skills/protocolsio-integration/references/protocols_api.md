@@ -27,6 +27,7 @@ Retrieve protocols with filtering and pagination.
 **Endpoint:** `GET /protocols`
 
 **Query Parameters:**
+
 - `filter`: Filter type
   - `public`: Public protocols only
   - `private`: Your private protocols
@@ -41,6 +42,7 @@ Retrieve protocols with filtering and pagination.
 - `content_format`: Content format (`json`, `html`, `markdown`)
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/protocols?filter=public&key=CRISPR&page_size=20&content_format=html"
@@ -53,6 +55,7 @@ Retrieve a protocol by its DOI.
 **Endpoint:** `GET /protocols/{doi}`
 
 **Path Parameters:**
+
 - `doi`: The protocol DOI (e.g., `dx.doi.org/10.17504/protocols.io.xxxxx`)
 
 ## Retrieve Protocol Details
@@ -62,12 +65,15 @@ Retrieve a protocol by its DOI.
 **Endpoint:** `GET /protocols/{protocol_id}`
 
 **Path Parameters:**
+
 - `protocol_id`: The protocol's unique identifier
 
 **Query Parameters:**
+
 - `content_format`: Content format (`json`, `html`, `markdown`)
 
 **Response includes:**
+
 - Protocol metadata (title, authors, description, DOI)
 - All protocol steps with content
 - Materials and reagents
@@ -82,6 +88,7 @@ Retrieve a protocol by its DOI.
 **Endpoint:** `POST /protocols`
 
 **Request Body Parameters:**
+
 - `title` (required): Protocol title
 - `description`: Protocol description
 - `tags`: Array of tag strings
@@ -93,6 +100,7 @@ Retrieve a protocol by its DOI.
 - `link`: External link to related resource
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -110,6 +118,7 @@ curl -X POST \
 **Endpoint:** `PATCH /protocols/{protocol_id}`
 
 **Path Parameters:**
+
 - `protocol_id`: The protocol's unique identifier
 
 **Request Body**: Same parameters as create, all optional
@@ -121,6 +130,7 @@ curl -X POST \
 **Endpoint:** `POST /protocols/{protocol_id}/steps`
 
 **Request Body Parameters:**
+
 - `title` (required): Step title
 - `description`: Step description (HTML, Markdown, or Draft.js JSON)
 - `duration`: Step duration in seconds
@@ -131,6 +141,7 @@ curl -X POST \
 - `expected_result`: Expected outcome description
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -159,6 +170,7 @@ curl -X POST \
 **Endpoint:** `POST /protocols/{protocol_id}/steps/reorder`
 
 **Request Body:**
+
 - `step_order`: Array of step IDs in desired order
 
 ## Materials and Reagents
@@ -170,6 +182,7 @@ Retrieve all materials and reagents used in a protocol.
 **Endpoint:** `GET /protocols/{protocol_id}/materials`
 
 **Response includes:**
+
 - Reagent names and descriptions
 - Catalog numbers
 - Vendor information
@@ -185,17 +198,20 @@ Issue a DOI and make the protocol publicly available.
 **Endpoint:** `POST /protocols/{protocol_id}/publish`
 
 **Request Body Parameters:**
+
 - `version_notes`: Description of changes in this version
 - `publish_type`: Publication type
   - `new`: First publication
   - `update`: Update to existing published protocol
 
 **Important Notes:**
+
 - Once published, protocols receive a permanent DOI
 - Published protocols cannot be deleted, only updated with new versions
 - Published protocols are publicly accessible
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -232,13 +248,16 @@ Generate a formatted PDF version of a protocol.
 **Endpoint:** `GET /view/{protocol_uri}.pdf`
 
 **Query Parameters:**
+
 - `compact`: Set to `1` for compact view without large spacing
 
 **Rate Limits:**
+
 - Signed-in users: 5 requests per minute
 - Unsigned users: 3 requests per minute
 
 **Example:**
+
 ```
 https://protocols.io/api/v3/view/crispr-protocol-abc123.pdf?compact=1
 ```

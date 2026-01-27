@@ -5,48 +5,61 @@
 **Base URL:** `https://api.openalex.org`
 **Authentication:** None required
 **Rate Limits:**
+
 - Default: 1 request/second, 100k requests/day
 - Polite pool (with email): 10 requests/second, 100k requests/day
 
 ## Critical Best Practices
 
 ### ✅ DO: Use `?sample` parameter for random sampling
+
 ```
 https://api.openalex.org/works?sample=20&seed=123
 ```
+
 For large samples (10k+), use multiple seeds and deduplicate.
 
 ### ❌ DON'T: Use random page numbers for sampling
+
 Incorrect: `?page=5`, `?page=17` - This biases results!
 
 ### ✅ DO: Use two-step lookup for entity filtering
+
 ```
 1. Find entity ID: /authors?search=einstein
 2. Use ID: /works?filter=authorships.author.id:A5023888391
 ```
 
 ### ❌ DON'T: Filter by entity names directly
+
 Incorrect: `/works?filter=author_name:Einstein` - Names are ambiguous!
 
 ### ✅ DO: Use maximum page size for bulk extraction
+
 ```
 ?per-page=200
 ```
+
 This is 8x faster than default (25).
 
 ### ❌ DON'T: Use default page sizes
+
 Default is only 25 results per page.
 
 ### ✅ DO: Use OR filter (pipe |) for batch lookups
+
 ```
 /works?filter=doi:10.1/abc|10.2/def|10.3/ghi
 ```
+
 Up to 50 values per filter.
 
 ### ❌ DON'T: Make sequential API calls for lists
+
 Making 100 separate calls when you can batch them is inefficient.
 
 ### ✅ DO: Implement exponential backoff for retries
+
 ```python
 for attempt in range(max_retries):
     try:
@@ -59,9 +72,11 @@ for attempt in range(max_retries):
 ```
 
 ### ✅ DO: Add email for 10x rate limit boost
+
 ```
 ?mailto=yourname@example.edu
 ```
+
 Increases from 1 req/sec → 10 req/sec.
 
 ## Entity Endpoints
@@ -77,21 +92,22 @@ Increases from 1 req/sec → 10 req/sec.
 
 ## Essential Query Parameters
 
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `filter=` | Filter results | `?filter=publication_year:2020` |
-| `search=` | Full-text search | `?search=machine+learning` |
-| `sort=` | Sort results | `?sort=cited_by_count:desc` |
-| `per-page=` | Results per page (max 200) | `?per-page=200` |
-| `page=` | Page number | `?page=2` |
-| `sample=` | Random results | `?sample=50&seed=42` |
-| `select=` | Limit fields | `?select=id,title` |
-| `group_by=` | Aggregate by field | `?group_by=publication_year` |
-| `mailto=` | Email for polite pool | `?mailto=you@example.edu` |
+| Parameter   | Description                | Example                         |
+| ----------- | -------------------------- | ------------------------------- |
+| `filter=`   | Filter results             | `?filter=publication_year:2020` |
+| `search=`   | Full-text search           | `?search=machine+learning`      |
+| `sort=`     | Sort results               | `?sort=cited_by_count:desc`     |
+| `per-page=` | Results per page (max 200) | `?per-page=200`                 |
+| `page=`     | Page number                | `?page=2`                       |
+| `sample=`   | Random results             | `?sample=50&seed=42`            |
+| `select=`   | Limit fields               | `?select=id,title`              |
+| `group_by=` | Aggregate by field         | `?group_by=publication_year`    |
+| `mailto=`   | Email for polite pool      | `?mailto=you@example.edu`       |
 
 ## Filter Syntax
 
 ### Basic Filtering
+
 ```
 Single filter:     ?filter=publication_year:2020
 Multiple (AND):    ?filter=publication_year:2020,is_oa:true
@@ -100,6 +116,7 @@ Negation:          ?filter=type:!journal-article
 ```
 
 ### Comparison Operators
+
 ```
 Greater than:      ?filter=cited_by_count:>100
 Less than:         ?filter=publication_year:<2020
@@ -107,22 +124,27 @@ Range:             ?filter=publication_year:2020-2023
 ```
 
 ### Multiple Values in Same Attribute
+
 ```
 Repeat filter:     ?filter=institutions.country_code:us,institutions.country_code:gb
 Use + symbol:      ?filter=institutions.country_code:us+gb
 ```
+
 Both mean: "works with author from US AND author from GB"
 
 ### OR Queries
+
 ```
 Any of these:      ?filter=institutions.country_code:us|gb|ca
 Batch IDs:         ?filter=doi:10.1/abc|10.2/def
 ```
+
 Up to 50 values with pipes.
 
 ## Common Query Patterns
 
 ### Get Random Sample
+
 ```bash
 # Small sample
 https://api.openalex.org/works?sample=20&seed=42
@@ -134,6 +156,7 @@ https://api.openalex.org/works?sample=1000&seed=2
 ```
 
 ### Search Works
+
 ```bash
 # Simple search
 https://api.openalex.org/works?search=machine+learning
@@ -146,6 +169,7 @@ https://api.openalex.org/works?search=climate&filter=publication_year:2023
 ```
 
 ### Find Works by Author (Two-Step)
+
 ```bash
 # Step 1: Get author ID
 https://api.openalex.org/authors?search=Heather+Piwowar
@@ -156,6 +180,7 @@ https://api.openalex.org/works?filter=authorships.author.id:A5023888391
 ```
 
 ### Find Works by Institution (Two-Step)
+
 ```bash
 # Step 1: Get institution ID
 https://api.openalex.org/institutions?search=MIT
@@ -166,11 +191,13 @@ https://api.openalex.org/works?filter=authorships.institutions.id:I136199984
 ```
 
 ### Highly Cited Recent Papers
+
 ```bash
 https://api.openalex.org/works?filter=publication_year:>2020&sort=cited_by_count:desc&per-page=200
 ```
 
 ### Open Access Works
+
 ```bash
 # All OA
 https://api.openalex.org/works?filter=is_oa:true
@@ -180,18 +207,21 @@ https://api.openalex.org/works?filter=open_access.oa_status:gold
 ```
 
 ### Multiple Criteria
+
 ```bash
 # Recent OA works about COVID from top institutions
 https://api.openalex.org/works?filter=publication_year:2022,is_oa:true,title.search:covid,authorships.institutions.id:I136199984|I27837315
 ```
 
 ### Bulk DOI Lookup
+
 ```bash
 # Get specific works by DOI (up to 50 per request)
 https://api.openalex.org/works?filter=doi:https://doi.org/10.1371/journal.pone.0266781|https://doi.org/10.1371/journal.pone.0267149&per-page=50
 ```
 
 ### Aggregate Data
+
 ```bash
 # Top topics
 https://api.openalex.org/works?group_by=topics.id
@@ -204,6 +234,7 @@ https://api.openalex.org/works?group_by=authorships.institutions.id
 ```
 
 ### Pagination
+
 ```bash
 # First page
 https://api.openalex.org/works?filter=publication_year:2023&per-page=200
@@ -215,6 +246,7 @@ https://api.openalex.org/works?filter=publication_year:2023&per-page=200&page=2
 ## Response Structure
 
 ### List Endpoints
+
 ```json
 {
   "meta": {
@@ -224,18 +256,22 @@ https://api.openalex.org/works?filter=publication_year:2023&per-page=200&page=2
     "per_page": 25
   },
   "results": [
-    { /* entity object */ }
+    {
+      /* entity object */
+    }
   ]
 }
 ```
 
 ### Single Entity
+
 ```
 https://api.openalex.org/works/W2741809807
 → Returns Work object directly (no meta/results wrapper)
 ```
 
 ### Group By
+
 ```json
 {
   "meta": { "count": 100 },
@@ -251,47 +287,51 @@ https://api.openalex.org/works/W2741809807
 
 ## Works Filters (Most Common)
 
-| Filter | Description | Example |
-|--------|-------------|---------|
-| `authorships.author.id` | Author's OpenAlex ID | `A5023888391` |
-| `authorships.institutions.id` | Institution's ID | `I136199984` |
-| `cited_by_count` | Citation count | `>100` |
-| `is_oa` | Is open access | `true/false` |
-| `publication_year` | Year published | `2020`, `>2020`, `2018-2022` |
-| `primary_location.source.id` | Source (journal) ID | `S137773608` |
-| `topics.id` | Topic ID | `T10001` |
-| `type` | Document type | `article`, `book`, `dataset` |
-| `has_doi` | Has DOI | `true/false` |
-| `has_fulltext` | Has fulltext | `true/false` |
+| Filter                        | Description          | Example                      |
+| ----------------------------- | -------------------- | ---------------------------- |
+| `authorships.author.id`       | Author's OpenAlex ID | `A5023888391`                |
+| `authorships.institutions.id` | Institution's ID     | `I136199984`                 |
+| `cited_by_count`              | Citation count       | `>100`                       |
+| `is_oa`                       | Is open access       | `true/false`                 |
+| `publication_year`            | Year published       | `2020`, `>2020`, `2018-2022` |
+| `primary_location.source.id`  | Source (journal) ID  | `S137773608`                 |
+| `topics.id`                   | Topic ID             | `T10001`                     |
+| `type`                        | Document type        | `article`, `book`, `dataset` |
+| `has_doi`                     | Has DOI              | `true/false`                 |
+| `has_fulltext`                | Has fulltext         | `true/false`                 |
 
 ## Authors Filters
 
-| Filter | Description |
-|--------|-------------|
+| Filter                      | Description              |
+| --------------------------- | ------------------------ |
 | `last_known_institution.id` | Current/last institution |
-| `works_count` | Number of works |
-| `cited_by_count` | Total citations |
-| `orcid` | ORCID identifier |
+| `works_count`               | Number of works          |
+| `cited_by_count`            | Total citations          |
+| `orcid`                     | ORCID identifier         |
 
 ## External ID Support
 
 ### Works
+
 ```
 DOI:  /works/https://doi.org/10.7717/peerj.4375
 PMID: /works/pmid:29844763
 ```
 
 ### Authors
+
 ```
 ORCID: /authors/https://orcid.org/0000-0003-1613-5981
 ```
 
 ### Institutions
+
 ```
 ROR: /institutions/https://ror.org/02y3ad647
 ```
 
 ### Sources
+
 ```
 ISSN: /sources/issn:0028-0836
 ```
@@ -307,6 +347,7 @@ ISSN: /sources/issn:0028-0836
 ## Error Handling
 
 ### HTTP Status Codes
+
 - `200` - Success
 - `400` - Bad request (check filter syntax)
 - `403` - Rate limit exceeded (implement backoff)
@@ -314,6 +355,7 @@ ISSN: /sources/issn:0028-0836
 - `500` - Server error (retry with backoff)
 
 ### Exponential Backoff
+
 ```python
 def fetch_with_retry(url, max_retries=5):
     for attempt in range(max_retries):
@@ -337,15 +379,18 @@ def fetch_with_retry(url, max_retries=5):
 ## Rate Limiting
 
 ### Without Email (Default Pool)
+
 - 1 request/second
 - 100,000 requests/day
 
 ### With Email (Polite Pool)
+
 - 10 requests/second
 - 100,000 requests/day
 - **Always use for production**
 
 ### Concurrent Request Strategy
+
 1. Track requests per second globally
 2. Use semaphore or rate limiter across threads
 3. Monitor for 403 responses

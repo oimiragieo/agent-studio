@@ -8,14 +8,14 @@ Fix all 50 open issues identified in the framework deep dive, organized into 5 p
 | Category | Total | Resolved | Open |
 |----------|-------|----------|------|
 | SEC-AUDIT | 11 | 10 | 1 |
-| HOOK-* | 12 | 0 | 12 |
-| CRITICAL-* | 3 | 0 | 3 |
-| IMP-* | 7 | 0 | 7 |
-| ARCH-* | 4 | 1 | 3 |
-| POINTER-* | 6 | 5 | 1 |
-| PERF-* | 9 | 0 | 9 |
-| PROC-* | 10 | 0 | 10 |
-| SEC-IMPL-* | 6 | 0 | 6 |
+| HOOK-_ | 12 | 0 | 12 |
+| CRITICAL-_ | 3 | 0 | 3 |
+| IMP-_ | 7 | 0 | 7 |
+| ARCH-_ | 4 | 1 | 3 |
+| POINTER-_ | 6 | 5 | 1 |
+| PERF-_ | 9 | 0 | 9 |
+| PROC-_ | 10 | 0 | 10 |
+| SEC-IMPL-_ | 6 | 0 | 6 |
 
 ## Objectives
 
@@ -30,6 +30,7 @@ Fix all 50 open issues identified in the framework deep dive, organized into 5 p
 ## Phases
 
 ### Phase 1: Critical Security & Reliability (P1) - Immediate
+
 **Dependencies**: None
 **Parallel OK**: Partial
 **Estimated Time**: 4 hours
@@ -77,12 +78,15 @@ These issues MUST be fixed first as they affect system security and reliability.
   - **Rollback**: `git checkout -- .claude/hooks/safety/router-write-guard.cjs`
 
 #### Phase 1 Error Handling
+
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document: `echo "Phase 1 failed: $(date)" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
 
 #### Phase 1 Verification Gate
+
 ```bash
 # All must pass before proceeding
 pnpm test:framework 2>&1 | grep -E "passing|PASS" && \
@@ -94,6 +98,7 @@ echo "Phase 1 PASSED"
 ---
 
 ### Phase 2: Performance Quick Wins (P1) - Same Day
+
 **Dependencies**: Phase 1
 **Parallel OK**: Yes (tasks 2.1-2.3 can run in parallel)
 **Estimated Time**: 6 hours
@@ -106,6 +111,7 @@ High-impact performance improvements with moderate effort.
   - **Issue**: ~2000 lines of parseHookInput() duplicated across 40+ hooks
   - **Files to Create**: `.claude/lib/utils/hook-input.cjs`, `.claude/lib/utils/hook-input.test.cjs`
   - **Command**:
+
     ```
     Task({ agent: "developer", prompt: "Create .claude/lib/utils/hook-input.cjs with:
     - parseHookInput(options) - stdin/argv JSON parsing
@@ -115,6 +121,7 @@ High-impact performance improvements with moderate effort.
     Extract from .claude/hooks/routing/task-create-guard.cjs lines 36-90 as reference.
     Create 15+ tests covering all edge cases." })
     ```
+
   - **Verify**: `pnpm test -- .claude/lib/utils/hook-input.test.cjs 2>&1 | grep -E "passing|PASS"`
   - **Rollback**: `rm -f .claude/lib/utils/hook-input.cjs .claude/lib/utils/hook-input.test.cjs`
 
@@ -138,12 +145,15 @@ High-impact performance improvements with moderate effort.
   - **Rollback**: `git checkout -- .claude/hooks/evolution/ .claude/hooks/safety/file-placement-guard.cjs`
 
 #### Phase 2 Error Handling
+
 If any task fails:
+
 1. Run rollback for that specific task
 2. Continue with other parallel tasks
 3. Document partial failures in issues.md
 
 #### Phase 2 Verification Gate
+
 ```bash
 # All must pass
 ls .claude/lib/utils/hook-input.cjs && \
@@ -155,6 +165,7 @@ echo "Phase 2 PASSED"
 ---
 
 ### Phase 3: Code Quality & Hook Fixes (P2) - Short Term
+
 **Dependencies**: Phase 2
 **Parallel OK**: Partial
 **Estimated Time**: 12 hours
@@ -166,6 +177,7 @@ Address hook quality issues and important library fixes.
 - [ ] **3.1** HOOK-001: Migrate hooks to use hook-input.cjs (~4h)
   - **Issue**: 40+ hooks with duplicated parseHookInput()
   - **Command**:
+
     ```
     Task({ agent: "developer", prompt: "Update ALL hooks in .claude/hooks/ to:
     1. Import { parseHookInput, validateHookInput } from '../../lib/utils/hook-input.cjs'
@@ -174,6 +186,7 @@ Address hook quality issues and important library fixes.
 
     Priority order: routing/, safety/, evolution/, self-healing/, memory/, reflection/, validation/, tools/" })
     ```
+
   - **Verify**: `grep -r "function parseHookInput" .claude/hooks/ | wc -l` should return 0
   - **Rollback**: `git checkout -- .claude/hooks/`
 
@@ -207,12 +220,15 @@ Address hook quality issues and important library fixes.
   - **Rollback**: `git checkout -- .claude/hooks/memory/`
 
 #### Phase 3 Error Handling
+
 If any task fails:
+
 1. Run rollback command
 2. Document in issues.md with specific task reference
 3. Continue with unblocked tasks
 
 #### Phase 3 Verification Gate
+
 ```bash
 # All must pass
 pnpm test:framework 2>&1 | grep -E "passing|PASS" && \
@@ -224,6 +240,7 @@ echo "Phase 3 PASSED"
 ---
 
 ### Phase 4: Hook Consolidation (P2) - Medium Term
+
 **Dependencies**: Phase 3
 **Parallel OK**: No (sequential consolidation)
 **Estimated Time**: 16 hours
@@ -241,6 +258,7 @@ Major hook consolidation for 60% latency reduction on Edit/Write operations.
     - router-self-check.cjs
   - **Target**: Single unified-routing-guard.cjs
   - **Command**:
+
     ```
     Task({ agent: "developer", prompt: "Create .claude/hooks/routing/unified-routing-guard.cjs that:
     1. Combines all 5 routing guard logics
@@ -251,6 +269,7 @@ Major hook consolidation for 60% latency reduction on Edit/Write operations.
 
     After creation, update .claude/settings.json to use new hook and deprecate old ones." })
     ```
+
   - **Verify**: `pnpm test -- .claude/hooks/routing/unified-routing-guard.test.cjs`
   - **Rollback**: `git checkout -- .claude/hooks/routing/ .claude/settings.json`
 
@@ -279,12 +298,15 @@ Major hook consolidation for 60% latency reduction on Edit/Write operations.
   - **Rollback**: `git checkout -- .claude/hooks/memory/ .claude/hooks/reflection/ .claude/settings.json`
 
 #### Phase 4 Error Handling
+
 If any task fails:
+
 1. DO NOT modify settings.json until consolidation is verified
 2. Run full rollback of affected hook directory
 3. Keep old hooks active, document failure
 
 #### Phase 4 Verification Gate
+
 ```bash
 # Performance validation
 pnpm test:framework 2>&1 | grep -E "passing|PASS" && \
@@ -298,6 +320,7 @@ echo "Phase 4 PASSED"
 ---
 
 ### Phase 5: Process Automation & Documentation (P3) - Strategic
+
 **Dependencies**: Phase 4
 **Parallel OK**: Yes (all tasks can run in parallel)
 **Estimated Time**: 26 hours
@@ -403,12 +426,15 @@ Long-term process improvements and automation.
   - **Rollback**: `git checkout -- .claude/lib/**/*.test.cjs`
 
 #### Phase 5 Error Handling
+
 If any task fails:
+
 1. Tasks are independent - continue with others
 2. Document specific failure in issues.md
 3. Low-risk phase - no cascading failures
 
 #### Phase 5 Verification Gate
+
 ```bash
 # Documentation created
 ls .claude/workflows/core/hook-consolidation-workflow.md && \
@@ -424,6 +450,7 @@ echo "Phase 5 PASSED"
 ---
 
 ## Phase [FINAL]: Evolution & Reflection Check
+
 **Dependencies**: All previous phases
 **Parallel OK**: No
 
@@ -453,27 +480,27 @@ echo "Phase 5 PASSED"
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Hook consolidation breaks functionality | HIGH | Comprehensive test coverage before deprecating old hooks | `git checkout -- .claude/hooks/ .claude/settings.json` |
-| State cache causes stale reads | MEDIUM | Explicit invalidation on writes, short TTL (1s) | Remove getCachedState calls |
-| Pre-commit hook slows development | LOW | Make lint configurable via env var | Disable git hook |
-| Documentation becomes stale | LOW | Link to source code, auto-generate where possible | N/A |
-| Parallel hook migration causes conflicts | MEDIUM | Sequential execution for Phase 4 | Rollback entire phase |
+| Risk                                     | Impact | Mitigation                                               | Rollback                                               |
+| ---------------------------------------- | ------ | -------------------------------------------------------- | ------------------------------------------------------ |
+| Hook consolidation breaks functionality  | HIGH   | Comprehensive test coverage before deprecating old hooks | `git checkout -- .claude/hooks/ .claude/settings.json` |
+| State cache causes stale reads           | MEDIUM | Explicit invalidation on writes, short TTL (1s)          | Remove getCachedState calls                            |
+| Pre-commit hook slows development        | LOW    | Make lint configurable via env var                       | Disable git hook                                       |
+| Documentation becomes stale              | LOW    | Link to source code, auto-generate where possible        | N/A                                                    |
+| Parallel hook migration causes conflicts | MEDIUM | Sequential execution for Phase 4                         | Rollback entire phase                                  |
 
 ---
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Dependencies |
-|-------|-------|-----------|-----------|--------------|
-| 1 - Critical Security | 5 | 4h | Partial | None |
-| 2 - Performance Quick Wins | 3 | 6h | Yes | Phase 1 |
-| 3 - Code Quality | 5 | 12h | Partial | Phase 2 |
-| 4 - Hook Consolidation | 3 | 16h | No | Phase 3 |
-| 5 - Process Automation | 9 | 26h | Yes | Phase 4 |
-| FINAL - Reflection | 2 | 25m | No | All |
-| **Total** | **27** | **~64h** | | |
+| Phase                      | Tasks  | Est. Time | Parallel? | Dependencies |
+| -------------------------- | ------ | --------- | --------- | ------------ |
+| 1 - Critical Security      | 5      | 4h        | Partial   | None         |
+| 2 - Performance Quick Wins | 3      | 6h        | Yes       | Phase 1      |
+| 3 - Code Quality           | 5      | 12h       | Partial   | Phase 2      |
+| 4 - Hook Consolidation     | 3      | 16h       | No        | Phase 3      |
+| 5 - Process Automation     | 9      | 26h       | Yes       | Phase 4      |
+| FINAL - Reflection         | 2      | 25m       | No        | All          |
+| **Total**                  | **27** | **~64h**  |           |              |
 
 ---
 
@@ -481,7 +508,7 @@ echo "Phase 5 PASSED"
 
 After all phases complete:
 
-1. **Security**: All SEC-* issues resolved (11/11)
+1. **Security**: All SEC-\* issues resolved (11/11)
 2. **Performance**: 60% latency reduction on Edit/Write operations
 3. **Code Quality**: <300 lines duplicated code (down from 2300)
 4. **Test Coverage**: >60% hook test coverage (up from 44%)
@@ -494,27 +521,27 @@ After all phases complete:
 
 ### Agent Assignments
 
-| Phase | Primary Agent | Supporting Agents |
-|-------|--------------|-------------------|
-| 1 | DEVELOPER | SECURITY-ARCHITECT (review) |
-| 2 | DEVELOPER | CODE-REVIEWER |
-| 3 | DEVELOPER | QA (tests) |
-| 4 | DEVELOPER | ARCHITECT (design), QA (tests) |
-| 5 | DEVELOPER, PLANNER | TECHNICAL-WRITER (docs) |
-| FINAL | REFLECTION-AGENT | - |
+| Phase | Primary Agent      | Supporting Agents              |
+| ----- | ------------------ | ------------------------------ |
+| 1     | DEVELOPER          | SECURITY-ARCHITECT (review)    |
+| 2     | DEVELOPER          | CODE-REVIEWER                  |
+| 3     | DEVELOPER          | QA (tests)                     |
+| 4     | DEVELOPER          | ARCHITECT (design), QA (tests) |
+| 5     | DEVELOPER, PLANNER | TECHNICAL-WRITER (docs)        |
+| FINAL | REFLECTION-AGENT   | -                              |
 
 ### Key File References
 
-| Issue Category | Primary Files |
-|---------------|---------------|
-| SEC-AUDIT-011 | `.claude/hooks/routing/router-state.cjs` |
-| HOOK-003 | `.claude/hooks/evolution/research-enforcement.cjs` |
-| CRITICAL-001 | `.claude/lib/memory/memory-manager.cjs`, `memory-scheduler.cjs`, `smart-pruner.cjs` |
-| PERF-006/007 | `.claude/lib/utils/hook-input.cjs`, `.claude/lib/utils/project-root.cjs` |
-| PERF-001/002/003 | `.claude/hooks/routing/`, `.claude/hooks/evolution/`, `.claude/hooks/memory/` |
+| Issue Category   | Primary Files                                                                       |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| SEC-AUDIT-011    | `.claude/hooks/routing/router-state.cjs`                                            |
+| HOOK-003         | `.claude/hooks/evolution/research-enforcement.cjs`                                  |
+| CRITICAL-001     | `.claude/lib/memory/memory-manager.cjs`, `memory-scheduler.cjs`, `smart-pruner.cjs` |
+| PERF-006/007     | `.claude/lib/utils/hook-input.cjs`, `.claude/lib/utils/project-root.cjs`            |
+| PERF-001/002/003 | `.claude/hooks/routing/`, `.claude/hooks/evolution/`, `.claude/hooks/memory/`       |
 
 ---
 
-*Plan generated: 2026-01-26*
-*Deep Dive Report: .claude/context/artifacts/FRAMEWORK-DEEP-DIVE-REPORT.md*
-*Issues Inventory: .claude/context/memory/issues.md*
+_Plan generated: 2026-01-26_
+_Deep Dive Report: .claude/context/artifacts/FRAMEWORK-DEEP-DIVE-REPORT.md_
+_Issues Inventory: .claude/context/memory/issues.md_

@@ -44,6 +44,7 @@ print(f"Gene names: {gene_names}")
 ```
 
 **Output:**
+
 - UniProt accession: P43403
 - Gene name: ZAP70
 
@@ -134,6 +135,7 @@ if kegg_mapping:
 ```
 
 **Output:**
+
 - path:hsa04064 - NF-kappa B signaling pathway
 - path:hsa04650 - Natural killer cell mediated cytotoxicity
 - path:hsa04660 - T cell receptor signaling pathway
@@ -197,6 +199,7 @@ if annotations:
 **Inputs:** Protein name (e.g., "ZAP70_HUMAN")
 
 **Outputs:**
+
 1. UniProt accession and gene name
 2. Protein sequence (FASTA)
 3. Similar proteins (BLAST results)
@@ -262,6 +265,7 @@ for rel_type, count in sorted(relation_types.items()):
 ```
 
 **Output:**
+
 - Entry count (genes/proteins in pathway)
 - Relation count (interactions)
 - Distribution of interaction types (activation, inhibition, binding, etc.)
@@ -448,6 +452,7 @@ if chembl_id:
 **Input:** Compound name (e.g., "Geldanamycin")
 
 **Output:**
+
 - KEGG ID: C11222
 - ChEBI ID: 5292
 - ChEMBL ID: CHEMBL278315
@@ -711,6 +716,7 @@ for org in organisms:
 ### 1. Error Handling
 
 Always wrap service calls:
+
 ```python
 try:
     result = service.method(params)
@@ -724,6 +730,7 @@ except Exception as e:
 ### 2. Rate Limiting
 
 Add delays for batch processing:
+
 ```python
 import time
 
@@ -735,6 +742,7 @@ for item in items:
 ### 3. Result Validation
 
 Check for empty or unexpected results:
+
 ```python
 if result and len(result) > 0:
     # Process
@@ -746,6 +754,7 @@ else:
 ### 4. Progress Reporting
 
 For long workflows:
+
 ```python
 total = len(items)
 for i, item in enumerate(items):
@@ -757,6 +766,7 @@ for i, item in enumerate(items):
 ### 5. Data Export
 
 Save intermediate results:
+
 ```python
 import json
 

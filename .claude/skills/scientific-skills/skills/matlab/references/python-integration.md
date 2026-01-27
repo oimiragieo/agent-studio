@@ -1,6 +1,7 @@
 # Python Integration Reference
 
 ## Table of Contents
+
 1. [Calling Python from MATLAB](#calling-python-from-matlab)
 2. [Data Type Conversion](#data-type-conversion)
 3. [Working with Python Objects](#working-with-python-objects)
@@ -95,16 +96,16 @@ df = py.pandas.DataFrame(pyargs( ...
 
 ### MATLAB to Python
 
-| MATLAB Type | Python Type |
-|-------------|-------------|
-| double, single | float |
-| int8, int16, int32, int64 | int |
-| uint8, uint16, uint32, uint64 | int |
-| logical | bool |
-| char, string | str |
-| cell array | list |
-| struct | dict |
-| numeric array | numpy.ndarray (if numpy available) |
+| MATLAB Type                   | Python Type                        |
+| ----------------------------- | ---------------------------------- |
+| double, single                | float                              |
+| int8, int16, int32, int64     | int                                |
+| uint8, uint16, uint32, uint64 | int                                |
+| logical                       | bool                               |
+| char, string                  | str                                |
+| cell array                    | list                               |
+| struct                        | dict                               |
+| numeric array                 | numpy.ndarray (if numpy available) |
 
 ```matlab
 % Automatic conversion examples

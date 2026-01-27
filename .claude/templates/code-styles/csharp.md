@@ -3,9 +3,10 @@
 This document summarizes key rules and best practices from the Google C# Style Guide.
 
 ## 1. Naming Conventions
+
 - **PascalCase:** For class names, method names, constants, properties, namespaces, and public fields.
   - Example: `MyClass`, `GetValue()`, `MaxValue`
-- **_camelCase:** For private, internal, and protected fields (with leading underscore).
+- **\_camelCase:** For private, internal, and protected fields (with leading underscore).
   - Example: `_myField`, `_internalState`
 - **camelCase:** For local variables and parameters.
   - Example: `localVariable`, `methodParameter`
@@ -13,6 +14,7 @@ This document summarizes key rules and best practices from the Google C# Style G
 - **Type Parameters:** Use descriptive names prefixed with `T` (e.g., `TValue`, `TKey`), or just `T` for simple cases.
 
 ## 2. Formatting Rules
+
 - **Indentation:** Use 2 spaces (never tabs).
 - **Braces:** K&R style-no line break before the opening brace; keep `} else` on one line; braces required even when optional.
   ```csharp
@@ -26,7 +28,9 @@ This document summarizes key rules and best practices from the Google C# Style G
 - **One Statement Per Line:** Each statement on its own line.
 
 ## 3. Declaration Order
+
 Class member ordering:
+
 - Group members in this order:
   1. Nested classes, enums, delegates, and events
   2. Static, const, and readonly fields
@@ -42,6 +46,7 @@ Class member ordering:
 - Where possible, group interface implementations together.
 
 ## 4. Language Features
+
 - **var:** Use of `var` is encouraged if it aids readability by avoiding type names that are noisy, obvious, or unimportant. Prefer explicit types when it improves clarity.
   ```csharp
   var apple = new Apple();  // Good - type is obvious
@@ -72,6 +77,7 @@ Class member ordering:
   ```
 
 ## 5. Best Practices
+
 - **Structs vs Classes**:
   - Almost always use a class.
   - Consider structs only for small, value-like types that are short-lived or frequently embedded.
@@ -86,6 +92,7 @@ Class member ordering:
 - **LINQ:** Use LINQ for readability, but be mindful of performance in hot paths.
 
 ## 6. File Organization
+
 - **One Class Per File:** Typically one class, interface, enum, or struct per file.
 - **File Name:** Prefer the file name to match the name of the primary type it contains.
 - **Folders and File Locations:**
@@ -99,8 +106,10 @@ Class member ordering:
   - New top-level namespace names must be globally unique and recognizable.
 
 ## 7. Parameters and Returns
+
 - **out Parameters:** Permitted for output-only values; place `out` parameters after all other parameters. Prefer tuples or return types when they improve clarity.
 - **Argument Clarity:** When argument meaning is nonobvious, use named constants, replace `bool` with `enum`, use named arguments, or create a configuration class/struct.
+
   ```csharp
   // Bad
   DecimalNumber product = CalculateProduct(values, 7, false, null);
@@ -112,4 +121,4 @@ Class member ordering:
 
 **BE CONSISTENT.** When editing code, follow the existing style in the codebase.
 
-*Source: [Google C# Style Guide](https://google.github.io/styleguide/csharp-style.html)*
+_Source: [Google C# Style Guide](https://google.github.io/styleguide/csharp-style.html)_

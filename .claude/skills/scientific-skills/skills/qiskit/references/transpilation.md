@@ -7,6 +7,7 @@ Transpilation is the process of rewriting a quantum circuit to match the topolog
 **Problem**: Abstract quantum circuits may use gates not available on hardware and assume all-to-all qubit connectivity.
 
 **Solution**: Transpilation transforms circuits to:
+
 1. Use only hardware-native gates (basis gates)
 2. Respect physical qubit connectivity
 3. Minimize circuit depth and gate count
@@ -53,10 +54,12 @@ qc_3 = transpile(qc, backend=backend, optimization_level=3)
 The transpiler pipeline consists of six stages:
 
 ### 1. Init Stage
+
 - Validates circuit instructions
 - Translates multi-qubit gates to standard form
 
 ### 2. Layout Stage
+
 - Maps virtual qubits to physical qubits
 - Considers qubit connectivity and error rates
 
@@ -69,10 +72,12 @@ qc_transpiled = transpile(qc, coupling_map=coupling)
 ```
 
 ### 3. Routing Stage
+
 - Inserts SWAP gates to satisfy connectivity constraints
 - Minimizes additional SWAP overhead
 
 ### 4. Translation Stage
+
 - Converts gates to hardware basis gates
 - Typical basis: {RZ, SX, X, CX}
 
@@ -83,12 +88,14 @@ qc_transpiled = transpile(qc, basis_gates=basis_gates)
 ```
 
 ### 5. Optimization Stage
+
 - Reduces gate count and circuit depth
 - Applies gate cancellation and commutation rules
 - Uses **virtual permutation elision** (levels 2-3)
 - Finds separable operations to decompose
 
 ### 6. Scheduling Stage
+
 - Adds timing information for pulse-level control
 
 ## Advanced Optimization Features
@@ -100,6 +107,7 @@ At optimization levels 2-3, Qiskit analyzes commutation structure to eliminate u
 ### Gate Cancellation
 
 Identifies and removes pairs of gates that cancel:
+
 - X-X → I
 - H-H → I
 - CNOT-CNOT → I
@@ -227,6 +235,7 @@ print(backend.configuration().basis_gates)
 ### 3. Minimize Two-Qubit Gates
 
 Two-qubit gates have significantly higher error rates:
+
 - Design algorithms to minimize CNOT gates
 - Use gate identities to reduce counts
 
@@ -274,13 +283,17 @@ Transpilation depends on specific device (Rigetti, IonQ, etc.)
 ## Common Issues and Solutions
 
 ### Issue: Circuit too deep after transpilation
+
 **Solution**: Use higher optimization level or redesign circuit with fewer layers
 
 ### Issue: Too many SWAP gates inserted
+
 **Solution**: Adjust initial_layout to better match qubit topology
 
 ### Issue: Transpilation takes too long
+
 **Solution**: Reduce optimization level or update to Qiskit v2.2+ for speed improvements
 
 ### Issue: Unexpected gate decompositions
+
 **Solution**: Check basis_gates and consider specifying custom decomposition rules

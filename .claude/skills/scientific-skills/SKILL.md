@@ -25,6 +25,7 @@ A comprehensive collection of **139 ready-to-use scientific skills** that transf
 ## When to Use
 
 Invoke this skill when:
+
 - Working on scientific research tasks
 - Need access to specialized databases (PubMed, ChEMBL, UniProt, etc.)
 - Performing bioinformatics or cheminformatics analysis
@@ -37,127 +38,127 @@ Invoke this skill when:
 
 ```javascript
 // Invoke the main skill catalog
-Skill({ skill: "scientific-skills" });
+Skill({ skill: 'scientific-skills' });
 
 // Or invoke specific sub-skills directly
-Skill({ skill: "scientific-skills/rdkit" });       // Cheminformatics
-Skill({ skill: "scientific-skills/scanpy" });      // Single-cell analysis
-Skill({ skill: "scientific-skills/biopython" });   // Bioinformatics
-Skill({ skill: "scientific-skills/literature-review" }); // Literature review
+Skill({ skill: 'scientific-skills/rdkit' }); // Cheminformatics
+Skill({ skill: 'scientific-skills/scanpy' }); // Single-cell analysis
+Skill({ skill: 'scientific-skills/biopython' }); // Bioinformatics
+Skill({ skill: 'scientific-skills/literature-review' }); // Literature review
 ```
 
 ## Skill Categories
 
 ### Scientific Databases (28+)
 
-| Skill | Description |
-|-------|-------------|
-| `pubchem` | Chemical compound database |
-| `chembl-database` | Bioactivity database for drug discovery |
-| `uniprot-database` | Protein sequence and function database |
-| `pdb` | Protein Data Bank structures |
-| `drugbank-database` | Drug and drug target information |
-| `kegg` | Pathway and genome database |
-| `clinvar-database` | Clinical variant interpretations |
-| `cosmic-database` | Cancer mutation database |
-| `ensembl-database` | Genome browser and annotations |
-| `geo-database` | Gene expression data |
-| `gwas-database` | Genome-wide association studies |
-| `reactome-database` | Biological pathways |
-| `string-database` | Protein-protein interactions |
-| `alphafold-database` | Protein structure predictions |
-| `biorxiv-database` | Preprint server for biology |
-| `clinicaltrials-database` | Clinical trial registry |
-| `ena-database` | European Nucleotide Archive |
-| `fda-database` | FDA drug approvals and labels |
-| `gene-database` | Gene information from NCBI |
-| `zinc-database` | Commercially available compounds |
-| `brenda-database` | Enzyme database |
-| `clinpgx-database` | Pharmacogenomics annotations |
-| `uspto-database` | Patent database |
+| Skill                     | Description                             |
+| ------------------------- | --------------------------------------- |
+| `pubchem`                 | Chemical compound database              |
+| `chembl-database`         | Bioactivity database for drug discovery |
+| `uniprot-database`        | Protein sequence and function database  |
+| `pdb`                     | Protein Data Bank structures            |
+| `drugbank-database`       | Drug and drug target information        |
+| `kegg`                    | Pathway and genome database             |
+| `clinvar-database`        | Clinical variant interpretations        |
+| `cosmic-database`         | Cancer mutation database                |
+| `ensembl-database`        | Genome browser and annotations          |
+| `geo-database`            | Gene expression data                    |
+| `gwas-database`           | Genome-wide association studies         |
+| `reactome-database`       | Biological pathways                     |
+| `string-database`         | Protein-protein interactions            |
+| `alphafold-database`      | Protein structure predictions           |
+| `biorxiv-database`        | Preprint server for biology             |
+| `clinicaltrials-database` | Clinical trial registry                 |
+| `ena-database`            | European Nucleotide Archive             |
+| `fda-database`            | FDA drug approvals and labels           |
+| `gene-database`           | Gene information from NCBI              |
+| `zinc-database`           | Commercially available compounds        |
+| `brenda-database`         | Enzyme database                         |
+| `clinpgx-database`        | Pharmacogenomics annotations            |
+| `uspto-database`          | Patent database                         |
 
 ### Python Analysis Libraries (55+)
 
-| Skill | Description |
-|-------|-------------|
-| `rdkit` | Cheminformatics toolkit |
-| `scanpy` | Single-cell RNA-seq analysis |
-| `anndata` | Annotated data matrices |
-| `biopython` | Computational biology tools |
-| `pytorch-lightning` | Deep learning framework |
-| `scikit-learn` | Machine learning library |
-| `transformers` | NLP and deep learning models |
-| `pandas` / `polars` / `vaex` | Data manipulation |
-| `matplotlib` / `seaborn` / `plotly` | Visualization |
-| `deepchem` | Deep learning for chemistry |
-| `esm` | Evolutionary Scale Modeling |
-| `datamol` | Molecular data processing |
-| `pymatgen` | Materials science |
-| `qiskit` | Quantum computing |
-| `pymoo` | Multi-objective optimization |
-| `statsmodels` | Statistical modeling |
-| `sympy` | Symbolic mathematics |
-| `networkx` | Network analysis |
-| `geopandas` | Geospatial analysis |
-| `shap` | Model explainability |
+| Skill                               | Description                  |
+| ----------------------------------- | ---------------------------- |
+| `rdkit`                             | Cheminformatics toolkit      |
+| `scanpy`                            | Single-cell RNA-seq analysis |
+| `anndata`                           | Annotated data matrices      |
+| `biopython`                         | Computational biology tools  |
+| `pytorch-lightning`                 | Deep learning framework      |
+| `scikit-learn`                      | Machine learning library     |
+| `transformers`                      | NLP and deep learning models |
+| `pandas` / `polars` / `vaex`        | Data manipulation            |
+| `matplotlib` / `seaborn` / `plotly` | Visualization                |
+| `deepchem`                          | Deep learning for chemistry  |
+| `esm`                               | Evolutionary Scale Modeling  |
+| `datamol`                           | Molecular data processing    |
+| `pymatgen`                          | Materials science            |
+| `qiskit`                            | Quantum computing            |
+| `pymoo`                             | Multi-objective optimization |
+| `statsmodels`                       | Statistical modeling         |
+| `sympy`                             | Symbolic mathematics         |
+| `networkx`                          | Network analysis             |
+| `geopandas`                         | Geospatial analysis          |
+| `shap`                              | Model explainability         |
 
 ### Bioinformatics & Genomics
 
-| Skill | Description |
-|-------|-------------|
-| `gget` | Gene and transcript information |
-| `pysam` | SAM/BAM file manipulation |
-| `deeptools` | NGS data analysis |
-| `pydeseq2` | Differential expression |
-| `scvi-tools` | Deep learning for single-cell |
-| `etetoolkit` | Phylogenetic analysis |
-| `scikit-bio` | Bioinformatics algorithms |
-| `bioservices` | Web services for biology |
-| `cellxgene-census` | Cell atlas exploration |
+| Skill              | Description                     |
+| ------------------ | ------------------------------- |
+| `gget`             | Gene and transcript information |
+| `pysam`            | SAM/BAM file manipulation       |
+| `deeptools`        | NGS data analysis               |
+| `pydeseq2`         | Differential expression         |
+| `scvi-tools`       | Deep learning for single-cell   |
+| `etetoolkit`       | Phylogenetic analysis           |
+| `scikit-bio`       | Bioinformatics algorithms       |
+| `bioservices`      | Web services for biology        |
+| `cellxgene-census` | Cell atlas exploration          |
 
 ### Cheminformatics & Drug Discovery
 
-| Skill | Description |
-|-------|-------------|
-| `rdkit` | Molecular manipulation |
-| `datamol` | Molecular data handling |
-| `molfeat` | Molecular featurization |
-| `diffdock` | Molecular docking |
-| `torchdrug` | Drug discovery ML |
-| `pytdc` | Therapeutics data commons |
-| `cobrapy` | Metabolic modeling |
+| Skill       | Description               |
+| ----------- | ------------------------- |
+| `rdkit`     | Molecular manipulation    |
+| `datamol`   | Molecular data handling   |
+| `molfeat`   | Molecular featurization   |
+| `diffdock`  | Molecular docking         |
+| `torchdrug` | Drug discovery ML         |
+| `pytdc`     | Therapeutics data commons |
+| `cobrapy`   | Metabolic modeling        |
 
 ### Scientific Communication
 
-| Skill | Description |
-|-------|-------------|
-| `literature-review` | Systematic literature reviews |
-| `scientific-writing` | Academic writing assistance |
-| `scientific-schematics` | AI-generated figures |
-| `scientific-slides` | Presentation generation |
-| `hypothesis-generation` | Hypothesis development |
-| `venue-templates` | Journal-specific formatting |
-| `citation-management` | Reference management |
+| Skill                   | Description                   |
+| ----------------------- | ----------------------------- |
+| `literature-review`     | Systematic literature reviews |
+| `scientific-writing`    | Academic writing assistance   |
+| `scientific-schematics` | AI-generated figures          |
+| `scientific-slides`     | Presentation generation       |
+| `hypothesis-generation` | Hypothesis development        |
+| `venue-templates`       | Journal-specific formatting   |
+| `citation-management`   | Reference management          |
 
 ### Clinical & Medical
 
-| Skill | Description |
-|-------|-------------|
-| `clinical-decision-support` | Clinical reasoning |
-| `clinical-reports` | Medical report generation |
-| `treatment-plans` | Treatment planning |
-| `pyhealth` | Healthcare ML |
-| `pydicom` | Medical imaging |
+| Skill                       | Description               |
+| --------------------------- | ------------------------- |
+| `clinical-decision-support` | Clinical reasoning        |
+| `clinical-reports`          | Medical report generation |
+| `treatment-plans`           | Treatment planning        |
+| `pyhealth`                  | Healthcare ML             |
+| `pydicom`                   | Medical imaging           |
 
 ### Laboratory & Integration
 
-| Skill | Description |
-|-------|-------------|
+| Skill                   | Description              |
+| ----------------------- | ------------------------ |
 | `benchling-integration` | Lab informatics platform |
-| `dnanexus-integration` | Genomics cloud platform |
-| `pylabrobot` | Laboratory automation |
-| `flowio` | Flow cytometry data |
-| `omero-integration` | Bioimaging platform |
+| `dnanexus-integration`  | Genomics cloud platform  |
+| `pylabrobot`            | Laboratory automation    |
+| `flowio`                | Flow cytometry data      |
+| `omero-integration`     | Bioimaging platform      |
 
 ## Core Workflows
 
@@ -239,17 +240,17 @@ scientific-skills/
 
 ```javascript
 // Invoke specific skill
-Skill({ skill: "scientific-skills/rdkit" });
-Skill({ skill: "scientific-skills/scanpy" });
+Skill({ skill: 'scientific-skills/rdkit' });
+Skill({ skill: 'scientific-skills/scanpy' });
 ```
 
 ### Chained Workflows
 
 ```javascript
 // Multi-skill workflow
-Skill({ skill: "scientific-skills/literature-review" });
-Skill({ skill: "scientific-skills/hypothesis-generation" });
-Skill({ skill: "scientific-skills/scientific-schematics" });
+Skill({ skill: 'scientific-skills/literature-review' });
+Skill({ skill: 'scientific-skills/hypothesis-generation' });
+Skill({ skill: 'scientific-skills/scientific-schematics' });
 ```
 
 ## Prerequisites
@@ -270,19 +271,19 @@ Skill({ skill: "scientific-skills/scientific-schematics" });
 
 ### Recommended Agent Pairings
 
-| Agent | Scientific Skills |
-|-------|------------------|
-| `data-engineer` | polars, dask, vaex, zarr-python |
-| `python-pro` | All Python-based skills |
-| `database-architect` | Database skills for schema design |
-| `technical-writer` | literature-review, scientific-writing |
+| Agent                | Scientific Skills                     |
+| -------------------- | ------------------------------------- |
+| `data-engineer`      | polars, dask, vaex, zarr-python       |
+| `python-pro`         | All Python-based skills               |
+| `database-architect` | Database skills for schema design     |
+| `technical-writer`   | literature-review, scientific-writing |
 
 ### Example Agent Spawn
 
 ```javascript
 Task({
-  subagent_type: "python-pro",
-  description: "Analyze molecular dataset with RDKit",
+  subagent_type: 'python-pro',
+  description: 'Analyze molecular dataset with RDKit',
   prompt: `You are the PYTHON-PRO agent with scientific research expertise.
 
 ## Task
@@ -298,7 +299,7 @@ Analyze the molecular dataset for drug-likeness properties.
 3. Apply Lipinski filters
 4. Generate visualization
 5. Report findings
-`
+`,
 });
 ```
 

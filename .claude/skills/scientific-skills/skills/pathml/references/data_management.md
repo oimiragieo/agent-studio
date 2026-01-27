@@ -7,6 +7,7 @@ PathML provides efficient data management solutions for handling large-scale pat
 ## HDF5 Integration
 
 HDF5 (Hierarchical Data Format) is the primary storage format for processed PathML data, providing:
+
 - Efficient compression and chunked storage
 - Fast random access to subsets of data
 - Support for arbitrarily large datasets
@@ -16,6 +17,7 @@ HDF5 (Hierarchical Data Format) is the primary storage format for processed Path
 ### Saving to HDF5
 
 **Single slide:**
+
 ```python
 from pathml.core import SlideData
 
@@ -31,6 +33,7 @@ wsi.to_hdf5("processed_slide.h5")
 ```
 
 **Multiple slides (SlideDataset):**
+
 ```python
 from pathml.core import SlideDataset
 import glob
@@ -78,6 +81,7 @@ processed_dataset.h5
 ### Loading from HDF5
 
 **Load entire slide:**
+
 ```python
 from pathml.core import SlideData
 
@@ -92,6 +96,7 @@ for tile in wsi.tiles:
 ```
 
 **Load specific tiles:**
+
 ```python
 # Load only tiles at specific indices
 tile_indices = [0, 10, 20, 30]
@@ -103,6 +108,7 @@ for tile in tiles:
 ```
 
 **Memory-mapped access:**
+
 ```python
 import h5py
 
@@ -123,6 +129,7 @@ with h5py.File("processed_dataset.h5", 'r') as f:
 ### Tile Generation Strategies
 
 **Fixed-size tiles with no overlap:**
+
 ```python
 wsi.generate_tiles(
     level=1,
@@ -131,11 +138,13 @@ wsi.generate_tiles(
     pad=False  # Don't pad edge tiles
 )
 ```
+
 - **Use case:** Standard tile-based processing, classification
 - **Pros:** Simple, no redundancy, fast processing
 - **Cons:** Edge effects at tile boundaries
 
 **Overlapping tiles:**
+
 ```python
 wsi.generate_tiles(
     level=1,
@@ -144,11 +153,13 @@ wsi.generate_tiles(
     pad=False
 )
 ```
+
 - **Use case:** Segmentation, detection (reduces boundary artifacts)
 - **Pros:** Better boundary handling, smoother stitching
 - **Cons:** More tiles, redundant computation
 
 **Adaptive tiling based on tissue content:**
+
 ```python
 from pathml.utils import adaptive_tile_generation
 
@@ -165,6 +176,7 @@ for tile in wsi.tiles:
 
 wsi.tiles = tissue_tiles
 ```
+
 - **Use case:** Sparse tissue samples, efficiency
 - **Pros:** Reduces processing of background tiles
 - **Cons:** Requires tissue detection preprocessing step
@@ -199,6 +211,7 @@ plt.show()
 ```
 
 **Stitching methods:**
+
 - `'average'`: Average overlapping regions (smooth transitions)
 - `'max'`: Maximum value in overlapping regions
 - `'first'`: Keep first tile's value (no blending)
@@ -711,23 +724,27 @@ subset = features_mmap[1000:2000]  # Only loads requested rows
 ## Common Issues and Solutions
 
 **Issue: HDF5 files very large**
+
 - Increase compression level: `compression_opts=9`
 - Store only necessary data (avoid redundant copies)
 - Use appropriate data types (uint8 for images vs. float64)
 
 **Issue: Slow HDF5 read/write**
+
 - Optimize chunk size for access pattern
 - Reduce compression level for faster I/O
 - Use SSD storage instead of HDD
 - Enable parallel HDF5 with MPI
 
 **Issue: Running out of disk space**
+
 - Delete intermediate files after processing
 - Compress inactive datasets
 - Move old data to archival storage
 - Use cloud storage for less-accessed data
 
 **Issue: Data corruption or loss**
+
 - Implement regular backups
 - Use RAID for redundancy
 - Validate checksums after transfers

@@ -5,6 +5,7 @@ Comprehensive guide to BibTeX entry types, required fields, formatting conventio
 ## Overview
 
 BibTeX is the standard bibliography format for LaTeX documents. Proper formatting ensures:
+
 - Correct citation rendering
 - Consistent formatting
 - Compatibility with citation styles
@@ -19,12 +20,14 @@ This guide covers all common entry types and formatting rules.
 **Most common entry type** for peer-reviewed journal articles.
 
 **Required fields**:
+
 - `author`: Author names
 - `title`: Article title
 - `journal`: Journal name
 - `year`: Publication year
 
 **Optional fields**:
+
 - `volume`: Volume number
 - `number`: Issue number
 - `pages`: Page range
@@ -34,6 +37,7 @@ This guide covers all common entry types and formatting rules.
 - `note`: Additional notes
 
 **Template**:
+
 ```bibtex
 @article{CitationKey2024,
   author  = {Last1, First1 and Last2, First2},
@@ -49,6 +53,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Example**:
+
 ```bibtex
 @article{Jumper2021,
   author  = {Jumper, John and Evans, Richard and Pritzel, Alexander and others},
@@ -67,12 +72,14 @@ This guide covers all common entry types and formatting rules.
 **For entire books**.
 
 **Required fields**:
+
 - `author` OR `editor`: Author(s) or editor(s)
 - `title`: Book title
 - `publisher`: Publisher name
 - `year`: Publication year
 
 **Optional fields**:
+
 - `volume`: Volume number (if multi-volume)
 - `series`: Series name
 - `address`: Publisher location
@@ -81,6 +88,7 @@ This guide covers all common entry types and formatting rules.
 - `url`: URL
 
 **Template**:
+
 ```bibtex
 @book{CitationKey2024,
   author    = {Last, First},
@@ -94,6 +102,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Example**:
+
 ```bibtex
 @book{Kumar2021,
   author    = {Kumar, Vinay and Abbas, Abul K. and Aster, Jon C.},
@@ -111,12 +120,14 @@ This guide covers all common entry types and formatting rules.
 **For papers in conference proceedings**.
 
 **Required fields**:
+
 - `author`: Author names
 - `title`: Paper title
 - `booktitle`: Conference/proceedings name
 - `year`: Year
 
 **Optional fields**:
+
 - `editor`: Proceedings editor(s)
 - `volume`: Volume number
 - `series`: Series name
@@ -128,6 +139,7 @@ This guide covers all common entry types and formatting rules.
 - `doi`: DOI
 
 **Template**:
+
 ```bibtex
 @inproceedings{CitationKey2024,
   author    = {Last, First},
@@ -141,6 +153,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Example**:
+
 ```bibtex
 @inproceedings{Vaswani2017,
   author    = {Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and others},
@@ -159,6 +172,7 @@ This guide covers all common entry types and formatting rules.
 **For chapters in edited books**.
 
 **Required fields**:
+
 - `author`: Chapter author(s)
 - `title`: Chapter title
 - `booktitle`: Book title
@@ -166,6 +180,7 @@ This guide covers all common entry types and formatting rules.
 - `year`: Publication year
 
 **Optional fields**:
+
 - `editor`: Book editor(s)
 - `volume`: Volume number
 - `series`: Series name
@@ -177,6 +192,7 @@ This guide covers all common entry types and formatting rules.
 - `month`: Month
 
 **Template**:
+
 ```bibtex
 @incollection{CitationKey2024,
   author    = {Last, First},
@@ -191,6 +207,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Example**:
+
 ```bibtex
 @incollection{Brown2020,
   author    = {Brown, Peter O. and Botstein, David},
@@ -209,12 +226,14 @@ This guide covers all common entry types and formatting rules.
 **For PhD dissertations and theses**.
 
 **Required fields**:
+
 - `author`: Author name
 - `title`: Thesis title
 - `school`: Institution
 - `year`: Year
 
 **Optional fields**:
+
 - `type`: Type (e.g., "PhD dissertation", "PhD thesis")
 - `address`: Institution location
 - `month`: Month
@@ -222,6 +241,7 @@ This guide covers all common entry types and formatting rules.
 - `note`: Additional notes
 
 **Template**:
+
 ```bibtex
 @phdthesis{CitationKey2024,
   author = {Last, First},
@@ -234,6 +254,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Example**:
+
 ```bibtex
 @phdthesis{Johnson2023,
   author  = {Johnson, Mary L.},
@@ -252,12 +273,14 @@ This guide covers all common entry types and formatting rules.
 **For Master's theses**.
 
 **Required fields**:
+
 - `author`: Author name
 - `title`: Thesis title
 - `school`: Institution
 - `year`: Year
 
 **Template**:
+
 ```bibtex
 @mastersthesis{CitationKey2024,
   author = {Last, First},
@@ -272,11 +295,13 @@ This guide covers all common entry types and formatting rules.
 **For items that don't fit other categories** (preprints, datasets, software, websites, etc.).
 
 **Required fields**:
+
 - `author` (if known)
 - `title`
 - `year`
 
 **Optional fields**:
+
 - `howpublished`: Repository, website, format
 - `url`: URL
 - `doi`: DOI
@@ -284,6 +309,7 @@ This guide covers all common entry types and formatting rules.
 - `month`: Month
 
 **Template for preprints**:
+
 ```bibtex
 @misc{CitationKey2024,
   author       = {Last, First},
@@ -296,6 +322,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Template for datasets**:
+
 ```bibtex
 @misc{DatasetName2024,
   author       = {Last, First},
@@ -308,6 +335,7 @@ This guide covers all common entry types and formatting rules.
 ```
 
 **Template for software**:
+
 ```bibtex
 @misc{SoftwareName2024,
   author       = {Last, First},
@@ -324,18 +352,21 @@ This guide covers all common entry types and formatting rules.
 **For technical reports**.
 
 **Required fields**:
+
 - `author`: Author name(s)
 - `title`: Report title
 - `institution`: Institution
 - `year`: Year
 
 **Optional fields**:
+
 - `type`: Type of report
 - `number`: Report number
 - `address`: Institution location
 - `month`: Month
 
 **Template**:
+
 ```bibtex
 @techreport{CitationKey2024,
   author      = {Last, First},
@@ -352,15 +383,18 @@ This guide covers all common entry types and formatting rules.
 **For unpublished works** (not preprints - use @misc for those).
 
 **Required fields**:
+
 - `author`: Author name(s)
 - `title`: Work title
 - `note`: Description
 
 **Optional fields**:
+
 - `month`: Month
 - `year`: Year
 
 **Template**:
+
 ```bibtex
 @unpublished{CitationKey2024,
   author = {Last, First},
@@ -377,12 +411,14 @@ This guide covers all common entry types and formatting rules.
 **Note**: Not standard BibTeX, but supported by many bibliography packages (biblatex).
 
 **Required fields**:
+
 - `author` OR `organization`
 - `title`
 - `url`
 - `year`
 
 **Template**:
+
 ```bibtex
 @online{CitationKey2024,
   author = {{Organization Name}},
@@ -400,6 +436,7 @@ This guide covers all common entry types and formatting rules.
 **Convention**: `FirstAuthorYEARkeyword`
 
 **Examples**:
+
 ```bibtex
 Smith2024protein
 Doe2023machine
@@ -409,6 +446,7 @@ WHO2024guidelines          % Organization author
 ```
 
 **Rules**:
+
 - Alphanumeric plus: `-`, `_`, `.`, `:`
 - No spaces
 - Case-sensitive
@@ -416,6 +454,7 @@ WHO2024guidelines          % Organization author
 - Descriptive
 
 **Avoid**:
+
 - Special characters: `@`, `#`, `&`, `%`, `$`
 - Spaces: use CamelCase or underscores
 - Starting with numbers: `2024Smith` (some systems disallow)
@@ -425,6 +464,7 @@ WHO2024guidelines          % Organization author
 **Recommended format**: `Last, First Middle`
 
 **Single author**:
+
 ```bibtex
 author = {Smith, John}
 author = {Smith, John A.}
@@ -432,17 +472,20 @@ author = {Smith, John Andrew}
 ```
 
 **Multiple authors** - separate with `and`:
+
 ```bibtex
 author = {Smith, John and Doe, Jane}
 author = {Smith, John A. and Doe, Jane M. and Johnson, Mary L.}
 ```
 
 **Many authors** (10+):
+
 ```bibtex
 author = {Smith, John and Doe, Jane and Johnson, Mary and others}
 ```
 
 **Special cases**:
+
 ```bibtex
 % Suffix (Jr., III, etc.)
 author = {King, Jr., Martin Luther}
@@ -460,6 +503,7 @@ author = {de Broglie, Louis}
 ```
 
 **Wrong formats** (don't use):
+
 ```bibtex
 author = {Smith, J.; Doe, J.}  % Semicolons (wrong)
 author = {Smith, J., Doe, J.}  % Commas (wrong)
@@ -482,6 +526,7 @@ title = {{CRISPR-Cas9} Gene Editing Technology}
 **Reason**: Citation styles may change capitalization. Braces protect.
 
 **Examples**:
+
 ```bibtex
 % Good
 title = {Advances in {COVID-19} Treatment}
@@ -494,6 +539,7 @@ title = {Using Python for Data Analysis}  % python
 ```
 
 **Whole title protection** (rarely needed):
+
 ```bibtex
 title = {{This Entire Title Keeps Its Capitalization}}
 ```
@@ -510,6 +556,7 @@ pages = {123}          % Single page
 ```
 
 **Wrong**:
+
 ```bibtex
 pages = {123-145}      % Single hyphen (don't use)
 pages = {pp. 123-145}  % "pp." not needed
@@ -536,12 +583,14 @@ month = dec
 ```
 
 **Or numeric**:
+
 ```bibtex
 month = {1}   % January
 month = {12}  % December
 ```
 
 **Or full name in braces**:
+
 ```bibtex
 month = {January}
 ```
@@ -563,6 +612,7 @@ journal = {Journal of the American Chemical Society}
 **Bibliography style** will handle abbreviation if needed.
 
 **Avoid manual abbreviation**:
+
 ```bibtex
 % Don't do this in BibTeX file
 journal = {Proc. Natl. Acad. Sci. U.S.A.}
@@ -572,6 +622,7 @@ journal = {Proceedings of the National Academy of Sciences}
 ```
 
 **Exception**: If style requires abbreviations, use full abbreviated form:
+
 ```bibtex
 journal = {Proc. Natl. Acad. Sci. U.S.A.}  % If required by style
 ```
@@ -585,6 +636,7 @@ doi = {10.1038/s41586-021-03819-2}
 ```
 
 **Not**:
+
 ```bibtex
 doi = {https://doi.org/10.1038/s41586-021-03819-2}  % Don't include URL
 doi = {doi:10.1038/s41586-021-03819-2}              % Don't include prefix
@@ -601,11 +653,13 @@ url = {https://www.example.com/article}
 ```
 
 **Use**:
+
 - When DOI not available
 - For web pages
 - For supplementary materials
 
 **Don't duplicate**:
+
 ```bibtex
 % Don't include both if DOI URL is same as url
 doi = {10.1038/nature12345}
@@ -615,6 +669,7 @@ url = {https://doi.org/10.1038/nature12345}  % Redundant!
 ### Special Characters
 
 **Accents and diacritics**:
+
 ```bibtex
 author = {M{\"u}ller, Hans}        % ü
 author = {Garc{\'i}a, Jos{\'e}}    % í, é
@@ -623,18 +678,21 @@ author = {Schr{\"o}dinger, Erwin}  % ö
 ```
 
 **Or use UTF-8** (with proper LaTeX setup):
+
 ```bibtex
 author = {Müller, Hans}
 author = {García, José}
 ```
 
 **Mathematical symbols**:
+
 ```bibtex
 title = {The $\alpha$-helix Structure}
 title = {$\beta$-sheet Prediction}
 ```
 
 **Chemical formulas**:
+
 ```bibtex
 title = {H$_2$O Molecular Dynamics}
 % Or with chemformula package:
@@ -661,6 +719,7 @@ title = {\ce{H2O} Molecular Dynamics}
 ```
 
 **Rules**:
+
 - Most important fields first
 - Consistent across entries
 - Use formatter to standardize
@@ -670,6 +729,7 @@ title = {\ce{H2O} Molecular Dynamics}
 ### 1. Consistent Formatting
 
 Use same format throughout:
+
 - Author name format
 - Title capitalization
 - Journal names
@@ -678,6 +738,7 @@ Use same format throughout:
 ### 2. Required Fields
 
 Always include:
+
 - All required fields for entry type
 - DOI for modern papers (2000+)
 - Volume and pages for articles
@@ -686,6 +747,7 @@ Always include:
 ### 3. Protect Capitalization
 
 Use braces for:
+
 - Proper nouns: `{AlphaFold}`
 - Acronyms: `{DNA}`, `{CRISPR}`
 - Formulas: `{H2O}`
@@ -694,6 +756,7 @@ Use braces for:
 ### 4. Complete Author Lists
 
 Include all authors when possible:
+
 - All authors if <10
 - Use "and others" for 10+
 - Don't abbreviate to "et al." manually
@@ -701,6 +764,7 @@ Include all authors when possible:
 ### 5. Use Standard Entry Types
 
 Choose correct entry type:
+
 - Journal article → `@article`
 - Book → `@book`
 - Conference paper → `@inproceedings`
@@ -709,6 +773,7 @@ Choose correct entry type:
 ### 6. Validate Syntax
 
 Check for:
+
 - Balanced braces
 - Commas after fields
 - Unique citation keys
@@ -717,11 +782,13 @@ Check for:
 ### 7. Use Formatters
 
 Use automated tools:
+
 ```bash
 python scripts/format_bibtex.py references.bib
 ```
 
 Benefits:
+
 - Consistent formatting
 - Catch syntax errors
 - Standardize field order
@@ -732,6 +799,7 @@ Benefits:
 ### 1. Wrong Author Separator
 
 **Wrong**:
+
 ```bibtex
 author = {Smith, J.; Doe, J.}    % Semicolon
 author = {Smith, J., Doe, J.}    % Comma
@@ -739,6 +807,7 @@ author = {Smith, J. & Doe, J.}   % Ampersand
 ```
 
 **Correct**:
+
 ```bibtex
 author = {Smith, John and Doe, Jane}
 ```
@@ -746,6 +815,7 @@ author = {Smith, John and Doe, Jane}
 ### 2. Missing Commas
 
 **Wrong**:
+
 ```bibtex
 @article{Smith2024,
   author = {Smith, John}    % Missing comma!
@@ -754,6 +824,7 @@ author = {Smith, John and Doe, Jane}
 ```
 
 **Correct**:
+
 ```bibtex
 @article{Smith2024,
   author = {Smith, John},   % Comma after each field
@@ -764,12 +835,14 @@ author = {Smith, John and Doe, Jane}
 ### 3. Unprotected Capitalization
 
 **Wrong**:
+
 ```bibtex
 title = {Machine Learning with Python}
 % "Python" will become "python" in title case
 ```
 
 **Correct**:
+
 ```bibtex
 title = {Machine Learning with {Python}}
 ```
@@ -777,11 +850,13 @@ title = {Machine Learning with {Python}}
 ### 4. Single Hyphen in Pages
 
 **Wrong**:
+
 ```bibtex
 pages = {123-145}   % Single hyphen
 ```
 
 **Correct**:
+
 ```bibtex
 pages = {123--145}  % Double hyphen (en-dash)
 ```
@@ -789,11 +864,13 @@ pages = {123--145}  % Double hyphen (en-dash)
 ### 5. Redundant "pp." in Pages
 
 **Wrong**:
+
 ```bibtex
 pages = {pp. 123--145}
 ```
 
 **Correct**:
+
 ```bibtex
 pages = {123--145}
 ```
@@ -801,12 +878,14 @@ pages = {123--145}
 ### 6. DOI with URL Prefix
 
 **Wrong**:
+
 ```bibtex
 doi = {https://doi.org/10.1038/nature12345}
 doi = {doi:10.1038/nature12345}
 ```
 
 **Correct**:
+
 ```bibtex
 doi = {10.1038/nature12345}
 ```
@@ -897,12 +976,12 @@ BibTeX formatting essentials:
 ✓ **Protect capitalization** with braces  
 ✓ **Use `--` for page ranges**  
 ✓ **Include DOI** for modern papers  
-✓ **Validate syntax** before compilation  
+✓ **Validate syntax** before compilation
 
 Use formatting tools to ensure consistency:
+
 ```bash
 python scripts/format_bibtex.py references.bib
 ```
 
 Properly formatted BibTeX ensures correct, consistent citations across all bibliography styles!
-

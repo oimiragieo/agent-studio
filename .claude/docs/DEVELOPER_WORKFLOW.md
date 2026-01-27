@@ -42,13 +42,14 @@ cat .claude/context/memory/decisions.md
 
 ```javascript
 // Get full task details
-TaskGet({ taskId: "X" });
+TaskGet({ taskId: 'X' });
 
 // Examine dependencies
 // If task has blockedBy, those tasks must complete first
 ```
 
 **Check for**:
+
 - Clear acceptance criteria
 - Blocked dependencies (can't start if blocked)
 - Related tasks (for context)
@@ -65,6 +66,7 @@ Grep({ pattern: 'functionName', glob: '**/*.ts' });
 ```
 
 **Understand**:
+
 - Current implementation
 - Existing tests
 - Related components
@@ -75,12 +77,12 @@ Grep({ pattern: 'functionName', glob: '**/*.ts' });
 ```javascript
 // Mark task as in-progress BEFORE starting work
 TaskUpdate({
-  taskId: "X",
-  status: "in_progress",
+  taskId: 'X',
+  status: 'in_progress',
   metadata: {
-    owner: "developer",
-    startedAt: new Date().toISOString()
-  }
+    owner: 'developer',
+    startedAt: new Date().toISOString(),
+  },
 });
 ```
 
@@ -101,13 +103,16 @@ TaskUpdate({
 Skill({ skill: 'tdd' });
 
 // 2. Write test FIRST
-Write('src/feature.test.ts', `
+Write(
+  'src/feature.test.ts',
+  `
   describe('new feature', () => {
     test('should do X when Y happens', () => {
       expect(feature()).toBe(expected);
     });
   });
-`);
+`
+);
 
 // 3. Run test - it MUST fail
 Bash({ type: 'bash_20250124', command: 'npm test -- feature.test.ts' });
@@ -121,11 +126,14 @@ Bash({ type: 'bash_20250124', command: 'npm test -- feature.test.ts' });
 
 ```javascript
 // Write ONLY enough code to pass the test
-Write('src/feature.ts', `
+Write(
+  'src/feature.ts',
+  `
   export function feature() {
     return expected; // Simplest implementation
   }
-`);
+`
+);
 
 // Run test - it MUST pass now
 Bash({ type: 'bash_20250124', command: 'npm test -- feature.test.ts' });
@@ -141,7 +149,7 @@ Bash({ type: 'bash_20250124', command: 'npm test -- feature.test.ts' });
 // Improve code without changing behavior
 Edit('src/feature.ts', {
   oldContent: '// simple implementation',
-  newContent: '// improved implementation with better structure'
+  newContent: '// improved implementation with better structure',
 });
 
 // Run tests again - MUST still pass
@@ -151,6 +159,7 @@ Bash({ type: 'bash_20250124', command: 'npm test' });
 ```
 
 **Refactoring Principles**:
+
 - Remove duplication
 - Improve naming
 - Extract functions
@@ -170,8 +179,8 @@ Write(`${PROJECT_ROOT}/.claude/docs/FILE.md`, content);
 Read(`${PROJECT_ROOT}/.claude/agents/core/developer.md`);
 
 // Wrong - relative paths (will fail)
-Write('.claude/docs/FILE.md', content);  // ❌
-Read('../agents/core/developer.md');     // ❌
+Write('.claude/docs/FILE.md', content); // ❌
+Read('../agents/core/developer.md'); // ❌
 ```
 
 **Reference**: [FILE_PLACEMENT_RULES.md](./FILE_PLACEMENT_RULES.md) for correct output locations.
@@ -180,17 +189,17 @@ Read('../agents/core/developer.md');     // ❌
 
 **Where to create files:**
 
-| File Type | Location | Example |
-|-----------|----------|---------|
-| Source code | Project structure | `src/feature.ts` |
-| Tests | Co-located with source | `src/feature.test.ts` |
-| Plans | `.claude/context/plans/` | `feature-plan.md` |
-| Reports | `.claude/context/artifacts/reports/` | `qa-report.md` |
-| Research | `.claude/context/artifacts/research-reports/` | `topic-research.md` |
-| Memory | `.claude/context/memory/` | `learnings.md` |
-| Agents | `.claude/agents/{category}/` | `my-agent.md` |
-| Skills | `.claude/skills/{name}/` | `SKILL.md` |
-| Hooks | `.claude/hooks/{category}/` | `my-hook.cjs` |
+| File Type   | Location                                      | Example               |
+| ----------- | --------------------------------------------- | --------------------- |
+| Source code | Project structure                             | `src/feature.ts`      |
+| Tests       | Co-located with source                        | `src/feature.test.ts` |
+| Plans       | `.claude/context/plans/`                      | `feature-plan.md`     |
+| Reports     | `.claude/context/artifacts/reports/`          | `qa-report.md`        |
+| Research    | `.claude/context/artifacts/research-reports/` | `topic-research.md`   |
+| Memory      | `.claude/context/memory/`                     | `learnings.md`        |
+| Agents      | `.claude/agents/{category}/`                  | `my-agent.md`         |
+| Skills      | `.claude/skills/{name}/`                      | `SKILL.md`            |
+| Hooks       | `.claude/hooks/{category}/`                   | `my-hook.cjs`         |
 
 **Full reference**: See [FILE_PLACEMENT_RULES.md](./FILE_PLACEMENT_RULES.md)
 
@@ -214,6 +223,7 @@ Read('../agents/core/developer.md');     // ❌
 ```
 
 **Invoke language-specific skills:**
+
 - `Skill({ skill: 'typescript-expert' })` for TypeScript
 - `Skill({ skill: 'python-backend-expert' })` for Python
 - `Skill({ skill: 'golang-pro' })` for Go
@@ -241,6 +251,7 @@ try {
 ```
 
 **Error types:**
+
 - Use custom error classes
 - Include context in error messages
 - Log errors before throwing
@@ -290,25 +301,21 @@ Skill({ skill: 'verification-before-completion' });
 
 ```javascript
 TaskUpdate({
-  taskId: "X",
-  status: "completed",
+  taskId: 'X',
+  status: 'completed',
   metadata: {
-    summary: "Implemented feature X with TDD approach",
-    filesModified: [
-      "src/feature.ts",
-      "src/feature.test.ts"
-    ],
-    filesCreated: [
-      "src/new-module.ts"
-    ],
+    summary: 'Implemented feature X with TDD approach',
+    filesModified: ['src/feature.ts', 'src/feature.test.ts'],
+    filesCreated: ['src/new-module.ts'],
     testsAdded: true,
     testsPassing: true,
-    completedAt: new Date().toISOString()
-  }
+    completedAt: new Date().toISOString(),
+  },
 });
 ```
 
 **Required metadata:**
+
 - `summary` - One-line description of work done
 - `filesModified` - Array of changed files
 - `filesCreated` - Array of new files
@@ -337,6 +344,7 @@ TaskUpdate({
 ```
 
 **When to update memory**:
+
 - New pattern discovered
 - Workaround for known issue
 - Architecture decision made
@@ -365,12 +373,14 @@ TaskList();
 **Procedure**:
 
 1. **Read the failure output carefully**
+
    ```bash
    npm test 2>&1 | tee test-output.txt
    # Review FULL output, not just summary
    ```
 
 2. **Invoke debugging skill**
+
    ```javascript
    Skill({ skill: 'debugging' });
    ```
@@ -381,19 +391,22 @@ TaskList();
    - What was expected vs actual?
 
 4. **Fix and re-test**
+
    ```javascript
-   Edit('src/feature.ts', { /* fix */ });
+   Edit('src/feature.ts', {
+     /* fix */
+   });
    Bash({ command: 'npm test' });
    ```
 
 5. **Update task metadata**
    ```javascript
    TaskUpdate({
-     taskId: "X",
+     taskId: 'X',
      metadata: {
-       discoveries: ["Test failure due to async timing issue"],
-       fixApplied: "Added await before assertion"
-     }
+       discoveries: ['Test failure due to async timing issue'],
+       fixApplied: 'Added await before assertion',
+     },
    });
    ```
 
@@ -409,13 +422,14 @@ TaskList();
 
 2. **Common hooks and fixes**:
 
-   | Hook | Reason | Fix |
-   |------|--------|-----|
-   | `router-write-guard.cjs` | Router using Edit/Write | Spawn a developer agent instead |
-   | `file-placement-guard.cjs` | Wrong file location | Use correct path from FILE_PLACEMENT_RULES.md |
-   | `task-create-guard.cjs` | Complex task needs planner | Spawn planner first |
+   | Hook                       | Reason                     | Fix                                           |
+   | -------------------------- | -------------------------- | --------------------------------------------- |
+   | `router-write-guard.cjs`   | Router using Edit/Write    | Spawn a developer agent instead               |
+   | `file-placement-guard.cjs` | Wrong file location        | Use correct path from FILE_PLACEMENT_RULES.md |
+   | `task-create-guard.cjs`    | Complex task needs planner | Spawn planner first                           |
 
 3. **Correct the violation**
+
    ```javascript
    // Example: Wrong location blocked
    // Blocked: .claude/my-file.md
@@ -432,12 +446,14 @@ TaskList();
 **Procedure**:
 
 1. **Identify missing dependency**
+
    ```bash
    npm test
    # Error: Cannot find module 'some-package'
    ```
 
 2. **Install dependency**
+
    ```bash
    npm install some-package
    # or for dev dependencies
@@ -445,6 +461,7 @@ TaskList();
    ```
 
 3. **Verify installation**
+
    ```bash
    npm test
    # Should now pass
@@ -453,11 +470,11 @@ TaskList();
 4. **Update task metadata**
    ```javascript
    TaskUpdate({
-     taskId: "X",
+     taskId: 'X',
      metadata: {
-       discoveries: ["Required package: some-package"],
-       dependenciesAdded: ["some-package"]
-     }
+       discoveries: ['Required package: some-package'],
+       dependenciesAdded: ['some-package'],
+     },
    });
    ```
 
@@ -468,12 +485,14 @@ TaskList();
 **Procedure**:
 
 1. **Check blocking tasks**
+
    ```javascript
-   TaskGet({ taskId: "X" });
+   TaskGet({ taskId: 'X' });
    // Output shows: blockedBy: ["Y", "Z"]
    ```
 
 2. **Check status of blocking tasks**
+
    ```javascript
    TaskList();
    // Find tasks Y and Z
@@ -498,11 +517,13 @@ TaskList();
 ### Keep Changes Minimal and Focused
 
 **Good**:
+
 - 1-3 files per change
 - Single responsibility changes
 - Clear commit messages
 
 **Bad**:
+
 - 10+ files in one change
 - Multiple unrelated features
 - Vague commit messages
@@ -522,11 +543,13 @@ src/
 ### Document Decisions in Memory
 
 **When to document**:
+
 - "Why did we choose approach X over Y?"
 - "What's the workaround for issue Z?"
 - "How do we handle edge case W?"
 
 **Format** (in `.claude/context/memory/decisions.md`):
+
 ```markdown
 ## ADR-NNN: Decision Title
 
@@ -540,14 +563,16 @@ src/
 ### Use Skills via Skill() Tool
 
 **Correct**:
+
 ```javascript
 Skill({ skill: 'tdd' });
 Skill({ skill: 'debugging' });
 ```
 
 **Wrong**:
+
 ```javascript
-Read('.claude/skills/tdd/SKILL.md');  // Reading ≠ Invoking
+Read('.claude/skills/tdd/SKILL.md'); // Reading ≠ Invoking
 ```
 
 **Why**: The `Skill()` tool loads instructions into context. Reading the file doesn't apply the skill.
@@ -561,9 +586,9 @@ Read('.claude/skills/tdd/SKILL.md');  // Reading ≠ Invoking
 Before starting ANY task:
 
 ```javascript
-Skill({ skill: 'tdd' });                          // Red-Green-Refactor
-Skill({ skill: 'debugging' });                    // 4-phase debugging
-Skill({ skill: 'git-expert' });                   // Git best practices
+Skill({ skill: 'tdd' }); // Red-Green-Refactor
+Skill({ skill: 'debugging' }); // 4-phase debugging
+Skill({ skill: 'git-expert' }); // Git best practices
 Skill({ skill: 'verification-before-completion' }); // Evidence-based gates
 ```
 
@@ -571,23 +596,25 @@ Skill({ skill: 'verification-before-completion' }); // Evidence-based gates
 
 Invoke based on task requirements:
 
-| Trigger | Skill | Purpose |
-|---------|-------|---------|
-| Python code | `python-backend-expert` | Python patterns |
-| TypeScript code | `typescript-expert` | TS best practices |
-| Security changes | `security-architect` | Threat modeling |
-| Context limit | `context-compressor` | Token reduction |
-| GitHub operations | `github-mcp` | GitHub API |
-| Code quality review | `code-analyzer` | Static analysis |
+| Trigger             | Skill                   | Purpose           |
+| ------------------- | ----------------------- | ----------------- |
+| Python code         | `python-backend-expert` | Python patterns   |
+| TypeScript code     | `typescript-expert`     | TS best practices |
+| Security changes    | `security-architect`    | Threat modeling   |
+| Context limit       | `context-compressor`    | Token reduction   |
+| GitHub operations   | `github-mcp`            | GitHub API        |
+| Code quality review | `code-analyzer`         | Static analysis   |
 
 ### Skill Discovery
 
 **Consult the catalog**:
+
 ```bash
 cat .claude/context/artifacts/skill-catalog.md
 ```
 
 **Search by category or keyword, then invoke**:
+
 ```javascript
 Skill({ skill: '<skill-name>' });
 ```
@@ -605,12 +632,14 @@ Skill({ skill: '<skill-name>' });
 ## Quick Reference Card
 
 ### Pre-Implementation
+
 1. ✓ Read memory files
 2. ✓ TaskGet to understand task
 3. ✓ Read existing code
 4. ✓ TaskUpdate to claim
 
 ### Implementation
+
 1. ✓ RED - Write failing test
 2. ✓ GREEN - Minimal code to pass
 3. ✓ REFACTOR - Improve quality
@@ -618,12 +647,14 @@ Skill({ skill: '<skill-name>' });
 5. ✓ Follow file placement rules
 
 ### Post-Implementation
+
 1. ✓ Run tests (verify 0 failures)
 2. ✓ TaskUpdate with metadata
 3. ✓ Update memory files
 4. ✓ TaskList for next work
 
 ### Error Recovery
+
 - Tests fail → Invoke debugging skill
 - Hook blocks → Read error, fix violation
 - Missing deps → Install and verify
@@ -633,5 +664,5 @@ Skill({ skill: '<skill-name>' });
 
 **CRITICAL**: This workflow is MANDATORY for all developer agents. Deviations without documented justification are violations of framework standards.
 
-*Last updated: 2026-01-25*
-*Part of Framework Refactoring Phase 4*
+_Last updated: 2026-01-25_
+_Part of Framework Refactoring Phase 4_

@@ -29,8 +29,10 @@ X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, r
 ### Cross-Validation Strategies
 
 **KFold**
+
 - Standard k-fold cross-validation
 - Splits data into k consecutive folds
+
 ```python
 from sklearn.model_selection import KFold
 
@@ -41,8 +43,10 @@ for train_idx, val_idx in kf.split(X):
 ```
 
 **StratifiedKFold**
+
 - Preserves class distribution in each fold
 - Use for imbalanced classification
+
 ```python
 from sklearn.model_selection import StratifiedKFold
 
@@ -53,8 +57,10 @@ for train_idx, val_idx in skf.split(X, y):
 ```
 
 **TimeSeriesSplit**
+
 - For time series data
 - Respects temporal order
+
 ```python
 from sklearn.model_selection import TimeSeriesSplit
 
@@ -65,8 +71,10 @@ for train_idx, val_idx in tscv.split(X):
 ```
 
 **GroupKFold**
+
 - Ensures samples from same group don't appear in both train and validation
 - Use when samples are not independent
+
 ```python
 from sklearn.model_selection import GroupKFold
 
@@ -77,9 +85,11 @@ for train_idx, val_idx in gkf.split(X, y, groups=group_ids):
 ```
 
 **LeaveOneOut (LOO)**
+
 - Each sample used as validation set once
 - Use for very small datasets
 - Computationally expensive
+
 ```python
 from sklearn.model_selection import LeaveOneOut
 
@@ -92,8 +102,10 @@ for train_idx, val_idx in loo.split(X):
 ### Cross-Validation Functions
 
 **cross_val_score**
+
 - Evaluate model using cross-validation
 - Returns array of scores
+
 ```python
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import RandomForestClassifier
@@ -106,8 +118,10 @@ print(f"Mean: {scores.mean():.3f} (+/- {scores.std() * 2:.3f})")
 ```
 
 **cross_validate**
+
 - More comprehensive than cross_val_score
 - Can return multiple metrics and fit times
+
 ```python
 from sklearn.model_selection import cross_validate
 
@@ -125,8 +139,10 @@ print(f"Fit time: {cv_results['fit_time'].mean():.3f}s")
 ```
 
 **cross_val_predict**
+
 - Get predictions for each sample when it was in validation set
 - Useful for analyzing errors
+
 ```python
 from sklearn.model_selection import cross_val_predict
 
@@ -143,8 +159,10 @@ cm = confusion_matrix(y, y_pred)
 ### Grid Search
 
 **GridSearchCV**
+
 - Exhaustive search over parameter grid
 - Tests all combinations
+
 ```python
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
@@ -182,8 +200,10 @@ results_df = pd.DataFrame(grid_search.cv_results_)
 ### Randomized Search
 
 **RandomizedSearchCV**
+
 - Samples random combinations from parameter distributions
 - More efficient for large search spaces
+
 ```python
 from sklearn.model_selection import RandomizedSearchCV
 from scipy.stats import randint, uniform
@@ -216,8 +236,10 @@ print(f"Best score: {random_search.best_score_:.3f}")
 ### Successive Halving
 
 **HalvingGridSearchCV / HalvingRandomSearchCV**
+
 - Iteratively selects best candidates using successive halving
 - More efficient than exhaustive search
+
 ```python
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingGridSearchCV
@@ -559,7 +581,9 @@ pipeline = ImbPipeline([
 ## Best Practices
 
 ### Stratified Splitting
+
 Always use stratified splitting for classification:
+
 ```python
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, stratify=y, random_state=42
@@ -567,19 +591,23 @@ X_train, X_test, y_train, y_test = train_test_split(
 ```
 
 ### Appropriate Metrics
+
 - **Balanced data**: Accuracy, F1-score
 - **Imbalanced data**: Precision, Recall, F1-score, ROC AUC, Balanced Accuracy
 - **Cost-sensitive**: Define custom scorer with costs
 - **Ranking**: ROC AUC, Average Precision
 
 ### Cross-Validation
+
 - Use 5 or 10-fold CV for most cases
 - Use StratifiedKFold for classification
 - Use TimeSeriesSplit for time series
 - Use GroupKFold when samples are grouped
 
 ### Nested Cross-Validation
+
 For unbiased performance estimates when tuning:
+
 ```python
 from sklearn.model_selection import cross_val_score, GridSearchCV
 

@@ -21,16 +21,16 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Page Limits (NSF PAPPG - Proposal & Award Policies & Procedures Guide)**:
 
-| Component | Page Limit | Font | Spacing |
-|-----------|-----------|------|---------|
-| **Project Summary** | 1 page | Any readable, 10pt+ | Any |
-| **Project Description** | 15 pages | Times Roman 11pt or similar | Single |
-| **References Cited** | No limit | Times Roman 11pt | Single |
-| **Biographical Sketch** | 3 pages per person | Times Roman 11pt | Single |
-| **Budget Justification** | 3-5 pages | Any readable | Any |
-| **Current & Pending Support** | No limit | Times Roman 11pt | Single |
-| **Facilities, Equipment** | 2 pages | Any readable | Any |
-| **Data Management Plan** | 2 pages | Any readable | Any |
+| Component                     | Page Limit         | Font                        | Spacing |
+| ----------------------------- | ------------------ | --------------------------- | ------- |
+| **Project Summary**           | 1 page             | Any readable, 10pt+         | Any     |
+| **Project Description**       | 15 pages           | Times Roman 11pt or similar | Single  |
+| **References Cited**          | No limit           | Times Roman 11pt            | Single  |
+| **Biographical Sketch**       | 3 pages per person | Times Roman 11pt            | Single  |
+| **Budget Justification**      | 3-5 pages          | Any readable                | Any     |
+| **Current & Pending Support** | No limit           | Times Roman 11pt            | Single  |
+| **Facilities, Equipment**     | 2 pages            | Any readable                | Any     |
+| **Data Management Plan**      | 2 pages            | Any readable                | Any     |
 
 **Margins**: 1 inch (2.54 cm) on all sides (strictly enforced)
 
@@ -89,6 +89,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
    - Publications from prior NSF grants
 
 **Key Requirements**:
+
 - Intellectual Merit and Broader Impacts integrated throughout
 - Figures and tables allowed (count toward page limit)
 - Citations to references (use References Cited section)
@@ -100,6 +101,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NSF Biographical Sketch (3 pages)
 
 **Required Sections**:
+
 1. **Professional Preparation**: Institutions, degrees, fields
 2. **Appointments**: Current and previous positions
 3. **Products**: Up to 5 most relevant, up to 5 other significant products
@@ -107,6 +109,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 4. **Synergistic Activities**: Up to 5 examples of impact beyond research
 
 **Format**:
+
 - NSF template must be used (SciENcv or NSF-approved format)
 - No longer uses "Publications" but "Products"
 
@@ -115,6 +118,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NSF Broader Impacts
 
 **NSF-Recognized Categories** (demonstrate ≥1):
+
 1. **Advance discovery while promoting teaching/learning**
 2. **Broaden participation** of underrepresented groups
 3. **Disseminate broadly** to enhance scientific/technological understanding
@@ -122,12 +126,14 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 5. **Develop scientific workforce** and infrastructure
 
 **Best Practices**:
+
 - Be specific with measurable outcomes
 - Explain how activities will be assessed
 - Integrate with research (don't treat as "add-on")
 - Budget for broader impacts activities
 
 **Examples**:
+
 - K-12 outreach programs
 - Curriculum development
 - Training underrepresented students
@@ -139,6 +145,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NSF Budget
 
 **Typical Categories**:
+
 - **Senior Personnel**: PI, co-PIs (% effort, salary)
 - **Other Personnel**: Postdocs, graduate students, undergrads
 - **Fringe Benefits**: Institutional rates
@@ -155,6 +162,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NSF Data Management Plan (2 pages)
 
 **Required Content**:
+
 - Types of data produced
 - Standards for data format and metadata
 - Policies for access and sharing
@@ -162,6 +170,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - Plans for archiving and preservation
 
 **Acceptable Approaches**:
+
 - Deposit in domain-specific repository
 - Institutional repository
 - Data available upon request (with restrictions justification)
@@ -193,7 +202,8 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - **Project Summary**: `assets/grants/nsf_project_summary.tex`
 - **Biographical Sketch**: Use NSF SciENcv or template
 
-**Resources**: 
+**Resources**:
+
 - NSF PAPPG: https://www.nsf.gov/publications/pub_summ.jsp?ods_key=pappg
 - NSF Fastlane: https://www.fastlane.nsf.gov/
 
@@ -204,11 +214,12 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### Overview
 
 **Agency**: National Institutes of Health  
-**Funding Mechanisms**: 
+**Funding Mechanisms**:
+
 - **R01**: Research Project Grant (most common)
 - **R21**: Exploratory/Developmental Research Grant
 - **K Awards**: Career Development Awards
-**Success Rate**: 10-20% (varies by institute and mechanism)
+  **Success Rate**: 10-20% (varies by institute and mechanism)
 
 ---
 
@@ -216,15 +227,15 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Page Limits** (Research Strategy):
 
-| Component | Page Limit | Font | Spacing |
-|-----------|-----------|------|---------|
-| **Specific Aims** | 1 page | Arial 11pt minimum | Any |
-| **Research Strategy** | 12 pages | Arial 11pt minimum | 0.5 inch margins minimum |
-| - Significance | Part of 12 | | |
-| - Innovation | Part of 12 | | |
-| - Approach | Part of 12 | | |
-| **Bibliography** | No limit | Arial 11pt | |
-| **Biographical Sketch** | 5 pages per person | Arial 11pt | |
+| Component               | Page Limit         | Font               | Spacing                  |
+| ----------------------- | ------------------ | ------------------ | ------------------------ |
+| **Specific Aims**       | 1 page             | Arial 11pt minimum | Any                      |
+| **Research Strategy**   | 12 pages           | Arial 11pt minimum | 0.5 inch margins minimum |
+| - Significance          | Part of 12         |                    |                          |
+| - Innovation            | Part of 12         |                    |                          |
+| - Approach              | Part of 12         |                    |                          |
+| **Bibliography**        | No limit           | Arial 11pt         |                          |
+| **Biographical Sketch** | 5 pages per person | Arial 11pt         |                          |
 
 **Margins**: 0.5 inch minimum (all sides)  
 **Paper Size**: Letter (8.5 × 11 inches)
@@ -263,6 +274,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
    - Future directions
 
 **Best Practices**:
+
 - Crystal clear, compelling narrative
 - State hypothesis explicitly
 - Explain expected outcomes
@@ -277,6 +289,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Required Sections**:
 
 #### 1. Significance (typically 2-3 pages)
+
 - **Importance**: Critical barrier to progress
 - **Knowledge gap**: What's not known
 - **Impact**: How project advances field
@@ -284,13 +297,16 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - **References**: Cite key literature
 
 #### 2. Innovation (typically 1-2 pages)
+
 - **Novelty**: New concepts, approaches, methods
 - **Challenge paradigms**: Shift thinking
 - **Refined/new methodologies**: Technical innovation
 - **Novel applications**: Existing tools in new ways
 
 #### 3. Approach (typically 7-9 pages)
+
 **For Each Aim**:
+
 - **Rationale**: Why this aim
 - **Experimental design**: Detailed methods
 - **Expected outcomes**: What results mean
@@ -299,6 +315,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - **Timeline**: When each aim completed
 
 **Additional Approach Content**:
+
 - Preliminary data (critical for R01)
 - Power analyses for sample sizes
 - Statistical analysis plans
@@ -309,6 +326,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NIH Biographical Sketch (5 pages)
 
 **Sections** (NIH format):
+
 1. **Personal Statement** (4 sentences explaining why you're suited)
 2. **Positions, Honors, and Scientific Appointments**
 3. **Contributions to Science** (Up to 5 contributions, up to 4 pubs each)
@@ -321,6 +339,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NIH Review Criteria
 
 **Scored Criteria** (1-9 scale, 1=best):
+
 1. **Significance**: Importance, impact
 2. **Investigator(s)**: Qualifications, track record
 3. **Innovation**: Novel concepts, methods
@@ -328,6 +347,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 5. **Environment**: Institutional support, resources
 
 **Additional Considerations** (not scored but noted):
+
 - Vertebrate animals
 - Biohazards
 - Human subjects protections
@@ -341,6 +361,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NIH R21 (Exploratory Grant)
 
 **Key Differences from R01**:
+
 - **Research Strategy**: 6 pages (vs. 12 for R01)
 - **Duration**: 2 years maximum
 - **Budget**: $275K total costs over 2 years
@@ -348,6 +369,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - **Purpose**: High-risk, high-reward projects; new directions
 
 **When to Choose R21 vs. R01**:
+
 - R21: Early-stage, limited preliminary data, high-risk
 - R01: Established line of research, strong preliminary data
 
@@ -356,12 +378,14 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NIH K Awards (Career Development)
 
 **Mechanisms**:
+
 - **K01**: Mentored Research Scientist Development Award
 - **K08**: Mentored Clinical Scientist Research Career Development Award
 - **K23**: Mentored Patient-Oriented Research Career Development Award
 - **K99/R00**: Pathway to Independence Award (postdoc to faculty)
 
 **Key Components**:
+
 - **Career Development Plan**: Training goals, timeline
 - **Research Plan**: 6-12 pages (mechanism-dependent)
 - **Mentor(s)**: Letters of support, mentoring plan
@@ -373,6 +397,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### NIH Budget
 
 **Modular vs. Detailed**:
+
 - **Modular**: ≤$250K direct costs per year (25K increments)
 - **Detailed**: >$250K direct costs per year
 
@@ -389,6 +414,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - **Biographical Sketch**: Use NIH fillable PDF or format page
 
 **Resources**:
+
 - NIH Application Guide: https://grants.nih.gov/grants/how-to-apply-application-guide.html
 - SF424 Forms: https://grants.nih.gov/grants/how-to-apply-application-guide/forms-e/general-forms-e.pdf
 
@@ -400,6 +426,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Agency**: U.S. Department of Energy  
 **Offices**:
+
 - **Office of Science**: Basic research (BES, BER, ASCR, NP, HEP, FES)
 - **ARPA-E**: High-risk, high-reward energy technologies
 - **EERE**: Energy efficiency and renewable energy
@@ -413,15 +440,15 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Page Limits** (typical, varies by FOA):
 
-| Component | Page Limit | Format |
-|-----------|-----------|--------|
-| **Project Narrative** | 10-20 pages | Times 11pt, 1" margins |
-| **References** | No limit | |
-| **Budget Justification** | 3-5 pages | |
-| **Biographical Sketches** | 2-3 pages each | |
-| **Current & Pending** | No limit | |
-| **Facilities & Resources** | No limit | |
-| **Data Management Plan** | 2 pages | |
+| Component                  | Page Limit     | Format                 |
+| -------------------------- | -------------- | ---------------------- |
+| **Project Narrative**      | 10-20 pages    | Times 11pt, 1" margins |
+| **References**             | No limit       |                        |
+| **Budget Justification**   | 3-5 pages      |                        |
+| **Biographical Sketches**  | 2-3 pages each |                        |
+| **Current & Pending**      | No limit       |                        |
+| **Facilities & Resources** | No limit       |                        |
+| **Data Management Plan**   | 2 pages        |                        |
 
 ---
 
@@ -455,19 +482,23 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### DOE-Specific Requirements
 
 **Energy Relevance**: Must clearly tie to DOE mission
+
 - Basic science: Fundamental understanding for energy applications
 - Applied: Energy efficiency, renewable energy, grid, storage
 
 **Technology Readiness Levels (TRLs)**: Often required to specify
+
 - **TRL 1-3**: Basic research, proof of concept
 - **TRL 4-6**: Component/subsystem validation
 - **TRL 7-9**: System demonstration, deployment
 
 **National Laboratory Collaboration**: Encouraged
+
 - Include lab scientists as co-PIs or collaborators
 - Letter of collaboration from lab
 
 **Cost Sharing**: Sometimes required (check FOA)
+
 - Can be in-kind (equipment, time)
 - Must be documented
 
@@ -476,6 +507,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### DOE Budget Considerations
 
 **Allowable Costs**:
+
 - Personnel (salaries, benefits)
 - Equipment
 - Travel (especially to DOE national labs)
@@ -484,6 +516,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 - Indirect costs (negotiated F&A rate)
 
 **Unallowable**:
+
 - Construction
 - Entertainment
 - Some indirect costs (depends on institution type)
@@ -495,6 +528,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Template**: `assets/grants/doe_proposal_template.tex`
 
 **Resources**:
+
 - DOE Office of Science Funding: https://science.osti.gov/grants
 - EERE Funding: https://www.energy.gov/eere/funding/eere-funding-opportunities
 
@@ -515,10 +549,10 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Page Limits** (typical, varies by BAA):
 
-| Component | Page Limit | Format |
-|-----------|-----------|--------|
-| **Technical and Management Proposal** | 20-25 pages | Times 12pt, 1" margins |
-| **Cost Proposal** | Separate volume | |
+| Component                             | Page Limit      | Format                 |
+| ------------------------------------- | --------------- | ---------------------- |
+| **Technical and Management Proposal** | 20-25 pages     | Times 12pt, 1" margins |
+| **Cost Proposal**                     | Separate volume |                        |
 
 ---
 
@@ -570,23 +604,28 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### DARPA-Specific Considerations
 
 **Engagement with Program Manager (PM)**:
+
 - **Strongly encouraged** to contact PM before submission
 - Discuss idea alignment with program goals
 - PM can provide feedback on approach
 
 **Transformative Impact**:
+
 - Must demonstrate potential for "game-changing" impact
 - Not incremental improvements
 
 **Technical Risk**:
+
 - High-risk approaches acceptable (even encouraged)
 - Must show mitigation strategies
 
 **National Security Relevance**:
+
 - Clear connection to defense applications
 - Dual-use (civilian + military) often valuable
 
 **Metrics for Success**:
+
 - Quantifiable milestones
 - "Go/no-go" decision points
 
@@ -595,6 +634,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### DARPA Budget
 
 **Full Cost Accounting**: Detailed justification required
+
 - **Labor**: Hourly rates, hours per task
 - **Materials**: Itemized
 - **Equipment**: Justification for purchases
@@ -611,6 +651,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Template**: `assets/grants/darpa_baa_response.tex`
 
 **Resources**:
+
 - DARPA Opportunities: https://www.darpa.mil/work-with-us/opportunities
 - BAA Listings: SAM.gov (formerly FedBizOpps)
 
@@ -624,12 +665,14 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Typical Award**: Varies widely ($100K to $10M+)
 
 **Proposal Requirements**:
+
 - **Letter of Inquiry** (2-3 pages): Initial screening
 - **Full Proposal** (if invited): 10-15 pages
 - **Theory of Change**: How intervention leads to impact
 - **Monitoring & Evaluation**: Metrics, data collection
 
 **Key Emphases**:
+
 - Scalability and sustainability
 - Impact in low-resource settings
 - Partnerships with local organizations
@@ -644,11 +687,13 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Typical Award**: £100K to £5M
 
 **Proposal Format** (varies by scheme):
+
 - **Investigator Awards**: Track record and research vision
 - **Project Grants**: Specific research project
 - **Career Development**: Early/mid-career researchers
 
 **Requirements**:
+
 - Research plan
 - Track record
 - Value for money justification
@@ -663,6 +708,7 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 **Focus**: Biomedical research, early-career scientists
 
 **Selection**:
+
 - Nomination by institution
 - Track record of innovation
 - Research vision for next 5-7 years
@@ -674,11 +720,13 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 **Focus**: Science, education, justice & opportunity  
 **Award Types**:
+
 - **Imaging**: Advanced imaging technologies
 - **Neurodegeneration Challenge**: AD, ALS, PD, FTD
 - **Single-Cell Biology**: Tools and resources
 
 **Emphasis**:
+
 - Open science (data sharing, open-source)
 - Collaboration across institutions
 - Technology development
@@ -688,13 +736,13 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 
 ## Quick Reference Table
 
-| Agency | Typical Award | Duration | Key Criteria | Template |
-|--------|--------------|----------|--------------|----------|
-| **NSF** | $100K-500K/yr | 3-5 yrs | Intellectual Merit + Broader Impacts | `nsf_proposal_template.tex` |
-| **NIH R01** | $250K-500K/yr | 5 yrs | Significance, Innovation, Approach | `nih_r01_template.tex` |
-| **NIH R21** | $275K total | 2 yrs | Exploratory, high-risk | `nih_r21_template.tex` |
-| **DOE** | $200K-1M/yr | 3 yrs | Energy relevance, TRLs | `doe_proposal_template.tex` |
-| **DARPA** | $500K-5M/yr | 2-4 yrs | Transformative, Heilmeier | `darpa_baa_response.tex` |
+| Agency      | Typical Award | Duration | Key Criteria                         | Template                    |
+| ----------- | ------------- | -------- | ------------------------------------ | --------------------------- |
+| **NSF**     | $100K-500K/yr | 3-5 yrs  | Intellectual Merit + Broader Impacts | `nsf_proposal_template.tex` |
+| **NIH R01** | $250K-500K/yr | 5 yrs    | Significance, Innovation, Approach   | `nih_r01_template.tex`      |
+| **NIH R21** | $275K total   | 2 yrs    | Exploratory, high-risk               | `nih_r21_template.tex`      |
+| **DOE**     | $200K-1M/yr   | 3 yrs    | Energy relevance, TRLs               | `doe_proposal_template.tex` |
+| **DARPA**   | $500K-5M/yr   | 2-4 yrs  | Transformative, Heilmeier            | `darpa_baa_response.tex`    |
 
 ---
 
@@ -724,31 +772,37 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ### Timeline for Proposal Development
 
 **3 months before deadline**:
+
 - Identify opportunity
 - Assemble team
 - Outline aims/objectives
 
 **2 months before**:
+
 - Draft aims/objectives
 - Preliminary budget
 - Contact program officer (if allowed)
 
 **1 month before**:
+
 - Full first draft
 - Internal review
 - Revise based on feedback
 
 **2 weeks before**:
+
 - Final revisions
 - Proofread carefully
 - Assemble all documents
 
 **1 week before**:
+
 - Institutional review/approval
 - Budget finalization
 - Submission system upload
 
 **2 days before**:
+
 - Final check
 - Submit (don't wait until deadline!)
 
@@ -757,12 +811,14 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 ## Resources
 
 ### Grant Writing Guides
+
 - NSF PAPPG: https://www.nsf.gov/publications/pub_summ.jsp?ods_key=pappg
 - NIH Application Guide: https://grants.nih.gov/grants/how-to-apply-application-guide.html
 - GrantForward (database): https://www.grantforward.com/
 - Pivot (database): https://pivot.proquest.com/
 
 ### Institutional Resources
+
 - Office of Sponsored Research (OSR)
 - Grant writing workshops
 - Internal mock reviews
@@ -784,4 +840,3 @@ Comprehensive requirements and formatting guidelines for major federal and priva
 8. **Submit early**: Technical glitches happen
 
 **Remember**: Grant writing is a skill developed over time. Seek feedback, revise, and persist!
-

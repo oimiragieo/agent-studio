@@ -7,6 +7,7 @@ This document covers models for analyzing spatially-resolved transcriptomics dat
 **Purpose**: Multi-resolution deconvolution of spatial transcriptomics using single-cell reference data.
 
 **Key Features**:
+
 - Estimates cell type proportions at each spatial location
 - Uses single-cell RNA-seq reference for deconvolution
 - Multi-resolution approach (global and local patterns)
@@ -14,6 +15,7 @@ This document covers models for analyzing spatially-resolved transcriptomics dat
 - Provides uncertainty quantification
 
 **When to Use**:
+
 - Deconvolving Visium or similar spatial transcriptomics
 - Have scRNA-seq reference data with cell type labels
 - Want to map cell types to spatial locations
@@ -21,11 +23,13 @@ This document covers models for analyzing spatially-resolved transcriptomics dat
 - Need probabilistic estimates of cell type abundance
 
 **Data Requirements**:
+
 - **Spatial data**: Visium or similar spot-based measurements (target data)
 - **Single-cell reference**: scRNA-seq with cell type annotations
 - Both datasets should share genes
 
 **Basic Usage**:
+
 ```python
 import scvi
 
@@ -58,15 +62,18 @@ ct_expression = model.get_scale_for_ct("T cells")
 ```
 
 **Key Parameters**:
+
 - `amortization`: Amortization strategy ("both", "latent", "proportion")
 - `n_latent`: Latent dimensionality (inherited from scVI model)
 
 **Outputs**:
+
 - `get_proportions()`: Cell type proportions at each spot
 - `get_scale_for_ct(cell_type)`: Cell type-specific expression patterns
 - `get_gamma()`: Proportion-specific gene expression scaling
 
 **Visualization**:
+
 ```python
 import scanpy as sc
 import matplotlib.pyplot as plt
@@ -93,17 +100,20 @@ for ct in cell_types:
 **Purpose**: Cell type deconvolution for spatial transcriptomics using probabilistic modeling.
 
 **Key Features**:
+
 - Reference-based deconvolution
 - Probabilistic framework for cell type proportions
 - Works with various spatial technologies
 - Handles gene selection and normalization
 
 **When to Use**:
+
 - Similar to DestVI but simpler approach
 - Deconvolving spatial data with reference
 - Faster alternative for basic deconvolution
 
 **Basic Usage**:
+
 ```python
 scvi.model.STEREOSCOPE.setup_anndata(
     sc_adata,
@@ -134,23 +144,27 @@ proportions = spatial_model.get_proportions()
 **Purpose**: Spatial mapping and integration of single-cell data to spatial locations.
 
 **Key Features**:
+
 - Maps single cells to spatial coordinates
 - Learns optimal transport between single-cell and spatial data
 - Gene imputation at spatial locations
 - Cell type mapping
 
 **When to Use**:
+
 - Mapping cells from scRNA-seq to spatial locations
 - Imputing unmeasured genes in spatial data
 - Understanding spatial organization at single-cell resolution
 - Integrating scRNA-seq and spatial transcriptomics
 
 **Data Requirements**:
+
 - Single-cell RNA-seq data with annotations
 - Spatial transcriptomics data
 - Shared genes between modalities
 
 **Basic Usage**:
+
 ```python
 import tangram as tg
 
@@ -178,6 +192,7 @@ tg.project_genes(ad_map, spatial_adata, genes=genes_to_impute)
 ```
 
 **Visualization**:
+
 ```python
 # Visualize cell type mapping
 sc.pl.spatial(
@@ -192,17 +207,20 @@ sc.pl.spatial(
 **Purpose**: Cross-modality imputation between spatial and single-cell data.
 
 **Key Features**:
+
 - Joint model of spatial and single-cell data
 - Imputes missing genes in spatial data
 - Enables cross-dataset queries
 - Learns shared representations
 
 **When to Use**:
+
 - Imputing genes not measured in spatial data
 - Joint analysis of spatial and single-cell datasets
 - Mapping between modalities
 
 **Basic Usage**:
+
 ```python
 # Combine datasets
 combined_adata = sc.concat([sc_adata, spatial_adata])
@@ -224,22 +242,26 @@ imputed = model.get_imputed_values(spatial_indices)
 **Purpose**: Analyzing cell-environment relationships in spatial data.
 
 **Key Features**:
+
 - Models cellular neighborhoods and environments
 - Identifies environment-associated gene expression
 - Accounts for spatial correlation structure
 - Cell-cell interaction analysis
 
 **When to Use**:
+
 - Understanding how spatial context affects cells
 - Identifying niche-specific gene programs
 - Cell-cell interaction studies
 - Microenvironment analysis
 
 **Data Requirements**:
+
 - Spatial transcriptomics with coordinates
 - Cell type annotations (optional)
 
 **Basic Usage**:
+
 ```python
 scvi.model.SCVIVA.setup_anndata(
     spatial_adata,
@@ -262,18 +284,21 @@ env_genes = model.get_environment_specific_genes()
 **Purpose**: Addressing spatial transcriptomics noise through resolution-aware modeling.
 
 **Key Features**:
+
 - Accounts for spatial resolution effects
 - Denoises spatial data
 - Multi-scale analysis
 - Improves downstream analysis quality
 
 **When to Use**:
+
 - Noisy spatial data
 - Multiple spatial resolutions
 - Need denoising before analysis
 - Improving data quality
 
 **Basic Usage**:
+
 ```python
 scvi.model.RESOLVI.setup_anndata(
     spatial_adata,
@@ -291,7 +316,9 @@ denoised = model.get_denoised_expression()
 ## Model Selection for Spatial Transcriptomics
 
 ### DestVI
+
 **Choose when**:
+
 - Need detailed deconvolution with reference
 - Have high-quality scRNA-seq reference
 - Want multi-resolution analysis
@@ -300,7 +327,9 @@ denoised = model.get_denoised_expression()
 **Best for**: Visium, spot-based technologies
 
 ### Stereoscope
+
 **Choose when**:
+
 - Need simpler, faster deconvolution
 - Basic cell type proportion estimates
 - Limited computational resources
@@ -308,7 +337,9 @@ denoised = model.get_denoised_expression()
 **Best for**: Quick deconvolution tasks
 
 ### Tangram
+
 **Choose when**:
+
 - Want single-cell resolution mapping
 - Need to impute many genes
 - Interested in cell positioning
@@ -317,7 +348,9 @@ denoised = model.get_denoised_expression()
 **Best for**: Detailed spatial mapping
 
 ### gimVI
+
 **Choose when**:
+
 - Need bidirectional imputation
 - Joint modeling of spatial and single-cell
 - Cross-dataset queries
@@ -325,7 +358,9 @@ denoised = model.get_denoised_expression()
 **Best for**: Integration and imputation
 
 ### scVIVA
+
 **Choose when**:
+
 - Interested in cellular environments
 - Cell-cell interaction analysis
 - Neighborhood effects
@@ -333,7 +368,9 @@ denoised = model.get_denoised_expression()
 **Best for**: Microenvironment studies
 
 ### ResolVI
+
 **Choose when**:
+
 - Data quality is a concern
 - Need denoising
 - Multi-scale analysis

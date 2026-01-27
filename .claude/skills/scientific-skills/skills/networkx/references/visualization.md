@@ -3,6 +3,7 @@
 ## Basic Drawing with Matplotlib
 
 ### Simple Visualization
+
 ```python
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -19,6 +20,7 @@ plt.close()
 ```
 
 ### Drawing with Labels
+
 ```python
 # Draw with node labels
 nx.draw(G, with_labels=True)
@@ -33,6 +35,7 @@ plt.show()
 ## Layout Algorithms
 
 ### Spring Layout (Force-Directed)
+
 ```python
 # Fruchterman-Reingold force-directed algorithm
 pos = nx.spring_layout(G, seed=42)
@@ -44,6 +47,7 @@ pos = nx.spring_layout(G, k=0.5, iterations=50, seed=42)
 ```
 
 ### Circular Layout
+
 ```python
 # Arrange nodes in circle
 pos = nx.circular_layout(G)
@@ -52,6 +56,7 @@ plt.show()
 ```
 
 ### Random Layout
+
 ```python
 # Random positioning
 pos = nx.random_layout(G, seed=42)
@@ -60,6 +65,7 @@ plt.show()
 ```
 
 ### Shell Layout
+
 ```python
 # Concentric circles
 pos = nx.shell_layout(G)
@@ -72,6 +78,7 @@ pos = nx.shell_layout(G, nlist=shells)
 ```
 
 ### Spectral Layout
+
 ```python
 # Use eigenvectors of graph Laplacian
 pos = nx.spectral_layout(G)
@@ -80,6 +87,7 @@ plt.show()
 ```
 
 ### Kamada-Kawai Layout
+
 ```python
 # Energy-based layout
 pos = nx.kamada_kawai_layout(G)
@@ -88,6 +96,7 @@ plt.show()
 ```
 
 ### Planar Layout
+
 ```python
 # For planar graphs only
 if nx.is_planar(G):
@@ -97,6 +106,7 @@ if nx.is_planar(G):
 ```
 
 ### Tree Layouts
+
 ```python
 # For tree graphs
 if nx.is_tree(G):
@@ -108,6 +118,7 @@ if nx.is_tree(G):
 ## Customizing Node Appearance
 
 ### Node Colors
+
 ```python
 # Single color
 nx.draw(G, node_color='red')
@@ -124,6 +135,7 @@ plt.show()
 ```
 
 ### Node Sizes
+
 ```python
 # Size by degree
 node_sizes = [100 * G.degree(n) for n in G.nodes()]
@@ -136,6 +148,7 @@ nx.draw(G, node_size=node_sizes)
 ```
 
 ### Node Shapes
+
 ```python
 # Draw nodes separately with different shapes
 pos = nx.spring_layout(G)
@@ -154,6 +167,7 @@ plt.show()
 ```
 
 ### Node Borders
+
 ```python
 nx.draw(G, pos=pos,
         node_color='lightblue',
@@ -165,6 +179,7 @@ plt.show()
 ## Customizing Edge Appearance
 
 ### Edge Colors
+
 ```python
 # Single color
 nx.draw(G, edge_color='gray')
@@ -181,6 +196,7 @@ nx.draw(G, edge_color=weights, edge_cmap=plt.cm.Reds)
 ```
 
 ### Edge Widths
+
 ```python
 # Width by weight
 edge_widths = [3 * G[u][v].get('weight', 1) for u, v in G.edges()]
@@ -193,6 +209,7 @@ nx.draw(G, width=edge_widths)
 ```
 
 ### Edge Styles
+
 ```python
 # Dashed edges
 nx.draw(G, style='dashed')
@@ -209,6 +226,7 @@ plt.show()
 ```
 
 ### Directed Graphs (Arrows)
+
 ```python
 # Draw directed graph with arrows
 G_directed = nx.DiGraph([(1, 2), (2, 3), (3, 1)])
@@ -225,6 +243,7 @@ plt.show()
 ## Labels and Annotations
 
 ### Node Labels
+
 ```python
 pos = nx.spring_layout(G)
 
@@ -240,6 +259,7 @@ nx.draw_networkx_labels(G, pos,
 ```
 
 ### Edge Labels
+
 ```python
 pos = nx.spring_layout(G)
 nx.draw_networkx_nodes(G, pos)
@@ -258,6 +278,7 @@ nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 ## Advanced Drawing Techniques
 
 ### Combining Draw Functions
+
 ```python
 # Full control by separating components
 pos = nx.spring_layout(G, seed=42)
@@ -281,6 +302,7 @@ plt.show()
 ```
 
 ### Subgraph Highlighting
+
 ```python
 pos = nx.spring_layout(G)
 
@@ -302,6 +324,7 @@ plt.show()
 ```
 
 ### Community Coloring
+
 ```python
 from networkx.algorithms import community
 
@@ -325,6 +348,7 @@ plt.show()
 ## Creating Publication-Quality Figures
 
 ### High Resolution Export
+
 ```python
 plt.figure(figsize=(12, 8))
 pos = nx.spring_layout(G, seed=42)
@@ -346,6 +370,7 @@ plt.close()
 ```
 
 ### Multi-Panel Figures
+
 ```python
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
 
@@ -366,6 +391,7 @@ plt.close()
 ## Interactive Visualization Libraries
 
 ### Plotly (Interactive)
+
 ```python
 import plotly.graph_objects as go
 
@@ -416,6 +442,7 @@ fig.show()
 ```
 
 ### PyVis (Interactive HTML)
+
 ```python
 from pyvis.network import Network
 
@@ -433,6 +460,7 @@ net.show('graph.html')
 ```
 
 ### Graphviz (via pydot)
+
 ```python
 # Requires graphviz and pydot
 from networkx.drawing.nx_pydot import graphviz_layout
@@ -448,6 +476,7 @@ nx.drawing.nx_pydot.write_dot(G, 'graph.dot')
 ## Bipartite Graph Visualization
 
 ### Two-Set Layout
+
 ```python
 from networkx.algorithms import bipartite
 
@@ -474,6 +503,7 @@ plt.show()
 ## 3D Visualization
 
 ### 3D Network Plot
+
 ```python
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -507,22 +537,26 @@ plt.show()
 ## Best Practices
 
 ### Performance
+
 - For large graphs (>1000 nodes), use simpler layouts (circular, random)
 - Use `alpha` parameter to make dense edges more visible
 - Consider downsampling or showing subgraphs for very large networks
 
 ### Aesthetics
+
 - Use consistent color schemes
 - Scale node sizes meaningfully (e.g., by degree or importance)
 - Keep labels readable (adjust font size and position)
 - Use white space effectively (adjust figure size)
 
 ### Reproducibility
+
 - Always set random seeds for layouts: `nx.spring_layout(G, seed=42)`
 - Save layout positions for consistency across multiple plots
 - Document color/size mappings in legends or captions
 
 ### File Formats
+
 - PNG for raster images (web, presentations)
 - PDF for vector graphics (publications, scalable)
 - SVG for web and interactive applications

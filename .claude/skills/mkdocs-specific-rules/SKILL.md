@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Follow best practices for MkDocs structure, including clear navigation, proper use of themes, and effective plugin integration.
 - Ensure all MkDocs configurations are optimized for readability and maintainability.
 - Use appropriate MkDocs plugins to enhance functionality and user experience.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

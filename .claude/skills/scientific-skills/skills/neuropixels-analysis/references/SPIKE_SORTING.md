@@ -4,23 +4,25 @@ Comprehensive guide to spike sorting Neuropixels data.
 
 ## Available Sorters
 
-| Sorter | GPU Required | Speed | Quality | Best For |
-|--------|--------------|-------|---------|----------|
-| **Kilosort4** | Yes (CUDA) | Fast | Excellent | Production use |
-| **Kilosort3** | Yes (CUDA) | Fast | Very Good | Legacy compatibility |
-| **Kilosort2.5** | Yes (CUDA) | Fast | Good | Older pipelines |
-| **SpykingCircus2** | No | Medium | Good | CPU-only systems |
-| **Mountainsort5** | No | Medium | Good | Small recordings |
-| **Tridesclous2** | No | Medium | Good | Interactive sorting |
+| Sorter             | GPU Required | Speed  | Quality   | Best For             |
+| ------------------ | ------------ | ------ | --------- | -------------------- |
+| **Kilosort4**      | Yes (CUDA)   | Fast   | Excellent | Production use       |
+| **Kilosort3**      | Yes (CUDA)   | Fast   | Very Good | Legacy compatibility |
+| **Kilosort2.5**    | Yes (CUDA)   | Fast   | Good      | Older pipelines      |
+| **SpykingCircus2** | No           | Medium | Good      | CPU-only systems     |
+| **Mountainsort5**  | No           | Medium | Good      | Small recordings     |
+| **Tridesclous2**   | No           | Medium | Good      | Interactive sorting  |
 
 ## Kilosort4 (Recommended)
 
 ### Installation
+
 ```bash
 pip install kilosort
 ```
 
 ### Basic Usage
+
 ```python
 import spikeinterface.full as si
 
@@ -36,6 +38,7 @@ print(f"Found {len(sorting.unit_ids)} units")
 ```
 
 ### Custom Parameters
+
 ```python
 sorting = si.run_sorter(
     'kilosort4',
@@ -58,6 +61,7 @@ sorting = si.run_sorter(
 ```
 
 ### Kilosort4 Full Parameters
+
 ```python
 # Get all available parameters
 params = si.get_default_sorter_params('kilosort4')
@@ -88,6 +92,7 @@ ks4_params = {
 ## Kilosort3
 
 ### Usage
+
 ```python
 sorting = si.run_sorter(
     'kilosort3',
@@ -105,11 +110,13 @@ sorting = si.run_sorter(
 ## SpykingCircus2 (CPU-Only)
 
 ### Installation
+
 ```bash
 pip install spykingcircus
 ```
 
 ### Usage
+
 ```python
 sorting = si.run_sorter(
     'spykingcircus2',
@@ -124,11 +131,13 @@ sorting = si.run_sorter(
 ## Mountainsort5 (CPU-Only)
 
 ### Installation
+
 ```bash
 pip install mountainsort5
 ```
 
 ### Usage
+
 ```python
 sorting = si.run_sorter(
     'mountainsort5',
@@ -143,6 +152,7 @@ sorting = si.run_sorter(
 ## Running Multiple Sorters
 
 ### Compare Sorters
+
 ```python
 # Run multiple sorters
 sorting_ks4 = si.run_sorter('kilosort4', recording, output_folder='ks4/')
@@ -160,6 +170,7 @@ agreement = comparison.get_agreement_sorting()
 ```
 
 ### Ensemble Sorting
+
 ```python
 # Create consensus sorting
 sorting_ensemble = si.create_ensemble_sorting(
@@ -172,6 +183,7 @@ sorting_ensemble = si.create_ensemble_sorting(
 ## Sorting in Docker/Singularity
 
 ### Using Docker
+
 ```python
 sorting = si.run_sorter(
     'kilosort3',
@@ -183,6 +195,7 @@ sorting = si.run_sorter(
 ```
 
 ### Using Singularity
+
 ```python
 sorting = si.run_sorter(
     'kilosort3',
@@ -196,6 +209,7 @@ sorting = si.run_sorter(
 ## Long Recording Strategy
 
 ### Concatenate Recordings
+
 ```python
 # Multiple recording files
 recordings = [
@@ -214,6 +228,7 @@ sortings_split = si.split_sorting(sorting, recording_concat)
 ```
 
 ### Sort by Segment
+
 ```python
 # For very long recordings, sort segments separately
 from pathlib import Path
@@ -233,6 +248,7 @@ for i, segment in enumerate(recording.split_by_times([0, 3600, 7200, 10800])):
 ## Post-Sorting Curation
 
 ### Manual Curation with Phy
+
 ```python
 # Export to Phy format
 analyzer = si.create_sorting_analyzer(sorting, recording)
@@ -244,6 +260,7 @@ si.export_to_phy(analyzer, output_folder='phy_export/')
 ```
 
 ### Load Phy Curation
+
 ```python
 # After manual curation in Phy
 sorting_curated = si.read_phy('phy_export/')
@@ -253,6 +270,7 @@ sorting_curated = si.apply_phy_curation(sorting, 'phy_export/')
 ```
 
 ### Automatic Curation
+
 ```python
 # Remove units below quality threshold
 analyzer = si.create_sorting_analyzer(sorting, recording)
@@ -271,6 +289,7 @@ print(f"Kept {len(good_unit_ids)}/{len(sorting.unit_ids)} units")
 ## Sorting Metrics
 
 ### Check Sorter Output
+
 ```python
 # Basic stats
 print(f"Units found: {len(sorting.unit_ids)}")
@@ -283,6 +302,7 @@ for unit_id in sorting.unit_ids[:10]:
 ```
 
 ### Firing Rates
+
 ```python
 # Compute firing rates
 duration = recording.get_total_duration()
@@ -297,6 +317,7 @@ for unit_id in sorting.unit_ids:
 ### Common Issues
 
 **Out of GPU Memory**
+
 ```python
 # Reduce batch size
 sorting = si.run_sorter(
@@ -308,6 +329,7 @@ sorting = si.run_sorter(
 ```
 
 **Too Few Units Found**
+
 ```python
 # Lower detection threshold
 sorting = si.run_sorter(
@@ -320,6 +342,7 @@ sorting = si.run_sorter(
 ```
 
 **Too Many Units (Over-splitting)**
+
 ```python
 # Increase minimum distance between templates
 sorting = si.run_sorter(
@@ -332,6 +355,7 @@ sorting = si.run_sorter(
 ```
 
 **Check GPU Availability**
+
 ```python
 import torch
 print(f"CUDA available: {torch.cuda.is_available()}")

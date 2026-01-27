@@ -112,6 +112,7 @@ for project in projects:
 ### Supported Object Types
 
 The `getObject()` and `getObjects()` methods support:
+
 - `"Project"`
 - `"Dataset"`
 - `"Image"`

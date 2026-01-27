@@ -7,6 +7,7 @@ This reference documents the fundamental classes in `pymatgen.core` that form th
 Pymatgen follows an object-oriented design where elements, sites, and structures are represented as objects. The framework emphasizes periodic boundary conditions for crystal representation while maintaining flexibility for molecular systems.
 
 **Unit Conventions**: All units in pymatgen are typically assumed to be in atomic units:
+
 - Lengths: angstroms (Å)
 - Energies: electronvolts (eV)
 - Angles: degrees
@@ -14,9 +15,11 @@ Pymatgen follows an object-oriented design where elements, sites, and structures
 ## Element and Periodic Table
 
 ### Element
+
 Represents periodic table elements with comprehensive properties.
 
 **Creation methods:**
+
 ```python
 from pymatgen.core import Element
 
@@ -29,6 +32,7 @@ si = Element.from_name("silicon")
 ```
 
 **Key properties:**
+
 - `atomic_mass`: Atomic mass in amu
 - `atomic_radius`: Atomic radius in angstroms
 - `electronegativity`: Pauling electronegativity
@@ -38,6 +42,7 @@ si = Element.from_name("silicon")
 - `X`: Element symbol as string
 
 ### Species
+
 Extends Element for charged ions and specific oxidation states.
 
 ```python
@@ -50,6 +55,7 @@ fe2 = Species("Fe", +2)
 ```
 
 ### DummySpecies
+
 Placeholder atoms for special structural representations (e.g., vacancies).
 
 ```python
@@ -63,6 +69,7 @@ vacancy = DummySpecies("X")
 Represents chemical formulas and compositions, enabling chemical analysis and manipulation.
 
 ### Creation
+
 ```python
 from pymatgen.core import Composition
 
@@ -75,6 +82,7 @@ comp = Composition.from_weight_dict({"Fe": 111.69, "O": 48.00})
 ```
 
 ### Key methods
+
 - `get_reduced_formula_and_factor()`: Returns reduced formula and multiplication factor
 - `oxi_state_guesses()`: Attempts to determine oxidation states
 - `replace(replacements_dict)`: Replace elements
@@ -82,6 +90,7 @@ comp = Composition.from_weight_dict({"Fe": 111.69, "O": 48.00})
 - `is_element`: Check if composition is a single element
 
 ### Key properties
+
 - `weight`: Molecular weight
 - `reduced_formula`: Reduced chemical formula
 - `hill_formula`: Formula in Hill notation (C, H, then alphabetical)
@@ -94,6 +103,7 @@ comp = Composition.from_weight_dict({"Fe": 111.69, "O": 48.00})
 Defines unit cell geometry for crystal structures.
 
 ### Creation
+
 ```python
 from pymatgen.core import Lattice
 
@@ -113,11 +123,13 @@ lattice = Lattice.hexagonal(a=2.95, c=4.68)
 ```
 
 ### Key methods
+
 - `get_niggli_reduced_lattice()`: Returns Niggli-reduced lattice
 - `get_distance_and_image(frac_coords1, frac_coords2)`: Distance between fractional coordinates with periodic boundary conditions
 - `get_all_distances(frac_coords1, frac_coords2)`: Distances including periodic images
 
 ### Key properties
+
 - `volume`: Volume of the unit cell (Å³)
 - `abc`: Lattice parameters (a, b, c) as tuple
 - `angles`: Lattice angles (alpha, beta, gamma) as tuple
@@ -128,6 +140,7 @@ lattice = Lattice.hexagonal(a=2.95, c=4.68)
 ## Sites
 
 ### Site
+
 Represents an atomic position in non-periodic systems.
 
 ```python
@@ -137,6 +150,7 @@ site = Site("Si", [0.0, 0.0, 0.0])  # Species and Cartesian coordinates
 ```
 
 ### PeriodicSite
+
 Represents an atomic position in a periodic lattice with fractional coordinates.
 
 ```python
@@ -146,10 +160,12 @@ site = PeriodicSite("Si", [0.5, 0.5, 0.5], lattice)  # Species, fractional coord
 ```
 
 **Key methods:**
+
 - `distance(other_site)`: Distance to another site
 - `is_periodic_image(other_site)`: Check if sites are periodic images
 
 **Key properties:**
+
 - `species`: Species or element at the site
 - `coords`: Cartesian coordinates
 - `frac_coords`: Fractional coordinates (for PeriodicSite)
@@ -160,6 +176,7 @@ site = PeriodicSite("Si", [0.5, 0.5, 0.5], lattice)  # Species, fractional coord
 Represents a crystal structure as a collection of periodic sites. `Structure` is mutable, while `IStructure` is immutable.
 
 ### Creation
+
 ```python
 from pymatgen.core import Structure, Lattice
 
@@ -179,6 +196,7 @@ struct = Structure.from_spacegroup("Fm-3m", Lattice.cubic(3.5),
 ```
 
 ### File I/O
+
 ```python
 # Write to file (format inferred from extension)
 struct.to(filename="output.cif")
@@ -193,6 +211,7 @@ poscar_string = struct.to(fmt="poscar")
 ### Key methods
 
 **Structure modification:**
+
 - `append(species, coords)`: Add a site
 - `insert(i, species, coords)`: Insert site at index
 - `remove_sites(indices)`: Remove sites by index
@@ -203,6 +222,7 @@ poscar_string = struct.to(fmt="poscar")
 - `get_primitive_structure()`: Get primitive cell
 
 **Analysis:**
+
 - `get_distance(i, j)`: Distance between sites i and j
 - `get_neighbors(site, r)`: Get neighbors within radius r
 - `get_all_neighbors(r)`: Get all neighbors for all sites
@@ -210,9 +230,11 @@ poscar_string = struct.to(fmt="poscar")
 - `matches(other_struct)`: Check if structures match
 
 **Interpolation:**
+
 - `interpolate(end_structure, nimages)`: Interpolate between structures
 
 ### Key properties
+
 - `lattice`: Lattice object
 - `species`: List of species at each site
 - `sites`: List of PeriodicSite objects
@@ -228,6 +250,7 @@ poscar_string = struct.to(fmt="poscar")
 Represents non-periodic collections of atoms. `Molecule` is mutable, while `IMolecule` is immutable.
 
 ### Creation
+
 ```python
 from pymatgen.core import Molecule
 
@@ -242,6 +265,7 @@ mol = Molecule.from_file("molecule.mol")
 ```
 
 ### Key methods
+
 - `get_covalent_bonds()`: Returns bonds based on covalent radii
 - `get_neighbors(site, r)`: Get neighbors within radius
 - `get_zmatrix()`: Get Z-matrix representation
@@ -249,6 +273,7 @@ mol = Molecule.from_file("molecule.mol")
 - `get_centered_molecule()`: Center molecule at origin
 
 ### Key properties
+
 - `species`: List of species
 - `sites`: List of Site objects
 - `num_sites`: Number of atoms
@@ -280,13 +305,16 @@ This approach addresses limitations of Python pickling and maintains compatibili
 ## Additional Core Classes
 
 ### CovalentBond
+
 Represents bonds in molecules.
 
 **Key properties:**
+
 - `length`: Bond length
 - `get_bond_order()`: Returns bond order (single, double, triple)
 
 ### Ion
+
 Represents charged ionic species with oxidation states.
 
 ```python
@@ -297,15 +325,19 @@ fe2_ion = Ion.from_formula("Fe2+")
 ```
 
 ### Interface
+
 Represents substrate-film combinations for heterojunction analysis.
 
 ### GrainBoundary
+
 Represents crystallographic grain boundaries.
 
 ### Spectrum
+
 Represents spectroscopic data with methods for normalization and processing.
 
 **Key methods:**
+
 - `normalize(mode="max")`: Normalize spectrum
 - `smear(sigma)`: Apply Gaussian smearing
 

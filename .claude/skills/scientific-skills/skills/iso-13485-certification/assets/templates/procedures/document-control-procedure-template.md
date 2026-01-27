@@ -12,18 +12,18 @@
 
 ### Approval Signatures
 
-| Role | Name | Signature | Date |
-|------|------|-----------|------|
-| Author | [NAME] | | [DATE] |
-| Reviewer | [NAME] | | [DATE] |
-| Approver (Quality Manager) | [NAME] | | [DATE] |
+| Role                       | Name   | Signature | Date   |
+| -------------------------- | ------ | --------- | ------ |
+| Author                     | [NAME] |           | [DATE] |
+| Reviewer                   | [NAME] |           | [DATE] |
+| Approver (Quality Manager) | [NAME] |           | [DATE] |
 
 ### Revision History
 
-| Revision | Date | Description of Changes | Approved By |
-|----------|------|------------------------|-------------|
-| 00 | [DATE] | Initial release | [NAME] |
-|  |  |  |  |
+| Revision | Date   | Description of Changes | Approved By |
+| -------- | ------ | ---------------------- | ----------- |
+| 00       | [DATE] | Initial release        | [NAME]      |
+|          |        |                        |             |
 
 ---
 
@@ -83,6 +83,7 @@ This procedure applies to all controlled documents within the Quality Management
 - External documents (standards, regulations, customer specifications)
 
 This procedure does NOT apply to:
+
 - Records (controlled per SOP-[NUMBER] Control of Records)
 - Transient documents (emails, meeting notes not part of QMS)
 - Marketing and sales materials (unless affecting product quality or regulatory compliance)
@@ -91,22 +92,23 @@ This procedure does NOT apply to:
 
 ## 3. DEFINITIONS
 
-| Term | Definition |
-|------|------------|
-| **Controlled Document** | A document that is subject to review, approval, distribution control, and change management per this procedure |
-| **Master Document** | The official controlled copy maintained by Document Control, from which all distributed copies originate |
-| **Document Owner** | The person or department responsible for the content, accuracy, and maintenance of a document |
-| **Document Control Coordinator** | Person responsible for managing the document control system |
-| **Revision** | A change to a controlled document that has been approved and issued |
-| **Obsolete Document** | A document that has been superseded by a newer revision or is no longer applicable |
-| **External Document** | A document originating from outside the organization (standards, regulations, customer specifications, etc.) |
-| **SUPERSEDED** | Watermark applied to obsolete documents retained for reference |
+| Term                             | Definition                                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Controlled Document**          | A document that is subject to review, approval, distribution control, and change management per this procedure |
+| **Master Document**              | The official controlled copy maintained by Document Control, from which all distributed copies originate       |
+| **Document Owner**               | The person or department responsible for the content, accuracy, and maintenance of a document                  |
+| **Document Control Coordinator** | Person responsible for managing the document control system                                                    |
+| **Revision**                     | A change to a controlled document that has been approved and issued                                            |
+| **Obsolete Document**            | A document that has been superseded by a newer revision or is no longer applicable                             |
+| **External Document**            | A document originating from outside the organization (standards, regulations, customer specifications, etc.)   |
+| **SUPERSEDED**                   | Watermark applied to obsolete documents retained for reference                                                 |
 
 ---
 
 ## 4. RESPONSIBILITIES
 
 ### 4.1 Document Control Coordinator
+
 - Manages document control system
 - Assigns document numbers
 - Maintains master document repository
@@ -118,6 +120,7 @@ This procedure does NOT apply to:
 - Trains personnel on document control procedures
 
 ### 4.2 Document Owners
+
 - Create and maintain documents within their area
 - Ensure document accuracy and completeness
 - Initiate document changes when needed
@@ -126,18 +129,21 @@ This procedure does NOT apply to:
 - Ensure personnel in their area use current documents
 
 ### 4.3 Quality Manager
+
 - Approves all QMS documents (SOPs, Quality Manual)
 - Reviews document changes for QMS impact
 - Ensures document control system effectiveness
 - Audits document control compliance
 
 ### 4.4 Department Managers
+
 - Approve department-specific work instructions
 - Ensure current documents available in their areas
 - Ensure personnel trained on document changes
 - Remove obsolete documents from use areas
 
 ### 4.5 All Personnel
+
 - Use only current, approved documents
 - Report document issues (errors, illegibility, missing documents)
 - Do not use obsolete or unapproved documents
@@ -152,29 +158,34 @@ This procedure does NOT apply to:
 QMS documents are organized in a four-tier hierarchy:
 
 **Tier 1: Quality Manual (QM)**
+
 - Policy-level document
 - Describes overall QMS
 - References all Tier 2 procedures
 - Approved by CEO and Quality Manager
 
 **Tier 2: Standard Operating Procedures (SOPs)**
+
 - Define WHAT must be done, WHO does it, WHEN
 - Cross-functional processes
 - Include all 31 required documented procedures per ISO 13485
 - Approved by Quality Manager
 
 **Tier 3: Work Instructions (WIs)**
+
 - Define HOW to perform specific tasks
 - Step-by-step instructions
 - Department or process-specific
 - Approved by Department Manager and Quality Manager
 
 **Tier 4: Forms and Templates**
+
 - Standardized formats for data collection
 - Support SOPs and WIs
 - Approved by Document Owner and Quality Manager
 
 **Other Controlled Documents:**
+
 - Medical Device Files (MDFs)
 - Design History Files (DHFs)
 - Validation documents
@@ -187,32 +198,39 @@ QMS documents are organized in a four-tier hierarchy:
 All controlled documents are assigned unique identification numbers:
 
 **Quality Manual:**
+
 - Format: QM-[###]
 - Example: QM-001
 
 **Standard Operating Procedures:**
+
 - Format: SOP-[ISO Clause]-[###]
 - Example: SOP-4.2.4-001 (for Clause 4.2.4 Control of Documents)
 - Example: SOP-8.5-001 (for CAPA procedure)
 
 **Work Instructions:**
+
 - Format: WI-[Department Code]-[###]
 - Example: WI-MFG-001 (Manufacturing department work instruction)
 - Department codes: MFG (Manufacturing), QC (Quality Control), ENG (Engineering), etc.
 
 **Forms:**
+
 - Format: FORM-[SOP/WI Number]-[Letter]
 - Example: FORM-SOP-8.5-001-A (CAPA Request Form)
 
 **Medical Device Files:**
+
 - Format: MDF-[Product Code]-[###]
 - Example: MDF-ABC-001
 
 **Other Documents:**
+
 - Format varies by document type
 - Assigned by Document Control Coordinator
 
 **Revision Designation:**
+
 - Initial release: Revision 00
 - First revision: Revision 01
 - Subsequent revisions: 02, 03, 04, etc.
@@ -234,6 +252,7 @@ All controlled documents are assigned unique identification numbers:
 All controlled documents must include:
 
 **Header (on each page):**
+
 - Document number
 - Document title
 - Revision number
@@ -241,10 +260,12 @@ All controlled documents must include:
 - Page number (Page X of Y)
 
 **Document Control Section:**
+
 - Approval signature table
 - Revision history table
 
 **Content Requirements:**
+
 - Clear, concise language
 - Present tense, active voice
 - Consistent terminology
@@ -289,14 +310,14 @@ All controlled documents must include:
 
 Approval authority based on document type:
 
-| Document Type | Approval Authority |
-|---------------|-------------------|
-| Quality Manual | CEO and Quality Manager |
-| Standard Operating Procedures | Quality Manager |
-| Work Instructions | Department Manager and Quality Manager |
-| Forms | Document Owner and Quality Manager |
-| Specifications | Engineering Manager and Quality Manager |
-| Medical Device Files | [Per regulatory requirements] |
+| Document Type                 | Approval Authority                      |
+| ----------------------------- | --------------------------------------- |
+| Quality Manual                | CEO and Quality Manager                 |
+| Standard Operating Procedures | Quality Manager                         |
+| Work Instructions             | Department Manager and Quality Manager  |
+| Forms                         | Document Owner and Quality Manager      |
+| Specifications                | Engineering Manager and Quality Manager |
+| Medical Device Files          | [Per regulatory requirements]           |
 
 **Approval Steps:**
 
@@ -313,6 +334,7 @@ Approval authority based on document type:
 **5.4.3 Training Requirements**
 
 Before document becomes effective:
+
 - Affected personnel identified
 - Training conducted as needed
 - Training records maintained per SOP-[NUMBER]
@@ -329,6 +351,7 @@ Before document becomes effective:
 **5.5.2 Controlled Copies**
 
 **Electronic Distribution (Primary Method):**
+
 - Documents stored in [DOCUMENT MANAGEMENT SYSTEM]
 - Access controlled by user permissions
 - Read-only access for most users
@@ -337,6 +360,7 @@ Before document becomes effective:
 - Users may print for immediate use (uncontrolled copies)
 
 **Physical Distribution (When Necessary):**
+
 - Controlled copies issued for specific locations/uses
 - Each copy stamped "CONTROLLED COPY - [Copy Number]"
 - Distribution list maintained showing:
@@ -366,6 +390,7 @@ Before document becomes effective:
 **5.6.1 Initiating Changes**
 
 Changes may be initiated by:
+
 - Document Owner identifying need
 - CAPA requiring procedure change
 - Internal audit finding
@@ -408,6 +433,7 @@ Changes may be initiated by:
 **5.6.4 Indication of Changes**
 
 Changes are indicated by:
+
 - Revision history table (describes nature of changes)
 - Change bars or highlights in document (optional but recommended)
 - Change summary page for significant revisions (optional)
@@ -415,6 +441,7 @@ Changes are indicated by:
 **5.6.5 Urgent Changes**
 
 For urgent changes affecting safety or regulatory compliance:
+
 - Expedited review and approval process
 - May use interim method (e.g., hand-written changes with approval)
 - Formal document revision completed as soon as practical
@@ -425,6 +452,7 @@ For urgent changes affecting safety or regulatory compliance:
 **5.7.1 When Document Becomes Obsolete**
 
 Document becomes obsolete when:
+
 - New revision approved and becomes effective
 - Document no longer applicable to operations
 - Product discontinued
@@ -446,24 +474,28 @@ Document becomes obsolete when:
 **5.7.3 Retention of Obsolete Documents**
 
 Obsolete documents may be retained for:
+
 - Reference purposes
 - Product investigations
 - Regulatory or legal requirements
 - Historical record
 
 **If retained:**
+
 - Clearly marked "OBSOLETE - FOR REFERENCE ONLY" or "SUPERSEDED"
 - Stored separately from current documents
 - Access restricted and controlled
 - Retained per applicable retention requirements
 
 **Retention Locations:**
+
 - Electronic archive with "OBSOLETE" watermark
 - Separate physical archive area
 
 **5.7.4 Prevention of Unintended Use**
 
 To prevent unintended use:
+
 - Physical copies stamped "OBSOLETE" in red
 - Electronic copies watermarked "OBSOLETE"
 - Removed from active work areas
@@ -475,6 +507,7 @@ To prevent unintended use:
 **5.8.1 Types of External Documents**
 
 External documents include:
+
 - ISO standards
 - IEC standards
 - FDA regulations and guidance documents
@@ -527,15 +560,15 @@ External documents include:
 
 Records generated and maintained per this procedure:
 
-| Record | Retention Period | Location | Responsible Party |
-|--------|------------------|----------|-------------------|
-| Master Document List | Current + [X] years | [LOCATION/SYSTEM] | Document Control Coordinator |
-| Document Approval Records | [X years or device lifetime] | Document Control System | Document Control Coordinator |
-| Document Revision History | [X years or device lifetime] | Document Control System | Document Control Coordinator |
-| Document Change Requests | [X years] | [LOCATION] | Document Control Coordinator |
-| Distribution Lists | Current + [X] years | [LOCATION] | Document Control Coordinator |
-| Obsolete Document Archive | [Per retention schedule] | [LOCATION] | Document Control Coordinator |
-| External Document Register | Current + [X] years | [LOCATION] | Document Control Coordinator |
+| Record                     | Retention Period             | Location                | Responsible Party            |
+| -------------------------- | ---------------------------- | ----------------------- | ---------------------------- |
+| Master Document List       | Current + [X] years          | [LOCATION/SYSTEM]       | Document Control Coordinator |
+| Document Approval Records  | [X years or device lifetime] | Document Control System | Document Control Coordinator |
+| Document Revision History  | [X years or device lifetime] | Document Control System | Document Control Coordinator |
+| Document Change Requests   | [X years]                    | [LOCATION]              | Document Control Coordinator |
+| Distribution Lists         | Current + [X] years          | [LOCATION]              | Document Control Coordinator |
+| Obsolete Document Archive  | [Per retention schedule]     | [LOCATION]              | Document Control Coordinator |
+| External Document Register | Current + [X] years          | [LOCATION]              | Document Control Coordinator |
 
 ---
 

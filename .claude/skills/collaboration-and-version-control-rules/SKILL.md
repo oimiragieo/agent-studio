@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Establish a clear workflow for collaboration and review.
 - Use issue tracking to manage bugs and feature requests.
 - Communicate effectively with contributors and stakeholders.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -388,11 +388,13 @@ qc.draw('mpl', style='bw')  # Black and white
 ### Common Issues
 
 **Issue**: "No module named 'matplotlib'"
+
 ```bash
 uv pip install matplotlib
 ```
 
 **Issue**: Circuit too large to display
+
 ```python
 # Use folding
 qc.draw('mpl', fold=50)
@@ -403,12 +405,14 @@ fig.savefig('large_circuit.png', dpi=150, bbox_inches='tight')
 ```
 
 **Issue**: Jupyter notebook not displaying plots
+
 ```python
 # Add magic command at notebook start
 %matplotlib inline
 ```
 
 **Issue**: LaTeX visualization not working
+
 ```bash
 # Install LaTeX support
 uv pip install pylatexenc

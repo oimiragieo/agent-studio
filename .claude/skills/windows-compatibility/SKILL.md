@@ -32,12 +32,8 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  12. Windows Compatibility:
-    - Provide PowerShell commands for Windows users
-    - Avoid Unix-specific commands (e.g., use `Remove-Item` instead of `rm`)
-    - Use cross-platform Node.js commands when possible
-</instructions>
+- |- 12. Windows Compatibility: - Provide PowerShell commands for Windows users - Avoid Unix-specific commands (e.g., use `Remove-Item` instead of `rm`) - Use cross-platform Node.js commands when possible
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

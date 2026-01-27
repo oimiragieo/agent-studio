@@ -13,11 +13,13 @@ The BMG Labtech CLARIOstar and CLARIOstar Plus are microplate readers that measu
 #### Hardware Setup
 
 **Physical Connections:**
+
 1. IEC C13 power cord to mains power
 2. USB-B cable to computer (with security screws on device end)
 3. Optional: RS-232 port for plate stacking units
 
 **Communication:**
+
 - Serial connection through FTDI/USB-A at firmware level
 - Cross-platform support (Windows, macOS, Linux)
 
@@ -169,6 +171,7 @@ finally:
 **Development Status:**
 
 Some CLARIOstar features are under development:
+
 - Spectral scanning
 - Injector needle control
 - Detailed measurement parameter configuration

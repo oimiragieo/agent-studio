@@ -34,6 +34,7 @@ OpenRouter uses pay-as-you-go billing:
 5. Optionally set up auto-recharge
 
 **Pricing notes:**
+
 - Models have different per-token costs
 - See https://openrouter.ai/perplexity for Perplexity pricing
 - Monitor usage at https://openrouter.ai/activity
@@ -48,6 +49,7 @@ OpenRouter uses pay-as-you-go billing:
 6. **Important**: Save this key securely - you can't view it again!
 
 **Security tips:**
+
 - Never share your API key publicly
 - Don't commit keys to version control
 - Use separate keys for different projects
@@ -61,11 +63,13 @@ You have two options for setting up your API key:
 #### Option A: Environment Variable (Recommended)
 
 **Linux/macOS:**
+
 ```bash
 export OPENROUTER_API_KEY='sk-or-v1-your-key-here'
 ```
 
 To make it permanent, add to your shell profile:
+
 ```bash
 # For bash: Add to ~/.bashrc or ~/.bash_profile
 echo 'export OPENROUTER_API_KEY="sk-or-v1-your-key-here"' >> ~/.bashrc
@@ -77,11 +81,13 @@ source ~/.zshrc
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 $env:OPENROUTER_API_KEY = "sk-or-v1-your-key-here"
 ```
 
 To make it permanent:
+
 ```powershell
 [System.Environment]::SetEnvironmentVariable('OPENROUTER_API_KEY', 'sk-or-v1-your-key-here', 'User')
 ```
@@ -98,11 +104,13 @@ EOF
 ```
 
 Or use the setup script:
+
 ```bash
 python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 ```
 
 Then load it before running scripts:
+
 ```bash
 # Load environment variables from .env
 source .env
@@ -112,6 +120,7 @@ pip install python-dotenv
 ```
 
 **Using python-dotenv in scripts:**
+
 ```python
 from dotenv import load_dotenv
 load_dotenv()  # Loads .env file automatically
@@ -129,11 +138,13 @@ uv pip install litellm
 ```
 
 Or with regular pip:
+
 ```bash
 pip install litellm
 ```
 
 **Optional dependencies:**
+
 ```bash
 # For .env file support
 uv pip install python-dotenv
@@ -155,6 +166,7 @@ python scripts/perplexity_search.py --check-setup
 ```
 
 You should see:
+
 ```
 ✓ OPENROUTER_API_KEY is set (sk-or-v1-...xxxx)
 ✓ LiteLLM is installed (version X.X.X)
@@ -170,6 +182,7 @@ python scripts/perplexity_search.py "What is CRISPR gene editing?"
 ```
 
 Expected output:
+
 ```
 ================================================================================
 ANSWER
@@ -202,6 +215,7 @@ Protect against unexpected charges:
 5. Enable "Auto-recharge" with limit if desired
 
 **Recommended limits for development:**
+
 - Rate limit: 10-20 requests per minute
 - Spending limit: $10-50 depending on usage
 
@@ -222,6 +236,7 @@ Tips for reducing costs:
 **Cause**: Environment variable not set
 
 **Solution**:
+
 ```bash
 # Check if variable is set
 echo $OPENROUTER_API_KEY
@@ -236,12 +251,14 @@ python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 ### Error: "Invalid API key"
 
 **Causes**:
+
 - Key was deleted or revoked
 - Key has expired
 - Typo in the key
 - Wrong key format
 
 **Solutions**:
+
 1. Verify key at https://openrouter.ai/keys
 2. Check for extra spaces or quotes
 3. Generate a new key if needed
@@ -252,6 +269,7 @@ python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 **Cause**: OpenRouter account has run out of credits
 
 **Solution**:
+
 1. Go to https://openrouter.ai/account
 2. Click "Credits" tab
 3. Add more credits
@@ -262,6 +280,7 @@ python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 **Cause**: Too many requests in a short time
 
 **Solutions**:
+
 1. Wait a few seconds before retrying
 2. Increase rate limit at https://openrouter.ai/keys
 3. Implement exponential backoff in code
@@ -272,6 +291,7 @@ python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 **Cause**: Incorrect model name or model no longer available
 
 **Solution**:
+
 1. Check available models at https://openrouter.ai/models
 2. Use correct format: `openrouter/perplexity/sonar-pro`
 3. Verify model is still supported
@@ -281,6 +301,7 @@ python scripts/setup_env.py --api-key sk-or-v1-your-key-here
 **Cause**: LiteLLM package is not installed
 
 **Solution**:
+
 ```bash
 uv pip install litellm
 ```
@@ -290,6 +311,7 @@ uv pip install litellm
 **Cause**: Python path issues or version conflicts
 
 **Solutions**:
+
 1. Verify installation: `pip list | grep litellm`
 2. Reinstall: `uv pip install --force-reinstall litellm`
 3. Check Python version: `python --version` (requires 3.8+)
@@ -369,6 +391,7 @@ response = completion(
 ### .gitignore Template
 
 Add to your `.gitignore`:
+
 ```
 # Environment variables
 .env
@@ -424,17 +447,20 @@ A: Yes, OpenRouter is designed for production use with robust infrastructure, SL
 ## Resources
 
 **Official Documentation:**
+
 - OpenRouter: https://openrouter.ai/docs
 - Perplexity Models: https://openrouter.ai/perplexity
 - LiteLLM: https://docs.litellm.ai/
 
 **Account Management:**
+
 - Dashboard: https://openrouter.ai/account
 - API Keys: https://openrouter.ai/keys
 - Usage: https://openrouter.ai/activity
 - Billing: https://openrouter.ai/credits
 
 **Community:**
+
 - OpenRouter Discord: https://discord.gg/openrouter
 - GitHub Issues: https://github.com/OpenRouter
 - LiteLLM GitHub: https://github.com/BerriAI/litellm

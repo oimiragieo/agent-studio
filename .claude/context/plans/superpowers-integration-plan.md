@@ -22,36 +22,36 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 
 ### Tier 1: Critical (Must Have)
 
-| Item | Reason | Priority |
-|------|--------|----------|
-| `test-driven-development` skill | Far more comprehensive than existing `tdd` skill - includes Iron Laws, rationalization prevention tables, red flags, and testing anti-patterns reference | P0 |
-| `systematic-debugging` skill | More rigorous than existing `debugging` skill - 4-phase process with root-cause-tracing and defense-in-depth techniques | P0 |
-| `verification-before-completion` skill | Unique capability - prevents false completion claims with "Evidence before claims" protocol | P0 |
-| `code-reviewer` agent | Two-stage review (spec compliance then code quality) is a unique pattern not present in existing framework | P0 |
+| Item                                   | Reason                                                                                                                                                   | Priority |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `test-driven-development` skill        | Far more comprehensive than existing `tdd` skill - includes Iron Laws, rationalization prevention tables, red flags, and testing anti-patterns reference | P0       |
+| `systematic-debugging` skill           | More rigorous than existing `debugging` skill - 4-phase process with root-cause-tracing and defense-in-depth techniques                                  | P0       |
+| `verification-before-completion` skill | Unique capability - prevents false completion claims with "Evidence before claims" protocol                                                              | P0       |
+| `code-reviewer` agent                  | Two-stage review (spec compliance then code quality) is a unique pattern not present in existing framework                                               | P0       |
 
 ### Tier 2: High Value (Should Have)
 
-| Item | Reason | Priority |
-|------|--------|----------|
-| `brainstorming` skill | Structured design refinement before implementation - prevents "Description Trap" | P1 |
-| `writing-plans` skill | Bite-sized task creation (2-5 min tasks) with complete code snippets | P1 |
-| `executing-plans` skill | Batch execution with review checkpoints | P1 |
-| `subagent-driven-development` skill | Same-session plan execution with two-stage review per task | P1 |
-| Slash commands (`/brainstorm`, `/write-plan`, `/execute-plan`) | User-facing workflow triggers | P1 |
+| Item                                                           | Reason                                                                           | Priority |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------- |
+| `brainstorming` skill                                          | Structured design refinement before implementation - prevents "Description Trap" | P1       |
+| `writing-plans` skill                                          | Bite-sized task creation (2-5 min tasks) with complete code snippets             | P1       |
+| `executing-plans` skill                                        | Batch execution with review checkpoints                                          | P1       |
+| `subagent-driven-development` skill                            | Same-session plan execution with two-stage review per task                       | P1       |
+| Slash commands (`/brainstorm`, `/write-plan`, `/execute-plan`) | User-facing workflow triggers                                                    | P1       |
 
 ### Tier 3: Valuable (Nice to Have)
 
-| Item | Reason | Priority |
-|------|--------|----------|
-| `using-git-worktrees` skill | Isolated workspace creation with safety verification | P2 |
-| `finishing-a-development-branch` skill | Structured merge/PR decision workflow | P2 |
-| `dispatching-parallel-agents` skill | Concurrent subagent coordination pattern | P2 |
-| `requesting-code-review` / `receiving-code-review` skills | Code review protocol skills | P2 |
-| `writing-skills` skill | TDD applied to skill documentation creation | P2 |
-| `using-superpowers` skill | Skill discovery and invocation introduction | P2 |
-| Session-start hook | Automatic skill awareness injection | P2 |
-| `skills-core.js` library | Skill discovery/parsing utilities | P3 |
-| `find-polluter.sh` tool | Test pollution bisection finder | P3 |
+| Item                                                      | Reason                                               | Priority |
+| --------------------------------------------------------- | ---------------------------------------------------- | -------- |
+| `using-git-worktrees` skill                               | Isolated workspace creation with safety verification | P2       |
+| `finishing-a-development-branch` skill                    | Structured merge/PR decision workflow                | P2       |
+| `dispatching-parallel-agents` skill                       | Concurrent subagent coordination pattern             | P2       |
+| `requesting-code-review` / `receiving-code-review` skills | Code review protocol skills                          | P2       |
+| `writing-skills` skill                                    | TDD applied to skill documentation creation          | P2       |
+| `using-superpowers` skill                                 | Skill discovery and invocation introduction          | P2       |
+| Session-start hook                                        | Automatic skill awareness injection                  | P2       |
+| `skills-core.js` library                                  | Skill discovery/parsing utilities                    | P3       |
+| `find-polluter.sh` tool                                   | Test pollution bisection finder                      | P3       |
 
 ---
 
@@ -59,17 +59,17 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 
 ### Skills Requiring Replacement (Superpowers version is superior)
 
-| Existing Skill | Superpowers Skill | Action |
-|----------------|-------------------|--------|
-| `.claude/skills/tdd/SKILL.md` | `test-driven-development` | **REPLACE** - Superpowers version includes Iron Laws, red flags, rationalization tables, DOT flowcharts, testing anti-patterns reference |
-| `.claude/skills/debugging/SKILL.md` | `systematic-debugging` | **REPLACE** - Superpowers version includes 4-phase process, root-cause-tracing, defense-in-depth, find-polluter tool |
+| Existing Skill                      | Superpowers Skill         | Action                                                                                                                                   |
+| ----------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/tdd/SKILL.md`       | `test-driven-development` | **REPLACE** - Superpowers version includes Iron Laws, red flags, rationalization tables, DOT flowcharts, testing anti-patterns reference |
+| `.claude/skills/debugging/SKILL.md` | `systematic-debugging`    | **REPLACE** - Superpowers version includes 4-phase process, root-cause-tracing, defense-in-depth, find-polluter tool                     |
 
 ### Skills That Complement (No Conflict)
 
-| Existing Skill | Relationship |
-|----------------|--------------|
-| `.claude/skills/smart-debug/SKILL.md` | **KEEP** - Focuses on observability/production debugging. Superpowers `systematic-debugging` focuses on methodology. They complement each other. |
-| `.claude/agents/core/qa.md` | **KEEP** - QA agent focuses on test coverage and regression. Code-reviewer agent focuses on plan compliance and code quality. Different purposes. |
+| Existing Skill                        | Relationship                                                                                                                                      |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/smart-debug/SKILL.md` | **KEEP** - Focuses on observability/production debugging. Superpowers `systematic-debugging` focuses on methodology. They complement each other.  |
+| `.claude/agents/core/qa.md`           | **KEEP** - QA agent focuses on test coverage and regression. Code-reviewer agent focuses on plan compliance and code quality. Different purposes. |
 
 ---
 
@@ -77,50 +77,50 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 
 ### Skills
 
-| Source | Target |
-|--------|--------|
-| `superpowers-main/skills/brainstorming/` | `.claude/skills/brainstorming/` |
-| `superpowers-main/skills/writing-plans/` | `.claude/skills/writing-plans/` |
-| `superpowers-main/skills/executing-plans/` | `.claude/skills/executing-plans/` |
-| `superpowers-main/skills/subagent-driven-development/` | `.claude/skills/subagent-driven-development/` |
-| `superpowers-main/skills/test-driven-development/` | `.claude/skills/tdd/` (REPLACE) |
-| `superpowers-main/skills/systematic-debugging/` | `.claude/skills/debugging/` (REPLACE) |
+| Source                                                    | Target                                           |
+| --------------------------------------------------------- | ------------------------------------------------ |
+| `superpowers-main/skills/brainstorming/`                  | `.claude/skills/brainstorming/`                  |
+| `superpowers-main/skills/writing-plans/`                  | `.claude/skills/writing-plans/`                  |
+| `superpowers-main/skills/executing-plans/`                | `.claude/skills/executing-plans/`                |
+| `superpowers-main/skills/subagent-driven-development/`    | `.claude/skills/subagent-driven-development/`    |
+| `superpowers-main/skills/test-driven-development/`        | `.claude/skills/tdd/` (REPLACE)                  |
+| `superpowers-main/skills/systematic-debugging/`           | `.claude/skills/debugging/` (REPLACE)            |
 | `superpowers-main/skills/verification-before-completion/` | `.claude/skills/verification-before-completion/` |
-| `superpowers-main/skills/using-git-worktrees/` | `.claude/skills/using-git-worktrees/` |
+| `superpowers-main/skills/using-git-worktrees/`            | `.claude/skills/using-git-worktrees/`            |
 | `superpowers-main/skills/finishing-a-development-branch/` | `.claude/skills/finishing-a-development-branch/` |
-| `superpowers-main/skills/dispatching-parallel-agents/` | `.claude/skills/dispatching-parallel-agents/` |
-| `superpowers-main/skills/requesting-code-review/` | `.claude/skills/requesting-code-review/` |
-| `superpowers-main/skills/receiving-code-review/` | `.claude/skills/receiving-code-review/` |
-| `superpowers-main/skills/writing-skills/` | `.claude/skills/writing-skills/` |
-| `superpowers-main/skills/using-superpowers/` | `.claude/skills/skill-discovery/` |
+| `superpowers-main/skills/dispatching-parallel-agents/`    | `.claude/skills/dispatching-parallel-agents/`    |
+| `superpowers-main/skills/requesting-code-review/`         | `.claude/skills/requesting-code-review/`         |
+| `superpowers-main/skills/receiving-code-review/`          | `.claude/skills/receiving-code-review/`          |
+| `superpowers-main/skills/writing-skills/`                 | `.claude/skills/writing-skills/`                 |
+| `superpowers-main/skills/using-superpowers/`              | `.claude/skills/skill-discovery/`                |
 
 ### Agent
 
-| Source | Target |
-|--------|--------|
+| Source                                     | Target                                        |
+| ------------------------------------------ | --------------------------------------------- |
 | `superpowers-main/agents/code-reviewer.md` | `.claude/agents/specialized/code-reviewer.md` |
 
 ### Commands
 
-| Source | Target |
-|--------|--------|
-| `superpowers-main/commands/brainstorm.md` | `.claude/commands/brainstorm.md` |
-| `superpowers-main/commands/write-plan.md` | `.claude/commands/write-plan.md` |
+| Source                                      | Target                             |
+| ------------------------------------------- | ---------------------------------- |
+| `superpowers-main/commands/brainstorm.md`   | `.claude/commands/brainstorm.md`   |
+| `superpowers-main/commands/write-plan.md`   | `.claude/commands/write-plan.md`   |
 | `superpowers-main/commands/execute-plan.md` | `.claude/commands/execute-plan.md` |
 
 ### Hooks
 
-| Source | Target |
-|--------|--------|
+| Source                    | Target                   |
+| ------------------------- | ------------------------ |
 | `superpowers-main/hooks/` | `.claude/hooks/session/` |
 
 ### Tools
 
-| Source | Target |
-|--------|--------|
-| `superpowers-main/lib/skills-core.js` | `.claude/tools/skills-core/skills-core.js` |
+| Source                                                          | Target                                         |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| `superpowers-main/lib/skills-core.js`                           | `.claude/tools/skills-core/skills-core.js`     |
 | `superpowers-main/skills/systematic-debugging/find-polluter.sh` | `.claude/tools/find-polluter/find-polluter.sh` |
-| `superpowers-main/skills/writing-skills/render-graphs.js` | `.claude/tools/render-graphs/render-graphs.js` |
+| `superpowers-main/skills/writing-skills/render-graphs.js`       | `.claude/tools/render-graphs/render-graphs.js` |
 
 ---
 
@@ -129,6 +129,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 1: Foundation (Core Discipline Skills)
 
 **Tasks**:
+
 1. Backup existing `tdd` and `debugging` skills to `.claude.archive/`
 2. Install enhanced TDD skill with Iron Laws and anti-patterns
 3. Install systematic-debugging skill with 4-phase process
@@ -141,6 +142,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 2: Code Review Agent
 
 **Tasks**:
+
 1. Install code-reviewer agent to `.claude/agents/specialized/`
 2. Install requesting-code-review and receiving-code-review skills
 3. Update CLAUDE.md routing table
@@ -151,6 +153,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 3: Workflow Skills
 
 **Tasks**:
+
 1. Install brainstorming skill
 2. Install writing-plans skill
 3. Install executing-plans skill
@@ -163,6 +166,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 4: Git Workflow Skills
 
 **Tasks**:
+
 1. Install using-git-worktrees skill
 2. Install finishing-a-development-branch skill
 
@@ -172,6 +176,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 5: Slash Commands
 
 **Tasks**:
+
 1. Install `/brainstorm`, `/write-plan`, `/execute-plan` commands
 2. Update command skill references
 
@@ -181,6 +186,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 6: Advanced Skills
 
 **Tasks**:
+
 1. Install dispatching-parallel-agents skill
 2. Install writing-skills skill (TDD for docs)
 3. Install skill-discovery skill (renamed from using-superpowers)
@@ -191,6 +197,7 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 ### Phase 7: Hooks and Tools
 
 **Tasks**:
+
 1. Create `.claude/hooks/session/` directory
 2. Install session-start hook
 3. Install utility tools (skills-core.js, find-polluter.sh, render-graphs.js)
@@ -216,16 +223,16 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 
 ### Verification Checklist
 
-| Phase | Test |
-|-------|------|
-| 1 | TDD workflow enforces Iron Law |
-| 1 | Debugging follows 4-phase process |
-| 2 | Two-stage code review works |
-| 3 | Complete workflow cycle |
-| 4 | Git worktree isolation works |
-| 5 | Slash commands trigger correctly |
-| 6 | Parallel agent dispatch works |
-| 7 | Session hook injects content |
+| Phase | Test                              |
+| ----- | --------------------------------- |
+| 1     | TDD workflow enforces Iron Law    |
+| 1     | Debugging follows 4-phase process |
+| 2     | Two-stage code review works       |
+| 3     | Complete workflow cycle           |
+| 4     | Git worktree isolation works      |
+| 5     | Slash commands trigger correctly  |
+| 6     | Parallel agent dispatch works     |
+| 7     | Session hook injects content      |
 
 ---
 
@@ -233,22 +240,23 @@ Integration of the superpowers codebase into agent-studio framework. Key integra
 
 ### Files to Update
 
-| File | Changes |
-|------|---------|
-| `.claude/CLAUDE.md` | Add code-reviewer to routing table |
-| `.claude/context/memory/learnings.md` | Add integration learnings |
+| File                                  | Changes                            |
+| ------------------------------------- | ---------------------------------- |
+| `.claude/CLAUDE.md`                   | Add code-reviewer to routing table |
+| `.claude/context/memory/learnings.md` | Add integration learnings          |
 
 ### New Documentation
 
-| File | Content |
-|------|---------|
-| `.claude/docs/WORKFLOW_GUIDE.md` | Complete development workflow |
-| `.claude/docs/SKILL_AUTHORING.md` | How to create new skills |
-| `.claude/docs/CODE_REVIEW_PROTOCOL.md` | Two-stage review process |
+| File                                   | Content                       |
+| -------------------------------------- | ----------------------------- |
+| `.claude/docs/WORKFLOW_GUIDE.md`       | Complete development workflow |
+| `.claude/docs/SKILL_AUTHORING.md`      | How to create new skills      |
+| `.claude/docs/CODE_REVIEW_PROTOCOL.md` | Two-stage review process      |
 
 ### Cross-Reference Updates
 
 Replace all `superpowers:skill-name` with framework skill names:
+
 - `superpowers:test-driven-development` -> `tdd`
 - `superpowers:systematic-debugging` -> `debugging`
 - `superpowers:verification-before-completion` -> `verification-before-completion`
@@ -304,6 +312,7 @@ NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 Write code before the test? Delete it. Start over.
 
 **No exceptions:**
+
 - Don't keep it as "reference"
 - Don't "adapt" it while writing tests
 - Don't look at it
@@ -313,6 +322,7 @@ Implement fresh from tests. Period.
 ```
 
 This pattern should be applied to:
+
 - TDD skill (already has it in Superpowers)
 - Verification-before-completion skill
 - Any discipline-enforcing skill
@@ -324,14 +334,14 @@ Anticipate and counter agent rationalizations with explicit tables:
 ```markdown
 ## Common Rationalizations
 
-| Excuse | Reality |
-|--------|---------|
-| "Too simple to test" | Simple code breaks. Test takes 30 seconds. |
-| "I'll test after" | Tests passing immediately prove nothing. |
-| "Tests after achieve same goals" | Tests-after = "what does this do?" Tests-first = "what should this do?" |
-| "Already manually tested" | Ad-hoc ≠ systematic. No record, can't re-run. |
-| "Deleting X hours is wasteful" | Sunk cost fallacy. Keeping unverified code is technical debt. |
-| "TDD is dogmatic, I'm being pragmatic" | TDD IS pragmatic. Finds bugs before commit. |
+| Excuse                                 | Reality                                                                 |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| "Too simple to test"                   | Simple code breaks. Test takes 30 seconds.                              |
+| "I'll test after"                      | Tests passing immediately prove nothing.                                |
+| "Tests after achieve same goals"       | Tests-after = "what does this do?" Tests-first = "what should this do?" |
+| "Already manually tested"              | Ad-hoc ≠ systematic. No record, can't re-run.                           |
+| "Deleting X hours is wasteful"         | Sunk cost fallacy. Keeping unverified code is technical debt.           |
+| "TDD is dogmatic, I'm being pragmatic" | TDD IS pragmatic. Finds bugs before commit.                             |
 ```
 
 ### Pattern 3: Red Flags Lists
@@ -410,6 +420,7 @@ This single line prevents agents from rationalizing violations by claiming they'
 ### YAML Frontmatter Conversion
 
 Superpowers skills use minimal frontmatter:
+
 ```yaml
 ---
 name: skill-name
@@ -418,6 +429,7 @@ description: Use when...
 ```
 
 Agent-studio skills use extended frontmatter:
+
 ```yaml
 ---
 name: skill-name
@@ -450,6 +462,7 @@ cat .claude/context/memory/learnings.md
 \`\`\`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`
@@ -461,17 +474,17 @@ cat .claude/context/memory/learnings.md
 
 Replace all Superpowers skill references:
 
-| Superpowers Reference | Agent-Studio Reference |
-|----------------------|----------------------|
-| `superpowers:test-driven-development` | `tdd` |
-| `superpowers:systematic-debugging` | `debugging` |
+| Superpowers Reference                        | Agent-Studio Reference           |
+| -------------------------------------------- | -------------------------------- |
+| `superpowers:test-driven-development`        | `tdd`                            |
+| `superpowers:systematic-debugging`           | `debugging`                      |
 | `superpowers:verification-before-completion` | `verification-before-completion` |
-| `superpowers:brainstorming` | `brainstorming` |
-| `superpowers:writing-plans` | `writing-plans` |
-| `superpowers:executing-plans` | `executing-plans` |
-| `superpowers:subagent-driven-development` | `subagent-driven-development` |
-| `superpowers:code-reviewer` | `code-reviewer` |
-| `superpowers:using-git-worktrees` | `using-git-worktrees` |
+| `superpowers:brainstorming`                  | `brainstorming`                  |
+| `superpowers:writing-plans`                  | `writing-plans`                  |
+| `superpowers:executing-plans`                | `executing-plans`                |
+| `superpowers:subagent-driven-development`    | `subagent-driven-development`    |
+| `superpowers:code-reviewer`                  | `code-reviewer`                  |
+| `superpowers:using-git-worktrees`            | `using-git-worktrees`            |
 | `superpowers:finishing-a-development-branch` | `finishing-a-development-branch` |
 
 ---
@@ -481,6 +494,7 @@ Replace all Superpowers skill references:
 ### Complete File Manifest
 
 **Phase 1: Foundation Skills**
+
 ```
 SOURCE                                                     DESTINATION
 skills/test-driven-development/SKILL.md                   .claude/skills/tdd/SKILL.md (REPLACE)
@@ -493,6 +507,7 @@ skills/systematic-debugging/condition-based-waiting.md    .claude/skills/debuggi
 ```
 
 **Phase 2: Code Review**
+
 ```
 SOURCE                                                     DESTINATION
 agents/code-reviewer.md                                    .claude/agents/specialized/code-reviewer.md (NEW)
@@ -502,6 +517,7 @@ skills/receiving-code-review/SKILL.md                      .claude/skills/receiv
 ```
 
 **Phase 3: Workflow Skills**
+
 ```
 SOURCE                                                     DESTINATION
 skills/brainstorming/SKILL.md                              .claude/skills/brainstorming/SKILL.md (NEW)
@@ -514,6 +530,7 @@ skills/subagent-driven-development/code-quality-reviewer-prompt.md .claude/skill
 ```
 
 **Phase 4: Git Workflow**
+
 ```
 SOURCE                                                     DESTINATION
 skills/using-git-worktrees/SKILL.md                        .claude/skills/using-git-worktrees/SKILL.md (NEW)
@@ -521,6 +538,7 @@ skills/finishing-a-development-branch/SKILL.md             .claude/skills/finish
 ```
 
 **Phase 6: Advanced**
+
 ```
 SOURCE                                                     DESTINATION
 skills/dispatching-parallel-agents/SKILL.md                .claude/skills/dispatching-parallel-agents/SKILL.md (NEW)
@@ -539,6 +557,7 @@ skills/using-superpowers/SKILL.md                          .claude/skills/skill-
 - [ ] **Security Review**: Not Required - No auth/security changes
 
 ### Review Focus Areas
+
 - Architect: Skill naming consistency, agent skill assignments, directory structure, Iron Laws pattern implementation
 
 ---

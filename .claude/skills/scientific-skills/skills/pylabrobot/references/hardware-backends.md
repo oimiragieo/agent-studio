@@ -25,6 +25,7 @@ await lh.drop_tips()
 ### Backend Interface
 
 All backends inherit from `LiquidHandlerBackend` and implement:
+
 - `setup()`: Initialize connection to hardware
 - `stop()`: Close connection and cleanup
 - Device-specific command methods (aspirate, dispense, etc.)
@@ -51,17 +52,20 @@ await lh.setup()
 ```
 
 **Platform Support:**
+
 - Windows ✅
 - macOS ✅
 - Linux ✅
 - Raspberry Pi ✅
 
 **Communication:**
+
 - USB connection to robot
 - Direct firmware commands
 - No Hamilton software required
 
 **Features:**
+
 - Full liquid handling operations
 - CO-RE tip support
 - 96-channel head support (if equipped)
@@ -69,6 +73,7 @@ await lh.setup()
 - Carrier and rail-based positioning
 
 **Deck Types:**
+
 ```python
 from pylabrobot.resources import STARLetDeck, STARDeck
 
@@ -126,20 +131,24 @@ await lh.setup()
 ```
 
 **Platform Support:**
+
 - Any platform with network access to OT-2
 
 **Communication:**
+
 - HTTP API over network
 - Requires robot IP address
 - No Opentrons app required
 
 **Features:**
+
 - 8-channel pipette support
 - Single-channel pipette support
 - Standard OT-2 deck layout
 - Coordinate-based positioning
 
 **Limitations:**
+
 - Uses older Opentrons HTTP API
 - Some features may be limited compared to STAR
 
@@ -173,6 +182,7 @@ await lh.stop()
 Support for Tecan EVO liquid handling robots is under development.
 
 **Current Status:**
+
 - Work-in-progress
 - Basic commands may be available
 - Check documentation for current feature support
@@ -202,6 +212,7 @@ lh = LiquidHandler(backend=Vantage(), deck=VantageDeck())
 ```
 
 **Features:**
+
 - Similar to STAR support
 - Some advanced features may be limited
 
@@ -227,6 +238,7 @@ await lh.setup()
 ```
 
 **Features:**
+
 - No hardware required
 - Simulates all liquid handling operations
 - Works with visualizer for real-time feedback
@@ -234,6 +246,7 @@ await lh.setup()
 - Tracks tips and volumes
 
 **Use Cases:**
+
 - Protocol development and testing
 - Training and education
 - CI/CD pipeline testing
@@ -369,18 +382,21 @@ backend = ChatterboxBackend(
 ### Connection Troubleshooting
 
 **Hamilton STAR:**
+
 - Ensure USB cable is connected
 - Check that no other software is using the robot
 - Verify firmware is up to date
 - On macOS/Linux, may need USB permissions
 
 **Opentrons OT-2:**
+
 - Verify robot IP address is correct
 - Check network connectivity (ping robot)
 - Ensure robot is powered on
 - Confirm Opentrons app is not blocking API access
 
 **General:**
+
 - Use `await lh.setup()` to test connection
 - Check error messages for specific issues
 - Ensure proper permissions for device access

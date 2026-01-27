@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
   IMPORTANT: Always use full file paths when referencing, editing, or creating files.
   Example: E:\Stojanovic-One\src\routes\Home.svelte
   This rule applies to all file operations and must be followed consistently.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

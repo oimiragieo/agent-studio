@@ -127,6 +127,7 @@ npa.correct_motion(
 Apply motion correction.
 
 **Presets:**
+
 - `'kilosort_like'`: Fast, rigid correction
 - `'nonrigid_accurate'`: Slower, better for severe drift
 - `'nonrigid_fast_and_accurate'`: Balanced option
@@ -148,6 +149,7 @@ npa.run_sorting(
 Run spike sorter.
 
 **Supported sorters:**
+
 - `'kilosort4'`: GPU-based, recommended
 - `'kilosort3'`: Legacy, requires MATLAB
 - `'spykingcircus2'`: CPU-based alternative
@@ -207,6 +209,7 @@ npa.compute_quality_metrics(
 Compute quality metrics for all units.
 
 **Available metrics:**
+
 - `snr`: Signal-to-noise ratio
 - `isi_violations_ratio`: ISI violations
 - `presence_ratio`: Recording presence
@@ -272,6 +275,7 @@ npa.generate_unit_report(
 Generate visual report for AI analysis.
 
 Returns:
+
 - `'image_path'`: Path to saved figure
 - `'image_base64'`: Base64 encoded image
 - `'metrics'`: Quality metrics dict
@@ -293,6 +297,7 @@ npa.analyze_unit_visually(
 Analyze unit using vision-language model.
 
 **Tasks:**
+
 - `'quality_assessment'`: Classify as good/mua/noise
 - `'merge_candidate'`: Check if units should merge
 - `'drift_assessment'`: Assess motion/drift
@@ -401,15 +406,18 @@ rec_filtered = si.bandpass_filter(recording, freq_min=300, freq_max=6000)
 ## Common Parameters
 
 ### Recording parameters
+
 - `freq_min`: Highpass cutoff (Hz)
 - `freq_max`: Lowpass cutoff (Hz)
 - `n_jobs`: Parallel jobs (-1 = all cores)
 
 ### Sorting parameters
+
 - `output_folder`: Where to save results
 - `sorter_params`: Dict of sorter-specific params
 
 ### Quality metric thresholds
+
 - `snr_threshold`: SNR cutoff (typically 5)
 - `isi_threshold`: ISI violations cutoff (typically 0.01)
 - `presence_threshold`: Presence ratio cutoff (typically 0.9)

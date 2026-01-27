@@ -15,6 +15,7 @@ slide = Slide(processed_path="path/to/processed/output",
 ```
 
 **Parameters:**
+
 - `slide_path`: Path to the whole slide image file (supports multiple formats: SVS, TIFF, NDPI, etc.)
 - `processed_path`: Directory where processed outputs (tiles, thumbnails, etc.) will be saved
 
@@ -31,6 +32,7 @@ slide = Slide(prostate_path, processed_path="output/")
 ```
 
 Available sample datasets:
+
 - `prostate_tissue()`: Prostate tissue sample
 - `ovarian_tissue()`: Ovarian tissue sample
 - `breast_tissue()`: Breast tissue sample
@@ -40,6 +42,7 @@ Available sample datasets:
 ## Key Properties
 
 ### Slide Dimensions
+
 ```python
 # Get slide dimensions at level 0 (highest resolution)
 width, height = slide.dimensions
@@ -50,6 +53,7 @@ level_dimensions = slide.level_dimensions
 ```
 
 ### Magnification Information
+
 ```python
 # Get base magnification (e.g., 40x, 20x)
 base_mag = slide.base_mpp  # Microns per pixel at level 0
@@ -59,6 +63,7 @@ num_levels = slide.levels  # Number of pyramid levels
 ```
 
 ### Slide Properties
+
 ```python
 # Access OpenSlide properties dictionary
 properties = slide.properties
@@ -110,6 +115,7 @@ region = slide.extract_region(
 ## Working with Pyramid Levels
 
 WSI files use a pyramidal structure with multiple resolution levels:
+
 - Level 0: Highest resolution (native scan resolution)
 - Level 1+: Progressively lower resolutions for faster access
 
@@ -142,6 +148,7 @@ slide_path = slide.scaled_image
 ## Common Workflows
 
 ### Slide Inspection Workflow
+
 ```python
 from histolab.slide import Slide
 
@@ -158,6 +165,7 @@ slide.save_thumbnail()
 ```
 
 ### Multi-Slide Processing
+
 ```python
 import os
 from pathlib import Path

@@ -83,6 +83,7 @@ python validate_trial_report.py my_csr.md
 ## Key Features
 
 ### CARE Guidelines Compliance
+
 - Complete CARE checklist coverage
 - De-identification verification
 - Informed consent documentation
@@ -90,12 +91,14 @@ python validate_trial_report.py my_csr.md
 - Literature review integration
 
 ### Regulatory Compliance
+
 - **HIPAA** - Privacy protection, 18 identifier removal, Safe Harbor method
 - **FDA** - 21 CFR Parts 11, 50, 56, 312 compliance
 - **ICH-GCP** - Good Clinical Practice standards
 - **ALCOA-CCEA** - Data integrity principles
 
 ### Professional Standards
+
 - **ACR** - American College of Radiology reporting standards
 - **CAP** - College of American Pathologists synoptic reporting
 - **CLSI** - Clinical Laboratory Standards Institute
@@ -103,6 +106,7 @@ python validate_trial_report.py my_csr.md
 - **ICH-E3** - Clinical study report structure
 
 ### Medical Coding Systems
+
 - **ICD-10-CM** - Diagnosis coding
 - **CPT** - Procedure coding
 - **SNOMED-CT** - Clinical terminology
@@ -114,7 +118,7 @@ python validate_trial_report.py my_csr.md
 ### 1. Publishing a Clinical Case Report
 
 ```
-> Create a clinical case report for a 65-year-old patient with atypical 
+> Create a clinical case report for a 65-year-old patient with atypical
   presentation of acute appendicitis
 
 > Check this case report for HIPAA compliance
@@ -169,32 +173,36 @@ python validate_trial_report.py my_csr.md
 ## Best Practices
 
 ### Privacy and Ethics
+
 ✓ Always obtain informed consent for case reports  
 ✓ Remove all 18 HIPAA identifiers before publication  
 ✓ Use de-identification validation scripts  
 ✓ Document consent in manuscript  
-✓ Consider re-identification risk for rare conditions  
+✓ Consider re-identification risk for rare conditions
 
 ### Clinical Quality
+
 ✓ Use professional medical terminology  
 ✓ Follow structured reporting templates  
 ✓ Include all required elements  
 ✓ Document chronology clearly  
-✓ Support diagnoses with evidence  
+✓ Support diagnoses with evidence
 
 ### Regulatory Compliance
+
 ✓ Meet SAE reporting timelines (7-day, 15-day)  
 ✓ Follow ICH-E3 structure for CSRs  
 ✓ Maintain ALCOA-CCEA data integrity  
 ✓ Document protocol adherence  
-✓ Use MedDRA coding for adverse events  
+✓ Use MedDRA coding for adverse events
 
 ### Documentation Standards
+
 ✓ Sign and date all clinical notes  
 ✓ Document medical necessity  
 ✓ Use standard abbreviations only  
 ✓ Avoid prohibited abbreviations (JCAHO "Do Not Use" list)  
-✓ Maintain legibility and completeness  
+✓ Maintain legibility and completeness
 
 ## Integration
 
@@ -208,6 +216,7 @@ The clinical-reports skill integrates seamlessly with:
 ## Resources
 
 ### External Standards
+
 - CARE Guidelines: https://www.care-statement.org/
 - ICH-E3 Guideline: https://database.ich.org/sites/default/files/E3_Guideline.pdf
 - CONSORT Statement: http://www.consort-statement.org/
@@ -216,6 +225,7 @@ The clinical-reports skill integrates seamlessly with:
 - CAP Cancer Protocols: https://www.cap.org/protocols-and-guidelines
 
 ### Professional Organizations
+
 - American Medical Association (AMA)
 - American College of Radiology (ACR)
 - College of American Pathologists (CAP)
@@ -225,6 +235,7 @@ The clinical-reports skill integrates seamlessly with:
 ## Support
 
 For issues or questions about the clinical-reports skill:
+
 1. Check the comprehensive reference files
 2. Review templates for examples
 3. Run validation scripts to identify issues
@@ -233,4 +244,3 @@ For issues or questions about the clinical-reports skill:
 ## License
 
 Part of the Claude Scientific Writer project. See main LICENSE file.
-

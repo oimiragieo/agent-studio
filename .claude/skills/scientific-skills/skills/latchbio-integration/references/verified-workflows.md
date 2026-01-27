@@ -1,6 +1,7 @@
 # Verified Workflows
 
 ## Overview
+
 Latch Verified Workflows are production-ready, pre-built bioinformatics pipelines developed and maintained by Latch engineers. These workflows are used by top pharmaceutical companies and biotech firms for research and discovery.
 
 ## Available in Python SDK
@@ -25,6 +26,7 @@ from latch.verified import (
 ### Bulk RNA-seq Analysis
 
 **Alignment and Quantification:**
+
 ```python
 from latch.verified import bulk_rnaseq
 from latch.types import LatchFile
@@ -39,6 +41,7 @@ results = bulk_rnaseq(
 ```
 
 **Features:**
+
 - Read quality control with FastQC
 - Adapter trimming
 - Alignment with STAR or HISAT2
@@ -48,6 +51,7 @@ results = bulk_rnaseq(
 ### Differential Expression Analysis
 
 **DESeq2:**
+
 ```python
 from latch.verified import deseq2
 from latch.types import LatchFile
@@ -62,6 +66,7 @@ results = deseq2(
 ```
 
 **Features:**
+
 - Normalization and variance stabilization
 - Differential expression testing
 - MA plots and volcano plots
@@ -71,6 +76,7 @@ results = deseq2(
 ### Pathway Analysis
 
 **Enrichment Analysis:**
+
 ```python
 from latch.verified import pathway_enrichment
 
@@ -83,6 +89,7 @@ results = pathway_enrichment(
 ```
 
 **Supported Databases:**
+
 - Gene Ontology (GO)
 - KEGG pathways
 - Reactome
@@ -92,6 +99,7 @@ results = pathway_enrichment(
 ### Sequence Alignment
 
 **MAFFT Multiple Sequence Alignment:**
+
 ```python
 from latch.verified import mafft
 from latch.types import LatchFile
@@ -104,6 +112,7 @@ aligned = mafft(
 ```
 
 **Features:**
+
 - Multiple alignment algorithms (FFT-NS-1, FFT-NS-2, G-INS-i, L-INS-i)
 - Automatic algorithm selection
 - Support for large alignments
@@ -112,6 +121,7 @@ aligned = mafft(
 ### Adapter and Quality Trimming
 
 **Trim Galore:**
+
 ```python
 from latch.verified import trim_galore
 
@@ -124,6 +134,7 @@ trimmed = trim_galore(
 ```
 
 **Features:**
+
 - Automatic adapter detection
 - Quality trimming
 - FastQC integration
@@ -134,6 +145,7 @@ trimmed = trim_galore(
 ### AlphaFold
 
 **Standard AlphaFold:**
+
 ```python
 from latch.verified import alphafold
 from latch.types import LatchFile
@@ -147,6 +159,7 @@ structure = alphafold(
 ```
 
 **Features:**
+
 - Monomer and multimer prediction
 - Template-based modeling option
 - MSA generation
@@ -154,6 +167,7 @@ structure = alphafold(
 - PDB structure output
 
 **Model Presets:**
+
 - `monomer`: Single protein chain
 - `monomer_casp14`: CASP14 competition version
 - `monomer_ptm`: With pTM confidence
@@ -162,6 +176,7 @@ structure = alphafold(
 ### ColabFold
 
 **Optimized AlphaFold Alternative:**
+
 ```python
 from latch.verified import colabfold
 
@@ -174,6 +189,7 @@ structure = colabfold(
 ```
 
 **Features:**
+
 - Faster than standard AlphaFold
 - MMseqs2-based MSA generation
 - Multiple model predictions
@@ -181,6 +197,7 @@ structure = colabfold(
 - Ranking by confidence
 
 **Advantages:**
+
 - 3-5x faster MSA generation
 - Lower compute cost
 - Similar accuracy to AlphaFold
@@ -190,6 +207,7 @@ structure = colabfold(
 ### ArchR (scATAC-seq)
 
 **Chromatin Accessibility Analysis:**
+
 ```python
 from latch.verified import archr
 
@@ -201,6 +219,7 @@ results = archr(
 ```
 
 **Features:**
+
 - Arrow file generation
 - Quality control metrics
 - Dimensionality reduction
@@ -211,6 +230,7 @@ results = archr(
 ### scVelo (RNA Velocity)
 
 **RNA Velocity Analysis:**
+
 ```python
 from latch.verified import scvelo
 
@@ -222,6 +242,7 @@ results = scvelo(
 ```
 
 **Features:**
+
 - Spliced/unspliced quantification
 - Velocity estimation
 - Dynamical modeling
@@ -231,6 +252,7 @@ results = scvelo(
 ### emptyDropsR (Cell Calling)
 
 **Empty Droplet Detection:**
+
 ```python
 from latch.verified import emptydrops
 
@@ -241,6 +263,7 @@ filtered_matrix = emptydrops(
 ```
 
 **Features:**
+
 - Distinguish cells from empty droplets
 - FDR-based thresholding
 - Ambient RNA removal
@@ -251,6 +274,7 @@ filtered_matrix = emptydrops(
 ### CRISPResso2
 
 **CRISPR Editing Assessment:**
+
 ```python
 from latch.verified import crispresso2
 
@@ -263,6 +287,7 @@ results = crispresso2(
 ```
 
 **Features:**
+
 - Indel quantification
 - Base editing analysis
 - Prime editing analysis
@@ -285,6 +310,7 @@ tree = phylogenetics(
 ```
 
 **Features:**
+
 - Multiple tree-building methods
 - Bootstrap support
 - Tree visualization
@@ -334,6 +360,7 @@ def complete_rnaseq_analysis(
 ### When to Use Verified Workflows
 
 **Use Verified Workflows for:**
+
 1. Standard analysis pipelines
 2. Well-established methods
 3. Production-ready analyses
@@ -341,6 +368,7 @@ def complete_rnaseq_analysis(
 5. Validated bioinformatics tools
 
 **Build Custom Workflows for:**
+
 1. Novel analysis methods
 2. Custom preprocessing steps
 3. Integration with proprietary tools
@@ -391,6 +419,7 @@ def custom_structure_pipeline(input_fasta: LatchFile) -> LatchFile:
 ### In-Platform Documentation
 
 Each verified workflow includes:
+
 - Parameter descriptions
 - Input/output specifications
 - Method details
@@ -414,6 +443,7 @@ for workflow in workflows:
 ### Workflow Versions
 
 Verified workflows are versioned and maintained:
+
 - Bug fixes and improvements
 - New features added
 - Backward compatibility maintained
@@ -444,6 +474,7 @@ results = bulk_rnaseq(
 ### Workflow Updates
 
 Verified workflows receive regular updates:
+
 - Tool version upgrades
 - Performance improvements
 - Bug fixes

@@ -65,7 +65,6 @@ When reviewing or writing code, apply these guidelines:
 - Use message passing for communication between different parts of the extension
 - Implement proper state management using chrome.storage API
 
-
 </instructions>
 
 <examples>
@@ -79,12 +78,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- chrome-extension-expert
 
+- chrome-extension-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

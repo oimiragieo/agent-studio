@@ -38,13 +38,13 @@ context_files:
   - .claude/context/memory/decisions.md
   - .claude/context/evolution-state.json
 triggers:
-  - "create new agent"
-  - "create new skill"
-  - "need a .*agent"
-  - "need a .*skill"
-  - "no matching agent"
-  - "capability gap"
-  - "evolve"
+  - 'create new agent'
+  - 'create new skill'
+  - 'need a .*agent'
+  - 'need a .*skill'
+  - 'no matching agent'
+  - 'capability gap'
+  - 'evolve'
 ---
 
 # Evolution Orchestrator
@@ -83,24 +83,27 @@ E - Enable     -> Deploy and register in ecosystem
 **Purpose**: Confirm evolution is actually needed
 
 **Actions**:
+
 ```javascript
 // 1. Read current evolution state
-Read(".claude/context/evolution-state.json");
+Read('.claude/context/evolution-state.json');
 
 // 2. Check if similar artifact exists
-Glob(".claude/agents/**/*.md");  // or skills, workflows, etc.
-Grep("similar capability pattern");
+Glob('.claude/agents/**/*.md'); // or skills, workflows, etc.
+Grep('similar capability pattern');
 
 // 3. Analyze the gap using structured thinking
-mcp__sequential-thinking__sequentialthinking({
-  thought: "Analyzing capability gap: [description]. Checking existing artifacts for overlap...",
-  thoughtNumber: 1,
-  totalThoughts: 5,
-  nextThoughtNeeded: true
-});
+mcp__sequential -
+  thinking__sequentialthinking({
+    thought: 'Analyzing capability gap: [description]. Checking existing artifacts for overlap...',
+    thoughtNumber: 1,
+    totalThoughts: 5,
+    nextThoughtNeeded: true,
+  });
 ```
 
 **Gate Criteria**:
+
 - [ ] Clear capability gap identified and documented
 - [ ] No existing artifact meets the need (verified with Glob/Grep)
 - [ ] Request is within ecosystem scope (not external integration)
@@ -109,6 +112,7 @@ mcp__sequential-thinking__sequentialthinking({
 **If gate fails**: Return recommendation to use existing artifact with specific file path.
 
 **State Transition**:
+
 ```json
 {
   "state": "evaluating",
@@ -127,14 +131,15 @@ mcp__sequential-thinking__sequentialthinking({
 **Purpose**: Ensure no conflicts with existing ecosystem
 
 **Actions**:
+
 ```javascript
 // Check for naming conflicts
-Read(".claude/context/artifacts/skill-catalog.md");
-Grep("proposed-name", ".claude/agents/");
-Grep("proposed-name", ".claude/skills/");
+Read('.claude/context/artifacts/skill-catalog.md');
+Grep('proposed-name', '.claude/agents/');
+Grep('proposed-name', '.claude/skills/');
 
 // Check capability overlaps
-Glob(".claude/agents/**/*.md");
+Glob('.claude/agents/**/*.md');
 // Read each similar agent and compare capabilities
 
 // Verify naming conventions
@@ -143,6 +148,7 @@ Glob(".claude/agents/**/*.md");
 ```
 
 **Gate Criteria**:
+
 - [ ] No naming conflicts with existing artifacts
 - [ ] No capability overlap that would cause routing ambiguity
 - [ ] Name follows ecosystem conventions (kebab-case)
@@ -158,6 +164,7 @@ Glob(".claude/agents/**/*.md");
 | Schema | `<artifact>-schema` | `agent-schema`, `skill-schema` |
 
 **State Transition**:
+
 ```json
 {
   "currentEvolution": {
@@ -179,9 +186,10 @@ Glob(".claude/agents/**/*.md");
 **THIS GATE CANNOT BE BYPASSED.**
 
 **Actions**:
+
 ```javascript
 // INVOKE research-synthesis skill (MANDATORY)
-Skill({ skill: "research-synthesis" });
+Skill({ skill: 'research-synthesis' });
 
 // The skill will execute:
 // 1. Minimum 3 Exa/WebSearch queries
@@ -190,12 +198,14 @@ Skill({ skill: "research-synthesis" });
 ```
 
 **Research Protocol** (from research-synthesis skill):
+
 1. **Query 1**: Best practices for `<artifact_type>` in `<domain>`
 2. **Query 2**: Implementation patterns and real-world examples
 3. **Query 3**: Claude/AI agent specific patterns
 4. **Codebase Analysis**: Examine 2+ similar artifacts in ecosystem
 
 **Gate Criteria**:
+
 - [ ] Minimum 3 research queries executed (with evidence)
 - [ ] At least 3 external sources consulted (URLs documented)
 - [ ] Existing codebase patterns documented (2+ similar artifacts)
@@ -205,6 +215,7 @@ Skill({ skill: "research-synthesis" });
 **Research Report Location**: `.claude/context/artifacts/research-reports/<artifact-name>-research.md`
 
 **State Transition**:
+
 ```json
 {
   "currentEvolution": {
@@ -223,26 +234,27 @@ Skill({ skill: "research-synthesis" });
 **Purpose**: Create the artifact using appropriate creator skill
 
 **Actions**:
+
 ```javascript
 // Invoke the appropriate creator skill based on artifact type
 switch (artifactType) {
-  case "agent":
-    Skill({ skill: "agent-creator" });
+  case 'agent':
+    Skill({ skill: 'agent-creator' });
     break;
-  case "skill":
-    Skill({ skill: "skill-creator" });
+  case 'skill':
+    Skill({ skill: 'skill-creator' });
     break;
-  case "workflow":
-    Skill({ skill: "workflow-creator" });
+  case 'workflow':
+    Skill({ skill: 'workflow-creator' });
     break;
-  case "hook":
-    Skill({ skill: "hook-creator" });
+  case 'hook':
+    Skill({ skill: 'hook-creator' });
     break;
-  case "schema":
-    Skill({ skill: "schema-creator" });
+  case 'schema':
+    Skill({ skill: 'schema-creator' });
     break;
-  case "template":
-    Skill({ skill: "template-creator" });
+  case 'template':
+    Skill({ skill: 'template-creator' });
     break;
 }
 
@@ -253,6 +265,7 @@ switch (artifactType) {
 ```
 
 **Gate Criteria**:
+
 - [ ] Artifact file created at correct location
 - [ ] YAML frontmatter passes schema validation
 - [ ] All required fields present (see creator skill for requirements)
@@ -272,6 +285,7 @@ switch (artifactType) {
 | Template | `.claude/templates/<name>.md` |
 
 **State Transition**:
+
 ```json
 {
   "currentEvolution": {
@@ -289,9 +303,10 @@ switch (artifactType) {
 **Purpose**: Quality assurance before deployment
 
 **Actions**:
+
 ```javascript
 // Read the created artifact
-Read("created-artifact-path");
+Read('created-artifact-path');
 
 // Verify completeness
 // - No placeholder content ("[TODO]", "TBD", "<fill-in>")
@@ -300,13 +315,14 @@ Read("created-artifact-path");
 // - Documentation is complete
 
 // For agents, verify skills exist
-Glob(".claude/skills/*/SKILL.md");  // Check all assigned skills
+Glob('.claude/skills/*/SKILL.md'); // Check all assigned skills
 
 // Run validation tools if available
 Bash("node .claude/tools/validate-agents.mjs 2>&1 | grep '<agent-name>'");
 ```
 
 **Verification Checklist**:
+
 - [ ] No placeholder content in artifact
 - [ ] Task Progress Protocol section complete with Iron Laws
 - [ ] Memory Protocol section complete with file paths
@@ -325,6 +341,7 @@ Bash("node .claude/tools/validate-agents.mjs 2>&1 | grep '<agent-name>'");
 | Memory Protocol | Before/After/During sections |
 
 **State Transition**:
+
 ```json
 {
   "currentEvolution": {
@@ -346,12 +363,13 @@ Bash("node .claude/tools/validate-agents.mjs 2>&1 | grep '<agent-name>'");
 **Purpose**: Deploy artifact and register in ecosystem
 
 **Actions**:
+
 ```javascript
 // 1. Update CLAUDE.md routing table (for agents)
-if (artifactType === "agent") {
-  Edit(".claude/CLAUDE.md", {
-    old_string: "| System routing",  // Insert before this line
-    new_string: `| ${requestType} | \`${agentName}\` | \`.claude/agents/${category}/${agentName}.md\` |\n| System routing`
+if (artifactType === 'agent') {
+  Edit('.claude/CLAUDE.md', {
+    old_string: '| System routing', // Insert before this line
+    new_string: `| ${requestType} | \`${agentName}\` | \`.claude/agents/${category}/${agentName}.md\` |\n| System routing`,
   });
 
   // Verify routing table update
@@ -359,21 +377,22 @@ if (artifactType === "agent") {
 }
 
 // 2. Update skill catalog (for skills)
-if (artifactType === "skill") {
-  Edit(".claude/context/artifacts/skill-catalog.md", "new skill entry");
+if (artifactType === 'skill') {
+  Edit('.claude/context/artifacts/skill-catalog.md', 'new skill entry');
 }
 
 // 3. Record in evolution state
-Edit(".claude/context/evolution-state.json", {
+Edit('.claude/context/evolution-state.json', {
   // Add to evolutions array
 });
 
 // 4. Record in memory
-Edit(".claude/context/memory/learnings.md", "evolution record");
-Edit(".claude/context/memory/decisions.md", "design decisions from research");
+Edit('.claude/context/memory/learnings.md', 'evolution record');
+Edit('.claude/context/memory/decisions.md', 'design decisions from research');
 ```
 
 **Gate Criteria**:
+
 - [ ] CLAUDE.md routing table updated (if agent)
 - [ ] Skill catalog updated (if skill)
 - [ ] Evolution state updated with completed evolution
@@ -381,6 +400,7 @@ Edit(".claude/context/memory/decisions.md", "design decisions from research");
 - [ ] Artifact is discoverable by Router
 
 **Post-Enable Verification**:
+
 ```bash
 # For agents
 grep "<agent-name>" .claude/CLAUDE.md || echo "FAILED: Not in routing table"
@@ -390,6 +410,7 @@ grep "<skill-name>" .claude/context/artifacts/skill-catalog.md || echo "FAILED: 
 ```
 
 **Final State**:
+
 ```json
 {
   "state": "idle",
@@ -413,17 +434,17 @@ grep "<skill-name>" .claude/context/artifacts/skill-catalog.md || echo "FAILED: 
 
 ```javascript
 // Read current state
-const stateContent = Read(".claude/context/evolution-state.json");
+const stateContent = Read('.claude/context/evolution-state.json');
 const state = JSON.parse(stateContent);
 
 // Update phase
-state.state = "obtaining";  // current activity
-state.currentEvolution.phase = "obtain";
+state.state = 'obtaining'; // current activity
+state.currentEvolution.phase = 'obtain';
 state.currentEvolution.gatePassed = true;
 state.lastUpdated = new Date().toISOString();
 
 // Write back
-Write(".claude/context/evolution-state.json", JSON.stringify(state, null, 2));
+Write('.claude/context/evolution-state.json', JSON.stringify(state, null, 2));
 ```
 
 **State Values**:
@@ -451,19 +472,20 @@ Write(".claude/context/evolution-state.json", JSON.stringify(state, null, 2));
 ```javascript
 // Example: Gate failure handling
 if (!gatePassed) {
-  state.state = "blocked";
+  state.state = 'blocked';
   state.currentEvolution.blockedReason = "Naming conflict: agent 'data-scientist' already exists";
   state.currentEvolution.blockedAt = new Date().toISOString();
-  state.currentEvolution.recommendedAction = "Use existing data-scientist agent or choose different name";
+  state.currentEvolution.recommendedAction =
+    'Use existing data-scientist agent or choose different name';
 
-  Write(".claude/context/evolution-state.json", JSON.stringify(state, null, 2));
+  Write('.claude/context/evolution-state.json', JSON.stringify(state, null, 2));
 
   // Return recommendation to user
   return {
-    status: "blocked",
-    phase: "validate",
-    reason: "Naming conflict detected",
-    recommendation: "Use existing agent or choose different name"
+    status: 'blocked',
+    phase: 'validate',
+    reason: 'Naming conflict detected',
+    recommendation: 'Use existing agent or choose different name',
   };
 }
 ```
@@ -483,8 +505,8 @@ TaskUpdate({
   metadata: {
     phase: 'evaluate',
     artifactType: 'agent',
-    artifactName: 'proposed-name'
-  }
+    artifactName: 'proposed-name',
+  },
 });
 
 // 3. Do the EVOLVE workflow...
@@ -494,8 +516,8 @@ TaskUpdate({
   metadata: {
     phase: 'obtain',
     researchQueries: 3,
-    sourcesFound: 5
-  }
+    sourcesFound: 5,
+  },
 });
 
 // 4. Mark complete when done
@@ -506,8 +528,8 @@ TaskUpdate({
     summary: 'Created <artifact-type> <name> with EVOLVE workflow',
     filesModified: ['path/to/artifact', 'CLAUDE.md', 'evolution-state.json'],
     researchReport: 'path/to/research/report',
-    phasesCompleted: ['E', 'V', 'O', 'L', 'V', 'E']
-  }
+    phasesCompleted: ['E', 'V', 'O', 'L', 'V', 'E'],
+  },
 });
 
 // 5. Check for next available task
@@ -515,6 +537,7 @@ TaskList();
 ```
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work
@@ -524,30 +547,30 @@ TaskList();
 **Use the Skill tool to invoke skills, not just read them:**
 
 ```javascript
-Skill({ skill: 'research-synthesis' });       // MANDATORY before any creation
-Skill({ skill: 'agent-creator' });            // Create agent artifacts
-Skill({ skill: 'skill-creator' });            // Create skill artifacts
+Skill({ skill: 'research-synthesis' }); // MANDATORY before any creation
+Skill({ skill: 'agent-creator' }); // Create agent artifacts
+Skill({ skill: 'skill-creator' }); // Create skill artifacts
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `research-synthesis` | Research best practices (3+ queries) | MANDATORY in Phase O |
-| `task-management-protocol` | Track evolution progress | Always at evolution start |
-| `verification-before-completion` | Evidence-based completion gates | Before Phase E (Enable) |
-| `artifact-lifecycle` | Manage artifact creation/deprecation | Always for artifact work |
+| Skill                            | Purpose                              | When                      |
+| -------------------------------- | ------------------------------------ | ------------------------- |
+| `research-synthesis`             | Research best practices (3+ queries) | MANDATORY in Phase O      |
+| `task-management-protocol`       | Track evolution progress             | Always at evolution start |
+| `verification-before-completion` | Evidence-based completion gates      | Before Phase E (Enable)   |
+| `artifact-lifecycle`             | Manage artifact creation/deprecation | Always for artifact work  |
 
 ### Creator Skills (Invoke Based on Artifact Type)
 
-| Artifact Type | Skill | Purpose |
-|--------------|-------|---------|
-| Agent | `agent-creator` | Create agent markdown with schema validation |
-| Skill | `skill-creator` | Create skill directory with SKILL.md |
-| Workflow | `workflow-creator` | Create workflow markdown files |
-| Hook | `hook-creator` | Create CJS/MJS hooks with tests |
-| Schema | `schema-creator` | Create JSON Schema definitions |
-| Template | `template-creator` | Create artifact templates |
+| Artifact Type | Skill              | Purpose                                      |
+| ------------- | ------------------ | -------------------------------------------- |
+| Agent         | `agent-creator`    | Create agent markdown with schema validation |
+| Skill         | `skill-creator`    | Create skill directory with SKILL.md         |
+| Workflow      | `workflow-creator` | Create workflow markdown files               |
+| Hook          | `hook-creator`     | Create CJS/MJS hooks with tests              |
+| Schema        | `schema-creator`   | Create JSON Schema definitions               |
+| Template      | `template-creator` | Create artifact templates                    |
 
 ### Usage in EVOLVE Phases
 
@@ -557,12 +580,24 @@ Skill({ skill: 'research-synthesis' });
 
 // Phase L: LOCK (based on artifact type)
 switch (artifactType) {
-  case 'agent': Skill({ skill: 'agent-creator' }); break;
-  case 'skill': Skill({ skill: 'skill-creator' }); break;
-  case 'workflow': Skill({ skill: 'workflow-creator' }); break;
-  case 'hook': Skill({ skill: 'hook-creator' }); break;
-  case 'schema': Skill({ skill: 'schema-creator' }); break;
-  case 'template': Skill({ skill: 'template-creator' }); break;
+  case 'agent':
+    Skill({ skill: 'agent-creator' });
+    break;
+  case 'skill':
+    Skill({ skill: 'skill-creator' });
+    break;
+  case 'workflow':
+    Skill({ skill: 'workflow-creator' });
+    break;
+  case 'hook':
+    Skill({ skill: 'hook-creator' });
+    break;
+  case 'schema':
+    Skill({ skill: 'schema-creator' });
+    break;
+  case 'template':
+    Skill({ skill: 'template-creator' });
+    break;
 }
 ```
 
@@ -571,6 +606,7 @@ switch (artifactType) {
 ## Memory Protocol (MANDATORY)
 
 **Before starting any evolution:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 cat .claude/context/memory/decisions.md
@@ -578,11 +614,13 @@ cat .claude/context/evolution-state.json
 ```
 
 Review:
+
 - Past evolution patterns
 - Design decisions and rationale
 - Current evolution state
 
 **After completing evolution, record findings:**
+
 - New evolution pattern -> `.claude/context/memory/learnings.md`
 - Design decisions from research -> `.claude/context/memory/decisions.md`
 - Issues encountered -> `.claude/context/memory/issues.md`
@@ -700,17 +738,18 @@ The Router should invoke this agent when:
 
 This agent is the meta-orchestrator for the Creator Ecosystem:
 
-| Creator Skill | Invoked In | Purpose |
-|--------------|------------|---------|
-| `research-synthesis` | Phase O | Gather best practices |
-| `agent-creator` | Phase L | Create agent artifacts |
-| `skill-creator` | Phase L | Create skill artifacts |
-| `workflow-creator` | Phase L | Create workflow artifacts |
-| `hook-creator` | Phase L | Create hook artifacts |
-| `schema-creator` | Phase L | Create schema artifacts |
-| `template-creator` | Phase L | Create template artifacts |
+| Creator Skill        | Invoked In | Purpose                   |
+| -------------------- | ---------- | ------------------------- |
+| `research-synthesis` | Phase O    | Gather best practices     |
+| `agent-creator`      | Phase L    | Create agent artifacts    |
+| `skill-creator`      | Phase L    | Create skill artifacts    |
+| `workflow-creator`   | Phase L    | Create workflow artifacts |
+| `hook-creator`       | Phase L    | Create hook artifacts     |
+| `schema-creator`     | Phase L    | Create schema artifacts   |
+| `template-creator`   | Phase L    | Create template artifacts |
 
 **Related Workflows**:
+
 - Router Decision: `.claude/workflows/core/router-decision.md`
 - Artifact Lifecycle: `.claude/workflows/core/skill-lifecycle.md`
 - External Integration: `.claude/workflows/core/external-integration.md`

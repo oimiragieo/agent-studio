@@ -67,30 +67,35 @@ Based on modern data engineering best practices:
 ## Tools & Frameworks
 
 **Orchestration:**
+
 - **Apache Airflow**: Workflow orchestration with DAGs
 - **Prefect**: Modern Python workflow engine
 - **Dagster**: Asset-based orchestration
 - **Temporal**: Durable execution for complex workflows
 
 **Data Processing:**
+
 - **Apache Spark**: Distributed data processing (PySpark, Spark SQL)
 - **Pandas/Polars**: In-memory data manipulation
 - **DuckDB**: Embedded analytical database
 - **Ray**: Distributed Python computing
 
 **Transformation & Modeling:**
+
 - **dbt**: Analytics engineering and data transformation
 - **SQLMesh**: SQL-based data transformations
 - **SQL**: Advanced SQL for data manipulation
 - **Python**: Custom transformation logic
 
 **Data Quality:**
+
 - **Great Expectations**: Data validation and profiling
 - **Soda**: Data quality testing and monitoring
 - **Pydantic**: Data validation with Python types
 - **Pandera**: DataFrame validation
 
 **Storage & Warehousing:**
+
 - **PostgreSQL**: Relational database
 - **DuckDB**: OLAP queries and analytics
 - **BigQuery**: Cloud data warehouse
@@ -98,6 +103,7 @@ Based on modern data engineering best practices:
 - **Apache Iceberg/Delta Lake**: Table formats for data lakes
 
 **Monitoring & Visualization:**
+
 - **Grafana**: Metrics and monitoring dashboards
 - **Superset**: BI and data visualization
 - **Metabase**: Simple BI tool
@@ -108,6 +114,7 @@ Based on modern data engineering best practices:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files to understand specialized workflows:
+
 - `.claude/skills/data-expert/SKILL.md` - Data engineering patterns
 - `.claude/skills/text-to-sql/SKILL.md` - SQL generation and optimization
 - `.claude/skills/diagram-generator/SKILL.md` - Pipeline and schema visualization
@@ -148,6 +155,7 @@ Read: .env
 ### Step 4: Implement
 
 **Airflow DAG Example:**
+
 ```python
 # dags/etl_user_analytics.py
 from datetime import datetime, timedelta
@@ -216,6 +224,7 @@ extract_task >> transform_task >> load_task >> validate_task
 ```
 
 **dbt Model Example:**
+
 ```sql
 -- models/analytics/user_metrics.sql
 {{ config(
@@ -258,6 +267,7 @@ FROM user_aggregates
 ```
 
 **Data Quality Check:**
+
 ```python
 # tests/test_user_metrics.py
 import great_expectations as ge
@@ -315,6 +325,7 @@ def test_user_metrics_quality():
 ### 1. Build ETL Pipeline
 
 **Process:**
+
 1. Identify source data and extraction method
 2. Design transformation logic
 3. Define data quality checks
@@ -324,6 +335,7 @@ def test_user_metrics_quality():
 7. Document pipeline
 
 **Verification:**
+
 - [ ] Pipeline runs successfully
 - [ ] Data quality checks passing
 - [ ] Performance acceptable
@@ -334,6 +346,7 @@ def test_user_metrics_quality():
 ### 2. Create dbt Data Models
 
 **Process:**
+
 1. Understand source tables
 2. Design dimensional model (if applicable)
 3. Write SQL transformations in dbt
@@ -343,6 +356,7 @@ def test_user_metrics_quality():
 7. Deploy to production
 
 **Verification:**
+
 - [ ] Models compile successfully
 - [ ] dbt tests passing
 - [ ] Documentation generated
@@ -353,6 +367,7 @@ def test_user_metrics_quality():
 ### 3. Implement Data Quality Framework
 
 **Process:**
+
 1. Define data quality requirements
 2. Choose validation framework (Great Expectations, Soda)
 3. Create validation suites
@@ -361,6 +376,7 @@ def test_user_metrics_quality():
 6. Document quality metrics
 
 **Verification:**
+
 - [ ] Validation suites cover key requirements
 - [ ] Validations run automatically
 - [ ] Failures trigger alerts
@@ -370,6 +386,7 @@ def test_user_metrics_quality():
 ### 4. Optimize Query Performance
 
 **Process:**
+
 1. Identify slow queries (query logs, monitoring)
 2. Analyze query execution plans
 3. Apply optimizations:
@@ -382,6 +399,7 @@ def test_user_metrics_quality():
 5. Document optimizations
 
 **Verification:**
+
 - [ ] Query time reduced significantly
 - [ ] Execution plan improved
 - [ ] No regressions in results
@@ -390,6 +408,7 @@ def test_user_metrics_quality():
 ### 5. Setup Data Monitoring
 
 **Process:**
+
 1. Define key metrics (data freshness, quality, volume)
 2. Implement metric collection
 3. Create Grafana/Superset dashboards
@@ -398,6 +417,7 @@ def test_user_metrics_quality():
 6. Document monitoring setup
 
 **Verification:**
+
 - [ ] Metrics collected accurately
 - [ ] Dashboards display correctly
 - [ ] Alerts trigger appropriately
@@ -416,20 +436,20 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `data-expert` | Data engineering patterns | Always at task start |
-| `text-to-sql` | SQL query generation | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                   | When                 |
+| -------------------------------- | ------------------------- | -------------------- |
+| `data-expert`                    | Data engineering patterns | Always at task start |
+| `text-to-sql`                    | SQL query generation      | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle  | Always at task start |
+| `verification-before-completion` | Quality gates             | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition              | Skill                         | Purpose               |
-| ---------------------- | ----------------------------- | --------------------- |
-| Pipeline visualization | `diagram-generator`           | Pipeline diagrams     |
-| Pandas work            | `pandas-data-manipulation-rules` | Pandas patterns    |
-| Large data             | `large-data-with-dask`        | Dask optimization     |
+| Condition              | Skill                            | Purpose           |
+| ---------------------- | -------------------------------- | ----------------- |
+| Pipeline visualization | `diagram-generator`              | Pipeline diagrams |
+| Pandas work            | `pandas-data-manipulation-rules` | Pandas patterns   |
+| Large data             | `large-data-with-dask`           | Dask optimization |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -466,6 +486,7 @@ Review past pipeline patterns, data quality rules, and optimization strategies.
 ### Review Requirements
 
 For major pipelines:
+
 - [ ] **Architect Review**: Data model and pipeline architecture
 - [ ] **QA Review**: Test coverage and data quality checks
 - [ ] **Security Review**: Data access and PII handling
@@ -473,6 +494,7 @@ For major pipelines:
 ## Best Practices
 
 ### Pipeline Design
+
 - Idempotent operations (safe to re-run)
 - Incremental processing where possible
 - Clear separation of extraction, transformation, loading
@@ -481,6 +503,7 @@ For major pipelines:
 - Version control for all pipeline code
 
 ### Data Quality
+
 - Schema validation at ingestion
 - Null checks on required fields
 - Uniqueness checks on keys
@@ -489,6 +512,7 @@ For major pipelines:
 - Monitoring data quality metrics over time
 
 ### Performance
+
 - Partition large tables appropriately
 - Use columnar formats (Parquet, ORC)
 - Pushdown predicates to source systems
@@ -498,8 +522,9 @@ For major pipelines:
 - Profile and optimize slow queries
 
 ### SQL Best Practices
+
 - Use CTEs for complex queries
-- Avoid SELECT *
+- Avoid SELECT \*
 - Use explicit column names
 - Add comments for complex logic
 - Use appropriate indexes
@@ -507,6 +532,7 @@ For major pipelines:
 - Test queries on sample data first
 
 ### Testing
+
 - Unit test transformation functions
 - Integration test full pipelines
 - Data quality tests on outputs

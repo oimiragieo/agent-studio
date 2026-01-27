@@ -5,6 +5,7 @@ Comprehensive guide for creating publication-quality visualizations with scanpy.
 ## General Plotting Principles
 
 All scanpy plotting functions follow consistent patterns:
+
 - Functions in `sc.pl.*` mirror analysis functions in `sc.tl.*`
 - Most accept `color` parameter for gene names or metadata columns
 - Results are saved via `save` parameter
@@ -321,6 +322,7 @@ for gene in ['CD3D', 'CD14', 'MS4A1']:
 ## Common Customization Parameters
 
 ### Layout Parameters
+
 - `figsize`: Figure size (width, height)
 - `frameon`: Show frame around plot
 - `title`: Plot title
@@ -329,6 +331,7 @@ for gene in ['CD3D', 'CD14', 'MS4A1']:
 - `size`: Point size
 
 ### Color Parameters
+
 - `color`: Variable(s) to color by
 - `palette`: Color palette (e.g., 'Set1', 'viridis')
 - `cmap`: Colormap for continuous variables
@@ -336,6 +339,7 @@ for gene in ['CD3D', 'CD14', 'MS4A1']:
 - `use_raw`: Use raw counts for gene expression
 
 ### Saving Parameters
+
 - `save`: Filename suffix for saving
 - `show`: Whether to display plot
 - `dpi`: Resolution for raster formats

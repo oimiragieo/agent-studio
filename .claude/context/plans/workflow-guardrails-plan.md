@@ -3,6 +3,7 @@
 ## Problem Analysis
 
 ### Issues That Occurred
+
 1. **Wrong Directory** - Agents created in `C:\dev\projects\.claude\` instead of `agent-studio\.claude\`
 2. **Orphaned Skills** - 70% of skills weren't assigned to any agent
 3. **Empty Skills** - Skills created with minimal/placeholder content
@@ -10,6 +11,7 @@
 5. **Validation Not Run** - Errors weren't caught before completion
 
 ### Root Causes
+
 1. **No Directory Enforcement** - Subagents inherit CWD but aren't told the correct project path
 2. **Manual Checklists** - System Impact Analysis exists but isn't automated
 3. **No Content Validation** - Skills can be "created" with 3 lines of content
@@ -40,11 +42,12 @@ All file operations MUST be relative to this path.
 - DO NOT create files outside PROJECT_ROOT
 
 ## Your Task
-...`
+...`,
 });
 ```
 
 **Implementation:**
+
 - [ ] Update CLAUDE.md spawn examples with PROJECT_ROOT
 - [ ] Update router.md spawn examples
 - [ ] Update agent-creator to include PROJECT_ROOT in generated spawn commands
@@ -87,6 +90,7 @@ async function preValidation(options) {
 ```
 
 **Implementation:**
+
 - [ ] Add preValidation() to create-agent.mjs
 - [ ] Add preValidation() to skill-creator/scripts/create.cjs
 - [ ] Fail fast on validation errors
@@ -100,14 +104,14 @@ async function preValidation(options) {
 ```javascript
 // In create.cjs and validate-all.cjs
 const MINIMUM_REQUIREMENTS = {
-  totalLines: 50,           // At least 50 lines
+  totalLines: 50, // At least 50 lines
   hasSection: {
-    'Purpose': true,
-    'Usage': true,
-    'Examples': true,
-    'Memory Protocol': true
+    Purpose: true,
+    Usage: true,
+    Examples: true,
+    'Memory Protocol': true,
   },
-  descriptionLength: 50     // At least 50 chars
+  descriptionLength: 50, // At least 50 chars
 };
 
 function validateContent(skillPath) {
@@ -117,7 +121,7 @@ function validateContent(skillPath) {
   if (lines < MINIMUM_REQUIREMENTS.totalLines) {
     return {
       valid: false,
-      error: `Skill has only ${lines} lines (minimum: ${MINIMUM_REQUIREMENTS.totalLines})`
+      error: `Skill has only ${lines} lines (minimum: ${MINIMUM_REQUIREMENTS.totalLines})`,
     };
   }
 
@@ -125,7 +129,7 @@ function validateContent(skillPath) {
     if (required && !content.includes(`## ${section}`)) {
       return {
         valid: false,
-        error: `Missing required section: ## ${section}`
+        error: `Missing required section: ## ${section}`,
       };
     }
   }
@@ -135,6 +139,7 @@ function validateContent(skillPath) {
 ```
 
 **Implementation:**
+
 - [ ] Add content validation to create.cjs
 - [ ] Add content check to validate-all.cjs
 - [ ] Fail creation if content is too minimal
@@ -179,6 +184,7 @@ async function detectOrphans() {
 ```
 
 **Implementation:**
+
 - [ ] Create detect-orphans.mjs
 - [ ] Add to validation suite
 - [ ] Run after skill/agent creation
@@ -211,6 +217,7 @@ async function updateRoutingTable(agentConfig) {
 ```
 
 **Implementation:**
+
 - [ ] Add updateRoutingTable() to create-agent.mjs
 - [ ] Prompt user for "request type" description
 - [ ] Auto-insert row in correct position
@@ -231,38 +238,38 @@ async function verifyCreation(type, name) {
     // Agent-specific checks
     checks.push({
       name: 'Agent file exists',
-      fn: () => glob.sync(`.claude/agents/**/${name}.md`).length > 0
+      fn: () => glob.sync(`.claude/agents/**/${name}.md`).length > 0,
     });
     checks.push({
       name: 'In routing table',
-      fn: () => fs.readFileSync('.claude/CLAUDE.md', 'utf-8').includes(name)
+      fn: () => fs.readFileSync('.claude/CLAUDE.md', 'utf-8').includes(name),
     });
     checks.push({
       name: 'Has verification-before-completion',
       fn: () => {
         const content = fs.readFileSync(glob.sync(`.claude/agents/**/${name}.md`)[0], 'utf-8');
         return content.includes('verification-before-completion');
-      }
+      },
     });
   } else if (type === 'skill') {
     // Skill-specific checks
     checks.push({
       name: 'Skill file exists',
-      fn: () => fs.existsSync(`.claude/skills/${name}/SKILL.md`)
+      fn: () => fs.existsSync(`.claude/skills/${name}/SKILL.md`),
     });
     checks.push({
       name: 'Assigned to agent',
       fn: () => {
         const agents = glob.sync('.claude/agents/**/*.md');
         return agents.some(a => fs.readFileSync(a, 'utf-8').includes(name));
-      }
+      },
     });
     checks.push({
       name: 'Content is comprehensive',
       fn: () => {
         const content = fs.readFileSync(`.claude/skills/${name}/SKILL.md`, 'utf-8');
         return content.split('\n').length >= 50;
-      }
+      },
     });
   }
 
@@ -332,16 +339,19 @@ exit 0
 ## Implementation Priority
 
 ### Phase 1: Critical (Implement Immediately)
+
 1. ✅ PROJECT_ROOT in spawn prompts (CLAUDE.md updated)
 2. ✅ Pre-creation validation (create-agent.mjs, create.cjs)
 3. ✅ Skill content minimum requirements (create.cjs)
 
 ### Phase 2: High (Implement This Week)
+
 4. ✅ Orphan detection script (detect-orphans.mjs created)
 5. ✅ Automated routing table updates (create-agent.mjs)
 6. ✅ Post-creation verification gate (create-agent.mjs, create.cjs)
 
 ### Phase 3: Medium (Implement This Month)
+
 7. ⬜ Git pre-commit hook
 8. ⬜ CI/CD validation pipeline
 9. ⬜ Dashboard showing orphan count
@@ -392,6 +402,7 @@ The existing workflows have good documentation but lack enforcement. The key add
 7. **Pre-commit hook** - Last line of defense
 
 With these guardrails, the issues we encountered would have been caught:
+
 - Wrong directory → PROJECT_ROOT check fails
 - Empty skills → Content minimum check fails
 - Orphaned skills → Orphan detection warns/fails

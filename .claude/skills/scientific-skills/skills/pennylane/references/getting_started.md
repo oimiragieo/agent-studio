@@ -52,6 +52,7 @@ def circuit(params):
 ### Devices
 
 Devices execute quantum circuits. PennyLane supports:
+
 - **Simulators**: `default.qubit`, `default.mixed`, `lightning.qubit`
 - **Hardware**: Access through plugins (IBM, Amazon Braket, Rigetti, etc.)
 
@@ -212,6 +213,7 @@ print(tape.measurements)
 ## Next Steps
 
 For detailed information on specific topics:
+
 - **Building circuits**: See `references/quantum_circuits.md`
 - **Quantum ML**: See `references/quantum_ml.md`
 - **Chemistry applications**: See `references/quantum_chemistry.md`

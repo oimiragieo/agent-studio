@@ -11,6 +11,7 @@ Detailed guidance for writing each section of a comprehensive market research re
 **Purpose:** Create a strong first impression and communicate report scope.
 
 **Required Elements:**
+
 - Report title (clear, specific to market being analyzed)
 - Subtitle (e.g., "Comprehensive Market Analysis Report")
 - Hero visualization (executive summary infographic or market-relevant image)
@@ -20,6 +21,7 @@ Detailed guidance for writing each section of a comprehensive market research re
 - Report type identifier
 
 **Best Practices:**
+
 - Title should include market name and geography if relevant
 - Use professional, high-quality hero image
 - Keep design clean and uncluttered
@@ -32,6 +34,7 @@ Detailed guidance for writing each section of a comprehensive market research re
 **Auto-generated in LaTeX.** Ensure all chapters, sections, and subsections use proper commands for inclusion.
 
 **Include:**
+
 - List of Figures (all visualizations with page numbers)
 - List of Tables (all data tables with page numbers)
 
@@ -44,7 +47,9 @@ Detailed guidance for writing each section of a comprehensive market research re
 **Required Sections:**
 
 #### Market Snapshot Box
+
 Key metrics displayed prominently:
+
 - Current market size with year
 - Projected market size with year
 - CAGR (compound annual growth rate)
@@ -53,31 +58,39 @@ Key metrics displayed prominently:
 - Key adoption/penetration metrics
 
 #### Investment Thesis / Why This Matters
+
 3-5 bullet points explaining:
+
 - Why this market is attractive
 - Key factors driving opportunity
 - Timing considerations
 - Risk-adjusted assessment
 
 #### Key Findings Summary
+
 Organized by theme:
+
 - Market Dynamics (2-3 points)
 - Competitive Landscape (2-3 points)
 - Growth Drivers (2-3 points)
 - Risk Factors (2-3 points)
 
 #### Strategic Recommendations
+
 Top 5 actionable recommendations, each with:
+
 - Clear action statement
 - Expected outcome
 - Priority level (immediate, near-term, medium-term)
 
 **Visual Requirements:**
+
 - 1-2 visuals maximum
 - Executive summary infographic strongly recommended
 - Key metrics visualization
 
 **Writing Guidelines:**
+
 - Write this section LAST after completing all analysis
 - Every statement should be supported by analysis in the main report
 - Use specific numbers, not vague qualifiers
@@ -95,6 +108,7 @@ Top 5 actionable recommendations, each with:
 #### Section 1.1: Market Definition
 
 **Content Requirements:**
+
 - Precise definition of the market being analyzed
 - Products/services included in scope
 - Products/services explicitly excluded
@@ -102,6 +116,7 @@ Top 5 actionable recommendations, each with:
 - Relationship to adjacent markets
 
 **Writing Approach:**
+
 - Begin with a clear, one-paragraph definition
 - Use a callout box to highlight the formal definition
 - Explain the rationale for scope decisions
@@ -110,6 +125,7 @@ Top 5 actionable recommendations, each with:
 #### Section 1.2: Scope and Boundaries
 
 **Cover:**
+
 - Geographic scope (global, regional, specific countries)
 - Product/service scope with specific categories
 - Time horizon (historical period + forecast period)
@@ -118,6 +134,7 @@ Top 5 actionable recommendations, each with:
 #### Section 1.3: Industry Ecosystem
 
 **Content Requirements:**
+
 - Value chain from inputs to end users
 - Key stakeholders at each stage
 - Relationships and dependencies between stakeholders
@@ -128,6 +145,7 @@ Top 5 actionable recommendations, each with:
 **Required Visual:** Industry ecosystem/value chain diagram
 
 **Writing Approach:**
+
 - Start with overview of the ecosystem
 - Describe each stakeholder category in detail
 - Explain how value is created and captured
@@ -136,6 +154,7 @@ Top 5 actionable recommendations, each with:
 #### Section 1.4: Market Structure
 
 **Content Requirements:**
+
 - Market concentration analysis (HHI, CR4, CR8)
 - Industry lifecycle stage assessment
 - Market fragmentation analysis
@@ -144,6 +163,7 @@ Top 5 actionable recommendations, each with:
 #### Section 1.5: Historical Context
 
 **Content Requirements:**
+
 - When the market emerged
 - Key milestones in market development
 - Major disruptions and shifts
@@ -151,6 +171,7 @@ Top 5 actionable recommendations, each with:
 - How customer needs have changed
 
 **Required Visuals (2 total):**
+
 1. Industry ecosystem diagram
 2. Market structure or industry lifecycle diagram
 
@@ -163,6 +184,7 @@ Top 5 actionable recommendations, each with:
 #### Section 2.1: Total Addressable Market (TAM)
 
 **Content Requirements:**
+
 - Current market size with source and methodology
 - Historical market size (5-10 years back)
 - Projected market size (5-10 years forward)
@@ -171,12 +193,14 @@ Top 5 actionable recommendations, each with:
 
 **Data Table Required:**
 Year-by-year market projections table showing:
+
 - Year
 - Market size (USD)
 - YoY growth rate
 - Cumulative CAGR
 
 **Writing Approach:**
+
 - State the bottom line first (total opportunity)
 - Provide historical context
 - Explain projection methodology
@@ -186,6 +210,7 @@ Year-by-year market projections table showing:
 #### Section 2.2: Serviceable Addressable Market (SAM)
 
 **Content Requirements:**
+
 - Definition of SAM for this market
 - SAM calculation methodology
 - Segment breakdown within SAM
@@ -193,6 +218,7 @@ Year-by-year market projections table showing:
 
 **Data Table Required:**
 Segment analysis table showing:
+
 - Segment name
 - 2024 value
 - 2034 value
@@ -202,6 +228,7 @@ Segment analysis table showing:
 #### Section 2.3: Serviceable Obtainable Market (SOM)
 
 **Content Requirements:**
+
 - Realistic market share scenarios
 - Conservative estimate with assumptions
 - Base case estimate with assumptions
@@ -213,6 +240,7 @@ Segment analysis table showing:
 #### Section 2.4: Regional Market Analysis
 
 **Content Requirements:**
+
 - Market size by region
 - Growth rates by region
 - Regional market share
@@ -222,6 +250,7 @@ Segment analysis table showing:
 **Required Visual:** Regional breakdown chart (pie or treemap)
 
 **Regions to cover:**
+
 - North America (with US/Canada breakdown if relevant)
 - Europe (with key country breakdown)
 - Asia-Pacific (with China, Japan, India focus)
@@ -231,6 +260,7 @@ Segment analysis table showing:
 #### Section 2.5: Segment Analysis
 
 **Content Requirements:**
+
 - Definition of market segments
 - Size of each segment
 - Growth rate of each segment
@@ -240,6 +270,7 @@ Segment analysis table showing:
 **Required Visual:** Segment growth comparison chart
 
 **Required Visuals (4 total):**
+
 1. Market growth trajectory chart
 2. TAM/SAM/SOM diagram
 3. Regional breakdown chart
@@ -254,12 +285,14 @@ Segment analysis table showing:
 #### Section 3.1: Primary Growth Drivers
 
 **Content Requirements:**
+
 - Identification of 5-10 key growth drivers
 - Quantified impact assessment for each
 - Timeline for impact
 - Evidence and data supporting each driver
 
 **For each driver, include:**
+
 - Clear description
 - Mechanism of impact on market
 - Quantified impact estimate
@@ -273,12 +306,14 @@ Segment analysis table showing:
 Comprehensive analysis of external factors:
 
 **Political:**
+
 - Government policies affecting the market
 - Political stability in key markets
 - Trade policies and tariffs
 - Government support programs
 
 **Economic:**
+
 - Economic growth trends
 - Interest rate environment
 - Inflation impacts
@@ -286,6 +321,7 @@ Comprehensive analysis of external factors:
 - Consumer spending trends
 
 **Social:**
+
 - Demographic trends
 - Cultural shifts
 - Consumer behavior changes
@@ -293,18 +329,21 @@ Comprehensive analysis of external factors:
 - Health and wellness trends
 
 **Technological:**
+
 - Enabling technologies
 - Digital transformation
 - Automation trends
 - Technology adoption curves
 
 **Legal:**
+
 - Regulatory requirements
 - Compliance costs
 - Intellectual property considerations
 - Employment regulations
 
 **Environmental:**
+
 - Sustainability requirements
 - Environmental regulations
 - Climate impacts
@@ -315,6 +354,7 @@ Comprehensive analysis of external factors:
 #### Section 3.3: Emerging Trends
 
 **Content Requirements:**
+
 - Identification of 5-8 emerging trends
 - Timeline for each trend
 - Expected impact on market
@@ -325,6 +365,7 @@ Comprehensive analysis of external factors:
 #### Section 3.4: Growth Inhibitors
 
 **Content Requirements:**
+
 - Factors slowing market growth
 - Barriers to adoption
 - Resource constraints
@@ -332,6 +373,7 @@ Comprehensive analysis of external factors:
 - Regulatory hurdles
 
 **Required Visuals (3 total):**
+
 1. Driver impact matrix
 2. PESTLE analysis diagram
 3. Trends timeline
@@ -345,6 +387,7 @@ Comprehensive analysis of external factors:
 #### Section 4.1: Market Structure Analysis
 
 **Content Requirements:**
+
 - Number of competitors
 - Market concentration (HHI index)
 - CR4 and CR8 ratios
@@ -354,12 +397,14 @@ Comprehensive analysis of external factors:
 #### Section 4.2: Porter's Five Forces Analysis
 
 **For each force, provide:**
+
 - Rating: High / Medium / Low
 - Key factors driving the rating
 - Supporting evidence
 - Strategic implications
 
 **Forces:**
+
 1. Threat of New Entrants
 2. Bargaining Power of Suppliers
 3. Bargaining Power of Buyers
@@ -369,6 +414,7 @@ Comprehensive analysis of external factors:
 **Required Visual:** Porter's Five Forces diagram
 
 **Writing Approach:**
+
 - Rate each force clearly
 - Provide 3-5 supporting factors per force
 - Include data where available
@@ -377,6 +423,7 @@ Comprehensive analysis of external factors:
 #### Section 4.3: Market Share Analysis
 
 **Content Requirements:**
+
 - Top 10 companies by market share
 - Market share trends (3-5 year view)
 - Share gains/losses by company
@@ -386,6 +433,7 @@ Comprehensive analysis of external factors:
 
 **Data Table Required:**
 Top 10 companies showing:
+
 - Rank
 - Company name
 - Revenue/market size
@@ -395,6 +443,7 @@ Top 10 companies showing:
 #### Section 4.4: Competitive Positioning
 
 **Content Requirements:**
+
 - Key dimensions of competition
 - Positioning of major players
 - Competitive advantages by company
@@ -403,6 +452,7 @@ Top 10 companies showing:
 **Required Visual:** Competitive positioning matrix (2x2)
 
 **Common positioning dimensions:**
+
 - Market focus (niche vs. broad)
 - Solution approach (product vs. platform)
 - Price positioning (premium vs. value)
@@ -412,6 +462,7 @@ Top 10 companies showing:
 #### Section 4.5: Strategic Groups
 
 **Content Requirements:**
+
 - Identification of strategic groups
 - Companies in each group
 - Mobility barriers between groups
@@ -422,6 +473,7 @@ Top 10 companies showing:
 #### Section 4.6: Competitive Dynamics
 
 **Content Requirements:**
+
 - Recent M&A activity
 - Partnership announcements
 - Product launches
@@ -431,6 +483,7 @@ Top 10 companies showing:
 #### Section 4.7: Barriers to Entry
 
 **Content Requirements:**
+
 - Capital requirements
 - Regulatory barriers
 - Technology barriers
@@ -440,6 +493,7 @@ Top 10 companies showing:
 - Switching costs
 
 **Required Visuals (4 total):**
+
 1. Porter's Five Forces diagram
 2. Market share chart
 3. Competitive positioning matrix
@@ -454,6 +508,7 @@ Top 10 companies showing:
 #### Section 5.1: Customer Segmentation
 
 **Content Requirements:**
+
 - Definition of customer segments
 - Segment sizes and market share
 - Segment characteristics
@@ -462,6 +517,7 @@ Top 10 companies showing:
 **Required Visual:** Customer segmentation breakdown
 
 **Common segmentation approaches:**
+
 - By company size (Enterprise, Mid-market, SMB, Consumer)
 - By industry vertical
 - By geography
@@ -471,6 +527,7 @@ Top 10 companies showing:
 #### Section 5.2: Segment Attractiveness Analysis
 
 **Content Requirements:**
+
 - Attractiveness criteria
 - Segment scoring/ranking
 - Investment implications
@@ -479,6 +536,7 @@ Top 10 companies showing:
 **Required Visual:** Segment attractiveness matrix
 
 **Attractiveness factors:**
+
 - Segment size
 - Growth rate
 - Profitability
@@ -489,6 +547,7 @@ Top 10 companies showing:
 #### Section 5.3: Customer Needs Analysis
 
 **For each segment, identify:**
+
 - Functional needs (what the product must do)
 - Emotional needs (how it makes them feel)
 - Social needs (how it affects their relationships)
@@ -498,6 +557,7 @@ Top 10 companies showing:
 #### Section 5.4: Buying Behavior
 
 **Content Requirements:**
+
 - Purchase triggers
 - Decision-making process
 - Key decision makers and influencers
@@ -511,6 +571,7 @@ Top 10 companies showing:
 **Required Visual:** Customer journey map
 
 **Journey stages to cover:**
+
 1. Awareness
 2. Consideration
 3. Decision
@@ -519,6 +580,7 @@ Top 10 companies showing:
 6. Advocacy/Renewal
 
 **Required Visuals (3 total):**
+
 1. Customer segmentation breakdown
 2. Segment attractiveness matrix
 3. Customer journey map
@@ -532,6 +594,7 @@ Top 10 companies showing:
 #### Section 6.1: Current Technology Stack
 
 **Content Requirements:**
+
 - Core technologies in use
 - Infrastructure requirements
 - Integration landscape
@@ -540,6 +603,7 @@ Top 10 companies showing:
 #### Section 6.2: Technology Roadmap
 
 **Content Requirements:**
+
 - Near-term evolution (1-2 years)
 - Medium-term evolution (3-5 years)
 - Long-term evolution (5-10 years)
@@ -550,6 +614,7 @@ Top 10 companies showing:
 #### Section 6.3: Emerging Technologies
 
 **For each emerging technology, cover:**
+
 - Technology description
 - Current maturity level (TRL or similar)
 - Expected timeline to mainstream
@@ -557,6 +622,7 @@ Top 10 companies showing:
 - Leading companies/regions
 
 **Common emerging technologies to assess:**
+
 - Artificial intelligence/ML
 - Cloud computing
 - IoT/Connected devices
@@ -567,6 +633,7 @@ Top 10 companies showing:
 #### Section 6.4: Innovation Trends
 
 **Content Requirements:**
+
 - R&D investment levels in industry
 - Patent filing trends
 - Startup activity and funding
@@ -578,6 +645,7 @@ Top 10 companies showing:
 #### Section 6.5: Technology Adoption Barriers
 
 **Content Requirements:**
+
 - Technical complexity
 - Integration challenges
 - Cost barriers
@@ -586,6 +654,7 @@ Top 10 companies showing:
 - Change management challenges
 
 **Required Visuals (2 total):**
+
 1. Technology roadmap diagram
 2. Innovation/adoption curve
 
@@ -598,6 +667,7 @@ Top 10 companies showing:
 #### Section 7.1: Current Regulatory Framework
 
 **Content Requirements:**
+
 - Key regulations affecting the market
 - Regulatory bodies and their roles
 - Compliance requirements
@@ -609,6 +679,7 @@ Top 10 companies showing:
 **Required Visual:** Regulatory timeline
 
 **Content Requirements:**
+
 - Historical regulatory milestones
 - Recent regulatory changes
 - Upcoming regulations
@@ -617,6 +688,7 @@ Top 10 companies showing:
 #### Section 7.3: Regulatory Impact Analysis
 
 **Content Requirements:**
+
 - Compliance costs
 - Market access implications
 - Competitive implications
@@ -626,6 +698,7 @@ Top 10 companies showing:
 #### Section 7.4: Policy Trends
 
 **Content Requirements:**
+
 - Government priorities
 - Funding initiatives
 - Trade policies
@@ -635,12 +708,14 @@ Top 10 companies showing:
 #### Section 7.5: Regional Regulatory Differences
 
 **Content Requirements:**
+
 - Comparison of regulations by region
 - Harmonization efforts
 - Key differences to navigate
 - Best practices for compliance
 
 **Required Visuals (1 total):**
+
 1. Regulatory timeline
 
 ---
@@ -652,6 +727,7 @@ Top 10 companies showing:
 #### Section 8.1: Risk Overview
 
 **Content Requirements:**
+
 - Risk categories covered
 - Risk assessment methodology
 - Overall risk profile assessment
@@ -661,6 +737,7 @@ Top 10 companies showing:
 **Required Visual:** Risk heatmap (probability vs. impact)
 
 **Risk categories to cover:**
+
 - Market risks
 - Competitive risks
 - Regulatory risks
@@ -670,6 +747,7 @@ Top 10 companies showing:
 - Reputational risks
 
 **For each risk, include:**
+
 - Risk description
 - Probability rating (Low/Medium/High)
 - Impact rating (Low/Medium/High)
@@ -679,6 +757,7 @@ Top 10 companies showing:
 
 **Data Table Required:**
 Risk register showing:
+
 - Risk name
 - Category
 - Probability
@@ -689,6 +768,7 @@ Risk register showing:
 #### Section 8.3: Detailed Risk Analysis
 
 Provide detailed analysis of top 5-10 risks, including:
+
 - Full description of the risk
 - Scenarios that could trigger it
 - Potential consequences
@@ -700,6 +780,7 @@ Provide detailed analysis of top 5-10 risks, including:
 **Required Visual:** Risk mitigation matrix
 
 **For each major risk, provide:**
+
 - Prevention strategies
 - Detection mechanisms
 - Response plans
@@ -707,6 +788,7 @@ Provide detailed analysis of top 5-10 risks, including:
 - Contingency plans
 
 **Required Visuals (2 total):**
+
 1. Risk heatmap
 2. Risk mitigation matrix
 
@@ -723,6 +805,7 @@ Provide detailed analysis of top 5-10 risks, including:
 **Required Visual:** Opportunity matrix (attractiveness vs. ability to win)
 
 **Content Requirements:**
+
 - Identification of 5-8 strategic opportunities
 - Sizing of each opportunity
 - Attractiveness assessment
@@ -732,6 +815,7 @@ Provide detailed analysis of top 5-10 risks, including:
 #### Section 9.2: Detailed Opportunity Analysis
 
 For each top opportunity, provide:
+
 - Description and scope
 - Market size potential
 - Growth trajectory
@@ -744,6 +828,7 @@ For each top opportunity, provide:
 #### Section 9.3: Strategic Options Analysis
 
 **Content Requirements:**
+
 - Build (organic development) options
 - Buy (M&A) options
 - Partner (strategic alliances) options
@@ -756,21 +841,25 @@ For each top opportunity, provide:
 **Structure recommendations in tiers:**
 
 **Tier 1: Immediate Priority**
+
 - Actions to take in next 0-6 months
 - Quick wins with high impact
 - Foundation-setting activities
 
 **Tier 2: Near-Term (6-12 months)**
+
 - Build on Tier 1 actions
 - Larger investments
 - Capability development
 
 **Tier 3: Medium-Term (1-2 years)**
+
 - Strategic initiatives
 - Major investments
 - Transformational changes
 
 **For each recommendation:**
+
 - Clear action statement
 - Rationale (why this matters)
 - Expected outcome
@@ -782,6 +871,7 @@ For each top opportunity, provide:
 #### Section 9.5: Success Factors
 
 **Content Requirements:**
+
 - Critical success factors for implementation
 - Organizational capabilities required
 - Resource requirements
@@ -789,6 +879,7 @@ For each top opportunity, provide:
 - Timing considerations
 
 **Required Visuals (3 total):**
+
 1. Opportunity matrix
 2. Strategic options framework
 3. Recommendation priority matrix
@@ -802,6 +893,7 @@ For each top opportunity, provide:
 #### Section 10.1: Implementation Overview
 
 **Content Requirements:**
+
 - Phased approach description
 - Overall timeline
 - Key dependencies
@@ -812,6 +904,7 @@ For each top opportunity, provide:
 **Required Visual:** Implementation timeline/Gantt chart
 
 **For each phase:**
+
 - Phase name and duration
 - Objectives
 - Key activities
@@ -821,6 +914,7 @@ For each top opportunity, provide:
 - Success criteria
 
 **Typical phases:**
+
 - Phase 1: Foundation (months 1-6)
 - Phase 2: Build (months 4-12)
 - Phase 3: Scale (months 10-18)
@@ -832,6 +926,7 @@ For each top opportunity, provide:
 
 **Data Table Required:**
 Milestone table showing:
+
 - Milestone name
 - Target date
 - Owner
@@ -841,6 +936,7 @@ Milestone table showing:
 #### Section 10.4: Resource Requirements
 
 **Content Requirements:**
+
 - Team structure and roles
 - Budget allocation by phase
 - Technology requirements
@@ -850,6 +946,7 @@ Milestone table showing:
 #### Section 10.5: Governance Structure
 
 **Content Requirements:**
+
 - Decision-making authority
 - Reporting structure
 - Review cadence
@@ -857,6 +954,7 @@ Milestone table showing:
 - Change management process
 
 **Required Visuals (2 total):**
+
 1. Implementation timeline/Gantt
 2. Milestone tracker
 
@@ -869,6 +967,7 @@ Milestone table showing:
 #### Section 11.1: Investment Summary
 
 **Content Requirements:**
+
 - Summary of investment opportunity
 - Key value drivers
 - Expected returns
@@ -881,6 +980,7 @@ Milestone table showing:
 
 **Data Table Required:**
 5-year projections showing:
+
 - Revenue
 - Growth rate
 - Gross margin
@@ -893,11 +993,13 @@ Milestone table showing:
 **Required Visual:** Scenario comparison chart
 
 **Three scenarios:**
+
 - Conservative: Lower growth, higher costs
 - Base Case: Expected performance
 - Optimistic: Favorable conditions
 
 **For each scenario:**
+
 - Key assumptions
 - Revenue projections
 - Profitability projections
@@ -907,6 +1009,7 @@ Milestone table showing:
 #### Section 11.4: Key Assumptions
 
 **Document all assumptions:**
+
 - Market growth assumptions
 - Market share assumptions
 - Pricing assumptions
@@ -917,6 +1020,7 @@ Milestone table showing:
 #### Section 11.5: Sensitivity Analysis
 
 **Content Requirements:**
+
 - Key variables affecting returns
 - Sensitivity to market growth
 - Sensitivity to pricing
@@ -926,6 +1030,7 @@ Milestone table showing:
 #### Section 11.6: Return Expectations
 
 **Content Requirements:**
+
 - ROI projections
 - Payback period
 - IRR estimates
@@ -933,6 +1038,7 @@ Milestone table showing:
 - Multiple analysis (if applicable)
 
 **Required Visuals (2 total):**
+
 1. Financial projections chart
 2. Scenario comparison chart
 
@@ -943,6 +1049,7 @@ Milestone table showing:
 ### Appendix A: Methodology & Data Sources
 
 **Content Requirements:**
+
 - Research methodology description
 - Primary research methods
 - Secondary research sources
@@ -953,6 +1060,7 @@ Milestone table showing:
 ### Appendix B: Detailed Market Data
 
 **Content Requirements:**
+
 - Comprehensive data tables
 - Year-by-year market data
 - Regional breakdowns
@@ -962,6 +1070,7 @@ Milestone table showing:
 ### Appendix C: Company Profiles
 
 **For each major company:**
+
 - Company overview
 - Headquarters and key locations
 - Revenue and employee count
@@ -973,6 +1082,7 @@ Milestone table showing:
 ### References/Bibliography
 
 **All sources cited:**
+
 - Market research reports
 - Industry publications
 - Government data

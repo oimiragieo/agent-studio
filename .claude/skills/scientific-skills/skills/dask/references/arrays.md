@@ -7,6 +7,7 @@ Dask Array implements NumPy's ndarray interface using blocked algorithms. It coo
 ## Core Concept
 
 A Dask Array is divided into chunks (blocks):
+
 - Each chunk is a regular NumPy array
 - Operations are applied to each chunk in parallel
 - Results are combined automatically
@@ -17,39 +18,46 @@ A Dask Array is divided into chunks (blocks):
 ### What Dask Arrays Support
 
 **Mathematical Operations**:
-- Arithmetic operations (+, -, *, /)
+
+- Arithmetic operations (+, -, \*, /)
 - Scalar functions (exponentials, logarithms, trigonometric)
 - Element-wise operations
 
 **Reductions**:
+
 - `sum()`, `mean()`, `std()`, `var()`
 - Reductions along specified axes
 - `min()`, `max()`, `argmin()`, `argmax()`
 
 **Linear Algebra**:
+
 - Tensor contractions
 - Dot products and matrix multiplication
 - Some decompositions (SVD, QR)
 
 **Data Manipulation**:
+
 - Transposition
 - Slicing (standard and fancy indexing)
 - Reshaping
 - Concatenation and stacking
 
 **Array Protocols**:
+
 - Universal functions (ufuncs)
 - NumPy protocols for interoperability
 
 ## When to Use Dask Arrays
 
 **Use Dask Arrays When**:
+
 - Arrays exceed available RAM
 - Computation can be parallelized across chunks
 - Working with NumPy-style numerical operations
 - Need to scale NumPy code to larger datasets
 
 **Stick with NumPy When**:
+
 - Arrays fit comfortably in memory
 - Operations require global views of data
 - Using specialized functions not available in Dask
@@ -60,6 +68,7 @@ A Dask Array is divided into chunks (blocks):
 Dask Arrays intentionally don't implement certain NumPy features:
 
 **Not Implemented**:
+
 - Most `np.linalg` functions (only basic operations available)
 - Operations difficult to parallelize (like full sorting)
 - Memory-inefficient operations (converting to lists, iterating via loops)
@@ -70,6 +79,7 @@ Dask Arrays intentionally don't implement certain NumPy features:
 ## Creating Dask Arrays
 
 ### From NumPy Arrays
+
 ```python
 import dask.array as da
 import numpy as np
@@ -80,6 +90,7 @@ dx = da.from_array(x, chunks=1000)  # Creates 10 chunks of 1000 elements each
 ```
 
 ### Random Arrays
+
 ```python
 # Create random array with specified chunks
 x = da.random.random((10000, 10000), chunks=(1000, 1000))
@@ -89,6 +100,7 @@ x = da.random.normal(10, 0.1, size=(10000, 10000), chunks=(1000, 1000))
 ```
 
 ### Zeros, Ones, and Empty
+
 ```python
 # Create arrays filled with constants
 zeros = da.zeros((10000, 10000), chunks=(1000, 1000))
@@ -97,6 +109,7 @@ empty = da.empty((10000, 10000), chunks=(1000, 1000))
 ```
 
 ### From Functions
+
 ```python
 # Create array from function
 def create_block(block_id):
@@ -110,6 +123,7 @@ x = da.from_delayed(
 ```
 
 ### From Disk
+
 ```python
 # Load from HDF5
 import h5py
@@ -125,6 +139,7 @@ x = da.from_array(z, chunks=(1000, 1000))
 ## Common Operations
 
 ### Arithmetic Operations
+
 ```python
 import dask.array as da
 
@@ -142,6 +157,7 @@ result = z.compute()
 ```
 
 ### Reductions
+
 ```python
 # Reductions along axes
 total = x.sum().compute()
@@ -154,6 +170,7 @@ col_sums = x.sum(axis=0).compute()
 ```
 
 ### Slicing and Indexing
+
 ```python
 # Standard slicing (returns Dask Array)
 subset = x[1000:5000, 2000:8000]
@@ -168,6 +185,7 @@ filtered = x[mask]
 ```
 
 ### Matrix Operations
+
 ```python
 # Matrix multiplication
 A = da.random.random((10000, 5000), chunks=(1000, 1000))
@@ -183,6 +201,7 @@ AT = A.T
 ```
 
 ### Linear Algebra
+
 ```python
 # SVD (Singular Value Decomposition)
 U, s, Vt = da.linalg.svd(A)
@@ -196,6 +215,7 @@ Q_computed, R_computed = dask.compute(Q, R)
 ```
 
 ### Reshaping and Manipulation
+
 ```python
 # Reshape
 x = da.random.random((10000, 10000), chunks=(1000, 1000))
@@ -220,11 +240,13 @@ Chunking is critical for Dask Array performance.
 ### Chunk Size Guidelines
 
 **Good Chunk Sizes**:
+
 - Each chunk: ~10-100 MB (compressed)
 - ~1 million elements per chunk for numeric data
 - Balance between parallelism and overhead
 
 **Example Calculation**:
+
 ```python
 # For float64 data (8 bytes per element)
 # Target 100 MB chunks: 100 MB / 8 bytes = 12.5M elements
@@ -234,6 +256,7 @@ x = da.random.random((10000, 10000), chunks=(1000, 1000))  # ~8 MB per chunk
 ```
 
 ### Viewing Chunk Structure
+
 ```python
 # Check chunks
 print(x.chunks)  # ((1000, 1000, ...), (1000, 1000, ...))
@@ -246,6 +269,7 @@ print(x.nbytes / x.npartitions)
 ```
 
 ### Rechunking
+
 ```python
 # Change chunk sizes
 x = da.random.random((10000, 10000), chunks=(500, 500))
@@ -275,6 +299,7 @@ output = result.compute()
 ```
 
 ### map_blocks with Different Output Shape
+
 ```python
 def reduction_function(block):
     # Returns scalar for each block
@@ -293,6 +318,7 @@ result = da.map_blocks(
 ## Lazy Evaluation and Computation
 
 ### Lazy Operations
+
 ```python
 # All operations are lazy (instant, no computation)
 x = da.random.random((10000, 10000), chunks=(1000, 1000))
@@ -304,6 +330,7 @@ result = z * 2
 ```
 
 ### Triggering Computation
+
 ```python
 # Compute single result
 final = result.compute()
@@ -313,6 +340,7 @@ result1, result2 = dask.compute(operation1, operation2)
 ```
 
 ### Persist in Memory
+
 ```python
 # Keep intermediate results in memory
 x_cached = x.persist()
@@ -325,12 +353,14 @@ y2 = (x_cached * 2).compute()
 ## Saving Results
 
 ### To NumPy
+
 ```python
 # Convert to NumPy (loads all in memory)
 numpy_array = dask_array.compute()
 ```
 
 ### To Disk
+
 ```python
 # Save to HDF5
 import h5py
@@ -347,12 +377,14 @@ da.store(x, z)
 ## Performance Considerations
 
 ### Efficient Operations
+
 - Element-wise operations: Very efficient
 - Reductions with parallelizable operations: Efficient
 - Slicing along chunk boundaries: Efficient
 - Matrix operations with good chunk alignment: Efficient
 
 ### Expensive Operations
+
 - Slicing across many chunks: Requires data movement
 - Operations requiring global sorting: Not well supported
 - Extremely irregular access patterns: Poor performance
@@ -361,6 +393,7 @@ da.store(x, z)
 ### Optimization Tips
 
 **1. Choose Good Chunk Sizes**
+
 ```python
 # Aim for balanced chunks
 # Good: ~100 MB per chunk
@@ -368,6 +401,7 @@ x = da.random.random((100000, 10000), chunks=(10000, 10000))
 ```
 
 **2. Align Chunks for Operations**
+
 ```python
 # Make sure chunks align for operations
 x = da.random.random((10000, 10000), chunks=(1000, 1000))
@@ -376,6 +410,7 @@ z = x + y  # Efficient
 ```
 
 **3. Use Appropriate Scheduler**
+
 ```python
 # Arrays work well with threaded scheduler (default)
 # Shared memory access is efficient
@@ -383,6 +418,7 @@ result = x.compute()  # Uses threads by default
 ```
 
 **4. Minimize Data Transfer**
+
 ```python
 # Better: Compute on each chunk, then transfer results
 means = x.mean(axis=1).compute()  # Transfers less data
@@ -395,6 +431,7 @@ means = x_numpy.mean(axis=1)  # Transfers more data
 ## Common Patterns
 
 ### Image Processing
+
 ```python
 import dask.array as da
 
@@ -413,6 +450,7 @@ mean_intensity = filtered.mean().compute()
 ```
 
 ### Scientific Computing
+
 ```python
 # Large-scale numerical simulation
 x = da.random.random((100000, 100000), chunks=(10000, 10000))
@@ -427,6 +465,7 @@ result = x.compute()
 ```
 
 ### Data Analysis
+
 ```python
 # Load large dataset
 data = da.from_zarr('measurements.zarr')
@@ -443,6 +482,7 @@ da.to_zarr(normalized, 'normalized.zarr')
 ## Integration with Other Tools
 
 ### XArray
+
 ```python
 import xarray as xr
 import dask.array as da
@@ -457,6 +497,7 @@ dataset = xr.DataArray(
 ```
 
 ### Scikit-learn (via Dask-ML)
+
 ```python
 # Some scikit-learn compatible operations
 from dask_ml.preprocessing import StandardScaler
@@ -469,6 +510,7 @@ X_scaled = scaler.fit_transform(X)
 ## Debugging Tips
 
 ### Visualize Task Graph
+
 ```python
 # Visualize computation graph (for small arrays)
 x = da.random.random((100, 100), chunks=(10, 10))
@@ -477,6 +519,7 @@ y.visualize(filename='graph.png')
 ```
 
 ### Check Array Properties
+
 ```python
 # Inspect before computing
 print(f"Shape: {x.shape}")
@@ -486,6 +529,7 @@ print(f"Number of tasks: {len(x.__dask_graph__())}")
 ```
 
 ### Test on Small Arrays First
+
 ```python
 # Test logic on small array
 small_x = da.random.random((100, 100), chunks=(50, 50))

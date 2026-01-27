@@ -17,9 +17,11 @@ Search for files and folders within a workspace.
 **Endpoint:** `GET /workspaces/{workspace_id}/files/search`
 
 **Path Parameters:**
+
 - `workspace_id`: The workspace's unique identifier
 
 **Query Parameters:**
+
 - `query`: Search keywords (searches filenames and metadata)
 - `type`: Filter by type
   - `file`: Files only
@@ -30,6 +32,7 @@ Search for files and folders within a workspace.
 - `page_id`: Page number for pagination (starts at 0)
 
 **Response includes:**
+
 - File/folder ID and name
 - File size and type
 - Creation and modification dates
@@ -37,6 +40,7 @@ Search for files and folders within a workspace.
 - Download URL (for files)
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/workspaces/12345/files/search?query=microscopy&type=file"
@@ -49,16 +53,19 @@ Browse files and folders within a specific folder.
 **Endpoint:** `GET /workspaces/{workspace_id}/folders/{folder_id}`
 
 **Path Parameters:**
+
 - `workspace_id`: The workspace's unique identifier
 - `folder_id`: The folder's unique identifier (use `root` for workspace root)
 
 **Query Parameters:**
+
 - `order_by`: Sort field (`name`, `size`, `created`, `modified`)
 - `order_dir`: Sort direction (`asc`, `desc`)
 - `page_size`: Number of results per page
 - `page_id`: Page number for pagination
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/workspaces/12345/folders/root?order_by=modified&order_dir=desc"
@@ -75,6 +82,7 @@ Upload a file to a workspace folder.
 **Request Format**: `multipart/form-data`
 
 **Form Parameters:**
+
 - `file` (required): The file to upload
 - `folder_id`: Target folder ID (omit or use `root` for workspace root)
 - `name`: Custom filename (optional, uses original filename if omitted)
@@ -82,6 +90,7 @@ Upload a file to a workspace folder.
 - `tags`: Comma-separated tags
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -99,6 +108,7 @@ After upload, verify the file was processed correctly.
 **Endpoint:** `GET /workspaces/{workspace_id}/files/{file_id}/status`
 
 **Response includes:**
+
 - Upload status (`processing`, `complete`, `failed`)
 - File metadata
 - Any processing errors
@@ -112,12 +122,14 @@ Download a file from the workspace.
 **Endpoint:** `GET /workspaces/{workspace_id}/files/{file_id}/download`
 
 **Path Parameters:**
+
 - `workspace_id`: The workspace's unique identifier
 - `file_id`: The file's unique identifier
 
 **Response**: Binary file data with appropriate Content-Type header
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   -o "downloaded_file.xlsx" \
@@ -131,6 +143,7 @@ Retrieve file information without downloading.
 **Endpoint:** `GET /workspaces/{workspace_id}/files/{file_id}`
 
 **Response includes:**
+
 - File name, size, and type
 - Upload date and author
 - Description and tags
@@ -145,12 +158,14 @@ Update file description, tags, or other metadata.
 **Endpoint:** `PATCH /workspaces/{workspace_id}/files/{file_id}`
 
 **Request Body:**
+
 - `name`: New filename
 - `description`: Updated description
 - `tags`: Updated tags (comma-separated)
 - `folder_id`: Move to different folder
 
 **Example Request:**
+
 ```bash
 curl -X PATCH \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -185,11 +200,13 @@ Create a new folder in the workspace.
 **Endpoint:** `POST /workspaces/{workspace_id}/folders`
 
 **Request Body:**
+
 - `name` (required): Folder name
 - `parent_folder_id`: Parent folder ID (omit for workspace root)
 - `description`: Folder description
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -207,6 +224,7 @@ curl -X POST \
 **Endpoint:** `PATCH /workspaces/{workspace_id}/folders/{folder_id}`
 
 **Request Body:**
+
 - `name`: New folder name
 - `description`: Updated description
 
@@ -217,6 +235,7 @@ Delete a folder and optionally its contents.
 **Endpoint:** `DELETE /workspaces/{workspace_id}/folders/{folder_id}`
 
 **Query Parameters:**
+
 - `recursive`: Set to `true` to delete folder and all contents (default: `false`)
 
 **Warning**: Recursive deletion cannot be easily undone
@@ -233,6 +252,7 @@ Attach experimental data files to protocols:
 4. Include download links in protocol description
 
 **Example Workflow:**
+
 ```bash
 # Upload the data file
 curl -X POST \
@@ -254,6 +274,7 @@ Organize files into logical folder structures:
 4. Tag files for easy search
 
 **Example Structure:**
+
 ```
 Workspace Root
 ├── Protocols
@@ -314,32 +335,39 @@ Manage file versions manually:
 Protocols.io supports various file types:
 
 **Data Files:**
+
 - Spreadsheets: `.xlsx`, `.xls`, `.csv`, `.tsv`
 - Statistical data: `.rds`, `.rdata`, `.sav`, `.dta`
 - Plain text: `.txt`, `.log`, `.json`, `.xml`
 
 **Images:**
+
 - Common formats: `.jpg`, `.jpeg`, `.png`, `.gif`, `.bmp`, `.tif`, `.tiff`
 - Scientific: `.czi`, `.nd2`, `.lsm` (may require special handling)
 
 **Documents:**
+
 - PDF: `.pdf`
 - Word: `.docx`, `.doc`
 - PowerPoint: `.pptx`, `.ppt`
 
 **Code and Scripts:**
+
 - Python: `.py`, `.ipynb`
 - R: `.r`, `.rmd`
 - Shell: `.sh`, `.bash`
 
 **Multimedia:**
+
 - Video: `.mp4`, `.avi`, `.mov`
 - Audio: `.mp3`, `.wav`
 
 **Archives:**
+
 - Compressed: `.zip`, `.tar.gz`, `.7z`
 
 **File Size Limits:**
+
 - Standard files: Check workspace limits (typically 100 MB - 1 GB)
 - Large files: May require chunked upload or special handling
 

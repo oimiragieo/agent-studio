@@ -67,24 +67,28 @@ Based on Tauri 2.0 best practices:
 ## Tools & Frameworks
 
 **Tauri Ecosystem:**
+
 - **Tauri CLI**: Project scaffolding, dev server, build system
 - **@tauri-apps/api**: Frontend JavaScript/TypeScript bindings
-- **@tauri-apps/plugin-***: Official plugins (fs, dialog, notification, shell, etc.)
+- **@tauri-apps/plugin-\***: Official plugins (fs, dialog, notification, shell, etc.)
 - **tauri-specta**: Type-safe IPC with TypeScript code generation
 
 **Rust Backend:**
+
 - **tokio**: Async runtime for non-blocking operations
 - **serde/serde_json**: Serialization for IPC communication
 - **tauri::State**: Managed application state
 - **anyhow/thiserror**: Error handling and propagation
 
 **Frontend:**
+
 - **Svelte/SvelteKit**: Reactive UI with minimal overhead
 - **TypeScript**: Type-safe frontend development
 - **Vite**: Fast development and optimized builds
 - **Tailwind CSS**: Utility-first styling
 
 **Testing & Quality:**
+
 - **cargo test**: Rust unit and integration tests
 - **vitest**: Frontend unit testing
 - **WebdriverIO**: E2E desktop app testing
@@ -96,6 +100,7 @@ Based on Tauri 2.0 best practices:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files to understand specialized workflows:
+
 - `.claude/skills/tauri-native-api-integration/SKILL.md` - Native API patterns
 - `.claude/skills/tauri-security-rules/SKILL.md` - Security best practices
 - `.claude/skills/tauri-svelte-typescript-general/SKILL.md` - Frontend integration
@@ -135,6 +140,7 @@ Read: src-tauri/tauri.conf.json
 ### Step 4: Implement
 
 **Rust Backend (src-tauri/src/):**
+
 ```rust
 #[tauri::command]
 async fn read_config_file(app: tauri::AppHandle) -> Result<String, String> {
@@ -149,6 +155,7 @@ async fn read_config_file(app: tauri::AppHandle) -> Result<String, String> {
 ```
 
 **Frontend Integration (src/):**
+
 ```typescript
 import { invoke } from '@tauri-apps/api/core';
 
@@ -164,17 +171,14 @@ async function loadConfig(): Promise<string> {
 ```
 
 **Capability Definition (src-tauri/capabilities/):**
+
 ```json
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main-capability",
   "description": "Main window capabilities",
   "windows": ["main"],
-  "permissions": [
-    "core:default",
-    "path:default",
-    "fs:read-file"
-  ]
+  "permissions": ["core:default", "path:default", "fs:read-file"]
 }
 ```
 
@@ -207,6 +211,7 @@ async function loadConfig(): Promise<string> {
 ### 1. Add New Tauri Command
 
 **Process:**
+
 1. Define Rust command with proper error handling
 2. Register command in main.rs
 3. Add TypeScript bindings
@@ -215,6 +220,7 @@ async function loadConfig(): Promise<string> {
 6. Document usage
 
 **Verification:**
+
 - [ ] Command compiles without warnings
 - [ ] TypeScript types are correct
 - [ ] Minimal permissions granted
@@ -224,6 +230,7 @@ async function loadConfig(): Promise<string> {
 ### 2. Implement Native File Dialog
 
 **Process:**
+
 1. Use `@tauri-apps/plugin-dialog`
 2. Configure dialog capabilities
 3. Handle file selection in frontend
@@ -231,6 +238,7 @@ async function loadConfig(): Promise<string> {
 5. Test on all target platforms
 
 **Verification:**
+
 - [ ] Dialog appears correctly
 - [ ] File filters work
 - [ ] Cross-platform compatibility
@@ -239,6 +247,7 @@ async function loadConfig(): Promise<string> {
 ### 3. Setup Auto-Updater
 
 **Process:**
+
 1. Configure tauri.conf.json updater section
 2. Setup update server/GitHub releases
 3. Implement update check logic
@@ -247,6 +256,7 @@ async function loadConfig(): Promise<string> {
 6. Configure code signing
 
 **Verification:**
+
 - [ ] Update checks work
 - [ ] Download and install successful
 - [ ] Rollback on failure
@@ -256,6 +266,7 @@ async function loadConfig(): Promise<string> {
 ### 4. Security Hardening
 
 **Process:**
+
 1. Review capability definitions (principle of least privilege)
 2. Configure CSP headers in tauri.conf.json
 3. Audit IPC surface area
@@ -264,6 +275,7 @@ async function loadConfig(): Promise<string> {
 6. Document security model
 
 **Verification:**
+
 - [ ] No unnecessary permissions
 - [ ] CSP blocks untrusted content
 - [ ] All commands have error handling
@@ -283,22 +295,22 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `tauri-native-api-integration` | Tauri commands and IPC | Always at task start |
-| `tauri-security-rules` | Security configurations | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                  | When                 |
+| -------------------------------- | ------------------------ | -------------------- |
+| `tauri-native-api-integration`   | Tauri commands and IPC   | Always at task start |
+| `tauri-security-rules`           | Security configurations  | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle | Always at task start |
+| `verification-before-completion` | Quality gates            | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Svelte frontend | `svelte-expert` | Svelte UI patterns |
-| React frontend | `react-expert` | React patterns |
-| Testing strategy | `testing-expert` | Comprehensive testing patterns |
-| TypeScript work | `typescript-expert` | TypeScript best practices |
-| File operations | `filesystem` | File system patterns |
+| Condition        | Skill               | Purpose                        |
+| ---------------- | ------------------- | ------------------------------ |
+| Svelte frontend  | `svelte-expert`     | Svelte UI patterns             |
+| React frontend   | `react-expert`      | React patterns                 |
+| Testing strategy | `testing-expert`    | Comprehensive testing patterns |
+| TypeScript work  | `typescript-expert` | TypeScript best practices      |
+| File operations  | `filesystem`        | File system patterns           |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -335,6 +347,7 @@ Review past Tauri patterns, permission configurations, and platform-specific iss
 ### Review Requirements
 
 For major features:
+
 - [ ] **Security Review**: Capability and permission audit
 - [ ] **QA Review**: Cross-platform testing coverage
 - [ ] **Performance Review**: Bundle size and startup time
@@ -342,6 +355,7 @@ For major features:
 ## Best Practices
 
 ### Rust Backend
+
 - Use async functions for I/O operations
 - Implement proper error types (avoid String errors)
 - Use managed state for app-wide data
@@ -350,6 +364,7 @@ For major features:
 - Use Result<T, E> for fallible operations
 
 ### Frontend Integration
+
 - Type-safe IPC with TypeScript
 - Handle command errors gracefully
 - Show loading states for async operations
@@ -358,6 +373,7 @@ For major features:
 - Minimize IPC calls for performance
 
 ### Security
+
 - Grant minimal required permissions
 - Use capability-based permission model
 - Configure strict CSP headers
@@ -367,6 +383,7 @@ For major features:
 - Keep dependencies updated
 
 ### Cross-Platform
+
 - Test on all target platforms
 - Use Tauri path APIs (not hardcoded paths)
 - Handle platform-specific features conditionally
@@ -374,6 +391,7 @@ For major features:
 - Test different screen sizes and DPI settings
 
 ### Performance
+
 - Lazy load heavy dependencies
 - Optimize bundle size (tree shaking)
 - Use web workers for CPU-intensive tasks

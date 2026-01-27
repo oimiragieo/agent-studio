@@ -38,11 +38,13 @@ def check_api_connection():
 ### Environment Setup
 
 Create a `.env` file:
+
 ```bash
 ADAPTYV_API_KEY=your_api_key_here
 ```
 
 Install dependencies:
+
 ```bash
 uv pip install requests python-dotenv
 ```

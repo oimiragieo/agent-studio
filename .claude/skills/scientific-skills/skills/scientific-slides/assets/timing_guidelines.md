@@ -11,12 +11,14 @@ Proper timing is critical for professional scientific presentations. This guide 
 **Rule of Thumb**: Plan for approximately 1 slide per minute of presentation time.
 
 **Why It Works**:
+
 - Allows adequate time to explain each concept
 - Accounts for transitions and questions
 - Provides buffer for variations in pace
 - Industry-standard baseline for planning
 
 **Adjustments**:
+
 - **Complex slides** (data-heavy, detailed figures): 2-3 minutes each
 - **Simple slides** (title, section dividers): 15-30 seconds each
 - **Key result slides**: 2-4 minutes each
@@ -25,7 +27,7 @@ Proper timing is critical for professional scientific presentations. This guide 
 ### Slide Count by Talk Length
 
 | Duration | Total Slides | Title/Intro | Methods | Results | Discussion | Conclusion |
-|----------|--------------|-------------|---------|---------|------------|------------|
+| -------- | ------------ | ----------- | ------- | ------- | ---------- | ---------- |
 | 5 min    | 5-7          | 1-2         | 0-1     | 2-3     | 1          | 1          |
 | 10 min   | 10-12        | 2           | 1-2     | 4-5     | 2-3        | 1          |
 | 15 min   | 15-18        | 2-3         | 2-3     | 6-8     | 3-4        | 1-2        |
@@ -37,12 +39,14 @@ Proper timing is critical for professional scientific presentations. This guide 
 ### Exceptions to the Rule
 
 **When to Use More Slides**:
+
 - Many simple concepts to cover
 - Highly visual presentation (minimal text)
 - Progressive builds (each build = new "slide")
 - Fast-paced overview talks
 
 **When to Use Fewer Slides**:
+
 - Deep dive into few concepts
 - Complex data visualizations
 - Interactive discussions expected
@@ -144,11 +148,13 @@ Slide 7: Conclusion + Contact (30 seconds)
 ### Simple Slides
 
 **Title/Section Dividers** (15-30 seconds):
+
 - Say title
 - Brief transition comment
 - Move on quickly
 
 **Single Bullet Point Slides** (30-45 seconds):
+
 - Read or paraphrase point
 - Provide 1-2 sentences of explanation
 - Transition to next
@@ -156,6 +162,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 ### Standard Content Slides
 
 **Bullet Point Slides** (1-2 minutes):
+
 - 3-4 bullets: ~1 minute
 - 5-6 bullets: ~2 minutes
 - **Strategy**:
@@ -164,6 +171,7 @@ Slide 7: Conclusion + Contact (30 seconds)
   - Use builds to control pacing
 
 **Equation Slides** (1-2 minutes):
+
 - Introduce equation context (20 seconds)
 - Explain each term (40 seconds)
 - Discuss implications (20-40 seconds)
@@ -171,6 +179,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 ### Complex Slides
 
 **Data Visualization Slides** (2-3 minutes):
+
 ```
 30 seconds: Set up (what you're showing)
 60 seconds: Walk through key patterns
@@ -180,10 +189,11 @@ Slide 7: Conclusion + Contact (30 seconds)
 ```
 
 **Multi-Panel Figures** (2-4 minutes):
+
 ```
 Option 1 - Progressive Build:
 - Show panel 1: 60 seconds
-- Add panel 2: 60 seconds  
+- Add panel 2: 60 seconds
 - Add panel 3: 60 seconds
 - Integrate: 60 seconds
 
@@ -196,6 +206,7 @@ Option 2 - All at Once:
 ```
 
 **Table Slides** (1-2 minutes):
+
 - Don't read every cell
 - Guide attention: "Notice the top row..."
 - Highlight key comparison
@@ -208,11 +219,13 @@ Option 2 - All at Once:
 **Natural Checkpoints** (Use these to self-monitor):
 
 For 15-minute talk:
+
 - **3-4 minutes**: Should be finishing introduction
 - **7-8 minutes**: Should be halfway through results
 - **12-13 minutes**: Should be starting conclusions
 
 For 45-minute talk:
+
 - **10 minutes**: Finishing introduction
 - **20 minutes**: Halfway through methods
 - **35 minutes**: Finishing results
@@ -227,6 +240,7 @@ For 45-minute talk:
 - Audience looking confused
 
 **Recovery Strategies**:
+
 1. Skip backup/secondary slides (prepare these in advance)
 2. Summarize instead of detailing
 3. Cut discussion, not results
@@ -240,6 +254,7 @@ For 45-minute talk:
 - Reaching conclusion with time left
 
 **Adjustment Strategies**:
+
 1. Expand on key points naturally
 2. Provide additional examples
 3. Take questions mid-talk (if appropriate)
@@ -251,40 +266,45 @@ For 45-minute talk:
 
 **Minimum Practice Requirements**:
 
-| Talk Type | Practice Runs | Time Commitment |
-|-----------|--------------|-----------------|
-| Lightning (5 min) | 5-7 times | 3 hours |
-| Conference (15 min) | 3-5 times | 4-5 hours |
-| Seminar (45 min) | 3-4 times | 6-8 hours |
-| Defense (60 min) | 4-6 times | 10-15 hours |
+| Talk Type           | Practice Runs | Time Commitment |
+| ------------------- | ------------- | --------------- |
+| Lightning (5 min)   | 5-7 times     | 3 hours         |
+| Conference (15 min) | 3-5 times     | 4-5 hours       |
+| Seminar (45 min)    | 3-4 times     | 6-8 hours       |
+| Defense (60 min)    | 4-6 times     | 10-15 hours     |
 
 ### Practice Progression
 
 **Run 1: Rough Draft**
+
 - Focus: Get through all slides
 - Time it (will likely run long)
 - Identify problem areas
 - Note where you stumble
 
 **Run 2: Smoothing**
+
 - Focus: Improve transitions
 - Practice specific wording
 - Time each section
 - Start cutting if over time
 
 **Run 3: Refinement**
+
 - Focus: Exact timing
 - Practice with timer visible
 - Implement timing strategies
 - Fine-tune explanations
 
 **Run 4: Final Polish**
+
 - Focus: Delivery quality
 - Record yourself (video)
 - Practice Q&A scenarios
 - Perfect timing
 
 **Run 5+: Maintenance**
+
 - Day before talk
 - Morning of talk (if time)
 - Just opening and closing
@@ -292,6 +312,7 @@ For 45-minute talk:
 ### Practice Methods
 
 **Solo Practice**:
+
 ```
 1. Full talk with timer
 2. Section-by-section focus
@@ -301,6 +322,7 @@ For 45-minute talk:
 ```
 
 **Recorded Practice**:
+
 ```
 1. Video yourself
 2. Watch playback critically
@@ -313,6 +335,7 @@ For 45-minute talk:
 ```
 
 **Live Audience Practice**:
+
 ```
 1. Lab meeting or colleagues
 2. Request honest feedback
@@ -327,18 +350,21 @@ For 45-minute talk:
 ### Timing Tools
 
 **During Practice**:
+
 - Phone timer (visible)
 - Stopwatch with lap times
 - Timer app with alerts
 - Record for later analysis
 
 **During Presentation**:
+
 - Phone/watch timer (subtle glances)
 - Session clock (if provided)
 - Time notes on slides (bottom corner)
 - Vibrating watch alerts at key checkpoints
 
 **Timing Notes on Slides**:
+
 ```
 Add small text (8pt, corner):
 Slide 1: "0:00"
@@ -355,6 +381,7 @@ Slide 18: "14:00"
 **Scenario**: "We're running behind, can you cut to 10 minutes?"
 
 **Strategy**:
+
 1. Keep introduction (brief)
 2. Mention methods (30 seconds)
 3. Show main result only (3 minutes)
@@ -362,6 +389,7 @@ Slide 18: "14:00"
 5. Skip: Secondary results, detailed discussion
 
 **Pre-Prepare**:
+
 - Know which slides are "must keep"
 - Mark "optional" slides
 - Have 5, 10, and 15-minute versions ready
@@ -371,6 +399,7 @@ Slide 18: "14:00"
 **Scenario**: "Previous speaker cancelled, you have 30 minutes instead of 15"
 
 **Options**:
+
 1. Go deeper on key results
 2. Show backup slides
 3. Include additional analyses
@@ -378,6 +407,7 @@ Slide 18: "14:00"
 5. Allow more Q&A time
 
 **Don't**:
+
 - Repeat content
 - Add filler
 - Slow down artificially
@@ -388,12 +418,14 @@ Slide 18: "14:00"
 ### Including Q&A in Your Time
 
 **If Q&A is within your slot**:
+
 - Plan for 20-30% of time for questions
 - 15-minute talk: Reserve 3-4 minutes
 - 45-minute talk: Reserve 10-15 minutes
 - Finish content 2-3 minutes early
 
 **Q&A Time Management**:
+
 - Brief answers (30-90 seconds each)
 - "Great question, let me keep this brief..."
 - Redirect detailed questions: "Let's discuss after"
@@ -402,6 +434,7 @@ Slide 18: "14:00"
 ### Separate Q&A Time
 
 **If Q&A is after your slot**:
+
 - Use full allotted time
 - Finish exactly at time limit
 - Don't assume extra time
@@ -471,6 +504,7 @@ Target: 15:00, Slides: 1-18
 **Problem**: Spending 5 minutes of 15-minute talk on background
 
 **Solution**:
+
 - Limit intro to 15-20% of total time
 - Jump to your contribution quickly
 - Save detailed review for discussion
@@ -480,6 +514,7 @@ Target: 15:00, Slides: 1-18
 **Problem**: Spending same time on title slide as key result
 
 **Solution**:
+
 - Vary pace based on importance
 - Rush through simple slides
 - Linger on key findings
@@ -489,6 +524,7 @@ Target: 15:00, Slides: 1-18
 **Problem**: Realizing you're behind only at minute 12 of 15
 
 **Solution**:
+
 - Set 3-4 checkpoints
 - Glance at timer regularly
 - Adjust in real-time
@@ -498,6 +534,7 @@ Target: 15:00, Slides: 1-18
 **Problem**: First time through is during actual presentation
 
 **Solution**:
+
 - Practice minimum 3 times
 - Time each practice
 - Get feedback
@@ -507,6 +544,7 @@ Target: 15:00, Slides: 1-18
 **Problem**: Run over time with no strategy
 
 **Solution**:
+
 - Know which slides to skip
 - Have condensed versions ready
 - Practice shortened version
@@ -516,12 +554,14 @@ Target: 15:00, Slides: 1-18
 ### Virtual Presentations
 
 **Adjustments**:
+
 - Slightly slower pace (5-10%)
 - More explicit transitions
 - Built-in pauses for lag
 - Buffer for technical issues
 
 **Time Allocation**:
+
 - Start 1-2 minutes early (tech check)
 - More time for Q&A (typing delays)
 - Share slides in advance if possible
@@ -529,6 +569,7 @@ Target: 15:00, Slides: 1-18
 ### Poster Spotlight Talks (3 Minutes)
 
 **Ultra-Tight Timing**:
+
 ```
 0:00-0:30 | Title + Context
 0:30-1:30 | Problem + Approach
@@ -541,12 +582,14 @@ Target: 15:00, Slides: 1-18
 ### Invited Talks (45-60 Minutes)
 
 **More Flexibility**:
+
 - Can adjust pace based on audience
 - Welcome interruptions
 - Conversational style acceptable
 - Less rigid timing
 
 **Still Important**:
+
 - Have overall time structure
 - Monitor major checkpoints
 - Respect Q&A time
@@ -594,4 +637,3 @@ Emergency Strategies:
 
 Remember: Better to finish early than run over!
 ```
-

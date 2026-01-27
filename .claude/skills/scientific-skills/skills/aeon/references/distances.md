@@ -9,6 +9,7 @@ Aeon provides specialized distance functions for measuring similarity between ti
 Allow flexible temporal alignment between series:
 
 **Dynamic Time Warping Family:**
+
 - `dtw` - Classic Dynamic Time Warping
 - `ddtw` - Derivative DTW (compares derivatives)
 - `wdtw` - Weighted DTW (penalizes warping by location)
@@ -16,12 +17,14 @@ Allow flexible temporal alignment between series:
 - `shape_dtw` - Shape-based DTW
 
 **Edit-Based:**
+
 - `erp` - Edit distance with Real Penalty
 - `edr` - Edit Distance on Real sequences
 - `lcss` - Longest Common SubSequence
 - `twe` - Time Warp Edit distance
 
 **Specialized:**
+
 - `msm` - Move-Split-Merge distance
 - `adtw` - Amerced DTW
 - `sbd` - Shape-Based Distance
@@ -150,15 +153,15 @@ distance = lcss_distance(x, y, epsilon=0.5)
 
 ## Quick Reference Table
 
-| Distance | Alignment | Speed | Robustness | Interpretability |
-|----------|-----------|-------|------------|------------------|
-| Euclidean | Lock-step | Very Fast | Low | High |
-| DTW | Elastic | Medium | Medium | Medium |
-| DDTW | Elastic | Medium | High | Medium |
-| WDTW | Elastic | Medium | Medium | Medium |
-| ERP | Edit-based | Slow | High | Low |
-| LCSS | Edit-based | Slow | Very High | Low |
-| Shape DTW | Elastic | Medium | Medium | High |
+| Distance  | Alignment  | Speed     | Robustness | Interpretability |
+| --------- | ---------- | --------- | ---------- | ---------------- |
+| Euclidean | Lock-step  | Very Fast | Low        | High             |
+| DTW       | Elastic    | Medium    | Medium     | Medium           |
+| DDTW      | Elastic    | Medium    | High       | Medium           |
+| WDTW      | Elastic    | Medium    | Medium     | Medium           |
+| ERP       | Edit-based | Slow      | High       | Low              |
+| LCSS      | Edit-based | Slow      | Very High  | Low              |
+| Shape DTW | Elastic    | Medium    | Medium     | High             |
 
 ## Best Practices
 

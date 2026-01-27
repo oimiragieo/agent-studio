@@ -27,10 +27,12 @@ spectra = list(spectra_generator)
 **Description**: Loads spectra from MGF files, a common format for mass spectrometry data exchange.
 
 **Parameters**:
+
 - `filename` (str): Path to MGF file
 - `metadata_harmonization` (bool, default=True): Apply automatic metadata key harmonization
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_mgf
 
@@ -52,10 +54,12 @@ spectra = list(load_from_mgf("data.mgf", metadata_harmonization=False))
 **Description**: Loads spectra from MSP files, commonly used for spectral libraries.
 
 **Parameters**:
+
 - `filename` (str): Path to MSP file
 - `metadata_harmonization` (bool, default=True): Apply automatic metadata harmonization
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_msp
 
@@ -73,11 +77,13 @@ spectra = list(load_from_msp("library.msp"))
 **Description**: Loads spectra from mzML files, the standard XML-based format for raw mass spectrometry data.
 
 **Parameters**:
+
 - `filename` (str): Path to mzML file
 - `ms_level` (int, default=2): MS level to extract (1 for MS1, 2 for MS2/tandem)
 - `metadata_harmonization` (bool, default=True): Apply automatic metadata harmonization
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_mzml
 
@@ -99,11 +105,13 @@ ms1_spectra = list(load_from_mzml("data.mzML", ms_level=1))
 **Description**: Loads spectra from mzXML files, an earlier XML-based format for mass spectrometry data.
 
 **Parameters**:
+
 - `filename` (str): Path to mzXML file
 - `ms_level` (int, default=2): MS level to extract
 - `metadata_harmonization` (bool, default=True): Apply automatic metadata harmonization
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_mzxml
 
@@ -121,10 +129,12 @@ spectra = list(load_from_mzxml("data.mzXML"))
 **Description**: Loads spectra from JSON files, particularly GNPS-compatible JSON format.
 
 **Parameters**:
+
 - `filename` (str): Path to JSON file
 - `metadata_harmonization` (bool, default=True): Apply automatic metadata harmonization
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_json
 
@@ -142,9 +152,11 @@ spectra = list(load_from_json("spectra.json"))
 **Description**: Loads previously saved matchms Spectrum objects from pickle files. Fast loading of preprocessed spectra.
 
 **Parameters**:
+
 - `filename` (str): Path to pickle file
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_pickle
 
@@ -162,9 +174,11 @@ spectra = list(load_from_pickle("processed_spectra.pkl"))
 **Description**: Loads a single spectrum from a metabolomics USI reference.
 
 **Parameters**:
+
 - `usi` (str): Universal Spectrum Identifier string
 
 **Example**:
+
 ```python
 from matchms.importing import load_from_usi
 
@@ -187,11 +201,13 @@ Matchms provides functions to save processed spectra to various formats for shar
 **Description**: Saves spectra to MGF format.
 
 **Parameters**:
+
 - `spectra` (list): List of Spectrum objects to save
 - `filename` (str): Output file path
 - `write_mode` (str, default='w'): File write mode ('w' for write, 'a' for append)
 
 **Example**:
+
 ```python
 from matchms.exporting import save_as_mgf
 
@@ -207,11 +223,13 @@ save_as_mgf(processed_spectra, "output.mgf")
 **Description**: Saves spectra to MSP format.
 
 **Parameters**:
+
 - `spectra` (list): List of Spectrum objects to save
 - `filename` (str): Output file path
 - `write_mode` (str, default='w'): File write mode
 
 **Example**:
+
 ```python
 from matchms.exporting import save_as_msp
 
@@ -227,11 +245,13 @@ save_as_msp(library_spectra, "library.msp")
 **Description**: Saves spectra to JSON format (GNPS-compatible).
 
 **Parameters**:
+
 - `spectra` (list): List of Spectrum objects to save
 - `filename` (str): Output file path
 - `write_mode` (str, default='w'): File write mode
 
 **Example**:
+
 ```python
 from matchms.exporting import save_as_json
 
@@ -247,10 +267,12 @@ save_as_json(spectra, "spectra.json")
 **Description**: Saves spectra as Python pickle file. Preserves all Spectrum attributes and is fastest for loading.
 
 **Parameters**:
+
 - `spectra` (list): List of Spectrum objects to save
 - `filename` (str): Output file path
 
 **Example**:
+
 ```python
 from matchms.exporting import save_as_pickle
 
@@ -258,11 +280,13 @@ save_as_pickle(processed_spectra, "processed.pkl")
 ```
 
 **Advantages**:
+
 - Fast save and load
 - Preserves exact Spectrum state
 - No format conversion overhead
 
 **Disadvantages**:
+
 - Not human-readable
 - Python-specific (not portable to other languages)
 - Pickle format may not be compatible across Python versions
@@ -352,6 +376,7 @@ with open("output.mgf", 'w') as outfile:
 ## Format Selection Guidelines
 
 **MGF**:
+
 - ✓ Widely supported
 - ✓ Human-readable
 - ✓ Good for data sharing
@@ -359,18 +384,21 @@ with open("output.mgf", 'w') as outfile:
 - Best for: Data exchange, GNPS uploads, publication data
 
 **MSP**:
+
 - ✓ Spectral library standard
 - ✓ Human-readable
 - ✓ Good metadata support
 - Best for: Reference libraries, NIST format compatibility
 
 **JSON**:
+
 - ✓ Structured format
 - ✓ GNPS compatible
 - ✓ Easy to parse programmatically
 - Best for: Web applications, GNPS integration, structured data
 
 **Pickle**:
+
 - ✓ Fastest save/load
 - ✓ Preserves exact state
 - ✗ Not portable to other languages
@@ -378,6 +406,7 @@ with open("output.mgf", 'w') as outfile:
 - Best for: Intermediate processing, Python-only workflows
 
 **mzML/mzXML**:
+
 - ✓ Raw instrument data
 - ✓ Rich metadata
 - ✓ Industry standard
@@ -404,6 +433,7 @@ spectrum = load_from_mgf("data.mgf", metadata_harmonization=True)
 ## File Format Specifications
 
 For detailed format specifications:
+
 - **MGF**: http://www.matrixscience.com/help/data_file_help.html
 - **MSP**: https://chemdata.nist.gov/mass-spc/ms-search/
 - **mzML**: http://www.psidev.info/mzML

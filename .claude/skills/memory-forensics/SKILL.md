@@ -20,6 +20,7 @@ tools: [Read, Write, Edit, Bash, Glob, Grep]
 - **Educational purposes** in controlled environments
 
 **NEVER use for**:
+
 - Unauthorized system access or surveillance
 - Privacy violations
 - Intellectual property theft
@@ -508,6 +509,7 @@ floss pid.1234.dmp
 Read `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 
 **After completing:**
+
 - New pattern -> `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 - Issue found -> `C:\dev\projects\agent-studio\.claude\context\memory\issues.md`
 - Decision made -> `C:\dev\projects\agent-studio\.claude\context\memory\decisions.md`

@@ -11,6 +11,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 **Study Population**: n=60 patients with newly diagnosed GBM treated with standard Stupp protocol (temozolomide + radiation → adjuvant temozolomide)
 
 **Molecular Classification**: Verhaak 2010 subtypes with immune signature refinement
+
 - **Group A**: Mesenchymal-Immune-Active subtype (n=18, 30%)
 - **Group B**: Other molecular subtypes (Proneural, Classical, Neural) (n=42, 70%)
 
@@ -23,6 +24,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 ### Mesenchymal-Immune-Active Subtype Characteristics
 
 **Molecular Features**:
+
 - NF1 alterations (mutations or deletions): 72% (13/18)
 - High YKL-40 (CHI3L1) expression: 100% (18/18, median z-score +2.8)
 - Immune gene signature: Elevated (median ESTIMATE immune score +1250)
@@ -30,6 +32,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 - MES (mesenchymal) signature score: >0.5 (all patients)
 
 **Clinical Characteristics**:
+
 - Median age: 64 years (range 42-76)
 - Male: 61% (11/18)
 - Tumor location: Temporal lobe predominant (55%)
@@ -38,6 +41,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 ### Comparison Groups (Other Subtypes)
 
 **Molecular Features**:
+
 - Proneural: n=15 (25%) - PDGFRA amplification, younger age
 - Classical: n=18 (30%) - EGFR amplification, chromosome 7+/10-
 - Neural: n=9 (15%) - neuronal markers, may include normal tissue
@@ -47,7 +51,8 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 ### Response Assessment (RANO Criteria)
 
 **Objective Response Rate** (after chemoradiation, ~3 months):
-- Mesenchymal-Immune-Active: 6/18 (33%) - CR 0, PR 6  
+
+- Mesenchymal-Immune-Active: 6/18 (33%) - CR 0, PR 6
 - Other subtypes: 18/42 (43%) - CR 1, PR 17
 - p = 0.48 (Fisher's exact)
 
@@ -56,12 +61,14 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 ### Survival Outcomes
 
 **Progression-Free Survival (PFS)**:
+
 - Mesenchymal-Immune-Active: Median 7.2 months (95% CI 5.8-9.1)
 - Other subtypes: Median 9.5 months (95% CI 8.1-11.3)
 - Hazard Ratio: 1.58 (95% CI 0.89-2.81), p = 0.12
 - 6-month PFS rate: 61% vs 74%
 
 **Overall Survival (OS)**:
+
 - Mesenchymal-Immune-Active: Median 12.8 months (95% CI 10.2-15.4)
 - Other subtypes: Median 16.3 months (95% CI 14.7-18.9)
 - Hazard Ratio: 1.72 (95% CI 0.95-3.11), p = 0.073
@@ -73,6 +80,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 ### Response to Bevacizumab at Recurrence
 
 **Subset Analysis** (patients receiving bevacizumab at first recurrence, n=35):
+
 - Mesenchymal-Immune-Active: n=12
   - ORR: 58% (7/12)
   - Median PFS2 (from bevacizumab start): 6.8 months
@@ -89,6 +97,7 @@ This example demonstrates a patient cohort analysis stratified by molecular biom
 **Treatment-Related Adverse Events** (Temozolomide):
 
 No significant differences in toxicity between molecular subtypes:
+
 - Lymphopenia (any grade): 89% vs 86%, p = 0.77
 - Thrombocytopenia (grade 3-4): 22% vs 19%, p = 0.79
 - Fatigue (any grade): 94% vs 90%, p = 0.60
@@ -116,6 +125,7 @@ No significant differences in toxicity between molecular subtypes:
    - GRADE: R (research recommendation)
 
 **For Other GBM Subtypes**:
+
 - Standard treatment per NCCN guidelines
 - Consider tumor treating fields (Optune) after radiation completion
 - Clinical trials based on specific molecular features (EGFR amplification → EGFR inhibitor trials)
@@ -123,6 +133,7 @@ No significant differences in toxicity between molecular subtypes:
 ### Prognostic Information
 
 **Counseling Patients**:
+
 - Mesenchymal-immune-active subtype associated with trend toward shorter survival (12.8 vs 16.3 months)
 - Not definitive due to small sample size and confidence intervals overlapping
 - Prospective validation needed
@@ -199,10 +210,10 @@ Median OS, months (95% CI)        12.8 (10.2-15.4)     16.3 (14.7-18.9) 1.72 (0.
 ---
 
 **This example demonstrates**:
+
 - Biomarker-based stratification methodology
 - Outcome reporting with appropriate statistics
 - Clinical contextualization of findings
 - Evidence-based recommendations with grading
 - Transparent limitation discussion
 - Structure suitable for pharmaceutical/clinical research documentation
-

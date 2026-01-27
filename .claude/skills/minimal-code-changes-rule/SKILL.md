@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Only modify sections of the code related to the task at hand.
 - Avoid modifying unrelated pieces of code.
 - Accomplish goals with minimal code changes.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

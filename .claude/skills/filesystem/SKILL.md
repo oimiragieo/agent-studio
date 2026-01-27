@@ -37,22 +37,26 @@ Filesystem Skill - Guidance for file system operations using Claude Code's built
 ### Reading Files
 
 **Read Tool**: Read file contents
+
 ```
 Read file_path="/path/to/file.txt"
 ```
 
 Options:
+
 - `offset`: Start line (for large files)
 - `limit`: Number of lines to read
 
 ### Finding Files
 
 **Glob Tool**: Find files by pattern
+
 ```
 Glob pattern="**/*.ts"
 ```
 
 Common patterns:
+
 - `**/*.ts` - All TypeScript files
 - `src/**/*.tsx` - React components in src
 - `**/test*.js` - Test files anywhere
@@ -60,22 +64,26 @@ Common patterns:
 ### Searching Content
 
 **Grep Tool**: Search file contents
+
 ```
 Grep pattern="function myFunc" path="/src"
 ```
 
 Options:
+
 - `output_mode`: "content", "files_with_matches", or "count"
 - `-A`, `-B`, `-C`: Context lines
 
 ### Writing Files
 
 **Write Tool**: Create or overwrite files
+
 ```
 Write file_path="/path/to/file.txt" content="..."
 ```
 
 **Edit Tool**: Modify existing files
+
 ```
 Edit file_path="/path/to/file.txt" old_string="..." new_string="..."
 ```
@@ -83,6 +91,7 @@ Edit file_path="/path/to/file.txt" old_string="..." new_string="..."
 ### Directory Operations
 
 **Bash Tool**: For directory operations
+
 ```bash
 # List directory
 ls -la /path/to/dir
@@ -101,6 +110,7 @@ mv /old/path /new/path
 ## Common Workflows
 
 ### Reading Multiple Files
+
 ```
 # Read files in parallel (multiple Read calls in one message)
 Read file_path="/src/app.ts"
@@ -109,6 +119,7 @@ Read file_path="/src/utils.ts"
 ```
 
 ### Search and Read
+
 ```
 # 1. Find files
 Glob pattern="**/*.config.ts"
@@ -118,6 +129,7 @@ Read file_path="/path/from/glob/result"
 ```
 
 ### Find and Replace
+
 ```
 # 1. Search for pattern
 Grep pattern="oldFunction" path="/src"
@@ -163,6 +175,7 @@ Edit file_path="/src/utils.ts" old_string="export function oldName" new_string="
 </examples>
 
 ## Rules
+
 - Always read files before editing
 - Use built-in tools (Read, Glob, Grep) instead of bash equivalents
 - Verify changes after editing
@@ -170,11 +183,13 @@ Edit file_path="/src/utils.ts" old_string="export function oldName" new_string="
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

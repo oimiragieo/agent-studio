@@ -9,36 +9,42 @@ Joins combine data from multiple DataFrames based on common columns.
 ### Basic Join Types
 
 **Inner Join (intersection):**
+
 ```python
 # Keep only matching rows from both DataFrames
 result = df1.join(df2, on="id", how="inner")
 ```
 
 **Left Join (all left + matches from right):**
+
 ```python
 # Keep all rows from left, add matching rows from right
 result = df1.join(df2, on="id", how="left")
 ```
 
 **Outer Join (union):**
+
 ```python
 # Keep all rows from both DataFrames
 result = df1.join(df2, on="id", how="outer")
 ```
 
 **Cross Join (Cartesian product):**
+
 ```python
 # Every row from left with every row from right
 result = df1.join(df2, how="cross")
 ```
 
 **Semi Join (filtered left):**
+
 ```python
 # Keep only left rows that have a match in right
 result = df1.join(df2, on="id", how="semi")
 ```
 
 **Anti Join (non-matching left):**
+
 ```python
 # Keep only left rows that DON'T have a match in right
 result = df1.join(df2, on="id", how="anti")
@@ -47,21 +53,25 @@ result = df1.join(df2, on="id", how="anti")
 ### Join Syntax Variations
 
 **Single column join:**
+
 ```python
 df1.join(df2, on="id")
 ```
 
 **Multiple columns join:**
+
 ```python
 df1.join(df2, on=["id", "date"])
 ```
 
 **Different column names:**
+
 ```python
 df1.join(df2, left_on="user_id", right_on="id")
 ```
 
 **Multiple different columns:**
+
 ```python
 df1.join(
     df2,
@@ -84,6 +94,7 @@ result = df1.join(df2, on="id", suffix="_right")
 ### Join Examples
 
 **Example 1: Customer Orders**
+
 ```python
 customers = pl.DataFrame({
     "customer_id": [1, 2, 3, 4],
@@ -104,6 +115,7 @@ result = customers.join(orders, on="customer_id", how="left")
 ```
 
 **Example 2: Time-series data**
+
 ```python
 prices = pl.DataFrame({
     "date": ["2023-01-01", "2023-01-02", "2023-01-03"],
@@ -166,6 +178,7 @@ result = pl.concat([df1, df2], how="vertical")
 ```
 
 **Handling mismatched schemas:**
+
 ```python
 df1 = pl.DataFrame({"a": [1, 2], "b": [3, 4]})
 df2 = pl.DataFrame({"a": [5, 6], "c": [7, 8]})
@@ -201,6 +214,7 @@ result = pl.concat([df1, df2], parallel=True)
 ### Use Cases
 
 **Combining data from multiple sources:**
+
 ```python
 # Read multiple files and concatenate
 files = ["data_2023.csv", "data_2024.csv", "data_2025.csv"]
@@ -209,6 +223,7 @@ combined = pl.concat(dfs, how="vertical")
 ```
 
 **Adding computed columns:**
+
 ```python
 base = pl.DataFrame({"value": [1, 2, 3]})
 computed = pl.DataFrame({"doubled": [2, 4, 6]})

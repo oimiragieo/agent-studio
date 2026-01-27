@@ -14,21 +14,23 @@ The conductor-main codebase is a Gemini CLI extension implementing Context-Drive
 
 The following Conductor concepts are already in our codebase:
 
-| Conductor Feature | Our Implementation | Location |
-|-------------------|-------------------|----------|
-| Context artifacts (product.md, tech-stack.md, workflow.md) | `context-driven-development` skill | `.claude/skills/context-driven-development/` |
-| Track lifecycle (spec.md, plan.md, metadata.json) | `track-management` skill | `.claude/skills/track-management/` |
-| TDD workflow, phase checkpoints, git notes, SHA tracking | `workflow-patterns` skill | `.claude/skills/workflow-patterns/` |
-| Conductor validation | `conductor-validator` agent | `.claude/agents/specialized/conductor-validator.md` |
+| Conductor Feature                                          | Our Implementation                 | Location                                            |
+| ---------------------------------------------------------- | ---------------------------------- | --------------------------------------------------- |
+| Context artifacts (product.md, tech-stack.md, workflow.md) | `context-driven-development` skill | `.claude/skills/context-driven-development/`        |
+| Track lifecycle (spec.md, plan.md, metadata.json)          | `track-management` skill           | `.claude/skills/track-management/`                  |
+| TDD workflow, phase checkpoints, git notes, SHA tracking   | `workflow-patterns` skill          | `.claude/skills/workflow-patterns/`                 |
+| Conductor validation                                       | `conductor-validator` agent        | `.claude/agents/specialized/conductor-validator.md` |
 
 ## New Features to Integrate
 
 ### Tier 1: High Value, Direct Integration
 
 #### 1. Code Style Guides (8 templates)
+
 **Source**: `templates/code_styleguides/`
 **Target**: `.claude/templates/code-styles/`
 **Files**:
+
 - `python.md` - Google Python Style Guide Summary
 - `typescript.md` - Google TypeScript Style Guide (gts)
 - `javascript.md` - Google JavaScript Style Guide
@@ -41,9 +43,11 @@ The following Conductor concepts are already in our codebase:
 **Value**: Ready-to-inject style context for agents working in specific languages.
 
 #### 2. Interactive Questionnaire Framework
+
 **Source**: `commands/conductor/setup.toml` (Sections 2.1-2.5)
 **Target**: `.claude/skills/interactive-requirements-gathering/SKILL.md`
 **Key Patterns**:
+
 - A/B/C/D/E multiple choice structure
 - "Additive" vs "Exclusive Choice" question classification
 - Sequential questioning (one at a time)
@@ -53,9 +57,11 @@ The following Conductor concepts are already in our codebase:
 **Value**: Structured human-in-the-loop requirements gathering.
 
 #### 3. Smart Revert
+
 **Source**: `commands/conductor/revert.toml`
 **Target**: `.claude/skills/smart-revert/SKILL.md`
 **Key Features**:
+
 - 4-phase revert protocol
 - Git reconciliation for rewritten history
 - Related commit identification
@@ -66,18 +72,22 @@ The following Conductor concepts are already in our codebase:
 ### Tier 2: Enhancement to Existing Skills
 
 #### 4. Brownfield Analysis Protocol
+
 **Source**: `commands/conductor/setup.toml` (Section 2.0)
 **Target**: Enhance `.claude/skills/project-onboarding/SKILL.md`
 **New Sections**:
+
 - Respect .gitignore/.claudeignore
 - Efficient file triage (head/tail for large files)
 - Tech stack inference from manifests
 - Context-aware questioning
 
 #### 5. Conductor Setup Workflow
+
 **Source**: `commands/conductor/setup.toml`
 **Target**: `.claude/workflows/conductor-setup-workflow.md`
 **Phases**:
+
 1. Project Discovery (greenfield/brownfield detection)
 2. Product Definition (product.md, product-guidelines.md)
 3. Tech Stack Configuration
@@ -88,13 +98,13 @@ The following Conductor concepts are already in our codebase:
 
 These features are already in our skills:
 
-| Conductor Feature | Already In |
-|-------------------|-----------|
-| Git notes pattern | `workflow-patterns` |
-| SHA tracking in plan.md | `track-management` |
-| Phase checkpoint verification | `workflow-patterns` |
-| TDD Red-Green-Refactor | `workflow-patterns`, `tdd` skill |
-| Track types (feature/bug/chore/refactor) | `track-management` |
+| Conductor Feature                        | Already In                       |
+| ---------------------------------------- | -------------------------------- |
+| Git notes pattern                        | `workflow-patterns`              |
+| SHA tracking in plan.md                  | `track-management`               |
+| Phase checkpoint verification            | `workflow-patterns`              |
+| TDD Red-Green-Refactor                   | `workflow-patterns`, `tdd` skill |
+| Track types (feature/bug/chore/refactor) | `track-management`               |
 
 ## Integration Checklist
 

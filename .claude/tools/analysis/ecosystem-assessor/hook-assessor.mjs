@@ -19,7 +19,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 function findProjectRoot() {
   let dir = __dirname;
   let prevDir = '';
-  while (dir !== prevDir) {  // Stop when we reach the root (dirname returns same path)
+  while (dir !== prevDir) {
+    // Stop when we reach the root (dirname returns same path)
     // Check if this directory contains a .claude folder (project root)
     if (existsSync(join(dir, '.claude'))) return dir;
     prevDir = dir;
@@ -39,7 +40,16 @@ const SETTINGS_PATH = join(ROOT, '.claude', 'settings.json');
 const HOOK_PATTERNS = {
   // Financial/Payment - needs validation and audit
   financial: {
-    keywords: ['payment', 'financial', 'money', 'transaction', 'billing', 'invoice', 'price', 'cost'],
+    keywords: [
+      'payment',
+      'financial',
+      'money',
+      'transaction',
+      'billing',
+      'invoice',
+      'price',
+      'cost',
+    ],
     hooks: [
       {
         type: 'PreToolUse',
@@ -60,7 +70,20 @@ const HOOK_PATTERNS = {
 
   // Security/Auth - needs scope validation
   security: {
-    keywords: ['security', 'auth', 'password', 'token', 'jwt', 'oauth', 'credential', 'secret', 'encrypt', 'permission', 'role', 'access'],
+    keywords: [
+      'security',
+      'auth',
+      'password',
+      'token',
+      'jwt',
+      'oauth',
+      'credential',
+      'secret',
+      'encrypt',
+      'permission',
+      'role',
+      'access',
+    ],
     hooks: [
       {
         type: 'PreToolUse',
@@ -81,7 +104,19 @@ const HOOK_PATTERNS = {
 
   // Database/Migration - needs backup and dry-run
   database: {
-    keywords: ['database', 'migration', 'schema', 'sql', 'query', 'table', 'column', 'index', 'postgres', 'mysql', 'sqlite'],
+    keywords: [
+      'database',
+      'migration',
+      'schema',
+      'sql',
+      'query',
+      'table',
+      'column',
+      'index',
+      'postgres',
+      'mysql',
+      'sqlite',
+    ],
     hooks: [
       {
         type: 'PreToolUse',
@@ -102,7 +137,17 @@ const HOOK_PATTERNS = {
 
   // Deployment/Release - needs approval gate
   deployment: {
-    keywords: ['deploy', 'release', 'production', 'staging', 'publish', 'rollout', 'ci', 'cd', 'pipeline'],
+    keywords: [
+      'deploy',
+      'release',
+      'production',
+      'staging',
+      'publish',
+      'rollout',
+      'ci',
+      'cd',
+      'pipeline',
+    ],
     hooks: [
       {
         type: 'PreToolUse',
@@ -144,7 +189,17 @@ const HOOK_PATTERNS = {
 
   // API/External - needs response validation
   external: {
-    keywords: ['api', 'external', 'third-party', 'webhook', 'http', 'rest', 'graphql', 'fetch', 'request'],
+    keywords: [
+      'api',
+      'external',
+      'third-party',
+      'webhook',
+      'http',
+      'rest',
+      'graphql',
+      'fetch',
+      'request',
+    ],
     hooks: [
       {
         type: 'PostToolUse',
@@ -165,7 +220,17 @@ const HOOK_PATTERNS = {
 
   // Infrastructure - needs state protection
   infrastructure: {
-    keywords: ['terraform', 'infrastructure', 'cloud', 'aws', 'gcp', 'azure', 'k8s', 'kubernetes', 'docker'],
+    keywords: [
+      'terraform',
+      'infrastructure',
+      'cloud',
+      'aws',
+      'gcp',
+      'azure',
+      'k8s',
+      'kubernetes',
+      'docker',
+    ],
     hooks: [
       {
         type: 'PreToolUse',
@@ -314,7 +379,10 @@ main();
  */
 function extractKeywords(text) {
   if (!text) return new Set();
-  const words = text.toLowerCase().split(/\W+/).filter(w => w.length > 2);
+  const words = text
+    .toLowerCase()
+    .split(/\W+/)
+    .filter(w => w.length > 2);
   return new Set(words);
 }
 
@@ -347,9 +415,8 @@ function getExistingHooks() {
  * Check if a similar hook already exists
  */
 function hookExists(recommendation, existingHooks) {
-  return existingHooks.some(h =>
-    h.trigger === recommendation.type &&
-    h.command.includes(recommendation.template)
+  return existingHooks.some(
+    h => h.trigger === recommendation.type && h.command.includes(recommendation.template)
   );
 }
 
@@ -422,7 +489,8 @@ export function getAvailableTemplates() {
 
 // CLI usage - normalize paths for Windows compatibility
 const scriptPath = process.argv[1] || '';
-const isMain = import.meta.url === `file://${scriptPath}` ||
+const isMain =
+  import.meta.url === `file://${scriptPath}` ||
   import.meta.url === `file:///${scriptPath.replace(/\\/g, '/')}`;
 if (isMain) {
   const args = process.argv.slice(2);

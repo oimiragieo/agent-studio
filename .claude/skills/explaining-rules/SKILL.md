@@ -60,15 +60,15 @@ Match file patterns to relevant skills (e.g., `.tsx` files → react-expert, typ
 
 Match technologies to expert skills:
 
-| Technology | Skill |
-|------------|-------|
-| React, JSX | react-expert |
-| TypeScript | typescript-expert |
-| Next.js | nextjs-expert |
-| Python | python-backend-expert |
-| Node.js | nodejs-expert |
-| Database | database-expert |
-| Testing | testing-expert |
+| Technology | Skill                 |
+| ---------- | --------------------- |
+| React, JSX | react-expert          |
+| TypeScript | typescript-expert     |
+| Next.js    | nextjs-expert         |
+| Python     | python-backend-expert |
+| Node.js    | nodejs-expert         |
+| Database   | database-expert       |
+| Testing    | testing-expert        |
 
 ### Step 5: Load Relevant Skills
 
@@ -88,7 +88,7 @@ For each relevant skill, explain:
 - **Why it applies**: Connection to the file/query
 - **Key requirements**: Most important standards
 - **Examples**: Code examples showing compliance
-</execution_process>
+  </execution_process>
 
 <best_practices>
 
@@ -97,8 +97,8 @@ For each relevant skill, explain:
 3. **Use Examples**: Show code examples from the rule files
 4. **Progressive Disclosure**: Load only relevant rules, not all 1,081
 5. **Context-Aware**: Adapt explanation to user's experience level
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <formatting_example>
@@ -123,6 +123,7 @@ Structure explanations clearly:
 </examples>
 
 ## Rules
+
 - Scan skills directory to find applicable skills
 - Explain why skills apply, not just what they say
 - Focus on 3-5 most relevant skills
@@ -130,11 +131,13 @@ Structure explanations clearly:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

@@ -1,6 +1,6 @@
 ---
 name: insight-extraction
-description: "Extract actionable insights from completed coding sessions. Use when a session completes to capture learnings for future sessions."
+description: 'Extract actionable insights from completed coding sessions. Use when a session completes to capture learnings for future sessions.'
 version: 1.0.0
 model: sonnet
 invoked_by: both
@@ -26,12 +26,14 @@ Analyze completed coding sessions and extract structured learnings for the memor
 ## When to Use
 
 **Always:**
+
 - After completing a coding task
 - After fixing bugs
 - After discovering new patterns
 - After failed attempts (especially valuable)
 
 **Exceptions:**
+
 - Trivial changes with no learnings
 - Documentation-only changes
 
@@ -78,6 +80,7 @@ For each modified file, extract:
 - **Gotchas**: Any file-specific traps?
 
 **Good example:**
+
 ```json
 {
   "path": "src/stores/terminal-store.ts",
@@ -89,6 +92,7 @@ For each modified file, extract:
 ```
 
 **Bad example (too vague):**
+
 ```json
 {
   "path": "src/stores/terminal-store.ts",
@@ -108,6 +112,7 @@ Only extract patterns that are **reusable**:
 - Reference a concrete example in the codebase
 
 **Good example:**
+
 ```json
 {
   "pattern": "Use e.stopPropagation() on interactive elements inside containers with onClick handlers",
@@ -125,6 +130,7 @@ Must be **specific** and **actionable**:
 - Avoid generic advice ("be careful with X")
 
 **Good example:**
+
 ```json
 {
   "gotcha": "Terminal header onClick steals focus from child interactive elements",
@@ -163,17 +169,21 @@ Create the structured insight output:
 # Session Insights: [Task Name]
 
 ## Date
+
 [timestamp]
 
 ## Task
+
 [Description of what was being implemented]
 
 ## Outcome
+
 [SUCCESS/FAILURE]
 
 ## File Insights
 
 ### [file-path]
+
 - **Purpose**: [what this file does]
 - **Changes**: [what was changed and why]
 - **Patterns**: [patterns used]
@@ -182,6 +192,7 @@ Create the structured insight output:
 ## Patterns Discovered
 
 ### [Pattern Name]
+
 - **Pattern**: [description]
 - **Applies to**: [when to use]
 - **Example**: [file or code reference]
@@ -189,6 +200,7 @@ Create the structured insight output:
 ## Gotchas Discovered
 
 ### [Gotcha Name]
+
 - **Issue**: [what to avoid]
 - **Trigger**: [what causes it]
 - **Solution**: [how to handle]
@@ -196,15 +208,19 @@ Create the structured insight output:
 ## Approach Analysis
 
 ### What Worked
+
 [Description of successful approach]
 
 ### What Failed (if applicable)
+
 [Description of failed approaches and why]
 
 ### Alternatives Tried
+
 [List of other approaches attempted]
 
 ## Recommendations for Future Sessions
+
 1. [Specific recommendation 1]
 2. [Specific recommendation 2]
 ```
@@ -216,6 +232,7 @@ Save to `.claude/context/memory/learnings.md` (append).
 ### Empty or Minimal Diff
 
 If the diff is very small or empty:
+
 - Still extract file purposes if you can infer them
 - Note that the session made minimal changes
 - Focus on recommendations for next steps
@@ -223,6 +240,7 @@ If the diff is very small or empty:
 ### Failed Session
 
 If the session failed:
+
 - Focus on **why it failed** - this is the most valuable insight
 - Extract what was learned from the failure
 - Recommendations should address how to succeed next time
@@ -279,6 +297,7 @@ This skill works well with:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

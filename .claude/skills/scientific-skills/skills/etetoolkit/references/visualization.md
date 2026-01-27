@@ -3,6 +3,7 @@
 Complete guide to tree visualization with ETE Toolkit.
 
 ## Table of Contents
+
 1. [Rendering Basics](#rendering-basics)
 2. [TreeStyle Configuration](#treestyle-configuration)
 3. [Node Styling](#node-styling)

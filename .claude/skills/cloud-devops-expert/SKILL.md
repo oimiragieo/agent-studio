@@ -34,6 +34,7 @@ You help developers write better code by applying established guidelines and bes
 ### AWS Cloud Patterns
 
 **Core Services:**
+
 - **Compute**: EC2, Lambda (serverless), ECS/EKS (containers), Fargate
 - **Storage**: S3 (object), EBS (block), EFS (file system)
 - **Database**: RDS (relational), DynamoDB (NoSQL), Aurora (MySQL/PostgreSQL)
@@ -41,6 +42,7 @@ You help developers write better code by applying established guidelines and bes
 - **Monitoring**: CloudWatch (metrics, logs, alarms)
 
 **Best Practices:**
+
 - Use AWS Organizations for multi-account management
 - Implement least privilege with IAM roles and policies
 - Enable CloudTrail for audit logging
@@ -50,6 +52,7 @@ You help developers write better code by applying established guidelines and bes
 ### GCP (Google Cloud Platform) Patterns
 
 **Core Services:**
+
 - **Compute**: Compute Engine (VMs), Cloud Functions (serverless), GKE (Kubernetes)
 - **Storage**: Cloud Storage (object), Persistent Disk (block)
 - **Database**: Cloud SQL, Cloud Spanner, Firestore
@@ -57,6 +60,7 @@ You help developers write better code by applying established guidelines and bes
 - **Monitoring**: Cloud Monitoring, Cloud Logging
 
 **Best Practices:**
+
 - Use Google Cloud Identity for centralized identity management
 - Implement VPC Service Controls for security perimeters
 - Enable Cloud Audit Logs for compliance
@@ -65,6 +69,7 @@ You help developers write better code by applying established guidelines and bes
 ### Azure Patterns
 
 **Core Services:**
+
 - **Compute**: Virtual Machines, Azure Functions, AKS (Kubernetes), Container Instances
 - **Storage**: Blob Storage, Azure Files, Managed Disks
 - **Database**: Azure SQL, Cosmos DB (NoSQL), PostgreSQL/MySQL
@@ -72,6 +77,7 @@ You help developers write better code by applying established guidelines and bes
 - **Monitoring**: Azure Monitor, Log Analytics
 
 **Best Practices:**
+
 - Use Azure AD for identity and access management
 - Implement Azure Policy for governance
 - Enable Azure Security Center for threat protection
@@ -80,6 +86,7 @@ You help developers write better code by applying established guidelines and bes
 ### Terraform Best Practices
 
 **Project Structure:**
+
 ```
 terraform/
 ├── environments/
@@ -98,6 +105,7 @@ terraform/
 ```
 
 **Code Organization:**
+
 - Use modules for reusable infrastructure components
 - Separate environments with workspaces or directories
 - Store state remotely (S3 + DynamoDB for AWS, GCS for GCP, Azure Blob for Azure)
@@ -105,6 +113,7 @@ terraform/
 - Never commit secrets (use AWS Secrets Manager, HashiCorp Vault, etc.)
 
 **Terraform Workflow:**
+
 ```bash
 # Initialize
 terraform init
@@ -120,6 +129,7 @@ terraform destroy
 ```
 
 **Best Practices:**
+
 - Use `terraform fmt` for consistent formatting
 - Use `terraform validate` to check syntax
 - Implement state locking to prevent concurrent modifications
@@ -131,12 +141,14 @@ terraform destroy
 ### Kubernetes Deployment Patterns
 
 **Deployment Strategies:**
+
 - **Rolling Update**: Gradual replacement of pods (default)
 - **Blue/Green**: Run two identical environments, switch traffic
 - **Canary**: Gradual traffic shift to new version
 - **Recreate**: Terminate old pods before creating new ones (downtime)
 
 **Resource Management:**
+
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -153,26 +165,27 @@ spec:
         app: myapp
     spec:
       containers:
-      - name: myapp
-        image: myapp:v1.0.0
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: 8080
+        - name: myapp
+          image: myapp:v1.0.0
+          resources:
+            requests:
+              memory: '256Mi'
+              cpu: '250m'
+            limits:
+              memory: '512Mi'
+              cpu: '500m'
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
 ```
 
 **Best Practices:**
+
 - Use namespaces for environment/team isolation
 - Implement RBAC for access control
 - Define resource requests and limits
@@ -184,6 +197,7 @@ spec:
 ### CI/CD Pipeline Patterns
 
 **GitHub Actions Example:**
+
 ```yaml
 name: CI/CD Pipeline
 
@@ -221,6 +235,7 @@ jobs:
 ```
 
 **Best Practices:**
+
 - Implement automated testing (unit, integration, e2e)
 - Use matrix builds for multi-platform testing
 - Cache dependencies to speed up builds
@@ -232,18 +247,21 @@ jobs:
 ### Infrastructure as Code (IaC) Principles
 
 **Version Control:**
+
 - Store all infrastructure code in Git
 - Use pull requests for code review
 - Implement branch protection rules
 - Tag releases for production deployments
 
 **Testing:**
+
 - Use `terraform plan` to preview changes
 - Implement policy-as-code with Sentinel, OPA, or Checkov
 - Use `tflint` for Terraform linting
 - Test modules in isolation
 
 **Documentation:**
+
 - Document module inputs and outputs
 - Maintain README files for each module
 - Use terraform-docs to auto-generate documentation
@@ -253,24 +271,28 @@ jobs:
 **The Three Pillars:**
 
 **Metrics** (Prometheus + Grafana)
+
 - Use Prometheus for metrics collection
 - Define SLIs (Service Level Indicators)
 - Set up alerting rules
 - Create Grafana dashboards for visualization
 
 **Logs** (ELK Stack, CloudWatch, Cloud Logging)
+
 - Centralize logs from all services
 - Implement structured logging (JSON format)
 - Use log aggregation and parsing
 - Set up log-based alerts
 
 **Traces** (Jaeger, Zipkin, X-Ray)
+
 - Implement distributed tracing
 - Track request flow across microservices
 - Identify performance bottlenecks
 - Correlate traces with logs and metrics
 
 **Observability Best Practices:**
+
 - Define SLOs (Service Level Objectives) and SLAs
 - Implement health check endpoints
 - Use APM (Application Performance Monitoring) tools
@@ -280,17 +302,20 @@ jobs:
 ### Container Orchestration (Kubernetes)
 
 **Helm Charts:**
+
 - Use Helm for package management
 - Create reusable chart templates
 - Use values files for environment-specific configuration
 - Version and publish charts to chart repository
 
 **Kubernetes Operators:**
+
 - Automate operational tasks
 - Manage complex stateful applications
 - Examples: Prometheus Operator, Postgres Operator
 
 **Service Mesh (Istio, Linkerd):**
+
 - Implement traffic management (canary, blue/green)
 - Enable mutual TLS for service-to-service communication
 - Implement circuit breakers and retries
@@ -299,6 +324,7 @@ jobs:
 ### Cost Optimization
 
 **AWS Cost Optimization:**
+
 - Use Reserved Instances or Savings Plans for predictable workloads
 - Implement auto-scaling to match demand
 - Use S3 lifecycle policies to transition to cheaper storage classes
@@ -306,6 +332,7 @@ jobs:
 - Right-size instances based on usage metrics
 
 **Multi-Cloud Cost Management:**
+
 - Use tags/labels for cost allocation
 - Implement chargeback models for team accountability
 - Use spot/preemptible instances for non-critical workloads
@@ -314,12 +341,14 @@ jobs:
 ### Cloudflare Developer Platform
 
 **Cloudflare Workers & Pages:**
+
 - Edge computing platform for serverless functions
 - Deploy at the edge (close to users globally)
 - Use Workers KV for edge key-value storage
 - Use Durable Objects for stateful applications
 
 **Cloudflare Primitives:**
+
 - **R2**: S3-compatible object storage (no egress fees)
 - **D1**: SQLite-based serverless database
 - **KV**: Key-value storage (globally distributed)
@@ -328,6 +357,7 @@ jobs:
 - **Vectorize**: Vector database for embeddings
 
 **Configuration (wrangler.toml):**
+
 ```toml
 name = "my-worker"
 main = "src/index.ts"
@@ -347,7 +377,6 @@ database_name = "my-db"
 database_id = "xxx"
 ```
 
-
 </instructions>
 
 <examples>
@@ -361,6 +390,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
+
 - cloudflare-developer-tools-rule
 
 ## Related Skills
@@ -370,6 +400,7 @@ This expert skill consolidates 1 individual skills:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

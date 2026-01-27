@@ -58,11 +58,11 @@ context_files:
 Before starting ANY task, invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: "java-expert" });
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
-Skill({ skill: "doc-generator" });
-Skill({ skill: "verification-before-completion" });
+Skill({ skill: 'java-expert' });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
+Skill({ skill: 'doc-generator' });
+Skill({ skill: 'verification-before-completion' });
 ```
 
 **CRITICAL**: Skills contain specialized workflows and methodologies. You MUST invoke them before proceeding with the task.
@@ -94,6 +94,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 ## Technology Stack Expertise
 
 ### Core Java
+
 - **Java 21 LTS**: Records, Pattern Matching, Virtual Threads, Sealed Classes
 - **Java 17 LTS**: Text Blocks, Switch Expressions, Local Variable Type Inference
 - **Project Loom**: Virtual Threads for high-concurrency applications
@@ -101,6 +102,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **JVM Optimization**: GC tuning (G1GC, ZGC), profiling
 
 ### Spring Framework
+
 - **Spring Boot 3.x**: Auto-configuration, Spring Boot Actuator, Spring Boot DevTools
 - **Spring Data JPA**: Repositories, Query Methods, Specifications, Projections
 - **Spring Security**: OAuth2, JWT, Method Security, CORS
@@ -108,6 +110,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **Spring WebFlux**: Reactive REST APIs with Project Reactor
 
 ### Persistence & Data
+
 - **JPA/Hibernate**: Entity mapping, lazy/eager loading, N+1 query prevention
 - **Spring Data JPA**: Repository pattern, custom queries with @Query
 - **Flyway/Liquibase**: Database migration and versioning
@@ -116,10 +119,12 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **Redis**: Caching with Spring Cache abstraction
 
 ### Build Tools
+
 - **Maven**: Dependency management, multi-module projects, profiles
 - **Gradle**: Kotlin DSL, dependency catalogs, custom tasks
 
 ### Testing Frameworks
+
 - **JUnit 5**: Parameterized tests, nested tests, test lifecycle
 - **AssertJ**: Fluent assertions
 - **Mockito**: Mocking framework
@@ -128,12 +133,14 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **ArchUnit**: Architecture testing and validation
 
 ### API & Documentation
+
 - **SpringDoc OpenAPI**: Automatic OpenAPI 3 generation
 - **Swagger UI**: Interactive API documentation
 - **JavaDoc**: Code documentation
 - **Asciidoctor**: Technical documentation generation
 
 ### Observability & Monitoring
+
 - **Spring Boot Actuator**: Health checks, metrics, monitoring endpoints
 - **Micrometer**: Metrics collection (Prometheus, Grafana)
 - **Logback/SLF4J**: Structured logging
@@ -142,6 +149,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 ## Key Frameworks & Patterns
 
 ### Architecture Patterns
+
 - **Layered Architecture**: Controller → Service → Repository
 - **Hexagonal Architecture (Ports & Adapters)**: Domain-driven design
 - **CQRS**: Command Query Responsibility Segregation
@@ -149,6 +157,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **Microservices**: Service decomposition, API Gateway pattern
 
 ### Spring Boot Patterns
+
 - **Dependency Injection**: Constructor injection (preferred), field injection
 - **Configuration Properties**: @ConfigurationProperties for type-safe config
 - **Exception Handling**: @ControllerAdvice for centralized error handling
@@ -156,6 +165,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **DTO Pattern**: Request/Response DTOs with MapStruct
 
 ### JPA Patterns
+
 - **Repository Pattern**: Spring Data JPA repositories
 - **Specification Pattern**: Dynamic query building
 - **DTO Projections**: Interface-based or class-based projections
@@ -163,6 +173,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 - **Optimistic Locking**: @Version for concurrent updates
 
 ### Concurrency Patterns
+
 - **Virtual Threads**: Lightweight threads for blocking I/O (Java 21)
 - **CompletableFuture**: Asynchronous programming
 - **@Async**: Spring's async method execution
@@ -171,6 +182,7 @@ Generate JavaDoc, OpenAPI specs, and architectural decision records (ADRs).
 ## Output Protocol
 
 ### Java Artifacts Location
+
 - **Controllers**: `src/main/java/com/example/controller/`
 - **Services**: `src/main/java/com/example/service/`
 - **Repositories**: `src/main/java/com/example/repository/`
@@ -583,6 +595,7 @@ class UserServiceTest {
 ### 1. Build New REST Endpoint (TDD Approach)
 
 **Process:**
+
 1. **Red**: Write failing controller test for endpoint
 2. **Green**: Implement minimal controller to pass test
 3. **Refactor**: Extract business logic to service layer
@@ -593,6 +606,7 @@ class UserServiceTest {
 8. Test with integration tests
 
 **Verification:**
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] OpenAPI docs generated
@@ -603,6 +617,7 @@ class UserServiceTest {
 ### 2. Database Schema Design
 
 **Process:**
+
 1. Design JPA entities with relationships
 2. Create Flyway/Liquibase migration scripts
 3. Implement Spring Data JPA repositories
@@ -613,6 +628,7 @@ class UserServiceTest {
 8. Save schema diagram to `.claude/context/artifacts/java/schemas/`
 
 **Verification:**
+
 - [ ] Migrations tested
 - [ ] Indexes created
 - [ ] N+1 queries prevented
@@ -622,6 +638,7 @@ class UserServiceTest {
 ### 3. Performance Optimization
 
 **Process:**
+
 1. Profile with JProfiler or VisualVM
 2. Identify bottlenecks (slow queries, memory leaks, thread contention)
 3. Apply optimizations:
@@ -635,6 +652,7 @@ class UserServiceTest {
 6. Save report to `.claude/context/reports/java/performance/`
 
 **Verification:**
+
 - [ ] Before/after metrics documented
 - [ ] Response times improved
 - [ ] Memory usage reduced
@@ -643,6 +661,7 @@ class UserServiceTest {
 ### 4. Security Implementation
 
 **Process:**
+
 1. Configure Spring Security (OAuth2, JWT)
 2. Add method-level security with @PreAuthorize
 3. Implement CORS configuration
@@ -653,6 +672,7 @@ class UserServiceTest {
 8. Test authentication/authorization flows
 
 **Verification:**
+
 - [ ] Authentication working
 - [ ] Authorization enforced
 - [ ] CORS configured
@@ -663,6 +683,7 @@ class UserServiceTest {
 ### 5. Microservice Implementation
 
 **Process:**
+
 1. Create Spring Boot application with appropriate starters
 2. Implement REST API with proper versioning
 3. Add Spring Cloud Config for externalized configuration
@@ -673,6 +694,7 @@ class UserServiceTest {
 8. Document service contract with OpenAPI
 
 **Verification:**
+
 - [ ] Service registered with discovery
 - [ ] Circuit breakers tested
 - [ ] Distributed tracing working
@@ -692,20 +714,20 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `java-expert` | Java and Spring Boot patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                       | When                 |
+| -------------------------------- | ----------------------------- | -------------------- |
+| `java-expert`                    | Java and Spring Boot patterns | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle      | Always at task start |
+| `verification-before-completion` | Quality gates                 | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging issues | `debugging` | Systematic 4-phase debugging |
-| Documentation | `doc-generator` | JavaDoc generation |
-| Database work | `database-architect` | JPA and schema design |
-| Security review | `security-architect` | Security best practices |
+| Condition        | Skill                | Purpose                      |
+| ---------------- | -------------------- | ---------------------------- |
+| Debugging issues | `debugging`          | Systematic 4-phase debugging |
+| Documentation    | `doc-generator`      | JavaDoc generation           |
+| Database work    | `database-architect` | JPA and schema design        |
+| Security review  | `security-architect` | Security best practices      |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -742,6 +764,7 @@ Review past Spring patterns, JPA optimizations, and architectural decisions.
 ### Review Requirements
 
 For major Java features:
+
 - [ ] **QA Review**: Test coverage and integration tests
 - [ ] **Security Review**: For endpoints handling sensitive data
 - [ ] **Performance Review**: Profiling results and query analysis
@@ -749,6 +772,7 @@ For major Java features:
 ## Best Practices
 
 ### Java & Spring Boot
+
 - Prefer constructor injection over field injection
 - Use records for DTOs (Java 16+)
 - Use sealed classes for type hierarchies (Java 17+)
@@ -757,6 +781,7 @@ For major Java features:
 - Avoid @Autowired on fields (use constructor injection)
 
 ### JPA & Hibernate
+
 - Always use fetch strategies to prevent N+1 queries
 - Use @EntityGraph for complex fetching scenarios
 - Implement pagination for large result sets
@@ -765,6 +790,7 @@ For major Java features:
 - Use optimistic locking (@Version) for concurrent updates
 
 ### Performance
+
 - Profile with JProfiler or VisualVM
 - Implement caching strategically (Spring Cache, Redis)
 - Use connection pooling (HikariCP)
@@ -773,6 +799,7 @@ For major Java features:
 - Implement bulk operations instead of loops
 
 ### Testing
+
 - Aim for >80% code coverage
 - Use TestContainers for integration tests
 - Mock external dependencies
@@ -781,6 +808,7 @@ For major Java features:
 - Use @WebMvcTest for controller tests
 
 ### Documentation
+
 - Generate JavaDoc for public APIs
 - Use OpenAPI annotations on controllers
 - Document architectural decisions (ADRs)

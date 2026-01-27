@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
   - Include 'nativewind/babel' in the plugins array.
   - Avoid using jsxImportSource in presets.
   - Ensure 'react-native-reanimated/plugin' follows 'nativewind/babel'.
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

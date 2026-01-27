@@ -28,6 +28,7 @@ Creates specialized AI agents on-demand for capabilities that don't have existin
 ```
 
 **Verification:**
+
 ```bash
 grep "<agent-name>" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md ROUTING TABLE NOT UPDATED!"
 ```
@@ -44,14 +45,14 @@ grep "<agent-name>" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md ROUTING TABLE NO
 
 ## Quick Reference
 
-| Operation | Method |
-|-----------|--------|
-| Check existing agents | `Glob: .claude/agents/**/*.md` |
-| Research domain | `WebSearch: "<topic> best practices 2026"` |
-| Find relevant skills | `Glob: .claude/skills/*/SKILL.md` |
-| Create agent | Write to `.claude/agents/<category>/<name>.md` |
-| Spawn agent | `Task` tool with new `subagent_type` |
-| Run in terminal | `claude -p "prompt" --allowedTools "..."` |
+| Operation             | Method                                         |
+| --------------------- | ---------------------------------------------- |
+| Check existing agents | `Glob: .claude/agents/**/*.md`                 |
+| Research domain       | `WebSearch: "<topic> best practices 2026"`     |
+| Find relevant skills  | `Glob: .claude/skills/*/SKILL.md`              |
+| Create agent          | Write to `.claude/agents/<category>/<name>.md` |
+| Spawn agent           | `Task` tool with new `subagent_type`           |
+| Run in terminal       | `claude -p "prompt" --allowedTools "..."`      |
 
 ## Agent Creation Process
 
@@ -64,6 +65,7 @@ Grep: "<topic>" in .claude/agents/
 ```
 
 If a suitable agent exists, use it instead. Check:
+
 - Core agents: `.claude/agents/core/`
 - Specialized agents: `.claude/agents/specialized/`
 - Orchestrators: `.claude/agents/orchestrators/`
@@ -78,6 +80,7 @@ WebSearch: "<topic> tools frameworks methodologies"
 ```
 
 **Research goals:**
+
 - Current best practices and industry standards
 - Popular tools, frameworks, and methodologies
 - Expert techniques and evaluation criteria
@@ -90,15 +93,16 @@ Before designing the agent, you MUST research keywords that users will use to in
 #### Required Actions
 
 1. **Execute Exa Searches** (minimum 3 queries):
+
    ```javascript
    // Query 1: Role-specific tasks
-   mcp__Exa__web_search_exa({ query: "[agent-role] common tasks responsibilities" })
+   mcp__Exa__web_search_exa({ query: '[agent-role] common tasks responsibilities' });
 
    // Query 2: Industry terminology
-   mcp__Exa__web_search_exa({ query: "[agent-role] terminology keywords phrases" })
+   mcp__Exa__web_search_exa({ query: '[agent-role] terminology keywords phrases' });
 
    // Query 3: Problem types
-   mcp__Exa__web_search_exa({ query: "[agent-role] problem types use cases" })
+   mcp__Exa__web_search_exa({ query: '[agent-role] problem types use cases' });
    ```
 
 2. **Document Keywords** (save to research report):
@@ -111,6 +115,7 @@ Before designing the agent, you MUST research keywords that users will use to in
    Save to: `.claude/context/artifacts/research-reports/agent-keywords-[agent-name].md`
 
 #### Validation Gate
+
 - [ ] Minimum 3 Exa searches executed
 - [ ] Keywords documented with confidence levels
 - [ ] Research report saved
@@ -156,29 +161,30 @@ Grep: "<related-term>" in .claude/skills/
 
 ### Step 4: Determine Agent Configuration
 
-| Agent Type | Use When | Model | Temperature |
-|------------|----------|-------|-------------|
-| Worker | Executes tasks directly | sonnet | 0.3 |
-| Analyst | Research, review, evaluation | sonnet | 0.4 |
-| Specialist | Deep domain expertise | opus | 0.4 |
-| Advisor | Strategic guidance, consulting | opus | 0.5 |
+| Agent Type | Use When                       | Model  | Temperature |
+| ---------- | ------------------------------ | ------ | ----------- |
+| Worker     | Executes tasks directly        | sonnet | 0.3         |
+| Analyst    | Research, review, evaluation   | sonnet | 0.4         |
+| Specialist | Deep domain expertise          | opus   | 0.4         |
+| Advisor    | Strategic guidance, consulting | opus   | 0.5         |
 
-| Category | Directory | Examples |
-|----------|-----------|----------|
-| Core | `.claude/agents/core/` | developer, planner, architect |
-| Specialized | `.claude/agents/specialized/` | security-architect, devops |
-| Domain Expert | `.claude/agents/domain/` | ux-reviewer, data-scientist |
-| Orchestrator | `.claude/agents/orchestrators/` | master-orchestrator |
+| Category      | Directory                       | Examples                      |
+| ------------- | ------------------------------- | ----------------------------- |
+| Core          | `.claude/agents/core/`          | developer, planner, architect |
+| Specialized   | `.claude/agents/specialized/`   | security-architect, devops    |
+| Domain Expert | `.claude/agents/domain/`        | ux-reviewer, data-scientist   |
+| Orchestrator  | `.claude/agents/orchestrators/` | master-orchestrator           |
 
 ### Step 5: Generate Agent Definition (WITH SKILL LOADING)
 
 **CRITICAL**: The generated agent MUST include:
+
 1. Skills listed in frontmatter `skills:` array
 2. "Step 0: Load Skills" in the Workflow section with ACTUAL skill paths
 
 Write to `.claude/agents/<category>/<agent-name>.md`:
 
-```yaml
+````yaml
 ---
 name: <agent-name>
 description: <One sentence: what it does AND when to use it. Be specific about trigger conditions.>
@@ -228,7 +234,7 @@ Invoke your assigned skills using the Skill tool:
 ```javascript
 Skill({ skill: 'doc-generator' });
 Skill({ skill: 'diagram-generator' });
-```
+````
 
 > **CRITICAL**: Do NOT just read SKILL.md files. Use the `Skill()` tool to invoke skill workflows.
 > Reading a skill file does not apply it. Invoking with `Skill()` loads AND applies the workflow.
@@ -280,8 +286,8 @@ When executing tasks, follow this 8-step approach:
 
 ## Example Interactions
 
-| User Request | Agent Action |
-|--------------|--------------|
+| User Request          | Agent Action         |
+| --------------------- | -------------------- |
 | "<example request 1>" | <how agent responds> |
 | "<example request 2>" | <how agent responds> |
 | "<example request 3>" | <how agent responds> |
@@ -296,6 +302,7 @@ When executing tasks, follow this 8-step approach:
 > Minimum 8 examples required.
 
 ## Output Locations
+
 - Deliverables: `.claude/context/artifacts/`
 - Reports: `.claude/context/reports/`
 - Temporary files: `.claude/context/tmp/`
@@ -322,8 +329,8 @@ TaskUpdate({
   status: 'completed',
   metadata: {
     summary: 'Brief description of what was done',
-    filesModified: ['list', 'of', 'files']
-  }
+    filesModified: ['list', 'of', 'files'],
+  },
 });
 
 // 5. Check for next available task
@@ -331,23 +338,28 @@ TaskList();
 ```
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work
 
 **Why This Matters:**
+
 - Progress is visible to Router and other agents
 - Work survives context resets
 - No duplicate work (tasks have owners)
 - Dependencies are respected (blocked tasks can't start)
 
 ## Memory Protocol (MANDATORY)
+
 **Before starting any task:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing work, record findings:**
+
 - New pattern/solution -> Append to `.claude/context/memory/learnings.md`
 - Roadblock/issue -> Append to `.claude/context/memory/issues.md`
 - Decision made -> Append to `.claude/context/memory/decisions.md`
@@ -355,6 +367,7 @@ cat .claude/context/memory/learnings.md
 **During long tasks:** Use `.claude/context/memory/active_context.md` as scratchpad.
 
 > ASSUME INTERRUPTION: Your context may reset. If it's not in memory, it didn't happen.
+
 ```
 
 ### Reference Agent (MANDATORY COMPARISON)
@@ -364,6 +377,7 @@ cat .claude/context/memory/learnings.md
 Before finalizing any agent, compare against python-pro.md structure:
 
 ```
+
 [ ] Has all sections python-pro has (Core Persona, Capabilities, Workflow, Response Approach, Behavioral Traits, Example Interactions, Skill Invocation Protocol, Memory Protocol)
 [ ] Section order matches python-pro
 [ ] Level of detail is comparable
@@ -371,6 +385,7 @@ Before finalizing any agent, compare against python-pro.md structure:
 [ ] Example Interactions has 8+ items (domain-specific)
 [ ] Response Approach has 8 numbered steps
 [ ] Skill Invocation Protocol includes Automatic and Contextual skills tables
+
 ```
 
 **Why python-pro is the reference:**
@@ -401,6 +416,7 @@ Before finalizing any agent, compare against python-pro.md structure:
 
 **Validation checklist before writing:**
 ```
+
 [ ] name: defined and kebab-case
 [ ] description: single line, describes trigger conditions
 [ ] model: one of sonnet/opus/haiku
@@ -411,7 +427,8 @@ Before finalizing any agent, compare against python-pro.md structure:
 [ ] Response Approach section present with 8 steps
 [ ] Behavioral Traits section present with 10+ traits
 [ ] Example Interactions section present with 8+ examples
-```
+
+````
 
 **Model Validation (CRITICAL):**
 - model field MUST be base name only: `haiku`, `sonnet`, or `opus`
@@ -448,7 +465,8 @@ After agent file is written, you MUST update the CLAUDE.md routing table:
 2. **Generate routing entry**:
    ```markdown
    | {request_type} | `{agent_name}` | `.claude/agents/{category}/{agent_name}.md` |
-   ```
+````
+
 3. **Find correct insertion point** (alphabetical within category, or at end of relevant section)
 4. **Insert using Edit tool**
 5. **Verify with**:
@@ -469,6 +487,7 @@ After updating CLAUDE.md, you MUST register the agent in router-enforcer.cjs:
 #### Required Updates
 
 1. **Add to `intentKeywords` object** with keywords from Step 2.5:
+
    ```javascript
    // In router-enforcer.cjs intentKeywords section
    '<agent-name>': [
@@ -482,6 +501,7 @@ After updating CLAUDE.md, you MUST register the agent in router-enforcer.cjs:
    ```
 
 2. **Add to `ROUTING_TABLE` object**:
+
    ```javascript
    // In router-enforcer.cjs ROUTING_TABLE section
    '<agent-name>': {
@@ -498,6 +518,7 @@ After updating CLAUDE.md, you MUST register the agent in router-enforcer.cjs:
    ```
 
 #### Verification
+
 ```bash
 grep "<agent-name>" .claude/hooks/routing/router-enforcer.cjs || echo "ERROR: Agent not in router-enforcer.cjs - AGENT CREATION INCOMPLETE"
 ```
@@ -509,6 +530,7 @@ grep "<agent-name>" .claude/hooks/routing/router-enforcer.cjs || echo "ERROR: Ag
 ### Step 8: Create Workflow & Update Memory
 
 The CLI tool automatically:
+
 1. **Creates a workflow example** in `.claude/workflows/<agent-name>-workflow.md`
 2. **Updates memory** in `.claude/context/memory/learnings.md` with routing hints
 
@@ -526,24 +548,27 @@ This outputs a spawn command for the Task tool to immediately execute the origin
 
 **Option A: Use output spawn command (recommended for self-evolution)**
 The CLI outputs a Task spawn command when `--original-request` is provided:
+
 ```javascript
 Task({
-  subagent_type: "general-purpose",
-  description: "ux-reviewer executing original task",
-  prompt: "You are the UX-REVIEWER agent..."
-})
+  subagent_type: 'general-purpose',
+  description: 'ux-reviewer executing original task',
+  prompt: 'You are the UX-REVIEWER agent...',
+});
 ```
 
 **Option B: Spawn via Task tool manually**
+
 ```javascript
 Task({
-  subagent_type: "general-purpose",
-  description: "Execute task with new agent",
-  prompt: "You are <AGENT>. Read .claude/agents/domain/<name>.md and complete: <task>"
-})
+  subagent_type: 'general-purpose',
+  description: 'Execute task with new agent',
+  prompt: 'You are <AGENT>. Read .claude/agents/domain/<name>.md and complete: <task>',
+});
 ```
 
 **Option C: Run in separate terminal (new session)**
+
 ```bash
 node .claude/tools/agent-creator/spawn-agent.mjs --agent "<name>" --prompt "<task>"
 ```
@@ -570,7 +595,7 @@ node .claude/tools/agent-creator/spawn-agent.mjs --agent "<name>" --prompt "<tas
    - `task-management-protocol` for task tracking
 4. **Create** `.claude/agents/domain/mobile-ux-reviewer.md`:
 
-```yaml
+````yaml
 ---
 name: mobile-ux-reviewer
 description: Reviews mobile app UX against Apple HIG and accessibility standards. Use for UX audits and accessibility compliance checks.
@@ -601,13 +626,15 @@ Invoke your assigned skills using the Skill tool:
 ```javascript
 Skill({ skill: 'diagram-generator' });
 Skill({ skill: 'doc-generator' });
-```
+````
 
 > **CRITICAL**: Use `Skill()` tool, not `Read()`. Skill() loads AND applies the workflow.
 
 ### Step 1-5: Execute Task
+
 ...
-```
+
+````
 
 5. **Execute**: Spawn via Task tool
 
@@ -647,7 +674,7 @@ The Router should output this when no agent matches:
   "reasoning": "No existing agent matches UX review for mobile apps. Creating specialized agent.",
   "original_request": "<user's original request>"
 }
-```
+````
 
 ## Persistence
 
@@ -658,20 +685,24 @@ The Router should output this when no agent matches:
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/agents/<category>/`
 
 Categories:
+
 - `core/` - fundamental agents (developer, planner, architect, etc.)
 - `domain/` - language/framework specialists (python-pro, etc.)
 - `specialized/` - task-specific agents (security-architect, etc.)
 - `orchestrators/` - multi-agent coordinators
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -680,12 +711,15 @@ Invalid placements will be blocked in production mode.
 ## Memory Protocol (MANDATORY)
 
 **Before creating an agent:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
+
 Check for patterns in previous agent creations.
 
 **After creating an agent:**
+
 - Record the new agent pattern to `.claude/context/memory/learnings.md`
 - If the domain is new, add to `.claude/context/memory/decisions.md`
 
@@ -854,6 +888,7 @@ grep "<agent-name>" .claude/hooks/routing/router-enforcer.cjs || echo "ERROR: Ag
 ```
 
 **Completion Checklist** (all must be checked):
+
 ```
 [ ] Step 2.5 keyword research completed (3+ Exa searches)
 [ ] Keyword research report saved to .claude/context/artifacts/research-reports/agent-keywords-<name>.md
@@ -884,14 +919,17 @@ grep "<agent-name>" .claude/hooks/routing/router-enforcer.cjs || echo "ERROR: Ag
 This skill is part of the unified artifact lifecycle. For complete multi-agent orchestration:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - How the Router discovers and invokes this skill's artifacts
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Discovery, creation, update, deprecation phases
 - Version management and registry updates
 - CLAUDE.md integration requirements
 
 **External Integration:** `.claude/workflows/core/external-integration.md`
+
 - Safe integration of external artifacts
 - Security review and validation phases
 
@@ -901,13 +939,13 @@ This skill is part of the unified artifact lifecycle. For complete multi-agent o
 
 This skill is part of the **Creator Ecosystem**. After creating an agent, consider whether companion creators are needed:
 
-| Creator | When to Use | Invocation |
-|---------|-------------|------------|
-| **skill-creator** | Agent needs new skills not in `.claude/skills/` | `Skill({ skill: 'skill-creator' })` |
-| **workflow-creator** | Agent needs orchestration workflow | `Skill({ skill: 'workflow-creator' })` |
-| **template-creator** | Agent needs code templates | `Skill({ skill: 'template-creator' })` |
-| **schema-creator** | Agent needs input/output validation schemas | `Skill({ skill: 'schema-creator' })` |
-| **hook-creator** | Agent needs pre/post execution hooks | `Skill({ skill: 'hook-creator' })` |
+| Creator              | When to Use                                     | Invocation                             |
+| -------------------- | ----------------------------------------------- | -------------------------------------- |
+| **skill-creator**    | Agent needs new skills not in `.claude/skills/` | `Skill({ skill: 'skill-creator' })`    |
+| **workflow-creator** | Agent needs orchestration workflow              | `Skill({ skill: 'workflow-creator' })` |
+| **template-creator** | Agent needs code templates                      | `Skill({ skill: 'template-creator' })` |
+| **schema-creator**   | Agent needs input/output validation schemas     | `Skill({ skill: 'schema-creator' })`   |
+| **hook-creator**     | Agent needs pre/post execution hooks            | `Skill({ skill: 'hook-creator' })`     |
 
 ### Integration Workflow
 

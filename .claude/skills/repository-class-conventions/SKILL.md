@@ -38,7 +38,7 @@ When reviewing or writing code, apply these guidelines:
 - Must use JPQL for all @Query type methods, unless specified in a prompt otherwise.
 - Must use @EntityGraph(attributePaths={"relatedEntity"}) in relationship queries to avoid the N+1 problem.
 - Must use a DTO as The data container for multi-join queries with @Query.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

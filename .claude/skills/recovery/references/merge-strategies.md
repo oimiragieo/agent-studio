@@ -13,11 +13,13 @@ When multiple agents or sessions modify the same files, merge conflicts can occu
 **Use Case**: Adding new functions to a file without modifying existing code.
 
 **Pattern**:
+
 1. Identify insert position (before `module.exports` in JS, at end otherwise)
 2. Append new functions with proper spacing
 3. Preserve existing code untouched
 
 **Example**:
+
 ```javascript
 // Original file
 function existingFunction() { ... }
@@ -29,6 +31,7 @@ function newFunction() { ... }  // <-- Appended
 ```
 
 **When to Use**:
+
 - New feature implementation
 - Adding utility functions
 - Non-conflicting additions
@@ -38,12 +41,14 @@ function newFunction() { ... }  // <-- Appended
 **Use Case**: Adding new methods to existing classes.
 
 **Pattern**:
+
 1. Identify target class
 2. Find class closing brace
 3. Insert methods before closing brace
 4. Maintain proper indentation
 
 **Example**:
+
 ```python
 class UserService:
     def get_user(self): ...
@@ -56,6 +61,7 @@ class UserService:
 **Use Case**: Adding variables, comments, or other statements.
 
 **Pattern**:
+
 1. Determine appropriate location (imports, constants, code)
 2. Append with proper newlines
 3. No conflict detection needed for pure additions
@@ -67,6 +73,7 @@ class UserService:
 **Use Case**: Combining import statements from multiple sources.
 
 **Pattern**:
+
 1. Find import section end in file
 2. Collect all new imports to add
 3. Deduplicate against existing imports
@@ -74,6 +81,7 @@ class UserService:
 5. Insert new imports at section end
 
 **Deduplication Logic**:
+
 ```python
 # Collect existing imports
 existing_imports = set(line for line in lines if is_import_line(line))
@@ -87,6 +95,7 @@ new_imports = [
 ```
 
 **Language Detection**:
+
 - Python: `import X` or `from X import Y`
 - JavaScript/TypeScript: `import X from` or `require(`
 - Go: `import "package"`
@@ -101,12 +110,14 @@ new_imports = [
 **Use Case**: Changes that depend on each other must be applied in correct order.
 
 **Pattern**:
+
 1. Build dependency graph from changes
 2. Topological sort to determine order
 3. Apply changes in sorted order
 4. Handle circular dependencies by escalating
 
 **Example**:
+
 ```
 Change A: Add function `validate()`
 Change B: Add function `process()` which calls `validate()`
@@ -119,6 +130,7 @@ Order: A must be applied before B
 **Use Case**: Apply changes in chronological order when no dependencies.
 
 **Pattern**:
+
 1. Sort changes by timestamp
 2. Apply in chronological order
 3. Newer changes override older for same location
@@ -131,23 +143,23 @@ Order: A must be applied before B
 
 These conflicts can be resolved automatically:
 
-| Scenario | Strategy |
-|----------|----------|
-| Adding non-overlapping functions | Append |
-| Adding imports (no conflicts) | Import merge |
+| Scenario                            | Strategy       |
+| ----------------------------------- | -------------- |
+| Adding non-overlapping functions    | Append         |
+| Adding imports (no conflicts)       | Import merge   |
 | Adding methods to different classes | Append methods |
-| Changes in different files | No conflict |
+| Changes in different files          | No conflict    |
 
 ### Manual Resolution Required
 
 These conflicts require human intervention:
 
-| Scenario | Reason |
-|----------|--------|
-| Same line modified differently | Ambiguous intent |
-| Conflicting imports (different versions) | Version decision needed |
-| Structural changes overlap | Architecture decision needed |
-| Delete vs modify conflict | Intent unclear |
+| Scenario                                 | Reason                       |
+| ---------------------------------------- | ---------------------------- |
+| Same line modified differently           | Ambiguous intent             |
+| Conflicting imports (different versions) | Version decision needed      |
+| Structural changes overlap               | Architecture decision needed |
+| Delete vs modify conflict                | Intent unclear               |
 
 ---
 

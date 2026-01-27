@@ -57,6 +57,7 @@ env.run()
 ```
 
 **Usage:**
+
 - `env.timeout(delay)` - Wait for specified time
 - `env.timeout(delay, value=val)` - Wait and return value
 
@@ -149,6 +150,7 @@ env.run()
 **Returns:** Dictionary mapping events to their values
 
 **Use cases:**
+
 - Parallel task completion
 - Barrier synchronization
 - Waiting for multiple resources
@@ -184,6 +186,7 @@ env.run()
 **Returns:** Dictionary with completed events and their values
 
 **Use cases:**
+
 - Racing conditions
 - Timeout mechanisms
 - First-to-respond scenarios
@@ -282,6 +285,7 @@ env.run()
 ```
 
 **Use cases:**
+
 - Broadcasting signals
 - Barrier synchronization
 - Coordinated process resumption

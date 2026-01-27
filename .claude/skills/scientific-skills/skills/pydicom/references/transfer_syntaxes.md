@@ -5,6 +5,7 @@ This document provides a comprehensive reference for DICOM transfer syntaxes and
 ## Overview
 
 A Transfer Syntax UID specifies:
+
 1. **Byte ordering**: Little Endian or Big Endian
 2. **Value Representation (VR)**: Implicit or Explicit
 3. **Compression**: None, or specific compression algorithm
@@ -12,29 +13,34 @@ A Transfer Syntax UID specifies:
 ## Uncompressed Transfer Syntaxes
 
 ### Implicit VR Little Endian (1.2.840.10008.1.2)
+
 - **Default** transfer syntax
 - Value Representations are implicit (not explicitly encoded)
 - Little Endian byte ordering
 - **Pydicom constant**: `pydicom.uid.ImplicitVRLittleEndian`
 
 **Usage:**
+
 ```python
 import pydicom
 ds.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
 ```
 
 ### Explicit VR Little Endian (1.2.840.10008.1.2.1)
+
 - **Most common** transfer syntax
 - Value Representations are explicit
 - Little Endian byte ordering
 - **Pydicom constant**: `pydicom.uid.ExplicitVRLittleEndian`
 
 **Usage:**
+
 ```python
 ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRLittleEndian
 ```
 
 ### Explicit VR Big Endian (1.2.840.10008.1.2.2) - RETIRED
+
 - Value Representations are explicit
 - Big Endian byte ordering
 - **Deprecated** - not recommended for new implementations
@@ -43,6 +49,7 @@ ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRLittleEndian
 ## JPEG Compression
 
 ### JPEG Baseline (Process 1) (1.2.840.10008.1.2.4.50)
+
 - **Lossy** compression
 - 8-bit samples only
 - Most widely supported JPEG format
@@ -51,6 +58,7 @@ ds.file_meta.TransferSyntaxUID = pydicom.uid.ExplicitVRLittleEndian
 **Dependencies:** Requires `pylibjpeg` or `pillow`
 
 **Usage:**
+
 ```python
 # Compress
 ds.compress(pydicom.uid.JPEGBaseline8Bit)
@@ -60,11 +68,13 @@ ds.decompress()
 ```
 
 ### JPEG Extended (Process 2 & 4) (1.2.840.10008.1.2.4.51)
+
 - **Lossy** compression
 - 8-bit and 12-bit samples
 - **Pydicom constant**: `pydicom.uid.JPEGExtended12Bit`
 
 ### JPEG Lossless, Non-Hierarchical (Process 14) (1.2.840.10008.1.2.4.57)
+
 - **Lossless** compression
 - First-Order Prediction
 - **Pydicom constant**: `pydicom.uid.JPEGLossless`
@@ -72,17 +82,20 @@ ds.decompress()
 **Dependencies:** Requires `pylibjpeg-libjpeg` or `gdcm`
 
 ### JPEG Lossless, Non-Hierarchical, First-Order Prediction (1.2.840.10008.1.2.4.70)
+
 - **Lossless** compression
 - Uses Process 14 Selection Value 1
 - **Pydicom constant**: `pydicom.uid.JPEGLosslessSV1`
 
 **Usage:**
+
 ```python
 # Compress to JPEG Lossless
 ds.compress(pydicom.uid.JPEGLossless)
 ```
 
 ### JPEG-LS Lossless (1.2.840.10008.1.2.4.80)
+
 - **Lossless** compression
 - Low complexity, good compression
 - **Pydicom constant**: `pydicom.uid.JPEGLSLossless`
@@ -90,6 +103,7 @@ ds.compress(pydicom.uid.JPEGLossless)
 **Dependencies:** Requires `pylibjpeg-libjpeg` or `gdcm`
 
 ### JPEG-LS Lossy (Near-Lossless) (1.2.840.10008.1.2.4.81)
+
 - **Near-lossless** compression
 - Allows controlled loss of precision
 - **Pydicom constant**: `pydicom.uid.JPEGLSNearLossless`
@@ -97,6 +111,7 @@ ds.compress(pydicom.uid.JPEGLossless)
 ## JPEG 2000 Compression
 
 ### JPEG 2000 Lossless Only (1.2.840.10008.1.2.4.90)
+
 - **Lossless** compression
 - Wavelet-based compression
 - Better compression than JPEG Lossless
@@ -105,12 +120,14 @@ ds.compress(pydicom.uid.JPEGLossless)
 **Dependencies:** Requires `pylibjpeg-openjpeg`, `gdcm`, or `pillow`
 
 **Usage:**
+
 ```python
 # Compress to JPEG 2000 Lossless
 ds.compress(pydicom.uid.JPEG2000Lossless)
 ```
 
 ### JPEG 2000 (1.2.840.10008.1.2.4.91)
+
 - **Lossy or lossless** compression
 - Wavelet-based compression
 - High quality at low bit rates
@@ -119,11 +136,13 @@ ds.compress(pydicom.uid.JPEG2000Lossless)
 **Dependencies:** Requires `pylibjpeg-openjpeg`, `gdcm`, or `pillow`
 
 ### JPEG 2000 Part 2 Multi-component Lossless (1.2.840.10008.1.2.4.92)
+
 - **Lossless** compression
 - Supports multi-component images
 - **Pydicom constant**: `pydicom.uid.JPEG2000MCLossless`
 
 ### JPEG 2000 Part 2 Multi-component (1.2.840.10008.1.2.4.93)
+
 - **Lossy or lossless** compression
 - Supports multi-component images
 - **Pydicom constant**: `pydicom.uid.JPEG2000MC`
@@ -131,6 +150,7 @@ ds.compress(pydicom.uid.JPEG2000Lossless)
 ## RLE Compression
 
 ### RLE Lossless (1.2.840.10008.1.2.5)
+
 - **Lossless** compression
 - Run-Length Encoding
 - Simple, fast algorithm
@@ -140,6 +160,7 @@ ds.compress(pydicom.uid.JPEG2000Lossless)
 **Dependencies:** Built into pydicom (no additional packages needed)
 
 **Usage:**
+
 ```python
 # Compress with RLE
 ds.compress(pydicom.uid.RLELossless)
@@ -151,6 +172,7 @@ ds.decompress()
 ## Deflated Transfer Syntaxes
 
 ### Deflated Explicit VR Little Endian (1.2.840.10008.1.2.1.99)
+
 - Uses ZLIB compression on entire dataset
 - Not commonly used
 - **Pydicom constant**: `pydicom.uid.DeflatedExplicitVRLittleEndian`
@@ -158,16 +180,19 @@ ds.decompress()
 ## MPEG Compression
 
 ### MPEG2 Main Profile @ Main Level (1.2.840.10008.1.2.4.100)
+
 - **Lossy** video compression
 - For multi-frame images/videos
 - **Pydicom constant**: `pydicom.uid.MPEG2MPML`
 
 ### MPEG2 Main Profile @ High Level (1.2.840.10008.1.2.4.101)
+
 - **Lossy** video compression
 - Higher resolution than MPML
 - **Pydicom constant**: `pydicom.uid.MPEG2MPHL`
 
 ### MPEG-4 AVC/H.264 High Profile (1.2.840.10008.1.2.4.102-106)
+
 - **Lossy** video compression
 - Various levels (BD, 2D, 3D, Stereo)
 - Modern video codec
@@ -175,6 +200,7 @@ ds.decompress()
 ## Checking Transfer Syntax
 
 ### Identify Current Transfer Syntax
+
 ```python
 import pydicom
 
@@ -192,6 +218,7 @@ print(f"Is compressed: {ts_uid.is_compressed}")
 ```
 
 ### Common Checks
+
 ```python
 # Check if little endian
 if ts_uid.is_little_endian:
@@ -213,6 +240,7 @@ elif 'RLE' in ts_uid.name:
 ## Decompression
 
 ### Automatic Decompression
+
 Pydicom can automatically decompress pixel data when accessing `pixel_array`:
 
 ```python
@@ -226,6 +254,7 @@ pixel_array = ds.pixel_array  # Decompresses if needed
 ```
 
 ### Manual Decompression
+
 ```python
 import pydicom
 
@@ -241,6 +270,7 @@ ds.save_as('uncompressed.dcm', write_like_original=False)
 ## Compression
 
 ### Compressing DICOM Files
+
 ```python
 import pydicom
 
@@ -260,6 +290,7 @@ ds.save_as('compressed_jpeg.dcm')
 ```
 
 ### Compression with Custom Encoding Parameters
+
 ```python
 import pydicom
 from pydicom.encoders import JPEGLSLosslessEncoder
@@ -275,6 +306,7 @@ ds.compress(pydicom.uid.JPEGLSLossless, encoding_plugin='pylibjpeg')
 Different transfer syntaxes require different Python packages:
 
 ### JPEG Baseline/Extended
+
 ```bash
 pip install pylibjpeg pylibjpeg-libjpeg
 # Or
@@ -282,6 +314,7 @@ pip install pillow
 ```
 
 ### JPEG Lossless/JPEG-LS
+
 ```bash
 pip install pylibjpeg pylibjpeg-libjpeg
 # Or
@@ -289,6 +322,7 @@ pip install python-gdcm
 ```
 
 ### JPEG 2000
+
 ```bash
 pip install pylibjpeg pylibjpeg-openjpeg
 # Or
@@ -298,9 +332,11 @@ pip install pillow
 ```
 
 ### RLE
+
 No additional packages needed - built into pydicom
 
 ### Comprehensive Installation
+
 ```bash
 # Install all common handlers
 pip install pylibjpeg pylibjpeg-libjpeg pylibjpeg-openjpeg python-gdcm
@@ -334,14 +370,17 @@ for handler in handlers:
 ## Common Issues
 
 ### Issue: "Unable to decode pixel data"
+
 **Cause:** Missing compression handler
 **Solution:** Install the appropriate package (see Installing Compression Handlers above)
 
 ### Issue: "Unsupported Transfer Syntax"
+
 **Cause:** Rare or unsupported compression format
 **Solution:** Try installing `python-gdcm` which supports more formats
 
 ### Issue: "Pixel data decompressed but looks wrong"
+
 **Cause:** May need to apply VOI LUT or rescale
 **Solution:** Use `apply_voi_lut()` or apply `RescaleSlope`/`RescaleIntercept`
 

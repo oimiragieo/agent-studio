@@ -1,6 +1,7 @@
 # Optimization in PennyLane
 
 ## Table of Contents
+
 1. [Built-in Optimizers](#built-in-optimizers)
 2. [Gradient Computation](#gradient-computation)
 3. [Variational Algorithms](#variational-algorithms)

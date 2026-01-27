@@ -113,7 +113,7 @@ Create dependency report:
 - Identify breaking changes
 - Suggest update strategy
 - Provide migration guidance
-</execution_process>
+  </execution_process>
 
 <integration>
 **Integration with DevOps Agent**:
@@ -126,7 +126,7 @@ Create dependency report:
 - Reviews security vulnerabilities
 - Validates security updates
 - Ensures compliance
-</integration>
+  </integration>
 
 <best_practices>
 
@@ -135,8 +135,8 @@ Create dependency report:
 3. **Test Updates**: Always test after updates
 4. **Gradual Updates**: Update incrementally
 5. **Document Changes**: Track update decisions
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <formatting_example>
@@ -221,6 +221,7 @@ Generate update plan for major version updates
 </examples>
 
 ## Rules
+
 - Always check for security vulnerabilities first
 - Research breaking changes before major updates
 - Test thoroughly after any dependency update
@@ -228,11 +229,13 @@ Generate update plan for major version updates
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

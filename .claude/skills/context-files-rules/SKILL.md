@@ -33,17 +33,17 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 - **Master Project Context (`projectContext.md`):**
-   - Located in `/ProjectDocs/contexts/`.
-   - Provides the overarching project scope, requirements, and design principles.
-   - Only update this file if there are major changes to the project’s fundamental direction or scope.
+  - Located in `/ProjectDocs/contexts/`.
+  - Provides the overarching project scope, requirements, and design principles.
+  - Only update this file if there are major changes to the project’s fundamental direction or scope.
 - **Additional Context Files:**
-   - Supplementary files (e.g., `uiContext.md`, `featureAContext.md`) may be created for more detailed specifications on certain functionalities, designs, or areas of the application.
-   - Keep these files stable. Update them only when new, approved changes need to be documented.
-   - Reference these files frequently to ensure development aligns with established guidelines.
+  - Supplementary files (e.g., `uiContext.md`, `featureAContext.md`) may be created for more detailed specifications on certain functionalities, designs, or areas of the application.
+  - Keep these files stable. Update them only when new, approved changes need to be documented.
+  - Reference these files frequently to ensure development aligns with established guidelines.
 - **Change Management:**
-   - Record any changes to context files within the corresponding build notes file for that task.
-   - Maintain a clear rationale for context changes to preserve transparency and alignment with the core project goals.
-</instructions>
+  - Record any changes to context files within the corresponding build notes file for that task.
+  - Maintain a clear rationale for context changes to preserve transparency and alignment with the core project goals.
+    </instructions>
 
 <examples>
 Example usage:
@@ -56,6 +56,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

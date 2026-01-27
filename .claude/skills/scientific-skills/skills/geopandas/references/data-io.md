@@ -98,6 +98,7 @@ gdf = gpd.read_feather("data.feather")
 ```
 
 Advantages:
+
 - Faster I/O than traditional formats
 - Better compression
 - Preserves multiple geometry columns

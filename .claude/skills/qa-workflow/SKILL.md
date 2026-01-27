@@ -1,6 +1,6 @@
 ---
 name: qa-workflow
-description: "QA validation and fix loop workflow. Use when implementation is complete and needs quality assurance before sign-off."
+description: 'QA validation and fix loop workflow. Use when implementation is complete and needs quality assurance before sign-off.'
 version: 1.0.0
 model: sonnet
 invoked_by: both
@@ -26,11 +26,13 @@ Comprehensive quality assurance workflow that validates implementation completen
 ## When to Use
 
 **Always:**
+
 - After implementation is marked complete
 - Before merging or deploying changes
 - When validating acceptance criteria
 
 **Exceptions:**
+
 - Documentation-only changes (may use minimal validation)
 - Trivial fixes with skip_validation flag
 
@@ -100,6 +102,7 @@ go test ./...
 ```
 
 **Document results:**
+
 ```
 UNIT TESTS:
 - [area-name]: PASS/FAIL (X/Y tests)
@@ -115,6 +118,7 @@ npm run test:integration
 ```
 
 **Document results:**
+
 ```
 INTEGRATION TESTS:
 - [test-name]: PASS/FAIL
@@ -130,6 +134,7 @@ npm run test:e2e
 ```
 
 **Document results:**
+
 ```
 E2E TESTS:
 - [flow-name]: PASS/FAIL
@@ -179,6 +184,7 @@ Verify code follows established patterns:
 ```
 
 **Document findings:**
+
 ```
 CODE REVIEW:
 - Security issues: [list or "None"]
@@ -214,25 +220,28 @@ REGRESSION CHECK:
 
 ## Summary
 
-| Category | Status | Details |
-|----------|--------|---------|
-| Unit Tests | PASS/FAIL | X/Y passing |
-| Integration Tests | PASS/FAIL | X/Y passing |
-| E2E Tests | PASS/FAIL | X/Y passing |
-| Manual Verification | PASS/FAIL | [summary] |
-| Security Review | PASS/FAIL | [summary] |
-| Pattern Compliance | PASS/FAIL | [summary] |
-| Regression Check | PASS/FAIL | [summary] |
+| Category            | Status    | Details     |
+| ------------------- | --------- | ----------- |
+| Unit Tests          | PASS/FAIL | X/Y passing |
+| Integration Tests   | PASS/FAIL | X/Y passing |
+| E2E Tests           | PASS/FAIL | X/Y passing |
+| Manual Verification | PASS/FAIL | [summary]   |
+| Security Review     | PASS/FAIL | [summary]   |
+| Pattern Compliance  | PASS/FAIL | [summary]   |
+| Regression Check    | PASS/FAIL | [summary]   |
 
 ## Issues Found
 
 ### Critical (Blocks Sign-off)
+
 1. [Issue description] - [File/Location]
 
 ### Major (Should Fix)
+
 1. [Issue description] - [File/Location]
 
 ### Minor (Nice to Fix)
+
 1. [Issue description] - [File/Location]
 
 ## Verdict
@@ -242,6 +251,7 @@ REGRESSION CHECK:
 **Reason**: [Explanation]
 
 **Next Steps**:
+
 - [If approved: Ready for merge]
 - [If rejected: List of fixes needed]
 ```
@@ -287,6 +297,7 @@ grep -A 50 "## Issues Found" .claude/context/reports/qa-report.md
 ```
 
 Extract from report:
+
 - Exact issues to fix
 - File locations
 - Required fixes
@@ -320,6 +331,7 @@ For each issue:
 4. **Verify** the fix locally
 
 **Follow these rules:**
+
 - Make the MINIMAL change needed
 - Don't refactor surrounding code
 - Don't add features
@@ -406,6 +418,7 @@ The QA → Fix → QA loop continues until:
 Maximum iterations: 5
 
 If max iterations reached without approval:
+
 - Escalate to human review
 - Document all remaining issues
 - Save detailed report
@@ -413,18 +426,21 @@ If max iterations reached without approval:
 ## Severity Guidelines
 
 **CRITICAL** - Blocks sign-off:
+
 - Failing tests
 - Security vulnerabilities
 - Missing required functionality
 - Data corruption risks
 
 **MAJOR** - Should fix:
+
 - Missing edge case handling
 - Performance issues
 - UX problems
 - Pattern violations
 
 **MINOR** - Nice to fix:
+
 - Style inconsistencies
 - Documentation gaps
 - Minor optimizations
@@ -476,6 +492,7 @@ This skill works well with:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

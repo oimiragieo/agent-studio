@@ -30,12 +30,12 @@ hook_config:
     - SessionStart
     - SessionEnd
   registration_targets:
-    - ".claude/settings.json"
-    - ".claude/config.yaml"
-    - ".claude/hooks/README.md"
-  naming_convention: "kebab-case"
-  file_extension: ".cjs"
-  test_extension: ".test.cjs"
+    - '.claude/settings.json'
+    - '.claude/config.yaml'
+    - '.claude/hooks/README.md'
+  naming_convention: 'kebab-case'
+  file_extension: '.cjs'
+  test_extension: '.test.cjs'
 
 phases:
   evaluate:
@@ -85,7 +85,7 @@ phases:
       - id: gate-evaluate
         condition: "steps['check-existing-hooks'].output.gap_confirmed === true"
         on_fail: abort
-        message: "Similar hook already exists. Consider enhancing existing hook instead."
+        message: 'Similar hook already exists. Consider enhancing existing hook instead.'
 
   validate:
     description: Check naming convention and no conflicts
@@ -126,15 +126,15 @@ phases:
       - id: gate-validate-name
         condition: "steps['validate-naming'].output.name_valid === true"
         on_fail: block
-        message: "Hook name must be kebab-case (lowercase letters, numbers, hyphens)"
+        message: 'Hook name must be kebab-case (lowercase letters, numbers, hyphens)'
       - id: gate-validate-conflict
         condition: "steps['check-naming-conflicts'].output.conflict_found === false"
         on_fail: abort
-        message: "Hook with this name already exists"
+        message: 'Hook with this name already exists'
       - id: gate-validate-event
         condition: "steps['validate-hook-event'].output.event_valid === true"
         on_fail: block
-        message: "Invalid hook event type. Must be PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, or SessionEnd"
+        message: 'Invalid hook event type. Must be PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, or SessionEnd'
 
   obtain:
     description: Research best hook patterns (optional but recommended)
@@ -171,7 +171,7 @@ phases:
       - id: gate-obtain
         condition: "steps['read-hook-template'].output.template_content !== null"
         on_fail: block
-        message: "Failed to load hook template"
+        message: 'Failed to load hook template'
 
   lock:
     description: Create hook.cjs and hook.test.cjs files
@@ -227,12 +227,12 @@ phases:
         condition: "steps['write-hook-file'].output.hook_file_created === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to create hook file"
+        message: 'Failed to create hook file'
       - id: gate-lock-test
         condition: "steps['write-test-file'].output.test_file_created === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to create test file"
+        message: 'Failed to create test file'
 
   verify:
     description: Run tests and validate exports
@@ -281,15 +281,15 @@ phases:
       - id: gate-verify-tests
         condition: "steps['run-tests'].output.tests_passed === true"
         on_fail: return_to_lock
-        message: "Tests failed. Fix hook implementation."
+        message: 'Tests failed. Fix hook implementation.'
       - id: gate-verify-exports
         condition: "steps['validate-exports'].output.exports_valid === true"
         on_fail: return_to_lock
-        message: "Hook must export validate() function"
+        message: 'Hook must export validate() function'
       - id: gate-verify-graceful
         condition: "steps['check-graceful-degradation'].output.graceful_degradation === true"
         on_fail: return_to_lock
-        message: "Hook must default to warn mode, not block"
+        message: 'Hook must default to warn mode, not block'
 
   enable:
     description: Register in settings.json, update hooks/README.md, update memory
@@ -359,17 +359,17 @@ phases:
         condition: "steps['register-hook'].output.registration_success === true"
         on_fail: retry
         max_retries: 2
-        message: "Failed to register hook"
+        message: 'Failed to register hook'
       - id: gate-enable-readme
         condition: "steps['update-hooks-readme'].output.readme_updated === true"
         on_fail: retry
         max_retries: 2
-        message: "Failed to update hooks README"
+        message: 'Failed to update hooks README'
       - id: gate-enable-verify
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Hook registration verification failed"
+        message: 'Hook registration verification failed'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -385,32 +385,32 @@ compensate:
       target: registration_target
       description: Remove hook from settings.json or config.yaml
     - action: revert_readme
-      target: ".claude/hooks/README.md"
+      target: '.claude/hooks/README.md'
       description: Remove hook entry from README
 
 # Iron Laws for hook creation (from SKILL.md)
 iron_laws:
   - id: no-hook-without-validate
-    rule: "Every hook MUST export validate() function"
+    rule: 'Every hook MUST export validate() function'
     enforcement: gate-verify-exports
   - id: no-hook-without-main
-    rule: "Every hook MUST have main() for CLI execution"
+    rule: 'Every hook MUST have main() for CLI execution'
     enforcement: gate-verify-exports
   - id: no-hook-without-graceful
     rule: "Default to 'warn' mode, not 'block'"
     enforcement: gate-verify-graceful
   - id: no-hook-without-error-handling
-    rule: "Wrap JSON.parse in try/catch, handle missing parameters"
+    rule: 'Wrap JSON.parse in try/catch, handle missing parameters'
     enforcement: lint-hook
   - id: no-hook-without-test
-    rule: "Every hook needs <hook-name>.test.cjs"
+    rule: 'Every hook needs <hook-name>.test.cjs'
     enforcement: gate-lock-test
   - id: no-hook-without-documentation
-    rule: "Add to .claude/hooks/README.md"
+    rule: 'Add to .claude/hooks/README.md'
     enforcement: gate-enable-readme
   - id: cross-platform-paths
-    rule: "Use path.join() not string concatenation"
+    rule: 'Use path.join() not string concatenation'
     enforcement: lint-hook
   - id: no-creation-without-system-impact
-    rule: "Check if hook requires settings.json or config.yaml registration"
+    rule: 'Check if hook requires settings.json or config.yaml registration'
     enforcement: gate-enable-register

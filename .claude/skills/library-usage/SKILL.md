@@ -39,7 +39,7 @@ When reviewing or writing code, apply these guidelines:
   - node-gyp (^10.2.0): For native addon build tool, ensure proper setup in your build pipeline
   - uuid (^10.0.0): For generating unique identifiers, prefer v4 for random UUIDs
   - zod (^3.23.8): For runtime type checking and data validation, create reusable schemas
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

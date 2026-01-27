@@ -36,10 +36,10 @@ workflow_config:
     - verify
     - enable
   registration_targets:
-    - ".claude/CLAUDE.md"
-    - ".claude/context/memory/learnings.md"
-  naming_convention: "kebab-case"
-  file_extension: ".yaml"
+    - '.claude/CLAUDE.md'
+    - '.claude/context/memory/learnings.md'
+  naming_convention: 'kebab-case'
+  file_extension: '.yaml'
 
 phases:
   evaluate:
@@ -88,7 +88,7 @@ phases:
       - id: gate-evaluate
         condition: "steps['check-existing-workflows'].output.gap_confirmed === true"
         on_fail: abort
-        message: "Similar workflow already exists. Consider enhancing existing workflow instead."
+        message: 'Similar workflow already exists. Consider enhancing existing workflow instead.'
 
   validate:
     description: Check naming convention and no conflicts
@@ -129,15 +129,15 @@ phases:
       - id: gate-validate-name
         condition: "steps['validate-naming'].output.name_valid === true"
         on_fail: block
-        message: "Workflow name must be kebab-case ending with -workflow"
+        message: 'Workflow name must be kebab-case ending with -workflow'
       - id: gate-validate-conflict
         condition: "steps['check-naming-conflicts'].output.conflict_found === false"
         on_fail: abort
-        message: "Workflow with this name already exists"
+        message: 'Workflow with this name already exists'
       - id: gate-validate-phases
         condition: "steps['validate-phase-structure'].output.phases_valid === true"
         on_fail: block
-        message: "Workflow phases must follow EVOLVE pattern (evaluate, validate, obtain, lock, verify, enable)"
+        message: 'Workflow phases must follow EVOLVE pattern (evaluate, validate, obtain, lock, verify, enable)'
 
   obtain:
     description: Research workflow patterns and best practices (optional but recommended)
@@ -174,7 +174,7 @@ phases:
       - id: gate-obtain
         condition: "steps['read-workflow-template'].output.template_content !== null"
         on_fail: block
-        message: "Failed to load workflow template"
+        message: 'Failed to load workflow template'
 
   lock:
     description: Create workflow YAML file with proper structure
@@ -238,12 +238,12 @@ phases:
         condition: "steps['write-workflow-file'].output.workflow_file_created === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to create workflow file"
+        message: 'Failed to create workflow file'
       - id: gate-lock-yaml
         condition: "steps['validate-yaml-syntax'].output.yaml_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "YAML syntax validation failed"
+        message: 'YAML syntax validation failed'
 
   verify:
     description: Run tests and validate structure
@@ -293,15 +293,15 @@ phases:
       - id: gate-verify-tests
         condition: "steps['run-tests'].output.tests_passed === true"
         on_fail: return_to_lock
-        message: "Tests failed. Fix workflow structure."
+        message: 'Tests failed. Fix workflow structure.'
       - id: gate-verify-phases
         condition: "steps['validate-phases'].output.all_phases_present === true"
         on_fail: return_to_lock
-        message: "Workflow must have all 6 EVOLVE phases"
+        message: 'Workflow must have all 6 EVOLVE phases'
       - id: gate-verify-gates
         condition: "steps['validate-gates'].output.gates_valid === true"
         on_fail: return_to_lock
-        message: "Each phase must have at least one gate"
+        message: 'Each phase must have at least one gate'
 
   enable:
     description: Register in CLAUDE.md and update memory
@@ -346,12 +346,12 @@ phases:
         condition: "steps['update-claude-md'].output.claude_md_updated === true"
         on_fail: retry
         max_retries: 2
-        message: "Failed to update CLAUDE.md"
+        message: 'Failed to update CLAUDE.md'
       - id: gate-enable-verify
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Workflow registration verification failed"
+        message: 'Workflow registration verification failed'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -364,29 +364,29 @@ compensate:
       description: Remove created test file
   enable:
     - action: revert_claude_md
-      target: ".claude/CLAUDE.md"
+      target: '.claude/CLAUDE.md'
       description: Remove workflow entry from CLAUDE.md
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove workflow entry from learnings
 
 # Iron Laws for workflow creation
 iron_laws:
   - id: no-workflow-without-evolve
-    rule: "Every workflow MUST follow EVOLVE phase structure"
+    rule: 'Every workflow MUST follow EVOLVE phase structure'
     enforcement: gate-verify-phases
   - id: no-workflow-without-gates
-    rule: "Every phase MUST have at least one gate"
+    rule: 'Every phase MUST have at least one gate'
     enforcement: gate-verify-gates
   - id: no-workflow-without-test
-    rule: "Every workflow needs <workflow-name>.test.cjs"
+    rule: 'Every workflow needs <workflow-name>.test.cjs'
     enforcement: gate-lock-yaml
   - id: no-workflow-without-claude-md
-    rule: "Add to CLAUDE.md Section 8.6"
+    rule: 'Add to CLAUDE.md Section 8.6'
     enforcement: gate-enable-claude-md
   - id: yaml-syntax-valid
-    rule: "YAML must parse without errors"
+    rule: 'YAML must parse without errors'
     enforcement: gate-lock-yaml
   - id: handlers-documented
-    rule: "All step handlers must be documented or implemented"
+    rule: 'All step handlers must be documented or implemented'
     enforcement: check-handler-references

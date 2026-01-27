@@ -57,7 +57,7 @@ Production-ready templates for incident response runbooks covering detection, tr
 
 ### Template 1: Service Outage Runbook
 
-```markdown
+````markdown
 # [Service Name] Outage Runbook
 
 ## Overview
@@ -102,6 +102,7 @@ kubectl rollout history deployment/payment-service -n payments
 # Check error rates
 curl -s "http://prometheus:9090/api/v1/query?query=sum(rate(http_requests_total{status=~'5..'}[5m]))"
 ```
+````
 
 ### 2. Quick Health Checks
 
@@ -320,7 +321,8 @@ Follow-up:
 - Postmortem scheduled for [DATE]
 - Bug fix in progress
 ```
-```
+
+````
 
 ### Template 2: Database Incident Runbook
 
@@ -355,7 +357,7 @@ SELECT pg_terminate_backend(pid)
 FROM pg_stat_activity
 WHERE state = 'idle'
 AND query_start < now() - interval '10 minutes';
-```
+````
 
 ## Replication Lag
 
@@ -390,6 +392,7 @@ psql -c "VACUUM FULL large_table;"
 
 # If emergency, delete old data or expand disk
 ```
+
 ```
 
 ## Best Practices
@@ -425,3 +428,4 @@ Read `.claude/context/memory/learnings.md`
 - Decision made -> `.claude/context/memory/decisions.md`
 
 > ASSUME INTERRUPTION: If it's not in memory, it didn't happen.
+```

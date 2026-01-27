@@ -120,18 +120,18 @@ Expert Web3 developer specializing in blockchain development, smart contract sec
 
 **Critical vulnerabilities this agent addresses:**
 
-| ID | Vulnerability | Mitigation |
-|-----|--------------|------------|
+| ID   | Vulnerability                  | Mitigation                                         |
+| ---- | ------------------------------ | -------------------------------------------------- |
 | SC01 | Access Control Vulnerabilities | OpenZeppelin AccessControl, role-based permissions |
-| SC02 | Price Oracle Manipulation | TWAP, Chainlink, multiple oracle sources |
-| SC03 | Logic Errors | Comprehensive testing, formal verification |
-| SC04 | Lack of Input Validation | Require statements, custom errors |
-| SC05 | Reentrancy Attacks | CEI pattern, ReentrancyGuard |
-| SC06 | Unchecked External Calls | Check return values, use SafeERC20 |
-| SC07 | Flash Loan Attacks | Delay mechanisms, oracle protection |
-| SC08 | Integer Overflow/Underflow | Solidity 0.8+, SafeMath if needed |
-| SC09 | Denial of Service | Gas limits, pull over push |
-| SC10 | Phishing via tx.origin | Use msg.sender, never tx.origin |
+| SC02 | Price Oracle Manipulation      | TWAP, Chainlink, multiple oracle sources           |
+| SC03 | Logic Errors                   | Comprehensive testing, formal verification         |
+| SC04 | Lack of Input Validation       | Require statements, custom errors                  |
+| SC05 | Reentrancy Attacks             | CEI pattern, ReentrancyGuard                       |
+| SC06 | Unchecked External Calls       | Check return values, use SafeERC20                 |
+| SC07 | Flash Loan Attacks             | Delay mechanisms, oracle protection                |
+| SC08 | Integer Overflow/Underflow     | Solidity 0.8+, SafeMath if needed                  |
+| SC09 | Denial of Service              | Gas limits, pull over push                         |
+| SC10 | Phishing via tx.origin         | Use msg.sender, never tx.origin                    |
 
 ## Workflow
 
@@ -140,10 +140,10 @@ Expert Web3 developer specializing in blockchain development, smart contract sec
 Invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: 'web3-expert' });           // Core Solidity/blockchain guidelines
-Skill({ skill: 'security-architect' });    // OWASP, threat modeling
-Skill({ skill: 'auth-security-expert' });  // Access control patterns
-Skill({ skill: 'tdd' });                   // Test-driven development
+Skill({ skill: 'web3-expert' }); // Core Solidity/blockchain guidelines
+Skill({ skill: 'security-architect' }); // OWASP, threat modeling
+Skill({ skill: 'auth-security-expert' }); // Access control patterns
+Skill({ skill: 'tdd' }); // Test-driven development
 ```
 
 > **CRITICAL**: Use `Skill()` tool to invoke skills. Reading skill files alone does NOT apply them.
@@ -259,27 +259,27 @@ When executing tasks, follow this 8-step approach:
 
 ```javascript
 // Invoke skills to apply their workflows
-Skill({ skill: 'web3-expert' });           // Solidity best practices
-Skill({ skill: 'security-architect' });    // Threat modeling, OWASP
-Skill({ skill: 'tdd' });                   // Test-Driven Development
+Skill({ skill: 'web3-expert' }); // Solidity best practices
+Skill({ skill: 'security-architect' }); // Threat modeling, OWASP
+Skill({ skill: 'tdd' }); // Test-Driven Development
 ```
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `web3-expert` | Solidity patterns, DeFi patterns | Always at task start |
-| `security-architect` | OWASP, threat modeling | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                          | When                 |
+| -------------------------------- | -------------------------------- | -------------------- |
+| `web3-expert`                    | Solidity patterns, DeFi patterns | Always at task start |
+| `security-architect`             | OWASP, threat modeling           | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle         | Always at task start |
+| `verification-before-completion` | Quality gates                    | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Debugging contract issues | `debugging` | Systematic 4-phase debugging |
-| Git operations | `git-expert` | Git best practices |
-| Authentication/access control | `auth-security-expert` | OAuth, access patterns |
+| Condition                     | Skill                  | Purpose                      |
+| ----------------------------- | ---------------------- | ---------------------------- |
+| Debugging contract issues     | `debugging`            | Systematic 4-phase debugging |
+| Git operations                | `git-expert`           | Git best practices           |
+| Authentication/access control | `auth-security-expert` | OAuth, access patterns       |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -305,8 +305,8 @@ TaskUpdate({
   status: 'completed',
   metadata: {
     summary: 'Brief description of what was done',
-    filesModified: ['list', 'of', 'files']
-  }
+    filesModified: ['list', 'of', 'files'],
+  },
 });
 
 // 5. Check for next available task
@@ -314,6 +314,7 @@ TaskList();
 ```
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work

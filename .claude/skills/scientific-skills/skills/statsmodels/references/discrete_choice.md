@@ -5,6 +5,7 @@ This document provides comprehensive guidance on discrete choice models in stats
 ## Overview
 
 Discrete choice models handle outcomes that are:
+
 - **Binary**: 0/1, success/failure
 - **Multinomial**: Multiple unordered categories
 - **Ordinal**: Ordered categories
@@ -19,6 +20,7 @@ All models use maximum likelihood estimation and assume i.i.d. errors.
 Uses logistic distribution for binary outcomes.
 
 **When to use:**
+
 - Binary classification (yes/no, success/failure)
 - Probability estimation for binary outcomes
 - Interpretable odds ratios
@@ -40,6 +42,7 @@ print(results.summary())
 ```
 
 **Interpretation:**
+
 ```python
 import numpy as np
 
@@ -59,6 +62,7 @@ print(odds_ci)
 ```
 
 **Marginal effects:**
+
 ```python
 # Average marginal effects (AME)
 marginal_effects = results.get_margeff(at='mean')
@@ -73,6 +77,7 @@ marginal_effects_custom = results.get_margeff(at='mean',
 ```
 
 **Predictions:**
+
 ```python
 # Predicted probabilities
 probs = results.predict(X)
@@ -90,6 +95,7 @@ new_probs = results.predict(X_new)
 ```
 
 **Model evaluation:**
+
 ```python
 from sklearn.metrics import (classification_report, confusion_matrix,
                              roc_auc_score, roc_curve)
@@ -113,6 +119,7 @@ print(f"McFadden's Pseudo R²: {results.prsquared:.4f}")
 Uses normal distribution for binary outcomes.
 
 **When to use:**
+
 - Binary outcomes
 - Prefer normal distribution assumption
 - Field convention (econometrics often uses probit)
@@ -129,6 +136,7 @@ print(results.summary())
 ```
 
 **Comparison with Logit:**
+
 - Probit and Logit usually give similar results
 - Probit: symmetric, based on normal distribution
 - Logit: slightly heavier tails, easier interpretation (odds ratios)
@@ -150,6 +158,7 @@ print("Probit marginal effects:", probit_me)
 For unordered categorical outcomes with 3+ categories.
 
 **When to use:**
+
 - Multiple unordered categories (e.g., transportation mode, brand choice)
 - No natural ordering among categories
 - Need probabilities for each category
@@ -167,6 +176,7 @@ print(results.summary())
 ```
 
 **Interpretation:**
+
 ```python
 # One category is reference (usually category 0)
 # Coefficients represent log-odds relative to reference
@@ -182,6 +192,7 @@ predicted_categories = probs.argmax(axis=1)
 ```
 
 **Relative risk ratios:**
+
 ```python
 # Exponentiate coefficients for relative risk ratios
 import numpy as np
@@ -200,6 +211,7 @@ print(params_df)
 For choice models where alternatives have characteristics.
 
 **When to use:**
+
 - Alternative-specific regressors (vary across choices)
 - Panel data with choices
 - Discrete choice experiments
@@ -219,6 +231,7 @@ results = model.fit()
 Standard model for count data.
 
 **When to use:**
+
 - Count outcomes (events, occurrences)
 - Rare events
 - Mean ≈ variance
@@ -235,6 +248,7 @@ print(results.summary())
 ```
 
 **Interpretation:**
+
 ```python
 # Rate ratios (incident rate ratios)
 rate_ratios = np.exp(results.params)
@@ -244,6 +258,7 @@ print("Rate ratios:", rate_ratios)
 ```
 
 **Check overdispersion:**
+
 ```python
 # Mean and variance should be similar for Poisson
 print(f"Mean: {y_counts.mean():.2f}")
@@ -262,6 +277,7 @@ if overdispersion_ratio > 1.5:
 ```
 
 **With offset (for rates):**
+
 ```python
 # When modeling rates with varying exposure
 # log(λ) = log(exposure) + Xβ
@@ -275,6 +291,7 @@ results = model.fit()
 For overdispersed count data (variance > mean).
 
 **When to use:**
+
 - Count data with overdispersion
 - Excess variance not explained by Poisson
 - Heterogeneity in counts
@@ -292,6 +309,7 @@ print(f"Dispersion parameter alpha: {results.params['alpha']:.4f}")
 ```
 
 **Compare with Poisson:**
+
 ```python
 # Fit both models
 poisson_results = Poisson(y_counts, X).fit()
@@ -316,11 +334,13 @@ if lr_pval < 0.05:
 For count data with excess zeros.
 
 **When to use:**
+
 - More zeros than expected from Poisson/NB
 - Two processes: one for zeros, one for counts
 - Examples: number of doctor visits, insurance claims
 
 **Models:**
+
 - ZeroInflatedPoisson (ZIP)
 - ZeroInflatedNegativeBinomialP (ZINB)
 
@@ -340,6 +360,7 @@ print(zip_results.summary())
 ```
 
 **Two parts of the model:**
+
 ```python
 # 1. Inflation model: P(Y=0 due to inflation)
 # 2. Count model: distribution of counts
@@ -356,6 +377,7 @@ predicted_counts = zip_results.predict(X, which='mean')
 Two-stage model: whether any counts, then how many.
 
 **When to use:**
+
 - Excess zeros
 - Different processes for zero vs positive counts
 - Zeros structurally different from positive values
@@ -379,6 +401,7 @@ print(results.summary())
 For ordered categorical outcomes.
 
 **When to use:**
+
 - Ordered categories (e.g., low/medium/high, ratings 1-5)
 - Natural ordering matters
 - Want to respect ordinal structure
@@ -396,6 +419,7 @@ print(results.summary())
 ```
 
 **Interpretation:**
+
 ```python
 # Cutpoints (thresholds between categories)
 cutpoints = results.params[-n_categories+1:]
@@ -413,6 +437,7 @@ predicted_categories = probs.argmax(axis=1)
 ```
 
 **Proportional odds assumption:**
+
 ```python
 # Test if coefficients are same across cutpoints
 # (Brant test - implement manually or check residuals)

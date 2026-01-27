@@ -3,9 +3,7 @@
   "title": "code-analyzer Output Schema",
   "description": "Output validation schema for code-analyzer skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

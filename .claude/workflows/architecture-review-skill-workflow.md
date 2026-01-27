@@ -38,13 +38,13 @@ This workflow performs comprehensive architecture reviews by:
 
 **Complexity indicators:**
 
-| Indicator | Simple Review | Full Review |
-|-----------|---------------|-------------|
-| Codebase size | < 10k LOC | > 10k LOC |
-| Service count | Monolith | Multi-service |
-| Team size | 1-3 | 4+ |
-| External dependencies | < 5 | 5+ |
-| Security sensitivity | Low | Medium-High |
+| Indicator             | Simple Review | Full Review   |
+| --------------------- | ------------- | ------------- |
+| Codebase size         | < 10k LOC     | > 10k LOC     |
+| Service count         | Monolith      | Multi-service |
+| Team size             | 1-3           | 4+            |
+| External dependencies | < 5           | 5+            |
+| Security sensitivity  | Low           | Medium-High   |
 
 ## Phase 1: Context Gathering
 
@@ -134,6 +134,7 @@ Audit existing architecture documentation.
 **Expected Output**: Documentation inventory with gap analysis.
 
 **Phase 1 Deliverables**:
+
 - `architecture-review-structure.md` - Codebase structure analysis
 - `architecture-review-docs.md` - Documentation audit results
 
@@ -251,6 +252,7 @@ Assess technical debt and maintenance burden.
 **Expected Output**: Technical debt inventory with prioritization.
 
 **Phase 2 Deliverables**:
+
 - `architecture-review-patterns.md` - Pattern analysis and quality metrics
 - `architecture-review-techdebt.md` - Technical debt assessment
 
@@ -361,6 +363,7 @@ Scan dependencies for security vulnerabilities.
 **Expected Output**: Dependency security scan with CVE findings.
 
 **Phase 3 Deliverables**:
+
 - `architecture-review-security.md` - Security posture assessment
 - `architecture-review-deps.md` - Dependency vulnerability scan
 
@@ -442,6 +445,7 @@ Consolidate all architecture review findings into actionable recommendations.
 **Expected Output**: Consolidated architecture review report with prioritized recommendations.
 
 **Phase 4 Deliverables**:
+
 - `architecture-review-final.md` - Complete review with recommendations
 
 ---
@@ -465,11 +469,13 @@ The architecture review is complete when:
 ### Phase 1 Failures
 
 **Codebase too large to explore**:
+
 1. Split exploration by domain/module
 2. Spawn parallel explorers for independent areas
 3. Set exploration depth limits for initial pass
 
 **Missing documentation**:
+
 1. Document gap in findings
 2. Proceed with code-based analysis
 3. Flag documentation as high-priority recommendation
@@ -477,11 +483,13 @@ The architecture review is complete when:
 ### Phase 2 Failures
 
 **Unable to identify patterns**:
+
 1. Check if codebase is too small/simple for formal patterns
 2. Look for emerging patterns vs. established patterns
 3. Document as "pattern-free" if truly ad-hoc
 
 **Complexity analysis timeout**:
+
 1. Focus on hotspot analysis rather than full coverage
 2. Use sampling for large codebases
 3. Prioritize recently-changed code
@@ -489,11 +497,13 @@ The architecture review is complete when:
 ### Phase 3 Failures
 
 **Security scan incomplete**:
+
 1. Document what was and wasn't scanned
 2. Flag gaps as recommendations for manual review
 3. Focus on highest-risk areas first
 
 **Dependency scan failures**:
+
 1. Check for unsupported package managers
 2. Fall back to manual dependency review
 3. Document unscannable dependencies
@@ -501,6 +511,7 @@ The architecture review is complete when:
 ### Phase 4 Failures
 
 **Conflicting recommendations**:
+
 1. Architect arbitrates conflicts
 2. Document trade-offs for stakeholder decision
 3. Provide multiple options with pros/cons
@@ -547,15 +558,15 @@ Phases 2 and 3 may run in parallel after Phase 1 completes.
 
 ## Agent-Skill Mapping Reference
 
-| Phase | Agent | Required Skills |
-|-------|-------|-----------------|
-| 1.1 | developer | code-analyzer, project-onboarding |
-| 1.2 | developer | - |
-| 2.1 | architect | code-analyzer |
-| 2.2 | architect | code-analyzer |
-| 3.1 | security-architect | security-architect |
-| 3.2 | security-architect | - |
-| 4.1 | code-reviewer | - |
+| Phase | Agent              | Required Skills                   |
+| ----- | ------------------ | --------------------------------- |
+| 1.1   | developer          | code-analyzer, project-onboarding |
+| 1.2   | developer          | -                                 |
+| 2.1   | architect          | code-analyzer                     |
+| 2.2   | architect          | code-analyzer                     |
+| 3.1   | security-architect | security-architect                |
+| 3.2   | security-architect | -                                 |
+| 4.1   | code-reviewer      | -                                 |
 
 ## Related Workflows
 

@@ -7,6 +7,7 @@ The Node endpoint retrieves property relationships and values from the Data Comm
 ## Core Capabilities
 
 The Node API performs three primary functions:
+
 1. Retrieve property labels associated with nodes
 2. Obtain values for specific properties across nodes
 3. Discover all connected nodes linked through relationships
@@ -18,17 +19,20 @@ The Node API performs three primary functions:
 Retrieve properties using relation expressions with arrow notation.
 
 **Key Parameters:**
+
 - `node_dcids`: Target node identifier(s)
 - `expression`: Relation syntax using arrows (`->`, `<-`, `<-*`)
 - `all_pages`: Enable pagination (default: True)
 - `next_token`: Continue paginated results
 
 **Arrow Notation:**
+
 - `->`: Outgoing property (from node to value)
 - `<-`: Incoming property (from value to node)
 - `<-*`: Multi-hop incoming traversal
 
 **Example Usage:**
+
 ```python
 from datacommons_client import DataCommonsClient
 
@@ -52,10 +56,12 @@ response = client.node.fetch(
 Get property labels without retrieving values—useful for discovering what properties exist.
 
 **Parameters:**
+
 - `node_dcids`: Node identifier(s)
 - `out`: Boolean—True for outgoing properties, False for incoming
 
 **Example Usage:**
+
 ```python
 # Get all outgoing property labels for California
 labels = client.node.fetch_property_labels(
@@ -75,12 +81,14 @@ labels = client.node.fetch_property_labels(
 Obtain specific property values with optional filters.
 
 **Parameters:**
+
 - `node_dcids`: Node identifier(s)
 - `property`: Property name to query
 - `out`: Direction (True for outgoing, False for incoming)
 - `limit`: Maximum number of values to return
 
 **Example Usage:**
+
 ```python
 # Get name property for California
 values = client.node.fetch_property_values(
@@ -95,6 +103,7 @@ values = client.node.fetch_property_values(
 List all entity types (Class nodes) in the Data Commons graph.
 
 **Example Usage:**
+
 ```python
 classes = client.node.fetch_all_classes()
 ```
@@ -104,10 +113,12 @@ classes = client.node.fetch_all_classes()
 Look up entity names by DCID in selected languages.
 
 **Parameters:**
+
 - `node_dcids`: Entity identifier(s)
 - `language`: Language code (default: "en")
 
 **Example Usage:**
+
 ```python
 names = client.node.fetch_entity_names(
     node_dcids=["geoId/06", "country/USA"],
@@ -121,9 +132,11 @@ names = client.node.fetch_entity_names(
 These methods navigate geographic relationships:
 
 #### fetch_place_children()
+
 Get direct child places.
 
 **Example Usage:**
+
 ```python
 # Get all states in USA
 children = client.node.fetch_place_children(
@@ -132,9 +145,11 @@ children = client.node.fetch_place_children(
 ```
 
 #### fetch_place_descendants()
+
 Retrieve full child hierarchies (recursive).
 
 **Example Usage:**
+
 ```python
 # Get all descendants of California (counties, cities, etc.)
 descendants = client.node.fetch_place_descendants(
@@ -143,9 +158,11 @@ descendants = client.node.fetch_place_descendants(
 ```
 
 #### fetch_place_parents()
+
 Get direct parent places.
 
 **Example Usage:**
+
 ```python
 # Get parent of San Francisco
 parents = client.node.fetch_place_parents(
@@ -154,9 +171,11 @@ parents = client.node.fetch_place_parents(
 ```
 
 #### fetch_place_ancestors()
+
 Retrieve complete parent lineages.
 
 **Example Usage:**
+
 ```python
 # Get all ancestors of San Francisco (CA, USA, etc.)
 ancestors = client.node.fetch_place_ancestors(
@@ -169,6 +188,7 @@ ancestors = client.node.fetch_place_ancestors(
 Access constraint properties for statistical variables—useful for understanding variable definitions and constraints.
 
 **Example Usage:**
+
 ```python
 constraints = client.node.fetch_statvar_constraints(
     node_dcids=["Count_Person"]
@@ -178,17 +198,20 @@ constraints = client.node.fetch_statvar_constraints(
 ## Response Format
 
 Methods return either:
+
 - **NodeResponse objects** with `.to_dict()`, `.to_json()`, and `.nextToken` properties
 - **Dictionaries** for entity names and place hierarchy methods
 
 ## Pagination
 
 For large responses:
+
 1. Set `all_pages=False` to receive data in chunks
 2. Response includes a `nextToken` value
 3. Re-query using that token to fetch subsequent pages
 
 **Example:**
+
 ```python
 # First page
 response = client.node.fetch(

@@ -47,6 +47,7 @@ shap.plots.waterfall(shap_values[0])
 ```
 
 **Key Decisions**:
+
 - Explainer type based on model architecture
 - Background dataset size (for DeepExplainer, KernelExplainer)
 - Number of samples to explain (all test set vs. subset)
@@ -91,6 +92,7 @@ shap.plots.scatter(shap_values[:, "Feature1"], color=shap_values[:, "Feature2"])
 ```
 
 **Common Issues to Check**:
+
 - Data leakage (feature with suspiciously high importance)
 - Spurious correlations (unexpected feature relationships)
 - Target leakage (features that shouldn't be predictive)
@@ -139,6 +141,7 @@ print(f"V2 Score: {model_v2.score(X_test_v2, y_test):.4f}")
 ```
 
 **Feature Engineering Insights from SHAP**:
+
 - Strong nonlinear patterns → Try transformations (log, sqrt, polynomial)
 - Color-coded interactions in scatter → Create interaction terms
 - Redundant features in clustering → Remove or combine
@@ -201,6 +204,7 @@ for name, shap_vals in shap_values_dict.items():
 ```
 
 **Model Selection Criteria**:
+
 - **Accuracy vs. Interpretability**: Sometimes simpler models with SHAP are preferable
 - **Feature Consistency**: Models agreeing on feature importance are more trustworthy
 - **Explanation Quality**: Clear, actionable explanations
@@ -260,6 +264,7 @@ for feature in proxy_features:
 ```
 
 **Fairness Metrics to Check**:
+
 - **Demographic Parity**: Similar positive prediction rates across groups
 - **Equal Opportunity**: Similar true positive rates across groups
 - **Feature Importance Parity**: Similar feature rankings across groups
@@ -316,6 +321,7 @@ shap.plots.waterfall(shap_exp[0])
 ```
 
 **Deep Learning Considerations**:
+
 - Background dataset size affects accuracy and speed
 - Multi-output handling (classification vs. regression)
 - Specialized plots for image/text data
@@ -418,6 +424,7 @@ def batch_explain_and_save(X_batch, output_dir):
 ```
 
 **Production Best Practices**:
+
 - Cache explainers to avoid recomputation
 - Batch explanations when possible
 - Limit explanation complexity (top N features)
@@ -467,6 +474,7 @@ shap.plots.scatter(shap_values[:, 'Month'])
 ```
 
 **Time Series Considerations**:
+
 - Lagged features and their importance
 - Rolling statistics interpretation
 - Seasonal patterns in SHAP values
@@ -475,37 +483,46 @@ shap.plots.scatter(shap_values[:, 'Month'])
 ## Common Pitfalls and Solutions
 
 ### Pitfall 1: Wrong Explainer Choice
+
 **Problem**: Using KernelExplainer for tree models (slow and unnecessary)
 **Solution**: Always use TreeExplainer for tree-based models
 
 ### Pitfall 2: Insufficient Background Data
+
 **Problem**: DeepExplainer/KernelExplainer with too few background samples
 **Solution**: Use 100-1000 representative samples
 
 ### Pitfall 3: Misinterpreting Log-Odds
+
 **Problem**: Confusion about units (probability vs. log-odds)
 **Solution**: Check model output type; use link="logit" when needed
 
 ### Pitfall 4: Ignoring Feature Correlations
+
 **Problem**: Interpreting features as independent when they're correlated
 **Solution**: Use feature clustering; understand domain relationships
 
 ### Pitfall 5: Overfitting to Explanations
+
 **Problem**: Feature engineering based solely on SHAP without validation
 **Solution**: Always validate improvements with cross-validation
 
 ### Pitfall 6: Data Leakage Undetected
+
 **Problem**: Not noticing unexpected feature importance indicating leakage
 **Solution**: Validate SHAP results against domain knowledge
 
 ### Pitfall 7: Computational Constraints Ignored
+
 **Problem**: Computing SHAP for entire large dataset
 **Solution**: Use sampling, batching, or subset analysis
 
 ## Advanced Techniques
 
 ### Technique 1: SHAP Interaction Values
+
 Capture pairwise feature interactions:
+
 ```python
 explainer = shap.TreeExplainer(model)
 shap_interaction_values = explainer.shap_interaction_values(X_test)
@@ -518,7 +535,9 @@ print(f"Interaction strength: {np.abs(interaction).mean():.4f}")
 ```
 
 ### Technique 2: Partial Dependence with SHAP
+
 Combine partial dependence plots with SHAP:
+
 ```python
 from sklearn.inspection import partial_dependence
 
@@ -531,7 +550,9 @@ plt.plot(pd_result['grid_values'][0], pd_result['average'][0])
 ```
 
 ### Technique 3: Conditional Expectations
+
 Analyze SHAP values conditioned on other features:
+
 ```python
 # High Income group
 high_income = X_test['Income'] > X_test['Income'].median()
@@ -543,6 +564,7 @@ shap.plots.beeswarm(shap_values[low_income])
 ```
 
 ### Technique 4: Feature Clustering for Redundancy
+
 ```python
 # Create hierarchical clustering
 clustering = shap.utils.hclust(X_train, y_train)
@@ -557,6 +579,7 @@ shap.plots.bar(shap_values, clustering=clustering, clustering_cutoff=0.5)
 ## Integration with MLOps
 
 **Experiment Tracking**:
+
 ```python
 import mlflow
 
@@ -581,6 +604,7 @@ with mlflow.start_run():
 ```
 
 **Model Monitoring**:
+
 ```python
 # Track SHAP distribution drift over time
 def compute_shap_summary(shap_values):

@@ -20,6 +20,7 @@ tools: [Read, Write, Edit, Bash, Glob, Grep]
 - **Educational purposes** in controlled environments
 
 **NEVER use for**:
+
 - Unauthorized network surveillance or sniffing
 - Man-in-the-middle attacks without authorization
 - Privacy violations
@@ -546,6 +547,7 @@ for pkt in packets:
 Read `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 
 **After completing:**
+
 - New pattern -> `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 - Issue found -> `C:\dev\projects\agent-studio\.claude\context\memory\issues.md`
 - Decision made -> `C:\dev\projects\agent-studio\.claude\context\memory\decisions.md`

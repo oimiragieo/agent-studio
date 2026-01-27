@@ -1,7 +1,5 @@
 {
   "bucket": "assistant-behavior-rules",
-  "skills": [
-    "assistant-behavior-rules"
-  ],
+  "skills": ["assistant-behavior-rules"],
   "consolidatedAt": "2026-01-24T03:46:43.464Z"
 }

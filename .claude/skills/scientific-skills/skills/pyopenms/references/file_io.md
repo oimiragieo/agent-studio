@@ -309,6 +309,7 @@ for source_file in exp_settings.getSourceFiles():
 ### Memory Management
 
 For large files:
+
 1. Use indexed or streaming access instead of full in-memory loading
 2. Process data in chunks
 3. Clear data structures when no longer needed

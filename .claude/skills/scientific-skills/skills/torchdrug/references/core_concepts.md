@@ -16,6 +16,7 @@ TorchDrug separates concerns into distinct modules:
 4. **Core Components** (core.py): Base classes and utilities
 
 **Benefits:**
+
 - Reuse representations across tasks
 - Mix and match components
 - Easy experimentation and prototyping
@@ -24,6 +25,7 @@ TorchDrug separates concerns into distinct modules:
 ### Configurable System
 
 All components inherit from `core.Configurable`:
+
 - Serialize to configuration dictionaries
 - Reconstruct from configurations
 - Save and load complete pipelines
@@ -36,12 +38,14 @@ All components inherit from `core.Configurable`:
 Base class for all TorchDrug components.
 
 **Key Methods:**
+
 - `config_dict()`: Serialize to dictionary
 - `load_config_dict(config)`: Load from dictionary
 - `save(file)`: Save to file
 - `load(file)`: Load from file
 
 **Example:**
+
 ```python
 from torchdrug import core, models
 
@@ -60,6 +64,7 @@ model2 = core.Configurable.load_config_dict(config)
 Decorator for registering models, tasks, and datasets.
 
 **Usage:**
+
 ```python
 from torchdrug import core as core_td
 
@@ -75,6 +80,7 @@ class CustomModel(nn.Module, core_td.Configurable):
 ```
 
 **Benefits:**
+
 - Models automatically serializable
 - String-based model specification
 - Easy model lookup and instantiation
@@ -86,6 +92,7 @@ class CustomModel(nn.Module, core_td.Configurable):
 Core data structure representing molecular or protein graphs.
 
 **Attributes:**
+
 - `num_node`: Number of nodes
 - `num_edge`: Number of edges
 - `node_feature`: Node feature tensor [num_node, feature_dim]
@@ -94,12 +101,14 @@ Core data structure representing molecular or protein graphs.
 - `num_relation`: Number of edge types (for multi-relational)
 
 **Methods:**
+
 - `node_mask(mask)`: Select subset of nodes
 - `edge_mask(mask)`: Select subset of edges
 - `undirected()`: Make graph undirected
 - `directed()`: Make graph directed
 
 **Batching:**
+
 - Graphs batched into single disconnected graph
 - Automatic batching in DataLoader
 - Preserves node/edge indices per graph
@@ -109,12 +118,14 @@ Core data structure representing molecular or protein graphs.
 Specialized graph for molecules.
 
 **Additional Attributes:**
+
 - `atom_type`: Atomic numbers
 - `bond_type`: Bond types (single, double, triple, aromatic)
 - `formal_charge`: Atomic formal charges
 - `explicit_hs`: Explicit hydrogen counts
 
 **Methods:**
+
 - `from_smiles(smiles)`: Create from SMILES string
 - `from_molecule(mol)`: Create from RDKit molecule
 - `to_smiles()`: Convert to SMILES
@@ -122,6 +133,7 @@ Specialized graph for molecules.
 - `ion_to_molecule()`: Neutralize charges
 
 **Example:**
+
 ```python
 from torchdrug import data
 
@@ -138,6 +150,7 @@ print(mol.bond_type)  # [1, 1] (single bonds)
 Specialized graph for proteins.
 
 **Additional Attributes:**
+
 - `residue_type`: Amino acid types
 - `atom_name`: Atom names (CA, CB, etc.)
 - `atom_type`: Atomic numbers
@@ -145,16 +158,19 @@ Specialized graph for proteins.
 - `chain_id`: Chain identifiers
 
 **Methods:**
+
 - `from_pdb(pdb_file)`: Load from PDB file
 - `from_sequence(sequence)`: Create from sequence
 - `to_pdb(pdb_file)`: Save to PDB file
 
 **Graph Construction:**
+
 - Nodes typically represent residues (not atoms)
 - Edges can be sequential, spatial (KNN), or contact-based
 - Configurable edge construction strategies
 
 **Example:**
+
 ```python
 from torchdrug import data
 
@@ -173,16 +189,19 @@ graph = protein.residue_graph(
 Efficient batching structure for heterogeneous graphs.
 
 **Purpose:**
+
 - Batch graphs of different sizes
 - Single GPU memory allocation
 - Efficient parallel processing
 
 **Attributes:**
+
 - `num_nodes`: List of node counts per graph
 - `num_edges`: List of edge counts per graph
 - `graph_ind`: Graph index for each node
 
 **Use Cases:**
+
 - Automatic in DataLoader
 - Custom batching strategies
 - Multi-graph operations
@@ -215,6 +234,7 @@ def forward(self, graph, input, all_loss=None, metric=None):
 ```
 
 **Key Points:**
+
 - `graph`: Batched graph structure
 - `input`: Node features [num_node, input_dim]
 - `all_loss`: Accumulated loss (for multi-task)
@@ -224,15 +244,18 @@ def forward(self, graph, input, all_loss=None, metric=None):
 ### Essential Attributes
 
 **All models must define:**
+
 - `input_dim`: Expected input feature dimension
 - `output_dim`: Output representation dimension
 
 **Purpose:**
+
 - Automatic dimension checking
 - Compose models in pipelines
 - Error checking and validation
 
 **Example:**
+
 ```python
 class CustomModel(nn.Module):
     def __init__(self, input_dim, hidden_dim):
@@ -284,12 +307,14 @@ class CustomTask(tasks.Task):
 ### Task Components
 
 **Typical Task Structure:**
+
 1. **Representation Model**: Encodes graph to embeddings
 2. **Readout/Prediction Head**: Maps embeddings to predictions
 3. **Loss Function**: Training objective
 4. **Metrics**: Evaluation measures
 
 **Example:**
+
 ```python
 from torchdrug import tasks, models
 
@@ -393,14 +418,17 @@ class LightningWrapper(pl.LightningModule):
 ### Built-in Criteria
 
 **Classification:**
+
 - `"bce"`: Binary cross-entropy
 - `"ce"`: Cross-entropy (multi-class)
 
 **Regression:**
+
 - `"mse"`: Mean squared error
 - `"mae"`: Mean absolute error
 
 **Knowledge Graph:**
+
 - `"bce"`: Binary classification of triples
 - `"ce"`: Cross-entropy ranking loss
 - `"margin"`: Margin-based ranking
@@ -424,18 +452,21 @@ class CustomTask(tasks.Task):
 ### Common Metrics
 
 **Classification:**
+
 - **AUROC**: Area under ROC curve
 - **AUPRC**: Area under precision-recall curve
 - **Accuracy**: Overall accuracy
 - **F1**: Harmonic mean of precision and recall
 
 **Regression:**
+
 - **MAE**: Mean absolute error
 - **RMSE**: Root mean squared error
 - **R²**: Coefficient of determination
 - **Pearson**: Pearson correlation
 
 **Ranking (Knowledge Graph):**
+
 - **MR**: Mean rank
 - **MRR**: Mean reciprocal rank
 - **Hits@K**: Percentage in top K
@@ -443,6 +474,7 @@ class CustomTask(tasks.Task):
 ### Multi-Task Metrics
 
 For multi-label or multi-task:
+
 - Metrics computed per task
 - Macro-average across tasks
 - Can weight by task importance
@@ -510,6 +542,7 @@ dataset = datasets.Fold("~/datasets/", transform=transform)
 ### Multi-Task Learning
 
 Train single model on multiple related tasks:
+
 ```python
 task = tasks.PropertyPrediction(
     model,
@@ -529,6 +562,7 @@ task = tasks.PropertyPrediction(
 ### Self-Supervised Pre-training
 
 Use pre-training tasks:
+
 - `AttributeMasking`: Mask node features
 - `EdgePrediction`: Predict edge existence
 - `ContextPrediction`: Contrastive learning
@@ -536,6 +570,7 @@ Use pre-training tasks:
 ### Custom Layers
 
 Extend TorchDrug with custom GNN layers:
+
 ```python
 from torchdrug import layers
 

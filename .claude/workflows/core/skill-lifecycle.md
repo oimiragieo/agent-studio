@@ -39,6 +39,7 @@ flowchart TD
 **When to use:** Any operation involving framework artifacts (skills, agents, hooks, workflows, templates, schemas) - creation, update, deprecation, or integration.
 
 **Phases:**
+
 1. **Discovery** - Check if artifact exists, compare versions
 2. **Decision** - Create new, update existing, or deprecate
 3. **Action** - Execute creation/update/deprecation
@@ -47,6 +48,7 @@ flowchart TD
 ```
 
 **Verification:**
+
 ```bash
 grep "skill-lifecycle" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 ```
@@ -819,30 +821,35 @@ Record lifecycle completion to .claude/context/memory/learnings.md
 ### Phase Gate Checks
 
 **Phase 1 Complete (Discovery):**
+
 - [ ] Discovery report exists
 - [ ] Artifact existence determined
 - [ ] Version comparison done (if existing)
 - [ ] Recommendation provided
 
 **Phase 2 Complete (Decision):**
+
 - [ ] Action plan created
 - [ ] CREATE/UPDATE/DEPRECATE decision made
 - [ ] Tasks defined
 - [ ] Dependencies identified
 
 **Phase 3 Complete (Action):**
+
 - [ ] Artifact created/updated/deprecated
 - [ ] Version number set/incremented
 - [ ] CHANGELOG updated
 - [ ] MIGRATION guide created (if needed)
 
 **Phase 4 Complete (Integration):**
+
 - [ ] creator-registry.json updated
 - [ ] CLAUDE.md updated (BLOCKING)
 - [ ] Skill catalog updated (if skill)
 - [ ] Agents assigned (if skill)
 
 **Phase 5 Complete (Validation):**
+
 - [ ] Integration tests passed
 - [ ] All references validated
 - [ ] Final verification complete

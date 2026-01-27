@@ -4,8 +4,8 @@ This directory contains modules for integrating external systems and registering
 
 ## Files
 
-| File | Purpose |
-|------|---------|
+| File                              | Purpose                                                   |
+| --------------------------------- | --------------------------------------------------------- |
 | `system-registration-handler.cjs` | Handles registration of new agents, skills, and workflows |
 
 ## Purpose
@@ -27,14 +27,14 @@ const handler = new SystemRegistrationHandler();
 await handler.registerAgent({
   name: 'my-custom-agent',
   category: 'domain',
-  definition: agentDefinition
+  definition: agentDefinition,
 });
 
 // Register a new skill
 await handler.registerSkill({
   name: 'my-custom-skill',
   triggers: ['keyword1', 'keyword2'],
-  definition: skillDefinition
+  definition: skillDefinition,
 });
 ```
 

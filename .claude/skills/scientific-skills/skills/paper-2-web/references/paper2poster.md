@@ -7,6 +7,7 @@ Paper2Poster automatically generates professional academic posters from research
 ## Core Capabilities
 
 ### 1. Content Extraction
+
 - Identifies key findings and contributions
 - Extracts important figures and tables
 - Summarizes methodology
@@ -14,6 +15,7 @@ Paper2Poster automatically generates professional academic posters from research
 - Preserves citations and references
 
 ### 2. Layout Design
+
 - Creates balanced, professional layouts
 - Optimizes content density and white space
 - Establishes clear visual hierarchy
@@ -21,6 +23,7 @@ Paper2Poster automatically generates professional academic posters from research
 - Adapts to different content types
 
 ### 3. Visual Design
+
 - Applies color schemes and branding
 - Optimizes typography for readability
 - Ensures figure quality and sizing
@@ -54,18 +57,21 @@ python pipeline_all.py \
 ### Parameters
 
 **Basic Configuration:**
+
 - `--input-dir`: Directory containing paper files
 - `--output-dir`: Directory for generated posters
 - `--model-choice`: LLM model selection (1=GPT-4, 2=GPT-4.1)
 - `--generate-poster`: Enable poster generation
 
 **Poster Dimensions:**
+
 - `--poster-width-inches`: Width in inches (default: 48)
 - `--poster-height-inches`: Height in inches (default: 36)
 - `--poster-orientation`: Portrait or landscape (default: landscape)
 - `--poster-dpi`: Resolution in DPI (default: 300)
 
 **Design Options:**
+
 - `--poster-template`: Template style (default: modern)
 - `--color-scheme`: Color palette selection
 - `--institution-branding`: Include institution colors and logos
@@ -74,6 +80,7 @@ python pipeline_all.py \
 ## Standard Poster Sizes
 
 ### Conference Standard Sizes
+
 - **4' × 3'** (48" × 36"): Most common conference poster
 - **5' × 4'** (60" × 48"): Large format for major conferences
 - **3' × 4'** (36" × 48"): Portrait orientation for narrow spaces
@@ -81,7 +88,9 @@ python pipeline_all.py \
 - **A1** (594mm × 841mm): Compact conference poster
 
 ### Custom Sizes
+
 The system supports any custom dimensions. Specify using:
+
 ```bash
 --poster-width-inches [width] --poster-height-inches [height]
 ```
@@ -89,6 +98,7 @@ The system supports any custom dimensions. Specify using:
 ## Input Requirements
 
 ### Supported Input Formats
+
 1. **LaTeX source** (preferred)
    - Main `.tex` file with complete paper
    - All figures and tables referenced
@@ -100,6 +110,7 @@ The system supports any custom dimensions. Specify using:
    - High-resolution figures
 
 ### Required Content Elements
+
 - Title and authors
 - Abstract or summary
 - Methodology description
@@ -108,6 +119,7 @@ The system supports any custom dimensions. Specify using:
 - References (optional but recommended)
 
 ### Recommended Assets
+
 - High-resolution figures (300 DPI minimum)
 - Vector graphics (PDF, SVG, EPS)
 - Institution logo
@@ -137,6 +149,7 @@ output/paper_name/poster/
 ## Poster Layout Sections
 
 ### Standard Sections
+
 1. **Header**
    - Title (large, prominent)
    - Authors and affiliations
@@ -174,6 +187,7 @@ output/paper_name/poster/
 ## Design Templates
 
 ### Modern Template (Default)
+
 - Clean, minimalist design
 - Bold colors for headers
 - Ample white space
@@ -181,6 +195,7 @@ output/paper_name/poster/
 - Focus on visual hierarchy
 
 ### Academic Template
+
 - Traditional academic styling
 - Conservative color palette
 - Dense information layout
@@ -188,6 +203,7 @@ output/paper_name/poster/
 - Standard section organization
 
 ### Visual Template
+
 - Image-focused layout
 - Large figure displays
 - Minimal text density
@@ -195,6 +211,7 @@ output/paper_name/poster/
 - Story-driven flow
 
 ### Technical Template
+
 - Equation-friendly layout
 - Code snippet support
 - Detailed methodology sections
@@ -204,6 +221,7 @@ output/paper_name/poster/
 ## Color Schemes
 
 ### Predefined Schemes
+
 - **Institutional**: Uses institution branding colors
 - **Professional**: Navy blue and gray palette
 - **Vibrant**: Bold, eye-catching colors
@@ -213,7 +231,9 @@ output/paper_name/poster/
 - **Cool**: Blue and purple tones
 
 ### Custom Color Schemes
+
 Specify custom colors in configuration:
+
 ```json
 {
   "primary": "#1E3A8A",
@@ -227,12 +247,14 @@ Specify custom colors in configuration:
 ## Typography Options
 
 ### Font Families
+
 - **Sans-serif** (default): Clean, modern, highly readable
 - **Serif**: Traditional academic appearance
 - **Mixed**: Serif for body, sans-serif for headers
 - **Monospace**: For code and technical content
 
 ### Size Hierarchy
+
 - **Title**: 72-96pt
 - **Section headers**: 48-60pt
 - **Subsection headers**: 36-48pt
@@ -243,6 +265,7 @@ Specify custom colors in configuration:
 ## Quality Assurance
 
 ### Automated Checks
+
 - **Text readability**: Minimum font size verification
 - **Color contrast**: Accessibility compliance
 - **Figure quality**: Resolution and clarity checks
@@ -250,6 +273,7 @@ Specify custom colors in configuration:
 - **Branding consistency**: Logo and color verification
 
 ### Manual Review Checklist
+
 1. ☐ All figures are high resolution and clear
 2. ☐ Text is readable from 3-6 feet away
 3. ☐ Color scheme is professional and consistent
@@ -264,6 +288,7 @@ Specify custom colors in configuration:
 ## Print Preparation
 
 ### File Specifications
+
 - **Format**: PDF/X-1a or PDF/X-4 for professional printing
 - **Resolution**: 300 DPI minimum, 600 DPI for fine details
 - **Color mode**: CMYK for print (system auto-converts from RGB)
@@ -271,6 +296,7 @@ Specify custom colors in configuration:
 - **Fonts**: All fonts embedded in PDF
 
 ### Printing Recommendations
+
 1. **Print shop**: Use professional poster printing service
 2. **Paper type**: Matte or satin finish for academic posters
 3. **Backing**: Foam core or rigid backing for stability
@@ -278,6 +304,7 @@ Specify custom colors in configuration:
 5. **Test print**: Print A4/Letter size preview first
 
 ### Budget Options
+
 - **Standard**: $50-100 for 4'×3' poster at professional shop
 - **Economy**: $20-40 for print-only (no mounting)
 - **Premium**: $150-300 for high-end materials and mounting
@@ -286,7 +313,9 @@ Specify custom colors in configuration:
 ## Advanced Features
 
 ### QR Code Generation
+
 Automatically generates QR codes for:
+
 - Paper PDF or DOI
 - Project website
 - GitHub repository
@@ -294,14 +323,18 @@ Automatically generates QR codes for:
 - Author profiles (ORCID, Google Scholar)
 
 ### Institution Branding
+
 When enabled:
+
 - Extracts institution from author affiliations
 - Searches for official logos (requires Google Search API)
 - Applies institution color schemes
 - Matches brand guidelines
 
 ### Interactive Elements (Digital Posters)
+
 For digital display or virtual conferences:
+
 - Clickable links and references
 - Embedded videos in figures
 - Interactive data visualizations
@@ -310,6 +343,7 @@ For digital display or virtual conferences:
 ## Best Practices
 
 ### Content Optimization
+
 1. **Focus on key findings**: Poster should tell story at a glance
 2. **Limit text**: Use bullet points, avoid paragraphs
 3. **Prioritize visuals**: Figures should dominate the space
@@ -317,6 +351,7 @@ For digital display or virtual conferences:
 5. **Highlight contributions**: Make novelty obvious
 
 ### Design Optimization
+
 1. **Use contrast**: Ensure text is easily readable
 2. **Maintain hierarchy**: Size indicates importance
 3. **Balance content**: Avoid crowding any section
@@ -324,6 +359,7 @@ For digital display or virtual conferences:
 5. **White space**: Don't fill every inch
 
 ### Figure Optimization
+
 1. **Large enough**: Minimum 6" width for main figures
 2. **High resolution**: 300 DPI minimum
 3. **Clear labels**: Axis labels, legends readable
@@ -341,6 +377,7 @@ For digital display or virtual conferences:
 ## Integration with Other Components
 
 Combine Paper2Poster with:
+
 - **Paper2Web**: Use matching visual design and color scheme
 - **Paper2Video**: Create poster walk-through video
 - **AutoPR**: Generate social media graphics from poster

@@ -40,6 +40,7 @@ grep -r "matcher" .claude/settings.json
 ```
 
 **Consolidation Candidates Criteria**:
+
 - Same event type (PreToolUse, PostToolUse, etc.)
 - Same or compatible matcher patterns
 - Related functionality (e.g., all routing hooks)
@@ -73,6 +74,7 @@ time node .claude/hooks/routing/hook-b.cjs < test-input.json
 ```
 
 Document baseline metrics:
+
 - Total hook execution time per tool operation
 - Number of file I/O operations
 - Memory usage
@@ -87,11 +89,13 @@ Create consolidation design:
 ## Consolidation: Router Enforcement Hooks
 
 ### Before (3 hooks, 3 processes, 6 file reads)
+
 1. router-mode-reset.cjs - reads router-state.json
 2. router-enforcer.cjs - reads router-state.json, CLAUDE.md
 3. task-create-guard.cjs - reads router-state.json
 
 ### After (1 hook, 1 process, 2 file reads)
+
 1. router-enforcement-unified.cjs
    - Combines all router enforcement logic
    - Single router-state.json read (cached)
@@ -106,21 +110,25 @@ Document the migration:
 ## Migration Plan
 
 ### Phase A: Create unified hook
+
 - [ ] Create router-enforcement-unified.cjs
 - [ ] Implement combined validation logic
 - [ ] Add comprehensive tests
 
 ### Phase B: Parallel testing
+
 - [ ] Run both old and new hooks in parallel
 - [ ] Compare results for discrepancies
 - [ ] Fix any inconsistencies
 
 ### Phase C: Switchover
+
 - [ ] Update settings.json to use unified hook
 - [ ] Keep old hooks as backup (renamed with .bak)
 - [ ] Monitor for issues
 
 ### Phase D: Cleanup
+
 - [ ] Remove backup hooks after 1 week
 - [ ] Update documentation
 - [ ] Archive migration notes
@@ -132,11 +140,13 @@ Document the migration:
 ## Rollback Plan
 
 ### Trigger Conditions
+
 - Unified hook fails validation tests
 - Production errors increase after deployment
 - Performance regression detected
 
 ### Rollback Steps
+
 1. Restore original settings.json from backup
 2. Restart Claude Code session
 3. Verify original hooks functioning
@@ -219,7 +229,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     console.error('Unified enforcement error:', err.message);
-    process.exit(2);  // Fail closed
+    process.exit(2); // Fail closed
   }
 }
 
@@ -401,18 +411,21 @@ rm -rf .claude/hooks/_backup/YYYYMMDD/
 ## Consolidation Checklist
 
 ### Before Starting
+
 - [ ] All hooks have passing tests
 - [ ] Performance baseline documented
 - [ ] Rollback plan defined
 - [ ] Backup created
 
 ### During Implementation
+
 - [ ] Unified hook preserves exact behavior
 - [ ] All original tests pass on unified hook
 - [ ] New tests cover edge cases
 - [ ] Performance improved
 
 ### After Deployment
+
 - [ ] settings.json updated
 - [ ] Parallel testing completed
 - [ ] No production errors
@@ -420,12 +433,12 @@ rm -rf .claude/hooks/_backup/YYYYMMDD/
 
 ## Performance Targets
 
-| Metric | Before | After | Target |
-|--------|--------|-------|--------|
-| Hooks per operation | N | 1 | Minimize |
-| File reads | M | 2-3 | Maximize cache usage |
-| Execution time | X ms | Y ms | 50% reduction |
-| Process spawns | N | 1 | Single process |
+| Metric              | Before | After | Target               |
+| ------------------- | ------ | ----- | -------------------- |
+| Hooks per operation | N      | 1     | Minimize             |
+| File reads          | M      | 2-3   | Maximize cache usage |
+| Execution time      | X ms   | Y ms  | 50% reduction        |
+| Process spawns      | N      | 1     | Single process       |
 
 ## Related Documentation
 

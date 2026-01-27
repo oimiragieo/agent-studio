@@ -34,9 +34,9 @@ schema_config:
     - title
     - type
   registration_targets:
-    - ".claude/context/memory/learnings.md"
-  naming_convention: "kebab-case"
-  file_extension: ".json"
+    - '.claude/context/memory/learnings.md'
+  naming_convention: 'kebab-case'
+  file_extension: '.json'
 
 phases:
   evaluate:
@@ -85,7 +85,7 @@ phases:
       - id: gate-evaluate
         condition: "steps['check-existing-schemas'].output.gap_confirmed === true"
         on_fail: abort
-        message: "Similar schema already exists. Consider enhancing existing schema instead."
+        message: 'Similar schema already exists. Consider enhancing existing schema instead.'
 
   validate:
     description: Check naming convention and no conflicts
@@ -126,15 +126,15 @@ phases:
       - id: gate-validate-name
         condition: "steps['validate-naming'].output.name_valid === true"
         on_fail: block
-        message: "Schema name must be kebab-case"
+        message: 'Schema name must be kebab-case'
       - id: gate-validate-conflict
         condition: "steps['check-naming-conflicts'].output.conflict_found === false"
         on_fail: abort
-        message: "Schema with this name already exists"
+        message: 'Schema with this name already exists'
       - id: gate-validate-properties
         condition: "steps['validate-property-names'].output.properties_valid === true"
         on_fail: block
-        message: "Property names must follow JSON Schema conventions"
+        message: 'Property names must follow JSON Schema conventions'
 
   obtain:
     description: Research schema patterns and existing standards (optional)
@@ -174,7 +174,7 @@ phases:
       - id: gate-obtain
         condition: "steps['determine-draft-version'].output.draft_version !== null"
         on_fail: block
-        message: "Failed to determine JSON Schema draft version"
+        message: 'Failed to determine JSON Schema draft version'
 
   lock:
     description: Create schema JSON file with proper structure
@@ -229,17 +229,17 @@ phases:
         condition: "steps['write-schema-file'].output.schema_file_created === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to create schema file"
+        message: 'Failed to create schema file'
       - id: gate-lock-json
         condition: "steps['validate-json-syntax'].output.json_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "JSON syntax validation failed"
+        message: 'JSON syntax validation failed'
       - id: gate-lock-structure
         condition: "steps['validate-schema-structure'].output.structure_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "Schema structure validation failed"
+        message: 'Schema structure validation failed'
 
   verify:
     description: Validate schema against test data
@@ -279,11 +279,11 @@ phases:
       - id: gate-verify-fields
         condition: "steps['validate-required-fields'].output.fields_present === true"
         on_fail: return_to_lock
-        message: "Required JSON Schema fields missing ($schema, $id, title, type)"
+        message: 'Required JSON Schema fields missing ($schema, $id, title, type)'
       - id: gate-verify-tests
         condition: "steps['test-schema-validation'].output.validation_tests_passed === true"
         on_fail: return_to_lock
-        message: "Schema validation tests failed"
+        message: 'Schema validation tests failed'
 
   enable:
     description: Register schema and update memory
@@ -330,7 +330,7 @@ phases:
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Schema registration verification failed"
+        message: 'Schema registration verification failed'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -340,29 +340,29 @@ compensate:
       description: Remove created schema file
   enable:
     - action: remove_from_index
-      target: ".claude/schemas/index.json"
+      target: '.claude/schemas/index.json'
       description: Remove schema from index if added
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove schema entry from learnings
 
 # Iron Laws for schema creation
 iron_laws:
   - id: no-schema-without-draft
-    rule: "Every schema MUST specify $schema (draft-07 or draft-2020-12)"
+    rule: 'Every schema MUST specify $schema (draft-07 or draft-2020-12)'
     enforcement: gate-verify-fields
   - id: no-schema-without-id
-    rule: "Every schema MUST have unique $id"
+    rule: 'Every schema MUST have unique $id'
     enforcement: gate-verify-fields
   - id: no-schema-without-title
-    rule: "Every schema MUST have descriptive title"
+    rule: 'Every schema MUST have descriptive title'
     enforcement: gate-verify-fields
   - id: no-schema-without-type
-    rule: "Every schema MUST specify root type"
+    rule: 'Every schema MUST specify root type'
     enforcement: gate-verify-fields
   - id: json-syntax-valid
-    rule: "JSON must parse without errors"
+    rule: 'JSON must parse without errors'
     enforcement: gate-lock-json
   - id: schema-structure-valid
-    rule: "Schema must follow JSON Schema specification"
+    rule: 'Schema must follow JSON Schema specification'
     enforcement: gate-lock-structure

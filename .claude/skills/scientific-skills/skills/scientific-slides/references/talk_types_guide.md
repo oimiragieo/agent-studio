@@ -9,6 +9,7 @@ Different presentation contexts require different approaches, structures, and em
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 10-20 minutes (15 minutes most common)
 - **Audience**: Mix of specialists and non-specialists in your field
 - **Setting**: Concurrent sessions, audience may arrive late
@@ -16,6 +17,7 @@ Different presentation contexts require different approaches, structures, and em
 - **Format**: Often followed by 2-5 minutes of questions
 
 **Challenges**:
+
 - Limited time for comprehensive coverage
 - Competing with other interesting talks
 - Audience fatigue (many talks in one day)
@@ -27,6 +29,7 @@ Different presentation contexts require different approaches, structures, and em
 **Recommended Slide Count**: 15-18 slides
 
 **Time Allocation**:
+
 ```
 Introduction (2-3 minutes, 2-3 slides):
 - Title + hook (30 seconds)
@@ -57,6 +60,7 @@ Conclusion (1 minute, 1-2 slides):
 ### Conference Talk Best Practices
 
 **Opening**:
+
 - ✅ Start with attention-grabbing hook (surprising fact, compelling image)
 - ✅ Clearly state why this work matters
 - ✅ Preview main finding early ("spoiler alert" acceptable)
@@ -64,6 +68,7 @@ Conclusion (1 minute, 1-2 slides):
 - ❌ Don't start with "I'm honored to be here..."
 
 **Content**:
+
 - ✅ Focus on 1-2 key findings (not everything from paper)
 - ✅ Use compelling visuals
 - ✅ Show data, not just conclusions
@@ -73,6 +78,7 @@ Conclusion (1 minute, 1-2 slides):
 - ❌ Don't use small fonts or busy slides
 
 **Delivery**:
+
 - ✅ Practice to ensure exact timing
 - ✅ Make eye contact with audience
 - ✅ Show enthusiasm for your work
@@ -82,6 +88,7 @@ Conclusion (1 minute, 1-2 slides):
 - ❌ Don't read slides verbatim
 
 **Q&A Strategy**:
+
 - Prepare backup slides with extra data
 - Anticipate likely questions
 - Keep answers concise (30-60 seconds)
@@ -91,6 +98,7 @@ Conclusion (1 minute, 1-2 slides):
 ### Lightning Talks (5-7 Minutes)
 
 **Ultra-Focused Structure**:
+
 ```
 Slide 1: Title (15 seconds)
 Slide 2: The Problem (45 seconds)
@@ -101,6 +109,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 ```
 
 **Key Principles**:
+
 - ONE main message only
 - Maximize visuals, minimize text
 - No methods details (just mention approach)
@@ -113,6 +122,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 **Purpose**: Drive traffic to poster session
 
 **Structure**:
+
 ```
 1 slide: Title + Context (30 seconds)
 2 slides: Problem + Approach (60 seconds)
@@ -121,6 +131,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 ```
 
 **Tips**:
+
 - Show teaser, not full story
 - Include poster number prominently
 - Use QR code for details
@@ -131,6 +142,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 45-60 minutes
 - **Audience**: Department faculty, students, postdocs
 - **Setting**: Single presentation, full attention
@@ -138,6 +150,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 - **Format**: Extended Q&A (10-15 minutes), interruptions welcome
 
 **Challenges**:
+
 - Maintaining engagement for longer duration
 - Balancing depth and accessibility
 - Handling interruptions smoothly
@@ -149,6 +162,7 @@ Slide 7: Conclusion + Contact (30 seconds)
 **Recommended Slide Count**: 40-50 slides
 
 **Time Allocation**:
+
 ```
 Introduction (8-10 minutes, 8-10 slides):
 - Personal introduction (1 minute)
@@ -186,6 +200,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 ### Seminar Best Practices
 
 **Opening**:
+
 - ✅ Establish credibility and context
 - ✅ Make personal connection to research
 - ✅ Show enthusiasm and passion
@@ -194,6 +209,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 - ❌ Don't be overly formal or stiff
 
 **Content**:
+
 - ✅ Go deeper into methods than conference talk
 - ✅ Show multiple related findings or studies
 - ✅ Discuss failed experiments and pivots (shows thinking)
@@ -204,6 +220,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 - ❌ Don't oversell findings
 
 **Engagement**:
+
 - ✅ Welcome interruptions: "Please feel free to ask questions"
 - ✅ Use checkpoint questions: "Does this make sense?"
 - ✅ Engage with questioners genuinely
@@ -214,6 +231,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 - ❌ Don't monopolize Q&A time
 
 **Pacing**:
+
 - Build in natural pause points
 - Don't rush (you have time)
 - Vary delivery speed and tone
@@ -223,6 +241,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 ### Job Talk Considerations
 
 **Additional Expectations**:
+
 - Show research program trajectory (past → present → future)
 - Demonstrate independent thinking
 - Show you can mentor students
@@ -231,6 +250,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 - Teaching philosophy may be discussed
 
 **Structure Adaptation**:
+
 - Add "Future Directions" section (5 minutes, 3-4 slides)
 - Show multiple projects if relevant
 - Discuss collaborative opportunities
@@ -241,6 +261,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 30-60 minutes (varies by institution)
 - **Audience**: Committee, colleagues, family
 - **Setting**: Formal examination
@@ -248,6 +269,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 - **Format**: Extended Q&A (30-90 minutes), private or public
 
 **Unique Aspects**:
+
 - Committee has read dissertation
 - Questioning can be extensive and critical
 - Evaluation of student's independence and expertise
@@ -259,6 +281,7 @@ Conclusion (2-3 minutes, 2-3 slides):
 **Recommended Slide Count**: 40-50 slides
 
 **Time Allocation**:
+
 ```
 Introduction (5 minutes, 5-6 slides):
 - Research context and motivation
@@ -306,6 +329,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 ### Defense Best Practices
 
 **Preparation**:
+
 - ✅ Practice extensively (5+ times)
 - ✅ Anticipate every possible question
 - ✅ Prepare backup slides with extra analyses
@@ -316,6 +340,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 - ❌ Don't leave preparation to last minute
 
 **Content**:
+
 - ✅ Comprehensive coverage of all studies
 - ✅ Clear connection between studies
 - ✅ Address limitations proactively
@@ -327,6 +352,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 - ❌ Don't ignore null results
 
 **Q&A Approach**:
+
 - ✅ Listen carefully to full question
 - ✅ Pause before answering (shows thoughtfulness)
 - ✅ Admit when you don't know
@@ -338,6 +364,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 - ❌ Don't ramble in answers
 
 **Handling Difficult Questions**:
+
 - **Critique of methods**: Acknowledge limitation, explain rationale, note in future work
 - **Alternative interpretations**: "That's an interesting perspective. I focused on X because... but Y is worth exploring"
 - **Why didn't you do X?**: "That would be valuable. Due to [constraint], I prioritized... Future work should examine that"
@@ -348,6 +375,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 10-20 minutes (varies widely)
 - **Audience**: Funding panel, non-specialists, decision-makers
 - **Setting**: Evaluative, competitive
@@ -355,6 +383,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 - **Format**: Presentation + Q&A focused on logistics and impact
 
 **Evaluation Criteria**:
+
 - Significance and innovation
 - Approach and feasibility
 - Investigator qualifications
@@ -366,6 +395,7 @@ Conclusions (2-3 minutes, 2-3 slides):
 **Recommended Slide Count**: 12-15 slides
 
 **Time Allocation**:
+
 ```
 Significance (3-4 minutes, 3-4 slides):
 - Problem statement with impact (90 seconds)
@@ -393,6 +423,7 @@ Conclusion (1 minute, 1 slide):
 ### Grant Pitch Best Practices
 
 **Significance**:
+
 - ✅ Lead with impact (lives saved, costs reduced, knowledge gained)
 - ✅ Use compelling statistics and real-world examples
 - ✅ Clearly state innovation (what's new?)
@@ -401,6 +432,7 @@ Conclusion (1 minute, 1 slide):
 - ❌ Don't be vague about expected outcomes
 
 **Approach**:
+
 - ✅ Show feasibility (you can actually do this)
 - ✅ Present clear, logical aims
 - ✅ Show preliminary data demonstrating proof-of-concept
@@ -411,6 +443,7 @@ Conclusion (1 minute, 1 slide):
 - ❌ Don't propose unrealistic timelines
 
 **Team and Resources**:
+
 - ✅ Highlight key personnel expertise
 - ✅ Show institutional support
 - ✅ Mention prior funding success
@@ -419,6 +452,7 @@ Conclusion (1 minute, 1 slide):
 - ❌ Don't propose work beyond your expertise without collaborators
 
 **Q&A Focus**:
+
 - Expect questions about:
   - Budget justification
   - Timeline and milestones
@@ -432,6 +466,7 @@ Conclusion (1 minute, 1 slide):
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 20-45 minutes
 - **Audience**: Lab members, colleagues, students
 - **Setting**: Educational, critical discussion
@@ -439,6 +474,7 @@ Conclusion (1 minute, 1 slide):
 - **Format**: Heavy Q&A, interactive discussion
 
 **Unique Aspects**:
+
 - Presenting others' work, not your own
 - Critical analysis expected
 - Audience may have read paper
@@ -450,6 +486,7 @@ Conclusion (1 minute, 1 slide):
 **Recommended Slide Count**: 15-20 slides
 
 **Time Allocation**:
+
 ```
 Context (2-3 minutes, 2-3 slides):
 - Paper citation and authors
@@ -491,6 +528,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 ### Journal Club Best Practices
 
 **Preparation**:
+
 - ✅ Read paper multiple times
 - ✅ Read key cited references
 - ✅ Look up unfamiliar methods or concepts
@@ -499,6 +537,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 - ❌ Don't just summarize without analysis
 
 **Presentation**:
+
 - ✅ Explain paper clearly (not everyone may have read it)
 - ✅ Highlight key figures and data
 - ✅ Point out strengths and innovations
@@ -510,6 +549,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 - ❌ Don't skip methods (often most important)
 
 **Critical Analysis**:
+
 - ✅ Question methodological choices
 - ✅ Consider alternative interpretations
 - ✅ Identify what's missing
@@ -520,6 +560,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 - ❌ Don't let personal biases dominate
 
 **Discussion Facilitation**:
+
 - Pose open-ended questions
 - "What do you think about their interpretation of Figure 3?"
 - "Is this the right control experiment?"
@@ -532,6 +573,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 10-30 minutes (often shorter)
 - **Audience**: Non-scientists, business decision-makers
 - **Setting**: High stakes, evaluative
@@ -539,6 +581,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 - **Format**: Emphasis on business case and timeline
 
 **Key Differences from Academic Talks**:
+
 - Emphasis on applications, not mechanisms
 - Market size and competition important
 - Intellectual property considerations
@@ -548,6 +591,7 @@ Critical Analysis (3-5 minutes, 1-2 slides):
 ### Structure for 20-Minute Industry Pitch
 
 **Time Allocation**:
+
 ```
 Problem and Market (3-4 minutes):
 - Unmet need or problem
@@ -583,6 +627,7 @@ Funding Ask (2-3 minutes):
 ### Industry Pitch Best Practices
 
 **Language**:
+
 - ✅ Simple, clear language (no jargon)
 - ✅ Focus on benefits and outcomes
 - ✅ Use business metrics (TAM, SAM, SOM)
@@ -592,6 +637,7 @@ Funding Ask (2-3 minutes):
 - ❌ Don't ignore commercial viability
 
 **Emphasis**:
+
 - Lead with problem and market opportunity
 - Show proof of concept clearly
 - Demonstrate clear path to commercialization
@@ -603,6 +649,7 @@ Funding Ask (2-3 minutes):
 ### Context and Expectations
 
 **Typical Characteristics**:
+
 - **Duration**: 45-90 minutes
 - **Audience**: Students, learners, varied expertise
 - **Setting**: Educational, classroom or workshop
@@ -610,6 +657,7 @@ Funding Ask (2-3 minutes):
 - **Format**: Interactive, may include exercises
 
 **Structure for 60-Minute Tutorial**:
+
 ```
 Introduction (5 minutes):
 - Learning objectives
@@ -645,6 +693,7 @@ Summary (5 minutes):
 ### Tutorial Best Practices
 
 **Content**:
+
 - ✅ Build complexity gradually
 - ✅ Use many examples
 - ✅ Repeat key concepts
@@ -654,6 +703,7 @@ Summary (5 minutes):
 - ❌ Don't move too quickly
 
 **Engagement**:
+
 - ✅ Ask questions to audience
 - ✅ Include interactive elements
 - ✅ Use demonstrations
@@ -663,15 +713,15 @@ Summary (5 minutes):
 
 ## Summary: Choosing the Right Approach
 
-| Talk Type | Duration | Audience | Depth | Key Focus |
-|-----------|----------|----------|-------|-----------|
-| Lightning | 5-7 min | General | Minimal | One key finding |
-| Conference | 15 min | Specialists | Moderate | Main results |
-| Seminar | 45-60 min | Experts | Deep | Comprehensive |
-| Defense | 45-60 min | Committee | Complete | All studies |
-| Grant | 15-20 min | Mixed | Moderate | Impact & feasibility |
-| Journal Club | 30-45 min | Lab group | Critical | Methods & interpretation |
-| Industry | 15-30 min | Non-scientists | Applied | Business case |
+| Talk Type    | Duration  | Audience       | Depth    | Key Focus                |
+| ------------ | --------- | -------------- | -------- | ------------------------ |
+| Lightning    | 5-7 min   | General        | Minimal  | One key finding          |
+| Conference   | 15 min    | Specialists    | Moderate | Main results             |
+| Seminar      | 45-60 min | Experts        | Deep     | Comprehensive            |
+| Defense      | 45-60 min | Committee      | Complete | All studies              |
+| Grant        | 15-20 min | Mixed          | Moderate | Impact & feasibility     |
+| Journal Club | 30-45 min | Lab group      | Critical | Methods & interpretation |
+| Industry     | 15-30 min | Non-scientists | Applied  | Business case            |
 
 ### Adaptation Checklist
 

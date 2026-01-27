@@ -7,6 +7,7 @@ Region2Vec generates unsupervised embeddings of genomic regions and region sets 
 ## When to Use
 
 Use Region2Vec when working with:
+
 - BED file collections requiring dimensionality reduction
 - Genomic region similarity analysis
 - Downstream ML tasks requiring region feature vectors
@@ -54,13 +55,13 @@ region2vec(
 
 ## Key Parameters
 
-| Parameter | Description | Typical Range |
-|-----------|-------------|---------------|
-| `init_lr` | Initial learning rate | 0.01 - 0.05 |
-| `window_size` | Context window size | 3 - 10 |
-| `num_shufflings` | Number of shuffling iterations | 500 - 2000 |
-| `embedding_dim` | Dimension of output embeddings | 50 - 300 |
-| `context_len` | Context length for training | 30 - 100 |
+| Parameter        | Description                    | Typical Range |
+| ---------------- | ------------------------------ | ------------- |
+| `init_lr`        | Initial learning rate          | 0.01 - 0.05   |
+| `window_size`    | Context window size            | 3 - 10        |
+| `num_shufflings` | Number of shuffling iterations | 500 - 2000    |
+| `embedding_dim`  | Dimension of output embeddings | 50 - 300      |
+| `context_len`    | Context length for training    | 30 - 100      |
 
 ## CLI Usage
 
@@ -84,6 +85,7 @@ geniml region2vec --token-folder /path/to/tokens \
 ## Output
 
 The trained model saves embeddings that can be used for:
+
 - Similarity searches across genomic regions
 - Clustering region sets
 - Feature vectors for downstream ML tasks

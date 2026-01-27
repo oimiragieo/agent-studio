@@ -5,6 +5,7 @@ Aeon provides extensive transformation capabilities for preprocessing, feature e
 ## Transformation Types
 
 Aeon distinguishes between:
+
 - **CollectionTransformers**: Transform multiple time series (collections)
 - **SeriesTransformers**: Transform individual time series
 
@@ -193,6 +194,7 @@ y_smoothed = smoother.fit_transform(y)
 ## Algorithm Selection
 
 ### For Feature Extraction:
+
 - **Speed + Performance**: MiniRocketTransformer
 - **Interpretability**: Catch22, TSFresh
 - **Dimensionality reduction**: PAA, SAX, PCA
@@ -200,12 +202,14 @@ y_smoothed = smoother.fit_transform(y)
 - **Comprehensive features**: TSFresh (with longer runtime)
 
 ### For Preprocessing:
+
 - **Normalization**: Normalizer, MinMaxScaler
 - **Smoothing**: MovingAverage, SavitzkyGolayFilter
 - **Missing values**: SimpleImputer
 - **Frequency analysis**: DWTTransformer, Fourier methods
 
 ### For Symbolic Representation:
+
 - **Fast approximation**: PAA
 - **Alphabet-based**: SAX
 - **Frequency-based**: SFA, SFAFast
@@ -213,6 +217,7 @@ y_smoothed = smoother.fit_transform(y)
 ## Best Practices
 
 1. **Fit on training data only**: Avoid data leakage
+
    ```python
    transformer.fit(X_train)
    X_train_tf = transformer.transform(X_train)
@@ -220,6 +225,7 @@ y_smoothed = smoother.fit_transform(y)
    ```
 
 2. **Pipeline composition**: Chain transformers for complex workflows
+
    ```python
    pipeline = CollectionTransformerPipeline([
        ('imputer', SimpleImputer()),
@@ -229,6 +235,7 @@ y_smoothed = smoother.fit_transform(y)
    ```
 
 3. **Feature selection**: TSFresh can generate many features; consider selection
+
    ```python
    from sklearn.feature_selection import SelectKBest
    selector = SelectKBest(k=100)

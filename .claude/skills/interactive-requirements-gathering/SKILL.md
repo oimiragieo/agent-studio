@@ -34,10 +34,10 @@ Structured framework for gathering requirements through interactive questionnair
 
 Before asking ANY question, classify its type:
 
-| Type | Purpose | Phrasing | Example |
-|------|---------|----------|---------|
-| **Additive** | Brainstorming, multiple answers valid | "Select all that apply" | "Which features do you need?" |
-| **Exclusive** | Single choice required | No multi-select phrase | "Which framework should we use?" |
+| Type          | Purpose                               | Phrasing                | Example                          |
+| ------------- | ------------------------------------- | ----------------------- | -------------------------------- |
+| **Additive**  | Brainstorming, multiple answers valid | "Select all that apply" | "Which features do you need?"    |
+| **Exclusive** | Single choice required                | No multi-select phrase  | "Which framework should we use?" |
 
 ### 2. Question Structure
 
@@ -91,11 +91,13 @@ For each question:
 ### Step 3: Handle Special Options
 
 **Option D (Type your own)**:
+
 - Accept user's custom input
 - Confirm the custom response
 - Continue to next question
 
 **Option E (Auto-generate)**:
+
 - Stop asking questions for this section
 - Use best judgment based on previous answers
 - Generate content and present for review
@@ -175,16 +177,18 @@ When using the AskUserQuestion tool, map to this framework:
 
 ```javascript
 AskUserQuestion({
-  questions: [{
-    header: "Database",
-    question: "Which database should we use?",
-    multiSelect: false, // Exclusive question
-    options: [
-      { label: "PostgreSQL (Recommended)", description: "Best for relational data" },
-      { label: "MongoDB", description: "Document store for flexible schemas" },
-      { label: "SQLite", description: "Lightweight for small apps" }
-    ]
-  }]
+  questions: [
+    {
+      header: 'Database',
+      question: 'Which database should we use?',
+      multiSelect: false, // Exclusive question
+      options: [
+        { label: 'PostgreSQL (Recommended)', description: 'Best for relational data' },
+        { label: 'MongoDB', description: 'Document store for flexible schemas' },
+        { label: 'SQLite', description: 'Lightweight for small apps' },
+      ],
+    },
+  ],
 });
 ```
 
@@ -264,6 +268,7 @@ AGENT: "Understood - the product automates code review feedback for developers a
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

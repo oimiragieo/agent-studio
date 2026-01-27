@@ -32,6 +32,7 @@ Summary Statistics API:   https://www.ebi.ac.uk/gwas/summary-statistics/api
 ### Version Information
 
 The GWAS Catalog REST API v2.0 was released in 2024, with significant improvements:
+
 - New endpoints (publications, genes, genomic context, ancestries)
 - Enhanced data exposure (cohorts, background traits, licenses)
 - Improved query capabilities
@@ -48,6 +49,7 @@ The previous API version remains available until May 2026 for backward compatibi
 ### Rate Limiting
 
 While no explicit rate limits are documented, follow best practices:
+
 - Implement delays between consecutive requests (e.g., 0.1-0.5 seconds)
 - Use pagination for large result sets
 - Cache responses locally
@@ -55,6 +57,7 @@ While no explicit rate limits are documented, follow best practices:
 - Avoid hammering the API with rapid consecutive requests
 
 **Example with rate limiting:**
+
 ```python
 import requests
 from time import sleep
@@ -74,27 +77,32 @@ The main API provides access to curated GWAS associations, studies, variants, an
 #### 1. Studies
 
 **Get all studies:**
+
 ```
 GET /studies
 ```
 
 **Get specific study:**
+
 ```
 GET /studies/{accessionId}
 ```
 
 **Search studies:**
+
 ```
 GET /studies/search/findByPublicationIdPubmedId?pubmedId={pmid}
 GET /studies/search/findByDiseaseTrait?diseaseTrait={trait}
 ```
 
 **Query Parameters:**
+
 - `page`: Page number (0-indexed)
 - `size`: Results per page (default: 20)
 - `sort`: Sort field (e.g., `publicationDate,desc`)
 
 **Example:**
+
 ```python
 import requests
 
@@ -109,6 +117,7 @@ print(f"Sample size: {study.get('initialSampleSize')}")
 ```
 
 **Response Fields:**
+
 - `accessionId`: Study identifier (GCST ID)
 - `title`: Study title
 - `publicationInfo`: Publication details including PMID
@@ -121,30 +130,36 @@ print(f"Sample size: {study.get('initialSampleSize')}")
 #### 2. Associations
 
 **Get all associations:**
+
 ```
 GET /associations
 ```
 
 **Get specific association:**
+
 ```
 GET /associations/{associationId}
 ```
 
 **Get associations for a trait:**
+
 ```
 GET /efoTraits/{efoId}/associations
 ```
 
 **Get associations for a variant:**
+
 ```
 GET /singleNucleotidePolymorphisms/{rsId}/associations
 ```
 
 **Query Parameters:**
+
 - `projection`: Response projection (e.g., `associationBySnp`)
 - `page`, `size`, `sort`: Pagination controls
 
 **Example:**
+
 ```python
 import requests
 
@@ -160,6 +175,7 @@ print(f"Found {len(associations)} associations")
 ```
 
 **Response Fields:**
+
 - `rsId`: Variant identifier
 - `strongestAllele`: Risk or effect allele
 - `pvalue`: Association p-value
@@ -178,11 +194,13 @@ print(f"Found {len(associations)} associations")
 #### 3. Variants (Single Nucleotide Polymorphisms)
 
 **Get variant details:**
+
 ```
 GET /singleNucleotidePolymorphisms/{rsId}
 ```
 
 **Search variants:**
+
 ```
 GET /singleNucleotidePolymorphisms/search/findByRsId?rsId={rsId}
 GET /singleNucleotidePolymorphisms/search/findByChromBpLocationRange?chrom={chr}&bpStart={start}&bpEnd={end}
@@ -190,6 +208,7 @@ GET /singleNucleotidePolymorphisms/search/findByGene?geneName={gene}
 ```
 
 **Example:**
+
 ```python
 import requests
 
@@ -204,6 +223,7 @@ print(f"Location: chr{variant.get('locations', [{}])[0].get('chromosomeName')}:{
 ```
 
 **Response Fields:**
+
 - `rsId`: rs number
 - `merged`: Indicates if variant merged with another
 - `functionalClass`: Variant consequence
@@ -217,17 +237,20 @@ print(f"Location: chr{variant.get('locations', [{}])[0].get('chromosomeName')}:{
 #### 4. Traits (EFO Terms)
 
 **Get trait information:**
+
 ```
 GET /efoTraits/{efoId}
 ```
 
 **Search traits:**
+
 ```
 GET /efoTraits/search/findByEfoUri?uri={efoUri}
 GET /efoTraits/search/findByTraitIgnoreCase?trait={traitName}
 ```
 
 **Example:**
+
 ```python
 import requests
 
@@ -244,6 +267,7 @@ print(f"EFO URI: {trait.get('uri')}")
 #### 5. Publications
 
 **Get publication information:**
+
 ```
 GET /publications
 GET /publications/{publicationId}
@@ -253,6 +277,7 @@ GET /publications/search/findByPubmedId?pubmedId={pmid}
 #### 6. Genes
 
 **Get gene information:**
+
 ```
 GET /genes
 GET /genes/{geneId}
@@ -314,6 +339,7 @@ associations = associations_response.json()
 Access full GWAS summary statistics for studies that have deposited complete data.
 
 ### Base URL
+
 ```
 https://www.ebi.ac.uk/gwas/summary-statistics/api
 ```
@@ -323,11 +349,13 @@ https://www.ebi.ac.uk/gwas/summary-statistics/api
 #### 1. Studies
 
 **Get all studies with summary statistics:**
+
 ```
 GET /studies
 ```
 
 **Get specific study:**
+
 ```
 GET /studies/{gcstId}
 ```
@@ -335,22 +363,26 @@ GET /studies/{gcstId}
 #### 2. Traits
 
 **Get trait information:**
+
 ```
 GET /traits/{efoId}
 ```
 
 **Get associations for a trait:**
+
 ```
 GET /traits/{efoId}/associations
 ```
 
 **Query Parameters:**
+
 - `p_lower`: Lower p-value threshold
 - `p_upper`: Upper p-value threshold
 - `size`: Number of results
 - `page`: Page number
 
 **Example:**
+
 ```python
 import requests
 
@@ -369,16 +401,19 @@ results = response.json()
 #### 3. Chromosomes
 
 **Get associations by chromosome:**
+
 ```
 GET /chromosomes/{chromosome}/associations
 ```
 
 **Query by genomic region:**
+
 ```
 GET /chromosomes/{chromosome}/associations?start={start}&end={end}
 ```
 
 **Example:**
+
 ```python
 import requests
 
@@ -401,11 +436,13 @@ variants = response.json()
 #### 4. Variants
 
 **Get specific variant across studies:**
+
 ```
 GET /variants/{variantId}
 ```
 
 **Search by variant ID:**
+
 ```
 GET /variants/{variantId}/associations
 ```
@@ -413,6 +450,7 @@ GET /variants/{variantId}/associations
 ### Response Fields
 
 **Association Fields:**
+
 - `variant_id`: Variant identifier
 - `chromosome`: Chromosome number
 - `base_pair_location`: Position (bp)
@@ -432,6 +470,7 @@ GET /variants/{variantId}/associations
 ### Content Type
 
 All API requests should include the header:
+
 ```
 Content-Type: application/json
 ```
@@ -476,6 +515,7 @@ Responses follow the HAL (Hypertext Application Language) specification:
 ### Page Metadata
 
 Paginated responses include page information:
+
 - `size`: Items per page
 - `totalElements`: Total number of results
 - `totalPages`: Total number of pages

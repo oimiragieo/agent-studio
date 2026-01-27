@@ -76,6 +76,7 @@ params.init_fields.type = "noise"  # initialization method
 ```
 
 **Available types**:
+
 - `"noise"`: Random noise
 - `"dipole"`: Vortex dipole
 - `"vortex"`: Single vortex
@@ -163,6 +164,7 @@ params.forcing.forcing_rate = 1.0  # energy injection rate
 ```
 
 **Common forcing types**:
+
 - `"tcrandom"`: Time-correlated random forcing
 - `"proportional"`: Proportional forcing (maintains specific spectrum)
 - `"in_script"`: Custom forcing defined in script

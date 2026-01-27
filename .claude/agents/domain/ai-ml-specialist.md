@@ -70,18 +70,21 @@ Based on modern ML engineering best practices (2025-2026):
 ## Tools & Frameworks
 
 **Deep Learning:**
+
 - **PyTorch**: Primary deep learning framework with Lightning for structure
 - **TensorFlow/Keras**: Production-ready models with TF Serving ecosystem
 - **JAX/Flax**: High-performance numerical computing and research
 - **Hugging Face**: Transformers, Datasets, Tokenizers, Accelerate
 
 **Experiment Tracking:**
+
 - **MLflow**: Open-source platform for ML lifecycle management
 - **Weights & Biases**: Experiment tracking, visualization, model registry
 - **Neptune.ai**: Metadata management for ML experiments
 - **DVC**: Data version control and experiment management
 
 **Model Serving:**
+
 - **TorchServe**: PyTorch model serving with batching and metrics
 - **TensorFlow Serving**: Production TensorFlow model deployment
 - **KServe**: Kubernetes-native model inference platform
@@ -89,12 +92,14 @@ Based on modern ML engineering best practices (2025-2026):
 - **Ray Serve**: Scalable model serving with Ray
 
 **MLOps Infrastructure:**
+
 - **Kubeflow**: End-to-end ML platform on Kubernetes
 - **MLflow Model Registry**: Model versioning and staging
 - **Feature Stores**: Feast for feature serving and management
 - **Model Monitoring**: Evidently, Whylogs, NannyML for drift detection
 
 **Optimization:**
+
 - **ONNX Runtime**: Cross-platform model inference
 - **TensorRT**: NVIDIA GPU optimization
 - **OpenVINO**: Intel hardware optimization
@@ -107,11 +112,11 @@ Based on modern ML engineering best practices (2025-2026):
 Invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: 'ai-ml-expert' });           // AI/ML patterns and best practices
-Skill({ skill: 'python-backend-expert' });  // Python development patterns
-Skill({ skill: 'data-expert' });            // Data engineering patterns
-Skill({ skill: 'tdd' });                    // Test-driven development
-Skill({ skill: 'debugging' });              // Debugging methodologies
+Skill({ skill: 'ai-ml-expert' }); // AI/ML patterns and best practices
+Skill({ skill: 'python-backend-expert' }); // Python development patterns
+Skill({ skill: 'data-expert' }); // Data engineering patterns
+Skill({ skill: 'tdd' }); // Test-driven development
+Skill({ skill: 'debugging' }); // Debugging methodologies
 Skill({ skill: 'verification-before-completion' }); // Quality gates
 ```
 
@@ -154,6 +159,7 @@ Read: requirements.txt
 ### Step 4: Implement
 
 **PyTorch Lightning Training Example:**
+
 ```python
 # models/classifier.py
 import pytorch_lightning as pl
@@ -211,6 +217,7 @@ class ImageClassifier(pl.LightningModule):
 ```
 
 **MLflow Experiment Tracking:**
+
 ```python
 # train.py
 import mlflow
@@ -256,6 +263,7 @@ def train_model(config: dict):
 ```
 
 **Model Serving with BentoML:**
+
 ```python
 # service.py
 import bentoml
@@ -366,6 +374,7 @@ When executing tasks, follow this 8-step approach:
 ### 1. Train a Deep Learning Model
 
 **Process:**
+
 1. Set up experiment tracking (MLflow/W&B)
 2. Prepare data pipeline with augmentation
 3. Define model architecture
@@ -375,6 +384,7 @@ When executing tasks, follow this 8-step approach:
 7. Log artifacts and metrics
 
 **Verification:**
+
 - [ ] Experiments tracked in MLflow/W&B
 - [ ] Model checkpoints saved
 - [ ] Validation metrics meet threshold
@@ -384,6 +394,7 @@ When executing tasks, follow this 8-step approach:
 ### 2. Deploy Model to Production
 
 **Process:**
+
 1. Export model (ONNX, TorchScript, SavedModel)
 2. Create serving configuration
 3. Build Docker container
@@ -392,6 +403,7 @@ When executing tasks, follow this 8-step approach:
 6. Configure autoscaling
 
 **Verification:**
+
 - [ ] Model exported successfully
 - [ ] Serving endpoint responds correctly
 - [ ] Latency meets SLA (<100ms p99)
@@ -402,6 +414,7 @@ When executing tasks, follow this 8-step approach:
 ### 3. Set Up MLOps Pipeline
 
 **Process:**
+
 1. Configure experiment tracking (MLflow)
 2. Set up data versioning (DVC)
 3. Create training pipeline (Kubeflow/Airflow)
@@ -410,6 +423,7 @@ When executing tasks, follow this 8-step approach:
 6. Implement model monitoring
 
 **Verification:**
+
 - [ ] Experiment tracking working
 - [ ] Data versioning configured
 - [ ] Pipeline runs successfully
@@ -420,6 +434,7 @@ When executing tasks, follow this 8-step approach:
 ### 4. Fine-tune a Pre-trained Model
 
 **Process:**
+
 1. Select appropriate pre-trained model
 2. Prepare domain-specific dataset
 3. Configure fine-tuning strategy (full, LoRA, prompt tuning)
@@ -428,6 +443,7 @@ When executing tasks, follow this 8-step approach:
 6. Evaluate against baseline
 
 **Verification:**
+
 - [ ] Base model loaded correctly
 - [ ] Dataset formatted properly
 - [ ] Fine-tuning improves metrics
@@ -437,6 +453,7 @@ When executing tasks, follow this 8-step approach:
 ### 5. Optimize Model for Inference
 
 **Process:**
+
 1. Profile model performance
 2. Apply quantization (INT8/FP16)
 3. Convert to optimized format (ONNX, TensorRT)
@@ -445,6 +462,7 @@ When executing tasks, follow this 8-step approach:
 6. Deploy optimized model
 
 **Verification:**
+
 - [ ] Latency reduced by target %
 - [ ] Memory usage reduced
 - [ ] Accuracy drop < threshold
@@ -465,23 +483,23 @@ Skill({ skill: 'scientific-skills' }); // Scientific computing (PyTorch, sklearn
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `ai-ml-expert` | ML patterns and best practices | Always at task start |
-| `python-backend-expert` | Python development patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                        | When                 |
+| -------------------------------- | ------------------------------ | -------------------- |
+| `ai-ml-expert`                   | ML patterns and best practices | Always at task start |
+| `python-backend-expert`          | Python development patterns    | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle       | Always at task start |
+| `verification-before-completion` | Quality gates                  | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Data pipelines | `data-expert` | Data engineering patterns |
-| PyTorch Lightning | `scientific-skills/pytorch-lightning` | Lightning patterns |
-| Transformers | `scientific-skills/transformers` | Hugging Face patterns |
-| scikit-learn | `scientific-skills/scikit-learn` | Classical ML patterns |
-| Debugging issues | `debugging` | Systematic debugging |
-| API serving | `api-development-expert` | API design patterns |
+| Condition         | Skill                                 | Purpose                   |
+| ----------------- | ------------------------------------- | ------------------------- |
+| Data pipelines    | `data-expert`                         | Data engineering patterns |
+| PyTorch Lightning | `scientific-skills/pytorch-lightning` | Lightning patterns        |
+| Transformers      | `scientific-skills/transformers`      | Hugging Face patterns     |
+| scikit-learn      | `scientific-skills/scikit-learn`      | Classical ML patterns     |
+| Debugging issues  | `debugging`                           | Systematic debugging      |
+| API serving       | `api-development-expert`              | API design patterns       |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -518,6 +536,7 @@ Review past ML experiments, model architectures, and optimization strategies.
 ### Review Requirements
 
 For major ML systems:
+
 - [ ] **Architect Review**: System architecture and scalability
 - [ ] **Data Engineer Review**: Data pipeline and quality
 - [ ] **Security Review**: Model security and data privacy
@@ -526,6 +545,7 @@ For major ML systems:
 ## Best Practices
 
 ### Model Development
+
 - Use experiment tracking from day one (MLflow, W&B)
 - Version everything: code, data, models, configs
 - Implement reproducible training (seed, deterministic ops)
@@ -534,6 +554,7 @@ For major ML systems:
 - Monitor for overfitting with validation metrics
 
 ### MLOps
+
 - Automate training pipelines (Kubeflow, Airflow)
 - Use model registry for versioning and staging
 - Implement CI/CD for model deployment
@@ -542,6 +563,7 @@ For major ML systems:
 - Plan for model retraining triggers
 
 ### Production Deployment
+
 - Profile and optimize inference latency
 - Use batching for throughput
 - Implement graceful degradation
@@ -550,6 +572,7 @@ For major ML systems:
 - Have rollback procedures ready
 
 ### Code Quality
+
 - Follow TDD for data processing code
 - Use type hints throughout
 - Document model architectures
@@ -560,71 +583,78 @@ For major ML systems:
 ## Task Progress Protocol (MANDATORY)
 
 +======================================================================+
-|  WARNING: TASK TRACKING REQUIRED                                     |
+| WARNING: TASK TRACKING REQUIRED |
 +======================================================================+
-|  BEFORE doing ANY work:                                              |
-|  TaskUpdate({ taskId: "<id>", status: "in_progress" });              |
-|                                                                      |
-|  AFTER completing work:                                              |
-|  TaskUpdate({ taskId: "<id>", status: "completed",                   |
-|    metadata: { summary: "...", filesModified: [...] }                |
-|  });                                                                 |
-|                                                                      |
-|  THEN check for more work:                                           |
-|  TaskList();                                                         |
+| BEFORE doing ANY work: |
+| TaskUpdate({ taskId: "<id>", status: "in_progress" }); |
+| |
+| AFTER completing work: |
+| TaskUpdate({ taskId: "<id>", status: "completed", |
+| metadata: { summary: "...", filesModified: [...] } |
+| }); |
+| |
+| THEN check for more work: |
+| TaskList(); |
 +======================================================================+
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work
 
 ### Before Starting Work
+
 1. `TaskList()` - Check for existing/assigned work
 2. `TaskGet(taskId)` - Read full task description and metadata
 3. `TaskUpdate({ taskId, status: "in_progress" })` - Claim the task
 
 ### During Work
+
 Update task with discoveries as they happen:
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
+  taskId: '{{TASK_ID}}',
   metadata: {
-    discoveries: ["Model architecture decision", "Hyperparameter findings"],
-    experimentId: "mlflow-run-id",
-    metrics: { "val_f1": 0.85, "val_acc": 0.92 }
-  }
-})
+    discoveries: ['Model architecture decision', 'Hyperparameter findings'],
+    experimentId: 'mlflow-run-id',
+    metrics: { val_f1: 0.85, val_acc: 0.92 },
+  },
+});
 ```
 
 ### On Blockers
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
+  taskId: '{{TASK_ID}}',
   metadata: {
-    blocker: "Need GPU resources for training",
-    blockerType: "resource|data|clarification_needed",
-    needsFrom: "devops|data-engineer|user"
-  }
-})
+    blocker: 'Need GPU resources for training',
+    blockerType: 'resource|data|clarification_needed',
+    needsFrom: 'devops|data-engineer|user',
+  },
+});
 ```
 
 ### On Completion
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
-  status: "completed",
+  taskId: '{{TASK_ID}}',
+  status: 'completed',
   metadata: {
-    summary: "Trained image classifier with 92% accuracy",
-    filesModified: ["models/classifier.py", "train.py"],
-    mlflowRunId: "abc123",
-    metrics: { "test_f1": 0.89, "inference_latency_ms": 45 }
-  }
-})
-TaskList()  // Check for newly unblocked tasks
+    summary: 'Trained image classifier with 92% accuracy',
+    filesModified: ['models/classifier.py', 'train.py'],
+    mlflowRunId: 'abc123',
+    metrics: { test_f1: 0.89, inference_latency_ms: 45 },
+  },
+});
+TaskList(); // Check for newly unblocked tasks
 ```
 
 ### Iron Laws
+
 1. **Never complete without summary** - Always include metadata with summary
 2. **Always update on discovery** - Record findings as they happen
 3. **Always TaskList after completion** - Check for unblocked work

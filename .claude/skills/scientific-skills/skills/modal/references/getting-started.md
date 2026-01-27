@@ -13,6 +13,7 @@ modal token new
 ```
 
 This creates credentials in `~/.modal.toml`. Alternatively, set environment variables:
+
 - `MODAL_TOKEN_ID`
 - `MODAL_TOKEN_SECRET`
 
@@ -50,6 +51,7 @@ def main():
 ```
 
 Run with:
+
 ```bash
 modal run hello_modal.py
 ```
@@ -59,6 +61,7 @@ modal run hello_modal.py
 ### Ephemeral Apps (Development)
 
 Run temporarily with `modal run`:
+
 ```bash
 modal run script.py
 ```
@@ -68,16 +71,19 @@ The app stops when the script exits. Use `--detach` to keep running after client
 ### Deployed Apps (Production)
 
 Deploy persistently with `modal deploy`:
+
 ```bash
 modal deploy script.py
 ```
 
 View deployed apps at https://modal.com/apps or with:
+
 ```bash
 modal app list
 ```
 
 Stop deployed apps:
+
 ```bash
 modal app stop app-name
 ```

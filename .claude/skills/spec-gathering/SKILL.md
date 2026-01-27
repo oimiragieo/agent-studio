@@ -1,6 +1,6 @@
 ---
 name: spec-gathering
-description: "Requirements gathering workflow for specification creation. Use when starting a new feature, task, or project that needs structured requirements."
+description: 'Requirements gathering workflow for specification creation. Use when starting a new feature, task, or project that needs structured requirements.'
 version: 1.0.0
 model: sonnet
 invoked_by: both
@@ -26,12 +26,14 @@ Gather user requirements through structured questioning and produce a validated 
 ## When to Use
 
 **Always:**
+
 - Starting a new feature or project
 - Clarifying ambiguous task descriptions
 - When user provides high-level goals without specifics
 - Before spec writing begins
 
 **Exceptions:**
+
 - Simple bug fixes with clear reproduction steps
 - Single-file changes with obvious scope
 - User explicitly provides complete requirements
@@ -51,6 +53,7 @@ Requirements must be confirmed by the user before proceeding to spec creation.
 Understand the project structure before engaging the user.
 
 **Steps:**
+
 1. Read project structure files if they exist
 2. Identify services, tech stack, and ports
 3. Understand existing patterns and conventions
@@ -77,13 +80,13 @@ If no task was provided, ask:
 
 Based on the task, determine the workflow type:
 
-| If task sounds like... | Workflow Type |
-|------------------------|---------------|
-| "Add feature X", "Build Y" | `feature` |
-| "Migrate from X to Y", "Refactor Z" | `refactor` |
-| "Fix bug where X", "Debug Y" | `investigation` |
-| "Migrate data from X" | `migration` |
-| Single service, small change | `simple` |
+| If task sounds like...              | Workflow Type   |
+| ----------------------------------- | --------------- |
+| "Add feature X", "Build Y"          | `feature`       |
+| "Migrate from X to Y", "Refactor Z" | `refactor`      |
+| "Fix bug where X", "Debug Y"        | `investigation` |
+| "Migrate data from X"               | `migration`     |
+| Single service, small change        | `simple`        |
 
 Ask to confirm:
 
@@ -94,6 +97,7 @@ Ask to confirm:
 Based on the project context and task, suggest affected areas:
 
 > "Based on your task and project structure, I think this involves:
+>
 > - **[service1]** (primary) - [why]
 > - **[service2]** (integration) - [why]
 >
@@ -123,10 +127,12 @@ Summarize what you understood:
 > **Scope**: [list of affected areas]
 >
 > **Requirements**:
+>
 > 1. [req 1]
 > 2. [req 2]
 >
 > **Success Criteria**:
+>
 > 1. [criterion 1]
 > 2. [criterion 2]
 >
@@ -142,27 +148,34 @@ Create the structured requirements output:
 # Requirements: [Task Name]
 
 ## Overview
+
 [One paragraph summary]
 
 ## Workflow Type
+
 [feature|refactor|investigation|migration|simple]
 
 ## Scope
+
 - **[area1]** (primary) - [role]
 - **[area2]** (integration) - [role]
 
 ## Requirements
+
 1. [Requirement 1]
 2. [Requirement 2]
 
 ## Acceptance Criteria
+
 1. [Criterion 1]
 2. [Criterion 2]
 
 ## Constraints
+
 - [Constraint 1 if any]
 
 ## Out of Scope
+
 - [What this task does NOT include]
 ```
 
@@ -215,6 +228,7 @@ This skill works well with:
 **Input:** "Add user authentication to the app"
 
 **Process:**
+
 1. Confirm: "You want to add user authentication. Is this username/password, OAuth, or something else?"
 2. Identify scope: "This will touch the backend API, database, and frontend login page."
 3. Get specifics: "Should users be able to reset passwords? Need email verification?"
@@ -227,6 +241,7 @@ This skill works well with:
 **Input:** "The page loads slowly"
 
 **Process:**
+
 1. Clarify: "Which page specifically? What do you consider slow?"
 2. Context: "When did this start? Any recent changes?"
 3. Metrics: "What load time would be acceptable?"
@@ -253,6 +268,7 @@ This skill works well with:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

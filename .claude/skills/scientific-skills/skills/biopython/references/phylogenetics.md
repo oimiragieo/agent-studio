@@ -50,6 +50,7 @@ print(f"Converted {count} trees")
 ### Basic Tree Components
 
 Trees consist of:
+
 - **Clade** - A node (internal or terminal) in the tree
 - **Terminal clades** - Leaves/tips (taxa)
 - **Internal clades** - Internal nodes
@@ -350,6 +351,7 @@ Phylo.write(tree, "output_tree.nwk", "newick")
 ### Distance Models
 
 Available distance calculation models:
+
 - **identity** - Simple identity
 - **blastn** - BLASTN identity
 - **trans** - Transition/transversion ratio

@@ -97,7 +97,6 @@ When reviewing or writing code, apply these guidelines:
 - Write tests for each controller and service.
 - Write end to end tests for eac
 
-
 </instructions>
 
 <examples>
@@ -111,6 +110,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
+
 - nodejs-expert
 
 ## Related Skills
@@ -120,6 +120,7 @@ This expert skill consolidates 1 individual skills:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

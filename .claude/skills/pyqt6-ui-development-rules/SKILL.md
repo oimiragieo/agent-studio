@@ -38,7 +38,7 @@ When reviewing or writing code, apply these guidelines:
 - Craft visually appealing interfaces with attention to color theory and layout.
 - Ensure accessibility and cross-platform compatibility.
 - Implement responsive designs that adapt to various screen sizes.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

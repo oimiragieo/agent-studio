@@ -466,6 +466,7 @@ def print_device_info(device):
 ### Setting Up Credentials
 
 **Google Cloud:**
+
 ```bash
 # Install gcloud CLI
 # Visit: https://cloud.google.com/sdk/docs/install
@@ -478,24 +479,28 @@ export GOOGLE_CLOUD_PROJECT=your-project-id
 ```
 
 **IonQ:**
+
 ```bash
 # Set API key
 export IONQ_API_KEY=your_api_key
 ```
 
 **Azure Quantum:**
+
 ```python
 # Use Azure CLI or workspace connection string
 # See: https://docs.microsoft.com/azure/quantum/
 ```
 
 **AQT:**
+
 ```bash
 # Request access token from AQT
 export AQT_TOKEN=your_token
 ```
 
 **Pasqal:**
+
 ```bash
 # Request API access from Pasqal
 export PASQAL_TOKEN=your_token

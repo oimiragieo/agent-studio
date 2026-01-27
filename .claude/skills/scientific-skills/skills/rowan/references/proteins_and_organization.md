@@ -17,14 +17,14 @@ The `Protein` class represents a protein structure stored on Rowan.
 
 **Attributes:**
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `uuid` | str | Unique identifier |
-| `name` | str | User-assigned name |
-| `data` | str | PDB structure data (lazy-loaded) |
-| `sanitized` | bool | Whether structure has been cleaned |
-| `public` | bool | Public visibility flag |
-| `created_at` | datetime | Upload timestamp |
+| Attribute    | Type     | Description                        |
+| ------------ | -------- | ---------------------------------- |
+| `uuid`       | str      | Unique identifier                  |
+| `name`       | str      | User-assigned name                 |
+| `data`       | str      | PDB structure data (lazy-loaded)   |
+| `sanitized`  | bool     | Whether structure has been cleaned |
+| `public`     | bool     | Public visibility flag             |
+| `created_at` | datetime | Upload timestamp                   |
 
 ---
 
@@ -99,6 +99,7 @@ print(f"Sanitized: {protein.sanitized}")
 ```
 
 **Sanitization performs:**
+
 - Removes non-protein molecules (waters, ligands, ions)
 - Fixes missing atoms in residues
 - Resolves alternate conformations
@@ -165,14 +166,14 @@ Folders provide hierarchical organization for workflows.
 
 **Attributes:**
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `uuid` | str | Unique identifier |
-| `name` | str | Folder name |
-| `parent_uuid` | str | Parent folder UUID (None for root) |
-| `starred` | bool | Starred status |
-| `public` | bool | Public visibility |
-| `created_at` | datetime | Creation timestamp |
+| Attribute     | Type     | Description                        |
+| ------------- | -------- | ---------------------------------- |
+| `uuid`        | str      | Unique identifier                  |
+| `name`        | str      | Folder name                        |
+| `parent_uuid` | str      | Parent folder UUID (None for root) |
+| `starred`     | bool     | Starred status                     |
+| `public`      | bool     | Public visibility                  |
+| `created_at`  | datetime | Creation timestamp                 |
 
 ---
 
@@ -246,6 +247,7 @@ rowan.print_folder_tree(root_uuid="folder-uuid")
 ```
 
 Output:
+
 ```
 📁 Drug Discovery Project
 ├── 📁 Lead Compounds
@@ -310,10 +312,10 @@ Projects are top-level containers for organizing folders and workflows.
 
 **Attributes:**
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `uuid` | str | Unique identifier |
-| `name` | str | Project name |
+| Attribute    | Type     | Description        |
+| ------------ | -------- | ------------------ |
+| `uuid`       | str      | Unique identifier  |
+| `name`       | str      | Project name       |
 | `created_at` | datetime | Creation timestamp |
 
 ---

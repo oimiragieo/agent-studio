@@ -5,6 +5,7 @@ Standardized template for implementing error recovery patterns in hooks, tools, 
 ## Template Usage
 
 Use this template when implementing error handling in:
+
 - Hook scripts
 - CLI tools
 - Agent workflows
@@ -124,7 +125,6 @@ async function executeWithRetry(operation, context = {}) {
       }
 
       return await operation();
-
     } catch (error) {
       lastError = error;
 
@@ -146,10 +146,7 @@ async function executeWithRetry(operation, context = {}) {
   }
 
   // All retries exhausted
-  throw new PermanentError(
-    `Operation failed after ${CONFIG.maxRetries} retries`,
-    lastError
-  );
+  throw new PermanentError(`Operation failed after ${CONFIG.maxRetries} retries`, lastError);
 }
 
 // =============================================================================
@@ -255,11 +252,13 @@ function logError(message, error, context = {}) {
  * Audit log for security events
  */
 function auditLog(event, data) {
-  console.error(JSON.stringify({
-    component: 'component-name',
-    event,
-    ...data,
-  }));
+  console.error(
+    JSON.stringify({
+      component: 'component-name',
+      event,
+      ...data,
+    })
+  );
 }
 
 // =============================================================================
@@ -294,7 +293,6 @@ async function main() {
     } else {
       exitCode = result.blocked ? 2 : 1;
     }
-
   } catch (error) {
     // Handle error based on recovery mode
     const recovery = handleError(error, context);
@@ -326,13 +324,13 @@ async function parseInput() {
   }
 
   // Read from stdin
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     let input = '';
     let hasData = false;
 
     process.stdin.setEncoding('utf8');
 
-    process.stdin.on('data', (chunk) => {
+    process.stdin.on('data', chunk => {
       hasData = true;
       input += chunk;
     });
@@ -394,26 +392,26 @@ module.exports = {
 
 ## Error Types Reference
 
-| Error Type | Retryable | Fail Behavior | Use Case |
-|------------|-----------|---------------|----------|
-| `TransientError` | Yes | Retry with backoff | Network timeout, file lock |
-| `PermanentError` | No | Depends on mode | Invalid input, missing file |
-| `SecurityError` | No | Always fail closed | Auth failure, injection detected |
+| Error Type       | Retryable | Fail Behavior      | Use Case                         |
+| ---------------- | --------- | ------------------ | -------------------------------- |
+| `TransientError` | Yes       | Retry with backoff | Network timeout, file lock       |
+| `PermanentError` | No        | Depends on mode    | Invalid input, missing file      |
+| `SecurityError`  | No        | Always fail closed | Auth failure, injection detected |
 
 ## Recovery Modes
 
-| Mode | Behavior | Use Case |
-|------|----------|----------|
+| Mode          | Behavior        | Use Case                |
+| ------------- | --------------- | ----------------------- |
 | `fail-closed` | Exit 2 on error | Security-critical hooks |
-| `fail-open` | Exit 0 on error | Recording/memory hooks |
-| `retry` | Retry then fail | Network operations |
+| `fail-open`   | Exit 0 on error | Recording/memory hooks  |
+| `retry`       | Retry then fail | Network operations      |
 
 ## Environment Variables
 
-| Variable | Values | Default | Purpose |
-|----------|--------|---------|---------|
+| Variable                  | Values                        | Default     | Purpose                |
+| ------------------------- | ----------------------------- | ----------- | ---------------------- |
 | `COMPONENT_RECOVERY_MODE` | fail-closed, fail-open, retry | fail-closed | Override recovery mode |
-| `DEBUG_HOOKS` | true, false | false | Enable debug logging |
+| `DEBUG_HOOKS`             | true, false                   | false       | Enable debug logging   |
 
 ## Usage Examples
 
@@ -472,16 +470,18 @@ const result = await executeWithRetry(async () => {
 To add error recovery to an existing hook:
 
 1. Import the error classes and handlers:
+
 ```javascript
 const {
   TransientError,
   PermanentError,
   SecurityError,
-  handleError
+  handleError,
 } = require('../../templates/error-recovery.cjs');
 ```
 
 2. Wrap main logic in try-catch:
+
 ```javascript
 try {
   // Existing logic
@@ -492,6 +492,7 @@ try {
 ```
 
 3. Classify errors appropriately:
+
 ```javascript
 // Security error
 if (suspiciousPattern.test(input)) {

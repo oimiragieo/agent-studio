@@ -9,26 +9,31 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Levels of Evidence
 
 **Level I: Highest Quality**
+
 - Systematic reviews and meta-analyses of randomized controlled trials (RCTs)
 - Large multi-center RCTs
 
 **Level II: High Quality**
+
 - Individual RCTs
 - Systematic reviews of observational studies
 
 **Level III: Moderate Quality**
+
 - Cohort studies
 - Case-control studies
 - Well-designed observational studies
 
 **Level IV: Lower Quality**
+
 - Case series
 - Case reports
 - Expert opinion
 
 **Recommendation Strength**:
+
 - **Grade A**: Strong recommendation, high-quality evidence
-- **Grade B**: Moderate recommendation, moderate-quality evidence  
+- **Grade B**: Moderate recommendation, moderate-quality evidence
 - **Grade C**: Weak recommendation, low-quality evidence
 - **Grade D**: Recommendation against (evidence of harm or no benefit)
 
@@ -37,12 +42,14 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Medication Selection Principles
 
 #### 1. Evidence-Based Prescribing
+
 - Use medications with proven efficacy for indication
 - Follow clinical practice guidelines
 - Consider comparative effectiveness data
 - Prefer medications with better safety profiles when equivalent efficacy
 
 #### 2. Patient-Specific Factors
+
 - Comorbidities and contraindications
 - Organ function (renal, hepatic)
 - Drug allergies and intolerances
@@ -52,6 +59,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 - Cost and insurance coverage
 
 #### 3. Medication Safety
+
 - Start low, go slow (especially in elderly, multiple comorbidities)
 - Titrate to target dose based on response and tolerance
 - Monitor for adverse effects
@@ -63,12 +71,14 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Hypertension
 
 **First-Line Agents** (per JNC-8, ACC/AHA guidelines):
+
 - **ACE Inhibitors** (lisinopril, enalapril): Preferred if diabetes, CKD, or heart failure
 - **ARBs** (losartan, valsartan): Alternative to ACE if intolerant
 - **Calcium Channel Blockers** (amlodipine): Particularly effective in elderly, Black patients
 - **Thiazide Diuretics** (chlorthalidone, HCTZ): Cost-effective, good CV outcomes
 
 **Dosing Strategy**:
+
 - Start single agent at low dose
 - Titrate to maximum tolerated dose before adding second agent
 - Combination therapy often needed (2-3 agents)
@@ -77,10 +87,12 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Type 2 Diabetes Mellitus
 
 **First-Line** (ADA Standards of Care):
+
 - **Metformin**: First-line for all patients unless contraindicated (eGFR <30)
   - Start 500-850mg daily or BID, titrate to 2000mg total daily
 
 **Second-Line** (individualize based on comorbidities):
+
 - **SGLT2 Inhibitors** (empagliflozin, dapagliflozin): If heart failure or CKD (strong cardio-renal benefits)
 - **GLP-1 Receptor Agonists** (semaglutide, dulaglutide): If ASCVD or high risk, weight loss needed
 - **DPP-4 Inhibitors** (sitagliptin): If low hypoglycemia risk desired
@@ -90,6 +102,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Depression
 
 **First-Line SSRIs** (APA guidelines):
+
 - Sertraline, escitalopram, fluoxetine, citalopram, paroxetine
 - Start low (e.g., sertraline 50mg, escitalopram 10mg)
 - Titrate after 2-4 weeks if partial response
@@ -97,11 +110,13 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 - Continue 6-12 months after remission (longer if recurrent)
 
 **Second-Line**:
+
 - **SNRIs** (venlafaxine, duloxetine): Especially if chronic pain comorbidity
 - **Bupropion**: If sexual dysfunction concern, smoking cessation
 - **Mirtazapine**: If insomnia/appetite stimulation needed
 
 **Augmentation** (if partial response):
+
 - Second antidepressant from different class
 - Atypical antipsychotic (aripiprazole, quetiapine) - FDA-approved augmentation
 - Lithium, thyroid hormone (triiodothyronine)
@@ -111,21 +126,25 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Multimodal Analgesia** (WHO Pain Ladder, CDC Opioid Guidelines):
 
 **Non-Opioid Analgesics**:
+
 - **Acetaminophen**: 3-4g/day divided, safe if liver function normal
 - **NSAIDs**: Ibuprofen, naproxen, meloxicam - short-term or chronic with GI protection
   - Monitor: Renal function, BP, GI bleeding risk
 
 **Adjuvant Analgesics for Neuropathic Pain**:
+
 - **Gabapentin**: 300mg titrated to 1800-3600mg/day divided TID
 - **Pregabalin**: 75mg BID titrated to 150-300mg BID (better bioavailability than gabapentin)
 - **SNRIs** (duloxetine): 60mg daily for diabetic neuropathy, chronic MSK pain
 - **TCAs** (amitriptyline, nortriptyline): Low-dose (10-75mg QHS) - second-line due to side effects
 
 **Topical Agents**:
+
 - Lidocaine patches 5%, diclofenac gel, capsaicin cream
 - Local effect, minimal systemic absorption
 
 **Opioids** (CDC guidelines - use cautiously):
+
 - Only after non-opioid multimodal therapies inadequate
 - Lowest effective dose, short-acting preferred initially
 - Avoid $>$90 MME/day if possible
@@ -158,6 +177,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
    - Also beneficial for diabetes and CKD
 
 **Additional Therapies**:
+
 - Loop diuretic (furosemide) for volume management (not mortality benefit)
 - Hydralazine-isosorbide dinitrate (if African American or intolerant to ACE/ARB)
 - Ivabradine (if EF $\leq$35%, HR $>$70 on max beta-blocker)
@@ -166,6 +186,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Medication Documentation Best Practices
 
 **Include in Treatment Plan**:
+
 - Generic name (brand name optional)
 - Dose, route, frequency
 - Indication/rationale
@@ -184,6 +205,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Diet and Nutrition
 
 **Mediterranean Diet** (Evidence: multiple RCTs, PREDIMED trial):
+
 - **Indications**: Cardiovascular disease prevention, diabetes management
 - **Components**:
   - High intake: Fruits, vegetables, whole grains, legumes, nuts, olive oil
@@ -193,18 +215,21 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 - **Implementation**: Dietitian referral for medical nutrition therapy
 
 **DASH Diet** (Dietary Approaches to Stop Hypertension):
+
 - **Indication**: Hypertension
 - **Components**: High fruits/vegetables, low-fat dairy, reduced sodium (<2300mg, ideally <1500mg)
 - **Evidence**: Reduces SBP by 8-14 mmHg
 - **Implementation**: DASH eating plan education, sodium tracking
 
 **Carbohydrate Counting** (for Diabetes):
+
 - Consistent carbohydrate intake: 45-60g per meal
 - Enables insulin dosing adjustment
 - Prevents glycemic variability
 - Dietitian teaches carb counting skills
 
 **Weight Management**:
+
 - Caloric deficit: 500-750 kcal/day for 1-2 lb/week weight loss
 - Behavior change strategies: Self-monitoring, stimulus control, goal-setting
 - Structured programs (Weight Watchers, MOVE!, etc.) more effective than self-directed
@@ -213,6 +238,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Physical Activity and Exercise
 
 **Aerobic Exercise**:
+
 - **Recommendation**: 150 min/week moderate intensity OR 75 min/week vigorous
 - **Moderate**: Brisk walking, cycling, swimming - can talk but not sing
 - **Vigorous**: Running, fast cycling - can say few words before pause
@@ -220,16 +246,19 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 - **Implementation**: Start with 10 min sessions, gradually increase
 
 **Resistance Training**:
+
 - **Recommendation**: 2-3 sessions/week, all major muscle groups
 - **Benefits**: Muscle strength, bone density, metabolic rate, glucose control
 - **Implementation**: Bodyweight exercises, resistance bands, free weights, machines
 
 **Balance and Flexibility**:
+
 - Important for fall prevention in elderly
 - Yoga, tai chi
 - Stretching routines
 
 **Exercise Prescription**:
+
 - FITT principle: **F**requency, **I**ntensity, **T**ime, **T**ype
 - Individualize based on fitness level, comorbidities, goals
 - Cardiac clearance if indicated (using ACSM or ACC/AHA guidelines)
@@ -241,6 +270,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Evidence**: Strongest intervention for COPD, cardiovascular disease, cancer prevention
 
 **5 A's Approach**:
+
 1. **Ask**: Screen all patients for tobacco use
 2. **Advise**: Urge all tobacco users to quit
 3. **Assess**: Willingness to make quit attempt
@@ -248,12 +278,14 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 5. **Arrange**: Follow-up contact
 
 **Pharmacotherapy** (doubles quit rates):
+
 - **Nicotine Replacement**: Patch, gum, lozenge - OTC, safe
 - **Varenicline**: Most effective (Chantix), start 1 week before quit date
 - **Bupropion**: Alternative, also treats depression
 - **Combination**: NRT + varenicline/bupropion more effective
 
 **Counseling**:
+
 - Quitline: 1-800-QUIT-NOW
 - Individual or group counseling
 - Cognitive-behavioral techniques
@@ -265,6 +297,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indications**: Insomnia, poor sleep quality
 
 **Components**:
+
 - Consistent sleep-wake schedule (same bedtime/wake time)
 - Bedroom: Dark, quiet, cool (60-67°F)
 - Avoid: Caffeine after 2 PM, alcohol, large meals before bed
@@ -278,6 +311,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 #### Stress Management
 
 **Techniques**:
+
 - **Mindfulness meditation**: 10-20 min daily, reduces anxiety, depression
 - **Progressive muscle relaxation**: Systematic tensing and relaxing muscle groups
 - **Deep breathing**: Diaphragmatic breathing, 4-7-8 technique
@@ -293,6 +327,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indications**: Depression, anxiety, insomnia, chronic pain, substance use
 
 **Core Components**:
+
 - Psychoeducation
 - Cognitive restructuring (identify and challenge distorted thoughts)
 - Behavioral activation (increase rewarding activities)
@@ -304,6 +339,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Implementation**: 12-16 weekly 50-min sessions with trained therapist, homework between sessions
 
 **Variants**:
+
 - **CBT-I** (insomnia): Sleep restriction, stimulus control, cognitive therapy for sleep
 - **CBT-CP** (chronic pain): Pain education, activity pacing, cognitive restructuring of pain catastrophizing
 
@@ -312,12 +348,14 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indication**: Ambivalence about behavior change (diet, exercise, substance use, medication adherence)
 
 **Principles**:
+
 - Express empathy
 - Develop discrepancy (between current behavior and goals/values)
 - Roll with resistance (don't argue)
 - Support self-efficacy
 
 **Techniques**:
+
 - Open-ended questions
 - Affirmations
 - Reflective listening
@@ -329,6 +367,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Patient Education and Self-Management
 
 **Components**:
+
 - Disease education (pathophysiology, natural history, treatment)
 - Self-monitoring skills (blood glucose, BP, weight, symptoms)
 - Medication management (purpose, dosing, side effects)
@@ -340,6 +379,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Evidence**: Self-management education improves outcomes in diabetes, asthma, heart failure, chronic pain
 
 **Delivery**:
+
 - Individual education by clinician or educator
 - Structured programs (DSMES for diabetes, cardiac rehab for heart disease)
 - Group classes
@@ -354,6 +394,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indications**: Musculoskeletal injuries, post-surgical rehabilitation, balance/gait disorders, chronic pain
 
 **Interventions**:
+
 - Therapeutic exercise: Strengthening, stretching, endurance
 - Manual therapy: Soft tissue mobilization, joint mobilization
 - Gait and balance training
@@ -369,6 +410,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indications**: ADL limitations, upper extremity dysfunction, cognitive-perceptual deficits, work-related injuries
 
 **Interventions**:
+
 - ADL/IADL training
 - Adaptive equipment and environmental modifications
 - Upper extremity strengthening and coordination
@@ -383,6 +425,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 **Indications**: Dysphagia, aphasia, dysarthria, cognitive-communication disorders
 
 **Interventions**:
+
 - Swallow therapy and diet modifications
 - Language therapy (aphasia)
 - Articulation therapy
@@ -426,6 +469,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Surgical Interventions
 
 **When to Refer for Surgery**:
+
 - Failed conservative management (adequate trial - typically 6-12 weeks minimum)
 - Progressive neurologic deficit
 - Cauda equina syndrome (emergency)
@@ -440,6 +484,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Acupuncture
 
 **Evidence**:
+
 - **Moderate evidence** for chronic low back pain, osteoarthritis knee pain, tension headaches, migraine
 - **Mechanism**: Unclear (endorphin release, gate control theory, placebo)
 
@@ -490,6 +535,7 @@ This reference provides comprehensive guidance on selecting, implementing, and d
 ### Documentation Template
 
 For each intervention, document:
+
 - **Intervention**: Specific name/type
 - **Indication**: Why this intervention for this patient
 - **Evidence**: Guideline-based, RCT data supporting use
@@ -504,4 +550,3 @@ For each intervention, document:
 **Document Version**: 1.0  
 **Last Updated**: January 2025  
 **Next Review**: January 2026
-

@@ -11,6 +11,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Research question is specific, measurable, and clearly articulated
 - Problem addresses significant gap in literature with high impact potential
 - Scope is appropriate and feasible within constraints
@@ -18,6 +19,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Theoretical or practical significance is compellingly justified
 
 **Good (4):**
+
 - Research question is clear with minor ambiguities
 - Problem is relevant with moderate impact potential
 - Scope is generally appropriate with minor feasibility concerns
@@ -25,6 +27,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Significance is adequately justified
 
 **Adequate (3):**
+
 - Research question is present but lacks specificity
 - Problem relevance is unclear or incremental
 - Scope may be too broad or narrow
@@ -32,6 +35,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Significance justification is weak
 
 **Needs Improvement (2):**
+
 - Research question is vague or poorly defined
 - Problem lacks clear relevance or significance
 - Scope is inappropriate or infeasible
@@ -39,6 +43,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - No clear justification for significance
 
 **Poor (1):**
+
 - No clear research question
 - Problem is trivial or irrelevant
 - Scope is fundamentally flawed
@@ -62,6 +67,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Comprehensive coverage of relevant literature across key areas
 - Critical synthesis identifying patterns, contradictions, and gaps
 - Literature is current (majority from last 3-5 years for rapidly evolving fields)
@@ -70,6 +76,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Identifies genuine research gaps that the work addresses
 
 **Good (4):**
+
 - Good coverage with minor gaps in key areas
 - Mostly synthesis with some description
 - Literature is mostly current with some older foundational works
@@ -78,6 +85,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Research gaps are identified but may not be critical
 
 **Adequate (3):**
+
 - Partial coverage with notable gaps
 - More descriptive summarization than synthesis
 - Literature mix of current and dated sources
@@ -86,6 +94,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Research gaps are vague or questionable
 
 **Needs Improvement (2):**
+
 - Minimal coverage with major gaps
 - Purely descriptive without synthesis
 - Literature is largely outdated
@@ -94,6 +103,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - No clear research gaps identified
 
 **Poor (1):**
+
 - Inadequate or absent literature review
 - No synthesis
 - Outdated or inappropriate sources
@@ -127,6 +137,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Research design perfectly aligned with research questions
 - Methods are rigorous, valid, and reliable
 - Procedures are detailed enough for replication
@@ -136,6 +147,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Limitations are explicitly discussed
 
 **Good (4):**
+
 - Design is appropriate with minor alignment issues
 - Methods are sound with small validity concerns
 - Procedures are mostly replicable
@@ -145,6 +157,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Some limitations discussed
 
 **Adequate (3):**
+
 - Design partially appropriate for questions
 - Methods have notable validity concerns
 - Procedures lack detail for full replication
@@ -154,6 +167,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Limitations minimally discussed
 
 **Needs Improvement (2):**
+
 - Design poorly aligned with research questions
 - Methods have serious validity issues
 - Procedures too vague to replicate
@@ -163,6 +177,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - No limitation discussion
 
 **Poor (1):**
+
 - Inappropriate or absent methodology
 - Methods fundamentally flawed
 - Not replicable
@@ -185,18 +200,21 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Design-Specific Considerations
 
 **Quantitative Studies:**
+
 - Sample size with power analysis
 - Control groups and randomization
 - Measurement validity and reliability
 - Statistical assumptions checking
 
 **Qualitative Studies:**
+
 - Sampling strategy and saturation
 - Data collection procedures
 - Coding and analysis framework
 - Trustworthiness criteria (credibility, transferability, etc.)
 
 **Mixed Methods:**
+
 - Integration rationale
 - Sequencing justification
 - Data convergence strategy
@@ -208,6 +226,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Data sources are highly credible and appropriate
 - Sample size is sufficient and well-justified
 - Data collection procedures are rigorous and systematic
@@ -216,6 +235,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Missing data is minimal and handled appropriately
 
 **Good (4):**
+
 - Data sources are credible with minor concerns
 - Sample size is adequate
 - Collection procedures are systematic
@@ -224,6 +244,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Missing data is addressed
 
 **Adequate (3):**
+
 - Data sources are acceptable but not optimal
 - Sample size is marginal
 - Collection procedures lack some rigor
@@ -232,6 +253,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Missing data handling is basic
 
 **Needs Improvement (2):**
+
 - Data sources have credibility issues
 - Sample size is insufficient
 - Collection procedures are ad hoc
@@ -240,6 +262,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Missing data not addressed
 
 **Poor (1):**
+
 - Data sources are inappropriate or unreliable
 - Sample size is inadequate
 - Collection is unsystematic
@@ -265,6 +288,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Analytical methods perfectly suited to data and questions
 - Analysis is rigorous with appropriate techniques
 - Results interpretation is logical and well-supported
@@ -274,6 +298,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Analysis is transparent and reproducible
 
 **Good (4):**
+
 - Methods are appropriate with minor issues
 - Analysis is sound
 - Interpretation is mostly logical
@@ -283,6 +308,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Analysis is mostly transparent
 
 **Adequate (3):**
+
 - Methods are acceptable but not optimal
 - Analysis has some technical issues
 - Interpretation has logical gaps
@@ -292,6 +318,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Analysis transparency is limited
 
 **Needs Improvement (2):**
+
 - Methods are questionable for data/questions
 - Analysis has significant technical flaws
 - Interpretation is poorly supported
@@ -301,6 +328,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Analysis is not transparent
 
 **Poor (1):**
+
 - Methods are inappropriate
 - Analysis is fundamentally flawed
 - Interpretation is illogical
@@ -345,6 +373,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Results are clearly and comprehensively presented
 - Visualizations are effective and appropriate
 - Statistical or qualitative rigor is evident
@@ -354,6 +383,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Negative and null results are reported
 
 **Good (4):**
+
 - Results are clear with minor presentation issues
 - Visualizations are generally effective
 - Rigor is present
@@ -363,6 +393,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Some negative results included
 
 **Adequate (3):**
+
 - Results presentation is adequate but could be clearer
 - Visualizations are basic or have issues
 - Rigor is questionable in places
@@ -372,6 +403,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Negative results may be omitted
 
 **Needs Improvement (2):**
+
 - Results presentation is unclear or confusing
 - Visualizations are poor or misleading
 - Lack of rigor
@@ -381,6 +413,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Only positive results shown
 
 **Poor (1):**
+
 - Results are poorly presented or absent
 - Visualizations are inappropriate or missing
 - No evidence of rigor
@@ -403,18 +436,21 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Presentation Quality
 
 **Tables:**
+
 - Clear labels and captions
 - Appropriate precision
 - Organized logically
 - Not overly complex
 
 **Figures:**
+
 - Clear axes and legends
 - Appropriate chart type
 - Professional appearance
 - Accessible (color-blind friendly)
 
 **Text:**
+
 - Highlights key findings
 - Avoids redundancy with tables/figures
 - Uses appropriate statistical language
@@ -426,6 +462,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - Writing is clear, concise, and precise
 - Organization is logical with excellent flow
 - Academic tone is appropriate and consistent
@@ -435,6 +472,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Abstract/summary is comprehensive and accurate
 
 **Good (4):**
+
 - Writing is clear with minor awkwardness
 - Organization is logical with good flow
 - Tone is mostly appropriate
@@ -444,6 +482,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Abstract is adequate
 
 **Adequate (3):**
+
 - Writing is understandable but has clarity issues
 - Organization has some logical gaps
 - Tone inconsistencies
@@ -453,6 +492,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Abstract is incomplete or vague
 
 **Needs Improvement (2):**
+
 - Writing is often unclear or verbose
 - Poor organization and flow
 - Tone is inappropriate
@@ -462,6 +502,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Abstract is poor or missing
 
 **Poor (1):**
+
 - Writing is unclear and difficult to follow
 - No clear organization
 - Tone is inappropriate
@@ -499,6 +540,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Quality Indicators
 
 **Excellent (5):**
+
 - All claims are appropriately cited
 - Sources are authoritative and current
 - Citations are accurate and complete
@@ -508,6 +550,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Primary sources used appropriately
 
 **Good (4):**
+
 - Most claims are cited
 - Sources are generally authoritative
 - Few citation errors
@@ -517,6 +560,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Mix of primary and secondary sources
 
 **Adequate (3):**
+
 - Some claims lack citations
 - Source quality is mixed
 - Several citation errors
@@ -526,6 +570,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Over-reliance on secondary sources
 
 **Needs Improvement (2):**
+
 - Many claims uncited
 - Sources are questionable
 - Numerous citation errors
@@ -535,6 +580,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 - Inappropriate sources (e.g., only secondary)
 
 **Poor (1):**
+
 - Inadequate citations
 - Unreliable sources
 - Pervasive citation errors
@@ -558,6 +604,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Citation Quality Assessment
 
 **Source Types (in order of preference for most academic work):**
+
 1. Peer-reviewed journal articles
 2. Academic books from reputable publishers
 3. Conference proceedings (field-dependent)
@@ -568,6 +615,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 8. Websites (rarely appropriate, except for factual data)
 
 **Red Flags:**
+
 - Wikipedia as a primary source
 - Excessive self-citation (>30%)
 - Only citing papers that support hypothesis
@@ -583,6 +631,7 @@ This document provides detailed evaluation criteria, rubrics, and quality indica
 ### Reproducibility
 
 Assess across dimensions:
+
 - Are methods detailed enough to replicate?
 - Are data and code available (or availability explained)?
 - Are analysis steps transparent?
@@ -591,6 +640,7 @@ Assess across dimensions:
 ### Ethics
 
 Consider:
+
 - IRB approval (for human subjects)
 - Informed consent
 - Privacy and confidentiality
@@ -601,6 +651,7 @@ Consider:
 ### Bias and Limitations
 
 Evaluate whether:
+
 - Potential biases are acknowledged
 - Limitations are discussed honestly
 - Boundary conditions are specified
@@ -609,6 +660,7 @@ Evaluate whether:
 ### Impact and Significance
 
 Consider:
+
 - Theoretical contribution
 - Practical implications
 - Policy relevance
@@ -642,6 +694,7 @@ Consider:
 ### Contextual Adjustments
 
 Adjust standards based on:
+
 - **Stage**: Proposal < Draft < Final submission
 - **Venue**: Student thesis < Conference < Journal < Top-tier journal
 - **Type**: Theoretical < Empirical < Meta-analysis

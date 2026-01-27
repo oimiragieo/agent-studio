@@ -1,6 +1,7 @@
 # Devices and Backends in PennyLane
 
 ## Table of Contents
+
 1. [Built-in Simulators](#built-in-simulators)
 2. [Hardware Plugins](#hardware-plugins)
 3. [Device Selection](#device-selection)
@@ -584,13 +585,13 @@ def gpu_circuit():
 
 ## Device Comparison
 
-| Device | Type | Max Qubits | Speed | Noise | Use Case |
-|--------|------|-----------|-------|-------|----------|
-| default.qubit | Simulator | ~25 | Medium | No | General purpose |
-| lightning.qubit | Simulator | ~30 | Fast | No | Large circuits |
-| default.mixed | Simulator | ~15 | Slow | Yes | Noise studies |
-| default.clifford | Simulator | 100+ | Very fast | No | Clifford circuits |
-| IBM Quantum | Hardware | 127 | Slow | Yes | Real experiments |
-| IonQ | Hardware | 11 | Slow | Low | High fidelity |
-| Rigetti | Hardware | 80 | Slow | Yes | Research |
-| Borealis | Hardware | 216 | Slow | Yes | Photonic QC |
+| Device           | Type      | Max Qubits | Speed     | Noise | Use Case          |
+| ---------------- | --------- | ---------- | --------- | ----- | ----------------- |
+| default.qubit    | Simulator | ~25        | Medium    | No    | General purpose   |
+| lightning.qubit  | Simulator | ~30        | Fast      | No    | Large circuits    |
+| default.mixed    | Simulator | ~15        | Slow      | Yes   | Noise studies     |
+| default.clifford | Simulator | 100+       | Very fast | No    | Clifford circuits |
+| IBM Quantum      | Hardware  | 127        | Slow      | Yes   | Real experiments  |
+| IonQ             | Hardware  | 11         | Slow      | Low   | High fidelity     |
+| Rigetti          | Hardware  | 80         | Slow      | Yes   | Research          |
+| Borealis         | Hardware  | 216        | Slow      | Yes   | Photonic QC       |

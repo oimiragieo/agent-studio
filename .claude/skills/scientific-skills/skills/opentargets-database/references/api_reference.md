@@ -7,6 +7,7 @@ https://api.platform.opentargets.org/api/v4/graphql
 ```
 
 Interactive GraphQL playground with documentation:
+
 ```
 https://api.platform.opentargets.org/api/v4/graphql/browser
 ```
@@ -31,6 +32,7 @@ For systematic queries involving multiple targets or diseases, use dataset downl
 ## GraphQL Query Structure
 
 GraphQL queries consist of:
+
 1. Query operation with optional variables
 2. Field selection (request only needed fields)
 3. Nested entity traversal
@@ -71,9 +73,11 @@ print(data)
 ## Available Query Endpoints
 
 ### /target
+
 Retrieve gene annotations, tractability assessments, and disease associations.
 
 **Common fields:**
+
 - `id` - Ensembl gene ID
 - `approvedSymbol` - HGNC gene symbol
 - `approvedName` - Full gene name
@@ -85,9 +89,11 @@ Retrieve gene annotations, tractability assessments, and disease associations.
 - `associatedDiseases` - Disease associations with evidence
 
 ### /disease
+
 Retrieve disease/phenotype data, known drugs, and clinical information.
 
 **Common fields:**
+
 - `id` - EFO disease identifier
 - `name` - Disease name
 - `description` - Disease description
@@ -97,9 +103,11 @@ Retrieve disease/phenotype data, known drugs, and clinical information.
 - `associatedTargets` - Target associations with evidence
 
 ### /drug
+
 Retrieve compound details, mechanisms of action, and pharmacovigilance data.
 
 **Common fields:**
+
 - `id` - ChEMBL identifier
 - `name` - Drug name
 - `drugType` - Small molecule, antibody, etc.
@@ -109,17 +117,21 @@ Retrieve compound details, mechanisms of action, and pharmacovigilance data.
 - `adverseEvents` - Pharmacovigilance data
 
 ### /search
+
 Search across all entities (targets, diseases, drugs).
 
 **Parameters:**
+
 - `queryString` - Search term
 - `entityNames` - Filter by entity type(s)
 - `page` - Pagination
 
 ### /associationDiseaseIndirect
+
 Retrieve target-disease associations including indirect evidence from disease descendants in ontology.
 
 **Key fields:**
+
 - `rows` - Association records with scores
 - `aggregations` - Aggregated statistics
 

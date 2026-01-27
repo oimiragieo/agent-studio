@@ -68,6 +68,7 @@ Based on Expo SDK 52+ and React Native best practices:
 ## Tools & Frameworks
 
 **Expo Ecosystem:**
+
 - **Expo CLI**: Project management, development server, build tools
 - **EAS (Expo Application Services)**: Build, submit, update infrastructure
 - **Expo Router**: File-based routing with native navigation
@@ -75,12 +76,14 @@ Based on Expo SDK 52+ and React Native best practices:
 - **Expo Dev Client**: Custom development builds
 
 **React Native:**
+
 - **React Native 0.76+**: Latest features and optimizations
 - **React 18+**: Concurrent features, Suspense, transitions
 - **TypeScript**: Type-safe mobile development
 - **Metro**: JavaScript bundler optimized for React Native
 
 **State & Data:**
+
 - **TanStack Query**: Server state, caching, synchronization
 - **Zustand**: Lightweight client state management
 - **AsyncStorage**: Persistent local storage
@@ -88,6 +91,7 @@ Based on Expo SDK 52+ and React Native best practices:
 - **MMKV**: Ultra-fast key-value storage
 
 **UI & Styling:**
+
 - **NativeWind**: Tailwind CSS for React Native
 - **React Native Paper**: Material Design components
 - **React Native Elements**: Cross-platform UI toolkit
@@ -95,6 +99,7 @@ Based on Expo SDK 52+ and React Native best practices:
 - **React Native Gesture Handler**: Native gesture handling
 
 **Testing & Quality:**
+
 - **Jest**: Unit and integration testing
 - **React Native Testing Library**: Component testing
 - **Detox**: Gray-box E2E testing
@@ -106,6 +111,7 @@ Based on Expo SDK 52+ and React Native best practices:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files to understand specialized workflows:
+
 - `.claude/skills/expo-framework-rule/SKILL.md` - Expo best practices
 - `.claude/skills/expo-mobile-app-rule/SKILL.md` - Mobile app patterns
 - `.claude/skills/react-expert/SKILL.md` - React patterns and hooks
@@ -146,6 +152,7 @@ Read: tsconfig.json
 ### Step 4: Implement (TDD Approach)
 
 **Component Implementation:**
+
 ```typescript
 // app/screens/profile.tsx
 import { View, Text, StyleSheet, Pressable } from 'react-native';
@@ -198,6 +205,7 @@ const styles = StyleSheet.create({
 ```
 
 **Testing:**
+
 ```typescript
 // __tests__/profile.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react-native';
@@ -256,6 +264,7 @@ describe('ProfileScreen', () => {
 ### 1. Build New Screen with Navigation
 
 **Process (TDD):**
+
 1. Write test for screen rendering
 2. Create screen component with Expo Router
 3. Implement navigation logic
@@ -264,6 +273,7 @@ describe('ProfileScreen', () => {
 6. Document screen purpose and navigation
 
 **Verification:**
+
 - [ ] Tests passing
 - [ ] Navigation works (back, params, deep links)
 - [ ] Responsive on different screen sizes
@@ -274,6 +284,7 @@ describe('ProfileScreen', () => {
 ### 2. Implement Native Feature (Camera, Location, etc.)
 
 **Process:**
+
 1. Install required Expo module
 2. Request permissions properly
 3. Handle permission states (granted, denied, undetermined)
@@ -282,6 +293,7 @@ describe('ProfileScreen', () => {
 6. Update app.json with required permissions
 
 **Verification:**
+
 - [ ] Permissions requested correctly
 - [ ] Graceful handling of denied permissions
 - [ ] Works on iOS and Android
@@ -291,6 +303,7 @@ describe('ProfileScreen', () => {
 ### 3. Setup State Management
 
 **Process:**
+
 1. Choose appropriate solution (Context, Zustand, Redux)
 2. Design state structure
 3. Implement stores/contexts
@@ -299,6 +312,7 @@ describe('ProfileScreen', () => {
 6. Test state updates and persistence
 
 **Verification:**
+
 - [ ] State updates correctly
 - [ ] No unnecessary re-renders
 - [ ] Persistence works (if applicable)
@@ -308,6 +322,7 @@ describe('ProfileScreen', () => {
 ### 4. Optimize Performance
 
 **Process:**
+
 1. Profile app with React DevTools Profiler
 2. Identify bottlenecks (slow renders, large bundles)
 3. Apply optimizations:
@@ -320,6 +335,7 @@ describe('ProfileScreen', () => {
 5. Document findings
 
 **Verification:**
+
 - [ ] Bundle size reduced
 - [ ] Render performance improved
 - [ ] Memory usage acceptable
@@ -329,6 +345,7 @@ describe('ProfileScreen', () => {
 ### 5. Setup EAS Build and Deploy
 
 **Process:**
+
 1. Configure eas.json for build profiles
 2. Setup app signing credentials
 3. Create build for iOS and Android
@@ -337,6 +354,7 @@ describe('ProfileScreen', () => {
 6. Configure EAS Update for OTA updates
 
 **Verification:**
+
 - [ ] Development builds working
 - [ ] Production builds signed correctly
 - [ ] App submissions successful
@@ -356,21 +374,21 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `expo-framework-rule` | Expo SDK and EAS | Always at task start |
-| `expo-mobile-app-rule` | Mobile app patterns | Always at task start |
-| `react-expert` | React patterns and hooks | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                  | When                 |
+| -------------------------------- | ------------------------ | -------------------- |
+| `expo-framework-rule`            | Expo SDK and EAS         | Always at task start |
+| `expo-mobile-app-rule`           | Mobile app patterns      | Always at task start |
+| `react-expert`                   | React patterns and hooks | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle | Always at task start |
+| `verification-before-completion` | Quality gates            | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition       | Skill                       | Purpose              |
-| --------------- | --------------------------- | -------------------- |
-| UI development  | `mobile-ui-development-rule`| Mobile UI patterns   |
-| Accessibility   | `accessibility`             | Screen reader support|
-| Native modules  | `mobile-first-design-rules` | Mobile-first patterns|
+| Condition      | Skill                        | Purpose               |
+| -------------- | ---------------------------- | --------------------- |
+| UI development | `mobile-ui-development-rule` | Mobile UI patterns    |
+| Accessibility  | `accessibility`              | Screen reader support |
+| Native modules | `mobile-first-design-rules`  | Mobile-first patterns |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -407,6 +425,7 @@ Review past mobile patterns, navigation solutions, and platform-specific issues.
 ### Review Requirements
 
 For major features:
+
 - [ ] **QA Review**: Test coverage on iOS and Android
 - [ ] **Accessibility Review**: Screen reader and accessibility compliance
 - [ ] **Performance Review**: Bundle size and runtime performance
@@ -414,6 +433,7 @@ For major features:
 ## Best Practices
 
 ### React Native Specific
+
 - Use functional components with hooks
 - Avoid inline styles (use StyleSheet.create)
 - Use FlatList for long scrollable lists
@@ -423,6 +443,7 @@ For major features:
 - Test on both platforms regularly
 
 ### Expo Best Practices
+
 - Use Expo Router for navigation (file-based routing)
 - Leverage EAS for builds and updates
 - Use Expo modules over community libraries when available
@@ -431,6 +452,7 @@ For major features:
 - Configure app.json properly for all features
 
 ### Performance
+
 - Lazy load heavy screens
 - Use React.memo for component optimization
 - Implement proper list virtualization (FlatList)
@@ -440,6 +462,7 @@ For major features:
 - Use Hermes JavaScript engine
 
 ### Mobile UX
+
 - Follow platform design guidelines (iOS HIG, Material Design)
 - Implement proper loading states
 - Handle offline scenarios gracefully
@@ -449,6 +472,7 @@ For major features:
 - Support landscape orientation where appropriate
 
 ### Testing
+
 - Test on real devices, not just simulators
 - Test different screen sizes and densities
 - Test network conditions (slow, offline)

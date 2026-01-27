@@ -17,6 +17,7 @@ The FDA drug databases provide access to information about pharmaceutical produc
 **Data Source**: FDA Adverse Event Reporting System (FAERS)
 
 **Key Fields**:
+
 - `patient.drug.medicinalproduct` - Drug name
 - `patient.drug.drugindication` - Reason for taking the drug
 - `patient.reaction.reactionmeddrapt` - Adverse reaction description
@@ -26,12 +27,14 @@ The FDA drug databases provide access to information about pharmaceutical produc
 - `primarysource.qualification` - Reporter qualification (physician, pharmacist, etc.)
 
 **Common Use Cases**:
+
 - Safety signal detection
 - Post-market surveillance
 - Drug interaction analysis
 - Comparative safety research
 
 **Example Queries**:
+
 ```python
 # Find adverse events for a specific drug
 import requests
@@ -68,6 +71,7 @@ params = {
 **Data Source**: Structured Product Labeling (SPL)
 
 **Key Fields**:
+
 - `openfda.brand_name` - Brand name(s) of the drug
 - `openfda.generic_name` - Generic name(s)
 - `indications_and_usage` - Approved uses
@@ -82,6 +86,7 @@ params = {
 - `inactive_ingredient` - Inactive ingredients
 
 **Common Use Cases**:
+
 - Clinical decision support
 - Drug information lookup
 - Patient education materials
@@ -89,6 +94,7 @@ params = {
 - Drug comparison analysis
 
 **Example Queries**:
+
 ```python
 # Get full labeling for a brand-name drug
 params = {
@@ -125,6 +131,7 @@ params = {
 **Data Source**: FDA NDC Directory
 
 **Key Fields**:
+
 - `product_ndc` - 10-digit NDC product identifier
 - `generic_name` - Generic drug name
 - `labeler_name` - Company that manufactures/distributes
@@ -139,6 +146,7 @@ params = {
 - `listing_expiration_date` - When listing expires
 
 **Common Use Cases**:
+
 - NDC lookup and validation
 - Product identification
 - Supply chain management
@@ -146,6 +154,7 @@ params = {
 - Insurance claims processing
 
 **Example Queries**:
+
 ```python
 # Look up drug by NDC code
 params = {
@@ -184,6 +193,7 @@ params = {
 **Data Source**: FDA Enforcement Reports
 
 **Key Fields**:
+
 - `status` - Current status (Ongoing, Completed, Terminated)
 - `recall_number` - Unique recall identifier
 - `classification` - Class I, II, or III (severity)
@@ -198,17 +208,20 @@ params = {
 - `voluntary_mandated` - Type of recall
 
 **Classification Levels**:
+
 - **Class I**: Dangerous or defective products that could cause serious health problems or death
 - **Class II**: Products that might cause temporary health problems or pose slight threat of serious nature
 - **Class III**: Products unlikely to cause adverse health reaction but violate FDA labeling/manufacturing regulations
 
 **Common Use Cases**:
+
 - Quality assurance monitoring
 - Supply chain risk management
 - Patient safety alerts
 - Regulatory compliance tracking
 
 **Example Queries**:
+
 ```python
 # Find all Class I (most serious) drug recalls
 params = {
@@ -248,6 +261,7 @@ params = {
 **Data Source**: Drugs@FDA Database (most drugs approved since 1939)
 
 **Key Fields**:
+
 - `application_number` - NDA/ANDA/BLA number
 - `sponsor_name` - Company that submitted application
 - `openfda.brand_name` - Brand name(s)
@@ -264,6 +278,7 @@ params = {
 - `submissions.review_priority` - Priority or standard review
 
 **Common Use Cases**:
+
 - Drug approval research
 - Regulatory pathway analysis
 - Historical approval tracking
@@ -271,6 +286,7 @@ params = {
 - Market access research
 
 **Example Queries**:
+
 ```python
 # Find approval information for a specific drug
 params = {
@@ -309,6 +325,7 @@ params = {
 **Data Source**: FDA Drug Shortages Database
 
 **Key Fields**:
+
 - `product_name` - Name of drug in shortage
 - `status` - Current status (Currently in Shortage, Resolved, Discontinued)
 - `reason` - Reason for shortage
@@ -320,6 +337,7 @@ params = {
 - `presentation` - Dosage form and strength
 
 **Common Use Cases**:
+
 - Formulary management
 - Supply chain planning
 - Patient care continuity
@@ -327,6 +345,7 @@ params = {
 - Procurement planning
 
 **Example Queries**:
+
 ```python
 # Find current drug shortages
 params = {

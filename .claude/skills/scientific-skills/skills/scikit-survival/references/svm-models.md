@@ -11,12 +11,14 @@ SVMs for survival analysis learn a function f(x) that produces risk scores, wher
 ## When to Use Survival SVMs
 
 **Appropriate for:**
+
 - Medium-sized datasets (typically 100-10,000 samples)
 - Need for non-linear decision boundaries (kernel SVMs)
 - Want margin-based learning with regularization
 - Have well-defined feature space
 
 **Not ideal for:**
+
 - Very large datasets (>100,000 samples) - ensemble methods may be faster
 - Need interpretable coefficients - use Cox models instead
 - Require survival function estimates - use Random Survival Forest
@@ -29,11 +31,13 @@ SVMs for survival analysis learn a function f(x) that produces risk scores, wher
 Linear survival SVM optimized for speed using coordinate descent.
 
 **When to Use:**
+
 - Linear relationships expected
 - Large datasets where speed matters
 - Want fast training and prediction
 
 **Key Parameters:**
+
 - `alpha`: Regularization parameter (default: 1.0)
   - Higher = more regularization
 - `rank_ratio`: Trade-off between ranking and regression (default: 1.0)
@@ -56,11 +60,13 @@ risk_scores = estimator.predict(X_test)
 Kernel survival SVM for non-linear relationships.
 
 **When to Use:**
+
 - Non-linear relationships between features and survival
 - Medium-sized datasets
 - Can afford longer training time for better performance
 
 **Kernel Options:**
+
 - `'linear'`: Linear kernel, equivalent to FastSurvivalSVM
 - `'poly'`: Polynomial kernel
 - `'rbf'`: Radial basis function (Gaussian) kernel - most common
@@ -68,6 +74,7 @@ Kernel survival SVM for non-linear relationships.
 - Custom kernel function
 
 **Key Parameters:**
+
 - `alpha`: Regularization parameter (default: 1.0)
 - `kernel`: Kernel function (default: 'rbf')
 - `gamma`: Kernel coefficient for rbf, poly, sigmoid
@@ -98,11 +105,13 @@ risk_scores = estimator.predict(X_test)
 Survival SVM using hinge loss, more similar to classification SVM.
 
 **When to Use:**
+
 - Want hinge loss instead of squared hinge
 - Sparse solutions desired
 - Similar behavior to classification SVMs
 
 **Key Parameters:**
+
 - `alpha`: Regularization parameter
 - `fit_intercept`: Whether to fit intercept term (default: False)
 
@@ -122,11 +131,13 @@ risk_scores = estimator.predict(X_test)
 Original formulation of survival SVM using quadratic programming.
 
 **When to Use:**
+
 - Small datasets
 - Research/benchmarking purposes
 - Other methods don't converge
 
 **Limitations:**
+
 - Slower than Fast variants
 - Less scalable
 
@@ -146,6 +157,7 @@ risk_scores = estimator.predict(X_test)
 Survival analysis using minimizing Lipschitz constant approach.
 
 **When to Use:**
+
 - Want different optimization objective
 - Research applications
 - Alternative to standard survival SVMs
@@ -220,11 +232,13 @@ print(f"Best C-index: {cv.best_score_:.3f}")
 Special kernel that combines clinical features with molecular data for improved predictions in medical applications.
 
 **Use Case:**
+
 - Have both clinical variables (age, stage, etc.) and high-dimensional molecular data (gene expression, genomics)
 - Clinical features should have different weighting
 - Want to integrate heterogeneous data types
 
 **Key Parameters:**
+
 - `fit_once`: Whether to fit kernel once or refit during cross-validation (default: False)
 - Clinical features should be passed separately from molecular features
 
@@ -383,6 +397,7 @@ X_test_scaled = scaler.transform(X_test)
 - **NaiveSurvivalSVM**: O(n³) - very slow for large datasets
 
 For large datasets (>10,000 samples), prefer:
+
 - FastSurvivalSVM (linear)
 - Gradient Boosting
 - Random Survival Forest
@@ -396,14 +411,15 @@ For large datasets (>10,000 samples), prefer:
 
 ## Model Selection Guide
 
-| Model | Speed | Non-linearity | Scalability | Interpretability |
-|-------|-------|---------------|-------------|------------------|
-| FastSurvivalSVM | Fast | No | High | Medium |
-| FastKernelSurvivalSVM | Medium | Yes | Medium | Low |
-| HingeLossSurvivalSVM | Fast | No | High | Medium |
-| NaiveSurvivalSVM | Slow | No | Low | Medium |
+| Model                 | Speed  | Non-linearity | Scalability | Interpretability |
+| --------------------- | ------ | ------------- | ----------- | ---------------- |
+| FastSurvivalSVM       | Fast   | No            | High        | Medium           |
+| FastKernelSurvivalSVM | Medium | Yes           | Medium      | Low              |
+| HingeLossSurvivalSVM  | Fast   | No            | High        | Medium           |
+| NaiveSurvivalSVM      | Slow   | No            | Low         | Medium           |
 
 **General Recommendations:**
+
 - Start with **FastSurvivalSVM** for baseline
 - Try **FastKernelSurvivalSVM** with RBF if non-linearity expected
 - Use grid search to tune alpha and gamma

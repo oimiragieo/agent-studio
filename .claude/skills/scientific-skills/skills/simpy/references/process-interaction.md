@@ -40,6 +40,7 @@ env.run()
 ```
 
 **Use cases:**
+
 - Start signals for coordinated operations
 - Completion notifications
 - Broadcasting state changes

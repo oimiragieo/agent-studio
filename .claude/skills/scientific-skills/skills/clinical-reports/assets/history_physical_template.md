@@ -62,8 +62,8 @@
 
 ## Medications
 
-| Medication | Dose | Route | Frequency | Indication |
-|------------|------|-------|-----------|------------|
+| Medication  | Dose | Route       | Frequency | Indication       |
+| ----------- | ---- | ----------- | --------- | ---------------- |
 | [Drug name] | [mg] | [PO/IV/etc] | [BID/etc] | [Why prescribed] |
 
 [ ] No current medications
@@ -72,8 +72,8 @@
 
 ## Allergies
 
-| Allergen | Reaction |
-|----------|----------|
+| Allergen                  | Reaction           |
+| ------------------------- | ------------------ |
 | [Drug/Food/Environmental] | [Type of reaction] |
 
 [ ] No known drug allergies (NKDA)
@@ -134,20 +134,22 @@
 ## Physical Examination
 
 **Vital Signs:**
-- Temperature: _____ °F (oral/axillary/tympanic)
-- Blood Pressure: _____/_____ mmHg ([right arm, sitting])
-- Heart Rate: _____ bpm (regular/irregular)
-- Respiratory Rate: _____ breaths/min
-- Oxygen Saturation: _____% on [room air / O2 at ___ L/min]
-- Height: _____ cm / inches
-- Weight: _____ kg / lbs
-- BMI: _____ kg/m²
-- Pain Score: ___/10
+
+- Temperature: **\_** °F (oral/axillary/tympanic)
+- Blood Pressure: **\_**/**\_** mmHg ([right arm, sitting])
+- Heart Rate: **\_** bpm (regular/irregular)
+- Respiratory Rate: **\_** breaths/min
+- Oxygen Saturation: **\_**% on [room air / O2 at ___ L/min]
+- Height: **\_** cm / inches
+- Weight: **\_** kg / lbs
+- BMI: **\_** kg/m²
+- Pain Score: \_\_\_/10
 
 **General:**  
 [Overall appearance, apparent vs stated age, nutritional status, distress level]
 
 **HEENT:**
+
 - Head: [Normocephalic, atraumatic, scalp lesions]
 - Eyes: [PERRLA, EOMI, conjunctiva, sclera, fundoscopy if done]
 - Ears: [TMs, canals, hearing]
@@ -158,6 +160,7 @@
 [Supple/stiff, lymphadenopathy, thyroid, JVP, carotid bruits]
 
 **Cardiovascular:**
+
 - Inspection: [PMI, precordial movement]
 - Palpation: [PMI location, thrills, lifts]
 - Auscultation: [Rate, rhythm, S1/S2, murmurs/rubs/gallops, location and radiation]
@@ -165,18 +168,21 @@
 - Extremities: [Edema, cyanosis, clubbing]
 
 **Pulmonary:**
+
 - Inspection: [Respiratory effort, use of accessory muscles, chest wall deformities]
 - Palpation: [Tactile fremitus, chest expansion]
 - Percussion: [Resonance, dullness]
 - Auscultation: [Breath sounds, adventitious sounds - location and quality]
 
 **Abdomen:**
+
 - Inspection: [Contour, scars, distention, visible peristalsis]
 - Auscultation: [Bowel sounds - present, hyperactive, hypoactive, absent]
 - Percussion: [Tympany, dullness, liver span, spleen]
 - Palpation: [Soft/firm, tenderness, masses, organomegaly, rebound, guarding, Murphy's sign]
 
 **Musculoskeletal:**
+
 - Inspection: [Deformities, swelling, erythema]
 - Palpation: [Tenderness, warmth]
 - Range of motion: [Active and passive, limitations]
@@ -187,6 +193,7 @@
 [Color, temperature, moisture, turgor, lesions, rashes, wounds]
 
 **Neurological:**
+
 - Mental Status: [Alert, oriented x3 (person, place, time), speech, memory]
 - Cranial Nerves: [II-XII - document abnormalities]
 - Motor: [Strength 5-point scale, tone, bulk, fasciculations]
@@ -212,11 +219,11 @@
 
 **Labs ([Date]):**
 
-| Test | Result | Reference Range | Flag |
-|------|--------|----------------|------|
-| WBC | [Value] | [Range] | [H/L/-] |
-| Hemoglobin | [Value] | [Range] | [H/L/-] |
-| [Additional labs] | | | |
+| Test              | Result  | Reference Range | Flag    |
+| ----------------- | ------- | --------------- | ------- |
+| WBC               | [Value] | [Range]         | [H/L/-] |
+| Hemoglobin        | [Value] | [Range]         | [H/L/-] |
+| [Additional labs] |         |                 |         |
 
 **Imaging ([Study], [Date]):**  
 [Key findings]
@@ -241,6 +248,7 @@
 **Assessment:** [Brief description of problem, severity, stability]
 
 **Plan:**
+
 - **Diagnostics:** [Labs, imaging, consultations needed]
 - **Therapeutics:** [Medications, procedures, interventions]
   - [Medication]: [dose, route, frequency] for [indication]
@@ -253,6 +261,7 @@
 **Assessment:** [Description]
 
 **Plan:**
+
 - [Diagnostics]
 - [Therapeutics]
 - [Monitoring]
@@ -263,6 +272,7 @@
 **Code Status:** [Full code / DNR / DNI / Other]
 
 **Prophylaxis:**
+
 - DVT prophylaxis: [Pharmacologic and/or mechanical]
 - GI prophylaxis: [If indicated]
 - Aspiration precautions: [If indicated]
@@ -276,12 +286,12 @@
 **Physician:** [Name, credentials]  
 **Level:** [Intern, Resident, Attending]  
 **Date/Time:** [MM/DD/YYYY at HH:MM]  
-**Signature:** ____________________
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
 **Co-signature (if applicable):**  
 **Attending:** [Name, credentials]  
 **Date/Time:** [MM/DD/YYYY at HH:MM]  
-**Signature:** ____________________
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
 ---
 
@@ -301,5 +311,3 @@
 - [ ] Disposition clear
 - [ ] Completed within 24 hours of admission (TJC requirement)
 - [ ] Signed and dated
-
-

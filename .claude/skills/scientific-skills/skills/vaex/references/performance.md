@@ -23,6 +23,7 @@ result = mean_expr  # Now the mean is actually calculated
 ```
 
 **Key concepts:**
+
 - **Expressions** are lazy - they define computations without executing them
 - **Materialization** happens when you access the result
 - **Query optimization** happens automatically before execution
@@ -91,6 +92,7 @@ for i, column in enumerate(['sales', 'quantity', 'profit', 'cost']):
 ### When to Use delay=True
 
 Use `delay=True` when:
+
 - Computing multiple aggregations
 - Computing statistics on many columns
 - Building dashboards or reports

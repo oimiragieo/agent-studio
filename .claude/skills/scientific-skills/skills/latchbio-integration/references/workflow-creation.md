@@ -1,27 +1,32 @@
 # Workflow Creation and Registration
 
 ## Overview
+
 The Latch SDK enables defining serverless bioinformatics workflows using Python decorators and deploying them with automatic containerization and UI generation.
 
 ## Installation
 
 Install the Latch SDK:
+
 ```bash
 python3 -m pip install latch
 ```
 
 **Prerequisites:**
+
 - Docker must be installed and running locally
 - Latch account credentials
 
 ## Initializing a New Workflow
 
 Create a new workflow template:
+
 ```bash
 latch init <workflow-name>
 ```
 
 This generates a workflow directory with:
+
 - `wf/__init__.py` - Main workflow definition
 - `Dockerfile` - Container configuration
 - `version` - Version tracking file
@@ -73,11 +78,13 @@ The SDK provides multiple task decorators for different resource requirements:
 ## Registering Workflows
 
 Register the workflow to the Latch platform:
+
 ```bash
 latch register <workflow-directory>
 ```
 
 The registration process:
+
 1. Builds Docker container with all dependencies
 2. Serializes workflow code
 3. Uploads container to registry
@@ -87,6 +94,7 @@ The registration process:
 ### Registration Output
 
 Upon successful registration:
+
 - Workflow appears in Latch workspace
 - Automatic UI is generated with parameter forms
 - Version is tracked and containerized
@@ -95,6 +103,7 @@ Upon successful registration:
 ## Supporting Multiple Pipeline Languages
 
 Latch supports uploading existing pipelines in:
+
 - **Python** - Native Latch SDK workflows
 - **Nextflow** - Import existing Nextflow pipelines
 - **Snakemake** - Import existing Snakemake pipelines
@@ -102,6 +111,7 @@ Latch supports uploading existing pipelines in:
 ### Nextflow Integration
 
 Import Nextflow pipelines:
+
 ```bash
 latch register --nextflow <nextflow-directory>
 ```
@@ -109,6 +119,7 @@ latch register --nextflow <nextflow-directory>
 ### Snakemake Integration
 
 Import Snakemake pipelines:
+
 ```bash
 latch register --snakemake <snakemake-directory>
 ```
@@ -118,6 +129,7 @@ latch register --snakemake <snakemake-directory>
 ### From CLI
 
 Execute a registered workflow:
+
 ```bash
 latch execute <workflow-name> --input-file <path> --output-dir <path>
 ```
@@ -125,6 +137,7 @@ latch execute <workflow-name> --input-file <path> --output-dir <path>
 ### From Python
 
 Execute workflows programmatically:
+
 ```python
 from latch.account import Account
 from latch.executions import execute_workflow
@@ -243,6 +256,7 @@ def batch_pipeline(samples: List[LatchFile]) -> List[LatchFile]:
 ### Debug Mode
 
 Enable verbose logging during registration:
+
 ```bash
 latch register --verbose <workflow-directory>
 ```

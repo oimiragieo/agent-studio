@@ -8,7 +8,7 @@ Quick reference for commonly used scanpy functions organized by module.
 import scanpy as sc
 ```
 
-## Reading and Writing Data (sc.read_*)
+## Reading and Writing Data (sc.read\_\*)
 
 ### Reading Functions
 
@@ -32,7 +32,7 @@ adata.write_loom(filename)                  # Write to loom format
 adata.write_zarr(filename)                  # Write to zarr format
 ```
 
-## Preprocessing (sc.pp.*)
+## Preprocessing (sc.pp.\*)
 
 ### Quality Control
 
@@ -77,7 +77,7 @@ sc.pp.neighbors(adata, n_neighbors=10, n_pcs=40) # Compute neighborhood graph
 sc.pp.combat(adata, key='batch')                 # ComBat batch correction
 ```
 
-## Tools (sc.tl.*)
+## Tools (sc.tl.\*)
 
 ### Dimensionality Reduction
 
@@ -129,7 +129,7 @@ sc.tl.ingest(adata, adata_ref)                   # Map to reference
 sc.tl.embedding_density(adata, basis='umap', groupby='leiden')
 ```
 
-## Plotting (sc.pl.*)
+## Plotting (sc.pl.\*)
 
 ### Basic Embeddings
 
@@ -191,18 +191,21 @@ sc.pl.tracksplot(adata, var_names=genes, groupby='leiden')
 ## Common Parameters
 
 ### Color Parameters
+
 - `color`: Variable(s) to color by (gene name, obs column)
 - `use_raw`: Use `.raw` attribute of adata
 - `palette`: Color palette to use
 - `vmin`, `vmax`: Color scale limits
 
 ### Layout Parameters
+
 - `basis`: Embedding basis ('umap', 'tsne', 'pca', etc.)
 - `legend_loc`: Legend location ('on data', 'right margin', etc.)
 - `size`: Point size
 - `alpha`: Point transparency
 
 ### Saving Parameters
+
 - `save`: Filename to save plot
 - `show`: Whether to show plot
 

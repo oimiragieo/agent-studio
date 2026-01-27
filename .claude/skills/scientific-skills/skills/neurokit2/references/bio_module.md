@@ -16,6 +16,7 @@ bio_signals, bio_info = nk.bio_process(ecg=None, rsp=None, eda=None, emg=None,
 ```
 
 **Parameters:**
+
 - `ecg`: ECG signal array (optional)
 - `rsp`: Respiratory signal array (optional)
 - `eda`: EDA signal array (optional)
@@ -25,6 +26,7 @@ bio_signals, bio_info = nk.bio_process(ecg=None, rsp=None, eda=None, emg=None,
 - `sampling_rate`: Sampling rate in Hz (must be consistent across signals or specify per signal)
 
 **Returns:**
+
 - `bio_signals`: Unified DataFrame containing all processed signals with columns:
   - Signal-specific features (e.g., `ECG_Clean`, `ECG_Rate`, `EDA_Phasic`, `RSP_Rate`)
   - All detected events/peaks
@@ -32,6 +34,7 @@ bio_signals, bio_info = nk.bio_process(ecg=None, rsp=None, eda=None, emg=None,
 - `bio_info`: Dictionary with signal-specific information (peak locations, parameters)
 
 **Example:**
+
 ```python
 # Process ECG, respiration, and EDA simultaneously
 bio_signals, bio_info = nk.bio_process(
@@ -52,6 +55,7 @@ rsp_peaks = bio_info['RSP']['RSP_Peaks']
 ```
 
 **Internal workflow:**
+
 1. Each signal is processed by its dedicated processing function:
    - `ecg_process()` for ECG
    - `rsp_process()` for respiration
@@ -63,6 +67,7 @@ rsp_peaks = bio_info['RSP']['RSP_Peaks']
 3. Cross-signal features computed (e.g., RSA if both ECG and RSP present)
 
 **Advantages:**
+
 - Simplified API for multi-modal recording
 - Unified time base for all signals
 - Automatic cross-signal feature computation
@@ -79,16 +84,19 @@ bio_results = nk.bio_analyze(bio_signals, sampling_rate=1000)
 ```
 
 **Parameters:**
+
 - `bio_signals`: DataFrame from `bio_process()` or custom processed signals
 - `sampling_rate`: Sampling rate (Hz)
 
 **Returns:**
+
 - DataFrame with analysis results for all detected signal types:
   - Interval-related metrics if duration ≥ 10 seconds
   - Event-related metrics if duration < 10 seconds
   - Cross-signal indices (e.g., RSA if ECG + RSP available)
 
 **Computed metrics by signal:**
+
 - **ECG**: Heart rate statistics, HRV indices (time, frequency, nonlinear domains)
 - **RSP**: Respiratory rate statistics, RRV, amplitude measures
 - **EDA**: SCR count, amplitude, tonic level, sympathetic indices
@@ -97,11 +105,13 @@ bio_results = nk.bio_analyze(bio_signals, sampling_rate=1000)
 - **EOG**: Blink count, blink rate
 
 **Cross-signal metrics:**
+
 - **RSA (Respiratory Sinus Arrhythmia)**: If ECG + RSP present
 - **Cardiorespiratory coupling**: Phase synchronization indices
 - **Multi-modal arousal**: Combined autonomic indices
 
 **Example:**
+
 ```python
 # Analyze processed signals
 results = nk.bio_analyze(bio_signals, sampling_rate=1000)
@@ -130,11 +140,13 @@ rsa = results['RSA']  # Automatically included
 ```
 
 **Computation:**
+
 - High-frequency HRV modulation by breathing
 - Requires synchronized ECG R-peaks and respiratory signal
 - Methods: Porges-Bohrer or peak-to-trough
 
 **Interpretation:**
+
 - Higher RSA: greater parasympathetic (vagal) influence
 - Marker of cardiac-respiratory coupling
 - Health indicator and emotion regulation capacity
@@ -151,6 +163,7 @@ edr = nk.ecg_rsp(ecg_signals['ECG_Clean'], sampling_rate=1000)
 ```
 
 **Use case:**
+
 - Estimate respiration when direct measurement unavailable
 - Cross-validate respiratory measurements
 
@@ -301,6 +314,7 @@ Capture multiple dimensions of physiological arousal:
 - **EMG**: Muscle tension, facial expression, startle
 
 **Example: Emotional picture viewing**
+
 - ECG: Heart rate deceleration during picture viewing (attention)
 - EDA: SCRs reflect emotional arousal intensity
 - RSP: Breath-holding or changes reflect emotional engagement
@@ -314,22 +328,26 @@ Multi-modal markers provide convergent evidence:
 - **Relaxation**: ↓ HR, ↑ HRV, ↓ EDA, ↓ respiration rate, slow breathing, ↓ muscle tension
 
 **Intervention effectiveness:**
+
 - Compare multi-modal indices before vs. after intervention
 - Identify which modalities respond to specific techniques
 
 ### Clinical Assessment
 
 **Anxiety disorders:**
+
 - Heightened baseline EDA, HR
 - Exaggerated responses to stressors
 - Reduced HRV, respiratory variability
 
 **Depression:**
+
 - Altered autonomic balance (↓ HRV)
 - Blunted EDA responses
 - Irregular respiratory patterns
 
 **PTSD:**
+
 - Hyperarousal (↑ HR, ↑ EDA baseline)
 - Exaggerated startle (EMG)
 - Altered RSA
@@ -355,23 +373,28 @@ Monitor training load and recovery:
 ## Advantages of Multi-Modal Recording
 
 **Convergent validity:**
+
 - Multiple indices converge on same construct (e.g., arousal)
 - More robust than single measure
 
 **Discriminant validity:**
+
 - Different signals dissociate under certain conditions
 - ECG reflects both sympathetic and parasympathetic
 - EDA reflects primarily sympathetic
 
 **System integration:**
+
 - Understand whole-body physiological coordination
 - Cross-signal coupling metrics (RSA, coherence)
 
 **Redundancy and robustness:**
+
 - If one signal quality poor, others available
 - Cross-validate findings across modalities
 
 **Richer interpretation:**
+
 - HR deceleration + SCR increase = orienting with arousal
 - HR acceleration + no SCR = cardiac response without sympathetic arousal
 

@@ -32,13 +32,8 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  10. Best Practices:
-    - Follow RESTful API design principles when applicable
-    - Implement responsive design for components
-    - Use Zod for data validation
-    - Regularly update dependencies and check for vulnerabilities
-</instructions>
+- |- 10. Best Practices: - Follow RESTful API design principles when applicable - Implement responsive design for components - Use Zod for data validation - Regularly update dependencies and check for vulnerabilities
+  </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

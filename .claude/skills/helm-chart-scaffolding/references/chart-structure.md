@@ -44,7 +44,7 @@ my-app/
 apiVersion: v2 # Required: API version
 name: my-application # Required: Chart name
 version: 1.2.3 # Required: Chart version (SemVer)
-appVersion: "2.5.0" # Application version
+appVersion: '2.5.0' # Application version
 description: A Helm chart for my application # Required
 type: application # Chart type: application or library
 keywords: # Search keywords
@@ -59,14 +59,14 @@ maintainers: # Maintainer list
     email: john@example.com
     url: https://github.com/johndoe
 icon: https://example.com/icon.png # Chart icon URL
-kubeVersion: ">=1.24.0" # Compatible Kubernetes versions
+kubeVersion: '>=1.24.0' # Compatible Kubernetes versions
 deprecated: false # Mark chart as deprecated
 annotations: # Arbitrary annotations
   example.com/release-notes: https://example.com/releases/v1.2.3
 dependencies: # Chart dependencies
   - name: postgresql
-    version: "12.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: '12.0.0'
+    repository: 'https://charts.bitnami.com/bitnami'
     condition: postgresql.enabled
     tags:
       - database
@@ -113,7 +113,7 @@ global:
 image:
   registry: docker.io
   repository: myapp/web
-  tag: "" # Defaults to .Chart.AppVersion
+  tag: '' # Defaults to .Chart.AppVersion
   pullPolicy: IfNotPresent
 
 # Deployment settings
@@ -302,8 +302,8 @@ Get the application URL by running:
 # Chart.yaml
 dependencies:
   - name: postgresql
-    version: "12.0.0"
-    repository: "https://charts.bitnami.com/bitnami"
+    version: '12.0.0'
+    repository: 'https://charts.bitnami.com/bitnami'
     condition: postgresql.enabled # Enable/disable via values
     tags: # Group dependencies
       - database
@@ -336,7 +336,7 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     version: 12.0.0
 digest: sha256:abcd1234...
-generated: "2024-01-01T00:00:00Z"
+generated: '2024-01-01T00:00:00Z'
 ```
 
 ## .helmignore
@@ -403,7 +403,7 @@ crds/
 
 ```yaml
 version: 2.3.1 # Chart version
-appVersion: "1.5.0" # Application version
+appVersion: '1.5.0' # Application version
 ```
 
 ## Chart Testing

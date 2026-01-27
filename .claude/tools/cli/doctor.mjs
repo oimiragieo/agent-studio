@@ -81,11 +81,7 @@ const REQUIRED_DIRS = [
 ];
 
 // Required files
-const REQUIRED_FILES = [
-  '.claude/CLAUDE.md',
-  '.claude/settings.json',
-  '.claude/config.yaml',
-];
+const REQUIRED_FILES = ['.claude/CLAUDE.md', '.claude/settings.json', '.claude/config.yaml'];
 
 // Track results
 const results = {
@@ -218,7 +214,8 @@ function validateSkills() {
     return;
   }
 
-  const skills = fs.readdirSync(skillsDir, { withFileTypes: true })
+  const skills = fs
+    .readdirSync(skillsDir, { withFileTypes: true })
     .filter(e => e.isDirectory())
     .map(e => e.name);
 
@@ -323,7 +320,10 @@ function validateMcp() {
     // Check for version pins
     let unpinned = 0;
     for (const [name, config] of Object.entries(servers)) {
-      if (config.args && config.args.some(a => a.includes('@modelcontextprotocol') && !a.includes('@'))) {
+      if (
+        config.args &&
+        config.args.some(a => a.includes('@modelcontextprotocol') && !a.includes('@'))
+      ) {
         unpinned++;
         log('yellow', `  ⚠ ${name}: no version pin`);
       } else {
@@ -348,10 +348,7 @@ function validateMcp() {
 function validateDocPaths() {
   console.log('\n📖 Checking Doc/Path References...');
 
-  const docsToCheck = [
-    '.claude/docs/ARCHITECTURE.md',
-    '.claude/CLAUDE.md',
-  ];
+  const docsToCheck = ['.claude/docs/ARCHITECTURE.md', '.claude/CLAUDE.md'];
 
   const pathPattern = /\.claude\/[a-zA-Z0-9_\-\/\.]+/g;
   let driftCount = 0;

@@ -21,6 +21,7 @@ class CustomMask(BinaryMask):
 ```
 
 **Use cases:**
+
 - Custom tissue segmentation algorithms
 - Region-specific analysis (e.g., excluding annotations)
 - Integration with external segmentation models
@@ -40,6 +41,7 @@ mask_array = tissue_mask(slide)
 ```
 
 **How it works:**
+
 1. Converts image to grayscale
 2. Applies Otsu thresholding to separate tissue from background
 3. Performs binary dilation to connect nearby tissue regions
@@ -47,10 +49,12 @@ mask_array = tissue_mask(slide)
 5. Filters out small objects (artifacts)
 
 **Returns:** Binary NumPy array where:
+
 - `True` (or 1): Tissue pixels
 - `False` (or 0): Background pixels
 
 **Best for:**
+
 - Slides with multiple separate tissue sections
 - Comprehensive tissue analysis
 - When all tissue regions are important
@@ -70,12 +74,14 @@ mask_array = biggest_mask(slide)
 ```
 
 **How it works:**
+
 1. Applies same filtering pipeline as TissueMask
 2. Identifies all connected tissue components
 3. Selects the largest connected component
 4. Returns bounding box encompassing that region
 
 **Best for:**
+
 - Slides with a single primary tissue section
 - Excluding small artifacts or tissue fragments
 - Focusing on main tissue area (default for most tilers)
@@ -239,13 +245,17 @@ random_tiler = RandomTiler(
 ## Common Issues and Solutions
 
 ### Issue: Mask includes too much background
+
 **Solution:** Adjust Otsu threshold or increase small object removal threshold
 
 ### Issue: Mask excludes valid tissue
+
 **Solution:** Reduce small object removal threshold or modify dilation parameters
 
 ### Issue: Multiple tissue sections, but only largest is captured
+
 **Solution:** Switch from `BiggestTissueBoxMask` to `TissueMask`
 
 ### Issue: Pen annotations included in mask
+
 **Solution:** Implement custom annotation exclusion mask (see example above)

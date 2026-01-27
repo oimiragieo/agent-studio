@@ -69,11 +69,11 @@ When reviewing or writing code, apply these guidelines:
 
 - Use the following folder structure:
   src/
-    components/
-    pages/
-    styles/
-    App.jsx
-    index.jsx
+  components/
+  pages/
+  styles/
+  App.jsx
+  index.jsx
 
 ### solidjs functional components
 
@@ -116,17 +116,16 @@ When reviewing or writing code, apply these guidelines:
 When reviewing or writing code, apply these guidelines:
 
 - Enforce the following folder structure:
-  
+
   src/
-    components/
-    pages/
-    utils/
-    types/
-    App.tsx
-    index.tsx
+  components/
+  pages/
+  utils/
+  types/
+  App.tsx
+  index.tsx
 
 ### solidjs react
-
 
 </instructions>
 
@@ -141,12 +140,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- solidjs-expert
 
+- solidjs-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

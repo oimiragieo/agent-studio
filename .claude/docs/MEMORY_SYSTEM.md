@@ -10,16 +10,16 @@ AI agents operate in a stateless environment where context resets between sessio
 
 All memory files live in `.claude/context/memory/`:
 
-| File | Purpose | Format |
-|------|---------|--------|
-| `learnings.md` | Patterns, solutions, gotchas | Markdown (Legacy Archive) |
-| `decisions.md` | Architecture Decision Records | ADR format |
-| `issues.md` | Known blockers and fixes | Issue format |
-| `active_context.md` | Current session state | Markdown |
-| `gotchas.json` | Pitfalls to avoid | JSON array |
-| `patterns.json` | Reusable solutions | JSON array |
-| `codebase_map.json` | File discoveries | JSON object |
-| `sessions/` | Per-session JSON files | JSON |
+| File                | Purpose                       | Format                    |
+| ------------------- | ----------------------------- | ------------------------- |
+| `learnings.md`      | Patterns, solutions, gotchas  | Markdown (Legacy Archive) |
+| `decisions.md`      | Architecture Decision Records | ADR format                |
+| `issues.md`         | Known blockers and fixes      | Issue format              |
+| `active_context.md` | Current session state         | Markdown                  |
+| `gotchas.json`      | Pitfalls to avoid             | JSON array                |
+| `patterns.json`     | Reusable solutions            | JSON array                |
+| `codebase_map.json` | File discoveries              | JSON object               |
+| `sessions/`         | Per-session JSON files        | JSON                      |
 
 ## Session-Based Memory
 
@@ -34,6 +34,7 @@ Session files follow the naming pattern `session_NNN.json` where NNN is a zero-p
 **Auto-increment**: The memory manager automatically creates the next session number when saving.
 
 **Structure**:
+
 ```json
 {
   "session_number": 1,
@@ -52,6 +53,7 @@ Session files follow the naming pattern `session_NNN.json` where NNN is a zero-p
 ### JSON Memory Files
 
 **Gotchas** (`.claude/context/memory/gotchas.json`):
+
 ```json
 [
   {
@@ -62,6 +64,7 @@ Session files follow the naming pattern `session_NNN.json` where NNN is a zero-p
 ```
 
 **Patterns** (`.claude/context/memory/patterns.json`):
+
 ```json
 [
   {
@@ -72,6 +75,7 @@ Session files follow the naming pattern `session_NNN.json` where NNN is a zero-p
 ```
 
 **Codebase Map** (`.claude/context/memory/codebase_map.json`):
+
 ```json
 {
   "discovered_files": {
@@ -88,6 +92,7 @@ Session files follow the naming pattern `session_NNN.json` where NNN is a zero-p
 ### Session Retention
 
 The memory system automatically prunes old sessions to prevent unbounded growth:
+
 - **Max sessions**: 50 (configurable in `memory-manager.cjs`)
 - **Pruning**: Automatic when saving new sessions
 - **Retention**: Most recent 50 sessions kept
@@ -123,6 +128,7 @@ node .claude/lib/memory/memory-manager.cjs record-discovery "path" "description"
 Records a codebase file discovery. The discovery is saved to `codebase_map.json` with the file path, description, category (default: "general"), and timestamp.
 
 **Example**:
+
 ```bash
 node .claude/lib/memory/memory-manager.cjs record-discovery "src/auth.ts" "JWT authentication handler" "security"
 ```
@@ -136,6 +142,7 @@ node .claude/lib/memory/memory-manager.cjs load
 Loads all memory files and outputs as formatted markdown. This is the command agents use to read memory at the start of a session.
 
 **Output includes**:
+
 - Recent gotchas (truncated to 20 items)
 - Recent patterns (truncated to 20 items)
 - Recent discoveries (truncated to 30 items)
@@ -149,6 +156,7 @@ node .claude/lib/memory/memory-manager.cjs stats
 ```
 
 Outputs JSON statistics about the memory system:
+
 ```json
 {
   "gotchas_count": 15,
@@ -190,16 +198,19 @@ node .claude/lib/memory/memory-manager.cjs load
 During and after completing work, agents must record discoveries:
 
 **Record a gotcha**:
+
 ```bash
 node .claude/lib/memory/memory-manager.cjs record-gotcha "Always validate user input before database queries"
 ```
 
 **Record a pattern**:
+
 ```bash
 node .claude/lib/memory/memory-manager.cjs record-pattern "Use Zod schemas for API validation"
 ```
 
 **Record a discovery**:
+
 ```bash
 node .claude/lib/memory/memory-manager.cjs record-discovery "src/api/users.ts" "User API endpoints" "api"
 ```
@@ -219,6 +230,7 @@ The `session-end-recorder.cjs` hook automatically captures session insights:
 **Trigger**: SessionEnd event (when a conversation session ends)
 
 **Workflow**:
+
 1. Gather session insights from stdin or `active_context.md`
 2. Build session data structure
 3. Call `memory-manager.cjs` `saveSession()` function
@@ -228,6 +240,7 @@ The `session-end-recorder.cjs` hook automatically captures session insights:
 7. Prune old sessions if count exceeds 50
 
 **Session Data Structure**:
+
 ```javascript
 {
   summary: 'Session summary',
@@ -247,6 +260,7 @@ Architecture Decision Records follow a standard format:
 
 ```markdown
 ## [ADR-XXX] Title
+
 - **Date**: YYYY-MM-DD
 - **Status**: Proposed | Accepted | Deprecated | Superseded
 - **Context**: Why this decision was needed
@@ -255,8 +269,10 @@ Architecture Decision Records follow a standard format:
 ```
 
 **Example**:
+
 ```markdown
 ## [ADR-001] Router-First Protocol
+
 - **Date**: 2026-01-23
 - **Status**: Accepted
 - **Context**: Need consistent request handling across all agent interactions
@@ -265,12 +281,14 @@ Architecture Decision Records follow a standard format:
 ```
 
 **When to create ADRs**:
+
 - Major architectural decisions
 - Framework adoption decisions
 - Protocol changes
 - Tool/library selections with trade-offs
 
 **Status transitions**:
+
 - Proposed → Accepted (when team agrees)
 - Accepted → Deprecated (when replaced)
 - Accepted → Superseded (when a new ADR replaces it)
@@ -281,6 +299,7 @@ Known issues and blockers follow a standard format:
 
 ```markdown
 ## [ISSUE-XXX] Title
+
 - **Date**: YYYY-MM-DD
 - **Severity**: Critical | High | Medium | Low
 - **Status**: Open | In Progress | Resolved | Won't Fix
@@ -290,8 +309,10 @@ Known issues and blockers follow a standard format:
 ```
 
 **Example**:
+
 ```markdown
 ## [SEC-001] RESOLVED: Bash Command Validator Fail-Open Vulnerability
+
 - **Date**: 2026-01-25
 - **Severity**: Critical
 - **Status**: Resolved
@@ -307,6 +328,7 @@ Known issues and blockers follow a standard format:
 The memory system uses read-time truncation to ensure memory loading fits within context limits:
 
 **Configuration** (in `memory-manager.cjs`):
+
 ```javascript
 MAX_CONTEXT_CHARS: {
   gotchas: 2000,
@@ -325,6 +347,7 @@ MAX_ITEMS: {
 ```
 
 **Loading strategy**:
+
 1. Load most recent items (last N items from arrays)
 2. Truncate to max characters per category
 3. Return only what fits in context
@@ -358,6 +381,7 @@ Include file paths in discoveries and patterns so future agents can locate the c
 When an issue is resolved, update the status and add the resolution. Don't leave stale "Open" issues.
 
 **Update template**:
+
 ```markdown
 - **Status**: Resolved
 - **Resolution**: Changed `process.exit(0)` to `process.exit(2)` in catch block
@@ -366,6 +390,7 @@ When an issue is resolved, update the status and add the resolution. Don't leave
 ### 5. Use Categories for Discoveries
 
 When recording file discoveries, use consistent categories:
+
 - `api` - API endpoints
 - `security` - Security-related code
 - `config` - Configuration files
@@ -390,6 +415,7 @@ The memory manager automatically checks for duplicates when recording gotchas an
 Memory transforms AI agents from one-shot tools into persistent collaborators:
 
 ### Without Memory
+
 - Every session starts from zero
 - Same mistakes repeated
 - No learning from past work
@@ -397,6 +423,7 @@ Memory transforms AI agents from one-shot tools into persistent collaborators:
 - Inefficient exploration of codebase
 
 ### With Memory
+
 - Learnings compound over time
 - Gotchas captured and avoided
 - Patterns emerge and get reused
@@ -406,16 +433,19 @@ Memory transforms AI agents from one-shot tools into persistent collaborators:
 ### Example: Multi-Session Feature Development
 
 **Session 1** (exploration):
+
 - Agent discovers auth handler in `src/auth.ts`
 - Records discovery to codebase_map
 - Records pattern: "Use JWT with RS256 algorithm"
 
 **Session 2** (implementation):
+
 - Agent reads memory, sees auth handler location
 - Reuses JWT pattern from memory
 - Avoids re-exploring codebase
 
 **Session 3** (debugging):
+
 - Agent reads memory, sees past gotcha: "Always validate JWT expiry"
 - Applies gotcha to fix bug
 - Records new gotcha: "Check token refresh race conditions"
@@ -429,12 +459,14 @@ The original `learnings.md` file is now a **read-only archive**. New learnings s
 ### Why the Change?
 
 **Problems with monolithic learnings.md**:
+
 - File grew too large (5000+ lines)
 - Context token waste loading entire file
 - Hard to find relevant learnings
 - No structure or categorization
 
 **Solutions with session-based memory**:
+
 - Learnings split across sessions
 - Read-time truncation for efficiency
 - Structured JSON for gotchas/patterns/discoveries
@@ -445,6 +477,7 @@ The original `learnings.md` file is now a **read-only archive**. New learnings s
 When `learnings.md` exceeds 5000 lines, archive older sections to `.claude/context/memory/archive/learnings-YYYY-MM.md` where YYYY-MM is the month being archived.
 
 **Archive process**:
+
 1. Create archive directory if it doesn't exist
 2. Move old content (e.g., content older than 6 months) to dated archive file
 3. Update `learnings.md` header with archive location
@@ -455,21 +488,23 @@ When `learnings.md` exceeds 5000 lines, archive older sections to `.claude/conte
 ### Integration with Task System
 
 Memory and task systems work together:
+
 - Tasks reference memory for context
 - Task completion triggers memory recording
 - TaskUpdate metadata can include discoveries
 
 **Example**:
+
 ```javascript
 TaskUpdate({
-  taskId: "3",
-  status: "completed",
+  taskId: '3',
+  status: 'completed',
   metadata: {
-    summary: "Fixed auth bug",
-    filesModified: ["src/auth.ts"],
-    discoveries: ["JWT expiry validation missing"],
-    patterns: ["Always check token expiry before refresh"]
-  }
+    summary: 'Fixed auth bug',
+    filesModified: ['src/auth.ts'],
+    discoveries: ['JWT expiry validation missing'],
+    patterns: ['Always check token expiry before refresh'],
+  },
 });
 ```
 
@@ -488,13 +523,14 @@ Task({
 
 ## Task
 [Task details here]
-`
+`,
 });
 ```
 
 ### Integration with Workflow Skills
 
 Workflow skills like `session-handoff` leverage memory:
+
 - Read current session state from `active_context.md`
 - Generate session summary
 - Save to session file via memory-manager
@@ -507,6 +543,7 @@ Workflow skills like `session-handoff` leverage memory:
 **Symptom**: `load` command returns empty results
 
 **Solution**: Initialize memory files
+
 ```bash
 mkdir -p .claude/context/memory/sessions
 echo '[]' > .claude/context/memory/gotchas.json
@@ -525,6 +562,7 @@ echo '{"discovered_files":{},"last_updated":null}' > .claude/context/memory/code
 **Symptom**: Loading memory takes > 1 second
 
 **Solution**: Prune old sessions and reduce MAX_ITEMS/MAX_CONTEXT_CHARS in `memory-manager.cjs`:
+
 ```javascript
 MAX_ITEMS: {
   gotchas: 10,  // Reduced from 20
@@ -539,6 +577,7 @@ MAX_ITEMS: {
 **Symptom**: Same gotcha appears multiple times
 
 **Solution**: Memory manager checks for duplicates automatically. If duplicates persist, manually deduplicate the JSON file:
+
 ```bash
 node -e "const fs=require('fs'); const data=JSON.parse(fs.readFileSync('.claude/context/memory/gotchas.json')); const unique=[...new Map(data.map(g=>[g.text,g])).values()]; fs.writeFileSync('.claude/context/memory/gotchas.json', JSON.stringify(unique,null,2));"
 ```
@@ -586,8 +625,8 @@ memoryManager.saveSession({
   summary: 'Implemented feature X',
   tasks_completed: ['Task 1', 'Task 2'],
   files_modified: ['file1.ts', 'file2.ts'],
-  custom_metric: 42,  // Custom field preserved
-  team_notes: 'Reviewed by Alice',  // Custom field preserved
+  custom_metric: 42, // Custom field preserved
+  team_notes: 'Reviewed by Alice', // Custom field preserved
 });
 ```
 

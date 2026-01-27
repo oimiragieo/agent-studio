@@ -9,11 +9,13 @@ Best practices and strategies for crafting effective search queries with Perplex
 Better results come from specific, well-structured queries rather than broad questions.
 
 **Good examples:**
+
 - "What are the latest clinical trial results for CAR-T cell therapy in treating B-cell lymphoma published in 2024?"
 - "Compare the efficacy and safety profiles of mRNA vaccines versus viral vector vaccines for COVID-19"
 - "Explain the mechanism of CRISPR-Cas9 off-target effects and current mitigation strategies"
 
 **Bad examples:**
+
 - "Tell me about cancer treatment" (too broad)
 - "CRISPR" (too vague)
 - "vaccines" (lacks specificity)
@@ -28,6 +30,7 @@ Break complex questions into clear components:
 4. **Output**: What format or type of answer do you need?
 
 **Example:**
+
 ```
 Topic: Protein folding prediction
 Scope: AlphaFold3 improvements over AlphaFold2
@@ -43,6 +46,7 @@ Output: Technical comparison with specific accuracy metrics
 ### Scientific Literature Search
 
 For scientific queries, include:
+
 - Specific terminology and concepts
 - Time constraints (recent publications)
 - Methodology or study types of interest
@@ -57,6 +61,7 @@ For scientific queries, include:
 ### Technical/Engineering Search
 
 For technical queries, specify:
+
 - Technology stack or framework
 - Use case or application context
 - Version requirements
@@ -71,6 +76,7 @@ For technical queries, specify:
 ### Medical/Clinical Search
 
 For medical queries, include:
+
 - Specific conditions, treatments, or interventions
 - Patient population or demographics
 - Outcomes of interest
@@ -178,6 +184,7 @@ Improve answers by specifying the output format:
 ### Biomedical Research
 
 Use precise terminology:
+
 - "randomized controlled trial" instead of "study"
 - "meta-analysis" instead of "review"
 - "in vitro" vs "in vivo" vs "clinical"
@@ -187,6 +194,7 @@ Use precise terminology:
 ### Computational/AI Research
 
 Use technical terms:
+
 - "transformer architecture" not "AI model"
 - "few-shot learning" not "learning from limited data"
 - "zero-shot" vs "few-shot" vs "fine-tuning"
@@ -195,6 +203,7 @@ Use technical terms:
 ### Chemistry/Drug Discovery
 
 Use IUPAC names and specific terms:
+
 - "small molecule" vs "biologic"
 - "pharmacokinetics" (ADME) vs "pharmacodynamics"
 - Specific assay types (e.g., "IC50", "EC50")
@@ -205,12 +214,14 @@ Use IUPAC names and specific terms:
 Perplexity searches real-time web data, making time constraints valuable:
 
 **Templates:**
+
 - "What papers were published in [journal] in [month/year] about [topic]?"
 - "What are the latest developments (past 6 months) in [field]?"
 - "What was announced at [conference] [year] regarding [topic]?"
 - "What are the most recent clinical trial results (2024) for [treatment]?"
 
 **Examples:**
+
 - "What papers were published in Nature Medicine in January 2024 about long COVID?"
 - "What are the latest developments (past 6 months) in large language model training efficiency?"
 - "What was announced at NeurIPS 2023 regarding AI safety and alignment?"
@@ -249,6 +260,7 @@ For comprehensive research:
 ## Summary
 
 Effective Perplexity searches require:
+
 1. **Specificity**: Clear, detailed queries
 2. **Structure**: Well-organized questions with context
 3. **Terminology**: Domain-appropriate keywords

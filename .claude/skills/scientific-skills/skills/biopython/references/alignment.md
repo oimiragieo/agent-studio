@@ -95,6 +95,7 @@ alignments = aligner.align(protein1, protein2)
 ### Available Substitution Matrices
 
 Common matrices include:
+
 - **BLOSUM** series (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90)
 - **PAM** series (PAM30, PAM70, PAM250)
 - **MATCH** - Simple match/mismatch matrix
@@ -126,6 +127,7 @@ for alignment in AlignIO.parse("alignments.aln", "clustal"):
 ### Supported Alignment Formats
 
 Common formats include:
+
 - **clustal** - Clustal format
 - **phylip** - PHYLIP format
 - **phylip-relaxed** - Relaxed PHYLIP (longer names)

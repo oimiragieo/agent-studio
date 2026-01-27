@@ -1,31 +1,40 @@
 # Drug Targets and Pathways
 
 ## Overview
+
 DrugBank provides comprehensive information about drug-protein interactions including targets, enzymes, transporters, and carriers. This data is essential for understanding drug mechanisms, identifying repurposing opportunities, and predicting off-target effects.
 
 ## Protein Interaction Categories
 
 ### Target Proteins
+
 Primary proteins that drugs bind to produce therapeutic effects:
+
 - **Receptors**: G-protein coupled receptors, nuclear receptors, ion channels
 - **Enzymes**: Kinases, proteases, phosphatases
 - **Transporters**: Used as targets (not just for ADME)
 - **Other**: Structural proteins, DNA/RNA
 
 ### Metabolic Enzymes
+
 Enzymes involved in drug metabolism:
+
 - **Cytochrome P450 enzymes**: CYP3A4, CYP2D6, CYP2C9, etc.
 - **Phase II enzymes**: UGTs, SULTs, GSTs
 - **Esterases and peptidases**
 
 ### Transporters
+
 Proteins involved in drug transport across membranes:
+
 - **Uptake transporters**: OATPs, OCTs
 - **Efflux transporters**: P-glycoprotein, BCRP, MRPs
 - **Other**: SLC and ABC transporter families
 
 ### Carriers
+
 Plasma proteins that bind and transport drugs:
+
 - **Albumin**: Major drug carrier in blood
 - **Alpha-1-acid glycoprotein**
 - **Lipoproteins**
@@ -34,6 +43,7 @@ Plasma proteins that bind and transport drugs:
 ## XML Data Structure
 
 ### Target Element Structure
+
 ```xml
 <targets>
   <target>
@@ -67,6 +77,7 @@ Plasma proteins that bind and transport drugs:
 ## Extract Target Information
 
 ### Get Drug Targets
+
 ```python
 from drugbank_downloader import get_drugbank_root
 
@@ -119,6 +130,7 @@ def get_text_safe(element):
 ```
 
 ### Get All Protein Interactions
+
 ```python
 def get_all_protein_interactions(drugbank_id):
     """Get targets, enzymes, transporters, and carriers for a drug"""
@@ -161,6 +173,7 @@ print(f"Carriers: {len(interactions['carriers'])}")
 ## Build Target-Drug Networks
 
 ### Create Target-Drug Matrix
+
 ```python
 import pandas as pd
 
@@ -202,6 +215,7 @@ dt_matrix.to_csv('drug_target_matrix.csv', index=False)
 ```
 
 ### Find Drugs Targeting Specific Protein
+
 ```python
 def find_drugs_for_target(target_name):
     """Find all drugs that target a specific protein"""
@@ -235,6 +249,7 @@ print(f"Found {len(kinase_drugs)} drugs targeting kinases")
 ```
 
 ### Find Drugs with Shared Targets
+
 ```python
 def find_shared_targets(drug1_id, drug2_id):
     """Find common targets between two drugs"""
@@ -267,6 +282,7 @@ print(f"Shared targets: {shared}")
 ## Pathway Analysis
 
 ### Extract Pathway Information
+
 ```python
 def get_drug_pathways(drugbank_id):
     """Extract pathway information for a drug"""
@@ -310,6 +326,7 @@ def get_drug_pathways(drugbank_id):
 ```
 
 ### Build Pathway Network
+
 ```python
 def build_pathway_drug_network():
     """Build network of pathways and drugs"""
@@ -341,6 +358,7 @@ def build_pathway_drug_network():
 ## Target-Based Drug Repurposing
 
 ### Find Drugs with Similar Target Profiles
+
 ```python
 def find_similar_target_profiles(drugbank_id, min_shared_targets=2):
     """Find drugs with similar target profiles for repurposing"""
@@ -388,6 +406,7 @@ for drug in candidates[:5]:
 ```
 
 ### Polypharmacology Analysis
+
 ```python
 def analyze_polypharmacology(drugbank_id):
     """Analyze on-target and off-target effects"""
@@ -423,6 +442,7 @@ print(f"Unknown action: {len(poly_analysis['unknown_action_targets'])}")
 ## Enzyme and Transporter Analysis
 
 ### CYP450 Interaction Analysis
+
 ```python
 def analyze_cyp450_metabolism(drugbank_id):
     """Analyze CYP450 enzyme involvement"""
@@ -448,6 +468,7 @@ for cyp in cyp_data:
 ```
 
 ### Transporter Substrate Analysis
+
 ```python
 def analyze_transporter_substrates(drugbank_id):
     """Identify transporter involvement for ADME"""
@@ -477,6 +498,7 @@ def analyze_transporter_substrates(drugbank_id):
 ## GO Term and Protein Function Analysis
 
 ### Extract GO Terms
+
 ```python
 def get_target_go_terms(drugbank_id):
     """Extract Gene Ontology terms for drug targets"""

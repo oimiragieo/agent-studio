@@ -11,12 +11,14 @@ ETE (Environment for Tree Exploration) is a Python toolkit for phylogenetic tree
 The fundamental class representing tree structures with hierarchical node organization.
 
 **Constructor:**
+
 ```python
 from ete3 import Tree
 t = Tree(newick=None, format=0, dist=None, support=None, name=None)
 ```
 
 **Parameters:**
+
 - `newick`: Newick string or file path
 - `format`: Newick format (0-100). Common formats:
   - `0`: Flexible format with branch lengths and names
@@ -35,6 +37,7 @@ t = Tree(newick=None, format=0, dist=None, support=None, name=None)
 Specialized class for phylogenetic analysis, extending TreeNode.
 
 **Constructor:**
+
 ```python
 from ete3 import PhyloTree
 t = PhyloTree(newick=None, alignment=None, alg_format='fasta',
@@ -42,6 +45,7 @@ t = PhyloTree(newick=None, alignment=None, alg_format='fasta',
 ```
 
 **Additional Parameters:**
+
 - `alignment`: Path to alignment file or alignment string
 - `alg_format`: 'fasta' or 'phylip'
 - `sp_naming_function`: Custom function to extract species from node names
@@ -51,12 +55,14 @@ t = PhyloTree(newick=None, alignment=None, alg_format='fasta',
 Class for hierarchical clustering analysis.
 
 **Constructor:**
+
 ```python
 from ete3 import ClusterTree
 t = ClusterTree(newick, text_array=None)
 ```
 
 **Parameters:**
+
 - `text_array`: Tab-delimited matrix with column headers and row names
 
 ### NCBITaxa
@@ -64,6 +70,7 @@ t = ClusterTree(newick, text_array=None)
 Class for NCBI taxonomy database operations.
 
 **Constructor:**
+
 ```python
 from ete3 import NCBITaxa
 ncbi = NCBITaxa(dbfile=None)
@@ -75,23 +82,25 @@ First instantiation downloads ~300MB NCBI taxonomy database to `~/.etetoolkit/ta
 
 ### Basic Attributes
 
-| Property | Type | Description | Default |
-|----------|------|-------------|---------|
-| `name` | str | Node identifier | "NoName" |
-| `dist` | float | Branch length to parent | 1.0 |
-| `support` | float | Bootstrap/confidence value | 1.0 |
-| `up` | TreeNode | Parent node reference | None |
-| `children` | list | Child nodes | [] |
+| Property   | Type     | Description                | Default  |
+| ---------- | -------- | -------------------------- | -------- |
+| `name`     | str      | Node identifier            | "NoName" |
+| `dist`     | float    | Branch length to parent    | 1.0      |
+| `support`  | float    | Bootstrap/confidence value | 1.0      |
+| `up`       | TreeNode | Parent node reference      | None     |
+| `children` | list     | Child nodes                | []       |
 
 ### Custom Features
 
 Add any custom data to nodes:
+
 ```python
 node.add_feature("custom_name", value)
 node.add_features(feature1=value1, feature2=value2)
 ```
 
 Access features:
+
 ```python
 value = node.custom_name
 # or
@@ -212,6 +221,7 @@ parent.remove_child(node)
 ### Pruning
 
 Keep only specified leaves:
+
 ```python
 # Keep only these leaves, remove all others
 tree.prune(["A", "B", "C"])
@@ -383,6 +393,7 @@ print(tree.get_ascii(show_internal=True, compact=False))
 ### Caching Content
 
 For frequent access to node contents:
+
 ```python
 # Cache all node contents
 node2content = tree.get_cached_content()
@@ -541,6 +552,7 @@ dev = node.deviation
 ### Distance Metrics
 
 Supported metrics:
+
 - `"euclidean"`: Euclidean distance
 - `"pearson"`: Pearson correlation
 - `"spearman"`: Spearman rank correlation

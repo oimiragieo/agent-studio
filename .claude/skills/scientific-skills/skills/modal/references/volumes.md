@@ -13,6 +13,7 @@ modal volume create my-volume
 ```
 
 For Volumes v2 (beta):
+
 ```bash
 modal volume create --version=2 my-volume
 ```
@@ -122,6 +123,7 @@ for data in vol.read_file("path.txt"):
 ### Volumes v1
 
 Best for:
+
 - <50,000 files (recommended)
 - <500,000 files (hard limit)
 - Sequential access patterns
@@ -130,12 +132,14 @@ Best for:
 ### Volumes v2 (Beta)
 
 Improved for:
+
 - Unlimited files
 - Hundreds of concurrent writers
 - Random access patterns
 - Large files (up to 1 TiB)
 
 Current v2 limits:
+
 - Max file size: 1 TiB
 - Max files per directory: 32,768
 - Unlimited directory depth
@@ -244,6 +248,7 @@ Multiple containers can read simultaneously without issues.
 ### Concurrent Writes
 
 Supported but:
+
 - Avoid modifying same files concurrently
 - Last write wins (data loss possible)
 - v1: Limit to ~5 concurrent writers

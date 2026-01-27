@@ -1,6 +1,6 @@
 ---
 name: spec-writing
-description: "Specification document creation from gathered requirements and context. Use when requirements are gathered and you need to create a comprehensive spec."
+description: 'Specification document creation from gathered requirements and context. Use when requirements are gathered and you need to create a comprehensive spec.'
 version: 1.0.0
 model: sonnet
 invoked_by: both
@@ -26,11 +26,13 @@ Transform gathered requirements and codebase context into a comprehensive, actio
 ## When to Use
 
 **Always:**
+
 - After requirements gathering is complete
 - When you have codebase context available
 - Before implementation planning begins
 
 **Exceptions:**
+
 - Simple changes that don't need formal specs
 - Exploratory work without clear requirements
 
@@ -70,6 +72,7 @@ cat .claude/context/analysis/[task-name].json 2>/dev/null
 ```
 
 Extract from these files:
+
 - **From requirements**: Task description, workflow type, acceptance criteria
 - **From project context**: Services, tech stacks, patterns
 - **From analysis**: Files to modify, files to reference, patterns
@@ -79,16 +82,19 @@ Extract from these files:
 Before writing, think about:
 
 **Implementation Strategy:**
+
 - What's the optimal order of implementation?
 - Which area should be built first?
 - What are the dependencies between components?
 
 **Risk Assessment:**
+
 - What could go wrong?
 - What edge cases exist?
 - Any security considerations?
 
 **Pattern Synthesis:**
+
 - What patterns from reference files apply?
 - What utilities can be reused?
 - What's the code style?
@@ -97,7 +103,7 @@ Before writing, think about:
 
 Create the spec with ALL required sections:
 
-```markdown
+````markdown
 # Specification: [Task Name]
 
 ## Overview
@@ -113,41 +119,47 @@ Create the spec with ALL required sections:
 ## Task Scope
 
 ### Areas Involved
+
 - **[area-name]** (primary) - [role from context analysis]
 - **[area-name]** (integration) - [role from context analysis]
 
 ### This Task Will:
+
 - [ ] [Specific change 1]
 - [ ] [Specific change 2]
 - [ ] [Specific change 3]
 
 ### Out of Scope:
+
 - [What this task does NOT include]
 
 ## Technical Context
 
 ### Tech Stack
+
 - Language: [from project context]
 - Framework: [from project context]
 - Key directories: [from project context]
 
 ### How to Run
+
 ```bash
 [commands from project context]
 ```
+````
 
 ## Files to Modify
 
-| File | Purpose | What to Change |
-|------|---------|----------------|
+| File     | Purpose   | What to Change           |
+| -------- | --------- | ------------------------ |
 | `[path]` | [purpose] | [specific change needed] |
 
 ## Files to Reference
 
 These files show patterns to follow:
 
-| File | Pattern to Copy |
-|------|----------------|
+| File     | Pattern to Copy                  |
+| -------- | -------------------------------- |
 | `[path]` | [what pattern this demonstrates] |
 
 ## Patterns to Follow
@@ -161,6 +173,7 @@ From `[reference file path]`:
 ```
 
 **Key Points:**
+
 - [What to notice about this pattern]
 - [What to replicate]
 
@@ -184,22 +197,26 @@ From `[reference file path]`:
 ## Implementation Notes
 
 ### DO
+
 - Follow the pattern in `[file]` for [thing]
 - Reuse `[utility/component]` for [purpose]
 - [Specific guidance based on context]
 
 ### DON'T
+
 - Create new [thing] when [existing thing] works
 - [Anti-pattern to avoid based on context]
 
 ## Development Environment
 
 ### Start Services
+
 ```bash
 [commands from project context]
 ```
 
 ### Required Environment Variables
+
 - `VAR_NAME`: [description]
 
 ## Success Criteria
@@ -217,28 +234,33 @@ The task is complete when:
 **CRITICAL**: These criteria must be verified by QA before sign-off.
 
 ### Unit Tests
-| Test | File | What to Verify |
-|------|------|----------------|
+
+| Test        | File             | What to Verify                 |
+| ----------- | ---------------- | ------------------------------ |
 | [Test Name] | `[path/to/test]` | [What this test should verify] |
 
 ### Integration Tests
-| Test | Areas | What to Verify |
-|------|-------|----------------|
+
+| Test        | Areas             | What to Verify            |
+| ----------- | ----------------- | ------------------------- |
 | [Test Name] | [area-a + area-b] | [API contract, data flow] |
 
 ### End-to-End Tests
-| Flow | Steps | Expected Outcome |
-|------|-------|------------------|
+
+| Flow        | Steps               | Expected Outcome  |
+| ----------- | ------------------- | ----------------- |
 | [User Flow] | 1. [Step] 2. [Step] | [Expected result] |
 
 ### QA Sign-off Requirements
+
 - [ ] All unit tests pass
 - [ ] All integration tests pass
 - [ ] All E2E tests pass
 - [ ] No regressions in existing functionality
 - [ ] Code follows established patterns
 - [ ] No security vulnerabilities introduced
-```
+
+````
 
 ### Phase 4: Verify Spec
 
@@ -254,7 +276,7 @@ grep -E "^##? QA Acceptance" spec.md && echo "QA Criteria present"
 
 # Check file length (should be substantial)
 wc -l spec.md
-```
+````
 
 If any section is missing, add it immediately.
 
@@ -318,6 +340,7 @@ This skill works well with:
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

@@ -41,7 +41,15 @@
         },
         "model": {
           "type": "string",
-          "enum": ["sonnet", "opus", "haiku", "inherit", "claude-sonnet-4-5", "claude-opus-4-5-20251101", "claude-haiku-4-5"],
+          "enum": [
+            "sonnet",
+            "opus",
+            "haiku",
+            "inherit",
+            "claude-sonnet-4-5",
+            "claude-opus-4-5-20251101",
+            "claude-haiku-4-5"
+          ],
           "description": "Model to use for the agent"
         },
         "temperature": {

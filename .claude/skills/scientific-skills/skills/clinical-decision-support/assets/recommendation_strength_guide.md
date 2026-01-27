@@ -18,6 +18,7 @@ Every clinical recommendation should address:
 #### Strong Recommendation (Grade 1)
 
 **When to Use**:
+
 - Desirable effects clearly outweigh undesirable effects (or vice versa)
 - High or moderate quality evidence
 - Values and preferences: Little variability expected
@@ -26,6 +27,7 @@ Every clinical recommendation should address:
 **Wording**: "We recommend..." or "Clinicians should..."
 
 **Implications**:
+
 - Most patients should receive the recommended intervention
 - Adherence to recommendation could be a quality indicator
 - Policy-makers can adapt as performance measure
@@ -35,13 +37,13 @@ Every clinical recommendation should address:
 ```
 STRONG RECOMMENDATION FOR (Grade 1):
 
-"We recommend osimertinib 80 mg daily as first-line therapy for adults with 
-advanced NSCLC harboring EGFR exon 19 deletion or L858R mutation (Strong 
+"We recommend osimertinib 80 mg daily as first-line therapy for adults with
+advanced NSCLC harboring EGFR exon 19 deletion or L858R mutation (Strong
 recommendation, High-quality evidence - GRADE 1A)."
 
 Rationale:
 - Large PFS benefit: 18.9 vs 10.2 months (HR 0.46, p<0.001)
-- OS benefit: 38.6 vs 31.8 months (HR 0.80, p=0.046)  
+- OS benefit: 38.6 vs 31.8 months (HR 0.80, p=0.046)
 - Better tolerability: Lower grade 3-4 AEs
 - Evidence: High-quality (large RCT, low risk of bias)
 - Benefits clearly outweigh harms
@@ -50,8 +52,8 @@ Rationale:
 ```
 STRONG RECOMMENDATION AGAINST (Grade 1):
 
-"We recommend against using bevacizumab in the first-line treatment of newly 
-diagnosed glioblastoma to improve overall survival (Strong recommendation against, 
+"We recommend against using bevacizumab in the first-line treatment of newly
+diagnosed glioblastoma to improve overall survival (Strong recommendation against,
 High-quality evidence - GRADE 1A)."
 
 Rationale:
@@ -64,6 +66,7 @@ Rationale:
 #### Conditional/Weak Recommendation (Grade 2)
 
 **When to Use**:
+
 - Desirable and undesirable effects closely balanced
 - Low or very low quality evidence
 - Values and preferences: Substantial variability
@@ -72,6 +75,7 @@ Rationale:
 **Wording**: "We suggest..." or "Clinicians might..."
 
 **Implications**:
+
 - Different choices will be appropriate for different patients
 - Shared decision-making essential
 - Policy-making requires substantial debate and stakeholder involvement
@@ -81,8 +85,8 @@ Rationale:
 ```
 CONDITIONAL RECOMMENDATION FOR (Grade 2):
 
-"We suggest considering maintenance pemetrexed after first-line platinum-pemetrexed 
-chemotherapy for advanced non-squamous NSCLC in patients without disease progression 
+"We suggest considering maintenance pemetrexed after first-line platinum-pemetrexed
+chemotherapy for advanced non-squamous NSCLC in patients without disease progression
 (Conditional recommendation, Moderate-quality evidence - GRADE 2B)."
 
 Rationale:
@@ -97,9 +101,9 @@ Rationale:
 ```
 CONDITIONAL RECOMMENDATION - EITHER OPTION ACCEPTABLE (Grade 2):
 
-"We suggest either pembrolizumab monotherapy OR pembrolizumab plus platinum-doublet 
-chemotherapy as first-line treatment for PD-L1 ≥50% NSCLC, based on patient 
-preferences and clinical factors (Conditional recommendation, High-quality evidence - 
+"We suggest either pembrolizumab monotherapy OR pembrolizumab plus platinum-doublet
+chemotherapy as first-line treatment for PD-L1 ≥50% NSCLC, based on patient
+preferences and clinical factors (Conditional recommendation, High-quality evidence -
 GRADE 2A)."
 
 Rationale:
@@ -150,20 +154,21 @@ Rationale:
 
 ### All Nine Possible Combinations
 
-| Evidence Quality | Strong For (↑↑) | Weak For (↑) | Strong Against (↓↓) | Weak Against (↓) |
-|-----------------|----------------|--------------|---------------------|------------------|
-| **High (⊕⊕⊕⊕)** | Grade 1A | Grade 2A | Grade 1A (against) | Grade 2A (against) |
-| **Moderate (⊕⊕⊕○)** | Grade 1B | Grade 2B | Grade 1B (against) | Grade 2B (against) |
-| **Low (⊕⊕○○)** | Grade 1C* | Grade 2C | Grade 1C (against)* | Grade 2C (against) |
-| **Very Low (⊕○○○)** | Grade 1D* | Grade 2D | Grade 1D (against)* | Grade 2D (against) |
+| Evidence Quality    | Strong For (↑↑) | Weak For (↑) | Strong Against (↓↓)  | Weak Against (↓)   |
+| ------------------- | --------------- | ------------ | -------------------- | ------------------ |
+| **High (⊕⊕⊕⊕)**     | Grade 1A        | Grade 2A     | Grade 1A (against)   | Grade 2A (against) |
+| **Moderate (⊕⊕⊕○)** | Grade 1B        | Grade 2B     | Grade 1B (against)   | Grade 2B (against) |
+| **Low (⊕⊕○○)**      | Grade 1C\*      | Grade 2C     | Grade 1C (against)\* | Grade 2C (against) |
+| **Very Low (⊕○○○)** | Grade 1D\*      | Grade 2D     | Grade 1D (against)\* | Grade 2D (against) |
 
-*Rare: Strong recommendations usually require at least moderate-quality evidence
+\*Rare: Strong recommendations usually require at least moderate-quality evidence
 
 ### Unusual Combinations (When They Occur)
 
 **Strong Recommendation with Low Quality Evidence (Grade 1C)**
 
 Rare, but can occur when:
+
 - Large magnitude of effect from observational data (RR >5 or <0.2)
 - Low quality evidence, but clear benefit-harm balance
 - Example: Anticoagulation for atrial fibrillation (before RCTs, strong observational data)
@@ -171,6 +176,7 @@ Rare, but can occur when:
 **Weak Recommendation with High Quality Evidence (Grade 2A)**
 
 Occurs when:
+
 - Benefits and harms closely balanced
 - Patient values highly variable
 - Example: Aspirin for primary prevention in low-risk individuals (benefits small, bleeding risk present, patient values vary)
@@ -180,11 +186,13 @@ Occurs when:
 ### Strong Recommendations
 
 **FOR (↑↑)**:
+
 - "We recommend [intervention] for [population]."
 - "Clinicians should [action]."
 - "[Intervention] is recommended."
 
 **AGAINST (↓↓)**:
+
 - "We recommend against [intervention] for [population]."
 - "Clinicians should not [action]."
 - "[Intervention] is not recommended."
@@ -192,37 +200,44 @@ Occurs when:
 ### Conditional/Weak Recommendations
 
 **FOR (↑)**:
+
 - "We suggest [intervention] for [population]."
 - "Clinicians might consider [action]."
 - "[Intervention] may be considered for selected patients."
 
 **AGAINST (↓)**:
+
 - "We suggest not using [intervention] for [population]."
 - "Clinicians might avoid [action]."
 - "[Intervention] is generally not recommended."
 
 **EITHER ACCEPTABLE**:
+
 - "We suggest either [option A] or [option B] based on patient preferences."
 - "Either approach is reasonable."
 
 ## Color Coding for Visual Documents
 
 **Strong Recommendations (Green Background)**:
+
 - RGB(0, 153, 76) or #009954
 - Clear visual priority
 - Use for Grade 1A, 1B
 
 **Conditional Recommendations (Yellow Background)**:
+
 - RGB(255, 193, 7) or #FFC107
 - Indicates discussion needed
 - Use for Grade 2A, 2B, 2C
 
 **Research/Investigational (Blue Background)**:
+
 - RGB(33, 150, 243) or #2196F3
 - Clinical trial consideration
 - Insufficient evidence for standard care
 
 **Not Recommended (Red Border/Background)**:
+
 - RGB(220, 20, 60) or #DC143C
 - Strong recommendation against
 - Evidence of harm or no benefit
@@ -325,4 +340,3 @@ Before finalizing recommendations, verify:
 - [ ] Guideline concordance is documented
 - [ ] Special populations are addressed (elderly, renal/hepatic impairment)
 - [ ] Monitoring requirements are specified
-

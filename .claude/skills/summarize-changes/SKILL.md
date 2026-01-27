@@ -34,6 +34,7 @@ Change Summarization Specialist - Creates clear, structured summaries of code ch
 ## When to Use
 
 Invoke this skill:
+
 - After completing any non-trivial coding task
 - Before committing changes
 - When preparing PR descriptions
@@ -71,39 +72,47 @@ Use this template:
 ## Changes Summary
 
 ### Overview
+
 [1-2 sentence high-level description of what was accomplished]
 
 ### Changes Made
 
 #### New Files
-| File | Purpose |
-|------|---------|
+
+| File              | Purpose                            |
+| ----------------- | ---------------------------------- |
 | `path/to/file.ts` | Description of what this file does |
 
 #### Modified Files
-| File | Changes |
-|------|---------|
+
+| File                  | Changes                  |
+| --------------------- | ------------------------ |
 | `path/to/existing.ts` | What was changed and why |
 
 #### Deleted Files
-| File | Reason |
-|------|--------|
+
+| File             | Reason                    |
+| ---------------- | ------------------------- |
 | `path/to/old.ts` | Why this file was removed |
 
 ### Technical Details
 
 **Key Implementation Decisions**:
+
 - Decision 1 and rationale
 - Decision 2 and rationale
 
 **Dependencies Added/Removed**:
+
 - Added: `package-name@version` - reason
 - Removed: `old-package` - reason
 
 ### Breaking Changes
+
 [List any breaking changes or "None"]
 
 ### Migration Required
+
 [Any steps needed to adopt these changes or "None"]
 
 ### Verification Checklist
@@ -116,6 +125,7 @@ Use this template:
 - [ ] Performance acceptable
 
 ### Related Issues/Tasks
+
 - Fixes #123
 - Related to #456
 ```
@@ -133,6 +143,7 @@ Generate a conventional commit message:
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `refactor`: Code restructuring
@@ -141,6 +152,7 @@ Generate a conventional commit message:
 - `chore`: Maintenance tasks
 
 **Example**:
+
 ```
 fix(auth): resolve login timeout error
 
@@ -156,18 +168,23 @@ If changes are for a PR, expand the summary:
 
 ```markdown
 ## Summary
+
 [Brief description of what this PR does]
 
 ## Changes
+
 [List of key changes]
 
 ## Testing
+
 [How this was tested]
 
 ## Screenshots
+
 [If UI changes]
 
 ## Checklist
+
 - [ ] Tests added/updated
 - [ ] Documentation updated
 - [ ] No breaking changes (or documented)
@@ -183,29 +200,35 @@ If changes are for a PR, expand the summary:
 ## Changes Summary
 
 ### Overview
+
 Fixed the search timeout error that occurred when users had slow connections.
 
 ### Changes Made
 
 #### Modified Files
-| File | Changes |
-|------|---------|
-| `src/api/search.ts` | Increased timeout from 5s to 30s |
-| `src/api/search.test.ts` | Added test for timeout handling |
+
+| File                     | Changes                          |
+| ------------------------ | -------------------------------- |
+| `src/api/search.ts`      | Increased timeout from 5s to 30s |
+| `src/api/search.test.ts` | Added test for timeout handling  |
 
 ### Technical Details
 
 **Key Implementation Decisions**:
+
 - Used 30s timeout as it covers 99th percentile of actual search times
 - Added retry logic with exponential backoff for transient failures
 
 **Dependencies Added/Removed**:
+
 - None
 
 ### Breaking Changes
+
 None
 
 ### Verification Checklist
+
 - [x] Unit tests pass
 - [x] Integration tests pass
 - [x] Manual testing performed
@@ -213,14 +236,18 @@ None
 
 ### Commit Message
 ```
+
 fix(search): increase timeout to handle slow connections
 
 Increased search API timeout from 5s to 30s and added retry logic.
 Users on slow connections were experiencing frequent timeout errors.
 
 Fixes #456
+
 ```
+
 ```
+
 </usage_example>
 
 <usage_example>
@@ -230,36 +257,43 @@ Fixes #456
 ## Changes Summary
 
 ### Overview
+
 Added user email validation with real-time feedback on the registration form.
 
 ### Changes Made
 
 #### New Files
-| File | Purpose |
-|------|---------|
-| `src/utils/emailValidator.ts` | Email validation utilities |
+
+| File                               | Purpose                    |
+| ---------------------------------- | -------------------------- |
+| `src/utils/emailValidator.ts`      | Email validation utilities |
 | `src/utils/emailValidator.test.ts` | Tests for email validation |
 
 #### Modified Files
-| File | Changes |
-|------|---------|
+
+| File                                  | Changes                         |
+| ------------------------------------- | ------------------------------- |
 | `src/components/RegistrationForm.tsx` | Added validation to email field |
-| `src/i18n/en.json` | Added validation error messages |
+| `src/i18n/en.json`                    | Added validation error messages |
 
 ### Technical Details
 
 **Key Implementation Decisions**:
+
 - Used RFC 5322 compliant regex for validation
 - Validation runs on blur to avoid interrupting typing
 - Debounced validation (300ms) for performance
 
 **Dependencies Added/Removed**:
+
 - None (used built-in regex)
 
 ### Breaking Changes
+
 None - additive change only
 
 ### Verification Checklist
+
 - [x] Unit tests pass (15 test cases for validation)
 - [x] Integration tests pass
 - [x] Manual testing performed
@@ -267,14 +301,18 @@ None - additive change only
 
 ### Commit Message
 ```
+
 feat(registration): add email validation with real-time feedback
 
 Added RFC 5322 compliant email validation to registration form.
 Validation runs on blur with debouncing for smooth UX.
 
 Closes #789
+
 ```
+
 ```
+
 </usage_example>
 </examples>
 
@@ -291,6 +329,7 @@ Closes #789
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

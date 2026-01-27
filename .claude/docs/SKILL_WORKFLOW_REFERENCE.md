@@ -38,10 +38,11 @@ Skill({ skill: 'tdd' });
 Skill({ skill: 'debugging' });
 
 // WRONG: Just reading the file doesn't apply the skill
-Read('.claude/skills/tdd/SKILL.md');  // Reading is NOT invoking
+Read('.claude/skills/tdd/SKILL.md'); // Reading is NOT invoking
 ```
 
 The `Skill()` tool:
+
 1. Locates the skill definition in `.claude/skills/<skill-name>/SKILL.md`
 2. Loads the skill instructions into the agent's context
 3. Makes skill-specific workflows available to the agent
@@ -60,6 +61,7 @@ Skills can reference workflows directly in their instructions:
 Follow the TDD workflow: `.claude/workflows/core/tdd-workflow.md`
 
 ### Steps
+
 1. Read the workflow file
 2. Execute each phase in sequence
 3. Record results to memory
@@ -75,14 +77,17 @@ Skills can embed workflow steps directly:
 ## Workflow
 
 ### Phase 1: Reproduce
+
 1. Identify the bug
 2. Create minimal reproduction
 
 ### Phase 2: Diagnose
+
 1. Add logging
 2. Trace execution
 
 ### Phase 3: Fix
+
 1. Implement fix
 2. Verify fix
 3. Add tests
@@ -117,19 +122,24 @@ Skill: TDD
 ```
 
 Example from TDD skill:
+
 ```markdown
 ## Workflow
 
 ### Step 1: Write Test First (RED)
+
 Create a failing test that defines expected behavior.
 
 ### Step 2: Run Test
+
 Verify the test fails for the right reason.
 
 ### Step 3: Write Implementation (GREEN)
+
 Write minimal code to pass the test.
 
 ### Step 4: Refactor
+
 Improve code quality while keeping tests green.
 ```
 
@@ -149,21 +159,26 @@ Skill: Code Quality
 ```
 
 Example:
+
 ```markdown
 ## Workflow
 
 ### Step 1: Analyze
+
 Check if code has test coverage.
 
 ### Step 2: Branch
+
 If coverage >= 80%:
-  - Run existing tests
-  - Check for regressions
+
+- Run existing tests
+- Check for regressions
 
 If coverage < 80%:
-  - Generate missing tests
-  - Run all tests
-  - Report coverage delta
+
+- Generate missing tests
+- Run all tests
+- Report coverage delta
 ```
 
 ### Pattern 3: Parallel Workflow Execution
@@ -186,10 +201,12 @@ Skill: Security Review
 ```
 
 Example:
+
 ```markdown
 ## Workflow
 
 ### Parallel Analysis
+
 Spawn concurrent security checks:
 
 1. **Static Analysis (SAST)**
@@ -201,6 +218,7 @@ Spawn concurrent security checks:
    - Penetration testing
 
 ### Consolidation
+
 Merge findings into unified security report.
 ```
 
@@ -223,10 +241,12 @@ Skill: QA Workflow
 ```
 
 Example from QA workflow skill:
+
 ```markdown
 ## Workflow
 
 ### Loop: Test-Fix Cycle
+
 Repeat until all tests pass:
 
 1. **Run Tests**
@@ -241,6 +261,7 @@ Repeat until all tests pass:
    Return to step 1.
 
 ### Maximum Iterations
+
 Stop after 5 iterations to prevent infinite loops.
 ```
 
@@ -262,32 +283,41 @@ Skill: Feature Development
 ```
 
 Example:
-```markdown
+
+````markdown
 ## Workflow
 
 ### Phase 1: Planning
+
 Spawn PLANNER agent with planning workflow:
+
 ```javascript
 Task({
-  prompt: `You are PLANNER. Follow planning workflow...`
-})
+  prompt: `You are PLANNER. Follow planning workflow...`,
+});
 ```
+````
 
 ### Phase 2: Implementation
+
 After planning completes, spawn DEVELOPER:
+
 ```javascript
 Task({
-  prompt: `You are DEVELOPER. Follow implementation workflow...`
-})
+  prompt: `You are DEVELOPER. Follow implementation workflow...`,
+});
 ```
 
 ### Phase 3: Testing
+
 After implementation, spawn QA:
+
 ```javascript
 Task({
-  prompt: `You are QA. Follow testing workflow...`
-})
+  prompt: `You are QA. Follow testing workflow...`,
+});
 ```
+
 ```
 
 ## Common Workflow Patterns
@@ -297,7 +327,9 @@ Task({
 Most enterprise workflows follow this structure:
 
 ```
+
 [Explore] --> [Plan] --> [Review] --> [Implement] --> [Validate]
+
 ```
 
 | Phase | Purpose | Typical Agent |
@@ -313,8 +345,10 @@ Most enterprise workflows follow this structure:
 Workflows with blocking checkpoints:
 
 ```
+
 [Phase 1] --> [Gate 1] --> [Phase 2] --> [Gate 2] --> [Phase 3]
-              (Review)                   (Test)
+(Review) (Test)
+
 ```
 
 Gates require explicit approval or passing conditions before proceeding.
@@ -324,8 +358,10 @@ Gates require explicit approval or passing conditions before proceeding.
 Workflows that produce and consume artifacts:
 
 ```
+
 [Producer Agent] --> [Artifact] --> [Consumer Agent]
-    PLANNER      -->   Plan.md  -->    DEVELOPER
+PLANNER --> Plan.md --> DEVELOPER
+
 ```
 
 Common artifacts:
@@ -352,13 +388,15 @@ Common artifacts:
 ### Skill Structure
 
 ```
+
 .claude/skills/<skill-name>/
-├── SKILL.md           # Skill definition with workflow
-├── examples/          # Usage examples
-│   └── example-1.md
-└── schemas/           # (optional) JSON schemas
-    └── input.schema.json
-```
+├── SKILL.md # Skill definition with workflow
+├── examples/ # Usage examples
+│ └── example-1.md
+└── schemas/ # (optional) JSON schemas
+└── input.schema.json
+
+````
 
 ### SKILL.md Template
 
@@ -398,7 +436,7 @@ This skill is used by:
 ## Memory Protocol
 1. Read `.claude/context/memory/learnings.md` before starting
 2. Record findings to appropriate memory file after completion
-```
+````
 
 ## Workflow Invocation Best Practices
 

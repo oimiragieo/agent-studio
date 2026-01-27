@@ -12,11 +12,13 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Resolution and File Format
 
 ### Resolution Requirements
+
 - **Raster images (photos, microscopy)**: 300-600 DPI at final print size
 - **Line art and graphs**: 600-1200 DPI (or vector format)
 - **Combined figures**: 300-600 DPI
 
 ### File Formats
+
 - **Vector formats (preferred for graphs/plots)**: PDF, EPS, SVG
   - Infinitely scalable without quality loss
   - Smaller file sizes for line art
@@ -29,6 +31,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
   - **Never use JPEG**: Lossy compression introduces artifacts
 
 ### Size Specifications
+
 - **Single column**: 85-90 mm (3.35-3.54 inches) width
 - **1.5 column**: 114-120 mm (4.49-4.72 inches) width
 - **Double column**: 174-180 mm (6.85-7.08 inches) width
@@ -37,6 +40,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Typography
 
 ### Font Guidelines
+
 - **Font family**: Sans-serif fonts (Arial, Helvetica, Calibri) for most journals
   - Some journals prefer specific fonts (check guidelines)
   - Consistency across all figures in manuscript
@@ -51,6 +55,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 - **Font weight**: Regular weight for most text; bold for panel labels only
 
 ### Text Best Practices
+
 - Use sentence case for axis labels ("Time (hours)" not "TIME (HOURS)")
 - Include units in parentheses
 - Avoid abbreviations unless space-constrained (define in caption)
@@ -59,6 +64,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Color Usage
 
 ### Color Selection Principles
+
 1. **Colorblind-friendly**: ~8% of males have color vision deficiency
    - Avoid red/green combinations
    - Use blue/orange, blue/yellow, or add texture/pattern
@@ -74,11 +80,13 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
    - Ensure sufficient contrast (especially for grayscale conversion)
 
 ### Recommended Color Palettes
+
 - **Qualitative (categories)**: ColorBrewer, Okabe-Ito palette
 - **Sequential (low to high)**: Viridis, Cividis, Blues, Oranges
 - **Diverging (negative to positive)**: RdBu, PuOr, BrBG (ensure colorblind-safe)
 
 ### Grayscale Compatibility
+
 - All figures should be interpretable in grayscale
 - Use different line styles (solid, dashed, dotted) and markers
 - Add patterns/hatching to bars and areas
@@ -86,6 +94,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Layout and Composition
 
 ### Multi-Panel Figures
+
 - **Panel labels**: Use bold uppercase letters (A, B, C) in top-left corner
 - **Spacing**: Adequate white space between panels
 - **Alignment**: Align panels along edges or axes where possible
@@ -95,6 +104,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ### Plot Elements
 
 #### Axes
+
 - **Axis lines**: 0.5-1 pt thickness
 - **Tick marks**: Point inward or outward consistently
 - **Tick frequency**: Enough to read values, not cluttered (typically 4-7 major ticks)
@@ -102,18 +112,21 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 - **Axis ranges**: Start from zero for bar charts (unless scientifically inappropriate)
 
 #### Lines and Markers
+
 - **Line width**: 1-2 pt for data lines; 0.5-1 pt for reference lines
 - **Marker size**: 3-6 pt, larger than line width
 - **Marker types**: Differentiate when multiple series (circles, squares, triangles)
 - **Error bars**: 0.5-1 pt width; include caps if appropriate
 
 #### Legends
+
 - **Position**: Inside plot area if space permits, outside otherwise
 - **Frame**: Optional; if used, thin line (0.5 pt)
 - **Order**: Match order of data appearance (top to bottom or left to right)
 - **Content**: Concise descriptions; full details in caption
 
 ### White Space and Margins
+
 - Remove unnecessary white space around plots
 - Maintain consistent margins
 - `tight_layout()` or `constrained_layout=True` in matplotlib
@@ -121,12 +134,14 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Data Representation Best Practices
 
 ### Statistical Rigor
+
 - **Error bars**: Always show uncertainty (SD, SEM, CI) and state which in caption
 - **Sample size**: Indicate n in figure or caption
-- **Significance**: Mark statistical significance clearly (*, **, ***)
+- **Significance**: Mark statistical significance clearly (\*, **, \***)
 - **Replicates**: Show individual data points when possible, not just summary statistics
 
 ### Appropriate Chart Types
+
 - **Bar plots**: Comparing discrete categories; always start y-axis at zero
 - **Line plots**: Time series or continuous relationships
 - **Scatter plots**: Correlation between variables; add regression line if appropriate
@@ -135,6 +150,7 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 - **Violin plots**: Distribution shape comparison (better than box plots for bimodal data)
 
 ### Avoiding Distortion
+
 - **No 3D effects**: Distorts perception of values
 - **No unnecessary decorations**: No gradients, shadows, or chart junk
 - **Consistent scales**: Use same scale for comparable panels
@@ -144,16 +160,19 @@ Scientific figures must be clear, accurate, and accessible. Publication-ready fi
 ## Accessibility
 
 ### Colorblind Considerations
+
 - Test with online simulators (e.g., Coblis, Color Oracle)
 - Use patterns/textures in addition to color
 - Provide alternative representations in supplementary materials if needed
 
 ### Visual Impairment
+
 - High contrast between elements
 - Thick enough lines (minimum 0.5 pt)
 - Clear, uncluttered layouts
 
 ### Data Availability
+
 - Include data tables in supplementary materials
 - Provide source data files for graphs
 - Consider interactive figures for online supplementary materials

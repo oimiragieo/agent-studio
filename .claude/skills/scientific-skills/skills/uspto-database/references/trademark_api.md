@@ -22,6 +22,7 @@ TSDR enables programmatic retrieval of trademark case status documents and infor
 Requires API key registration at: https://account.uspto.gov/api-manager/
 
 Include API key in request header:
+
 ```
 X-Api-Key: YOUR_API_KEY
 ```
@@ -35,6 +36,7 @@ GET /ts/cd/casedocs/sn{serial_number}/info.json
 ```
 
 **Example:**
+
 ```bash
 curl -H "X-Api-Key: YOUR_KEY" \
   "https://tsdrapi.uspto.gov/ts/cd/casedocs/sn87654321/info.json"
@@ -143,6 +145,7 @@ Retrieves trademark assignment records from the USPTO assignment database. Shows
 ### Authentication
 
 Requires API key in header:
+
 ```
 X-Api-Key: YOUR_API_KEY
 ```
@@ -168,6 +171,7 @@ POST /v1.4/assignment/search
 ```
 
 **Request body:**
+
 ```json
 {
   "criteria": {

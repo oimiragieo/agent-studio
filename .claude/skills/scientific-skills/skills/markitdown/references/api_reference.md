@@ -20,13 +20,13 @@ md = MarkItDown(
 
 #### Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `llm_client` | OpenAI client | `None` | OpenAI-compatible client for AI image descriptions |
-| `llm_model` | str | `None` | Model name (e.g., "anthropic/claude-opus-4.5") for image descriptions |
-| `llm_prompt` | str | `None` | Custom prompt for image description |
-| `docintel_endpoint` | str | `None` | Azure Document Intelligence endpoint |
-| `enable_plugins` | bool | `False` | Enable 3rd-party plugins |
+| Parameter           | Type          | Default | Description                                                           |
+| ------------------- | ------------- | ------- | --------------------------------------------------------------------- |
+| `llm_client`        | OpenAI client | `None`  | OpenAI-compatible client for AI image descriptions                    |
+| `llm_model`         | str           | `None`  | Model name (e.g., "anthropic/claude-opus-4.5") for image descriptions |
+| `llm_prompt`        | str           | `None`  | Custom prompt for image description                                   |
+| `docintel_endpoint` | str           | `None`  | Azure Document Intelligence endpoint                                  |
+| `enable_plugins`    | bool          | `False` | Enable 3rd-party plugins                                              |
 
 #### Methods
 
@@ -42,12 +42,14 @@ result = md.convert(
 ```
 
 **Parameters**:
+
 - `source` (str): Path to the file to convert
 - `file_extension` (str, optional): Override file extension detection
 
 **Returns**: `DocumentConverterResult` object
 
 **Example**:
+
 ```python
 result = md.convert("document.pdf")
 print(result.text_content)
@@ -65,12 +67,14 @@ result = md.convert_stream(
 ```
 
 **Parameters**:
+
 - `stream` (BinaryIO): Binary file-like object (e.g., file opened in `"rb"` mode)
 - `file_extension` (str): File extension to determine conversion method (e.g., ".pdf")
 
 **Returns**: `DocumentConverterResult` object
 
 **Example**:
+
 ```python
 with open("document.pdf", "rb") as f:
     result = md.convert_stream(f, file_extension=".pdf")
@@ -87,10 +91,10 @@ The result of a conversion operation.
 
 #### Attributes
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `text_content` | str | The converted Markdown text |
-| `title` | str | Document title (if available) |
+| Attribute      | Type | Description                   |
+| -------------- | ---- | ----------------------------- |
+| `text_content` | str  | The converted Markdown text   |
+| `title`        | str  | Document title (if available) |
 
 #### Example
 
@@ -117,11 +121,11 @@ class CustomConverter(DocumentConverter):
     def convert(self, stream, file_extension):
         """
         Convert a document from a binary stream.
-        
+
         Parameters:
             stream (BinaryIO): Binary file-like object
             file_extension (str): File extension (e.g., ".custom")
-            
+
         Returns:
             DocumentConverterResult: Conversion result
         """
@@ -174,6 +178,7 @@ result = md.convert("document.pdf")
 Plugins are Python packages that register converters with MarkItDown.
 
 **Plugin Structure**:
+
 ```
 my-markitdown-plugin/
 ├── setup.py
@@ -184,6 +189,7 @@ my-markitdown-plugin/
 ```
 
 **setup.py**:
+
 ```python
 from setuptools import setup
 
@@ -200,6 +206,7 @@ setup(
 ```
 
 **converter.py**:
+
 ```python
 from markitdown import DocumentConverter, DocumentConverterResult
 
@@ -212,7 +219,7 @@ class MyConverter(DocumentConverter):
             text_content=markdown,
             title="My Document"
         )
-    
+
     def process(self, content):
         # Process content
         return "# Converted Content\n\n..."
@@ -246,6 +253,7 @@ result = md.convert("presentation.pptx")
 ### Available Models via OpenRouter
 
 Popular models with vision support:
+
 - `anthropic/claude-opus-4.5` - **Recommended for scientific vision**
 - `google/gemini-3-pro-preview` - Gemini Pro Vision
 
@@ -294,6 +302,7 @@ result = md.convert("complex_document.pdf")
 ### Authentication
 
 Set environment variables:
+
 ```bash
 export AZURE_DOCUMENT_INTELLIGENCE_KEY="your-key"
 ```
@@ -356,20 +365,22 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 ## Breaking Changes (v0.0.1 to v0.1.0)
 
 1. **Dependencies**: Now organized into optional feature groups
+
    ```bash
    # Old
    pip install markitdown
-   
+
    # New
    pip install 'markitdown[all]'
    ```
 
 2. **convert_stream()**: Now requires binary file-like object
+
    ```python
    # Old (also accepted text)
    with open("file.pdf", "r") as f:  # text mode
        result = md.convert_stream(f)
-   
+
    # New (binary only)
    with open("file.pdf", "rb") as f:  # binary mode
        result = md.convert_stream(f, file_extension=".pdf")
@@ -388,9 +399,8 @@ with ThreadPoolExecutor(max_workers=4) as executor:
 
 ## Environment Variables
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `OPENROUTER_API_KEY` | OpenRouter API key for image descriptions | `sk-or-v1-...` |
-| `AZURE_DOCUMENT_INTELLIGENCE_KEY` | Azure DI authentication | `key123...` |
-| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | Azure DI endpoint | `https://...` |
-
+| Variable                               | Description                               | Example        |
+| -------------------------------------- | ----------------------------------------- | -------------- |
+| `OPENROUTER_API_KEY`                   | OpenRouter API key for image descriptions | `sk-or-v1-...` |
+| `AZURE_DOCUMENT_INTELLIGENCE_KEY`      | Azure DI authentication                   | `key123...`    |
+| `AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT` | Azure DI endpoint                         | `https://...`  |

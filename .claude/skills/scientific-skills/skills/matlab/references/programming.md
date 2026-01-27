@@ -1,6 +1,7 @@
 # Programming Reference
 
 ## Table of Contents
+
 1. [Scripts and Functions](#scripts-and-functions)
 2. [Control Flow](#control-flow)
 3. [Function Types](#function-types)

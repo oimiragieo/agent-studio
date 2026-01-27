@@ -10,28 +10,28 @@ Comprehensive guidelines for creating effective academic research posters includ
 
 ### International Sizes (ISO 216)
 
-| Size | Dimensions (mm) | Dimensions (inches) | Common Use |
-|------|----------------|---------------------|------------|
-| **A0** | 841 × 1189 | 33.1 × 46.8 | Most common international standard |
-| **A1** | 594 × 841 | 23.4 × 33.1 | Smaller conferences, travel-friendly |
-| **A2** | 420 × 594 | 16.5 × 23.4 | Mini posters, small venues |
+| Size   | Dimensions (mm) | Dimensions (inches) | Common Use                           |
+| ------ | --------------- | ------------------- | ------------------------------------ |
+| **A0** | 841 × 1189      | 33.1 × 46.8         | Most common international standard   |
+| **A1** | 594 × 841       | 23.4 × 33.1         | Smaller conferences, travel-friendly |
+| **A2** | 420 × 594       | 16.5 × 23.4         | Mini posters, small venues           |
 
 ### US Sizes
 
-| Size | Dimensions (inches) | Dimensions (mm) | Common Use |
-|------|-------------------|-----------------|------------|
-| **36" × 48"** | 36 × 48 | 914 × 1219 | Common US conference size (portrait) |
-| **42" × 56"** | 42 × 56 | 1067 × 1422 | Large format US posters |
-| **48" × 36"** | 48 × 36 | 1219 × 914 | Landscape orientation |
-| **48" × 96"** | 48 × 96 | 1219 × 2438 | Extra-wide format |
+| Size          | Dimensions (inches) | Dimensions (mm) | Common Use                           |
+| ------------- | ------------------- | --------------- | ------------------------------------ |
+| **36" × 48"** | 36 × 48             | 914 × 1219      | Common US conference size (portrait) |
+| **42" × 56"** | 42 × 56             | 1067 × 1422     | Large format US posters              |
+| **48" × 36"** | 48 × 36             | 1219 × 914      | Landscape orientation                |
+| **48" × 96"** | 48 × 96             | 1219 × 2438     | Extra-wide format                    |
 
 ### Other Common Sizes
 
-| Size | Dimensions | Notes |
-|------|-----------|-------|
+| Size               | Dimensions                     | Notes            |
+| ------------------ | ------------------------------ | ---------------- |
 | **90 cm × 120 cm** | 900 × 1200 mm / 35.4 × 47.2 in | Common in Europe |
-| **40" × 30"** | 1016 × 762 mm | Landscape format |
-| **3 ft × 4 ft** | 914 × 1219 mm / 36 × 48 in | Same as 36×48 |
+| **40" × 30"**      | 1016 × 762 mm                  | Landscape format |
+| **3 ft × 4 ft**    | 914 × 1219 mm / 36 × 48 in     | Same as 36×48    |
 
 ### Orientation
 
@@ -52,19 +52,20 @@ Comprehensive guidelines for creating effective academic research posters includ
 
 Posters are viewed from 3-6 feet (1-2 meters) away:
 
-| Element | Size Range | Recommended |
-|---------|-----------|-------------|
-| **Title** | 60-85 pt | 72-85 pt |
-| **Author Names** | 48-60 pt | 54 pt |
-| **Affiliations** | 32-40 pt | 36 pt |
-| **Section Headers** | 36-48 pt | 42 pt |
-| **Body Text** | 24-32 pt | 28 pt |
-| **Figure Captions** | 20-24 pt | 22 pt |
-| **References** | 18-22 pt | 20 pt |
+| Element             | Size Range | Recommended |
+| ------------------- | ---------- | ----------- |
+| **Title**           | 60-85 pt   | 72-85 pt    |
+| **Author Names**    | 48-60 pt   | 54 pt       |
+| **Affiliations**    | 32-40 pt   | 36 pt       |
+| **Section Headers** | 36-48 pt   | 42 pt       |
+| **Body Text**       | 24-32 pt   | 28 pt       |
+| **Figure Captions** | 20-24 pt   | 22 pt       |
+| **References**      | 18-22 pt   | 20 pt       |
 
 ### Font Families
 
 **Sans-Serif (Recommended for Posters)**:
+
 - Arial
 - Helvetica
 - Calibri
@@ -73,12 +74,14 @@ Posters are viewed from 3-6 feet (1-2 meters) away:
 - **Why**: Clean, readable at distance
 
 **Serif (Use Sparingly)**:
+
 - Times New Roman
 - Georgia
 - Palatino
 - **When**: Body text if preferred, but sans-serif better for headers
 
 **Monospace**:
+
 - Courier New
 - Consolas
 - **When**: Code snippets only
@@ -100,23 +103,25 @@ Posters are viewed from 3-6 feet (1-2 meters) away:
 
 **Column Structures**:
 
-| Layout | Columns | Best For |
-|--------|---------|----------|
-| **Single Column** | 1 | Simple, linear flow; timeline posters |
-| **Two Column** | 2 | Most common; balanced layout |
-| **Three Column** | 3 | Dense content; multi-part studies |
-| **Four Column** | 4 | Very dense; avoid if possible |
+| Layout            | Columns | Best For                              |
+| ----------------- | ------- | ------------------------------------- |
+| **Single Column** | 1       | Simple, linear flow; timeline posters |
+| **Two Column**    | 2       | Most common; balanced layout          |
+| **Three Column**  | 3       | Dense content; multi-part studies     |
+| **Four Column**   | 4       | Very dense; avoid if possible         |
 
 **Recommended**: **2 or 3 columns** for most research posters
 
 ### Visual Flow
 
 **Reading Order** (Western conventions):
+
 1. Top to bottom
 2. Left to right
 3. Z-pattern or F-pattern
 
 **Section Ordering** (typical):
+
 ```
 +----------------------------------+
 |            TITLE                 |
@@ -150,6 +155,7 @@ Posters are viewed from 3-6 feet (1-2 meters) away:
 Use colorblind-friendly color combinations:
 
 **Okabe-Ito Palette** (Recommended):
+
 - Orange: `#E69F00`
 - Sky Blue: `#56B4E9`
 - Bluish Green: `#009E73`
@@ -161,31 +167,37 @@ Use colorblind-friendly color combinations:
 - Gray: `#999999`
 
 **Viridis Palette** (sequential):
+
 - Good for heatmaps and gradients
 - Colorblind-safe and perceptually uniform
 
 ### Color Usage Guidelines
 
 **Background**:
+
 - **White or light gray**: Most common, professional
 - **Light colored**: Pale blue, beige (use cautiously)
 - **Avoid dark backgrounds**: Harder to read, expensive to print
 
 **Text**:
+
 - **Dark on light**: Black or dark gray text on white/light backgrounds
 - **Contrast ratio**: At least 4.5:1 (WCAG AA standard)
 
 **Accent Colors**:
+
 - Use 2-3 accent colors maximum
 - Section headers, key findings
 - Consistent throughout poster
 
 **Figures**:
+
 - Colorblind-safe palettes
 - Sufficient contrast
 - Test in grayscale
 
 ### Color Contrast Tools
+
 - WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
 - Coblis (Color Blindness Simulator): https://www.color-blindness.com/coblis-color-blindness-simulator/
 
@@ -196,6 +208,7 @@ Use colorblind-friendly color combinations:
 ### Essential Sections
 
 #### 1. Title Section
+
 - **Title**: Clear, specific, engaging
 - **Authors**: Names (underline presenting author)
 - **Affiliations**: Institutions, departments
@@ -203,22 +216,25 @@ Use colorblind-friendly color combinations:
 - **Contact**: Email, QR code to paper/website
 
 #### 2. Introduction/Background
+
 - **Purpose**: Context and motivation
 - **Length**: 100-200 words
-- **Include**: 
+- **Include**:
   - Problem statement
   - Research gap
   - Objectives/hypothesis
 
 #### 3. Methods
+
 - **Purpose**: How you did the study
-- **Format**: 
+- **Format**:
   - Bullet points preferred
   - Flow diagram if complex
   - Key parameters
 - **Include**: Sample size, procedures, analysis
 
 #### 4. Results
+
 - **Purpose**: What you found
 - **Format**: Primarily visual (figures, tables, charts)
 - **Include**:
@@ -227,6 +243,7 @@ Use colorblind-friendly color combinations:
   - Visual evidence
 
 #### 5. Discussion/Conclusions
+
 - **Purpose**: What it means
 - **Length**: 100-200 words
 - **Include**:
@@ -236,11 +253,13 @@ Use colorblind-friendly color combinations:
   - Future work
 
 #### 6. References
+
 - **Format**: Small font, abbreviated citations
 - **Include**: Key citations only (5-10)
 - **Style**: Any consistent style
 
 ### Optional Sections
+
 - **Abstract**: Sometimes included, often omitted
 - **Acknowledgments**: Funding, collaborators
 - **Future Work**: Next steps
@@ -252,6 +271,7 @@ Use colorblind-friendly color combinations:
 ### Figures and Plots
 
 **Principles**:
+
 1. **Simplify**: Remove clutter, emphasize key points
 2. **Enlarge**: Make larger than in paper
 3. **Label clearly**: Large axis labels, legends
@@ -259,6 +279,7 @@ Use colorblind-friendly color combinations:
 5. **High resolution**: 300 dpi minimum
 
 **Figure Types**:
+
 - **Photographs**: High quality, cropped appropriately
 - **Graphs**: Bar charts, line plots, scatter plots
 - **Heatmaps**: Use colorblind-safe colormaps
@@ -268,11 +289,13 @@ Use colorblind-friendly color combinations:
 ### Tables
 
 **When to Use**:
+
 - Precise numerical values needed
 - Comparisons across conditions
 - Summary statistics
 
 **Best Practices**:
+
 - **Keep simple**: 3-5 columns, 5-10 rows maximum
 - **Large fonts**: Same size as body text
 - **Clear headers**: Bold column/row headers
@@ -282,11 +305,13 @@ Use colorblind-friendly color combinations:
 ### Icons and Graphics
 
 **Use**:
+
 - Icons for visual interest (methods, concepts)
 - Simple graphics to break text
 - Arrows to guide flow
 
 **Sources**:
+
 - Noun Project: https://thenounproject.com/
 - BioRender: https://biorender.com/ (scientific illustrations)
 - Font Awesome: https://fontawesome.com/ (icons)
@@ -301,18 +326,21 @@ Use colorblind-friendly color combinations:
 
 **Description**: Extension of Beamer for posters  
 **Best For**: Academic conferences, classic layout  
-**Pros**: 
+**Pros**:
+
 - Familiar to Beamer users
 - Clean, professional appearance
 - Many themes available
 
 **Cons**:
+
 - Less flexible than tikzposter
 - Can be verbose
 
 **Template**: `assets/posters/beamerposter_academic.tex`
 
 **Example Usage**:
+
 ```latex
 \documentclass[final]{beamer}
 \usepackage[size=a0,scale=1.24]{beamerposter}
@@ -326,17 +354,20 @@ Use colorblind-friendly color combinations:
 **Description**: Modern poster package using TikZ  
 **Best For**: Colorful, modern designs  
 **Pros**:
+
 - Highly customizable
 - Modern, attractive themes
 - Block-based layout
 
 **Cons**:
+
 - Steeper learning curve
 - Can be slow to compile
 
 **Template**: `assets/posters/tikzposter_research.tex`
 
 **Example Usage**:
+
 ```latex
 \documentclass[25pt, a0paper, portrait]{tikzposter}
 \usetheme{Autumn}
@@ -350,17 +381,20 @@ Use colorblind-friendly color combinations:
 **Description**: Box-and-poster system  
 **Best For**: Structured, multi-column layouts  
 **Pros**:
+
 - Excellent column control
 - Header boxes, structured layout
 - Good for dense content
 
 **Cons**:
+
 - Complex syntax
 - Less commonly used
 
 **Template**: `assets/posters/baposter_conference.tex`
 
 **Example Usage**:
+
 ```latex
 \documentclass[a0paper,portrait]{baposter}
 ```
@@ -372,6 +406,7 @@ Use colorblind-friendly color combinations:
 ### File Format
 
 **For Printing**:
+
 - **PDF**: Universal standard
 - **High resolution**: 300 dpi minimum, 600 dpi for photos
 - **Color space**: RGB for most printers (check with printer)
@@ -381,6 +416,7 @@ Use colorblind-friendly color combinations:
 ### Print Quality Checks
 
 Before printing:
+
 1. **Proofread**: Check for typos, errors
 2. **Colors**: Check in print preview
 3. **Resolution**: Zoom to 100%, check figure quality
@@ -390,9 +426,10 @@ Before printing:
 ### Print Providers
 
 **Options**:
+
 1. **University print shop**: Often cheapest, convenient
 2. **FedEx Office**: Widely available
-3. **Online services**: 
+3. **Online services**:
    - Vistaprint
    - Printful
    - Academic Poster Printing (specialized)
@@ -401,12 +438,12 @@ Before printing:
 
 ### Paper Types
 
-| Paper Type | Description | Best For |
-|-----------|-------------|----------|
-| **Matte** | Non-reflective finish | Well-lit venues, minimal glare |
-| **Glossy** | Shiny, vibrant colors | Photos, colorful figures |
-| **Satin/Semi-gloss** | Between matte and glossy | Balanced option (recommended) |
-| **Fabric** | Wrinkle-resistant, rollable | Travel, re-use |
+| Paper Type           | Description                 | Best For                       |
+| -------------------- | --------------------------- | ------------------------------ |
+| **Matte**            | Non-reflective finish       | Well-lit venues, minimal glare |
+| **Glossy**           | Shiny, vibrant colors       | Photos, colorful figures       |
+| **Satin/Semi-gloss** | Between matte and glossy    | Balanced option (recommended)  |
+| **Fabric**           | Wrinkle-resistant, rollable | Travel, re-use                 |
 
 **Recommendation**: **Satin or matte** for most academic posters
 
@@ -417,6 +454,7 @@ Before printing:
 ### What to Include
 
 Generate QR codes linking to:
+
 - **Paper PDF**: Published or preprint
 - **Supplementary materials**: Data, code, videos
 - **Personal website**: Lab or researcher page
@@ -425,7 +463,7 @@ Generate QR codes linking to:
 
 ### Placement
 
-- **Common locations**: 
+- **Common locations**:
   - Bottom right corner
   - Next to references
   - Near contact information
@@ -433,6 +471,7 @@ Generate QR codes linking to:
 - **Label**: "Scan for paper" or "More info"
 
 ### QR Code Generators
+
 - QR Code Generator: https://www.qr-code-generator.com/
 - QRStuff: https://www.qrstuff.com/
 - LaTeX package: `qrcode` for generating in LaTeX
@@ -480,17 +519,20 @@ Generate QR codes linking to:
 ### Talking Through Your Poster
 
 **30-second version**:
+
 - What is the problem?
 - What did you do?
 - What did you find?
 
 **2-minute version**:
+
 - Background + motivation
 - Methods (briefly)
 - Key result (show main figure)
 - Conclusion + implications
 
 **5+ minute version**:
+
 - Full walkthrough
 - Address specific questions
 - Discuss limitations, future work
@@ -593,17 +635,20 @@ Generate QR codes linking to:
 ## Resources
 
 ### LaTeX Templates
+
 - `assets/posters/beamerposter_academic.tex`
 - `assets/posters/tikzposter_research.tex`
 - `assets/posters/baposter_conference.tex`
 
 ### Online Resources
+
 - Better Posters Blog: https://betterposters.blogspot.com/
 - Colorblind Safe Palettes: https://colorbrewer2.org/
 - BioRender (scientific illustrations): https://biorender.com/
 - Poster Design Guide (Colin Purrington): https://colinpurrington.com/tips/poster-design/
 
 ### Tools
+
 - **Inkscape**: Free vector graphics editor
 - **PowerPoint**: Surprisingly popular for posters
 - **Illustrator**: Professional design tool
@@ -625,4 +670,3 @@ Generate QR codes linking to:
 8. **Accessibility**: Readable from distance, clear hierarchy
 
 **Remember**: A poster is **not a paper** - it's a visual summary designed to spark conversations!
-

@@ -1,6 +1,7 @@
 # GNU Octave Compatibility Reference
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Syntax Differences](#syntax-differences)
 3. [Operator Differences](#operator-differences)
@@ -517,18 +518,18 @@ pkg unload control
 
 ### Common Packages
 
-| Package | Description |
-|---------|-------------|
-| control | Control systems design |
-| signal | Signal processing |
-| image | Image processing |
-| statistics | Statistical functions |
-| optim | Optimization algorithms |
-| io | Input/output functions |
-| struct | Structure manipulation |
-| symbolic | Symbolic math (via SymPy) |
-| parallel | Parallel computing |
-| netcdf | NetCDF file support |
+| Package    | Description               |
+| ---------- | ------------------------- |
+| control    | Control systems design    |
+| signal     | Signal processing         |
+| image      | Image processing          |
+| statistics | Statistical functions     |
+| optim      | Optimization algorithms   |
+| io         | Input/output functions    |
+| struct     | Structure manipulation    |
+| symbolic   | Symbolic math (via SymPy) |
+| parallel   | Parallel computing        |
+| netcdf     | NetCDF file support       |
 
 ### Package Management
 

@@ -16,12 +16,14 @@ Systematic analysis of the .claude framework to identify bugs, security vulnerab
 ## Phases
 
 ### Phase 1: Security Deep Dive
+
 **Dependencies**: None
 **Parallel OK**: Yes (all audits can run concurrently)
 **Priority**: P0 - Critical
 **Estimated Time**: 3-4 hours
 
 #### Tasks
+
 - [ ] **1.1** Audit hooks/routing/ for fail-open vulnerabilities (~30 min)
   - **Files**: `router-state.cjs`, `task-create-guard.cjs`, `security-review-guard.cjs`, `planner-first-guard.cjs`
   - **Command**: `Grep({ pattern: "process\\.exit\\(0\\)", path: ".claude/hooks/routing/" })`
@@ -53,12 +55,15 @@ Systematic analysis of the .claude framework to identify bugs, security vulnerab
   - **Verify**: All security issues have resolution or mitigation
 
 #### Phase 1 Error Handling
+
 If any task fails:
+
 1. Document finding in `.claude/context/memory/issues.md` with severity
 2. Continue to next task (security audit is parallel)
 3. Aggregate critical findings at phase end
 
 #### Phase 1 Verification Gate
+
 ```bash
 # All must pass before proceeding
 grep -c "Status.*Open.*SEC-" .claude/context/memory/issues.md == 0  # No open security issues
@@ -67,6 +72,7 @@ grep -c "Status.*Open.*SEC-" .claude/context/memory/issues.md == 0  # No open se
 ---
 
 ### Phase 2: Hook Code Quality Audit
+
 **Dependencies**: Phase 1 (security baseline established)
 **Parallel OK**: Partial (by hook category)
 **Priority**: P1 - High
@@ -74,18 +80,19 @@ grep -c "Status.*Open.*SEC-" .claude/context/memory/issues.md == 0  # No open se
 
 #### Hook Categories to Audit
 
-| Category | Path | File Count | Focus Areas |
-|----------|------|------------|-------------|
-| routing/ | `.claude/hooks/routing/` | 16 files | State management, guard logic |
-| safety/ | `.claude/hooks/safety/` | 13 files | Validators, guards |
-| evolution/ | `.claude/hooks/evolution/` | 12 files | State machine, transitions |
-| memory/ | `.claude/hooks/memory/` | 6 files | Persistence, extraction |
-| reflection/ | `.claude/hooks/reflection/` | 6 files | Queue management |
-| self-healing/ | `.claude/hooks/self-healing/` | 6 files | Loop prevention, anomaly detection |
-| session/ | `.claude/hooks/session/` | 2 files | Session lifecycle |
-| validators/ | `.claude/hooks/safety/validators/` | 8 files | Command validation |
+| Category      | Path                               | File Count | Focus Areas                        |
+| ------------- | ---------------------------------- | ---------- | ---------------------------------- |
+| routing/      | `.claude/hooks/routing/`           | 16 files   | State management, guard logic      |
+| safety/       | `.claude/hooks/safety/`            | 13 files   | Validators, guards                 |
+| evolution/    | `.claude/hooks/evolution/`         | 12 files   | State machine, transitions         |
+| memory/       | `.claude/hooks/memory/`            | 6 files    | Persistence, extraction            |
+| reflection/   | `.claude/hooks/reflection/`        | 6 files    | Queue management                   |
+| self-healing/ | `.claude/hooks/self-healing/`      | 6 files    | Loop prevention, anomaly detection |
+| session/      | `.claude/hooks/session/`           | 2 files    | Session lifecycle                  |
+| validators/   | `.claude/hooks/safety/validators/` | 8 files    | Command validation                 |
 
 #### Tasks
+
 - [ ] **2.1** Audit routing hooks for state consistency (~45 min)
   - **Focus**: router-state.cjs state transitions, race conditions
   - **Check**: Thread-safe file operations, atomic writes
@@ -117,6 +124,7 @@ grep -c "Status.*Open.*SEC-" .claude/context/memory/issues.md == 0  # No open se
   - **Verify**: Circuit breaker cannot be bypassed
 
 #### Phase 2 Verification Gate
+
 ```bash
 # All hook tests must pass
 node --test --test-concurrency=1 ".claude/hooks/**/*.test.cjs"
@@ -125,6 +133,7 @@ node --test --test-concurrency=1 ".claude/hooks/**/*.test.cjs"
 ---
 
 ### Phase 3: Library Code Quality Audit
+
 **Dependencies**: Phase 1 (security baseline)
 **Parallel OK**: Yes (by lib category)
 **Priority**: P1 - High
@@ -132,15 +141,16 @@ node --test --test-concurrency=1 ".claude/hooks/**/*.test.cjs"
 
 #### Library Categories to Audit
 
-| Category | Path | File Count | Focus Areas |
-|----------|------|------------|-------------|
-| workflow/ | `.claude/lib/workflow/` | 16 files | Engine, validators, CLI |
-| memory/ | `.claude/lib/memory/` | 8 files | Manager, tiers, scheduler |
-| self-healing/ | `.claude/lib/self-healing/` | 6 files | Rollback, validator, dashboard |
-| utils/ | `.claude/lib/utils/` | 8 files | Safe JSON, atomic write, cache |
-| integration/ | `.claude/lib/integration/` | 2 files | System registration |
+| Category      | Path                        | File Count | Focus Areas                    |
+| ------------- | --------------------------- | ---------- | ------------------------------ |
+| workflow/     | `.claude/lib/workflow/`     | 16 files   | Engine, validators, CLI        |
+| memory/       | `.claude/lib/memory/`       | 8 files    | Manager, tiers, scheduler      |
+| self-healing/ | `.claude/lib/self-healing/` | 6 files    | Rollback, validator, dashboard |
+| utils/        | `.claude/lib/utils/`        | 8 files    | Safe JSON, atomic write, cache |
+| integration/  | `.claude/lib/integration/`  | 2 files    | System registration            |
 
 #### Tasks
+
 - [ ] **3.1** Audit workflow engine for execution safety (~45 min)
   - **Files**: `workflow-engine.cjs`, `step-validators.cjs`
   - **Focus**: Condition evaluation, step execution
@@ -166,6 +176,7 @@ node --test --test-concurrency=1 ".claude/hooks/**/*.test.cjs"
   - **Verify**: Edge cases handled (empty files, invalid JSON)
 
 #### Phase 3 Verification Gate
+
 ```bash
 # All lib tests must pass
 node --test --test-concurrency=1 ".claude/lib/**/*.test.cjs"
@@ -174,12 +185,14 @@ node --test --test-concurrency=1 ".claude/lib/**/*.test.cjs"
 ---
 
 ### Phase 4: Pointer Gap Analysis
+
 **Dependencies**: Phase 2, Phase 3 (code quality baseline)
 **Parallel OK**: Yes
 **Priority**: P1 - High
 **Estimated Time**: 2-3 hours
 
 #### Tasks
+
 - [ ] **4.1** Validate CLAUDE.md agent references (~30 min)
   - **File**: `.claude/CLAUDE.md`
   - **Command**: Extract agent file paths, verify existence
@@ -211,6 +224,7 @@ node --test --test-concurrency=1 ".claude/lib/**/*.test.cjs"
   - **Verify**: No "module not found" errors
 
 #### Phase 4 Verification Gate
+
 ```bash
 # All pointer validations pass
 node .claude/tools/cli/validate-agents.mjs && node .claude/tools/cli/detect-orphans.mjs
@@ -219,6 +233,7 @@ node .claude/tools/cli/validate-agents.mjs && node .claude/tools/cli/detect-orph
 ---
 
 ### Phase 5: Tools and CLI Audit
+
 **Dependencies**: Phase 2, Phase 3 (baseline)
 **Parallel OK**: Yes
 **Priority**: P2 - Medium
@@ -226,16 +241,17 @@ node .claude/tools/cli/validate-agents.mjs && node .claude/tools/cli/detect-orph
 
 #### Tool Categories to Audit
 
-| Category | Path | File Count | Focus Areas |
-|----------|------|------------|-------------|
-| analysis/ | `.claude/tools/analysis/` | 8 files | Project analyzer, repo-rag |
-| cli/ | `.claude/tools/cli/` | 5 files | Doctor, validators |
-| integrations/ | `.claude/tools/integrations/` | 8 files | GitHub, K8s, AWS, MCP |
-| optimization/ | `.claude/tools/optimization/` | 4 files | Token optimizer, thinking |
-| runtime/ | `.claude/tools/runtime/` | 4 files | Skills-core, swarm |
-| visualization/ | `.claude/tools/visualization/` | 2 files | Diagrams, graphs |
+| Category       | Path                           | File Count | Focus Areas                |
+| -------------- | ------------------------------ | ---------- | -------------------------- |
+| analysis/      | `.claude/tools/analysis/`      | 8 files    | Project analyzer, repo-rag |
+| cli/           | `.claude/tools/cli/`           | 5 files    | Doctor, validators         |
+| integrations/  | `.claude/tools/integrations/`  | 8 files    | GitHub, K8s, AWS, MCP      |
+| optimization/  | `.claude/tools/optimization/`  | 4 files    | Token optimizer, thinking  |
+| runtime/       | `.claude/tools/runtime/`       | 4 files    | Skills-core, swarm         |
+| visualization/ | `.claude/tools/visualization/` | 2 files    | Diagrams, graphs           |
 
 #### Tasks
+
 - [ ] **5.1** Audit analysis tools for path safety (~30 min)
   - **Focus**: File system operations, user input handling
   - **Check**: No path traversal vulnerabilities
@@ -257,6 +273,7 @@ node .claude/tools/cli/validate-agents.mjs && node .claude/tools/cli/detect-orph
   - **Verify**: Skill invocation is safe
 
 #### Phase 5 Verification Gate
+
 ```bash
 # All tool tests must pass
 node --test ".claude/tools/**/*.test.mjs" ".claude/tools/**/*.test.cjs"
@@ -265,12 +282,14 @@ node --test ".claude/tools/**/*.test.mjs" ".claude/tools/**/*.test.cjs"
 ---
 
 ### Phase 6: Performance Analysis
+
 **Dependencies**: Phase 2, Phase 3 (baseline)
 **Parallel OK**: Yes
 **Priority**: P2 - Medium
 **Estimated Time**: 2-3 hours
 
 #### Tasks
+
 - [ ] **6.1** Measure hook execution overhead (~45 min)
   - **Focus**: Pre/PostToolUse hook latency
   - **Method**: Add timing instrumentation to hooks
@@ -296,6 +315,7 @@ node --test ".claude/tools/**/*.test.mjs" ".claude/tools/**/*.test.cjs"
   - **Target**: < 100ms per step validation
 
 #### Phase 6 Verification Gate
+
 ```bash
 # Performance baselines documented
 cat .claude/context/artifacts/reports/performance-baseline.md
@@ -304,12 +324,14 @@ cat .claude/context/artifacts/reports/performance-baseline.md
 ---
 
 ### Phase 7: Process Enhancement
+
 **Dependencies**: Phase 4 (pointer gaps fixed)
 **Parallel OK**: No (sequential recommendations)
 **Priority**: P2 - Medium
 **Estimated Time**: 2 hours
 
 #### Tasks
+
 - [ ] **7.1** Document hook consolidation opportunities (~30 min)
   - **Focus**: Redundant hooks, similar logic
   - **Output**: Consolidation recommendations
@@ -331,6 +353,7 @@ cat .claude/context/artifacts/reports/performance-baseline.md
   - **Impact**: Clear path to improved framework health
 
 #### Phase 7 Verification Gate
+
 ```bash
 # Process enhancement document created
 cat .claude/context/artifacts/reports/process-enhancements.md
@@ -339,12 +362,14 @@ cat .claude/context/artifacts/reports/process-enhancements.md
 ---
 
 ### Phase 8: Test Infrastructure
+
 **Dependencies**: Phase 1, 2, 3 (code quality baseline)
 **Parallel OK**: Partial
 **Priority**: P2 - Medium
 **Estimated Time**: 2-3 hours
 
 #### Tasks
+
 - [ ] **8.1** Audit test coverage for hooks (~45 min)
   - **Focus**: Hooks with missing or incomplete tests
   - **Method**: Compare .cjs to .test.cjs files
@@ -369,6 +394,7 @@ cat .claude/context/artifacts/reports/process-enhancements.md
   - **Target**: All security issues have regression tests
 
 #### Phase 8 Verification Gate
+
 ```bash
 # All tests pass with no flakes
 node --test --test-concurrency=1 ".claude/**/*.test.cjs" && echo "PASS"
@@ -377,12 +403,14 @@ node --test --test-concurrency=1 ".claude/**/*.test.cjs" && echo "PASS"
 ---
 
 ### Phase 9: Final Report
+
 **Dependencies**: All previous phases
 **Parallel OK**: No
 **Priority**: P0 - Critical
 **Estimated Time**: 2 hours
 
 #### Tasks
+
 - [ ] **9.1** Consolidate security findings (~30 min)
   - **Output**: Security findings summary with severity
   - **Format**: Table with file, line, issue, severity, fix status
@@ -400,6 +428,7 @@ node --test --test-concurrency=1 ".claude/**/*.test.cjs" && echo "PASS"
   - **Format**: Standard memory file formats
 
 #### Phase 9 Verification Gate
+
 ```bash
 # Final report exists with all sections
 cat .claude/context/artifacts/reports/framework-analysis-final-report.md
@@ -409,41 +438,41 @@ cat .claude/context/artifacts/reports/framework-analysis-final-report.md
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Security issue during audit | High | Document immediately in issues.md | N/A |
-| Test failures block progress | Medium | Fix or skip with documentation | `git stash` |
-| Performance regression | Medium | Benchmark before/after | Revert changes |
-| Analysis scope creep | Medium | Timebox each phase | Defer to next phase |
+| Risk                         | Impact | Mitigation                        | Rollback            |
+| ---------------------------- | ------ | --------------------------------- | ------------------- |
+| Security issue during audit  | High   | Document immediately in issues.md | N/A                 |
+| Test failures block progress | Medium | Fix or skip with documentation    | `git stash`         |
+| Performance regression       | Medium | Benchmark before/after            | Revert changes      |
+| Analysis scope creep         | Medium | Timebox each phase                | Defer to next phase |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 6 | 3-4 hours | Yes |
-| 2 | 6 | 4-5 hours | Partial |
-| 3 | 4 | 3-4 hours | Yes |
-| 4 | 5 | 2-3 hours | Yes |
-| 5 | 4 | 2-3 hours | Yes |
-| 6 | 4 | 2-3 hours | Yes |
-| 7 | 4 | 2 hours | No |
-| 8 | 4 | 2-3 hours | Partial |
-| 9 | 4 | 2 hours | No |
-| **Total** | **41** | **~23-30 hours** | |
+| Phase     | Tasks  | Est. Time        | Parallel? |
+| --------- | ------ | ---------------- | --------- |
+| 1         | 6      | 3-4 hours        | Yes       |
+| 2         | 6      | 4-5 hours        | Partial   |
+| 3         | 4      | 3-4 hours        | Yes       |
+| 4         | 5      | 2-3 hours        | Yes       |
+| 5         | 4      | 2-3 hours        | Yes       |
+| 6         | 4      | 2-3 hours        | Yes       |
+| 7         | 4      | 2 hours          | No        |
+| 8         | 4      | 2-3 hours        | Partial   |
+| 9         | 4      | 2 hours          | No        |
+| **Total** | **41** | **~23-30 hours** |           |
 
 ## Agent Assignments
 
-| Phase | Primary Agent | Secondary Agent |
-|-------|--------------|-----------------|
-| 1 | SECURITY-ARCHITECT | CODE-REVIEWER |
-| 2 | CODE-REVIEWER | DEVELOPER (fixes) |
-| 3 | CODE-REVIEWER | DEVELOPER (fixes) |
-| 4 | ARCHITECT | CODE-REVIEWER |
-| 5 | CODE-REVIEWER | DEVELOPER (fixes) |
-| 6 | DEVELOPER | ARCHITECT |
-| 7 | PLANNER | ARCHITECT |
-| 8 | QA | DEVELOPER |
-| 9 | PLANNER | ARCHITECT |
+| Phase | Primary Agent      | Secondary Agent   |
+| ----- | ------------------ | ----------------- |
+| 1     | SECURITY-ARCHITECT | CODE-REVIEWER     |
+| 2     | CODE-REVIEWER      | DEVELOPER (fixes) |
+| 3     | CODE-REVIEWER      | DEVELOPER (fixes) |
+| 4     | ARCHITECT          | CODE-REVIEWER     |
+| 5     | CODE-REVIEWER      | DEVELOPER (fixes) |
+| 6     | DEVELOPER          | ARCHITECT         |
+| 7     | PLANNER            | ARCHITECT         |
+| 8     | QA                 | DEVELOPER         |
+| 9     | PLANNER            | ARCHITECT         |
 
 ## Key Focus Areas
 
@@ -451,40 +480,40 @@ cat .claude/context/artifacts/reports/framework-analysis-final-report.md
 
 Based on `issues.md` analysis, these patterns need verification:
 
-| Pattern | Risk | Files |
-|---------|------|-------|
-| Fail-open catch blocks | Bypass on error | All hooks with try/catch |
-| JSON.parse without schema | State poisoning | State file readers |
-| execSync with interpolation | Command injection | Shell execution |
-| Path traversal | Arbitrary file access | File system operations |
+| Pattern                     | Risk                  | Files                    |
+| --------------------------- | --------------------- | ------------------------ |
+| Fail-open catch blocks      | Bypass on error       | All hooks with try/catch |
+| JSON.parse without schema   | State poisoning       | State file readers       |
+| execSync with interpolation | Command injection     | Shell execution          |
+| Path traversal              | Arbitrary file access | File system operations   |
 
 ### 2. Code Quality Priorities (Phase 2, 3)
 
-| Issue Type | Impact | Detection Method |
-|------------|--------|------------------|
-| Missing error handling | Crashes | Grep for function without try/catch |
-| Unused exports | Dead code | AST analysis or grep |
-| Hardcoded paths | Portability | Grep for absolute paths |
-| Missing tests | Regressions | Compare .cjs to .test.cjs |
+| Issue Type             | Impact      | Detection Method                    |
+| ---------------------- | ----------- | ----------------------------------- |
+| Missing error handling | Crashes     | Grep for function without try/catch |
+| Unused exports         | Dead code   | AST analysis or grep                |
+| Hardcoded paths        | Portability | Grep for absolute paths             |
+| Missing tests          | Regressions | Compare .cjs to .test.cjs           |
 
 ### 3. Pointer Gap Priorities (Phase 4)
 
-| Gap Type | Impact | Detection Method |
-|----------|--------|------------------|
-| Missing agent files | Route failures | Validate CLAUDE.md paths |
-| Missing skill files | Skill() errors | Validate skill catalog |
-| Invalid imports | Module errors | Parse require() statements |
-| Schema ref errors | Validation failures | Validate $ref paths |
+| Gap Type            | Impact              | Detection Method           |
+| ------------------- | ------------------- | -------------------------- |
+| Missing agent files | Route failures      | Validate CLAUDE.md paths   |
+| Missing skill files | Skill() errors      | Validate skill catalog     |
+| Invalid imports     | Module errors       | Parse require() statements |
+| Schema ref errors   | Validation failures | Validate $ref paths        |
 
 ### 4. Performance Priorities (Phase 6)
 
 Based on `learnings.md`, known hotspots:
 
-| Hotspot | Current | Target | Fix |
-|---------|---------|--------|-----|
-| Hook execution | 500-1000ms/Edit | <200ms | Consolidation |
-| State file reads | 10-15/Edit | <3/Edit | TTL caching |
-| JSON parsing | Each hook | Once/operation | Cache parsed state |
+| Hotspot          | Current         | Target         | Fix                |
+| ---------------- | --------------- | -------------- | ------------------ |
+| Hook execution   | 500-1000ms/Edit | <200ms         | Consolidation      |
+| State file reads | 10-15/Edit      | <3/Edit        | TTL caching        |
+| JSON parsing     | Each hook       | Once/operation | Cache parsed state |
 
 ## Success Criteria
 
@@ -506,6 +535,6 @@ Based on `learnings.md`, known hotspots:
 
 ---
 
-*Plan created: 2026-01-26*
-*Author: PLANNER Agent*
-*Version: 1.0*
+_Plan created: 2026-01-26_
+_Author: PLANNER Agent_
+_Version: 1.0_

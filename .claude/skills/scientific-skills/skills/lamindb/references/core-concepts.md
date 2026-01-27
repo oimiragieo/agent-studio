@@ -9,6 +9,7 @@ Artifacts represent datasets in various formats (DataFrames, AnnData, SpatialDat
 ### Creating and Saving Artifacts
 
 **From file:**
+
 ```python
 import lamindb as ln
 
@@ -24,6 +25,7 @@ artifact = ln.Artifact(
 ```
 
 **From DataFrame:**
+
 ```python
 import pandas as pd
 
@@ -36,6 +38,7 @@ artifact = ln.Artifact.from_dataframe(
 ```
 
 **From AnnData:**
+
 ```python
 import anndata as ad
 

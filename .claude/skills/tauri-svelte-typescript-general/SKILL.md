@@ -38,7 +38,7 @@ When reviewing or writing code, apply these guidelines:
 - Follow best practices for Tauri application development, including security considerations.
 - Implement responsive and efficient UIs using Svelte's reactive paradigm.
 - Ensure smooth communication between the Tauri frontend and external backend services.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -51,6 +51,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

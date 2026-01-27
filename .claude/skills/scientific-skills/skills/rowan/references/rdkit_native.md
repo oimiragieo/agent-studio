@@ -40,9 +40,11 @@ print(f"Microscopic pKas: {result.microscopic_pkas}")
 ```
 
 **Parameters:**
+
 - `mol` (rdkit.Chem.Mol): RDKit molecule object
 
 **Returns:** `PKAResult` object with attributes:
+
 - `strongest_acid`: float - pKa of most acidic proton
 - `strongest_base`: float - pKa of most basic site
 - `microscopic_pkas`: list - Site-specific pKa values
@@ -71,6 +73,7 @@ for smi, result in zip(smiles_list, results):
 ```
 
 **Parameters:**
+
 - `mols` (list[rdkit.Chem.Mol]): List of RDKit molecules
 
 **Returns:** `list[PKAResult | None]` - Results for each molecule (None if failed)
@@ -96,9 +99,11 @@ for i, (taut, pop) in enumerate(zip(result.tautomers, result.populations)):
 ```
 
 **Parameters:**
+
 - `mol` (rdkit.Chem.Mol): RDKit molecule object
 
 **Returns:** `TautomerResult` object with attributes:
+
 - `tautomers`: list[rdkit.Chem.Mol] - Tautomer structures
 - `energies`: list[float] - Relative energies (kcal/mol)
 - `populations`: list[float] - Boltzmann populations at 298 K
@@ -122,6 +127,7 @@ for smi, result in zip(smiles_list, results):
 ```
 
 **Parameters:**
+
 - `mols` (list[rdkit.Chem.Mol]): List of RDKit molecules
 
 **Returns:** `list[TautomerResult | None]`
@@ -150,9 +156,11 @@ print(f"Lowest energy: {result.energies[0]:.4f} Hartree")
 ```
 
 **Parameters:**
+
 - `mol` (rdkit.Chem.Mol): RDKit molecule object
 
 **Returns:** `ConformerResult` object with attributes:
+
 - `conformers`: list[rdkit.Chem.Mol] - Conformer structures (with 3D coordinates)
 - `energies`: list[float] - Energies in Hartree
 - `lowest_energy_conformer`: rdkit.Chem.Mol - Global minimum
@@ -178,6 +186,7 @@ for smi, result in zip(smiles_list, results):
 ```
 
 **Parameters:**
+
 - `mols` (list[rdkit.Chem.Mol]): List of RDKit molecules
 
 **Returns:** `list[ConformerResult | None]`
@@ -208,9 +217,11 @@ print(f"Dipole moment: {result.dipole_magnitude:.2f} Debye")
 ```
 
 **Parameters:**
+
 - `mol` (rdkit.Chem.Mol): RDKit molecule with 3D coordinates
 
 **Returns:** `EnergyResult` object with attributes:
+
 - `energy`: float - Total energy (Hartree)
 - `dipole`: tuple[float, float, float] - Dipole vector
 - `dipole_magnitude`: float - Dipole magnitude (Debye)
@@ -235,6 +246,7 @@ for mol, result in zip(mols_3d, results):
 ```
 
 **Parameters:**
+
 - `mols` (list[rdkit.Chem.Mol]): List of molecules with 3D coordinates
 
 **Returns:** `list[EnergyResult | None]`
@@ -267,9 +279,11 @@ optimized_mol = result.molecule
 ```
 
 **Parameters:**
+
 - `mol` (rdkit.Chem.Mol): RDKit molecule (3D coordinates optional)
 
 **Returns:** `OptimizationResult` object with attributes:
+
 - `molecule`: rdkit.Chem.Mol - Optimized structure
 - `energy`: float - Final energy (Hartree)
 - `converged`: bool - Optimization convergence
@@ -293,6 +307,7 @@ for mol, result in zip(mols, results):
 ```
 
 **Parameters:**
+
 - `mols` (list[rdkit.Chem.Mol]): List of RDKit molecules
 
 **Returns:** `list[OptimizationResult | None]`
@@ -427,12 +442,12 @@ print(df[df['pka'].notna()].sort_values('pka'))
 
 ## Comparison with Full API
 
-| Feature | RDKit-Native | Full API |
-|---------|--------------|----------|
-| Input format | RDKit Mol | stjames.Molecule |
-| Output format | RDKit Mol + results | Workflow object |
-| Workflow control | Automatic | Manual wait/fetch |
-| Folder organization | No | Yes |
-| Advanced parameters | Default only | Full control |
+| Feature             | RDKit-Native        | Full API          |
+| ------------------- | ------------------- | ----------------- |
+| Input format        | RDKit Mol           | stjames.Molecule  |
+| Output format       | RDKit Mol + results | Workflow object   |
+| Workflow control    | Automatic           | Manual wait/fetch |
+| Folder organization | No                  | Yes               |
+| Advanced parameters | Default only        | Full control      |
 
 Use RDKit-native API for quick calculations; use full API for complex workflows or when you need fine-grained control.

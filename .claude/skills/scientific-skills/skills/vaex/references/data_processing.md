@@ -397,6 +397,7 @@ df['age_bfill'] = df.age.fillna(method='bfill')
 ### Missing Data Types in Vaex
 
 Vaex distinguishes between:
+
 - **NaN** - IEEE floating point Not-a-Number
 - **NA** - Arrow null type
 - **Missing** - General term for absent data

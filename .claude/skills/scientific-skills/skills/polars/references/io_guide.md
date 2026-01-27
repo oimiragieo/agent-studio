@@ -7,6 +7,7 @@ Comprehensive guide to reading and writing data in various formats with Polars.
 ### Reading CSV
 
 **Eager mode (loads into memory):**
+
 ```python
 import polars as pl
 
@@ -29,6 +30,7 @@ df = pl.read_csv(
 ```
 
 **Lazy mode (scans without loading - recommended for large files):**
+
 ```python
 # Scan CSV (builds query plan)
 lf = pl.scan_csv("data.csv")
@@ -60,6 +62,7 @@ df.write_csv(
 ### Multiple CSV Files
 
 **Read multiple files:**
+
 ```python
 # Read all CSVs in directory
 lf = pl.scan_csv("data/*.csv")
@@ -75,6 +78,7 @@ Parquet is the recommended format for performance and compression.
 ### Reading Parquet
 
 **Eager:**
+
 ```python
 df = pl.read_parquet("data.parquet")
 
@@ -88,6 +92,7 @@ df = pl.read_parquet(
 ```
 
 **Lazy (recommended):**
+
 ```python
 lf = pl.scan_parquet("data.parquet")
 
@@ -113,6 +118,7 @@ df.write_parquet(
 ### Partitioned Parquet (Hive-style)
 
 **Write partitioned:**
+
 ```python
 # Write with partitioning
 df.write_parquet(
@@ -123,6 +129,7 @@ df.write_parquet(
 ```
 
 **Read partitioned:**
+
 ```python
 lf = pl.scan_parquet("output_dir/**/*.parquet")
 
@@ -135,6 +142,7 @@ result = lf.filter(pl.col("year") == 2023).collect()
 ### Reading JSON
 
 **NDJSON (newline-delimited JSON) - recommended:**
+
 ```python
 df = pl.read_ndjson("data.ndjson")
 
@@ -143,6 +151,7 @@ lf = pl.scan_ndjson("data.ndjson")
 ```
 
 **Standard JSON:**
+
 ```python
 df = pl.read_json("data.json")
 
@@ -236,18 +245,21 @@ df.write_database(
 ### Common Database Connectors
 
 **PostgreSQL:**
+
 ```python
 uri = "postgresql://username:password@localhost:5432/database"
 df = pl.read_database_uri("SELECT * FROM table", uri=uri)
 ```
 
 **MySQL:**
+
 ```python
 uri = "mysql://username:password@localhost:3306/database"
 df = pl.read_database_uri("SELECT * FROM table", uri=uri)
 ```
 
 **SQLite:**
+
 ```python
 uri = "sqlite:///path/to/database.db"
 df = pl.read_database_uri("SELECT * FROM table", uri=uri)
@@ -323,12 +335,14 @@ df = pl.from_pandas(client.query(query).to_dataframe())
 ### IPC/Feather Format
 
 **Read:**
+
 ```python
 df = pl.read_ipc("data.arrow")
 lf = pl.scan_ipc("data.arrow")
 ```
 
 **Write:**
+
 ```python
 df.write_ipc("output.arrow")
 
@@ -441,6 +455,7 @@ result = lf.group_by("category").agg(pl.col("value").sum()).collect(streaming=Tr
 ### Format Selection
 
 **Use Parquet when:**
+
 - Need compression (up to 10x smaller than CSV)
 - Want fast reads/writes
 - Need to preserve data types
@@ -448,17 +463,20 @@ result = lf.group_by("category").agg(pl.col("value").sum()).collect(streaming=Tr
 - Need predicate pushdown
 
 **Use CSV when:**
+
 - Need human-readable format
 - Interfacing with legacy systems
 - Data is small
 - Need universal compatibility
 
 **Use JSON when:**
+
 - Working with nested/hierarchical data
 - Need web API compatibility
 - Data has flexible schema
 
 **Use Arrow IPC when:**
+
 - Need zero-copy data sharing
 - Fastest serialization required
 - Working between Arrow-compatible systems

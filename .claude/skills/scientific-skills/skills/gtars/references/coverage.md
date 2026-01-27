@@ -82,6 +82,7 @@ Uniwig supports multiple output formats:
 ### WIG Format
 
 Standard wiggle format:
+
 ```
 fixedStep chrom=chr1 start=1000 step=1
 12
@@ -94,6 +95,7 @@ fixedStep chrom=chr1 start=1000 step=1
 ### BigWig Format
 
 Binary format for efficient storage and access:
+
 ```bash
 # Generate BigWig
 gtars uniwig generate --input fragments.bed --output coverage.bw --format bigwig
@@ -102,6 +104,7 @@ gtars uniwig generate --input fragments.bed --output coverage.bw --format bigwig
 ### BedGraph Format
 
 Flexible format for variable coverage:
+
 ```
 chr1    1000    1001    12
 chr1    1001    1002    15

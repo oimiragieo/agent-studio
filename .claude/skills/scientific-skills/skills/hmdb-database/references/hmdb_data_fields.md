@@ -9,6 +9,7 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 ### Chemical Data Fields
 
 **Identification:**
+
 - `accession`: Primary HMDB ID (e.g., HMDB0000001)
 - `secondary_accessions`: Previous HMDB IDs for merged entries
 - `name`: Primary metabolite name
@@ -18,6 +19,7 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 - `monoisotopic_molecular_weight`: Monoisotopic molecular weight
 
 **Structure Representations:**
+
 - `smiles`: Simplified Molecular Input Line Entry System string
 - `inchi`: International Chemical Identifier string
 - `inchikey`: Hashed InChI for fast lookup
@@ -25,6 +27,7 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 - `traditional_iupac`: Traditional IUPAC name
 
 **Chemical Properties:**
+
 - `state`: Physical state (solid, liquid, gas)
 - `charge`: Net molecular charge
 - `logp`: Octanol-water partition coefficient (experimental/predicted)
@@ -38,6 +41,7 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 - `donor_count`: Hydrogen bond donor count
 
 **Chemical Taxonomy:**
+
 - `kingdom`: Chemical kingdom (e.g., Organic compounds)
 - `super_class`: Chemical superclass
 - `class`: Chemical class
@@ -50,12 +54,14 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 ### Biological Data Fields
 
 **Metabolite Origins:**
+
 - `origin`: Source of metabolite (endogenous, exogenous, drug metabolite, food component)
 - `biofluid_locations`: Biological fluids where found (blood, urine, saliva, CSF, etc.)
 - `tissue_locations`: Tissues where found (liver, kidney, brain, muscle, etc.)
 - `cellular_locations`: Subcellular locations (cytoplasm, mitochondria, membrane, etc.)
 
 **Biospecimen Information:**
+
 - `biospecimen`: Type of biological specimen
 - `status`: Detection status (detected, expected, predicted)
 - `concentration`: Concentration ranges with units
@@ -63,6 +69,7 @@ Each HMDB metabolite entry contains 130+ data fields organized into several cate
 
 **Normal and Abnormal Concentrations:**
 For each biofluid (blood, urine, saliva, CSF, feces, sweat):
+
 - Normal concentration value and range
 - Units (μM, mg/L, etc.)
 - Age and gender considerations
@@ -72,6 +79,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Pathway and Enzyme Information
 
 **Metabolic Pathways:**
+
 - `pathways`: List of associated metabolic pathways
   - Pathway name
   - SMPDB ID (Small Molecule Pathway Database ID)
@@ -79,6 +87,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
   - Pathway category
 
 **Enzymatic Reactions:**
+
 - `protein_associations`: Enzymes and transporters
   - Protein name
   - Gene name
@@ -89,6 +98,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
   - Enzyme kinetics (Km values)
 
 **Biochemical Context:**
+
 - `reactions`: Biochemical reactions involving the metabolite
 - `reaction_enzymes`: Enzymes catalyzing reactions
 - `cofactors`: Required cofactors
@@ -97,6 +107,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Disease and Biomarker Associations
 
 **Disease Links:**
+
 - `diseases`: Associated diseases and conditions
   - Disease name
   - OMIM ID (Online Mendelian Inheritance in Man)
@@ -104,6 +115,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
   - References and evidence
 
 **Biomarker Information:**
+
 - `biomarker_status`: Whether compound is a known biomarker
 - `biomarker_applications`: Clinical applications
 - `biomarker_for`: Diseases or conditions where used as biomarker
@@ -111,6 +123,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Spectroscopic Data
 
 **NMR Spectra:**
+
 - `nmr_spectra`: Nuclear Magnetic Resonance data
   - Spectrum type (1D ¹H, ¹³C, 2D COSY, HSQC, etc.)
   - Spectrometer frequency (MHz)
@@ -121,6 +134,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
   - FID (Free Induction Decay) files
 
 **Mass Spectrometry:**
+
 - `ms_spectra`: Mass spectrometry data
   - Spectrum type (MS, MS-MS, LC-MS, GC-MS)
   - Ionization mode (positive, negative, neutral)
@@ -130,6 +144,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
   - Predicted vs. experimental flag
 
 **Chromatography:**
+
 - `chromatography`: Chromatographic properties
   - Retention time
   - Column type
@@ -139,6 +154,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### External Database Links
 
 **Database Cross-References:**
+
 - `kegg_id`: KEGG Compound ID
 - `pubchem_compound_id`: PubChem CID
 - `pubchem_substance_id`: PubChem SID
@@ -155,6 +171,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 - `fbonto_id`: FlyBase ontology ID
 
 **Protein Database Links:**
+
 - `uniprot_id`: UniProt accession for associated proteins
 - `genbank_id`: GenBank ID for associated genes
 - `pdb_id`: Protein Data Bank ID for protein structures
@@ -162,6 +179,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Literature and Evidence
 
 **References:**
+
 - `general_references`: General references about the metabolite
   - PubMed ID
   - Reference text
@@ -173,6 +191,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Ontology and Classification
 
 **Ontology Terms:**
+
 - `ontology_terms`: Related ontology classifications
   - Term name
   - Ontology source (ChEBI, MeSH, etc.)
@@ -182,6 +201,7 @@ For each biofluid (blood, urine, saliva, CSF, feces, sweat):
 ### Data Quality and Provenance
 
 **Metadata:**
+
 - `creation_date`: Date entry was created
 - `update_date`: Date entry was last updated
 - `version`: HMDB version number
@@ -238,21 +258,27 @@ When downloading HMDB data in XML format, the structure follows this pattern:
 When working with HMDB data programmatically:
 
 **For metabolite identification:**
+
 - Query by `accession`, `name`, `synonyms`, `inchi`, `smiles`
 
 **For chemical similarity:**
+
 - Use `smiles`, `inchi`, `inchikey`, `molecular_weight`, `chemical_formula`
 
 **For biomarker discovery:**
+
 - Filter by `diseases`, `biomarker_status`, `normal_concentrations`, `abnormal_concentrations`
 
 **For pathway analysis:**
+
 - Extract `pathways`, `protein_associations`, `reactions`
 
 **For spectral matching:**
+
 - Compare against `nmr_spectra`, `ms_spectra` peak lists
 
 **For cross-database integration:**
+
 - Map using external IDs: `kegg_id`, `pubchem_compound_id`, `chebi_id`, etc.
 
 ## Field Completeness

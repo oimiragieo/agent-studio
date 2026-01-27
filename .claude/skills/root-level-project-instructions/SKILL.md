@@ -42,7 +42,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement thorough testing and quality assurance measures
 - Document code and create user guides
 - Continuously refine and improve based on user feedback
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -55,6 +55,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

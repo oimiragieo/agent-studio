@@ -11,21 +11,25 @@ Evidence-based treatment recommendations provide clinicians with systematic guid
 **Quality of Evidence Levels**
 
 **High Quality (⊕⊕⊕⊕)**
+
 - Further research very unlikely to change confidence in estimate
 - Criteria: Well-designed RCTs with consistent results, no serious limitations
 - Example: Multiple large RCTs showing similar treatment effects
 
 **Moderate Quality (⊕⊕⊕○)**
+
 - Further research likely to have important impact on confidence
 - Criteria: RCTs with limitations OR very strong evidence from observational studies
 - Example: Single RCT or multiple RCTs with some inconsistency
 
 **Low Quality (⊕⊕○○)**
+
 - Further research very likely to have important impact on confidence
 - Criteria: Observational studies OR RCTs with serious limitations
 - Example: Case-control studies, cohort studies with confounding
 
 **Very Low Quality (⊕○○○)**
+
 - Estimate of effect very uncertain
 - Criteria: Case series, expert opinion, or very serious limitations
 - Example: Mechanistic reasoning, unsystematic clinical observations
@@ -33,18 +37,21 @@ Evidence-based treatment recommendations provide clinicians with systematic guid
 **Strength of Recommendation**
 
 **Strong Recommendation (Grade 1)**
+
 - Benefits clearly outweigh risks and burdens (or vice versa)
 - Wording: "We recommend..."
 - Implications: Most patients should receive recommended course
 - Symbol: ↑↑ (strong for) or ↓↓ (strong against)
 
 **Conditional/Weak Recommendation (Grade 2)**
+
 - Trade-offs exist; benefits and risks closely balanced
 - Wording: "We suggest..."
 - Implications: Different choices for different patients; shared decision-making
 - Symbol: ↑ (weak for) or ↓ (weak against)
 
 **GRADE Notation Examples**
+
 - **1A**: Strong recommendation, high-quality evidence
 - **1B**: Strong recommendation, moderate-quality evidence
 - **2A**: Weak recommendation, high-quality evidence
@@ -54,26 +61,32 @@ Evidence-based treatment recommendations provide clinicians with systematic guid
 ### Oxford Centre for Evidence-Based Medicine (CEBM) Levels
 
 **Level 1: Systematic Review/Meta-Analysis**
+
 - 1a: SR of RCTs
 - 1b: Individual RCT with narrow confidence interval
 - 1c: All-or-none studies (all patients died before treatment, some survive after)
 
 **Level 2: Cohort Studies**
+
 - 2a: SR of cohort studies
 - 2b: Individual cohort study (including low-quality RCT)
 - 2c: Outcomes research, ecological studies
 
 **Level 3: Case-Control Studies**
+
 - 3a: SR of case-control studies
 - 3b: Individual case-control study
 
 **Level 4: Case Series**
+
 - Case series, poor-quality cohort, or case-control studies
 
 **Level 5: Expert Opinion**
+
 - Mechanism-based reasoning, expert opinion without critical appraisal
 
 **Grades of Recommendation**
+
 - **Grade A**: Consistent level 1 studies
 - **Grade B**: Consistent level 2 or 3 studies, or extrapolations from level 1
 - **Grade C**: Level 4 studies or extrapolations from level 2 or 3
@@ -84,12 +97,14 @@ Evidence-based treatment recommendations provide clinicians with systematic guid
 ### First-Line Therapy
 
 **Selection Criteria**
+
 - **Standard of Care**: Guideline-recommended based on phase 3 trials
 - **Patient Factors**: Performance status, comorbidities, organ function
 - **Disease Factors**: Stage, molecular profile, aggressiveness
 - **Goals**: Cure (adjuvant/neoadjuvant), prolonged remission, symptom control
 
 **First-Line Options Documentation**
+
 ```
 First-Line Treatment Options:
 
@@ -109,6 +124,7 @@ Option 2: Regimen B (NCCN Category 1, ESMO I-A)
 ### Second-Line and Beyond
 
 **Second-Line Selection**
+
 - **Prior Response**: Duration of response to first-line
 - **Progression Pattern**: Oligoprogression vs widespread progression
 - **Residual Toxicity**: Recovery from first-line toxicities
@@ -116,6 +132,7 @@ Option 2: Regimen B (NCCN Category 1, ESMO I-A)
 - **Clinical Trial Availability**: Novel agents in development
 
 **Treatment History Documentation**
+
 ```
 Prior Therapies:
 1. First-Line: Pembrolizumab (12 cycles)
@@ -126,7 +143,7 @@ Prior Therapies:
 
 2. Second-Line: Docetaxel + ramucirumab (6 cycles)
    - Best Response: Stable disease
-   - PFS: 5 months  
+   - PFS: 5 months
    - Discontinuation Reason: Progressive disease
    - Residual Toxicity: Grade 2 peripheral neuropathy
 
@@ -137,11 +154,13 @@ Current Consideration: Third-Line Options
 ### Maintenance Therapy
 
 **Indications**
+
 - Consolidation after response to induction therapy
 - Prevention of progression without continuous cytotoxic treatment
 - Bridging to definitive therapy (e.g., transplant)
 
 **Evidence Requirements**
+
 - PFS benefit demonstrated in randomized trials
 - Tolerable long-term toxicity profile
 - Quality of life preserved or improved
@@ -153,6 +172,7 @@ Current Consideration: Third-Line Options
 **FDA-Approved Biomarker-Drug Pairs**
 
 **Required Testing (Treatment-Specific)**
+
 - **ALK rearrangement → Alectinib, Brigatinib, Lorlatinib** (NSCLC)
 - **EGFR exon 19 del/L858R → Osimertinib** (NSCLC)
 - **BRAF V600E → Dabrafenib + Trametinib** (Melanoma, NSCLC, CRC)
@@ -160,6 +180,7 @@ Current Consideration: Third-Line Options
 - **PD-L1 ≥50% → Pembrolizumab monotherapy** (NSCLC first-line)
 
 **Complementary Diagnostics (Informative but not Required)**
+
 - **PD-L1 1-49%**: Combination immunotherapy preferred
 - **TMB-high**: May predict immunotherapy benefit (investigational)
 - **MSI-H/dMMR**: Pembrolizumab approved across tumor types
@@ -167,6 +188,7 @@ Current Consideration: Third-Line Options
 ### Biomarker Testing Algorithms
 
 **NSCLC Biomarker Panel**
+
 ```
 Reflex Testing at Diagnosis:
 ✓ EGFR mutations (exons 18, 19, 20, 21)
@@ -183,6 +205,7 @@ If EGFR+ on Osimertinib progression:
 ```
 
 **Breast Cancer Biomarker Algorithm**
+
 ```
 Initial Diagnosis:
 ✓ ER/PR IHC
@@ -199,15 +222,18 @@ If Metastatic ER+/HER2-:
 ### Actionable Alterations
 
 **Tier I: FDA-Approved Targeted Therapy**
+
 - Strong evidence from prospective trials
 - Guideline-recommended
 - Examples: EGFR exon 19 deletion, HER2 amplification, ALK fusion
 
 **Tier II: Clinical Trial or Off-Label Use**
+
 - Emerging evidence, clinical trial preferred
 - Examples: NTRK fusion (larotrectinib), RET fusion (selpercatinib)
 
 **Tier III: Biological Plausibility**
+
 - Preclinical evidence only
 - Clinical trial enrollment strongly recommended
 - Examples: Novel kinase fusions, rare resistance mutations
@@ -217,12 +243,14 @@ If Metastatic ER+/HER2-:
 ### Rationale for Combinations
 
 **Mechanisms**
+
 - **Non-Overlapping Toxicity**: Maximize dose intensity of each agent
 - **Synergistic Activity**: Enhanced efficacy beyond additive effects
 - **Complementary Mechanisms**: Target multiple pathways simultaneously
 - **Prevent Resistance**: Decrease selection pressure for resistant clones
 
 **Combination Design Principles**
+
 - **Sequential**: Induction then consolidation (different regimens)
 - **Concurrent**: Administered together for synergy
 - **Alternating**: Rotate regimens to minimize resistance
@@ -231,12 +259,14 @@ If Metastatic ER+/HER2-:
 ### Drug Interaction Assessment
 
 **Pharmacokinetic Interactions**
+
 - **CYP450 Induction/Inhibition**: Check for drug-drug interactions
 - **Transporter Interactions**: P-gp, BCRP, OATP substrates/inhibitors
 - **Protein Binding**: Highly protein-bound drugs (warfarin caution)
 - **Renal/Hepatic Clearance**: Avoid multiple renally cleared agents
 
 **Pharmacodynamic Interactions**
+
 - **Additive Toxicity**: Avoid overlapping adverse events (e.g., QTc prolongation)
 - **Antagonism**: Ensure mechanisms are complementary, not opposing
 - **Dose Modifications**: Pre-defined dose reduction schedules for combinations
@@ -263,7 +293,7 @@ Key Toxicities:
 
 Monitoring:
 - Blood pressure: Daily for first month, then weekly
-- Thyroid function: Every 6 weeks  
+- Thyroid function: Every 6 weeks
 - Liver enzymes: Before each cycle
 - Imaging: Every 6 weeks (RECIST v1.1)
 ```
@@ -273,6 +303,7 @@ Monitoring:
 ### On-Treatment Monitoring
 
 **Laboratory Monitoring**
+
 ```
 Test                   Baseline  Cycle 1  Cycle 2+  Rationale
 CBC with differential  ✓         Weekly   Day 1     Myelosuppression risk
@@ -284,6 +315,7 @@ Troponin/BNP          ✓*        -        As needed Cardiotoxicity risk
 ```
 
 **Imaging Assessment**
+
 ```
 Modality           Baseline  Follow-up           Criteria
 CT chest/abd/pelvis ✓       Every 6-9 weeks     RECIST v1.1
@@ -294,6 +326,7 @@ PET/CT             ✓***     Response assessment Lymphoma (Lugano criteria)
 ```
 
 **Clinical Assessment**
+
 ```
 Assessment               Frequency                Notes
 ECOG performance status  Every visit              Decline may warrant dose modification
@@ -306,6 +339,7 @@ Physical exam            Every visit              Target lesions, new symptoms
 ### Dose Modification Guidelines
 
 **Hematologic Toxicity**
+
 ```
 ANC and Platelet Counts          Action
 ANC ≥1.5 AND platelets ≥100k    Treat at full dose
@@ -318,6 +352,7 @@ Febrile Neutropenia              Hold treatment, hospitalize, antibiotics, G-CSF
 ```
 
 **Non-Hematologic Toxicity**
+
 ```
 Adverse Event     Grade 1         Grade 2              Grade 3              Grade 4
 Diarrhea          Continue        Continue with        Hold until ≤G1,      Hold, hospitalize
@@ -333,6 +368,7 @@ Pneumonitis       Continue        Hold, consider       Hold, corticosteroids, Di
 ### Post-Treatment Surveillance
 
 **Disease Monitoring**
+
 ```
 Time After Treatment    Imaging Frequency        Labs                   Clinical
 Year 1                  Every 3 months          Every 3 months         Every 3 months
@@ -344,6 +380,7 @@ Earlier imaging if symptoms suggest recurrence
 ```
 
 **Survivorship Care**
+
 ```
 Surveillance              Frequency                     Duration
 Disease monitoring        Per schedule above            Lifelong or until recurrence
@@ -361,12 +398,14 @@ Psychosocial support     As needed                      Depression, anxiety, PTS
 ### Elderly Patients (≥65-70 years)
 
 **Considerations**
+
 - **Reduced organ function**: Adjust for renal/hepatic impairment
 - **Polypharmacy**: Drug-drug interaction risk
 - **Frailty**: Geriatric assessment (G8, VES-13, CARG score)
 - **Goals of care**: Quality of life vs survival, functional independence
 
 **Modifications**
+
 - Dose reductions: 20-25% reduction for frail patients
 - Longer intervals: Every 4 weeks instead of every 3 weeks
 - Less aggressive regimens: Single-agent vs combination therapy
@@ -375,6 +414,7 @@ Psychosocial support     As needed                      Depression, anxiety, PTS
 ### Renal Impairment
 
 **Dose Adjustments by eGFR**
+
 ```
 eGFR (mL/min/1.73m²)    Category  Action
 ≥90                     Normal    Standard dosing
@@ -385,6 +425,7 @@ eGFR (mL/min/1.73m²)    Category  Action
 ```
 
 **Renally Cleared Agents Requiring Adjustment**
+
 - Carboplatin (Calvert formula: AUC × [GFR + 25])
 - Methotrexate (reduce dose 50-75% if CrCl <60)
 - Capecitabine (reduce dose 25-50% if CrCl 30-50)
@@ -392,6 +433,7 @@ eGFR (mL/min/1.73m²)    Category  Action
 ### Hepatic Impairment
 
 **Dose Adjustments by Bili and AST/ALT**
+
 ```
 Category          Bilirubin         AST/ALT        Action
 Normal           ≤ULN              ≤ULN           Standard dosing
@@ -401,6 +443,7 @@ Severe (Child C)  >3× ULN           Any            Avoid most agents, case-by-c
 ```
 
 **Hepatically Metabolized Agents Requiring Adjustment**
+
 - Docetaxel (reduce 25-50% if bilirubin elevated)
 - Irinotecan (reduce 50% if bilirubin 1.5-3× ULN)
 - Tyrosine kinase inhibitors (most metabolized by CYP3A4, reduce by 50%)
@@ -408,17 +451,20 @@ Severe (Child C)  >3× ULN           Any            Avoid most agents, case-by-c
 ### Pregnancy and Fertility
 
 **Contraception Requirements**
+
 - Effective contraception required during treatment and 6-12 months after
 - Two methods recommended for highly teratogenic agents
 - Male patients: Contraception if partner of childbearing potential
 
 **Fertility Preservation**
+
 - Oocyte/embryo cryopreservation (females, before gonadotoxic therapy)
 - Sperm banking (males, before alkylating agents, platinum)
 - GnRH agonists (ovarian suppression, controversial efficacy)
 - Referral to reproductive endocrinology before treatment
 
 **Pregnancy Management**
+
 - Avoid chemotherapy in first trimester (organogenesis)
 - Selective agents safe in second/third trimester (case-by-case)
 - Multidisciplinary team: oncology, maternal-fetal medicine, neonatology
@@ -428,12 +474,14 @@ Severe (Child C)  >3× ULN           Any            Avoid most agents, case-by-c
 ### When to Recommend Clinical Trials
 
 **Ideal Scenarios**
+
 - No standard therapy available (rare diseases, refractory settings)
 - Multiple equivalent standard options (patient preference for novel agent)
 - Standard therapy failed (second-line and beyond)
 - High-risk disease (adjuvant trials for improved outcomes)
 
 **Trial Selection Criteria**
+
 - **Phase**: Phase 1 (dose-finding, safety), Phase 2 (efficacy signal), Phase 3 (comparative effectiveness)
 - **Eligibility**: Match patient to inclusion/exclusion criteria
 - **Mechanism**: Novel vs established mechanism, biological rationale
@@ -443,6 +491,7 @@ Severe (Child C)  >3× ULN           Any            Avoid most agents, case-by-c
 ### Shared Decision-Making
 
 **Informing Patients**
+
 - Natural history without treatment
 - Standard treatment options with evidence, benefits, risks
 - Clinical trial options (if available)
@@ -450,6 +499,7 @@ Severe (Child C)  >3× ULN           Any            Avoid most agents, case-by-c
 - Patient values and preferences
 
 **Decision Aids**
+
 - Visual representations of benefit (icon arrays)
 - Number needed to treat calculations
 - Quality of life trade-offs
@@ -518,4 +568,3 @@ Provider: [Name, credentials]
 - Clinical trial options mentioned when appropriate
 - Shared decision-making documented
 - Goals of care aligned with treatment intensity
-

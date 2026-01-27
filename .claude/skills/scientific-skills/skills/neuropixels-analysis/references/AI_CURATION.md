@@ -23,6 +23,7 @@ When using this skill within Claude Code, Claude can directly analyze waveform p
 3. Claude will provide expert-level curation decisions
 
 Example workflow in Claude Code:
+
 ```python
 # Generate plots for a unit
 npa.plot_unit_summary(analyzer, unit_id=0, output='unit_0_summary.png')
@@ -32,6 +33,7 @@ npa.plot_unit_summary(analyzer, unit_id=0, output='unit_0_summary.png')
 ```
 
 Claude can assess:
+
 - Waveform consistency and shape
 - Refractory period violations from autocorrelograms
 - Amplitude stability over time
@@ -272,24 +274,24 @@ print(f"Noise: {summary['decisions'].get('noise', 0)}")
 
 The generated report includes 6 panels:
 
-| Panel | Content | What to Look For |
-|-------|---------|------------------|
-| Waveforms | Individual spike waveforms | Consistency, shape |
-| Template | Mean ± std | Clean negative peak, physiological shape |
-| Autocorrelogram | Spike timing | Gap at 0ms (refractory period) |
-| Amplitudes | Amplitude over time | Stability, no drift |
-| ISI Histogram | Inter-spike intervals | Refractory gap < 1.5ms |
-| Metrics | Quality numbers | SNR, ISI violations, presence |
+| Panel           | Content                    | What to Look For                         |
+| --------------- | -------------------------- | ---------------------------------------- |
+| Waveforms       | Individual spike waveforms | Consistency, shape                       |
+| Template        | Mean ± std                 | Clean negative peak, physiological shape |
+| Autocorrelogram | Spike timing               | Gap at 0ms (refractory period)           |
+| Amplitudes      | Amplitude over time        | Stability, no drift                      |
+| ISI Histogram   | Inter-spike intervals      | Refractory gap < 1.5ms                   |
+| Metrics         | Quality numbers            | SNR, ISI violations, presence            |
 
 ## API Support
 
 Currently supported APIs:
 
-| Provider | Client | Model Examples |
-|----------|--------|----------------|
-| Anthropic | `anthropic.Anthropic()` | claude-opus-4.5 |
-| OpenAI | `openai.OpenAI()` | gpt-4-vision-preview |
-| Google | `google.generativeai` | gemini-pro-vision |
+| Provider  | Client                  | Model Examples       |
+| --------- | ----------------------- | -------------------- |
+| Anthropic | `anthropic.Anthropic()` | claude-opus-4.5      |
+| OpenAI    | `openai.OpenAI()`       | gpt-4-vision-preview |
+| Google    | `google.generativeai`   | gemini-pro-vision    |
 
 ### Anthropic Example
 

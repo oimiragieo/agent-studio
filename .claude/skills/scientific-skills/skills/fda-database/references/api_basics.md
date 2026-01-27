@@ -7,11 +7,13 @@ This reference provides comprehensive information about using the openFDA API, i
 ### Base URL
 
 All openFDA API endpoints follow this structure:
+
 ```
 https://api.fda.gov/{category}/{endpoint}.json
 ```
 
 Examples:
+
 - `https://api.fda.gov/drug/event.json`
 - `https://api.fda.gov/device/510k.json`
 - `https://api.fda.gov/food/enforcement.json`
@@ -29,6 +31,7 @@ While openFDA can be used without an API key, registering for a free API key is 
 **Registration**: Visit https://open.fda.gov/apis/authentication/ to sign up
 
 **Benefits of API Key**:
+
 - Higher rate limits (240 req/min, 120,000 req/day)
 - Better for production applications
 - No additional cost
@@ -38,6 +41,7 @@ While openFDA can be used without an API key, registering for a free API key is 
 Include your API key in requests using one of two methods:
 
 **Method 1: Query Parameter (Recommended)**
+
 ```python
 import requests
 
@@ -54,6 +58,7 @@ response = requests.get(url, params=params)
 ```
 
 **Method 2: Basic Authentication**
+
 ```python
 import requests
 
@@ -72,14 +77,15 @@ response = requests.get(url, params=params, auth=(api_key, ''))
 
 ### Current Limits
 
-| Status | Requests per Minute | Requests per Day |
-|--------|-------------------|------------------|
-| **Without API Key** | 240 per IP address | 1,000 per IP address |
-| **With API Key** | 240 per key | 120,000 per key |
+| Status              | Requests per Minute | Requests per Day     |
+| ------------------- | ------------------- | -------------------- |
+| **Without API Key** | 240 per IP address  | 1,000 per IP address |
+| **With API Key**    | 240 per key         | 120,000 per key      |
 
 ### Rate Limit Headers
 
 The API returns rate limit information in response headers:
+
 ```python
 response = requests.get(url, params=params)
 
@@ -91,10 +97,12 @@ print(f"Reset time: {response.headers.get('X-RateLimit-Reset')}")
 ### Handling Rate Limits
 
 When you exceed rate limits, the API returns:
+
 - **Status Code**: `429 Too Many Requests`
 - **Error Message**: Indicates rate limit exceeded
 
 **Best Practice**: Implement exponential backoff:
+
 ```python
 import requests
 import time
@@ -126,6 +134,7 @@ For applications requiring higher limits, contact the openFDA team through their
 ### Basic Structure
 
 Queries use this format:
+
 ```
 ?api_key=YOUR_KEY&parameter=value&parameter2=value2
 ```
@@ -137,11 +146,13 @@ Parameters are separated by ampersands (`&`).
 The `search` parameter is the primary way to filter results.
 
 **Basic Format**:
+
 ```
 search=field:value
 ```
 
 **Example**:
+
 ```python
 params = {
     "api_key": api_key,
@@ -152,7 +163,9 @@ params = {
 ### Search Operators
 
 #### AND Operator
+
 Combines multiple conditions (both must be true):
+
 ```python
 # Find aspirin adverse events in Canada
 params = {
@@ -161,7 +174,9 @@ params = {
 ```
 
 #### OR Operator
+
 Either condition can be true (OR is implicit with space):
+
 ```python
 # Find aspirin OR ibuprofen
 params = {
@@ -170,6 +185,7 @@ params = {
 ```
 
 Or explicitly:
+
 ```python
 params = {
     "search": "patient.drug.medicinalproduct:aspirin+OR+patient.drug.medicinalproduct:ibuprofen"
@@ -177,7 +193,9 @@ params = {
 ```
 
 #### NOT Operator
+
 Exclude results:
+
 ```python
 # Events NOT in the United States
 params = {
@@ -186,7 +204,9 @@ params = {
 ```
 
 #### Wildcards
+
 Use asterisk (`*`) for partial matching:
+
 ```python
 # Any drug starting with "met"
 params = {
@@ -200,7 +220,9 @@ params = {
 ```
 
 #### Exact Phrase Matching
+
 Use quotes for exact phrases:
+
 ```python
 params = {
     "search": 'patient.reaction.reactionmeddrapt:"heart attack"'
@@ -208,7 +230,9 @@ params = {
 ```
 
 #### Range Queries
+
 Search within ranges:
+
 ```python
 # Date range (YYYYMMDD format)
 params = {
@@ -227,7 +251,9 @@ params = {
 ```
 
 #### Field Existence
+
 Check if a field exists:
+
 ```python
 # Records that have a patient age
 params = {
@@ -243,6 +269,7 @@ params = {
 ### Limit Parameter
 
 Controls how many results to return (1-1000, default 1):
+
 ```python
 params = {
     "search": "...",
@@ -255,6 +282,7 @@ params = {
 ### Skip Parameter
 
 For pagination, skip the first N results:
+
 ```python
 # Get results 101-200
 params = {
@@ -265,6 +293,7 @@ params = {
 ```
 
 **Pagination Example**:
+
 ```python
 def get_all_results(url, search_query, api_key, max_results=5000):
     """Retrieve results with pagination."""
@@ -300,6 +329,7 @@ def get_all_results(url, search_query, api_key, max_results=5000):
 ### Count Parameter
 
 Aggregate and count results by a field (instead of returning individual records):
+
 ```python
 # Count events by country
 params = {
@@ -309,12 +339,13 @@ params = {
 ```
 
 **Response Format**:
+
 ```json
 {
   "results": [
-    {"term": "us", "count": 12543},
-    {"term": "ca", "count": 3421},
-    {"term": "gb", "count": 2156}
+    { "term": "us", "count": 12543 },
+    { "term": "ca", "count": 3421 },
+    { "term": "gb", "count": 2156 }
   ]
 }
 ```
@@ -322,6 +353,7 @@ params = {
 #### Exact Counting
 
 Add `.exact` suffix for exact phrase counting (especially important for multi-word fields):
+
 ```python
 # Count exact reaction terms (not individual words)
 params = {
@@ -336,6 +368,7 @@ params = {
 ### Sort Parameter
 
 Sort results by field:
+
 ```python
 # Sort by date, newest first
 params = {
@@ -394,6 +427,7 @@ params = {
 ### Empty Results
 
 When no results match:
+
 ```json
 {
   "meta": {...},
@@ -404,6 +438,7 @@ When no results match:
 ### Error Response
 
 When an error occurs:
+
 ```json
 {
   "error": {
@@ -414,6 +449,7 @@ When an error occurs:
 ```
 
 **Common Error Codes**:
+
 - `NOT_FOUND`: No results found (404)
 - `INVALID_QUERY`: Malformed search query (400)
 - `RATE_LIMIT_EXCEEDED`: Too many requests (429)
@@ -425,6 +461,7 @@ When an error occurs:
 ### Nested Field Queries
 
 Query nested objects:
+
 ```python
 # Drug adverse events where serious outcome is death
 params = {
@@ -435,6 +472,7 @@ params = {
 ### Multiple Field Search
 
 Search across multiple fields:
+
 ```python
 # Search drug name in multiple fields
 params = {
@@ -445,6 +483,7 @@ params = {
 ### Complex Boolean Logic
 
 Combine multiple operators:
+
 ```python
 # (Aspirin OR Ibuprofen) AND (Heart Attack) AND NOT (US)
 params = {
@@ -455,6 +494,7 @@ params = {
 ### Counting with Filters
 
 Count within a specific subset:
+
 ```python
 # Count reactions for serious events only
 params = {
@@ -468,12 +508,14 @@ params = {
 ### 1. Query Efficiency
 
 **DO**:
+
 - Use specific field searches
 - Filter before counting
 - Use exact match when possible
 - Implement pagination for large datasets
 
 **DON'T**:
+
 - Use overly broad wildcards (e.g., `search=*`)
 - Request more data than needed
 - Skip error handling
@@ -482,6 +524,7 @@ params = {
 ### 2. Error Handling
 
 Always handle common errors:
+
 ```python
 def safe_api_call(url, params):
     """Safely call FDA API with comprehensive error handling."""
@@ -509,6 +552,7 @@ def safe_api_call(url, params):
 ### 3. Data Validation
 
 Validate and clean data:
+
 ```python
 def clean_search_term(term):
     """Clean and prepare search term."""
@@ -528,6 +572,7 @@ def validate_date(date_str):
 ### 4. Caching
 
 Implement caching for frequently accessed data:
+
 ```python
 import json
 from pathlib import Path
@@ -592,6 +637,7 @@ def cached_api_call(url, params):
 ### 5. Rate Limit Management
 
 Track and respect rate limits:
+
 ```python
 import time
 from collections import deque
@@ -632,6 +678,7 @@ def rate_limited_request(url, params):
 ## Common Query Patterns
 
 ### Pattern 1: Time-based Analysis
+
 ```python
 # Get events from last 30 days
 from datetime import datetime, timedelta
@@ -646,6 +693,7 @@ params = {
 ```
 
 ### Pattern 2: Top N Analysis
+
 ```python
 # Get top 10 most common reactions for a drug
 params = {
@@ -656,6 +704,7 @@ params = {
 ```
 
 ### Pattern 3: Comparative Analysis
+
 ```python
 # Compare two drugs
 drugs = ["aspirin", "ibuprofen"]
@@ -682,6 +731,7 @@ for drug in drugs:
 ## Support
 
 For questions or issues:
+
 - **GitHub Issues**: https://github.com/FDA/openfda/issues
 - **Email**: open-fda@fda.hhs.gov
 - **Discussion Forum**: Check GitHub discussions

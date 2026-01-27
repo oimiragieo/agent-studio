@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Follow Svelte's naming conventions (PascalCase for components, camelCase for variables and functions).
 - Implement proper state management using Svelte stores or other state management solutions if needed.
 - Use Svelte's built-in reactivity for efficient UI updates.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

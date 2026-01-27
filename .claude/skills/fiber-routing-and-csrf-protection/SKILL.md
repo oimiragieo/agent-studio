@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement CSRF protection with Fiber middleware
 - Utilize Fiber's Context for handling HTMX-specific headers
 - Use Fiber's template engine for server-side rendering
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

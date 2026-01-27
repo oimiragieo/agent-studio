@@ -1,11 +1,13 @@
 # Chemical Properties and Similarity Analysis
 
 ## Overview
+
 DrugBank provides extensive chemical property data including molecular structures, physicochemical properties, and calculated descriptors. This information enables structure-based analysis, similarity searches, and QSAR modeling.
 
 ## Chemical Identifiers and Structures
 
 ### Available Structure Formats
+
 - **SMILES**: Simplified Molecular Input Line Entry System
 - **InChI**: International Chemical Identifier
 - **InChIKey**: Hashed InChI for database searching
@@ -14,6 +16,7 @@ DrugBank provides extensive chemical property data including molecular structure
 - **Traditional Names**: Common names and synonyms
 
 ### Extract Chemical Structures
+
 ```python
 from drugbank_downloader import get_drugbank_root
 
@@ -49,7 +52,9 @@ print(f"InChI: {structures.get('InChI')}")
 ## Physicochemical Properties
 
 ### Calculated Properties
+
 Properties computed from structure:
+
 - **Molecular Weight**: Exact mass in Daltons
 - **logP**: Partition coefficient (lipophilicity)
 - **logS**: Aqueous solubility
@@ -61,13 +66,16 @@ Properties computed from structure:
 - **Polarizability**: Molecular polarizability
 
 ### Experimental Properties
+
 Measured properties from literature:
+
 - **Melting Point**: Physical melting point
 - **Water Solubility**: Experimental solubility data
 - **pKa**: Acid dissociation constant
 - **Hydrophobicity**: Experimental logP/logD values
 
 ### Extract All Properties
+
 ```python
 def get_all_properties(drugbank_id):
     """Extract all calculated and experimental properties"""
@@ -114,6 +122,7 @@ print(f"logP: {props['calculated'].get('logP', {}).get('value')}")
 ## Lipinski's Rule of Five Analysis
 
 ### Rule of Five Checker
+
 ```python
 def check_lipinski_rule_of_five(drugbank_id):
     """Check if drug satisfies Lipinski's Rule of Five"""
@@ -154,6 +163,7 @@ print(f"Passes Ro5: {ro5['passes']} (Violations: {ro5['violations']})")
 ```
 
 ### Veber's Rules
+
 ```python
 def check_veber_rules(drugbank_id):
     """Check Veber's rules for oral bioavailability"""
@@ -181,6 +191,7 @@ def check_veber_rules(drugbank_id):
 ## Chemical Similarity Analysis
 
 ### Structure-Based Similarity with RDKit
+
 ```python
 from rdkit import Chem
 from rdkit.Chem import AllChem, DataStructs
@@ -213,6 +224,7 @@ print(f"Tanimoto similarity: {similarity:.3f}")
 ```
 
 ### Find Similar Drugs
+
 ```python
 def find_similar_drugs(reference_drugbank_id, similarity_threshold=0.7):
     """Find structurally similar drugs in DrugBank"""
@@ -264,6 +276,7 @@ for drug in similar[:10]:
 ```
 
 ### Batch Similarity Matrix
+
 ```python
 import numpy as np
 import pandas as pd
@@ -304,6 +317,7 @@ sim_matrix = create_similarity_matrix(drug_list)
 ## Molecular Fingerprints
 
 ### Generate Different Fingerprint Types
+
 ```python
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem.AtomPairs import Pairs
@@ -330,6 +344,7 @@ fps = generate_fingerprints(structures.get('SMILES'))
 ```
 
 ### Substructure Search
+
 ```python
 from rdkit.Chem import Fragments
 
@@ -369,6 +384,7 @@ print(f"Found {len(benzene_drugs)} drugs with benzene ring")
 ## ADMET Property Prediction
 
 ### Predict Absorption
+
 ```python
 def predict_oral_absorption(drugbank_id):
     """Predict oral absorption based on physicochemical properties"""
@@ -411,6 +427,7 @@ def predict_oral_absorption(drugbank_id):
 ```
 
 ### BBB Permeability Prediction
+
 ```python
 def predict_bbb_permeability(drugbank_id):
     """Predict blood-brain barrier permeability"""
@@ -444,6 +461,7 @@ def predict_bbb_permeability(drugbank_id):
 ## Chemical Space Analysis
 
 ### Principal Component Analysis
+
 ```python
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -495,6 +513,7 @@ def perform_chemical_space_pca(drug_ids):
 ```
 
 ### Clustering by Chemical Properties
+
 ```python
 from sklearn.cluster import KMeans
 
@@ -539,6 +558,7 @@ def cluster_drugs_by_properties(drug_ids, n_clusters=10):
 ## Export Chemical Data
 
 ### Create Chemical Property Database
+
 ```python
 def export_chemical_properties(output_file='drugbank_chemical_properties.csv'):
     """Export all chemical properties to CSV"""

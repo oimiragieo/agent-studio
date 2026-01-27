@@ -34,6 +34,7 @@ You help developers write better code by applying established guidelines and bes
 ### Java 21+ Modern Features (2026)
 
 **Virtual Threads (Project Loom)**
+
 - Lightweight threads that dramatically improve scalability for I/O-bound applications
 - Use `Executors.newVirtualThreadPerTaskExecutor()` for thread pools
 - Perfect for web applications with many concurrent connections
@@ -63,6 +64,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 ```
 
 **Pattern Matching**
+
 - Pattern matching for switch (Java 21)
 - Record patterns
 - Destructuring with pattern matching
@@ -86,6 +88,7 @@ if (obj instanceof Point(int x, int y)) {
 ```
 
 **Records**
+
 - Immutable data carriers
 - Automatically generates constructor, getters, equals(), hashCode(), toString()
 
@@ -101,6 +104,7 @@ public record UserDTO(String name, String email, LocalDate birthDate) {
 ```
 
 **Sealed Classes**
+
 - Restrict which classes can extend/implement
 - Provides exhaustive pattern matching
 
@@ -114,12 +118,14 @@ public sealed interface Result<T> permits Success, Failure {
 ### Spring Boot 3.x Best Practices (2026)
 
 **Framework Setup:**
+
 - **Java 21+** as baseline (virtual threads, pattern matching)
 - **Spring Boot 3.2+** (latest stable)
 - **Spring Framework 6.x**
-- **Jakarta EE** (not javax.*) - namespace change
+- **Jakarta EE** (not javax.\*) - namespace change
 
 **Project Structure (Layered Architecture):**
+
 ```
 src/main/java/com/example/app/
 ├── controller/         # REST endpoints (RestController)
@@ -135,6 +141,7 @@ src/main/java/com/example/app/
 ```
 
 **Controller Layer (RestController):**
+
 - Handle HTTP requests/responses only
 - Delegate business logic to services
 - Use DTOs for request/response bodies
@@ -162,6 +169,7 @@ public class UserController {
 ```
 
 **Service Layer:**
+
 - Contains business logic
 - Uses repositories for data access
 - Converts between entities and DTOs
@@ -193,6 +201,7 @@ public class UserServiceImpl implements UserService {
 ```
 
 **Repository Layer (Spring Data JPA):**
+
 - Extends `JpaRepository<Entity, ID>`
 - Define custom query methods
 - Use `@Query` for complex queries
@@ -214,6 +223,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 ### JPA/Hibernate Best Practices
 
 **Entity Design:**
+
 - Use `@Entity` and `@Table` annotations
 - Always define `@Id` with generation strategy
 - Use `@Column` for constraints and mappings
@@ -248,6 +258,7 @@ public class User {
 ```
 
 **Performance Optimization:**
+
 - Use `@EntityGraph` or `JOIN FETCH` to prevent N+1 queries
 - Lazy load associations by default
 - Use pagination for large result sets
@@ -264,6 +275,7 @@ Page<User> findAll(Pageable pageable);
 ### Testing (JUnit 5 + Mockito)
 
 **Unit Testing Services:**
+
 ```java
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -299,6 +311,7 @@ class UserServiceImplTest {
 ```
 
 **Integration Testing (Spring Boot Test):**
+
 ```java
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -326,6 +339,7 @@ class UserControllerIntegrationTest {
 ### Build Tools (Maven & Gradle)
 
 **Maven (pom.xml):**
+
 ```xml
 <properties>
     <java.version>21</java.version>
@@ -349,6 +363,7 @@ class UserControllerIntegrationTest {
 ```
 
 **Gradle (build.gradle):**
+
 ```groovy
 plugins {
     id 'java'
@@ -373,6 +388,7 @@ dependencies {
 ### Exception Handling
 
 **Global Exception Handler:**
+
 ```java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -411,6 +427,7 @@ public class GlobalExceptionHandler {
 ### Logging and Monitoring
 
 **Logging (SLF4J + Logback):**
+
 ```java
 @Slf4j
 @Service
@@ -432,6 +449,7 @@ public class UserServiceImpl implements UserService {
 ```
 
 **Actuator for Monitoring:**
+
 ```yaml
 management:
   endpoints:
@@ -442,7 +460,6 @@ management:
     health:
       show-details: always
 ```
-
 
 </instructions>
 
@@ -457,12 +474,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- java-expert
 
+- java-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

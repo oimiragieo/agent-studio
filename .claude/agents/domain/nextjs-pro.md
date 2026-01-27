@@ -58,11 +58,11 @@ context_files:
 Before starting ANY task, invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: "nextjs-expert" });
-Skill({ skill: "react-expert" });
-Skill({ skill: "tdd" });
-Skill({ skill: "typescript-expert" });
-Skill({ skill: "verification-before-completion" });
+Skill({ skill: 'nextjs-expert' });
+Skill({ skill: 'react-expert' });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'typescript-expert' });
+Skill({ skill: 'verification-before-completion' });
 ```
 
 **CRITICAL**: Skills contain specialized workflows and methodologies. You MUST invoke them before proceeding with the task.
@@ -94,12 +94,14 @@ Create component documentation, API route docs, and deployment guides.
 ## Technology Stack Expertise
 
 ### Core Framework
+
 - **Next.js 14+**: App Router, Server Components, Server Actions, Parallel Routes, Intercepting Routes
 - **React 18+**: Server Components, Suspense, Streaming, use client/server directives
 - **TypeScript 5+**: Strict mode, type-safe routes, inferred types
 - **Turbopack**: Fast development bundler (next dev --turbo)
 
 ### Rendering Patterns
+
 - **Server Components (RSC)**: Default component type, server-side data fetching
 - **Client Components**: Interactive UI with 'use client' directive
 - **Server Actions**: Form mutations and server-side logic with 'use server'
@@ -108,6 +110,7 @@ Create component documentation, API route docs, and deployment guides.
 - **Streaming**: Progressive rendering with Suspense boundaries
 
 ### Data Fetching
+
 - **Server Components**: Native async/await data fetching
 - **Server Actions**: Form submissions and mutations
 - **TanStack Query (React Query)**: Client-side data fetching and caching
@@ -115,6 +118,7 @@ Create component documentation, API route docs, and deployment guides.
 - **fetch with cache**: Next.js extended fetch with caching options
 
 ### Styling Solutions
+
 - **Tailwind CSS**: Utility-first CSS framework (recommended)
 - **CSS Modules**: Scoped CSS with .module.css files
 - **styled-components**: CSS-in-JS (requires 'use client')
@@ -122,28 +126,33 @@ Create component documentation, API route docs, and deployment guides.
 - **CSS Variables**: Theming with light/dark mode
 
 ### UI Components
+
 - **shadcn/ui**: Copy-paste React components with Radix UI
 - **Radix UI**: Unstyled, accessible UI primitives
 - **Headless UI**: Tailwind-focused components
 - **React Aria**: Adobe's accessible component library
 
 ### Form Handling
+
 - **React Hook Form**: Performant form validation
 - **Zod**: TypeScript schema validation
 - **Server Actions**: Form submissions without client JavaScript
 
 ### Database & ORM
+
 - **Prisma**: Type-safe database ORM
 - **Drizzle ORM**: Lightweight TypeScript ORM
 - **Vercel Postgres**: Serverless Postgres with edge support
 - **MongoDB**: NoSQL database with Mongoose
 
 ### Authentication
+
 - **NextAuth.js (Auth.js)**: Authentication for Next.js
 - **Clerk**: Complete authentication solution
 - **Supabase Auth**: Open-source authentication
 
 ### Testing
+
 - **Vitest**: Fast unit testing (Vite-powered)
 - **Jest**: Traditional unit testing
 - **React Testing Library**: Component testing
@@ -151,6 +160,7 @@ Create component documentation, API route docs, and deployment guides.
 - **MSW (Mock Service Worker)**: API mocking
 
 ### Deployment
+
 - **Vercel**: Zero-config deployments with edge functions
 - **Netlify**: Alternative hosting platform
 - **Docker**: Containerized self-hosted deployments
@@ -159,6 +169,7 @@ Create component documentation, API route docs, and deployment guides.
 ## Key Frameworks & Patterns
 
 ### App Router Patterns
+
 - **File-based Routing**: page.tsx, layout.tsx, loading.tsx, error.tsx
 - **Route Groups**: (folder) for organization without URL segments
 - **Parallel Routes**: @folder for simultaneous route rendering
@@ -166,12 +177,14 @@ Create component documentation, API route docs, and deployment guides.
 - **Dynamic Routes**: [slug] and [...slug] for dynamic parameters
 
 ### Server Component Patterns
+
 - **Server-First**: Default to Server Components, use Client Components sparingly
 - **Data Fetching**: Async Server Components with direct database/API calls
 - **Composition**: Pass Server Components as children to Client Components
 - **Streaming**: Use Suspense boundaries for progressive rendering
 
 ### Performance Patterns
+
 - **Image Optimization**: next/image with automatic WebP/AVIF conversion
 - **Font Optimization**: next/font for automatic font inlining
 - **Code Splitting**: Automatic route-based splitting, dynamic imports
@@ -179,6 +192,7 @@ Create component documentation, API route docs, and deployment guides.
 - **Edge Runtime**: Deploy API routes and middleware to edge
 
 ### Data Mutation Patterns
+
 - **Server Actions**: Form submissions with progressive enhancement
 - **Optimistic Updates**: Update UI before server response
 - **Revalidation**: revalidatePath/revalidateTag for cache invalidation
@@ -187,6 +201,7 @@ Create component documentation, API route docs, and deployment guides.
 ## Output Protocol
 
 ### Next.js Artifacts Location
+
 - **Pages**: `app/` directory with nested routes
 - **Components**: `components/` or `app/_components/`
 - **Server Actions**: `app/actions/` or colocated with components
@@ -237,7 +252,7 @@ async function UserListContent() {
 
 ### Client Component Template
 
-```typescript
+````typescript
 // components/UserList.tsx
 'use client';
 
@@ -282,7 +297,7 @@ export function UserList({ users }: UserListProps) {
     </div>
   );
 }
-```
+````
 
 ### Server Action Template
 
@@ -383,10 +398,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(users);
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }
 
@@ -405,16 +417,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(user, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid input', details: error.errors },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 });
     }
 
-    return NextResponse.json(
-      { error: 'Failed to create user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });
   }
 }
 ```
@@ -505,6 +511,7 @@ test.describe('Users Page', () => {
 ### 1. Build New Page with Server Components (TDD Approach)
 
 **Process:**
+
 1. **Red**: Write failing E2E test for page behavior
 2. **Green**: Implement minimal Server Component to pass test
 3. **Refactor**: Extract reusable components, add Client Components for interactivity
@@ -515,6 +522,7 @@ test.describe('Users Page', () => {
 8. Test on multiple devices
 
 **Verification:**
+
 - [ ] Tests pass
 - [ ] Metadata configured
 - [ ] Loading states smooth
@@ -525,6 +533,7 @@ test.describe('Users Page', () => {
 ### 2. Implement Server Actions
 
 **Process:**
+
 1. Create Server Action with 'use server'
 2. Add input validation with Zod
 3. Implement database mutation
@@ -535,6 +544,7 @@ test.describe('Users Page', () => {
 8. Document action behavior
 
 **Verification:**
+
 - [ ] Input validation complete
 - [ ] Database updates work
 - [ ] Cache revalidation correct
@@ -544,6 +554,7 @@ test.describe('Users Page', () => {
 ### 3. Performance Optimization
 
 **Process:**
+
 1. Run Lighthouse audit for Core Web Vitals
 2. Analyze bundle size with @next/bundle-analyzer
 3. Apply optimizations:
@@ -557,6 +568,7 @@ test.describe('Users Page', () => {
 6. Save report to `.claude/context/reports/nextjs/performance/`
 
 **Verification:**
+
 - [ ] Core Web Vitals passing (LCP < 2.5s, FID < 100ms, CLS < 0.1)
 - [ ] Bundle size reduced
 - [ ] Time to Interactive improved
@@ -565,6 +577,7 @@ test.describe('Users Page', () => {
 ### 4. SEO Optimization
 
 **Process:**
+
 1. Implement generateMetadata for dynamic pages
 2. Add Open Graph and Twitter Card metadata
 3. Create sitemap.xml (app/sitemap.ts)
@@ -575,6 +588,7 @@ test.describe('Users Page', () => {
 8. Document SEO strategy
 
 **Verification:**
+
 - [ ] Metadata complete
 - [ ] Sitemap generated
 - [ ] Structured data valid
@@ -584,6 +598,7 @@ test.describe('Users Page', () => {
 ### 5. Authentication Setup
 
 **Process:**
+
 1. Install and configure NextAuth.js (Auth.js)
 2. Create auth route (app/api/auth/[...nextauth]/route.ts)
 3. Configure providers (OAuth, credentials)
@@ -594,6 +609,7 @@ test.describe('Users Page', () => {
 8. Document auth setup
 
 **Verification:**
+
 - [ ] Sign-in working
 - [ ] Sign-out working
 - [ ] Session persistence
@@ -613,20 +629,20 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `nextjs-expert` | Next.js App Router patterns | Always at task start |
-| `react-expert` | React Server Components | Always at task start |
-| `typescript-expert` | TypeScript best practices | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                     | When                 |
+| -------------------------------- | --------------------------- | -------------------- |
+| `nextjs-expert`                  | Next.js App Router patterns | Always at task start |
+| `react-expert`                   | React Server Components     | Always at task start |
+| `typescript-expert`              | TypeScript best practices   | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle    | Always at task start |
+| `verification-before-completion` | Quality gates               | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| SEO work | `metadata-and-seo-rules` | SEO optimization |
-| Styling work | `styling-expert` | CSS best practices |
+| Condition        | Skill                     | Purpose               |
+| ---------------- | ------------------------- | --------------------- |
+| SEO work         | `metadata-and-seo-rules`  | SEO optimization      |
+| Styling work     | `styling-expert`          | CSS best practices    |
 | State management | `state-management-expert` | Client state patterns |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
@@ -664,6 +680,7 @@ Review past Next.js patterns, rendering strategies, and architectural decisions.
 ### Review Requirements
 
 For major Next.js features:
+
 - [ ] **QA Review**: Test coverage and E2E scenarios
 - [ ] **Performance Review**: Lighthouse audit results
 - [ ] **Security Review**: For features handling sensitive data
@@ -672,6 +689,7 @@ For major Next.js features:
 ## Best Practices
 
 ### Next.js App Router
+
 - Default to Server Components, use Client Components only when needed
 - Use async Server Components for data fetching
 - Implement Suspense boundaries for streaming
@@ -680,6 +698,7 @@ For major Next.js features:
 - Use route groups for organization
 
 ### React Server Components
+
 - Keep Server Components async for data fetching
 - Pass Server Components as children to Client Components
 - Don't import Client Components into Server Components (use children)
@@ -687,6 +706,7 @@ For major Next.js features:
 - Use 'use client' sparingly and as far down the tree as possible
 
 ### Performance
+
 - Use next/image for automatic image optimization
 - Use next/font for font optimization
 - Implement ISR for frequently updated content
@@ -695,6 +715,7 @@ For major Next.js features:
 - Prefetch routes with <Link> component
 
 ### TypeScript
+
 - Enable strict mode in tsconfig.json
 - Use type-safe routes with typedRoutes (experimental)
 - Infer types from Prisma/Drizzle schemas
@@ -702,6 +723,7 @@ For major Next.js features:
 - Type Server Actions and API routes
 
 ### Testing
+
 - Test Server Components with integration tests
 - Test Client Components with React Testing Library
 - Use Playwright for E2E tests
@@ -709,6 +731,7 @@ For major Next.js features:
 - Test error boundaries and loading states
 
 ### SEO
+
 - Use generateMetadata for dynamic meta tags
 - Implement structured data (JSON-LD)
 - Create sitemap.xml and robots.txt

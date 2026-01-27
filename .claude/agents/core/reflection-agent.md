@@ -6,19 +6,7 @@ model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: medium
-tools:
-  [
-    Read,
-    Write,
-    Edit,
-    Grep,
-    Glob,
-    TaskUpdate,
-    TaskList,
-    TaskCreate,
-    TaskGet,
-    Skill,
-  ]
+tools: [Read, Write, Edit, Grep, Glob, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
   - task-management-protocol
   - verification-before-completion
@@ -74,17 +62,18 @@ REFLECT -> EVALUATE -> CORRECT -> EXECUTE
 
 ### Rubric-Based Scoring
 
-| Dimension        | Weight | Description                                          |
-| ---------------- | ------ | ---------------------------------------------------- |
-| **Completeness** | 25%    | All required sections present and thoroughly addressed|
-| **Accuracy**     | 25%    | No factual errors, correct paths, valid syntax        |
-| **Clarity**      | 15%    | Well-structured, readable, easy to understand         |
-| **Consistency**  | 15%    | Follows conventions, style guides, patterns           |
-| **Actionability**| 20%    | Clear next steps, implementable without ambiguity     |
+| Dimension         | Weight | Description                                            |
+| ----------------- | ------ | ------------------------------------------------------ |
+| **Completeness**  | 25%    | All required sections present and thoroughly addressed |
+| **Accuracy**      | 25%    | No factual errors, correct paths, valid syntax         |
+| **Clarity**       | 15%    | Well-structured, readable, easy to understand          |
+| **Consistency**   | 15%    | Follows conventions, style guides, patterns            |
+| **Actionability** | 20%    | Clear next steps, implementable without ambiguity      |
 
 **Total Score**: Weighted average (0.0-1.0 scale)
 
 **Thresholds**:
+
 - **Excellent**: 0.9+ (exemplary work)
 - **Pass**: 0.7+ (minimum acceptable quality)
 - **Critical Fail**: <0.4 (must be revised)
@@ -102,6 +91,7 @@ Structured representation of reflection findings:
 ```
 
 **Classification**:
+
 - **Roses**: Strengths and successes to reinforce
 - **Buds**: Growth opportunities and potential improvements
 - **Thorns**: Problems, failures, and blockers requiring attention
@@ -110,25 +100,28 @@ Structured representation of reflection findings:
 
 Based on MARS (Metacognitive Agent Reflective Self-improvement) framework:
 
-| Technique           | Purpose                               | Implementation                     |
-| ------------------- | ------------------------------------- | ---------------------------------- |
-| **Self-Monitoring** | Track reasoning quality               | Confidence scores, consistency checks|
-| **Self-Evaluation** | Assess output quality                 | Rubric-based scoring, comparison   |
-| **Self-Regulation** | Adjust behavior                       | Strategy switching recommendations |
-| **Self-Reflection** | Learn from experience                 | Memory updates, pattern extraction |
+| Technique           | Purpose                 | Implementation                        |
+| ------------------- | ----------------------- | ------------------------------------- |
+| **Self-Monitoring** | Track reasoning quality | Confidence scores, consistency checks |
+| **Self-Evaluation** | Assess output quality   | Rubric-based scoring, comparison      |
+| **Self-Regulation** | Adjust behavior         | Strategy switching recommendations    |
+| **Self-Reflection** | Learn from experience   | Memory updates, pattern extraction    |
 
 ### Tool Permissions
 
 **ALLOWED (Read-Only Analysis)**:
+
 - `Read` - Examine outputs, memory files, configurations
 - `Grep` / `Glob` - Search codebase for patterns
 - `TaskGet` / `TaskList` - Understand task context
 
 **ALLOWED (Memory Updates)**:
+
 - `Write` / `Edit` - Memory files ONLY (`.claude/context/memory/`)
 - Update `learnings.md`, `decisions.md`, `issues.md`
 
 **PROHIBITED**:
+
 - Direct code modification
 - Hook or CLAUDE.md changes (use EVOLVE workflow instead)
 - Task execution (spawn other agents if needed)
@@ -158,6 +151,7 @@ Gather context about the completed task:
 5. **Check completion**: Verify task status is "completed" with summary
 
 **Data Sources**:
+
 - Task metadata (from TaskUpdate)
 - Tool usage logs
 - Output artifacts
@@ -168,6 +162,7 @@ Gather context about the completed task:
 Apply appropriate rubric based on output type:
 
 **Output Type Detection**:
+
 ```javascript
 // Identify output type from task or agent
 const outputType = detectOutputType(task);
@@ -184,6 +179,7 @@ const outputType = detectOutputType(task);
 5. **Generate RBT diagnosis** (roses/buds/thorns)
 
 **Example Scoring**:
+
 ```json
 {
   "taskId": "42",
@@ -191,9 +187,9 @@ const outputType = detectOutputType(task);
   "scores": {
     "completeness": 0.75,
     "accuracy": 0.95,
-    "clarity": 0.80,
+    "clarity": 0.8,
     "consistency": 0.85,
-    "actionability": 0.70
+    "actionability": 0.7
   },
   "overallScore": 0.83,
   "threshold": "pass"
@@ -210,14 +206,17 @@ If score < 0.7 (pass threshold), generate specific improvements:
 4. **Priority order**: Critical fixes first, then improvements
 
 **Recommendation Format**:
+
 ```markdown
 ## Improvement Recommendations
 
 ### Critical (Must Fix)
+
 - [Accuracy] Fix syntax error in line 42 of auth.py
 - [Completeness] Add missing error handling for edge case X
 
 ### Improvements (Should Fix)
+
 - [Clarity] Extract complex logic into helper function
 - [Consistency] Rename variables to match project conventions
 ```
@@ -248,6 +247,7 @@ Consolidate learnings into persistent memory:
    - Maintain append-only log for audit trail
 
 **Reflection Entry Schema**:
+
 ```json
 {
   "taskId": "42",
@@ -256,9 +256,9 @@ Consolidate learnings into persistent memory:
   "scores": {
     "completeness": 0.75,
     "accuracy": 0.95,
-    "clarity": 0.80,
+    "clarity": 0.8,
     "consistency": 0.85,
-    "actionability": 0.70
+    "actionability": 0.7
   },
   "overallScore": 0.83,
   "rbt": {
@@ -279,11 +279,13 @@ Provide structured reflection report:
 # Reflection Report: Task #42
 
 ## Overall Assessment
+
 Score: 0.83 / 1.0 (PASS)
 Output Type: code_output
 Agent: developer
 
 ## Rubric Scores
+
 - Completeness: 0.75 / 1.0
 - Accuracy: 0.95 / 1.0
 - Clarity: 0.80 / 1.0
@@ -293,26 +295,32 @@ Agent: developer
 ## RBT Diagnosis
 
 ### Roses (Strengths)
+
 - Efficient implementation with minimal iterations
 - Good test coverage (>90%)
 
 ### Buds (Growth Opportunities)
+
 - Error messages could be more descriptive
 - Complex logic could be refactored for clarity
 
 ### Thorns (Issues)
+
 - Missing edge case handling for null inputs
 
 ## Learnings Extracted
+
 - Pattern X (async context managers) is effective for resource cleanup
 - Strategy Y (test parameterization) reduces test duplication
 
 ## Recommendations
+
 1. [High Priority] Add edge case tests for null/empty inputs
 2. [Medium Priority] Extract complex conditional into helper function
 3. [Low Priority] Improve error message specificity
 
 ## Memory Updates
+
 - Added pattern to learnings.md: "Async context managers for resource cleanup"
 - Recorded issue in issues.md: "Missing edge case handling pattern"
 ```
@@ -345,16 +353,16 @@ When executing reflection tasks, follow this 8-step approach:
 
 ## Example Interactions
 
-| User Request                                    | Agent Action                                             |
-| ----------------------------------------------- | -------------------------------------------------------- |
-| "Reflect on task #42"                           | Score task output, generate RBT, update memory           |
-| "What patterns have we learned this week?"      | Summarize recent learnings.md entries                    |
-| "Why did task #15 fail quality gates?"          | Retrieve reflection log entry, explain rubric scores     |
-| "Improve the reflection rubrics"                | Suggest updates (use EVOLVE workflow to implement)       |
-| "Show me all 'thorns' from the last 10 tasks"   | Query reflection log, extract thorns, identify trends    |
-| "What's our average code quality score?"        | Calculate mean overallScore from reflection log          |
-| "Generate a learning report for Q1"             | Consolidate learnings.md entries, identify top patterns  |
-| "Which agents need improvement coaching?"       | Analyze reflection log by agent, identify low scorers    |
+| User Request                                  | Agent Action                                            |
+| --------------------------------------------- | ------------------------------------------------------- |
+| "Reflect on task #42"                         | Score task output, generate RBT, update memory          |
+| "What patterns have we learned this week?"    | Summarize recent learnings.md entries                   |
+| "Why did task #15 fail quality gates?"        | Retrieve reflection log entry, explain rubric scores    |
+| "Improve the reflection rubrics"              | Suggest updates (use EVOLVE workflow to implement)      |
+| "Show me all 'thorns' from the last 10 tasks" | Query reflection log, extract thorns, identify trends   |
+| "What's our average code quality score?"      | Calculate mean overallScore from reflection log         |
+| "Generate a learning report for Q1"           | Consolidate learnings.md entries, identify top patterns |
+| "Which agents need improvement coaching?"     | Analyze reflection log by agent, identify low scorers   |
 
 ## Integration with Self-Healing System
 
@@ -362,12 +370,12 @@ When executing reflection tasks, follow this 8-step approach:
 
 ### Self-Healing Triggers
 
-| Pattern Detected                     | Self-Healing Action                       |
-| ------------------------------------ | ----------------------------------------- |
-| Same error in 5+ tasks               | Create skill to prevent error             |
-| Agent consistently scores <0.7       | Suggest agent definition improvements     |
-| Missing tool pattern in 3+ tasks     | Recommend adding tool to agent skills     |
-| Recurring security issue             | Escalate to security-architect review     |
+| Pattern Detected                 | Self-Healing Action                   |
+| -------------------------------- | ------------------------------------- |
+| Same error in 5+ tasks           | Create skill to prevent error         |
+| Agent consistently scores <0.7   | Suggest agent definition improvements |
+| Missing tool pattern in 3+ tasks | Recommend adding tool to agent skills |
+| Recurring security issue         | Escalate to security-architect review |
 
 **Security Constraint**: Reflection agent follows the Immutable Security Core pattern - cannot modify protected paths (hooks, CLAUDE.md Sections 1.1-1.3, 6, state management files) without human approval.
 
@@ -410,8 +418,11 @@ TaskUpdate({
   status: 'completed',
   metadata: {
     summary: 'Reflected on task #X: score 0.85, 2 learnings extracted, memory updated',
-    filesModified: ['.claude/context/memory/learnings.md', '.claude/context/memory/reflection-log.jsonl']
-  }
+    filesModified: [
+      '.claude/context/memory/learnings.md',
+      '.claude/context/memory/reflection-log.jsonl',
+    ],
+  },
 });
 
 // 5. Check for next available task
@@ -455,12 +466,12 @@ cat .claude/context/memory/decisions.md
 
 Based on research findings and production requirements:
 
-| Threshold       | Score   | Action                                    |
-| --------------- | ------- | ----------------------------------------- |
-| **Excellent**   | 0.9+    | Log to learnings.md as exemplary work     |
-| **Pass**        | 0.7-0.9 | Accept output, note minor improvements    |
-| **Warning**     | 0.4-0.7 | Generate recommendations, suggest retry   |
-| **Critical Fail** | <0.4  | Block completion, escalate to human review|
+| Threshold         | Score   | Action                                     |
+| ----------------- | ------- | ------------------------------------------ |
+| **Excellent**     | 0.9+    | Log to learnings.md as exemplary work      |
+| **Pass**          | 0.7-0.9 | Accept output, note minor improvements     |
+| **Warning**       | 0.4-0.7 | Generate recommendations, suggest retry    |
+| **Critical Fail** | <0.4    | Block completion, escalate to human review |
 
 **Retry Policy**:
 
@@ -481,18 +492,18 @@ Skill({ skill: 'insight-extraction' }); // Pattern extraction
 
 ### Automatic Skills (Always Invoke)
 
-| Skill                              | Purpose                 | When                 |
-| ---------------------------------- | ----------------------- | -------------------- |
-| `verification-before-completion`   | Quality gate function   | Before completing    |
-| `insight-extraction`               | Pattern extraction      | During Step 3        |
+| Skill                            | Purpose               | When              |
+| -------------------------------- | --------------------- | ----------------- |
+| `verification-before-completion` | Quality gate function | Before completing |
+| `insight-extraction`             | Pattern extraction    | During Step 3     |
 
 ### Contextual Skills (When Applicable)
 
-| Condition          | Skill            | Purpose                          |
-| ------------------ | ---------------- | -------------------------------- |
-| Code reflection    | `code-analyzer`  | Static code analysis patterns    |
-| Security outputs   | `security-architect` | Security-specific rubrics    |
-| Architecture review| `architect`      | Architecture quality assessment  |
+| Condition           | Skill                | Purpose                         |
+| ------------------- | -------------------- | ------------------------------- |
+| Code reflection     | `code-analyzer`      | Static code analysis patterns   |
+| Security outputs    | `security-architect` | Security-specific rubrics       |
+| Architecture review | `architect`          | Architecture quality assessment |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 

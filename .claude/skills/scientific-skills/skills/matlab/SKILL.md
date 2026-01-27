@@ -4,7 +4,7 @@ description: MATLAB and GNU Octave numerical computing for matrix operations, da
 license: For MATLAB (https://www.mathworks.com/pricing-licensing.html) and for Octave (GNU General Public License version 3)
 compatibility: Requires either MATLAB or Octave to be installed for testing, but not required for just generating scripts.
 metadata:
-    skill-author: K-Dense Inc.
+  skill-author: K-Dense Inc.
 ---
 
 # MATLAB/Octave Scientific Computing
@@ -14,6 +14,7 @@ MATLAB is a numerical computing environment optimized for matrix operations and 
 ## Quick Start
 
 **Running MATLAB scripts:**
+
 ```bash
 # MATLAB (commercial)
 matlab -nodisplay -nosplash -r "run('script.m'); exit;"
@@ -23,6 +24,7 @@ octave script.m
 ```
 
 **Install GNU Octave:**
+
 ```bash
 # macOS
 brew install octave
@@ -319,6 +321,7 @@ For complete compatibility guide, see [references/octave-compatibility.md](refer
 ## Best Practices
 
 1. **Vectorize operations** - Avoid loops when possible:
+
    ```matlab
    % Slow
    for i = 1:1000
@@ -330,6 +333,7 @@ For complete compatibility guide, see [references/octave-compatibility.md](refer
    ```
 
 2. **Preallocate arrays** - Avoid growing arrays in loops:
+
    ```matlab
    % Slow
    for i = 1:1000
@@ -344,6 +348,7 @@ For complete compatibility guide, see [references/octave-compatibility.md](refer
    ```
 
 3. **Use appropriate data types** - Tables for mixed data, matrices for numeric:
+
    ```matlab
    % Numeric data
    M = readmatrix('numbers.csv');

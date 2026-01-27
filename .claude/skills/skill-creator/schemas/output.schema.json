@@ -3,9 +3,7 @@
   "title": "skill-creator Output Schema",
   "description": "Output validation schema for skill-creator skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

@@ -5,6 +5,7 @@ Create professional, publication-ready research posters for conferences and acad
 ## Overview
 
 This skill provides comprehensive guidance for creating research posters with three major LaTeX packages:
+
 - **beamerposter**: Traditional academic posters, familiar Beamer syntax
 - **tikzposter**: Modern, colorful designs with TikZ integration
 - **baposter**: Structured multi-column layouts with automatic positioning
@@ -14,6 +15,7 @@ This skill provides comprehensive guidance for creating research posters with th
 ### 1. Choose a Template
 
 Browse templates in `assets/`:
+
 - `beamerposter_template.tex` - Classic academic style
 - `tikzposter_template.tex` - Modern, colorful design
 - `baposter_template.tex` - Structured multi-column layout
@@ -21,6 +23,7 @@ Browse templates in `assets/`:
 ### 2. Customize Content
 
 Edit the template with your research:
+
 - Title, authors, affiliations
 - Introduction, methods, results, conclusions
 - Replace placeholder figures with your images
@@ -70,6 +73,7 @@ xelatex poster.tex
 ### Full Page Coverage
 
 All templates configured to maximize content area:
+
 - Minimal outer margins (5-15mm)
 - Optimal spacing between columns (15-20mm)
 - Proper block padding for readability
@@ -78,12 +82,14 @@ All templates configured to maximize content area:
 ### PDF Quality Control
 
 **Automated Checks** (`review_poster.sh`):
+
 - Page size verification
 - Font embedding check
 - Image resolution analysis
 - File size optimization
 
 **Manual Verification** (`assets/poster_quality_checklist.md`):
+
 - Visual inspection at 100% zoom
 - Reduced-scale print test (25%)
 - Typography and spacing review
@@ -92,6 +98,7 @@ All templates configured to maximize content area:
 ### Design Principles
 
 All templates follow evidence-based poster design:
+
 - **Typography**: 72pt+ title, 48-72pt headers, 24-36pt body text
 - **Color**: High contrast (≥4.5:1), color-blind friendly palettes
 - **Layout**: Clear visual hierarchy, logical flow
@@ -101,12 +108,12 @@ All templates follow evidence-based poster design:
 
 Templates support all standard sizes:
 
-| Size | Dimensions | Configuration |
-|------|------------|---------------|
-| A0 | 841 × 1189 mm | `size=a0` or `a0paper` |
-| A1 | 594 × 841 mm | `size=a1` or `a1paper` |
-| 36×48" | 914 × 1219 mm | Custom page size |
-| 42×56" | 1067 × 1422 mm | Custom page size |
+| Size   | Dimensions     | Configuration          |
+| ------ | -------------- | ---------------------- |
+| A0     | 841 × 1189 mm  | `size=a0` or `a0paper` |
+| A1     | 594 × 841 mm   | `size=a1` or `a1paper` |
+| 36×48" | 914 × 1219 mm  | Custom page size       |
+| 42×56" | 1067 × 1422 mm | Custom page size       |
 
 ## Documentation
 
@@ -148,6 +155,7 @@ Templates support all standard sizes:
 ### Tools and Assets
 
 **Scripts** (in `scripts/`):
+
 - `review_poster.sh`: Automated PDF quality check
   - Page size verification
   - Font embedding check
@@ -155,6 +163,7 @@ Templates support all standard sizes:
   - File size assessment
 
 **Checklists** (in `assets/`):
+
 - `poster_quality_checklist.md`: Comprehensive pre-printing checklist
   - Pre-compilation checks
   - PDF quality verification
@@ -164,6 +173,7 @@ Templates support all standard sizes:
   - Final printing checklist
 
 **Templates** (in `assets/`):
+
 - `beamerposter_template.tex`: Full working template
 - `tikzposter_template.tex`: Full working template
 - `baposter_template.tex`: Full working template
@@ -173,42 +183,49 @@ Templates support all standard sizes:
 ### Recommended Poster Creation Process
 
 **1. Planning** (before LaTeX)
+
 - Determine conference requirements (size, orientation)
 - Identify 3-5 key results to highlight
 - Create figures (300+ DPI)
 - Draft 300-800 word content outline
 
 **2. Template Selection**
+
 - Choose package based on needs:
   - **beamerposter**: Traditional conferences, institutional branding
   - **tikzposter**: Modern conferences, creative fields
   - **baposter**: Multi-section posters, structured layouts
 
 **3. Content Integration**
+
 - Copy template and customize
 - Replace placeholder text
 - Add figures and ensure high resolution
 - Configure colors to match branding
 
 **4. Compilation & Review**
+
 - Compile to PDF
 - Run `review_poster.sh` for automated checks
 - Review visually at 100% zoom
 - Check against `poster_quality_checklist.md`
 
 **5. Test Print**
+
 - **Critical step!** Print at 25% scale
 - A0 → A4 paper, 36×48" → Letter paper
 - View from 2-3 feet (simulates 8-12 feet for full poster)
 - Verify readability and colors
 
 **6. Revisions**
+
 - Fix any issues identified
 - Proofread carefully (errors are magnified!)
 - Get colleague feedback
 - Final compilation
 
 **7. Printing**
+
 - Verify page size: `pdfinfo poster.pdf`
 - Check fonts embedded: `pdffonts poster.pdf`
 - Send to professional printer 2-3 days before deadline
@@ -221,6 +238,7 @@ Templates support all standard sizes:
 **Problem**: Excessive white space around poster edges
 
 **Solution**:
+
 ```latex
 % beamerposter
 \setbeamersize{text margin left=5mm, text margin right=5mm}
@@ -238,9 +256,11 @@ Templates support all standard sizes:
 **Problem**: Text or figures extending beyond page
 
 **Solution**:
+
 - Check total width: columns + spacing + margins = pagewidth
 - Reduce column widths or spacing
 - Debug with visible page boundary:
+
 ```latex
 \usepackage{eso-pic}
 \AddToShipoutPictureBG{
@@ -255,6 +275,7 @@ Templates support all standard sizes:
 **Problem**: Pixelated or low-quality figures
 
 **Solution**:
+
 - Use vector graphics (PDF, SVG) when possible
 - Raster images: minimum 300 DPI at final print size
 - For A0 width (33.1"): 300 DPI = 9930 pixels minimum
@@ -265,6 +286,7 @@ Templates support all standard sizes:
 **Problem**: Printer rejects PDF due to missing fonts
 
 **Solution**:
+
 ```bash
 # Recompile with embedded fonts
 pdflatex -dEmbedAllFonts=true poster.tex
@@ -279,6 +301,7 @@ pdffonts poster.pdf
 **Problem**: PDF exceeds email size limit (>50MB)
 
 **Solution**:
+
 ```bash
 # Compress for digital sharing
 gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
@@ -291,18 +314,21 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
 ## Common Mistakes to Avoid
 
 ### Content
+
 - ❌ Too much text (>1000 words)
 - ❌ Font sizes too small (<24pt body text)
 - ❌ No clear main message
 - ✅ 300-800 words, 30pt+ body text, 1-3 key findings
 
 ### Design
+
 - ❌ Poor color contrast (<4.5:1)
 - ❌ Red-green color combinations (color-blind issue)
 - ❌ Cluttered layout with no white space
 - ✅ High contrast, accessible colors, generous spacing
 
 ### Technical
+
 - ❌ Wrong poster dimensions
 - ❌ Low resolution images (<300 DPI)
 - ❌ Fonts not embedded
@@ -312,15 +338,16 @@ gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
 
 Quick reference for choosing the right package:
 
-| Feature | beamerposter | tikzposter | baposter |
-|---------|--------------|------------|----------|
-| **Learning Curve** | Easy (Beamer users) | Moderate | Moderate |
-| **Aesthetics** | Traditional | Modern | Professional |
-| **Customization** | Moderate | High (TikZ) | Structured |
-| **Compilation Speed** | Fast | Slower | Fast-Medium |
-| **Best For** | Academic conferences | Creative designs | Multi-column layouts |
+| Feature               | beamerposter         | tikzposter       | baposter             |
+| --------------------- | -------------------- | ---------------- | -------------------- |
+| **Learning Curve**    | Easy (Beamer users)  | Moderate         | Moderate             |
+| **Aesthetics**        | Traditional          | Modern           | Professional         |
+| **Customization**     | Moderate             | High (TikZ)      | Structured           |
+| **Compilation Speed** | Fast                 | Slower           | Fast-Medium          |
+| **Best For**          | Academic conferences | Creative designs | Multi-column layouts |
 
 **Recommendation**:
+
 - First-time poster makers: **beamerposter** (familiar, simple)
 - Modern conferences: **tikzposter** (beautiful, flexible)
 - Complex layouts: **baposter** (automatic positioning)
@@ -364,18 +391,21 @@ pdflatex my_poster.tex
 ## Tips for Success
 
 ### Content Strategy
+
 1. **One main message**: What's the one thing viewers should remember?
 2. **3-5 key figures**: Visual content dominates
 3. **300-800 words**: Less is more
 4. **Bullet points**: More scannable than paragraphs
 
 ### Design Strategy
+
 1. **High contrast**: Dark on light or light on dark
 2. **Large fonts**: 30pt+ body text for readability from distance
 3. **White space**: 30-40% of poster should be empty
 4. **Visual hierarchy**: Vary sizes significantly (title 3× body text)
 
 ### Technical Strategy
+
 1. **Test early**: Print at 25% scale before final printing
 2. **Vector graphics**: Use PDF/SVG when possible
 3. **Verify specs**: Check page size, fonts, resolution
@@ -384,11 +414,13 @@ pdflatex my_poster.tex
 ## Additional Resources
 
 ### Online Tools
+
 - **Color contrast checker**: https://webaim.org/resources/contrastchecker/
 - **Color blindness simulator**: https://www.color-blindness.com/coblis-color-blindness-simulator/
 - **Color palette generator**: https://coolors.co/
 
 ### LaTeX Packages
+
 - `beamerposter`: Extends Beamer for poster-sized documents
 - `tikzposter`: Modern poster creation with TikZ
 - `baposter`: Box-based automatic poster layout
@@ -397,6 +429,7 @@ pdflatex my_poster.tex
 - `tcolorbox`: Colored boxes and frames
 
 ### Further Reading
+
 - All reference documents in `references/` directory
 - Quality checklist in `assets/poster_quality_checklist.md`
 - Package comparison in `references/latex_poster_packages.md`
@@ -404,6 +437,7 @@ pdflatex my_poster.tex
 ## Support
 
 For issues or questions:
+
 - Review reference documentation in `references/`
 - Check troubleshooting section above
 - Run automated review: `./scripts/review_poster.sh`
@@ -414,4 +448,3 @@ For issues or questions:
 LaTeX Poster Skill v1.0
 Compatible with: beamerposter, tikzposter, baposter
 Last updated: January 2025
-

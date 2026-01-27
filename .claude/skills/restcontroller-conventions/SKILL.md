@@ -39,7 +39,7 @@ When reviewing or writing code, apply these guidelines:
 - Methods return objects must be of type Response Entity of type ApiResponse.
 - All class method logic must be implemented in a try..catch block(s).
 - Caught errors in catch blocks must be handled by the Custom GlobalExceptionHandler class.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

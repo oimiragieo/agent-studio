@@ -3,9 +3,7 @@
   "title": "gcloud-cli Output Schema",
   "description": "Output validation schema for gcloud-cli skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

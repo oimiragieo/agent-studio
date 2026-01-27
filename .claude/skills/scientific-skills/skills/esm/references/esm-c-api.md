@@ -8,13 +8,14 @@ ESM C (Cambrian) is a family of protein language models optimized for representa
 
 **ESM C Family Models:**
 
-| Model ID | Parameters | Layers | Best For |
-|----------|-----------|--------|----------|
-| `esmc-300m` | 300M | 30 | Fast inference, lightweight applications |
-| `esmc-600m` | 600M | 36 | Balanced performance and quality |
-| `esmc-6b` | 6B | 80 | Maximum representation quality |
+| Model ID    | Parameters | Layers | Best For                                 |
+| ----------- | ---------- | ------ | ---------------------------------------- |
+| `esmc-300m` | 300M       | 30     | Fast inference, lightweight applications |
+| `esmc-600m` | 600M       | 36     | Balanced performance and quality         |
+| `esmc-6b`   | 6B         | 80     | Maximum representation quality           |
 
 **Key Features:**
+
 - 3x faster inference than ESM2
 - Improved perplexity and embedding quality
 - Efficient architecture for production deployment
@@ -22,6 +23,7 @@ ESM C (Cambrian) is a family of protein language models optimized for representa
 - Support for long sequences (up to 1024 residues efficiently)
 
 **Architecture Improvements over ESM2:**
+
 - Optimized attention mechanisms
 - Better token representation
 - Enhanced training procedures
@@ -85,6 +87,7 @@ print(f"Logits shape: {logits.shape}")
 **Output Shapes:**
 
 For a sequence of length L:
+
 - `embeddings.shape`: `(1, L, hidden_dim)` where hidden_dim depends on model
   - esmc-300m: hidden_dim = 960
   - esmc-600m: hidden_dim = 1152
@@ -485,12 +488,12 @@ cache.save()
 
 **Performance Improvements:**
 
-| Metric | ESM2-650M | ESM C-600M | Improvement |
-|--------|-----------|------------|-------------|
-| Inference Speed | 1.0x | 3.0x | 3x faster |
-| Perplexity | Higher | Lower | Better |
-| Memory Usage | 1.0x | 0.8x | 20% less |
-| Embedding Quality | Baseline | Improved | +5-10% |
+| Metric            | ESM2-650M | ESM C-600M | Improvement |
+| ----------------- | --------- | ---------- | ----------- |
+| Inference Speed   | 1.0x      | 3.0x       | 3x faster   |
+| Perplexity        | Higher    | Lower      | Better      |
+| Memory Usage      | 1.0x      | 0.8x       | 20% less    |
+| Embedding Quality | Baseline  | Improved   | +5-10%      |
 
 **Migration from ESM2:**
 
@@ -507,6 +510,7 @@ model = ESMC.from_pretrained("esmc-600m")
 ```
 
 Key differences:
+
 - Faster inference with same or better quality
 - Simplified API through ESMProtein
 - Better support for long sequences

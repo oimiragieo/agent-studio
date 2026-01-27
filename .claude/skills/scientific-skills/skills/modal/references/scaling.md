@@ -3,6 +3,7 @@
 ## Automatic Autoscaling
 
 Every Modal Function corresponds to an autoscaling pool of containers. Modal's autoscaler:
+
 - Spins up containers when no capacity available
 - Spins down containers when resources idle
 - Scales to zero by default when no inputs to process
@@ -76,12 +77,14 @@ def my_function():
 ```
 
 Parameters:
+
 - **max_containers**: Upper limit on total containers
 - **min_containers**: Minimum kept warm even when inactive
 - **buffer_containers**: Buffer size while function active (additional inputs won't need to queue)
 - **scaledown_window**: Maximum idle duration before scale down (seconds)
 
 Trade-offs:
+
 - Larger warm pool/buffer → Higher cost, lower latency
 - Longer scaledown window → Less churn for infrequent requests
 
@@ -142,6 +145,7 @@ def my_function(input: str):
 ```
 
 Ideal for I/O-bound workloads:
+
 - Database queries
 - External API requests
 - Remote Modal Function calls
@@ -184,6 +188,7 @@ Autoscaler aims for `target_inputs`, but containers can burst to `max_inputs` du
 ## Scaling Limits
 
 Modal enforces limits per function:
+
 - 2,000 pending inputs (not yet assigned to containers)
 - 25,000 total inputs (running + pending)
 
@@ -212,18 +217,21 @@ async def main():
 ## Common Gotchas
 
 **Incorrect**: Using Python's builtin map (runs sequentially)
+
 ```python
 # DON'T DO THIS
 results = map(evaluate_model, inputs)
 ```
 
 **Incorrect**: Calling function first
+
 ```python
 # DON'T DO THIS
 results = evaluate_model(inputs).map()
 ```
 
 **Correct**: Call .map() on Modal function object
+
 ```python
 # DO THIS
 results = evaluate_model.map(inputs)

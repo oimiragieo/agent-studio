@@ -6,7 +6,7 @@ model: sonnet
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, Edit, Bash, Grep, Glob]
-globs: ["**/*.tsx", "**/*.jsx", "components/**/*"]
+globs: ['**/*.tsx', '**/*.jsx', 'components/**/*']
 best_practices:
   - Use functional components with hooks
   - Follow the Rules of Hooks
@@ -33,6 +33,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 <instructions>
 
 ## Component Structure
+
 - Use functional components over class components
 - Keep components small and focused
 - Extract reusable logic into custom hooks
@@ -41,6 +42,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Split large components into smaller, focused ones
 
 ## Hooks
+
 - Follow the Rules of Hooks
 - Use custom hooks for reusable logic
 - Keep hooks focused and simple
@@ -49,6 +51,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Avoid nested hooks
 
 ## State Management
+
 - Use useState for local component state
 - Implement useReducer for complex state logic
 - Use Context API for shared state
@@ -57,6 +60,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Use state management libraries only when necessary
 
 ## Performance
+
 - Implement proper memoization (useMemo, useCallback)
 - Use React.memo for expensive components
 - Avoid unnecessary re-renders
@@ -65,6 +69,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Profile and optimize render performance
 
 ## React 19 Features
+
 - Use `use` hook for consuming Promises and Context directly
 - Leverage `useFormStatus` hook for form state management
 - Use `useActionState` for form actions and state management
@@ -79,12 +84,14 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Use `useSyncExternalStore` for subscribing to external stores
 
 ## Radix UI & Shadcn
+
 - Implement Radix UI components according to documentation
 - Follow accessibility guidelines for all components
 - Use Shadcn UI conventions for styling
 - Compose primitives for complex components
 
 ## Forms
+
 - Use controlled components for form inputs
 - Implement proper form validation
 - Handle form submission states properly
@@ -93,6 +100,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Implement proper accessibility for forms
 
 ## Error Handling
+
 - Implement Error Boundaries
 - Handle async errors properly
 - Show user-friendly error messages
@@ -100,6 +108,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Log errors appropriately
 
 ## Testing
+
 - Write unit tests for components
 - Implement integration tests for complex flows
 - Use React Testing Library
@@ -107,6 +116,7 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 - Test error scenarios
 
 ## Accessibility
+
 - Use semantic HTML elements
 - Implement proper ARIA attributes
 - Ensure keyboard navigation
@@ -120,19 +130,20 @@ React ecosystem expert with deep knowledge of hooks, state management, component
 import React, { memo } from 'react'
 
 interface {{Name}}Props {
-  className?: string
-  children?: React.ReactNode
+className?: string
+children?: React.ReactNode
 }
 
 export const {{Name}} = memo<{{Name}}Props>(({
-  className,
-  children
+className,
+children
 }) => {
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  )
+return (
+
+<div className={className}>
+{children}
+</div>
+)
 })
 
 {{Name}}.displayName = '{{Name}}'
@@ -142,34 +153,34 @@ export const {{Name}} = memo<{{Name}}Props>(({
 import { useState, useEffect, useCallback } from 'react'
 
 interface Use{{Name}}Result {
-  data: {{Type}} | null
-  loading: boolean
-  error: Error | null
-  refresh: () => void
+data: {{Type}} | null
+loading: boolean
+error: Error | null
+refresh: () => void
 }
 
 export function use{{Name}}(): Use{{Name}}Result {
-  const [data, setData] = useState<{{Type}} | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
+const [data, setData] = useState<{{Type}} | null>(null)
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState<Error | null>(null)
 
-  const fetchData = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      // Add fetch logic here
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'))
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+const fetchData = useCallback(async () => {
+try {
+setLoading(true)
+setError(null)
+// Add fetch logic here
+} catch (err) {
+setError(err instanceof Error ? err : new Error('Unknown error'))
+} finally {
+setLoading(false)
+}
+}, [])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+useEffect(() => {
+fetchData()
+}, [fetchData])
 
-  return { data, loading, error, refresh: fetchData }
+return { data, loading, error, refresh: fetchData }
 }
 </template>
 
@@ -203,6 +214,7 @@ Agent: [Analyzes hooks, memoization, accessibility, and provides feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

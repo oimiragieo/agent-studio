@@ -360,6 +360,7 @@ print("\nData exported to ca_cities_comparison.csv")
 ## Common Patterns Summary
 
 ### Pattern 1: Name → DCID → Data
+
 ```python
 names = ["California"]
 dcids = resolve_names(names)
@@ -367,18 +368,21 @@ data = query_observations(dcids, variables)
 ```
 
 ### Pattern 2: Coordinates → DCID → Data
+
 ```python
 dcid = resolve_coordinates(lat, lon)
 data = query_observations([dcid], variables)
 ```
 
 ### Pattern 3: Parent → Children → Data
+
 ```python
 children = get_place_children(parent_dcid)
 data = query_observations(children, variables)
 ```
 
 ### Pattern 4: Explore → Select → Query
+
 ```python
 available_vars = check_available_variables(dcids)
 selected_vars = filter_relevant(available_vars)

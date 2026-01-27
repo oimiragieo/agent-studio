@@ -9,6 +9,7 @@ PyLabRobot provides visualization and simulation tools for developing, testing, 
 ### What is the Visualizer?
 
 The PyLabRobot Visualizer is a browser-based tool that:
+
 - Displays 3D visualization of the deck layout
 - Shows real-time tip presence and liquid volumes
 - Works with both simulated and physical robots
@@ -33,6 +34,7 @@ await vis.stop()
 ```
 
 **Default Settings:**
+
 - Port: 1234 (http://localhost:1234)
 - Opens browser automatically when started
 
@@ -181,6 +183,7 @@ await vis.stop()
 PyLabRobot includes a graphical deck layout editor:
 
 **Features:**
+
 - Visual deck design interface
 - Drag-and-drop resource placement
 - Edit initial liquid states
@@ -188,6 +191,7 @@ PyLabRobot includes a graphical deck layout editor:
 - Save/load layouts as JSON
 
 **Usage:**
+
 - Accessed through the visualizer interface
 - Create layouts graphically instead of code
 - Export to JSON for use in protocols
@@ -217,6 +221,7 @@ tip_rack = deck.get_resource("tips")
 The ChatterboxBackend simulates liquid handling operations:
 
 **Features:**
+
 - No hardware required
 - Validates protocol logic
 - Tracks tips and volumes

@@ -3,9 +3,7 @@
   "title": "smart-debug Output Schema",
   "description": "Output validation schema for smart-debug skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

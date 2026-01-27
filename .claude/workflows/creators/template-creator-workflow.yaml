@@ -27,17 +27,17 @@ template_config:
     - configs
     - reports
   placeholder_syntax:
-    - "{{variable}}"
-    - "{{#section}}...{{/section}}"
-    - "{{^section}}...{{/section}}"
+    - '{{variable}}'
+    - '{{#section}}...{{/section}}'
+    - '{{^section}}...{{/section}}'
   required_placeholders:
-    - "{{name}}"
-    - "{{description}}"
+    - '{{name}}'
+    - '{{description}}'
   registration_targets:
-    - ".claude/templates/registry.json"
-    - ".claude/context/memory/learnings.md"
-  naming_convention: "kebab-case"
-  file_extension: ".md"
+    - '.claude/templates/registry.json'
+    - '.claude/context/memory/learnings.md'
+  naming_convention: 'kebab-case'
+  file_extension: '.md'
 
 phases:
   evaluate:
@@ -86,7 +86,7 @@ phases:
       - id: gate-evaluate
         condition: "steps['check-existing-templates'].output.gap_confirmed === true"
         on_fail: abort
-        message: "Similar template already exists. Consider enhancing existing template instead."
+        message: 'Similar template already exists. Consider enhancing existing template instead.'
 
   validate:
     description: Check naming convention and no conflicts
@@ -127,15 +127,15 @@ phases:
       - id: gate-validate-name
         condition: "steps['validate-naming'].output.name_valid === true"
         on_fail: block
-        message: "Template name must be kebab-case"
+        message: 'Template name must be kebab-case'
       - id: gate-validate-conflict
         condition: "steps['check-naming-conflicts'].output.conflict_found === false"
         on_fail: abort
-        message: "Template with this name already exists"
+        message: 'Template with this name already exists'
       - id: gate-validate-syntax
         condition: "steps['validate-placeholder-syntax'].output.syntax_valid === true"
         on_fail: block
-        message: "Placeholder syntax must follow Mustache/Handlebars format"
+        message: 'Placeholder syntax must follow Mustache/Handlebars format'
 
   obtain:
     description: Research template patterns and target artifact structure (optional)
@@ -174,7 +174,7 @@ phases:
       - id: gate-obtain
         condition: "steps['analyze-target-artifacts'].output.artifact_structure !== null"
         on_fail: block
-        message: "Failed to analyze target artifact structure"
+        message: 'Failed to analyze target artifact structure'
 
   lock:
     description: Create template file with proper structure
@@ -228,17 +228,17 @@ phases:
         condition: "steps['write-template-file'].output.template_file_created === true"
         on_fail: retry
         max_retries: 3
-        message: "Failed to create template file"
+        message: 'Failed to create template file'
       - id: gate-lock-placeholders
         condition: "steps['validate-placeholders'].output.placeholders_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "Template placeholders validation failed"
+        message: 'Template placeholders validation failed'
       - id: gate-lock-example
         condition: "steps['create-example-output'].output.example_valid === true"
         on_fail: retry
         max_retries: 3
-        message: "Template example output generation failed"
+        message: 'Template example output generation failed'
 
   verify:
     description: Validate template produces valid artifacts
@@ -279,15 +279,15 @@ phases:
       - id: gate-verify-required
         condition: "steps['validate-required-placeholders'].output.required_present === true"
         on_fail: return_to_lock
-        message: "Required placeholders missing (name, description)"
+        message: 'Required placeholders missing (name, description)'
       - id: gate-verify-render
         condition: "steps['test-template-rendering'].output.rendering_successful === true"
         on_fail: return_to_lock
-        message: "Template rendering failed"
+        message: 'Template rendering failed'
       - id: gate-verify-output
         condition: "steps['validate-rendered-output'].output.output_valid === true"
         on_fail: return_to_lock
-        message: "Rendered output does not match target artifact structure"
+        message: 'Rendered output does not match target artifact structure'
 
   enable:
     description: Register template in registry and update memory
@@ -334,12 +334,12 @@ phases:
         condition: "steps['update-template-registry'].output.registry_updated === true"
         on_fail: retry
         max_retries: 2
-        message: "Failed to update template registry"
+        message: 'Failed to update template registry'
       - id: gate-enable-verify
         condition: "steps['verify-registration'].output.verification_passed === true"
         on_fail: retry
         max_retries: 2
-        message: "Template registration verification failed"
+        message: 'Template registration verification failed'
 
 # Rollback/compensate actions for each phase
 compensate:
@@ -349,29 +349,29 @@ compensate:
       description: Remove created template file
   enable:
     - action: remove_from_registry
-      target: ".claude/templates/registry.json"
+      target: '.claude/templates/registry.json'
       description: Remove template from registry
     - action: revert_memory
-      target: ".claude/context/memory/learnings.md"
+      target: '.claude/context/memory/learnings.md'
       description: Remove template entry from learnings
 
 # Iron Laws for template creation
 iron_laws:
   - id: no-template-without-name-placeholder
-    rule: "Every template MUST have {{name}} placeholder"
+    rule: 'Every template MUST have {{name}} placeholder'
     enforcement: gate-verify-required
   - id: no-template-without-description-placeholder
-    rule: "Every template MUST have {{description}} placeholder"
+    rule: 'Every template MUST have {{description}} placeholder'
     enforcement: gate-verify-required
   - id: no-template-without-render-test
-    rule: "Template MUST render successfully with sample data"
+    rule: 'Template MUST render successfully with sample data'
     enforcement: gate-verify-render
   - id: no-template-without-registry
-    rule: "Template MUST be registered in registry.json"
+    rule: 'Template MUST be registered in registry.json'
     enforcement: gate-enable-registry
   - id: placeholder-syntax-valid
-    rule: "Placeholders must follow Mustache/Handlebars syntax"
+    rule: 'Placeholders must follow Mustache/Handlebars syntax'
     enforcement: gate-lock-placeholders
   - id: output-matches-target
-    rule: "Rendered output must match target artifact structure"
+    rule: 'Rendered output must match target artifact structure'
     enforcement: gate-verify-output

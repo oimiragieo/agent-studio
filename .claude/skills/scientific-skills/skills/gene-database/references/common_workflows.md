@@ -75,6 +75,7 @@ Annotate a list of gene identifiers with comprehensive metadata.
 1. **Prepare gene list**
 
 Create a file `genes.txt` with gene symbols (one per line):
+
 ```
 BRCA1
 TP53

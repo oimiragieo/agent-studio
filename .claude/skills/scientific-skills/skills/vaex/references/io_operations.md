@@ -7,6 +7,7 @@ This reference covers file input/output operations, format conversions, export s
 Vaex supports multiple file formats with varying performance characteristics. The choice of format significantly impacts loading speed, memory usage, and overall performance.
 
 **Format recommendations:**
+
 - **HDF5** - Best for most use cases (instant loading, memory-mapped)
 - **Apache Arrow** - Best for interoperability (instant loading, columnar)
 - **Parquet** - Good for distributed systems (compressed, columnar)
@@ -28,6 +29,7 @@ df = vaex.open(['data_2020.hdf5', 'data_2021.hdf5', 'data_2022.hdf5'])
 ```
 
 **Advantages:**
+
 - Instant loading (memory-mapped, no data read into RAM)
 - Optimal performance for Vaex operations
 - Supports compression
@@ -45,6 +47,7 @@ df = vaex.open('data_*.arrow')
 ```
 
 **Advantages:**
+
 - Instant loading (memory-mapped)
 - Language-agnostic format
 - Excellent for data sharing
@@ -65,12 +68,14 @@ df = vaex.open('gs://bucket/data.parquet')
 ```
 
 **Advantages:**
+
 - Compressed by default
 - Columnar format
 - Wide ecosystem support
 - Good for distributed systems
 
 **Considerations:**
+
 - Slower than HDF5/Arrow for local files
 - May require full file read for some operations
 
@@ -100,6 +105,7 @@ df = vaex.from_csv(
 ```
 
 **Recommendations:**
+
 - **Always convert large CSVs to HDF5** for repeated use
 - Use `convert` parameter to create HDF5 automatically
 - CSV loading can take significant time for large files
@@ -686,15 +692,15 @@ fs.ls('s3://bucket-name/')
 
 ## Format Feature Matrix
 
-| Feature | HDF5 | Arrow | Parquet | CSV |
-|---------|------|-------|---------|-----|
-| Load Speed | Instant | Instant | Fast | Slow |
-| Memory-mapped | Yes | Yes | No | No |
-| Compression | Optional | No | Yes | No |
-| Columnar | Yes | Yes | Yes | No |
-| Portability | Good | Excellent | Excellent | Excellent |
-| File Size | Medium | Medium | Small | Large |
-| Best For | Vaex workflows | Interop | Distributed | Exchange |
+| Feature       | HDF5           | Arrow     | Parquet     | CSV       |
+| ------------- | -------------- | --------- | ----------- | --------- |
+| Load Speed    | Instant        | Instant   | Fast        | Slow      |
+| Memory-mapped | Yes            | Yes       | No          | No        |
+| Compression   | Optional       | No        | Yes         | No        |
+| Columnar      | Yes            | Yes       | Yes         | No        |
+| Portability   | Good           | Excellent | Excellent   | Excellent |
+| File Size     | Medium         | Medium    | Small       | Large     |
+| Best For      | Vaex workflows | Interop   | Distributed | Exchange  |
 
 ## Related Resources
 

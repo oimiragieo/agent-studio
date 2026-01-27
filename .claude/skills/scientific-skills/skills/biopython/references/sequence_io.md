@@ -86,6 +86,7 @@ count = SeqIO.convert("input.gbk", "genbank", "output.fasta", "fasta")
 ### Supported File Formats
 
 Common formats include:
+
 - **fasta** - FASTA format
 - **fastq** - FASTQ format (with quality scores)
 - **genbank** or **gb** - GenBank format

@@ -7,12 +7,15 @@ Histolab provides a comprehensive set of filters for preprocessing whole slide i
 ## Filter Categories
 
 ### Image Filters
+
 Color space conversions, thresholding, and intensity adjustments
 
 ### Morphological Filters
+
 Structural operations like dilation, erosion, opening, and closing
 
 ### Composition Filters
+
 Utilities for combining multiple filters
 
 ## Image Filters
@@ -29,6 +32,7 @@ gray_image = gray_filter(rgb_image)
 ```
 
 **Use cases:**
+
 - Preprocessing for intensity-based operations
 - Simplifying color complexity
 - Input for morphological operations
@@ -45,6 +49,7 @@ hsv_image = hsv_filter(rgb_image)
 ```
 
 **Use cases:**
+
 - Color-based tissue segmentation
 - Detecting pen markings by hue
 - Separating chromatic from achromatic content
@@ -61,6 +66,7 @@ hed_image = hed_filter(rgb_image)
 ```
 
 **Use cases:**
+
 - Separating H&E stain components
 - Analyzing nuclear (hematoxylin) vs. cytoplasmic (eosin) staining
 - Quantifying stain intensity
@@ -77,11 +83,13 @@ binary_image = otsu_filter(grayscale_image)
 ```
 
 **How it works:**
+
 - Automatically determines optimal threshold
 - Separates foreground from background
 - Minimizes intra-class variance
 
 **Use cases:**
+
 - Tissue detection
 - Nuclei segmentation
 - Binary mask creation
@@ -101,6 +109,7 @@ binary_image = adaptive_filter(grayscale_image)
 ```
 
 **Use cases:**
+
 - Non-uniform illumination
 - Local contrast enhancement
 - Handling variable staining intensity
@@ -117,6 +126,7 @@ inverted_image = invert_filter(image)
 ```
 
 **Use cases:**
+
 - Preprocessing for certain segmentation algorithms
 - Visualization adjustments
 
@@ -132,6 +142,7 @@ enhanced_image = contrast_filter(image)
 ```
 
 **Use cases:**
+
 - Improving visibility of low-contrast features
 - Preprocessing for visualization
 - Enhancing faint structures
@@ -148,6 +159,7 @@ equalized_image = hist_eq_filter(grayscale_image)
 ```
 
 **Use cases:**
+
 - Standardizing image contrast
 - Revealing hidden details
 - Preprocessing for feature extraction
@@ -166,9 +178,11 @@ dilated_image = dilation_filter(binary_image)
 ```
 
 **Parameters:**
+
 - `disk_size`: Size of structuring element (default: 5)
 
 **Use cases:**
+
 - Connecting nearby tissue regions
 - Filling small gaps
 - Expanding tissue masks
@@ -185,6 +199,7 @@ eroded_image = erosion_filter(binary_image)
 ```
 
 **Use cases:**
+
 - Removing small protrusions
 - Separating connected objects
 - Shrinking tissue boundaries
@@ -201,6 +216,7 @@ opened_image = opening_filter(binary_image)
 ```
 
 **Use cases:**
+
 - Removing small artifacts
 - Smoothing object boundaries
 - Noise reduction
@@ -217,6 +233,7 @@ closed_image = closing_filter(binary_image)
 ```
 
 **Use cases:**
+
 - Filling small holes in tissue regions
 - Connecting nearby objects
 - Smoothing internal boundaries
@@ -235,6 +252,7 @@ cleaned_image = remove_small_filter(binary_image)
 ```
 
 **Use cases:**
+
 - Removing dust and artifacts
 - Filtering noise
 - Cleaning tissue masks
@@ -253,6 +271,7 @@ filled_image = fill_holes_filter(binary_image)
 ```
 
 **Use cases:**
+
 - Filling small gaps in tissue
 - Creating continuous tissue regions
 - Removing internal artifacts
@@ -491,24 +510,32 @@ coverage_filter = Lambda(tissue_coverage)
 ## Troubleshooting
 
 ### Issue: Tissue detection misses valid tissue
+
 **Solutions:**
+
 - Reduce `area_threshold` in `RemoveSmallObjects`
 - Decrease erosion/opening disk size
 - Try adaptive thresholding instead of Otsu
 
 ### Issue: Too many artifacts included
+
 **Solutions:**
+
 - Increase `area_threshold` in `RemoveSmallObjects`
 - Add opening/closing operations
 - Use custom color-based filtering for specific artifacts
 
 ### Issue: Tissue boundaries too rough
+
 **Solutions:**
+
 - Add `BinaryClosing` or `BinaryOpening` for smoothing
 - Adjust disk_size for morphological operations
 
 ### Issue: Variable staining quality
+
 **Solutions:**
+
 - Apply histogram equalization
 - Use adaptive thresholding
 - Implement stain normalization pipeline

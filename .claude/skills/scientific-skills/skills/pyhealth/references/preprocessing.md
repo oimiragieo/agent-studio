@@ -9,6 +9,7 @@ PyHealth provides comprehensive data processing utilities to transform raw healt
 All processors inherit from `Processor` with standard interface:
 
 **Key Methods:**
+
 - `__call__()`: Transform input data
 - `get_input_info()`: Return processed input schema
 - `get_output_info()`: Return processed output schema
@@ -18,18 +19,21 @@ All processors inherit from `Processor` with standard interface:
 ### Feature Processors
 
 **FeatureProcessor** (`FeatureProcessor`)
+
 - Base class for feature extraction
 - Handles vocabulary building
 - Embedding preparation
 - Feature encoding
 
 **Common Operations:**
+
 - Medical code tokenization
 - Categorical encoding
 - Feature normalization
 - Missing value handling
 
 **Usage:**
+
 ```python
 from pyhealth.data import FeatureProcessor
 
@@ -45,22 +49,26 @@ processed_features = processor(raw_features)
 ### Sequence Processors
 
 **SequenceProcessor** (`SequenceProcessor`)
+
 - Processes sequential clinical events
 - Temporal ordering preservation
 - Sequence padding/truncation
 - Time gap encoding
 
 **Key Features:**
+
 - Variable-length sequence handling
 - Temporal feature extraction
 - Sequence statistics computation
 
 **Parameters:**
+
 - `max_seq_length`: Maximum sequence length (truncate if longer)
 - `padding`: Padding strategy ("pre" or "post")
 - `truncating`: Truncation strategy ("pre" or "post")
 
 **Usage:**
+
 ```python
 from pyhealth.data import SequenceProcessor
 
@@ -75,16 +83,19 @@ processed_seq = processor(diagnosis_sequences)
 ```
 
 **NestedSequenceProcessor** (`NestedSequenceProcessor`)
+
 - Handles hierarchical sequences (e.g., visits containing events)
 - Two-level processing (visit-level and event-level)
 - Preserves nested structure
 
 **Use Cases:**
+
 - EHR with visits containing multiple events
 - Multi-level temporal modeling
 - Hierarchical attention models
 
 **Structure:**
+
 ```python
 # Input: [[visit1_events], [visit2_events], ...]
 # Output: Processed nested sequences with proper padding
@@ -93,17 +104,20 @@ processed_seq = processor(diagnosis_sequences)
 ### Numeric Data Processors
 
 **NestedFloatsProcessor** (`NestedFloatsProcessor`)
+
 - Processes nested numeric arrays
 - Lab values, vital signs, measurements
 - Multi-level numeric features
 
 **Operations:**
+
 - Normalization
 - Standardization
 - Missing value imputation
 - Outlier handling
 
 **Usage:**
+
 ```python
 from pyhealth.data import NestedFloatsProcessor
 
@@ -116,29 +130,34 @@ processed_labs = processor(lab_values)
 ```
 
 **TensorProcessor** (`TensorProcessor`)
+
 - Converts data to PyTorch tensors
 - Type handling (long, float, etc.)
 - Device placement (CPU/GPU)
 
 **Parameters:**
+
 - `dtype`: Tensor data type
 - `device`: Computation device
 
 ### Time-Series Processors
 
 **TimeseriesProcessor** (`TimeseriesProcessor`)
+
 - Handles temporal data with timestamps
 - Time gap computation
 - Temporal feature engineering
 - Irregular sampling handling
 
 **Extracted Features:**
+
 - Time since previous event
 - Time to next event
 - Event frequency
 - Temporal patterns
 
 **Usage:**
+
 ```python
 from pyhealth.data import TimeseriesProcessor
 
@@ -152,17 +171,20 @@ processed_ts = processor(timestamps, events)
 ```
 
 **SignalProcessor** (`SignalProcessor`)
+
 - Physiological signal processing
 - EEG, ECG, PPG signals
 - Filtering and preprocessing
 
 **Operations:**
+
 - Bandpass filtering
 - Artifact removal
 - Segmentation
 - Feature extraction (frequency, amplitude)
 
 **Usage:**
+
 ```python
 from pyhealth.data import SignalProcessor
 
@@ -178,18 +200,21 @@ processed_signal = processor(raw_eeg_signal)
 ### Image Processors
 
 **ImageProcessor** (`ImageProcessor`)
+
 - Medical image preprocessing
 - Normalization and resizing
 - Augmentation support
 - Format standardization
 
 **Operations:**
+
 - Resize to standard dimensions
 - Normalization (mean/std)
 - Windowing (for CT/MRI)
 - Data augmentation
 
 **Usage:**
+
 ```python
 from pyhealth.data import ImageProcessor
 
@@ -207,11 +232,13 @@ processed_image = processor(raw_image)
 ### Binary Classification
 
 **BinaryLabelProcessor** (`BinaryLabelProcessor`)
+
 - Binary classification labels (0/1)
 - Handles positive/negative classes
 - Class weighting for imbalance
 
 **Usage:**
+
 ```python
 from pyhealth.data import BinaryLabelProcessor
 
@@ -226,15 +253,18 @@ processed_labels = processor(raw_labels)
 ### Multi-Class Classification
 
 **MultiClassLabelProcessor** (`MultiClassLabelProcessor`)
+
 - Multi-class classification (mutually exclusive classes)
 - Label encoding
 - Class balancing
 
 **Parameters:**
+
 - `num_classes`: Number of classes
 - `class_weight`: Weighting strategy
 
 **Usage:**
+
 ```python
 from pyhealth.data import MultiClassLabelProcessor
 
@@ -249,16 +279,19 @@ processed_labels = processor(raw_labels)
 ### Multi-Label Classification
 
 **MultiLabelProcessor** (`MultiLabelProcessor`)
+
 - Multi-label classification (multiple labels per sample)
 - Binary encoding for each label
 - Label co-occurrence handling
 
 **Use Cases:**
+
 - Drug recommendation (multiple drugs)
 - ICD coding (multiple diagnoses)
 - Comorbidity prediction
 
 **Usage:**
+
 ```python
 from pyhealth.data import MultiLabelProcessor
 
@@ -273,16 +306,19 @@ processed_labels = processor(raw_label_sets)
 ### Regression
 
 **RegressionLabelProcessor** (`RegressionLabelProcessor`)
+
 - Continuous value prediction
 - Target scaling and normalization
 - Outlier handling
 
 **Use Cases:**
+
 - Length of stay prediction
 - Lab value prediction
 - Risk score estimation
 
 **Usage:**
+
 ```python
 from pyhealth.data import RegressionLabelProcessor
 
@@ -300,18 +336,21 @@ processed_targets = processor(raw_values)
 ### Text Processing
 
 **TextProcessor** (`TextProcessor`)
+
 - Clinical text preprocessing
 - Tokenization
 - Vocabulary building
 - Sequence encoding
 
 **Operations:**
+
 - Lowercasing
 - Punctuation removal
 - Medical abbreviation handling
 - Token frequency filtering
 
 **Usage:**
+
 ```python
 from pyhealth.data import TextProcessor
 
@@ -328,11 +367,13 @@ processed_text = processor(clinical_notes)
 ### Model-Specific Processors
 
 **StageNetProcessor** (`StageNetProcessor`)
+
 - Specialized preprocessing for StageNet model
 - Chunk-based sequence processing
 - Stage-aware feature extraction
 
 **Usage:**
+
 ```python
 from pyhealth.data import StageNetProcessor
 
@@ -345,6 +386,7 @@ processed_data = processor(sequential_data)
 ```
 
 **StageNetTensorProcessor** (`StageNetTensorProcessor`)
+
 - Tensor conversion for StageNet
 - Proper batching and padding
 - Stage mask generation
@@ -352,11 +394,13 @@ processed_data = processor(sequential_data)
 ### Raw Data Processing
 
 **RawProcessor** (`RawProcessor`)
+
 - Minimal preprocessing
 - Pass-through for pre-processed data
 - Custom preprocessing scenarios
 
 **Usage:**
+
 ```python
 from pyhealth.data import RawProcessor
 
@@ -367,16 +411,19 @@ processed_data = processor(data)  # Minimal transformation
 ## Sample-Level Processing
 
 **SampleProcessor** (`SampleProcessor`)
+
 - Processes complete samples (input + output)
 - Coordinates multiple processors
 - End-to-end preprocessing pipeline
 
 **Workflow:**
+
 1. Apply input processors to features
 2. Apply output processors to labels
 3. Combine into model-ready samples
 
 **Usage:**
+
 ```python
 from pyhealth.data import SampleProcessor
 
@@ -395,18 +442,21 @@ processed_sample = processor(raw_sample)
 ## Dataset-Level Processing
 
 **DatasetProcessor** (`DatasetProcessor`)
+
 - Processes entire datasets
 - Batch processing
 - Parallel processing support
 - Caching for efficiency
 
 **Operations:**
+
 - Apply processors to all samples
 - Generate vocabulary from dataset
 - Compute dataset statistics
 - Save processed data
 
 **Usage:**
+
 ```python
 from pyhealth.data import DatasetProcessor
 
@@ -610,28 +660,33 @@ sample_processor = SampleProcessor(
 ### Common Issues
 
 **Memory Error:**
+
 - Reduce `max_seq_length`
 - Use smaller batches
 - Process data in chunks
 - Enable caching to disk
 
 **Slow Processing:**
+
 - Enable parallel processing (`num_workers`)
 - Cache preprocessed data
 - Reduce feature dimensionality
 - Use more efficient data types
 
 **Shape Mismatch:**
+
 - Check sequence lengths
 - Verify padding configuration
 - Ensure consistent processor settings
 
 **NaN Values:**
+
 - Handle missing data explicitly
 - Check normalization parameters
 - Verify imputation strategy
 
 **Class Imbalance:**
+
 - Use class weighting
 - Consider oversampling
 - Adjust decision threshold

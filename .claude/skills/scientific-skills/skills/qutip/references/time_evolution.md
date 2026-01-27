@@ -3,6 +3,7 @@
 ## Overview
 
 QuTiP provides multiple solvers for quantum dynamics:
+
 - `sesolve` - Schrödinger equation (unitary evolution)
 - `mesolve` - Master equation (open systems with dissipation)
 - `mcsolve` - Monte Carlo (quantum trajectories)

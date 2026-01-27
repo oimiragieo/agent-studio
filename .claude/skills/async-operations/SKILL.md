@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Async Operations
   - Prefer async/await syntax over .then() chains
   - Use onMount for component initialization that requires async operations
-</instructions>
+    </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

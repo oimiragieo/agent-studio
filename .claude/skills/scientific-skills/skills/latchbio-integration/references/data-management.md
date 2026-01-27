@@ -1,6 +1,7 @@
 # Data Management
 
 ## Overview
+
 Latch provides comprehensive data management through cloud storage abstractions (LatchFile, LatchDir) and a structured Registry system for organizing experimental data.
 
 ## Cloud Storage: LatchFile and LatchDir
@@ -38,6 +39,7 @@ subdirs = output_dir.iterdir()  # List contents
 ### Path Formats
 
 Latch storage uses a special URL scheme:
+
 - **Latch paths**: `latch:///path/to/file`
 - **Local paths**: Automatically resolved during workflow execution
 - **S3 paths**: Can be used directly if configured
@@ -147,6 +149,7 @@ table = Table.get(table_id="tbl_456")
 ### Column Types
 
 Supported data types:
+
 - `string` - Text data
 - `number` - Numeric values (integer or float)
 - `boolean` - True/False values

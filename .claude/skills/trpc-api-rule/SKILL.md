@@ -33,6 +33,7 @@ You help developers write better code by applying established guidelines and bes
 ### Router Organization
 
 **Modular Router Structure:**
+
 - Split routers by domain/feature
 - Use `router()` to define routers
 - Use `mergeRouters()` to combine routers
@@ -44,22 +45,22 @@ import { z } from 'zod';
 import { router, publicProcedure, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input, ctx }) => {
-      return await ctx.db.user.findUnique({
-        where: { id: input.id }
-      });
-    }),
+  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input, ctx }) => {
+    return await ctx.db.user.findUnique({
+      where: { id: input.id },
+    });
+  }),
 
   create: protectedProcedure
-    .input(z.object({
-      name: z.string().min(1).max(100),
-      email: z.string().email(),
-    }))
+    .input(
+      z.object({
+        name: z.string().min(1).max(100),
+        email: z.string().email(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
       return await ctx.db.user.create({
-        data: input
+        data: input,
       });
     }),
 });
@@ -67,10 +68,12 @@ export const userRouter = router({
 // server/routers/post.ts
 export const postRouter = router({
   list: publicProcedure
-    .input(z.object({
-      limit: z.number().min(1).max(100).default(10),
-      cursor: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).default(10),
+        cursor: z.string().optional(),
+      })
+    )
     .query(async ({ input, ctx }) => {
       const posts = await ctx.db.post.findMany({
         take: input.limit + 1,
@@ -103,11 +106,13 @@ export type AppRouter = typeof appRouter;
 ### Type-Safe Procedures
 
 **Procedure Types:**
+
 - `query` - Read operations (GET-like)
 - `mutation` - Write operations (POST/PUT/DELETE-like)
 - `subscription` - Real-time updates (WebSocket-based)
 
 **Input Validation with Zod:**
+
 ```typescript
 import { z } from 'zod';
 
@@ -119,16 +124,15 @@ const CreateUserSchema = z.object({
 });
 
 const userRouter = router({
-  create: protectedProcedure
-    .input(CreateUserSchema)
-    .mutation(async ({ input, ctx }) => {
-      // input is fully typed as { name: string, email: string, age?: number }
-      return await ctx.db.user.create({ data: input });
-    }),
+  create: protectedProcedure.input(CreateUserSchema).mutation(async ({ input, ctx }) => {
+    // input is fully typed as { name: string, email: string, age?: number }
+    return await ctx.db.user.create({ data: input });
+  }),
 });
 ```
 
 **Output Validation (Optional but Recommended):**
+
 ```typescript
 const UserOutputSchema = z.object({
   id: z.string(),
@@ -151,30 +155,30 @@ const userRouter = router({
 ### Error Handling
 
 **TRPCError for Consistent Errors:**
+
 ```typescript
 import { TRPCError } from '@trpc/server';
 
 const userRouter = router({
-  getById: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const user = await ctx.db.user.findUnique({
-        where: { id: input.id }
+  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ input, ctx }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: `User with id ${input.id} not found`,
       });
+    }
 
-      if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: `User with id ${input.id} not found`,
-        });
-      }
-
-      return user;
-    }),
+    return user;
+  }),
 });
 ```
 
 **Error Codes:**
+
 - `BAD_REQUEST` - Invalid input (400)
 - `UNAUTHORIZED` - Not authenticated (401)
 - `FORBIDDEN` - Authenticated but no permission (403)
@@ -188,6 +192,7 @@ const userRouter = router({
 - `INTERNAL_SERVER_ERROR` - Server error (500)
 
 **Global Error Handling:**
+
 ```typescript
 import { initTRPC, TRPCError } from '@trpc/server';
 
@@ -197,10 +202,7 @@ export const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError
-            ? error.cause.flatten()
-            : null,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -210,6 +212,7 @@ export const t = initTRPC.context<Context>().create({
 ### Middleware Patterns
 
 **Authentication Middleware:**
+
 ```typescript
 const isAuthenticated = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
@@ -229,6 +232,7 @@ export const protectedProcedure = t.procedure.use(isAuthenticated);
 ```
 
 **Logging Middleware:**
+
 ```typescript
 const loggingMiddleware = t.middleware(async ({ path, type, next }) => {
   const start = Date.now();
@@ -246,6 +250,7 @@ export const loggedProcedure = t.procedure.use(loggingMiddleware);
 ```
 
 **Permission Middleware:**
+
 ```typescript
 const hasProjectAccess = t.middleware(async ({ ctx, input, next }) => {
   // Assumes input has projectId field
@@ -281,6 +286,7 @@ export const projectProcedure = protectedProcedure.use(hasProjectAccess);
 ### React Query Integration
 
 **Client Setup (React):**
+
 ```typescript
 // utils/trpc.ts
 import { createTRPCReact } from '@trpc/react-query';
@@ -290,6 +296,7 @@ export const trpc = createTRPCReact<AppRouter>();
 ```
 
 **Provider Setup:**
+
 ```typescript
 // _app.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -335,6 +342,7 @@ function MyApp({ Component, pageProps }) {
 ```
 
 **Using tRPC in Components:**
+
 ```typescript
 // components/UserProfile.tsx
 function UserProfile({ userId }: { userId: string }) {
@@ -370,11 +378,12 @@ function UserProfile({ userId }: { userId: string }) {
 ```
 
 **Optimistic Updates:**
+
 ```typescript
 const utils = trpc.useUtils();
 
 const createPost = trpc.post.create.useMutation({
-  onMutate: async (newPost) => {
+  onMutate: async newPost => {
     // Cancel outgoing refetches
     await utils.post.list.cancel();
 
@@ -382,7 +391,7 @@ const createPost = trpc.post.create.useMutation({
     const previousPosts = utils.post.list.getData();
 
     // Optimistically update
-    utils.post.list.setData(undefined, (old) => ({
+    utils.post.list.setData(undefined, old => ({
       posts: [newPost, ...(old?.posts ?? [])],
       nextCursor: old?.nextCursor,
     }));
@@ -403,6 +412,7 @@ const createPost = trpc.post.create.useMutation({
 ### Context Management
 
 **Creating Context:**
+
 ```typescript
 // server/trpc.ts
 import { CreateNextContextOptions } from '@trpc/server/adapters/next';
@@ -425,12 +435,13 @@ export const t = initTRPC.context<Context>().create();
 ```
 
 **Using Context in Procedures:**
+
 ```typescript
 const userRouter = router({
   me: protectedProcedure.query(async ({ ctx }) => {
     // ctx.session is available and typed
     return await ctx.db.user.findUnique({
-      where: { id: ctx.session.user.id }
+      where: { id: ctx.session.user.id },
     });
   }),
 });
@@ -449,12 +460,14 @@ const comments = trpc.comment.list.useQuery({ limit: 5 });
 ```
 
 **Disable Batching (if needed):**
+
 ```typescript
 import { httpLink } from '@trpc/client';
 
 const trpcClient = trpc.createClient({
   links: [
-    httpLink({ // Instead of httpBatchLink
+    httpLink({
+      // Instead of httpBatchLink
       url: '/api/trpc',
     }),
   ],
@@ -464,12 +477,13 @@ const trpcClient = trpc.createClient({
 ### Subscription Patterns (WebSocket)
 
 **Server Setup:**
+
 ```typescript
 import { observable } from '@trpc/server/observable';
 
 const postRouter = router({
   onNewPost: publicProcedure.subscription(() => {
-    return observable<Post>((emit) => {
+    return observable<Post>(emit => {
       const onPost = (post: Post) => {
         emit.next(post);
       };
@@ -485,6 +499,7 @@ const postRouter = router({
 ```
 
 **Client Usage:**
+
 ```typescript
 function PostFeed() {
   trpc.post.onNewPost.useSubscription(undefined, {
@@ -504,40 +519,47 @@ function PostFeed() {
 ### Best Practices
 
 **1. Use Zod for All Inputs**
+
 - Provides runtime validation and TypeScript types
 - Define schemas once, use everywhere
 
 **2. Organize Routers by Domain**
+
 - Keep related procedures together
 - Use nested routers for complex domains
 
 **3. Use Middleware for Cross-Cutting Concerns**
+
 - Authentication
 - Logging
 - Rate limiting
 - Permissions
 
 **4. Implement Proper Error Handling**
+
 - Use TRPCError with appropriate codes
 - Provide helpful error messages
 - Don't leak sensitive information
 
 **5. Optimize with React Query**
+
 - Set appropriate staleTime
 - Use optimistic updates for better UX
 - Implement pagination and infinite queries
 
 **6. Type Safety First**
+
 - Export AppRouter type from server
 - Use inferRouterInputs and inferRouterOutputs for types
 - Never use `any` types
 
 **7. Security**
+
 - Validate all inputs
 - Implement authentication middleware
 - Check permissions before operations
 - Never trust client-provided data
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -550,6 +572,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

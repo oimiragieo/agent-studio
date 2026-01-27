@@ -36,19 +36,20 @@ Context Compressor Skill - Techniques for reducing token usage while preserving 
 
 Content types that can be compressed:
 
-| Type | Compression Strategy |
-|------|---------------------|
-| Code | Keep signatures, summarize implementations |
-| Conversations | Extract decisions, drop small talk |
-| Documentation | Keep headings and key points |
-| Errors | Keep message and location, drop stack frames |
-| Logs | Keep patterns, drop repetitions |
+| Type          | Compression Strategy                         |
+| ------------- | -------------------------------------------- |
+| Code          | Keep signatures, summarize implementations   |
+| Conversations | Extract decisions, drop small talk           |
+| Documentation | Keep headings and key points                 |
+| Errors        | Keep message and location, drop stack frames |
+| Logs          | Keep patterns, drop repetitions              |
 
 ### Step 2: Apply Compression Techniques
 
 **Technique 1: Decision Extraction**
 
 Before:
+
 ```
 User: Should we use Redis or Memcached?
 Assistant: Let me analyze both options...
@@ -58,6 +59,7 @@ User: Ok let's use Redis.
 ```
 
 After:
+
 ```
 Decision: Use Redis (chosen for pub/sub support)
 ```
@@ -65,11 +67,13 @@ Decision: Use Redis (chosen for pub/sub support)
 **Technique 2: Code Summarization**
 
 Before:
+
 ```javascript
 // 100 lines of UserService implementation
 ```
 
 After:
+
 ```
 UserService: CRUD operations for users
 - Methods: create, read, update, delete, findByEmail
@@ -80,6 +84,7 @@ UserService: CRUD operations for users
 **Technique 3: Error Compression**
 
 Before:
+
 ```
 Error: Cannot read property 'id' of undefined
     at UserController.getUser (src/controllers/user.js:45:23)
@@ -88,6 +93,7 @@ Error: Cannot read property 'id' of undefined
 ```
 
 After:
+
 ```
 Error: Cannot read 'id' of undefined @ src/controllers/user.js:45
 Cause: User object is null when accessing .id
@@ -101,14 +107,17 @@ Use consistent formats:
 ## Session Summary
 
 ### Decisions Made
+
 - [D1] Use Redis for caching
 - [D2] JWT for authentication
 
 ### Files Modified
+
 - src/auth/jwt.js (new)
 - src/config/redis.js (updated)
 
 ### Open Items
+
 - [ ] Add rate limiting
 - [ ] Write tests for JWT
 ```
@@ -149,22 +158,27 @@ Compress the last 10 messages for context handoff
 ## Context Summary (compressed from 10 messages)
 
 ### Task
+
 Implementing user authentication with JWT
 
 ### Progress
+
 1. Created JWT utility (src/auth/jwt.js)
 2. Added login endpoint (src/routes/auth.js)
 3. Tests failing - mock issue
 
 ### Key Decisions
+
 - Using RS256 for JWT signing (security over performance)
 - 1-hour token expiry with refresh tokens
 
 ### Current Issue
+
 Jest mock for jwt.sign not working
-Location: src/auth/__tests__/jwt.test.js:23
+Location: src/auth/**tests**/jwt.test.js:23
 
 ### Next Steps
+
 1. Fix JWT mock
 2. Add refresh token endpoint
 ```
@@ -173,6 +187,7 @@ Location: src/auth/__tests__/jwt.test.js:23
 </examples>
 
 ## Rules
+
 - Never lose decision rationale
 - Always include file locations
 - Test that work can continue from compressed context
@@ -182,14 +197,17 @@ Location: src/auth/__tests__/jwt.test.js:23
 This skill supports multi-agent orchestration by enabling efficient context management:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - Router spawns agents that use this skill for context-efficient handoffs
 - Used in long-running sessions to maintain continuity
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Compression patterns evolve with framework changes
 - Session summaries feed into memory protocol
 
 **Related Workflows:**
+
 - `session-handoff` skill for complete handoff protocol
 - `swarm-coordination` skill for multi-agent context sharing
 
@@ -198,11 +216,13 @@ This skill supports multi-agent orchestration by enabling efficient context mana
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

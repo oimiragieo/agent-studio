@@ -57,6 +57,7 @@ sim = Simul(params)
 ```
 
 This initializes:
+
 - Operators (FFT, differential operators)
 - State variables (velocity, vorticity, etc.)
 - Output handlers

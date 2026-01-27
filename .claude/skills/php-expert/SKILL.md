@@ -80,7 +80,6 @@ When reviewing or writing code, apply these guidelines:
 - Describe the purpose of each main directory and key files
 - Explain how the package will be integrated
 
-
 </instructions>
 
 <examples>
@@ -94,12 +93,13 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 1 individual skills:
-- php-expert
 
+- php-expert
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

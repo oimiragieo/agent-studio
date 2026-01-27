@@ -6,16 +6,16 @@ This document provides guidance on conducting and interpreting Bayesian statisti
 
 ### Fundamental Differences
 
-| Aspect | Frequentist | Bayesian |
-|--------|-------------|----------|
-| **Probability interpretation** | Long-run frequency of events | Degree of belief/uncertainty |
-| **Parameters** | Fixed but unknown | Random variables with distributions |
-| **Inference** | Based on sampling distributions | Based on posterior distributions |
-| **Primary output** | p-values, confidence intervals | Posterior probabilities, credible intervals |
-| **Prior information** | Not formally incorporated | Explicitly incorporated via priors |
-| **Hypothesis testing** | Reject/fail to reject null | Probability of hypotheses given data |
-| **Sample size** | Often requires minimum | Can work with any sample size |
-| **Interpretation** | Indirect (probability of data given H₀) | Direct (probability of hypothesis given data) |
+| Aspect                         | Frequentist                             | Bayesian                                      |
+| ------------------------------ | --------------------------------------- | --------------------------------------------- |
+| **Probability interpretation** | Long-run frequency of events            | Degree of belief/uncertainty                  |
+| **Parameters**                 | Fixed but unknown                       | Random variables with distributions           |
+| **Inference**                  | Based on sampling distributions         | Based on posterior distributions              |
+| **Primary output**             | p-values, confidence intervals          | Posterior probabilities, credible intervals   |
+| **Prior information**          | Not formally incorporated               | Explicitly incorporated via priors            |
+| **Hypothesis testing**         | Reject/fail to reject null              | Probability of hypotheses given data          |
+| **Sample size**                | Often requires minimum                  | Can work with any sample size                 |
+| **Interpretation**             | Indirect (probability of data given H₀) | Direct (probability of hypothesis given data) |
 
 ### Key Question Difference
 
@@ -30,16 +30,19 @@ The Bayesian question is more intuitive and directly addresses what researchers 
 ## Bayes' Theorem
 
 **Formula**:
+
 ```
 P(θ|D) = P(D|θ) × P(θ) / P(D)
 ```
 
 **In words**:
+
 ```
 Posterior = Likelihood × Prior / Evidence
 ```
 
 Where:
+
 - **θ (theta)**: Parameter of interest (e.g., mean difference, correlation)
 - **D**: Observed data
 - **P(θ|D)**: Posterior distribution (belief about θ after seeing data)
@@ -56,20 +59,24 @@ Where:
 #### 1. Informative Priors
 
 **When to use**: When you have substantial prior knowledge from:
+
 - Previous studies
 - Expert knowledge
 - Theory
 - Pilot data
 
 **Example**: Meta-analysis shows effect size d ≈ 0.40, SD = 0.15
+
 - Prior: Normal(0.40, 0.15)
 
 **Advantages**:
+
 - Incorporates existing knowledge
 - More efficient (smaller samples needed)
 - Can stabilize estimates with small data
 
 **Disadvantages**:
+
 - Subjective (but subjectivity can be strength)
 - Must be justified and transparent
 - May be controversial if strong prior conflicts with data
@@ -81,16 +88,19 @@ Where:
 **When to use**: Default choice for most applications
 
 **Characteristics**:
+
 - Regularizes estimates (prevents extreme values)
 - Has minimal influence on posterior with moderate data
 - Prevents computational issues
 
 **Example priors**:
+
 - Effect size: Normal(0, 1) or Cauchy(0, 0.707)
 - Variance: Half-Cauchy(0, 1)
 - Correlation: Uniform(-1, 1) or Beta(2, 2)
 
 **Advantages**:
+
 - Balances objectivity and regularization
 - Computationally stable
 - Broadly acceptable
@@ -104,6 +114,7 @@ Where:
 **Example**: Uniform(-∞, ∞) for any value
 
 **⚠️ Caution**:
+
 - Can lead to improper posteriors
 - May produce non-sensible results
 - Not truly "non-informative" (still makes assumptions)
@@ -118,16 +129,19 @@ Where:
 **Always conduct**: Test how results change with different priors
 
 **Process**:
+
 1. Fit model with default/planned prior
 2. Fit model with more diffuse prior
 3. Fit model with more concentrated prior
 4. Compare posterior distributions
 
 **Reporting**:
+
 - If results are similar: Evidence is robust
 - If results differ substantially: Data are not strong enough to overwhelm prior
 
 **Python example**:
+
 ```python
 import pymc as pm
 
@@ -156,33 +170,36 @@ for name, prior in priors:
 **What it is**: Ratio of evidence for two competing hypotheses
 
 **Formula**:
+
 ```
 BF₁₀ = P(D|H₁) / P(D|H₀)
 ```
 
 **Interpretation**:
 
-| BF₁₀ | Evidence |
-|------|----------|
-| >100 | Decisive for H₁ |
-| 30-100 | Very strong for H₁ |
-| 10-30 | Strong for H₁ |
-| 3-10 | Moderate for H₁ |
-| 1-3 | Anecdotal for H₁ |
-| 1 | No evidence |
-| 1/3-1 | Anecdotal for H₀ |
-| 1/10-1/3 | Moderate for H₀ |
-| 1/30-1/10 | Strong for H₀ |
+| BF₁₀       | Evidence           |
+| ---------- | ------------------ |
+| >100       | Decisive for H₁    |
+| 30-100     | Very strong for H₁ |
+| 10-30      | Strong for H₁      |
+| 3-10       | Moderate for H₁    |
+| 1-3        | Anecdotal for H₁   |
+| 1          | No evidence        |
+| 1/3-1      | Anecdotal for H₀   |
+| 1/10-1/3   | Moderate for H₀    |
+| 1/30-1/10  | Strong for H₀      |
 | 1/100-1/30 | Very strong for H₀ |
-| <1/100 | Decisive for H₀ |
+| <1/100     | Decisive for H₀    |
 
 **Advantages over p-values**:
+
 1. Can provide evidence for null hypothesis
 2. Not dependent on sampling intentions (no "peeking" problem)
 3. Directly quantifies evidence
 4. Can be updated with more data
 
 **Python calculation**:
+
 ```python
 import pingouin as pg
 
@@ -211,16 +228,18 @@ def bf_from_t(t, n1, n2, r_scale=0.707):
 **Purpose**: Define range of negligible effect sizes
 
 **Process**:
+
 1. Define ROPE (e.g., d ∈ [-0.1, 0.1] for negligible effects)
 2. Calculate % of posterior inside ROPE
 3. Make decision:
-   - >95% in ROPE: Accept practical equivalence
-   - >95% outside ROPE: Reject equivalence
+   - > 95% in ROPE: Accept practical equivalence
+   - > 95% outside ROPE: Reject equivalence
    - Otherwise: Inconclusive
 
 **Advantage**: Directly tests for practical significance
 
 **Python example**:
+
 ```python
 # Define ROPE
 rope_lower, rope_upper = -0.1, 0.1
@@ -241,6 +260,7 @@ print(f"{in_rope*100:.1f}% of posterior in ROPE")
 **What it is**: Interval containing parameter with X% probability
 
 **95% Credible Interval interpretation**:
+
 > "There is a 95% probability that the true parameter lies in this interval."
 
 **This is what people THINK confidence intervals mean** (but don't in frequentist framework)
@@ -248,16 +268,19 @@ print(f"{in_rope*100:.1f}% of posterior in ROPE")
 **Types**:
 
 #### Equal-Tailed Interval (ETI)
+
 - 2.5th to 97.5th percentile
 - Simple to calculate
 - May not include mode for skewed distributions
 
 #### Highest Density Interval (HDI)
+
 - Narrowest interval containing 95% of distribution
 - Always includes mode
 - Better for skewed distributions
 
 **Python calculation**:
+
 ```python
 import arviz as az
 
@@ -289,6 +312,7 @@ hdi = az.hdi(posterior_samples, hdi_prob=0.95)
    - Multimodal: Multiple plausible values
 
 **Visualization**:
+
 ```python
 import matplotlib.pyplot as plt
 import arviz as az
@@ -312,12 +336,14 @@ az.plot_forest(trace)
 **Purpose**: Compare two groups (Bayesian alternative to t-test)
 
 **Outputs**:
+
 1. Posterior distribution of mean difference
 2. 95% credible interval
 3. Bayes Factor (BF₁₀)
 4. Probability of directional hypothesis (e.g., P(μ₁ > μ₂))
 
 **Python implementation**:
+
 ```python
 import pymc as pm
 import arviz as az
@@ -359,6 +385,7 @@ az.plot_posterior(trace, var_names=['diff'], ref_val=0)
 **Purpose**: Compare three or more groups
 
 **Model**:
+
 ```python
 import pymc as pm
 
@@ -395,6 +422,7 @@ contrast_1_2 = trace.posterior['group_means'][:,:,0] - trace.posterior['group_me
 **Advantage**: Provides distribution of correlation values
 
 **Python implementation**:
+
 ```python
 import pymc as pm
 
@@ -428,12 +456,14 @@ prob_positive = np.mean(trace.posterior['rho'].values > 0)
 **Purpose**: Model relationship between predictors and outcome
 
 **Advantages**:
+
 - Uncertainty in all parameters
 - Natural regularization (via priors)
 - Can incorporate prior knowledge
 - Credible intervals for predictions
 
 **Python implementation**:
+
 ```python
 import pymc as pm
 
@@ -468,17 +498,20 @@ with regression_model:
 ## Hierarchical (Multilevel) Models
 
 **When to use**:
+
 - Nested/clustered data (students within schools)
 - Repeated measures
 - Meta-analysis
 - Varying effects across groups
 
 **Key concept**: Partial pooling
+
 - Complete pooling: Ignore groups (biased)
 - No pooling: Analyze groups separately (high variance)
 - Partial pooling: Borrow strength across groups (Bayesian)
 
 **Example: Varying intercepts**:
+
 ```python
 with pm.Model() as hierarchical_model:
     # Hyperpriors
@@ -508,6 +541,7 @@ with pm.Model() as hierarchical_model:
 ### Methods
 
 #### 1. Bayes Factor
+
 - Directly compares model evidence
 - Sensitive to prior specification
 - Can be computationally intensive
@@ -515,16 +549,19 @@ with pm.Model() as hierarchical_model:
 #### 2. Information Criteria
 
 **WAIC (Widely Applicable Information Criterion)**:
+
 - Bayesian analog of AIC
 - Lower is better
 - Accounts for effective number of parameters
 
 **LOO (Leave-One-Out Cross-Validation)**:
+
 - Estimates out-of-sample prediction error
 - Lower is better
 - More robust than WAIC
 
 **Python calculation**:
+
 ```python
 import arviz as az
 
@@ -551,21 +588,25 @@ print(comparison)
 ### 1. Convergence Diagnostics
 
 **R-hat (Gelman-Rubin statistic)**:
+
 - Compares within-chain and between-chain variance
 - Values close to 1.0 indicate convergence
 - R-hat < 1.01: Good
 - R-hat > 1.05: Poor convergence
 
 **Effective Sample Size (ESS)**:
+
 - Number of independent samples
 - Higher is better
 - ESS > 400 per chain recommended
 
 **Trace plots**:
+
 - Should look like "fuzzy caterpillar"
 - No trends, no stuck chains
 
 **Python checking**:
+
 ```python
 # Automatic summary with diagnostics
 print(az.summary(trace, var_names=['parameter']))
@@ -582,11 +623,13 @@ az.plot_rank(trace)  # Rank plots
 **Purpose**: Does model generate data similar to observed data?
 
 **Process**:
+
 1. Generate predictions from posterior
 2. Compare to actual data
 3. Look for systematic discrepancies
 
 **Python implementation**:
+
 ```python
 with model:
     ppc = pm.sample_posterior_predictive(trace)
@@ -648,6 +691,7 @@ p_value = np.mean(pred_means >= obs_mean)  # Bayesian p-value
 ## When to Use Bayesian Methods
 
 **Use Bayesian when**:
+
 - You have prior information to incorporate
 - You want direct probability statements
 - Sample size is small
@@ -655,6 +699,7 @@ p_value = np.mean(pred_means >= obs_mean)  # Bayesian p-value
 - You want to update analysis as data arrives
 
 **Frequentist may be sufficient when**:
+
 - Standard analysis with large sample
 - No prior information
 - Computational resources limited

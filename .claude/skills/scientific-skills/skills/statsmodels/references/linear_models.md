@@ -9,12 +9,14 @@ This document provides detailed guidance on linear regression models in statsmod
 Assumes independent, identically distributed errors (Σ=I). Best for standard regression with homoscedastic errors.
 
 **When to use:**
+
 - Standard regression analysis
 - Errors are independent and have constant variance
 - No autocorrelation or heteroscedasticity
 - Most common starting point
 
 **Basic usage:**
+
 ```python
 import statsmodels.api as sm
 import numpy as np
@@ -31,6 +33,7 @@ print(results.summary())
 ```
 
 **Key results attributes:**
+
 ```python
 results.params           # Coefficients
 results.bse              # Standard errors
@@ -44,6 +47,7 @@ results.conf_int()       # Confidence intervals for parameters
 ```
 
 **Prediction with confidence/prediction intervals:**
+
 ```python
 # For in-sample predictions
 pred = results.get_prediction(X)
@@ -63,6 +67,7 @@ obs_ci_upper = pred_summary["obs_ci_upper"]
 ```
 
 **Formula API (R-style):**
+
 ```python
 import statsmodels.formula.api as smf
 
@@ -76,11 +81,13 @@ results = smf.ols(formula, data=df).fit()
 Handles heteroscedastic errors (diagonal Σ) where variance differs across observations.
 
 **When to use:**
+
 - Known heteroscedasticity (non-constant error variance)
 - Different observations have different reliability
 - Weights are known or can be estimated
 
 **Usage:**
+
 ```python
 # If you know the weights (inverse variance)
 weights = 1 / error_variance
@@ -94,6 +101,7 @@ results = model.fit()
 ```
 
 **Feasible WLS (estimating weights):**
+
 ```python
 # Step 1: Fit OLS
 ols_results = sm.OLS(y, X).fit()
@@ -112,11 +120,13 @@ wls_results = sm.WLS(y, X, weights=weights).fit()
 Handles arbitrary covariance structure (Σ). Superclass for other regression methods.
 
 **When to use:**
+
 - Known covariance structure
 - Correlated errors
 - More general than WLS
 
 **Usage:**
+
 ```python
 # Specify covariance structure
 # Sigma should be (n x n) covariance matrix
@@ -129,11 +139,13 @@ results = model.fit()
 Feasible generalized least squares with AR(p) errors for time series data.
 
 **When to use:**
+
 - Time series regression with autocorrelated errors
 - Need to account for serial correlation
 - Violations of error independence
 
 **Usage:**
+
 ```python
 # AR(1) errors
 model = sm.GLSAR(y, X, rho=1)  # rho=1 for AR(1), rho=2 for AR(2), etc.
@@ -148,11 +160,13 @@ print(f"Estimated rho: {results.model.rho}")
 Sequential parameter estimation, useful for adaptive or online learning.
 
 **When to use:**
+
 - Parameters change over time
 - Online/streaming data
 - Want to see parameter evolution
 
 **Usage:**
+
 ```python
 from statsmodels.regression.recursive_ls import RecursiveLS
 
@@ -169,11 +183,13 @@ cusum = results.cusum  # CUSUM statistic for structural breaks
 Compute estimates across moving windows for time-varying parameter detection.
 
 **When to use:**
+
 - Parameters vary over time
 - Want to detect structural changes
 - Time series with evolving relationships
 
 **Usage:**
+
 ```python
 from statsmodels.regression.rolling import RollingOLS, RollingWLS
 
@@ -197,12 +213,14 @@ plt.show()
 Analyzes conditional quantiles rather than conditional mean.
 
 **When to use:**
+
 - Interest in quantiles (median, 90th percentile, etc.)
 - Robust to outliers (median regression)
 - Distributional effects across quantiles
 - Heterogeneous effects
 
 **Usage:**
+
 ```python
 from statsmodels.regression.quantile_regression import QuantReg
 
@@ -231,11 +249,13 @@ plt.show()
 For hierarchical/nested data with random effects.
 
 **When to use:**
+
 - Clustered/grouped data (students in schools, patients in hospitals)
 - Repeated measures
 - Need random effects to account for grouping
 
 **Usage:**
+
 ```python
 from statsmodels.regression.mixed_linear_model import MixedLM
 

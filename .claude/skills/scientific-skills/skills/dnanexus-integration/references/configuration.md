@@ -34,10 +34,10 @@ The `dxapp.json` file is the configuration file for DNAnexus apps and applets. I
 
 ```json
 {
-  "name": "my-app",           // Unique identifier (lowercase, numbers, hyphens, underscores)
-  "title": "My App",          // Human-readable name
+  "name": "my-app", // Unique identifier (lowercase, numbers, hyphens, underscores)
+  "title": "My App", // Human-readable name
   "summary": "One line description",
-  "dxapi": "1.0.0"           // API version
+  "dxapi": "1.0.0" // API version
 }
 ```
 
@@ -45,14 +45,16 @@ The `dxapp.json` file is the configuration file for DNAnexus apps and applets. I
 
 ```json
 {
-  "version": "1.0.0",        // Semantic version (required for apps)
+  "version": "1.0.0", // Semantic version (required for apps)
   "description": "Extended description...",
   "developerNotes": "Implementation notes...",
-  "categories": [            // For app discovery
+  "categories": [
+    // For app discovery
     "Read Mapping",
     "Variation Calling"
   ],
-  "details": {               // Arbitrary metadata
+  "details": {
+    // Arbitrary metadata
     "contactEmail": "dev@example.com",
     "upstreamVersion": "2.1.0",
     "citations": ["doi:10.1000/example"],
@@ -159,20 +161,23 @@ Define how the app executes:
 ```json
 {
   "runSpec": {
-    "interpreter": "python3",        // or "bash"
-    "file": "src/my-app.py",         // Entry point script
+    "interpreter": "python3", // or "bash"
+    "file": "src/my-app.py", // Entry point script
     "distribution": "Ubuntu",
     "release": "24.04",
-    "version": "0",                   // Distribution version
-    "execDepends": [                  // System packages
-      {"name": "samtools"},
-      {"name": "bwa"}
+    "version": "0", // Distribution version
+    "execDepends": [
+      // System packages
+      { "name": "samtools" },
+      { "name": "bwa" }
     ],
-    "bundledDepends": [              // Bundled resources
-      {"name": "scripts.tar.gz", "id": {"$dnanexus_link": "file-xxxx"}}
+    "bundledDepends": [
+      // Bundled resources
+      { "name": "scripts.tar.gz", "id": { "$dnanexus_link": "file-xxxx" } }
     ],
-    "assetDepends": [                // Asset dependencies
-      {"name": "asset-name", "id": {"$dnanexus_link": "record-xxxx"}}
+    "assetDepends": [
+      // Asset dependencies
+      { "name": "asset-name", "id": { "$dnanexus_link": "record-xxxx" } }
     ],
     "systemRequirements": {
       "*": {
@@ -203,6 +208,7 @@ Define how the app executes:
 ```
 
 **Common instance types**:
+
 - `mem1_ssd1_v2_x2` - 2 cores, 3.9 GB RAM
 - `mem1_ssd1_v2_x4` - 4 cores, 7.8 GB RAM
 - `mem2_ssd1_v2_x4` - 4 cores, 15.6 GB RAM
@@ -239,15 +245,13 @@ Deploy apps across regions:
   "regionalOptions": {
     "aws:us-east-1": {
       "systemRequirements": {
-        "*": {"instanceType": "mem2_ssd1_v2_x4"}
+        "*": { "instanceType": "mem2_ssd1_v2_x4" }
       },
-      "assetDepends": [
-        {"id": "record-xxxx"}
-      ]
+      "assetDepends": [{ "id": "record-xxxx" }]
     },
     "azure:westus": {
       "systemRequirements": {
-        "*": {"instanceType": "azure:mem2_ssd1_x4"}
+        "*": { "instanceType": "azure:mem2_ssd1_x4" }
       }
     }
   }
@@ -264,10 +268,10 @@ Install Ubuntu packages at runtime:
 {
   "runSpec": {
     "execDepends": [
-      {"name": "samtools"},
-      {"name": "bwa"},
-      {"name": "python3-pip"},
-      {"name": "r-base", "version": "4.0.0"}
+      { "name": "samtools" },
+      { "name": "bwa" },
+      { "name": "python3-pip" },
+      { "name": "r-base", "version": "4.0.0" }
     ]
   }
 }
@@ -282,14 +286,13 @@ Packages are installed using `apt-get` from Ubuntu repositories.
 ```json
 {
   "runSpec": {
-    "execDepends": [
-      {"name": "python3-pip"}
-    ]
+    "execDepends": [{ "name": "python3-pip" }]
   }
 }
 ```
 
 Then in your app script:
+
 ```python
 import subprocess
 subprocess.check_call(["pip", "install", "numpy==1.24.0", "pandas==2.0.0"])
@@ -298,6 +301,7 @@ subprocess.check_call(["pip", "install", "numpy==1.24.0", "pandas==2.0.0"])
 #### Option 2: Requirements file
 
 Create `resources/requirements.txt`:
+
 ```
 numpy==1.24.0
 pandas==2.0.0
@@ -305,6 +309,7 @@ scikit-learn==1.3.0
 ```
 
 In your app:
+
 ```python
 subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
 ```
@@ -314,6 +319,7 @@ subprocess.check_call(["pip", "install", "-r", "requirements.txt"])
 Include custom tools or libraries in the app:
 
 **File structure**:
+
 ```
 my-app/
 ├── dxapp.json
@@ -327,6 +333,7 @@ my-app/
 ```
 
 Access resources in app:
+
 ```python
 import os
 
@@ -350,7 +357,7 @@ Assets are pre-built bundles of dependencies that can be shared across apps.
     "assetDepends": [
       {
         "name": "bwa-asset",
-        "id": {"$dnanexus_link": "record-xxxx"}
+        "id": { "$dnanexus_link": "record-xxxx" }
       }
     ]
   }
@@ -358,6 +365,7 @@ Assets are pre-built bundles of dependencies that can be shared across apps.
 ```
 
 Assets are mounted at runtime and accessible via environment variable:
+
 ```python
 import os
 asset_dir = os.environ.get("DX_ASSET_BWA")
@@ -367,6 +375,7 @@ bwa_path = os.path.join(asset_dir, "bin", "bwa")
 #### Creating Assets
 
 Create asset directory:
+
 ```bash
 mkdir bwa-asset
 cd bwa-asset
@@ -376,6 +385,7 @@ make && make install
 ```
 
 Build asset:
+
 ```bash
 dx build_asset bwa-asset --destination=project-xxxx:/assets/
 ```
@@ -396,14 +406,13 @@ dx build_asset bwa-asset --destination=project-xxxx:/assets/
         "instanceType": "mem2_ssd1_v2_x4"
       }
     },
-    "execDepends": [
-      {"name": "docker.io"}
-    ]
+    "execDepends": [{ "name": "docker.io" }]
   }
 }
 ```
 
 Use Docker in app:
+
 ```python
 import subprocess
 
@@ -430,9 +439,7 @@ For apps that run entirely in Docker:
     "file": "src/wrapper.sh",
     "distribution": "Ubuntu",
     "release": "24.04",
-    "execDepends": [
-      {"name": "docker.io"}
-    ]
+    "execDepends": [{ "name": "docker.io" }]
   }
 }
 ```
@@ -444,15 +451,16 @@ Request special permissions:
 ```json
 {
   "access": {
-    "network": ["*"],           // Internet access
-    "project": "CONTRIBUTE",    // Project write access
-    "allProjects": "VIEW",      // Read other projects
-    "developer": true           // Advanced permissions
+    "network": ["*"], // Internet access
+    "project": "CONTRIBUTE", // Project write access
+    "allProjects": "VIEW", // Read other projects
+    "developer": true // Advanced permissions
   }
 }
 ```
 
 **Network access**:
+
 - `["*"]` - Full internet
 - `["github.com", "pypi.org"]` - Specific domains
 
@@ -540,16 +548,12 @@ Request special permissions:
     "distribution": "Ubuntu",
     "release": "24.04",
 
-    "execDepends": [
-      {"name": "python3-pip"},
-      {"name": "samtools"},
-      {"name": "subread"}
-    ],
+    "execDepends": [{ "name": "python3-pip" }, { "name": "samtools" }, { "name": "subread" }],
 
     "assetDepends": [
       {
         "name": "star-aligner",
-        "id": {"$dnanexus_link": "record-star-asset"}
+        "id": { "$dnanexus_link": "record-star-asset" }
       }
     ],
 
@@ -560,7 +564,7 @@ Request special permissions:
     },
 
     "timeoutPolicy": {
-      "*": {"hours": 8}
+      "*": { "hours": 8 }
     }
   },
 
@@ -598,13 +602,13 @@ Request special permissions:
 ```json
 {
   "inputSpec": [
-    {"name": "input_file", "class": "file", "patterns": ["*.bam"]},
-    {"name": "threads", "class": "int", "default": 4, "optional": true}
+    { "name": "input_file", "class": "file", "patterns": ["*.bam"] },
+    { "name": "threads", "class": "int", "default": 4, "optional": true }
   ],
   "runSpec": {
-    "execDepends": [{"name": "tool-name"}],
+    "execDepends": [{ "name": "tool-name" }],
     "systemRequirements": {
-      "main": {"instanceType": "mem2_ssd1_v2_x8"}
+      "main": { "instanceType": "mem2_ssd1_v2_x8" }
     }
   }
 }
@@ -616,11 +620,9 @@ Request special permissions:
 {
   "runSpec": {
     "interpreter": "python3",
-    "execDepends": [
-      {"name": "python3-pip"}
-    ],
+    "execDepends": [{ "name": "python3-pip" }],
     "systemRequirements": {
-      "main": {"instanceType": "mem2_ssd1_v2_x4"}
+      "main": { "instanceType": "mem2_ssd1_v2_x4" }
     }
   }
 }
@@ -632,11 +634,9 @@ Request special permissions:
 {
   "runSpec": {
     "interpreter": "bash",
-    "execDepends": [
-      {"name": "docker.io"}
-    ],
+    "execDepends": [{ "name": "docker.io" }],
     "systemRequirements": {
-      "main": {"instanceType": "mem2_ssd1_v2_x8"}
+      "main": { "instanceType": "mem2_ssd1_v2_x8" }
     }
   },
   "access": {

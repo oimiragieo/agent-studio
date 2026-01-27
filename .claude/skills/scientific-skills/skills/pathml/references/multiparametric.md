@@ -7,24 +7,28 @@ PathML provides specialized support for multiparametric imaging technologies tha
 ## Supported Technologies
 
 ### CODEX (CO-Detection by indEXing)
+
 - Cyclic immunofluorescence imaging
 - 40+ protein markers simultaneously
 - Single-cell spatial proteomics
 - Multi-cycle acquisition with antibody barcoding
 
 ### Vectra Polaris
+
 - Multispectral multiplex immunofluorescence
 - 6-8 markers per slide
 - Spectral unmixing
 - Whole-slide scanning
 
 ### MERFISH (Multiplexed Error-Robust FISH)
+
 - Spatial transcriptomics
 - 100s-1000s of genes
 - Single-molecule resolution
 - Error-correcting barcodes
 
 ### Other Platforms
+
 - CycIF (Cyclic Immunofluorescence)
 - IMC (Imaging Mass Cytometry)
 - MIBI (Multiplexed Ion Beam Imaging)
@@ -53,6 +57,7 @@ print(f"Image shape: {codex_slide.shape}")
 ```
 
 **CODEX directory structure:**
+
 ```
 codex_directory/
 ├── cyc001_reg001/
@@ -125,6 +130,7 @@ transform = CollapseRunsCODEX(
 ```
 
 **Parameters:**
+
 - `z_slice`: Which focal plane to extract from z-stacks (typically middle slice)
 - `run_order`: Order of cycles; None for automatic detection
 - `method`: How to combine channels from multiple cycles ('max', 'mean', 'median')
@@ -151,12 +157,14 @@ transform = SegmentMIF(
 ```
 
 **Choosing cytoplasm channel:**
+
 - **CD45**: Pan-leukocyte marker (good for immune-rich tissues)
 - **panCK**: Pan-cytokeratin (good for epithelial tissues)
 - **CD298/b2m**: Universal membrane marker
 - **Combination**: Average multiple membrane markers
 
 **Compartment options:**
+
 - `'whole-cell'`: Full cell segmentation (nucleus + cytoplasm)
 - `'nuclear'`: Nuclear segmentation only
 - `'cytoplasm'`: Cytoplasmic compartment only
@@ -194,6 +202,7 @@ transform = QuantifyMIF(
 ```
 
 **Output:** AnnData object with:
+
 - `adata.X`: Marker expression matrix (cells × markers)
 - `adata.obs`: Cell metadata (cell ID, coordinates, area, etc.)
 - `adata.var`: Marker metadata
@@ -656,22 +665,26 @@ def export_to_seurat(adata, output_file):
 ## Common Issues and Solutions
 
 **Issue: Poor segmentation quality**
+
 - Verify nuclear and cytoplasm channels are correctly specified
 - Adjust image_resolution parameter to match actual resolution
 - Try different cytoplasm markers
 - Manually tune min/max cell size parameters
 
 **Issue: Low marker intensity**
+
 - Check for background subtraction artifacts
 - Verify channel names match actual channels
 - Inspect raw images for technical issues (focus, exposure)
 
 **Issue: Cell type annotations don't match expectations**
+
 - Adjust marker thresholds (too high/low)
 - Visualize marker distributions to set data-driven thresholds
 - Check for antibody specificity issues
 
 **Issue: Spatial analysis shows no significant interactions**
+
 - Increase neighborhood radius
 - Check for sufficient cell numbers per type
 - Verify spatial coordinates are correctly scaled

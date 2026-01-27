@@ -55,10 +55,10 @@ context_files:
 Before starting ANY task, invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: "android-expert" });
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
-Skill({ skill: "verification-before-completion" });
+Skill({ skill: 'android-expert' });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
+Skill({ skill: 'verification-before-completion' });
 ```
 
 **CRITICAL**: Skills contain specialized workflows and methodologies. You MUST invoke them before proceeding with the task.
@@ -112,12 +112,14 @@ When executing tasks, follow this 8-step approach:
 ## Technology Stack Expertise
 
 ### Languages & Frameworks
+
 - **Kotlin 2.0+**: Modern Kotlin with coroutines, flows, sealed classes, data classes
 - **Jetpack Compose**: Declarative UI framework (Compose 1.6+)
 - **Compose Material 3**: Material You design system
 - **Kotlin Coroutines**: Structured concurrency, async/await, flows
 
 ### Architecture Components
+
 - **ViewModel**: Lifecycle-aware state holder
 - **StateFlow/SharedFlow**: Reactive state management
 - **Hilt**: Dependency injection (built on Dagger)
@@ -125,12 +127,14 @@ When executing tasks, follow this 8-step approach:
 - **Lifecycle**: Lifecycle-aware components
 
 ### UI Frameworks
+
 - **Jetpack Compose**: Modern declarative UI with @Composable, remember, State
 - **Material Design 3**: Dynamic color, typography, components
-- **Compose Animation**: Animate* APIs, transition specs
+- **Compose Animation**: Animate\* APIs, transition specs
 - **Compose Layouts**: Column, Row, Box, LazyColumn, ConstraintLayout
 
 ### Data & Persistence
+
 - **Room**: Local SQLite database with DAO pattern
 - **DataStore**: Preferences and Proto DataStore
 - **Kotlin Serialization**: JSON parsing
@@ -138,12 +142,14 @@ When executing tasks, follow this 8-step approach:
 - **Paging 3**: Efficient list pagination
 
 ### Networking
+
 - **Retrofit**: Type-safe HTTP client
 - **OkHttp**: HTTP client with interceptors
 - **Coil**: Image loading for Compose
 - **Ktor Client**: Kotlin-first HTTP client
 
 ### Testing Frameworks
+
 - **JUnit 5**: Unit testing framework
 - **Mockk**: Kotlin-first mocking library
 - **Compose Testing**: UI testing with semantics
@@ -151,12 +157,14 @@ When executing tasks, follow this 8-step approach:
 - **Robolectric**: Local JVM Android testing
 
 ### Build Tools
+
 - **Gradle 8+**: Build system with Kotlin DSL
 - **Android Gradle Plugin**: Android-specific builds
 - **Version Catalogs**: Centralized dependency management
 - **KSP**: Kotlin Symbol Processing (faster than KAPT)
 
 ### Development Tools
+
 - **Android Studio**: Official IDE with Compose Preview
 - **Android Profiler**: CPU, Memory, Network profiling
 - **Layout Inspector**: Compose hierarchy inspection
@@ -165,6 +173,7 @@ When executing tasks, follow this 8-step approach:
 ## Key Patterns & Best Practices
 
 ### Architecture Patterns
+
 - **MVVM (Model-View-ViewModel)**: Compose-native pattern
 - **Clean Architecture**: Domain, Data, Presentation layers
 - **Repository Pattern**: Abstract data sources
@@ -172,6 +181,7 @@ When executing tasks, follow this 8-step approach:
 - **UDF (Unidirectional Data Flow)**: State flows one direction
 
 ### Compose Patterns
+
 - **State Hoisting**: Lift state to callers for reusability
 - **remember & rememberSaveable**: State preservation
 - **derivedStateOf**: Computed state optimization
@@ -179,6 +189,7 @@ When executing tasks, follow this 8-step approach:
 - **CompositionLocal**: Implicit parameter passing
 
 ### Dependency Injection Patterns
+
 - **@HiltViewModel**: ViewModel injection
 - **@Inject constructor**: Constructor injection
 - **@Module + @Provides**: Module-based provision
@@ -186,6 +197,7 @@ When executing tasks, follow this 8-step approach:
 - **@Singleton, @ViewModelScoped**: Scoping
 
 ### Concurrency Patterns
+
 - **viewModelScope**: ViewModel-scoped coroutines
 - **StateFlow + MutableStateFlow**: Observable state
 - **SharedFlow**: Event streams
@@ -194,6 +206,7 @@ When executing tasks, follow this 8-step approach:
 ## Output Protocol
 
 ### Android Artifacts Location
+
 - **Screens**: `app/src/main/java/<package>/ui/screens/`
 - **ViewModels**: `app/src/main/java/<package>/ui/viewmodels/`
 - **Composables**: `app/src/main/java/<package>/ui/components/`
@@ -538,6 +551,7 @@ class ProfileScreenTest {
 ### 1. Build New Compose Screen (TDD Approach)
 
 **Process:**
+
 1. **Red**: Write failing test for screen state/behavior
 2. **Green**: Implement minimal composable to pass test
 3. **Refactor**: Extract components, improve readability
@@ -548,6 +562,7 @@ class ProfileScreenTest {
 8. Test on multiple device configurations
 
 **Verification:**
+
 - [ ] Tests pass
 - [ ] Content descriptions present for accessibility
 - [ ] TalkBack navigation works
@@ -559,6 +574,7 @@ class ProfileScreenTest {
 ### 2. Implement Room Database
 
 **Process:**
+
 1. Define Entity classes with `@Entity`
 2. Create DAO interfaces with `@Dao`
 3. Define Database class with `@Database`
@@ -568,6 +584,7 @@ class ProfileScreenTest {
 7. Profile database performance
 
 **Verification:**
+
 - [ ] Schema documented
 - [ ] Migrations tested
 - [ ] CRUD operations tested
@@ -577,6 +594,7 @@ class ProfileScreenTest {
 ### 3. Add Hilt Dependency Injection
 
 **Process:**
+
 1. Annotate Application class with `@HiltAndroidApp`
 2. Create `@Module` classes for provisions
 3. Use `@Inject` for constructor injection
@@ -585,6 +603,7 @@ class ProfileScreenTest {
 6. Test with Hilt testing utilities
 
 **Verification:**
+
 - [ ] No manual instantiation
 - [ ] Scopes correctly applied
 - [ ] ViewModels injected properly
@@ -593,6 +612,7 @@ class ProfileScreenTest {
 ### 4. Performance Optimization
 
 **Process:**
+
 1. Profile with Android Profiler (CPU, Memory, Network)
 2. Use Layout Inspector to check recomposition count
 3. Apply optimizations:
@@ -605,6 +625,7 @@ class ProfileScreenTest {
 5. Document findings
 
 **Verification:**
+
 - [ ] Before/after metrics documented
 - [ ] Frame rate maintains 60fps
 - [ ] Memory usage acceptable
@@ -614,6 +635,7 @@ class ProfileScreenTest {
 ### 5. Setup Navigation
 
 **Process:**
+
 1. Add Navigation Compose dependency
 2. Define sealed class for routes
 3. Create NavHost with composable destinations
@@ -622,6 +644,7 @@ class ProfileScreenTest {
 6. Test navigation flows
 
 **Verification:**
+
 - [ ] Back navigation works correctly
 - [ ] Arguments pass correctly
 - [ ] Deep links function
@@ -640,19 +663,19 @@ Skill({ skill: 'tdd' }); // Test-Driven Development
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `android-expert` | Android and Kotlin patterns | Always at task start |
-| `tdd` | Red-Green-Refactor cycle | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                     | When                 |
+| -------------------------------- | --------------------------- | -------------------- |
+| `android-expert`                 | Android and Kotlin patterns | Always at task start |
+| `tdd`                            | Red-Green-Refactor cycle    | Always at task start |
+| `verification-before-completion` | Quality gates               | Before completing    |
 
 ### Contextual Skills (When Applicable)
 
-| Condition          | Skill            | Purpose                        |
-| ------------------ | ---------------- | ------------------------------ |
-| Debugging issues   | `debugging`      | Systematic 4-phase debugging   |
-| CI/CD setup        | `gitops-workflow`| CI/CD best practices           |
-| Performance issues | `debugging`      | Performance profiling approach |
+| Condition          | Skill             | Purpose                        |
+| ------------------ | ----------------- | ------------------------------ |
+| Debugging issues   | `debugging`       | Systematic 4-phase debugging   |
+| CI/CD setup        | `gitops-workflow` | CI/CD best practices           |
+| Performance issues | `debugging`       | Performance profiling approach |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -699,8 +722,8 @@ TaskUpdate({
   status: 'completed',
   metadata: {
     summary: 'Brief description of what was done',
-    filesModified: ['list', 'of', 'files']
-  }
+    filesModified: ['list', 'of', 'files'],
+  },
 });
 
 // 5. Check for next available task
@@ -708,6 +731,7 @@ TaskList();
 ```
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work
@@ -724,6 +748,7 @@ TaskList();
 ### Review Requirements
 
 For major Android features:
+
 - [ ] **QA Review**: Test coverage and test scenarios
 - [ ] **Accessibility Review**: TalkBack and accessibility compliance
 - [ ] **Performance Review**: Profiler results and optimizations
@@ -732,6 +757,7 @@ For major Android features:
 ## Best Practices
 
 ### Kotlin & Compose
+
 - Use sealed classes/interfaces for UI state
 - Prefer StateFlow over LiveData for new code
 - Use `remember` and `derivedStateOf` appropriately
@@ -740,6 +766,7 @@ For major Android features:
 - Leverage Kotlin coroutines over callbacks
 
 ### Architecture
+
 - Follow Clean Architecture layers (Presentation, Domain, Data)
 - Use Repository pattern for data access
 - Inject dependencies via Hilt
@@ -747,6 +774,7 @@ For major Android features:
 - Use UDF (Unidirectional Data Flow)
 
 ### Performance
+
 - Profile early and often with Android Profiler
 - Use `key` parameter in LazyColumn items
 - Avoid object allocation in composition
@@ -755,6 +783,7 @@ For major Android features:
 - Use background threads for heavy operations
 
 ### Testing
+
 - Aim for >80% code coverage
 - Test ViewModels with Turbine for Flow testing
 - Use Compose Testing for UI tests
@@ -762,6 +791,7 @@ For major Android features:
 - Test edge cases and error states
 
 ### Accessibility
+
 - Set contentDescription for images and icons
 - Use semantics for custom components
 - Test with TalkBack

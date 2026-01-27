@@ -32,14 +32,13 @@ Example: "Acute decompensated heart failure"
 [Numbered list, prioritized by clinical significance]
 
 **Primary Diagnosis:**
+
 1. [Primary diagnosis with ICD-10 code]
 
-**Secondary Diagnoses:**
-2. [Secondary diagnosis with ICD-10 code]
-3. [Additional diagnosis with ICD-10 code]
-4. [Comorbidity with ICD-10 code]
+**Secondary Diagnoses:** 2. [Secondary diagnosis with ICD-10 code] 3. [Additional diagnosis with ICD-10 code] 4. [Comorbidity with ICD-10 code]
 
 Example:
+
 ```
 1. Acute decompensated heart failure (I50.23)
 2. Acute kidney injury on chronic kidney disease stage 3 (N17.9, N18.3)
@@ -73,6 +72,7 @@ Example:
 ### Problem-Based Format (Alternative):
 
 **1. [Primary Problem]**
+
 - Presentation and initial management
 - Diagnostic workup
 - Treatment course
@@ -80,6 +80,7 @@ Example:
 - Status at discharge
 
 **2. [Secondary Problem]**
+
 - [Similar structure]
 
 **3. [Additional Problems]**
@@ -87,15 +88,19 @@ Example:
 ### Key Events and Interventions
 
 **Consultations Obtained:**
+
 - [Specialty] consulted on [date] for [reason]: [Recommendations]
 
 **Procedures Performed:**
+
 - [Procedure name] on [date]: [Indication, findings, complications if any]
 
 **Significant Diagnostic Studies:**
+
 - [Test/imaging] on [date]: [Key findings relevant to discharge care]
 
 **Complications:**
+
 - [Any complications that occurred]: [How managed]
 
 ---
@@ -116,13 +121,14 @@ Example:
 [One paragraph summary suitable for quick reference]
 
 Example:
+
 ```
-Mr. [Name] was admitted with acute decompensated heart failure in the setting of 
-medication non-adherence. He was diuresed with IV furosemide with net negative 
-5 liters over 3 days, with significant improvement in dyspnea and resolution of 
-lower extremity edema. Echocardiogram showed EF 30%, similar to prior. Kidney 
-function improved to baseline with diuresis. He was transitioned to oral diuretics 
-on hospital day 3 and remained stable. Patient was ambulating without dyspnea on 
+Mr. [Name] was admitted with acute decompensated heart failure in the setting of
+medication non-adherence. He was diuresed with IV furosemide with net negative
+5 liters over 3 days, with significant improvement in dyspnea and resolution of
+lower extremity edema. Echocardiogram showed EF 30%, similar to prior. Kidney
+function improved to baseline with diuresis. He was transitioned to oral diuretics
+on hospital day 3 and remained stable. Patient was ambulating without dyspnea on
 room air by discharge. Comprehensive heart failure education was provided.
 ```
 
@@ -131,6 +137,7 @@ room air by discharge. Comprehensive heart failure education was provided.
 ## Discharge Physical Examination
 
 **Vital Signs:**
+
 - Temperature: \_\_\_\_\_ °F
 - Blood Pressure: \_\_\_\_\_/\_\_\_\_\_ mmHg
 - Heart Rate: \_\_\_\_\_ bpm
@@ -158,15 +165,15 @@ room air by discharge. Comprehensive heart failure education was provided.
 
 ### Discharge Labs ([Date])
 
-| Test | Result | Reference Range |
-|------|--------|----------------|
-| WBC | [Value] | [Range] |
-| Hemoglobin | [Value] | [Range] |
-| Platelets | [Value] | [Range] |
-| Sodium | [Value] | [Range] |
-| Potassium | [Value] | [Range] |
-| Creatinine | [Value] | [Range] |
-| [Other relevant labs] | [Value] | [Range] |
+| Test                  | Result  | Reference Range |
+| --------------------- | ------- | --------------- |
+| WBC                   | [Value] | [Range]         |
+| Hemoglobin            | [Value] | [Range]         |
+| Platelets             | [Value] | [Range]         |
+| Sodium                | [Value] | [Range]         |
+| Potassium             | [Value] | [Range]         |
+| Creatinine            | [Value] | [Range]         |
+| [Other relevant labs] | [Value] | [Range]         |
 
 ### Imaging/Diagnostic Studies
 
@@ -220,6 +227,7 @@ room air by discharge. Comprehensive heart failure education was provided.
 **Overall Status:** [Stable / Improved / Baseline / Requires continued care]
 
 **Specific Assessments:**
+
 - Hemodynamic status: [Stable]
 - Respiratory status: [Room air / Oxygen requirement]
 - Mental status: [Alert and oriented x3 / Other]
@@ -228,9 +236,10 @@ room air by discharge. Comprehensive heart failure education was provided.
 - Wound healing (if applicable): [Appropriate / Delayed]
 
 Example:
+
 ```
-Patient is hemodynamically stable, ambulatory without assistance, no supplemental 
-oxygen requirement, euvolemic on physical exam, pain well-controlled, and has 
+Patient is hemodynamically stable, ambulatory without assistance, no supplemental
+oxygen requirement, euvolemic on physical exam, pain well-controlled, and has
 returned to baseline functional status.
 ```
 
@@ -241,6 +250,7 @@ returned to baseline functional status.
 [Where patient is going after hospital discharge]
 
 Options:
+
 - Home with self-care
 - Home with home health services
 - Skilled nursing facility
@@ -253,6 +263,7 @@ Options:
 **Discharge Disposition:** [Selection from above]
 
 **Services Arranged:**
+
 - [ ] Home health nursing
 - [ ] Physical therapy
 - [ ] Occupational therapy
@@ -327,6 +338,7 @@ Options:
 - [When to seek immediate care vs. call doctor]
 
 Example for heart failure:
+
 ```
 - Worsening shortness of breath or difficulty breathing
 - Chest pain or pressure
@@ -338,6 +350,7 @@ Example for heart failure:
 ```
 
 **Emergency Contact Numbers:**
+
 - Primary care physician: [Phone]
 - Specialty clinic: [Phone]
 - After-hours nurse line: [Phone]
@@ -348,6 +361,7 @@ Example for heart failure:
 ## Patient Education Provided
 
 Topics discussed with patient and/or family:
+
 - [ ] Disease process and prognosis
 - [ ] Medication purpose, dosing, and side effects
 - [ ] Warning signs and when to seek care
@@ -360,6 +374,7 @@ Topics discussed with patient and/or family:
 [Patient and family verbalize understanding of discharge instructions / Teach-back method used and patient able to repeat key points / Interpreter used]
 
 **Written Materials Provided:**
+
 - [ ] Discharge instructions
 - [ ] Medication list
 - [ ] Disease-specific education materials
@@ -387,6 +402,7 @@ Topics discussed with patient and/or family:
 ### Social Situation
 
 [Relevant social factors affecting discharge plan]
+
 - Living situation: [Lives alone / with family / assisted living]
 - Caregiver support: [Available / Limited / None]
 - Transportation: [Adequate / Needs assistance]
@@ -433,11 +449,13 @@ Topics discussed with patient and/or family:
 ## Notes
 
 **Timing Requirements:**
+
 - CMS requires completion within 30 days
 - Many hospitals require 24-48 hours
 - Should be available for follow-up appointments
 
 **Distribution:**
+
 - Send to primary care physician
 - Send to referring physician
 - Send to consulting specialists involved in care
@@ -445,9 +463,8 @@ Topics discussed with patient and/or family:
 - Upload to shared HIE (Health Information Exchange)
 
 **Quality Measures:**
+
 - Medication reconciliation required
 - Clear communication of changes
 - Specific follow-up plans
 - Patient education documented
-
-

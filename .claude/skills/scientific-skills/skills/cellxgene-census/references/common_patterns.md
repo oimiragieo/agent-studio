@@ -7,6 +7,7 @@
 Use when exploring available data without loading expression matrices.
 
 **Pattern: Get unique cell types in a tissue**
+
 ```python
 import cellxgene_census
 
@@ -22,6 +23,7 @@ with cellxgene_census.open_soma() as census:
 ```
 
 **Pattern: Count cells by condition**
+
 ```python
 cell_metadata = cellxgene_census.get_obs(
     census,
@@ -33,6 +35,7 @@ counts = cell_metadata.groupby(["disease", "tissue_general"]).size()
 ```
 
 **Pattern: Explore dataset information**
+
 ```python
 # Access datasets table
 datasets = census["census_info"]["datasets"].read().concat().to_pandas()
@@ -46,6 +49,7 @@ covid_datasets = datasets[datasets["disease"].str.contains("COVID", na=False)]
 Use `get_anndata()` when results fit in memory (typically < 100k cells).
 
 **Pattern: Tissue-specific cell type query**
+
 ```python
 adata = cellxgene_census.get_anndata(
     census=census,
@@ -56,6 +60,7 @@ adata = cellxgene_census.get_anndata(
 ```
 
 **Pattern: Gene-specific query with multiple genes**
+
 ```python
 marker_genes = ["CD4", "CD8A", "CD19", "FOXP3"]
 
@@ -77,6 +82,7 @@ adata = cellxgene_census.get_anndata(
 ```
 
 **Pattern: Multi-tissue query**
+
 ```python
 adata = cellxgene_census.get_anndata(
     census=census,
@@ -87,6 +93,7 @@ adata = cellxgene_census.get_anndata(
 ```
 
 **Pattern: Disease-specific query**
+
 ```python
 adata = cellxgene_census.get_anndata(
     census=census,
@@ -100,6 +107,7 @@ adata = cellxgene_census.get_anndata(
 Use `axis_query()` for queries that exceed available RAM.
 
 **Pattern: Iterative processing**
+
 ```python
 import pyarrow as pa
 
@@ -123,6 +131,7 @@ for batch in iterator:
 ```
 
 **Pattern: Incremental statistics (mean/variance)**
+
 ```python
 # Using Welford's online algorithm
 n = 0
@@ -147,6 +156,7 @@ variance = M2 / (n - 1) if n > 1 else 0
 Use `experiment_dataloader()` for training models.
 
 **Pattern: Create training dataloader**
+
 ```python
 from cellxgene_census.experimental.ml import experiment_dataloader
 import torch
@@ -172,6 +182,7 @@ with cellxgene_census.open_soma() as census:
 ```
 
 **Pattern: Train/test split**
+
 ```python
 from cellxgene_census.experimental.ml import ExperimentDataset
 
@@ -197,6 +208,7 @@ test_loader = experiment_dataloader(test_dataset)
 ### 5. Integration Workflows
 
 **Pattern: Scanpy integration**
+
 ```python
 import scanpy as sc
 
@@ -218,6 +230,7 @@ sc.pl.umap(adata, color=["cell_type", "tissue_general"])
 ```
 
 **Pattern: Multi-dataset integration**
+
 ```python
 # Query multiple datasets separately
 datasets_to_integrate = ["dataset_id_1", "dataset_id_2", "dataset_id_3"]
@@ -239,32 +252,42 @@ sce.pp.scanorama_integrate(adatas)
 ## Best Practices
 
 ### 1. Always Filter for Primary Data
+
 Unless specifically analyzing duplicates, always include `is_primary_data == True`:
+
 ```python
 obs_value_filter="cell_type == 'B cell' and is_primary_data == True"
 ```
 
 ### 2. Specify Census Version
+
 For reproducible analysis, always specify the Census version:
+
 ```python
 census = cellxgene_census.open_soma(census_version="2023-07-25")
 ```
 
 ### 3. Use Context Manager
+
 Always use the context manager to ensure proper cleanup:
+
 ```python
 with cellxgene_census.open_soma() as census:
     # Your code here
 ```
 
 ### 4. Select Only Needed Columns
+
 Minimize data transfer by selecting only required metadata columns:
+
 ```python
 obs_column_names=["cell_type", "tissue_general", "disease"]  # Not all columns
 ```
 
 ### 5. Check Dataset Presence for Gene Queries
+
 When analyzing specific genes, check which datasets measured them:
+
 ```python
 presence = cellxgene_census.get_presence_matrix(
     census,
@@ -274,7 +297,9 @@ presence = cellxgene_census.get_presence_matrix(
 ```
 
 ### 6. Use tissue_general for Broader Queries
+
 `tissue_general` provides coarser groupings than `tissue`, useful for cross-tissue analyses:
+
 ```python
 # Better for broad queries
 obs_value_filter="tissue_general == 'immune system'"
@@ -284,7 +309,9 @@ obs_value_filter="tissue == 'peripheral blood mononuclear cell'"
 ```
 
 ### 7. Combine Metadata Exploration with Expression Queries
+
 First explore metadata to understand available data, then query expression:
+
 ```python
 # Step 1: Explore
 metadata = cellxgene_census.get_obs(
@@ -303,7 +330,9 @@ adata = cellxgene_census.get_anndata(
 ```
 
 ### 8. Memory Management for Large Queries
+
 For large queries, check estimated size before loading:
+
 ```python
 # Get cell count first
 metadata = cellxgene_census.get_obs(
@@ -318,14 +347,18 @@ print(f"Query will return {n_cells} cells")
 ```
 
 ### 9. Leverage Ontology Terms for Consistency
+
 When possible, use ontology term IDs instead of free text:
+
 ```python
 # More reliable than cell_type == 'B cell' across datasets
 obs_value_filter="cell_type_ontology_term_id == 'CL:0000236'"
 ```
 
 ### 10. Batch Processing Pattern
+
 For systematic analyses across multiple conditions:
+
 ```python
 tissues = ["lung", "liver", "kidney", "heart"]
 results = {}

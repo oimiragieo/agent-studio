@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Use HTTPS for all communications with external services.
 - Implement proper authentication and authorization mechanisms if required.
 - Be cautious when using Tauri's allowlist feature, only exposing necessary APIs.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -4,13 +4,13 @@ This directory contains the memory management system for maintaining context acr
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| `memory-manager.cjs` | Core memory management - read/write/update memory files |
-| `memory-scheduler.cjs` | Schedules memory operations (compression, archival) |
-| `memory-tiers.cjs` | Implements tiered memory (hot/warm/cold) storage |
-| `smart-pruner.cjs` | Intelligently prunes old memory entries |
-| `memory-dashboard.cjs` | Dashboard utilities for memory inspection |
+| File                   | Purpose                                                 |
+| ---------------------- | ------------------------------------------------------- |
+| `memory-manager.cjs`   | Core memory management - read/write/update memory files |
+| `memory-scheduler.cjs` | Schedules memory operations (compression, archival)     |
+| `memory-tiers.cjs`     | Implements tiered memory (hot/warm/cold) storage        |
+| `smart-pruner.cjs`     | Intelligently prunes old memory entries                 |
+| `memory-dashboard.cjs` | Dashboard utilities for memory inspection               |
 
 ## Memory Architecture
 
@@ -34,7 +34,7 @@ const learnings = await memory.read('learnings');
 await memory.append('learnings', {
   date: new Date().toISOString(),
   pattern: 'Use async/await over callbacks',
-  context: 'Improved code readability in workflow engine'
+  context: 'Improved code readability in workflow engine',
 });
 ```
 

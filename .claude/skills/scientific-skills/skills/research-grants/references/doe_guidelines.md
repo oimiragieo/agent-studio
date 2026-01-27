@@ -9,6 +9,7 @@
 **Website**: https://www.energy.gov
 
 **Key Characteristics**:
+
 - Focus on energy, climate, environmental, computational, and physical sciences
 - Operates 17 national laboratories (largest science infrastructure in US)
 - Strong emphasis on industry partnerships and commercialization
@@ -59,6 +60,7 @@
    - Fundamental symmetries
 
 **Funding Mechanisms**:
+
 - **Early Career Research Program**: $750K over 5 years for early career scientists
 - **Funding Opportunity Announcements (FOAs)**: Program-specific solicitations
 - **Laboratory Directed Research and Development (LDRD)**: For national lab staff
@@ -68,6 +70,7 @@
 **Mission**: Advance high-potential, high-impact energy technologies that are too early for private-sector investment
 
 **Characteristics**:
+
 - High-risk, high-reward transformative energy technologies
 - Requires cost sharing (typically 20% for universities, more for industry)
 - Emphasis on pathway to commercialization
@@ -75,11 +78,13 @@
 - Budget: ~$500M annually
 
 **Program Types**:
+
 - **Focused Programs**: Specific technology areas (announced via FOAs)
 - **OPEN**: General solicitation across all energy technologies
 - **SCALEUP**: Bridging from lab to market
 
 **Typical Funding**:
+
 - $1-10M per project
 - 1-3 years duration
 - Technology transition focus
@@ -89,6 +94,7 @@
 **Mission**: Accelerate development and deployment of clean energy technologies
 
 **Program Areas**:
+
 - **Solar Energy Technologies Office (SETO)**
 - **Wind Energy Technologies Office (WETO)**
 - **Water Power Technologies Office (WPTO)**
@@ -100,6 +106,7 @@
 - **Hydrogen and Fuel Cell Technologies Office (HFTO)**
 
 **Funding Mechanisms**:
+
 - FOAs for specific technology areas
 - Small Business Innovation Research (SBIR)
 - Technology Commercialization Fund (TCF)
@@ -164,11 +171,13 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Budget and Budget Justification
 
 **Federal Cost Share**:
+
 - Specify DOE funding requested by year
 - Break down by category (labor, equipment, travel, etc.)
 - Detailed justification for each item
 
 **Cost Share** (often required):
+
 - Specify source (cash vs. in-kind)
 - Document commitment (letters from sponsors)
 - Typical requirements:
@@ -177,6 +186,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
   - National labs: Varies
 
 **Budget Categories**:
+
 - Labor (personnel with hours/rates)
 - Fringe benefits
 - Travel
@@ -189,6 +199,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Biographical Sketches
 
 **Format**: Often DOE-specific or NSF-style
+
 - Professional preparation
 - Appointments
 - Relevant publications (5-10 most relevant)
@@ -198,6 +209,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Work Breakdown Structure (WBS)
 
 **Often Required**: Detailed breakdown of tasks, milestones, and deliverables
+
 - Task structure aligned with budget
 - Quarterly or annual milestones
 - Deliverables for each task
@@ -206,6 +218,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Letters of Commitment
 
 **Required for**:
+
 - Cost share partners
 - Collaborating institutions
 - National laboratory partnerships
@@ -213,6 +226,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 - Access to facilities or resources
 
 **Must Include**:
+
 - Specific commitment (funding, personnel, equipment)
 - Signed by authorized representative
 - On institutional letterhead
@@ -220,6 +234,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Facilities and Equipment
 
 **Describe**:
+
 - Available facilities relevant to project
 - Major equipment accessible
 - Computational resources
@@ -228,6 +243,7 @@ DOE proposal requirements vary significantly by program office and FOA. **Always
 #### Data Management Plan (DMP)
 
 **Increasingly Required**:
+
 - Types of data to be generated
 - Standards and formats
 - Access and sharing policies
@@ -273,6 +289,7 @@ Proposals typically evaluated on:
 **ARPA-E uses concept paper → full application process**
 
 **Concept Paper Review** (typically 3-5 pages):
+
 - Technical innovation and impact
 - Potential for transformative advance
 - Relevance to energy applications
@@ -309,6 +326,7 @@ Proposals typically evaluated on:
 **Critical Component**: Path to commercialization
 
 **Assessed**:
+
 - Market opportunity and size
 - Competitive landscape
 - Barriers to adoption
@@ -317,6 +335,7 @@ Proposals typically evaluated on:
 - Economic viability
 
 **Common Mistakes**:
+
 - Underestimating time to market
 - Ignoring competing technologies
 - Unrealistic cost projections
@@ -327,17 +346,20 @@ Proposals typically evaluated on:
 ### National Laboratory Collaboration
 
 **Benefits**:
+
 - Access to unique facilities and expertise
 - Leveraging world-class capabilities
 - Credibility and track record
 
 **Mechanisms**:
+
 - **Subcontract**: Lab is subcontractor to university/company
 - **Cooperative Research and Development Agreement (CRADA)**: Partnership with industry
 - **User Facility Proposal**: Access to major DOE user facilities
 - **Strategic Partnership Project (SPP)**: Formal collaboration
 
 **Process**:
+
 - Identify appropriate lab partner early
 - Contact lab scientist to discuss collaboration
 - Develop work scope and budget together
@@ -345,6 +367,7 @@ Proposals typically evaluated on:
 - Include letter of commitment
 
 **Major National Labs**:
+
 - Argonne (ANL), Brookhaven (BNL), Lawrence Berkeley (LBNL)
 - Oak Ridge (ORNL), Pacific Northwest (PNNL), SLAC
 - Sandia (SNL), Los Alamos (LANL), Lawrence Livermore (LLNL)
@@ -355,6 +378,7 @@ Proposals typically evaluated on:
 **DOE operates 28 major user facilities** open to researchers
 
 **Types**:
+
 - **Light Sources**: X-ray and neutron scattering (APS, NSLS-II, ALS, etc.)
 - **Nanoscale Science Centers**: Fabrication and characterization
 - **High-Performance Computing**: Supercomputing centers (OLCF, NERSC, ALCF)
@@ -362,6 +386,7 @@ Proposals typically evaluated on:
 - **Accelerators and Detectors**: Particle and nuclear physics facilities
 
 **Access**:
+
 - Submit user proposal (separate from research proposal)
 - Peer-reviewed allocation of beam time or computing hours
 - No cost for non-proprietary research
@@ -370,17 +395,20 @@ Proposals typically evaluated on:
 ### Cost Sharing Requirements
 
 **Varies by Program**:
+
 - **Office of Science**: Generally not required (except specific FOAs)
 - **ARPA-E**: Required (typically 20% universities, 50%+ industry)
 - **EERE**: Often required (varies by program)
 - **FECM**: Often required
 
 **Types**:
+
 - **Cash**: Direct contribution of funds
 - **In-kind**: Personnel time, equipment use, materials
 - **Third-party**: Contribution from collaborator or sponsor
 
 **Requirements**:
+
 - Must be documented and verifiable
 - Cannot be used for other federal awards
 - Must be from non-federal sources (generally)
@@ -391,16 +419,19 @@ Proposals typically evaluated on:
 **DOE uses TRL scale 1-9** for technology development programs
 
 **TRL Definitions**:
+
 - **TRL 1-3**: Basic research (idea → proof of concept)
 - **TRL 4-6**: Development (component → system prototype)
 - **TRL 7-9**: Demonstration and deployment (prototype → commercial)
 
 **Funding by TRL**:
+
 - **Office of Science**: TRL 1-3 (basic research)
 - **ARPA-E**: TRL 2-5 (proof of concept → prototype)
 - **EERE**: TRL 4-8 (development → demonstration)
 
 **Specify in Proposal**:
+
 - Current TRL of technology
 - Target TRL at project end
 - Path from current to target
@@ -408,12 +439,14 @@ Proposals typically evaluated on:
 ### Intellectual Property and Data Rights
 
 **Standard Terms**:
+
 - Awardee generally retains IP rights
 - Government retains license for government purposes
 - Must report inventions to DOE
 - May have data sharing requirements
 
 **Industry Partners**:
+
 - Negotiate IP and data rights in advance
 - Protected CRADA information (5 years)
 - Background IP vs. foreground IP
@@ -421,6 +454,7 @@ Proposals typically evaluated on:
 ### Teaming and Partnerships
 
 **Encouraged for**:
+
 - University-national lab partnerships
 - University-industry partnerships
 - Multi-institutional teams
@@ -433,6 +467,7 @@ Proposals typically evaluated on:
 ### Finding Opportunities
 
 **Sources**:
+
 - **EERE Exchange**: https://eere-exchange.energy.gov
 - **ARPA-E OPEN**: https://arpa-e.energy.gov
 - **Office of Science FOAs**: https://science.osti.gov/grants/Funding-Opportunities
@@ -442,12 +477,14 @@ Proposals typically evaluated on:
 ### Application Systems
 
 **Varies by Office**:
+
 - **EERE Exchange**: EERE programs
 - **PAMS (Portfolio Analysis and Management System)**: Office of Science
 - **ARPA-E OPEN**: ARPA-E submissions
 - **Grants.gov**: Some programs
 
 **Registration Required** (can take 2-4 weeks):
+
 - SAM.gov (System for Award Management)
 - Grants.gov
 - DOE program-specific systems
@@ -455,6 +492,7 @@ Proposals typically evaluated on:
 ### Proposal Development Timeline
 
 **Recommended Timeline**:
+
 - **3-6 months before deadline**: Identify FOA, assemble team, contact lab partners
 - **2-3 months**: Develop technical approach, secure commitments
 - **1-2 months**: Draft proposal, prepare budget
@@ -465,12 +503,14 @@ Proposals typically evaluated on:
 ### Required Registrations
 
 **Before First Submission**:
+
 1. **SAM.gov**: System for Award Management (2-3 weeks)
 2. **Grants.gov**: Account and authorization (1 week)
 3. **FedConnect**: Optional, for notifications
 4. **PAMS/EERE Exchange**: Program-specific (immediate)
 
 **Institutional Requirements**:
+
 - Authorized Organizational Representative (AOR)
 - Institutional approvals
 - Cost accounting systems
@@ -480,11 +520,13 @@ Proposals typically evaluated on:
 ### Timeline
 
 **Varies by Program**:
+
 - **Office of Science**: 3-6 months
 - **ARPA-E**: 4-6 months (after full application invitation)
 - **EERE**: 3-6 months
 
 **Steps**:
+
 1. Administrative compliance check
 2. Peer review (external reviewers)
 3. Program manager evaluation
@@ -495,6 +537,7 @@ Proposals typically evaluated on:
 ### Reviewer Feedback
 
 **Provided**:
+
 - Reviewer comments (often anonymized)
 - Strengths and weaknesses
 - Scores by criterion
@@ -504,6 +547,7 @@ Proposals typically evaluated on:
 ### Success Rates
 
 **Varies Widely**:
+
 - **Office of Science Early Career**: ~10-15%
 - **ARPA-E OPEN**: ~2-5% (concept papers → awards)
 - **EERE FOAs**: 10-30% (depends on program)
@@ -583,4 +627,3 @@ Proposals typically evaluated on:
 ---
 
 **Key Takeaway**: DOE proposals require strong alignment with energy and national security missions, clear pathway to impact (especially for applied programs), and often benefit from partnerships with national laboratories or industry. Cost sharing, technology readiness levels, and commercialization strategies are critical considerations for competitive proposals.
-

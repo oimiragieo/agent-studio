@@ -19,45 +19,45 @@ The `scientific_report.sty` package provides professional formatting for scienti
 
 ### Primary Colors (Blues)
 
-| Color Name | RGB | Hex | Usage |
-|------------|-----|-----|-------|
-| `primaryblue` | (0, 51, 102) | `#003366` | Headers, titles, primary elements |
-| `secondaryblue` | (74, 144, 226) | `#4A90E2` | Subsections, secondary headings |
-| `lightblue` | (220, 235, 252) | `#DCEBFC` | Key findings box backgrounds |
-| `accentblue` | (0, 120, 215) | `#0078D7` | Accent highlights, hypothesis boxes |
+| Color Name      | RGB             | Hex       | Usage                               |
+| --------------- | --------------- | --------- | ----------------------------------- |
+| `primaryblue`   | (0, 51, 102)    | `#003366` | Headers, titles, primary elements   |
+| `secondaryblue` | (74, 144, 226)  | `#4A90E2` | Subsections, secondary headings     |
+| `lightblue`     | (220, 235, 252) | `#DCEBFC` | Key findings box backgrounds        |
+| `accentblue`    | (0, 120, 215)   | `#0078D7` | Accent highlights, hypothesis boxes |
 
 ### Scientific Colors (Greens)
 
-| Color Name | RGB | Hex | Usage |
-|------------|-----|-----|-------|
-| `sciencegreen` | (0, 168, 150) | `#00A896` | Methodology boxes, positive findings |
-| `lightgreen` | (220, 245, 240) | `#DCF5F0` | Methodology box backgrounds |
-| `darkgreen` | (0, 128, 96) | `#008060` | Results boxes, strong evidence |
+| Color Name     | RGB             | Hex       | Usage                                |
+| -------------- | --------------- | --------- | ------------------------------------ |
+| `sciencegreen` | (0, 168, 150)   | `#00A896` | Methodology boxes, positive findings |
+| `lightgreen`   | (220, 245, 240) | `#DCF5F0` | Methodology box backgrounds          |
+| `darkgreen`    | (0, 128, 96)    | `#008060` | Results boxes, strong evidence       |
 
 ### Warning Colors (Orange/Red)
 
-| Color Name | RGB | Hex | Usage |
-|------------|-----|-----|-------|
-| `cautionorange` | (255, 140, 66) | `#FF8C42` | Limitations, warnings, cautions |
-| `lightorange` | (255, 243, 224) | `#FFF3E0` | Limitations box backgrounds |
-| `criticalred` | (198, 40, 40) | `#C62828` | Critical notices, alerts |
-| `lightred` | (255, 235, 238) | `#FFEBEE` | Critical notice backgrounds |
+| Color Name      | RGB             | Hex       | Usage                           |
+| --------------- | --------------- | --------- | ------------------------------- |
+| `cautionorange` | (255, 140, 66)  | `#FF8C42` | Limitations, warnings, cautions |
+| `lightorange`   | (255, 243, 224) | `#FFF3E0` | Limitations box backgrounds     |
+| `criticalred`   | (198, 40, 40)   | `#C62828` | Critical notices, alerts        |
+| `lightred`      | (255, 235, 238) | `#FFEBEE` | Critical notice backgrounds     |
 
 ### Recommendation Colors
 
-| Color Name | RGB | Hex | Usage |
-|------------|-----|-----|-------|
-| `recommendpurple` | (103, 58, 183) | `#673AB7` | Recommendations boxes |
-| `lightpurple` | (237, 231, 246) | `#EDE7F6` | Recommendations box backgrounds |
+| Color Name        | RGB             | Hex       | Usage                           |
+| ----------------- | --------------- | --------- | ------------------------------- |
+| `recommendpurple` | (103, 58, 183)  | `#673AB7` | Recommendations boxes           |
+| `lightpurple`     | (237, 231, 246) | `#EDE7F6` | Recommendations box backgrounds |
 
 ### Neutral Colors
 
-| Color Name | RGB | Hex | Usage |
-|------------|-----|-----|-------|
-| `darkgray` | (66, 66, 66) | `#424242` | Body text |
-| `mediumgray` | (117, 117, 117) | `#757575` | Secondary text, definitions |
-| `lightgray` | (245, 245, 245) | `#F5F5F5` | Backgrounds, definition boxes |
-| `tablealt` | (248, 250, 252) | `#F8FAFC` | Alternating table rows |
+| Color Name   | RGB             | Hex       | Usage                         |
+| ------------ | --------------- | --------- | ----------------------------- |
+| `darkgray`   | (66, 66, 66)    | `#424242` | Body text                     |
+| `mediumgray` | (117, 117, 117) | `#757575` | Secondary text, definitions   |
+| `lightgray`  | (245, 245, 245) | `#F5F5F5` | Backgrounds, definition boxes |
+| `tablealt`   | (248, 250, 252) | `#F8FAFC` | Alternating table rows        |
 
 ---
 
@@ -519,21 +519,27 @@ Future studies should address the following:
 ## Troubleshooting
 
 ### Box Overflow
+
 If box content overflows the page:
+
 ```latex
 \newpage
 \begin{keyfindings}[Continued...]
 ```
 
 ### Figure Placement
+
 Use `[htbp]` for flexible placement, or `[H]` (requires `float` package) for exact:
+
 ```latex
 \usepackage{float}
 \begin{figure}[H]
 ```
 
 ### Table Too Wide
+
 Use `\resizebox` or reduce font size:
+
 ```latex
 \resizebox{\textwidth}{!}{
 \begin{tabular}{...}
@@ -543,7 +549,9 @@ Use `\resizebox` or reduce font size:
 ```
 
 ### Font Issues
+
 If Helvetica isn't rendering, ensure you're using XeLaTeX or LuaLaTeX:
+
 ```bash
 xelatex report.tex   # NOT pdflatex
 ```
@@ -552,23 +560,22 @@ xelatex report.tex   # NOT pdflatex
 
 ## Quick Reference Card
 
-| Purpose | Command/Environment |
-|---------|---------------------|
-| Major finding | `\begin{keyfindings}...\end{keyfindings}` |
-| Methods | `\begin{methodology}...\end{methodology}` |
-| Results | `\begin{resultsbox}...\end{resultsbox}` |
-| Recommendation | `\begin{recommendations}...\end{recommendations}` |
-| Limitation | `\begin{limitations}...\end{limitations}` |
-| Warning | `\begin{criticalnotice}...\end{criticalnotice}` |
-| Definition | `\begin{definition}...\end{definition}` |
+| Purpose           | Command/Environment                                 |
+| ----------------- | --------------------------------------------------- |
+| Major finding     | `\begin{keyfindings}...\end{keyfindings}`           |
+| Methods           | `\begin{methodology}...\end{methodology}`           |
+| Results           | `\begin{resultsbox}...\end{resultsbox}`             |
+| Recommendation    | `\begin{recommendations}...\end{recommendations}`   |
+| Limitation        | `\begin{limitations}...\end{limitations}`           |
+| Warning           | `\begin{criticalnotice}...\end{criticalnotice}`     |
+| Definition        | `\begin{definition}...\end{definition}`             |
 | Executive summary | `\begin{executivesummary}...\end{executivesummary}` |
-| Hypothesis | `\begin{hypothesis}...\end{hypothesis}` |
-| P-value | `\pvalue{0.05}` or `\psig{< 0.001}` |
-| Effect size | `\effectsize{d}{0.75}` |
-| Sample size | `\samplesize{250}` |
-| Mean ± SD | `\meansd{42.5}{8.3}` |
-| CI | `\CI{0.38}{0.72}` |
-| Highlight | `\highlight{text}` |
-| Alt row | `\rowcolor{tablealt}` |
-| Significance | `\sigone`, `\sigtwo`, `\sigthree`, `\signs` |
-
+| Hypothesis        | `\begin{hypothesis}...\end{hypothesis}`             |
+| P-value           | `\pvalue{0.05}` or `\psig{< 0.001}`                 |
+| Effect size       | `\effectsize{d}{0.75}`                              |
+| Sample size       | `\samplesize{250}`                                  |
+| Mean ± SD         | `\meansd{42.5}{8.3}`                                |
+| CI                | `\CI{0.38}{0.72}`                                   |
+| Highlight         | `\highlight{text}`                                  |
+| Alt row           | `\rowcolor{tablealt}`                               |
+| Significance      | `\sigone`, `\sigtwo`, `\sigthree`, `\signs`         |

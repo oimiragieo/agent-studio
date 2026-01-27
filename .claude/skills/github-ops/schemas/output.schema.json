@@ -3,9 +3,7 @@
   "title": "github-ops Output Schema",
   "description": "Output validation schema for github-ops skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

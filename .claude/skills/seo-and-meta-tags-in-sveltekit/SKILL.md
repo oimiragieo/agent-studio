@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Use Svelte:head component for adding meta information.
 - Implement canonical URLs for proper SEO.
 - Create reusable SEO components for consistent meta tag management.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

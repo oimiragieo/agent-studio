@@ -53,6 +53,7 @@ with BlitzGateway(username, password, host=host, port=4064) as conn:
 ```
 
 **Benefits:**
+
 - Automatic `connect()` call
 - Automatic `close()` call on exit
 - Exception-safe resource cleanup
@@ -343,6 +344,7 @@ Unable to contact ORB
 ```
 
 **Solutions:**
+
 - Verify host and port are correct
 - Check firewall settings
 - Ensure OMERO server is running
@@ -355,6 +357,7 @@ Cannot connect to server
 ```
 
 **Solutions:**
+
 - Verify username and password
 - Check user account is active
 - Verify group membership
@@ -363,6 +366,7 @@ Cannot connect to server
 ### Session Timeout
 
 **Solutions:**
+
 - Increase session timeout on server
 - Implement session keepalive
 - Reconnect on timeout

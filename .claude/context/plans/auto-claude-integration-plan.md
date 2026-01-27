@@ -13,6 +13,7 @@
 ## Executive Summary
 
 This plan integrates 4 tiers of artifacts from the Auto-Claude autonomous coding framework:
+
 1. **Security Validators** - Python validators converted to CJS hooks for command safety
 2. **System Prompts** - High-value prompts converted to workflow skills
 3. **Analysis Framework** - Enhancement of existing project-analyzer skill
@@ -40,14 +41,14 @@ This plan integrates 4 tiers of artifacts from the Auto-Claude autonomous coding
 
 ### Source Files
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `shell_validators.py` | Bash -c command validation | 154 |
-| `database_validators.py` | SQL injection prevention | ~200 |
-| `filesystem_validators.py` | Path traversal prevention | ~150 |
-| `git_validators.py` | Git command safety | ~100 |
-| `process_validators.py` | Process execution safety | ~100 |
-| `validator_registry.py` | Pluggable validator system | 78 |
+| File                       | Purpose                    | Lines |
+| -------------------------- | -------------------------- | ----- |
+| `shell_validators.py`      | Bash -c command validation | 154   |
+| `database_validators.py`   | SQL injection prevention   | ~200  |
+| `filesystem_validators.py` | Path traversal prevention  | ~150  |
+| `git_validators.py`        | Git command safety         | ~100  |
+| `process_validators.py`    | Process execution safety   | ~100  |
+| `validator_registry.py`    | Pluggable validator system | 78    |
 
 ### Target Location
 
@@ -121,8 +122,8 @@ This plan integrates 4 tiers of artifacts from the Auto-Claude autonomous coding
   - **Pattern**:
     ```javascript
     const VALIDATORS = {
-      'bash': require('./shell-validators').validateBashCommand,
-      'rm': require('./filesystem-validators').validateRmCommand,
+      bash: require('./shell-validators').validateBashCommand,
+      rm: require('./filesystem-validators').validateRmCommand,
       // ... etc
     };
     ```
@@ -138,6 +139,7 @@ This plan integrates 4 tiers of artifacts from the Auto-Claude autonomous coding
 #### Phase 1 Error Handling
 
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 1 failed: [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
@@ -161,26 +163,26 @@ node -e "const r = require('./.claude/hooks/safety/validators/registry.cjs'); co
 
 ### Source Files (High Value)
 
-| File | Purpose | Target Skill |
-|------|---------|--------------|
-| `spec_gatherer.md` | Requirements gathering | `spec-gathering` (new) |
-| `spec_writer.md` | Spec document creation | `spec-writing` (new) |
-| `spec_critic.md` | Self-critique with extended thinking | `spec-critique` (new) |
-| `qa_reviewer.md` | QA validation | Enhance existing `qa` agent |
-| `qa_fixer.md` | Issue fixing loop | Enhance existing `qa` agent |
-| `coder_recovery.md` | Recovery from stuck states | Enhance `recovery` skill |
-| `complexity_assessor.md` | AI complexity assessment | `complexity-assessment` (new) |
-| `insight_extractor.md` | Extract actionable insights | `insight-extraction` (new) |
+| File                     | Purpose                              | Target Skill                  |
+| ------------------------ | ------------------------------------ | ----------------------------- |
+| `spec_gatherer.md`       | Requirements gathering               | `spec-gathering` (new)        |
+| `spec_writer.md`         | Spec document creation               | `spec-writing` (new)          |
+| `spec_critic.md`         | Self-critique with extended thinking | `spec-critique` (new)         |
+| `qa_reviewer.md`         | QA validation                        | Enhance existing `qa` agent   |
+| `qa_fixer.md`            | Issue fixing loop                    | Enhance existing `qa` agent   |
+| `coder_recovery.md`      | Recovery from stuck states           | Enhance `recovery` skill      |
+| `complexity_assessor.md` | AI complexity assessment             | `complexity-assessment` (new) |
+| `insight_extractor.md`   | Extract actionable insights          | `insight-extraction` (new)    |
 
 ### Naming Conflict Check
 
-| Proposed Name | Existing? | Resolution |
-|---------------|-----------|------------|
-| `spec-gathering` | No | Create new |
-| `spec-writing` | No | Create new |
-| `spec-critique` | No | Create new |
-| `complexity-assessment` | No | Create new |
-| `insight-extraction` | No | Create new |
+| Proposed Name           | Existing? | Resolution |
+| ----------------------- | --------- | ---------- |
+| `spec-gathering`        | No        | Create new |
+| `spec-writing`          | No        | Create new |
+| `spec-critique`         | No        | Create new |
+| `complexity-assessment` | No        | Create new |
+| `insight-extraction`    | No        | Create new |
 
 ### Conversion Steps
 
@@ -250,6 +252,7 @@ node -e "const r = require('./.claude/hooks/safety/validators/registry.cjs'); co
 #### Phase 2 Error Handling
 
 If any task fails:
+
 1. Complete skills created successfully remain valid
 2. Document error in `.claude/context/memory/issues.md`
 3. Continue with remaining skills
@@ -278,14 +281,14 @@ done
 
 ### Source Files
 
-| File | Purpose |
-|------|---------|
+| File                         | Purpose                     |
+| ---------------------------- | --------------------------- |
 | `project_analyzer_module.py` | Project structure detection |
-| `service_analyzer.py` | Service/package analysis |
-| `framework_analyzer.py` | Tech stack detection |
-| `database_detector.py` | Database config detection |
-| `route_detector.py` | API endpoint discovery |
-| `port_detector.py` | Service port detection |
+| `service_analyzer.py`        | Service/package analysis    |
+| `framework_analyzer.py`      | Tech stack detection        |
+| `database_detector.py`       | Database config detection   |
+| `route_detector.py`          | API endpoint discovery      |
+| `port_detector.py`           | Service port detection      |
 
 ### Target: Enhance Existing project-analyzer Skill
 
@@ -356,13 +359,14 @@ ls .claude/skills/project-analyzer/references/*.md | wc -l
 
 ### Source Files
 
-| File | Purpose |
-|------|---------|
+| File          | Purpose                            |
+| ------------- | ---------------------------------- |
 | `recovery.py` | Smart rollback and recovery system |
 
 ### Target: Enhance Existing recovery Skill
 
 Key patterns to integrate:
+
 1. **FailureType classification** (BROKEN_BUILD, VERIFICATION_FAILED, CIRCULAR_FIX, CONTEXT_EXHAUSTED, UNKNOWN)
 2. **RecoveryAction patterns** (rollback, retry, skip, escalate)
 3. **Circular fix detection** (same approach tried multiple times)
@@ -471,12 +475,12 @@ done
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Hook breaks Bash execution | High | Test thoroughly before enabling | `git checkout .claude/hooks/safety/` |
-| Skill naming conflict | Medium | Check existing 273 skills first | Rename skill |
-| Python to CJS translation error | Medium | Test each validator individually | Fix specific validator |
-| Router not updated | High | Verify CLAUDE.md changes | Edit CLAUDE.md manually |
+| Risk                            | Impact | Mitigation                       | Rollback                             |
+| ------------------------------- | ------ | -------------------------------- | ------------------------------------ |
+| Hook breaks Bash execution      | High   | Test thoroughly before enabling  | `git checkout .claude/hooks/safety/` |
+| Skill naming conflict           | Medium | Check existing 273 skills first  | Rename skill                         |
+| Python to CJS translation error | Medium | Test each validator individually | Fix specific validator               |
+| Router not updated              | High   | Verify CLAUDE.md changes         | Edit CLAUDE.md manually              |
 
 ---
 
@@ -485,6 +489,7 @@ done
 ### Unit Tests
 
 For each validator hook:
+
 ```bash
 # Test command validation
 echo "Testing shell validator..."
@@ -512,15 +517,15 @@ npm test
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? |
-|-------|-------|-----------|-----------|
-| 1 | 8 | 90 min | No |
-| 2 | 7 | 120 min | Yes |
-| 3 | 5 | 60 min | Yes |
-| 4 | 3 | 45 min | No |
-| 5 | 2 | 15 min | No |
-| 6 | 2 | 15 min | No |
-| **Total** | **27** | **~345 min (~6 hours)** | |
+| Phase     | Tasks  | Est. Time               | Parallel? |
+| --------- | ------ | ----------------------- | --------- |
+| 1         | 8      | 90 min                  | No        |
+| 2         | 7      | 120 min                 | Yes       |
+| 3         | 5      | 60 min                  | Yes       |
+| 4         | 3      | 45 min                  | No        |
+| 5         | 2      | 15 min                  | No        |
+| 6         | 2      | 15 min                  | No        |
+| **Total** | **27** | **~345 min (~6 hours)** |           |
 
 ---
 
@@ -539,14 +544,14 @@ npm test
 
 ## What NOT to Integrate (and why)
 
-| Artifact | Reason |
-|----------|--------|
-| `orchestrator.py` | Framework already has master-orchestrator agent |
-| `context.py` | Framework uses different context management |
-| `merge/` directory | Complex Python AST manipulation, not portable |
-| `tools_pkg/permissions.py` | Framework uses different permission model |
-| GitHub prompts (`pr_*.md`) | Framework has dedicated code-reviewer agent |
-| MCP validation prompts | Too specific to Auto-Claude MCP setup |
+| Artifact                   | Reason                                          |
+| -------------------------- | ----------------------------------------------- |
+| `orchestrator.py`          | Framework already has master-orchestrator agent |
+| `context.py`               | Framework uses different context management     |
+| `merge/` directory         | Complex Python AST manipulation, not portable   |
+| `tools_pkg/permissions.py` | Framework uses different permission model       |
+| GitHub prompts (`pr_*.md`) | Framework has dedicated code-reviewer agent     |
+| MCP validation prompts     | Too specific to Auto-Claude MCP setup           |
 
 ---
 

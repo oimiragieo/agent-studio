@@ -3,6 +3,7 @@
 ## Purpose
 
 The Observation API retrieves statistical observations—data points linking entities, variables, and specific dates. Examples include:
+
 - "USA population in 2020"
 - "California GDP over time"
 - "Unemployment rate for all counties in a state"
@@ -14,6 +15,7 @@ The Observation API retrieves statistical observations—data points linking ent
 Primary method for retrieving observations with flexible entity specification.
 
 **Key Parameters:**
+
 - `variable_dcids` (required): List of statistical variable identifiers
 - `entity_dcids` or `entity_expression` (required): Specify entities by ID or relation expression
 - `date` (optional): Defaults to "latest". Accepts:
@@ -28,12 +30,14 @@ Primary method for retrieving observations with flexible entity specification.
 
 **Response Structure:**
 Data organized hierarchically by variable → entity, with metadata about "facets" (data sources) including:
+
 - Provenance URLs
 - Measurement methods
 - Observation periods
 - Import names
 
 **Example Usage:**
+
 ```python
 from datacommons_client import DataCommonsClient
 
@@ -69,6 +73,7 @@ Discovers which statistical variables contain data for given entities.
 **Output:** Dictionary of available variables organized by entity
 
 **Example Usage:**
+
 ```python
 # Check what variables are available for California
 available = client.observation.fetch_available_statistical_variables(
@@ -85,6 +90,7 @@ Explicit method targeting specific entities by DCID (functionally equivalent to 
 Retrieves observations for multiple entities grouped by parent and type—useful for querying all countries in a region or all counties within a state.
 
 **Parameters:**
+
 - `parent_entity`: Parent entity DCID
 - `entity_type`: Type of child entities
 - `variable_dcids`: Statistical variables to query
@@ -92,6 +98,7 @@ Retrieves observations for multiple entities grouped by parent and type—useful
 - `select` and filter options
 
 **Example Usage:**
+
 ```python
 # Get population for all counties in California
 response = client.observation.fetch_observations_by_entity_type(
@@ -105,6 +112,7 @@ response = client.observation.fetch_observations_by_entity_type(
 ## Response Object Methods
 
 All response objects support:
+
 - `to_json()`: Format as JSON string
 - `to_dict()`: Return as dictionary
 - `get_data_by_entity()`: Reorganize by entity instead of variable
@@ -115,6 +123,7 @@ All response objects support:
 ### Use Case 1: Check Data Availability Before Querying
 
 Use `select=["entity", "variable"]` to confirm entities have observations without retrieving actual data:
+
 ```python
 response = client.observation.fetch(
     variable_dcids=["Count_Person"],
@@ -126,6 +135,7 @@ response = client.observation.fetch(
 ### Use Case 2: Access Complete Time Series
 
 Request `date="all"` to obtain complete historical observations for trend analysis:
+
 ```python
 response = client.observation.fetch(
     variable_dcids=["Count_Person", "UnemploymentRate_Person"],
@@ -137,6 +147,7 @@ response = client.observation.fetch(
 ### Use Case 3: Filter by Data Source
 
 Specify `filter_facet_domains` to retrieve data from specific sources for consistency:
+
 ```python
 response = client.observation.fetch(
     variable_dcids=["Count_Person"],
@@ -148,6 +159,7 @@ response = client.observation.fetch(
 ### Use Case 4: Query Hierarchical Relationships
 
 Use relation expressions to fetch observations for related entities:
+
 ```python
 # Get data for all counties within California
 response = client.observation.fetch(
@@ -160,11 +172,13 @@ response = client.observation.fetch(
 ## Working with Pandas
 
 The API integrates seamlessly with Pandas. Install with Pandas support:
+
 ```bash
 pip install "datacommons-client[Pandas]"
 ```
 
 Response objects can be converted to DataFrames for analysis:
+
 ```python
 response = client.observation.fetch(
     variable_dcids=["Count_Person"],

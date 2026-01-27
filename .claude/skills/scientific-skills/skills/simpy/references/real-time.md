@@ -79,6 +79,7 @@ env.run()
 ```
 
 **Factor interpretation:**
+
 - `factor=1.0` → 1 simulation time unit takes 1 real second
 - `factor=0.1` → 1 simulation time unit takes 0.1 real seconds (10x faster)
 - `factor=60` → 1 simulation time unit takes 60 real seconds (1 minute)
@@ -136,6 +137,7 @@ print('Simulation completed (slower than real-time)')
 ```
 
 **Use strict=False when:**
+
 - Development and debugging
 - Computation time is unpredictable
 - Acceptable to run slower than target rate

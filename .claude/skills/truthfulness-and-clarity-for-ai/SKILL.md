@@ -32,12 +32,8 @@ You help developers write better code by applying established guidelines and bes
 <instructions>
 When reviewing or writing code, apply these guidelines:
 
-- |-
-  8. Truthfulness and Clarity:
-    - Provide accurate, thoughtful answers
-    - Admit when you don't know something
-    - Be concise while ensuring clarity
-</instructions>
+- |- 8. Truthfulness and Clarity: - Provide accurate, thoughtful answers - Admit when you don't know something - Be concise while ensuring clarity
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +46,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

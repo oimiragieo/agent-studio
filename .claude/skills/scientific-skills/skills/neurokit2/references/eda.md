@@ -15,12 +15,14 @@ signals, info = nk.eda_process(eda_signal, sampling_rate=100, method='neurokit')
 ```
 
 **Pipeline steps:**
+
 1. Signal cleaning (low-pass filtering)
 2. Tonic-phasic decomposition
 3. Skin conductance response (SCR) detection
 4. SCR feature extraction (onset, peak, amplitude, rise/recovery times)
 
 **Returns:**
+
 - `signals`: DataFrame with:
   - `EDA_Clean`: Filtered signal
   - `EDA_Tonic`: Slow-varying baseline
@@ -30,6 +32,7 @@ signals, info = nk.eda_process(eda_signal, sampling_rate=100, method='neurokit')
 - `info`: Dictionary with processing parameters
 
 **Methods:**
+
 - `'neurokit'`: cvxEDA decomposition + neurokit peak detection
 - `'biosppy'`: Median smoothing + biosppy approach
 
@@ -44,13 +47,16 @@ cleaned_eda = nk.eda_clean(eda_signal, sampling_rate=100, method='neurokit')
 ```
 
 **Methods:**
+
 - `'neurokit'`: Low-pass Butterworth filter (3 Hz cutoff)
 - `'biosppy'`: Low-pass Butterworth filter (5 Hz cutoff)
 
 **Automatic skipping:**
+
 - If sampling rate < 7 Hz, cleaning is skipped (already low-pass)
 
 **Rationale:**
+
 - EDA frequency content typically 0-3 Hz
 - Remove high-frequency noise and motion artifacts
 - Preserve slow SCRs (typical rise time 1-3 seconds)
@@ -66,42 +72,52 @@ tonic, phasic = nk.eda_phasic(eda_cleaned, sampling_rate=100, method='cvxeda')
 **Methods:**
 
 **1. cvxEDA (default, recommended):**
+
 ```python
 tonic, phasic = nk.eda_phasic(eda_cleaned, sampling_rate=100, method='cvxeda')
 ```
+
 - Convex optimization approach (Greco et al., 2016)
 - Sparse phasic driver model
 - Most physiologically accurate
 - Computationally intensive but superior decomposition
 
 **2. Median smoothing:**
+
 ```python
 tonic, phasic = nk.eda_phasic(eda_cleaned, sampling_rate=100, method='smoothmedian')
 ```
+
 - Median filter with configurable window
 - Fast, simple
 - Less accurate than cvxEDA
 
 **3. High-pass filtering (Biopac's Acqknowledge):**
+
 ```python
 tonic, phasic = nk.eda_phasic(eda_cleaned, sampling_rate=100, method='highpass')
 ```
+
 - High-pass filter (0.05 Hz) extracts phasic
 - Fast computation
 - Tonic derived by subtraction
 
 **4. SparsEDA:**
+
 ```python
 tonic, phasic = nk.eda_phasic(eda_cleaned, sampling_rate=100, method='sparseda')
 ```
+
 - Sparse deconvolution approach
 - Alternative optimization method
 
 **Returns:**
+
 - `tonic`: Slow-varying skin conductance level (SCL)
 - `phasic`: Fast skin conductance responses (SCRs)
 
 **Physiological interpretation:**
+
 - **Tonic (SCL)**: Baseline arousal, general activation, hydration
 - **Phasic (SCR)**: Event-related responses, orienting, emotional reactions
 
@@ -115,6 +131,7 @@ peaks, info = nk.eda_peaks(eda_phasic, sampling_rate=100, method='neurokit',
 ```
 
 **Methods:**
+
 - `'neurokit'`: Optimized for reliability, configurable thresholds
 - `'gamboa2008'`: Gamboa's algorithm
 - `'kim2004'`: Kim's approach
@@ -122,6 +139,7 @@ peaks, info = nk.eda_peaks(eda_phasic, sampling_rate=100, method='neurokit',
 - `'nabian2018'`: Nabian's algorithm
 
 **Key parameters:**
+
 - `amplitude_min`: Minimum SCR amplitude (default: 0.1 µS)
   - Too low: false positives from noise
   - Too high: miss small but valid responses
@@ -129,6 +147,7 @@ peaks, info = nk.eda_peaks(eda_phasic, sampling_rate=100, method='neurokit',
 - `rise_time_min`: Minimum rise time (default: 0.01 seconds)
 
 **Returns:**
+
 - Dictionary with:
   - `SCR_Onsets`: Indices where SCR begins
   - `SCR_Peaks`: Indices of peak amplitude
@@ -138,6 +157,7 @@ peaks, info = nk.eda_peaks(eda_phasic, sampling_rate=100, method='neurokit',
   - `SCR_RecoveryTime`: Peak-to-recovery duration (50% decay)
 
 **SCR timing conventions:**
+
 - **Latency**: 1-3 seconds after stimulus (typical)
 - **Rise time**: 0.5-3 seconds
 - **Recovery time**: 2-10 seconds (to 50% recovery)
@@ -164,10 +184,12 @@ analysis = nk.eda_analyze(signals, sampling_rate=100)
 ```
 
 **Mode selection:**
+
 - Duration < 10 seconds → `eda_eventrelated()`
 - Duration ≥ 10 seconds → `eda_intervalrelated()`
 
 **Returns:**
+
 - DataFrame with EDA metrics appropriate for analysis mode
 
 ### eda_eventrelated()
@@ -179,6 +201,7 @@ results = nk.eda_eventrelated(epochs)
 ```
 
 **Computed metrics (per epoch):**
+
 - `EDA_SCR`: Presence of SCR (binary: 0 or 1)
 - `SCR_Amplitude`: Maximum SCR amplitude during epoch
 - `SCR_Magnitude`: Mean phasic activity
@@ -189,11 +212,13 @@ results = nk.eda_eventrelated(epochs)
 - `EDA_Tonic`: Mean tonic level during epoch
 
 **Typical parameters:**
+
 - Epoch duration: 0-10 seconds post-stimulus
 - Baseline: -1 to 0 seconds pre-stimulus
 - Expected SCR latency: 1-3 seconds
 
 **Use cases:**
+
 - Emotional stimulus processing (images, sounds)
 - Cognitive load assessment (mental arithmetic)
 - Anticipation and prediction error
@@ -208,6 +233,7 @@ results = nk.eda_intervalrelated(signals, sampling_rate=100)
 ```
 
 **Computed metrics:**
+
 - `SCR_Peaks_N`: Number of SCRs detected
 - `SCR_Peaks_Amplitude_Mean`: Average SCR amplitude
 - `EDA_Tonic_Mean`, `EDA_Tonic_SD`: Tonic level statistics
@@ -217,11 +243,13 @@ results = nk.eda_intervalrelated(signals, sampling_rate=100)
 - `EDA_Phasic_*`: Mean, SD, min, max of phasic component
 
 **Recording duration:**
+
 - **Minimum**: 10 seconds
 - **Recommended**: 60+ seconds for stable SCR rate
 - **Sympathetic index**: ≥64 seconds required
 
 **Use cases:**
+
 - Resting state arousal assessment
 - Stress level monitoring
 - Baseline sympathetic activity
@@ -239,6 +267,7 @@ sympathetic = nk.eda_sympathetic(signals, sampling_rate=100, method='posada',
 ```
 
 **Methods:**
+
 - `'posada'`: Posada-Quintero method (2016)
   - Spectral power in 0.045-0.25 Hz band
   - Validated against other autonomic measures
@@ -246,19 +275,23 @@ sympathetic = nk.eda_sympathetic(signals, sampling_rate=100, method='posada',
   - Alternative frequency-based approach
 
 **Requirements:**
+
 - **Minimum duration**: 64 seconds
 - Sufficient for frequency resolution in target band
 
 **Returns:**
+
 - `EDA_Sympathetic`: Sympathetic index (absolute)
 - `EDA_SympatheticN`: Normalized sympathetic index (0-1)
 
 **Interpretation:**
+
 - Higher values: increased sympathetic arousal
 - Reflects tonic sympathetic activity, not phasic responses
 - Complements SCR analysis
 
 **Use cases:**
+
 - Stress assessment
 - Arousal monitoring over time
 - Cognitive load measurement
@@ -273,14 +306,17 @@ autocorr = nk.eda_autocor(eda_phasic, sampling_rate=100, lag=4)
 ```
 
 **Parameters:**
+
 - `lag`: Time lag in seconds (default: 4 seconds)
 
 **Interpretation:**
+
 - High autocorrelation: persistent, slowly-varying signal
 - Low autocorrelation: rapid, uncorrelated fluctuations
 - Reflects temporal regularity of SCRs
 
 **Use case:**
+
 - Assess signal quality
 - Characterize response patterns
 - Distinguish sustained vs. transient arousal
@@ -294,19 +330,23 @@ changepoints = nk.eda_changepoints(eda_phasic, penalty=10000, show=False)
 ```
 
 **Method:**
+
 - Penalty-based segmentation
 - Identifies transitions between states
 
 **Parameters:**
+
 - `penalty`: Controls sensitivity (default: 10,000)
   - Higher penalty: fewer, more robust changepoints
   - Lower penalty: more sensitive to small changes
 
 **Returns:**
+
 - Indices of detected changepoints
 - Optional visualization of segments
 
 **Use cases:**
+
 - Identify state transitions in continuous monitoring
 - Segment data by arousal level
 - Detect phase changes in experiments
@@ -323,12 +363,14 @@ nk.eda_plot(signals, info, static=True)
 ```
 
 **Displays:**
+
 - Raw and cleaned EDA signal
 - Tonic and phasic components
 - Detected SCR onsets, peaks, and recovery
 - Sympathetic index time course (if computed)
 
 **Interactive mode (`static=False`):**
+
 - Plotly-based interactive exploration
 - Zoom, pan, hover for details
 - Export to image formats
@@ -345,6 +387,7 @@ synthetic_eda = nk.eda_simulate(duration=10, sampling_rate=100, scr_number=3,
 ```
 
 **Parameters:**
+
 - `duration`: Signal length in seconds
 - `sampling_rate`: Sampling frequency (Hz)
 - `scr_number`: Number of SCRs to include
@@ -353,9 +396,11 @@ synthetic_eda = nk.eda_simulate(duration=10, sampling_rate=100, scr_number=3,
 - `random_state`: Seed for reproducibility
 
 **Returns:**
+
 - Synthetic EDA signal with realistic SCR morphology
 
 **Use cases:**
+
 - Algorithm testing and validation
 - Educational demonstrations
 - Method comparison
@@ -363,17 +408,20 @@ synthetic_eda = nk.eda_simulate(duration=10, sampling_rate=100, scr_number=3,
 ## Practical Considerations
 
 ### Sampling Rate Recommendations
+
 - **Minimum**: 10 Hz (adequate for slow SCRs)
 - **Standard**: 20-100 Hz (most commercial systems)
 - **High-resolution**: 1000 Hz (research-grade, oversampled)
 
 ### Recording Duration
+
 - **SCR detection**: ≥10 seconds (depends on stimulus)
 - **Event-related**: Typically 10-20 seconds per trial
 - **Interval-related**: ≥60 seconds for stable estimates
 - **Sympathetic index**: ≥64 seconds (frequency resolution)
 
 ### Electrode Placement
+
 - **Standard sites**:
   - Palmar: distal/middle phalanges (fingers)
   - Plantar: sole of foot
@@ -384,21 +432,25 @@ synthetic_eda = nk.eda_simulate(duration=10, sampling_rate=100, scr_number=3,
 ### Signal Quality Issues
 
 **Flat signal (no variation):**
+
 - Check electrode contact and gel
 - Verify proper placement on sweat gland-rich areas
 - Allow 5-10 minute adaptation period
 
 **Excessive noise:**
+
 - Movement artifacts: minimize participant motion
 - Electrical interference: check grounding, shielding
 - Thermal effects: control room temperature
 
 **Baseline drift:**
+
 - Normal: slow changes over minutes
 - Excessive: electrode polarization, poor contact
 - Solution: use `eda_phasic()` to separate tonic drift
 
 **Non-responders:**
+
 - ~5-10% of population have minimal EDA
 - Genetic/physiological variation
 - Not indicative of equipment failure
@@ -406,6 +458,7 @@ synthetic_eda = nk.eda_simulate(duration=10, sampling_rate=100, scr_number=3,
 ### Best Practices
 
 **Preprocessing workflow:**
+
 ```python
 # 1. Clean signal
 cleaned = nk.eda_clean(eda_raw, sampling_rate=100, method='neurokit')
@@ -421,6 +474,7 @@ analysis = nk.eda_analyze(signals, sampling_rate=100)
 ```
 
 **Event-related workflow:**
+
 ```python
 # 1. Process signal
 signals, info = nk.eda_process(eda_raw, sampling_rate=100)
@@ -442,30 +496,35 @@ results = nk.eda_eventrelated(epochs)
 ## Clinical and Research Applications
 
 **Emotion and affective science:**
+
 - Arousal dimension of emotion (not valence)
 - Emotional picture viewing
 - Music-induced emotion
 - Fear conditioning
 
 **Cognitive processes:**
+
 - Mental workload and effort
 - Attention and vigilance
 - Decision-making and uncertainty
 - Error processing
 
 **Clinical populations:**
+
 - Anxiety disorders: heightened baseline, exaggerated responses
 - PTSD: fear conditioning, extinction deficits
 - Autism: atypical arousal patterns
 - Psychopathy: reduced fear responses
 
 **Applied settings:**
+
 - Lie detection (polygraph)
 - User experience research
 - Driver monitoring
 - Stress assessment in real-world settings
 
 **Neuroimaging integration:**
+
 - fMRI: EDA correlates with amygdala, insula activity
 - Concurrent recording during brain imaging
 - Autonomic-brain coupling
@@ -473,17 +532,20 @@ results = nk.eda_eventrelated(epochs)
 ## Interpretation Guidelines
 
 **SCR amplitude:**
+
 - **0.01-0.05 µS**: Small but detectable
 - **0.05-0.2 µS**: Moderate response
 - **>0.2 µS**: Large response
 - **Context-dependent**: Normalize within-subject
 
 **SCR frequency:**
+
 - **Resting**: 1-3 SCRs per minute (typical)
 - **Stressed**: >5 SCRs per minute
 - **Non-specific SCRs**: Spontaneous (no identifiable stimulus)
 
 **Tonic SCL:**
+
 - **Range**: 2-20 µS (highly variable across individuals)
 - **Within-subject changes** more interpretable than absolute levels
 - **Increases**: arousal, stress, cognitive load

@@ -3,9 +3,7 @@
   "title": "slack-notifications Output Schema",
   "description": "Output validation schema for slack-notifications skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

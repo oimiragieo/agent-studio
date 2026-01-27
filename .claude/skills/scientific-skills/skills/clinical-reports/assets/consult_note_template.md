@@ -33,6 +33,7 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 [Chronological narrative relevant to consultation question]
 
 **Timeline of Current Issue:**
+
 - [Key events leading to consultation]
 - [Current status]
 - [Treatments tried]
@@ -52,16 +53,16 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 
 [List medications relevant to consultation question]
 
-| Medication | Dose | Route | Frequency | Relevant to: |
-|------------|------|-------|-----------|--------------|
-| [Drug] | [mg] | [route] | [freq] | [Why relevant] |
+| Medication | Dose | Route   | Frequency | Relevant to:   |
+| ---------- | ---- | ------- | --------- | -------------- |
+| [Drug]     | [mg] | [route] | [freq]    | [Why relevant] |
 
 ---
 
 ## Allergies
 
-| Allergen | Reaction |
-|----------|----------|
+| Allergen         | Reaction   |
+| ---------------- | ---------- |
 | [Drug/substance] | [Reaction] |
 
 ---
@@ -84,12 +85,13 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 ## Physical Examination
 
 **Vital Signs:**
-- Temperature: _____ °F
-- Blood Pressure: _____/_____ mmHg
-- Heart Rate: _____ bpm
-- Respiratory Rate: _____ breaths/min
-- Oxygen Saturation: _____% on [O2 status]
-- Weight: _____ kg (if relevant)
+
+- Temperature: **\_** °F
+- Blood Pressure: **\_**/**\_** mmHg
+- Heart Rate: **\_** bpm
+- Respiratory Rate: **\_** breaths/min
+- Oxygen Saturation: **\_**% on [O2 status]
+- Weight: **\_** kg (if relevant)
 
 **General:**  
 [Overall appearance, distress level]
@@ -97,6 +99,7 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 **[Focused Examination Relevant to Consultation]:**
 
 **Example for Cardiology Consult:**
+
 - **Cardiovascular:**
   - JVP: [cm H2O]
   - PMI: [location]
@@ -105,6 +108,7 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
   - Edema: [location and severity]
 
 **Example for Pulmonary Consult:**
+
 - **Pulmonary:**
   - Respiratory effort: [description]
   - Auscultation: [breath sounds, wheezes, crackles]
@@ -120,9 +124,9 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 
 [Include only labs relevant to consultation]
 
-| Test | Result | Reference Range | Trend |
-|------|--------|----------------|-------|
-| [Relevant lab] | [Value] | [Range] | [↑/↓/→] |
+| Test           | Result  | Reference Range | Trend   |
+| -------------- | ------- | --------------- | ------- |
+| [Relevant lab] | [Value] | [Range]         | [↑/↓/→] |
 
 **Imaging/Diagnostics:**
 
@@ -141,6 +145,7 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 [Detailed assessment of the consultation question]
 
 **Differential Diagnosis:**
+
 1. [Most likely diagnosis] - [supporting evidence]
 2. [Alternative diagnosis] - [evidence for/against]
 3. [Additional considerations]
@@ -158,10 +163,12 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 **[Problem Being Addressed]:**
 
 **Diagnostic Recommendations:**
+
 1. [Specific test] - [Rationale]
 2. [Additional studies] - [Why needed]
 
 **Therapeutic Recommendations:**
+
 1. **[Intervention/Medication]:**
    - [Specific dose, route, frequency]
    - [Duration]
@@ -176,23 +183,27 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
    - [Timing]
 
 **Monitoring Recommendations:**
+
 - [What to monitor]
 - [How often]
 - [Target parameters]
 
 **Follow-up Recommendations:**
+
 - [ ] Will follow along as consultant during hospitalization
 - [ ] Recommend follow-up in [Specialty] clinic in [timeframe]
 - [ ] Recommend re-consultation if [specific circumstances]
 - [ ] No further consultation needed unless [conditions]
 
 **Additional Recommendations:**
+
 - [Lifestyle modifications]
 - [Patient education points]
 - [Precautions]
 
 **Recommendations Summary for Primary Team:**
 [Concise bulleted list of key recommendations that can be quickly reviewed]
+
 1. [Action item 1]
 2. [Action item 2]
 3. [Action item 3]
@@ -211,12 +222,14 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 ## Follow-up Plan
 
 **Consultant will:**
+
 - [ ] Round daily until [condition met or discharge]
 - [ ] Re-evaluate in [X] days
 - [ ] Available for questions or changes in clinical status
 - [ ] Recommend outpatient follow-up in [timeframe]
 
 **Primary team to:**
+
 - [ ] Implement above recommendations
 - [ ] Notify consultant if [specific circumstances]
 - [ ] Monitor [specific parameters]
@@ -229,12 +242,12 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 **Service:** [Consulting service]  
 **Date/Time:** [MM/DD/YYYY at HH:MM]  
 **Pager/Contact:** [Number]  
-**Signature:** ____________________
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
 **Co-signature (if fellow or resident):**  
 **Attending:** [Name, credentials]  
 **Date/Time:** [MM/DD/YYYY at HH:MM]  
-**Signature:** ____________________
+**Signature:** **\*\*\*\***\_\_\_\_**\*\*\*\***
 
 ---
 
@@ -251,41 +264,48 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 **Common Consultation Types:**
 
 **Cardiology:**
+
 - Pre-operative risk assessment
 - Arrhythmia management
 - Heart failure management
 - Chest pain evaluation
 
 **Nephrology:**
+
 - Acute kidney injury
 - Chronic kidney disease management
 - Electrolyte abnormalities
 - Dialysis initiation/management
 
 **Infectious Disease:**
+
 - Antibiotic selection
 - Fever of unknown origin
 - Complex infections
 - HIV management
 
 **Endocrinology:**
+
 - Diabetes management
 - Thyroid disorders
 - Adrenal insufficiency
 - Calcium disorders
 
 **Psychiatry:**
+
 - Capacity assessment
 - Depression/anxiety management
 - Agitation management
 - Substance withdrawal
 
 **Pain Management:**
+
 - Chronic pain consultation
 - Post-operative pain control
 - Cancer pain management
 
 **Palliative Care:**
+
 - Goals of care discussion
 - Symptom management
 - End-of-life care planning
@@ -301,5 +321,3 @@ Example: "Please evaluate and manage acute kidney injury in setting of heart fai
 - Communicate recommendations verbally when appropriate
 - Be available for questions
 - Follow up consistently if ongoing consultation
-
-

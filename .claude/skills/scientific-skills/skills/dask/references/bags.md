@@ -7,6 +7,7 @@ Dask Bag implements functional operations including `map`, `filter`, `fold`, and
 ## Core Concept
 
 A Dask Bag is a collection of Python objects distributed across partitions:
+
 - Each partition contains generic Python objects
 - Operations use functional programming patterns
 - Processing uses streaming/iterators for memory efficiency
@@ -15,6 +16,7 @@ A Dask Bag is a collection of Python objects distributed across partitions:
 ## Key Capabilities
 
 ### Functional Operations
+
 - `map`: Transform each element
 - `filter`: Select elements based on condition
 - `fold`: Reduce elements with combining function
@@ -23,6 +25,7 @@ A Dask Bag is a collection of Python objects distributed across partitions:
 - `flatten`: Flatten nested structures
 
 ### Use Cases
+
 - Text processing and log analysis
 - JSON record processing
 - ETL on unstructured data
@@ -31,6 +34,7 @@ A Dask Bag is a collection of Python objects distributed across partitions:
 ## When to Use Dask Bags
 
 **Use Bags When**:
+
 - Working with general Python objects requiring flexible computation
 - Data doesn't fit structured array or tabular formats
 - Processing text, JSON, or custom Python objects
@@ -38,6 +42,7 @@ A Dask Bag is a collection of Python objects distributed across partitions:
 - Memory-efficient streaming is important
 
 **Use Other Collections When**:
+
 - Data is structured (use DataFrames instead)
 - Numeric computing (use Arrays instead)
 - Operations require complex groupby or shuffles (use DataFrames)
@@ -47,6 +52,7 @@ A Dask Bag is a collection of Python objects distributed across partitions:
 ## Important Limitations
 
 Bags sacrifice performance for generality:
+
 - Rely on multiprocessing scheduling (not threads)
 - Remain immutable (create new bags for changes)
 - Operate slower than array/DataFrame equivalents
@@ -56,6 +62,7 @@ Bags sacrifice performance for generality:
 ## Creating Bags
 
 ### From Sequences
+
 ```python
 import dask.bag as db
 
@@ -67,6 +74,7 @@ bag = db.from_sequence(range(10000), partition_size=1000)
 ```
 
 ### From Text Files
+
 ```python
 # Single file
 bag = db.read_text('data.txt')
@@ -82,6 +90,7 @@ bag = db.read_text('logs/*.log', blocksize='64MB')
 ```
 
 ### From Delayed Objects
+
 ```python
 import dask
 
@@ -96,6 +105,7 @@ bag = db.from_delayed(partitions)
 ```
 
 ### From Custom Sources
+
 ```python
 # From any iterable-producing function
 def read_json_files():
@@ -111,6 +121,7 @@ bag = db.from_sequence(read_json_files(), partition_size=10)
 ## Common Operations
 
 ### Map (Transform)
+
 ```python
 import dask.bag as db
 
@@ -135,6 +146,7 @@ processed = parsed.map(process_record)
 ```
 
 ### Filter
+
 ```python
 # Filter by condition
 valid = parsed.filter(lambda x: x['status'] == 'valid')
@@ -150,6 +162,7 @@ valid_records = parsed.filter(is_valid_record)
 ```
 
 ### Pluck (Extract Fields)
+
 ```python
 # Extract single field
 ids = parsed.pluck('id')
@@ -159,6 +172,7 @@ key_pairs = parsed.pluck(['id', 'value'])
 ```
 
 ### Flatten
+
 ```python
 # Flatten nested lists
 nested = db.from_sequence([[1, 2], [3, 4], [5, 6]])
@@ -170,6 +184,7 @@ words = bag.map(str.split).flatten()  # All words from all files
 ```
 
 ### GroupBy (Expensive)
+
 ```python
 # Group by key (requires shuffle)
 grouped = parsed.groupby(lambda x: x['category'])
@@ -180,6 +195,7 @@ result = counts.compute()
 ```
 
 ### FoldBy (Preferred for Aggregations)
+
 ```python
 # FoldBy is more efficient than groupby for aggregations
 def add(acc, item):
@@ -200,6 +216,7 @@ result = sums.compute()
 ```
 
 ### Reductions
+
 ```python
 # Count elements
 count = bag.count().compute()
@@ -221,6 +238,7 @@ total = bag.fold(
 ## Converting to Other Collections
 
 ### To DataFrame
+
 ```python
 import dask.bag as db
 import dask.dataframe as dd
@@ -236,6 +254,7 @@ ddf = bag.to_dataframe(meta={'id': int, 'value': float, 'category': str})
 ```
 
 ### To List/Compute
+
 ```python
 # Compute to Python list (loads all in memory)
 result = bag.compute()
@@ -247,6 +266,7 @@ sample = bag.take(100)
 ## Common Patterns
 
 ### JSON Processing
+
 ```python
 import dask.bag as db
 import json
@@ -273,6 +293,7 @@ summary = ddf.groupby('user_id')['value'].mean().compute()
 ```
 
 ### Log Analysis
+
 ```python
 # Read log files
 logs = db.read_text('logs/*.log')
@@ -303,6 +324,7 @@ result = error_counts.compute()
 ```
 
 ### Text Processing
+
 ```python
 # Read text files
 text = db.read_text('documents/*.txt')
@@ -330,6 +352,7 @@ sorted_words = sorted(top_words, key=lambda x: x[1], reverse=True)[:100]
 ```
 
 ### Data Cleaning Pipeline
+
 ```python
 import dask.bag as db
 import json
@@ -369,12 +392,14 @@ ddf.to_parquet('cleaned_data/')
 ## Performance Considerations
 
 ### Efficient Operations
+
 - Map, filter, pluck: Very efficient (streaming)
 - Flatten: Efficient
 - FoldBy with good key distribution: Reasonable
 - Take and head: Efficient (only processes needed partitions)
 
 ### Expensive Operations
+
 - GroupBy: Requires shuffle, can be slow
 - Distinct: Requires collecting all unique values
 - Operations requiring full data materialization
@@ -382,6 +407,7 @@ ddf.to_parquet('cleaned_data/')
 ### Optimization Tips
 
 **1. Use FoldBy Instead of GroupBy**
+
 ```python
 # Better: Use foldby for aggregations
 result = bag.foldby(key='category', binop=add, initial=0, combine=sum)
@@ -391,6 +417,7 @@ result = bag.groupby('category').map(lambda x: (x[0], sum(x[1])))
 ```
 
 **2. Convert to DataFrame Early**
+
 ```python
 # For structured operations, convert to DataFrame
 bag = db.read_text('data/*.json').map(json.loads)
@@ -399,12 +426,14 @@ ddf = bag.to_dataframe()  # Now use efficient DataFrame operations
 ```
 
 **3. Control Partition Size**
+
 ```python
 # Balance between too many and too few partitions
 bag = db.read_text('data/*.txt', blocksize='64MB')  # Reasonable partition size
 ```
 
 **4. Use Lazy Evaluation**
+
 ```python
 # Chain operations before computing
 result = (bag
@@ -418,6 +447,7 @@ result = (bag
 ## Debugging Tips
 
 ### Inspect Partitions
+
 ```python
 # Get number of partitions
 print(bag.npartitions)
@@ -428,6 +458,7 @@ print(sample)
 ```
 
 ### Validate on Small Data
+
 ```python
 # Test logic on small subset
 small_bag = db.from_sequence(sample_data, partition_size=10)
@@ -436,6 +467,7 @@ result = process_pipeline(small_bag).compute()
 ```
 
 ### Check Intermediate Results
+
 ```python
 # Compute intermediate steps to debug
 step1 = bag.map(parse).take(5)

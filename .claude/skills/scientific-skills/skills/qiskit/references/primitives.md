@@ -5,13 +5,17 @@ Primitives are the fundamental building blocks for executing quantum circuits. Q
 ## Primitive Types
 
 ### Sampler
+
 Calculates probabilities or quasi-probabilities of bitstrings from quantum circuits. Use when you need:
+
 - Measurement outcomes
 - Output probability distributions
 - Sampling from quantum states
 
 ### Estimator
+
 Computes expectation values of observables for quantum circuits. Use when you need:
+
 - Energy calculations
 - Observable measurements
 - Variational algorithm optimization
@@ -266,12 +270,14 @@ metadata = result[0].metadata
 ## Differences from V1 Primitives
 
 **V2 Improvements:**
+
 - More flexible parameter binding
 - Better result structure
 - Improved performance
 - Cleaner API design
 
 **Migration from V1:**
+
 - Use `StatevectorSampler` instead of `Sampler`
 - Use `StatevectorEstimator` instead of `Estimator`
 - Result access changed from `.result().quasi_dists[0]` to `.result()[0].data.meas.get_counts()`

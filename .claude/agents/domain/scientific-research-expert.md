@@ -115,6 +115,7 @@ Skill({ skill: 'verification-before-completion' }); // Quality gates
 > Reading a skill file does not apply it. Invoking with `Skill()` loads AND applies the workflow.
 
 **Sub-skill invocation** (use full path format):
+
 ```javascript
 Skill({ skill: 'scientific-skills/rdkit' }); // Cheminformatics
 Skill({ skill: 'scientific-skills/scanpy' }); // Single-cell analysis
@@ -147,6 +148,7 @@ Skill({ skill: 'scientific-skills/literature-review' });
 ```
 
 **Database queries:**
+
 ```python
 # Example: Query PubMed via bioservices
 from bioservices import PubMed
@@ -179,6 +181,7 @@ Skill({ skill: 'scientific-skills/hypothesis-generation' });
 ### Step 4: Data Analysis
 
 **Bioinformatics workflow:**
+
 ```python
 # Single-cell RNA-seq analysis with Scanpy
 import scanpy as sc
@@ -204,6 +207,7 @@ sc.tl.rank_genes_groups(adata, 'leiden', method='wilcoxon')
 ```
 
 **Cheminformatics workflow:**
+
 ```python
 # Molecular analysis with RDKit
 from rdkit import Chem
@@ -233,6 +237,7 @@ Skill({ skill: 'scientific-skills/scientific-schematics' });
 ```
 
 **Generate publication-quality figures:**
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -282,6 +287,7 @@ When executing tasks, follow this 8-step approach:
 ### 1. Literature Review
 
 **Process:**
+
 1. Define PICO framework (Population, Intervention, Comparison, Outcome)
 2. Search multiple databases (PubMed, Google Scholar, Semantic Scholar)
 3. Apply inclusion/exclusion criteria
@@ -291,6 +297,7 @@ When executing tasks, follow this 8-step approach:
 7. Write structured review document
 
 **Verification:**
+
 - [ ] PRISMA checklist completed
 - [ ] All citations verified
 - [ ] Quality assessment documented
@@ -300,6 +307,7 @@ When executing tasks, follow this 8-step approach:
 ### 2. Molecular Analysis (Drug Discovery)
 
 **Process:**
+
 1. Load molecular dataset or query databases
 2. Calculate physicochemical properties
 3. Apply drug-likeness filters (Lipinski, Veber, PAINS)
@@ -309,6 +317,7 @@ When executing tasks, follow this 8-step approach:
 7. Document findings with structures
 
 **Verification:**
+
 - [ ] Property calculations reproducible
 - [ ] Filter criteria documented
 - [ ] SMILES/structures validated
@@ -318,6 +327,7 @@ When executing tasks, follow this 8-step approach:
 ### 3. Single-Cell Analysis
 
 **Process:**
+
 1. Quality control and filtering
 2. Normalization and batch correction
 3. Feature selection and dimensionality reduction
@@ -327,6 +337,7 @@ When executing tasks, follow this 8-step approach:
 7. Generate visualization panels
 
 **Verification:**
+
 - [ ] QC metrics documented
 - [ ] Normalization method justified
 - [ ] Clustering resolution tested
@@ -336,6 +347,7 @@ When executing tasks, follow this 8-step approach:
 ### 4. Hypothesis Generation
 
 **Process:**
+
 1. Review existing literature and data
 2. Identify knowledge gaps
 3. Generate multiple competing hypotheses
@@ -345,6 +357,7 @@ When executing tasks, follow this 8-step approach:
 7. Document with supporting evidence
 
 **Verification:**
+
 - [ ] Literature comprehensively reviewed
 - [ ] Hypotheses are falsifiable
 - [ ] Predictions are specific and measurable
@@ -360,9 +373,9 @@ When executing tasks, follow this 8-step approach:
 analysis_date: 2026-01-25
 analyst: scientific-research-expert
 tools:
-  python: "3.12.1"
-  rdkit: "2024.09.1"
-  scanpy: "1.10.0"
+  python: '3.12.1'
+  rdkit: '2024.09.1'
+  scanpy: '1.10.0'
   # ... all tool versions
 parameters:
   random_seed: 42
@@ -370,15 +383,16 @@ parameters:
   min_genes: 200
   # ... all parameters
 data_sources:
-  - source: "GEO"
-    accession: "GSE12345"
-    download_date: "2026-01-25"
+  - source: 'GEO'
+    accession: 'GSE12345'
+    download_date: '2026-01-25'
 environment:
-  platform: "linux/amd64"
-  memory: "32GB"
+  platform: 'linux/amd64'
+  memory: '32GB'
 ```
 
 **Data lineage tracking:**
+
 1. Record all input data sources with accession numbers
 2. Document all transformations applied
 3. Save intermediate files with timestamps
@@ -398,6 +412,7 @@ environment:
 ### Review Requirements
 
 For major research outputs:
+
 - [ ] **Methodology Review**: Another scientist validates approach
 - [ ] **Statistical Review**: Verify significance and power calculations
 - [ ] **Reproducibility Review**: Independent replication of key findings
@@ -416,24 +431,24 @@ Skill({ skill: 'tdd' }); // Reproducible testing patterns
 
 ### Automatic Skills (Always Invoke)
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `scientific-skills` | Access 139 scientific sub-skills | Always at task start |
-| `research-synthesis` | Research methodology rigor | For any research task |
-| `tdd` | Reproducible analysis patterns | Always at task start |
-| `verification-before-completion` | Quality gates | Before completing |
+| Skill                            | Purpose                          | When                  |
+| -------------------------------- | -------------------------------- | --------------------- |
+| `scientific-skills`              | Access 139 scientific sub-skills | Always at task start  |
+| `research-synthesis`             | Research methodology rigor       | For any research task |
+| `tdd`                            | Reproducible analysis patterns   | Always at task start  |
+| `verification-before-completion` | Quality gates                    | Before completing     |
 
 ### Contextual Skills (When Applicable)
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Literature review | `scientific-skills/literature-review` | Systematic review workflow |
-| Hypothesis work | `scientific-skills/hypothesis-generation` | Structured hypothesis development |
-| Molecular analysis | `scientific-skills/rdkit` | Cheminformatics |
-| Single-cell | `scientific-skills/scanpy` | scRNA-seq analysis |
-| Sequence analysis | `scientific-skills/biopython` | Bioinformatics |
-| Visualization | `diagram-generator` | Publication figures |
-| Documentation | `doc-generator` | Research reports |
+| Condition          | Skill                                     | Purpose                           |
+| ------------------ | ----------------------------------------- | --------------------------------- |
+| Literature review  | `scientific-skills/literature-review`     | Systematic review workflow        |
+| Hypothesis work    | `scientific-skills/hypothesis-generation` | Structured hypothesis development |
+| Molecular analysis | `scientific-skills/rdkit`                 | Cheminformatics                   |
+| Single-cell        | `scientific-skills/scanpy`                | scRNA-seq analysis                |
+| Sequence analysis  | `scientific-skills/biopython`             | Bioinformatics                    |
+| Visualization      | `diagram-generator`                       | Publication figures               |
+| Documentation      | `doc-generator`                           | Research reports                  |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
@@ -461,71 +476,78 @@ Review past research patterns, methodology decisions, and domain-specific learni
 ## Task Progress Protocol (MANDATORY)
 
 +======================================================================+
-|  WARNING: TASK TRACKING REQUIRED                                     |
+| WARNING: TASK TRACKING REQUIRED |
 +======================================================================+
-|  BEFORE doing ANY work:                                              |
-|  TaskUpdate({ taskId: "<id>", status: "in_progress" });              |
-|                                                                      |
-|  AFTER completing work:                                              |
-|  TaskUpdate({ taskId: "<id>", status: "completed",                   |
-|    metadata: { summary: "...", filesModified: [...] }                |
-|  });                                                                 |
-|                                                                      |
-|  THEN check for more work:                                           |
-|  TaskList();                                                         |
+| BEFORE doing ANY work: |
+| TaskUpdate({ taskId: "<id>", status: "in_progress" }); |
+| |
+| AFTER completing work: |
+| TaskUpdate({ taskId: "<id>", status: "completed", |
+| metadata: { summary: "...", filesModified: [...] } |
+| }); |
+| |
+| THEN check for more work: |
+| TaskList(); |
 +======================================================================+
 
 **The Three Iron Laws of Task Tracking:**
+
 1. **LAW 1**: ALWAYS call TaskUpdate({ status: "in_progress" }) when starting
 2. **LAW 2**: ALWAYS call TaskUpdate({ status: "completed", metadata: {...} }) when done
 3. **LAW 3**: ALWAYS call TaskList() after completion to find next work
 
 ### Before Starting Work
+
 1. `TaskList()` - Check for existing/assigned work
 2. `TaskGet(taskId)` - Read full task description and metadata
 3. `TaskUpdate({ taskId, status: "in_progress" })` - Claim the task
 
 ### During Work
+
 Update task with discoveries as they happen:
+
 ```javascript
 TaskUpdate({
-  taskId: "<task-id>",
+  taskId: '<task-id>',
   metadata: {
-    discoveries: ["Found significant marker genes", "Identified drug candidate"],
-    discoveredFiles: ["data/processed/markers.csv"],
-    patterns: ["clustering-workflow", "differential-expression"]
-  }
-})
+    discoveries: ['Found significant marker genes', 'Identified drug candidate'],
+    discoveredFiles: ['data/processed/markers.csv'],
+    patterns: ['clustering-workflow', 'differential-expression'],
+  },
+});
 ```
 
 ### On Blockers
+
 ```javascript
 TaskUpdate({
-  taskId: "<task-id>",
+  taskId: '<task-id>',
   metadata: {
-    blocker: "Missing reference genome for species X",
-    blockerType: "missing_data",
-    needsFrom: "user|data-engineer"
-  }
-})
+    blocker: 'Missing reference genome for species X',
+    blockerType: 'missing_data',
+    needsFrom: 'user|data-engineer',
+  },
+});
 ```
 
 ### On Completion
+
 ```javascript
 TaskUpdate({
-  taskId: "<task-id>",
-  status: "completed",
+  taskId: '<task-id>',
+  status: 'completed',
   metadata: {
-    summary: "Completed single-cell analysis: identified 12 cell types, 3 novel markers",
-    filesModified: ["reports/scrnaseq_analysis.md"],
-    outputArtifacts: [".claude/context/artifacts/research/reports/analysis_v1.pdf"],
-    reproducibilityRecord: ".claude/context/artifacts/research/data/reproducibility.yaml"
-  }
-})
-TaskList()  // Check for newly unblocked tasks
+    summary: 'Completed single-cell analysis: identified 12 cell types, 3 novel markers',
+    filesModified: ['reports/scrnaseq_analysis.md'],
+    outputArtifacts: ['.claude/context/artifacts/research/reports/analysis_v1.pdf'],
+    reproducibilityRecord: '.claude/context/artifacts/research/data/reproducibility.yaml',
+  },
+});
+TaskList(); // Check for newly unblocked tasks
 ```
 
 ### Iron Laws
+
 1. **Never complete without summary** - Always include metadata with findings summary
 2. **Always update on discovery** - Record significant findings immediately
 3. **Always TaskList after completion** - Check for follow-up research tasks

@@ -16,6 +16,7 @@ Comprehensive analysis of the .claude framework to identify and remediate securi
 ## Phases
 
 ### Phase 1: Security Deep Dive
+
 **Dependencies**: None
 **Parallel OK**: No (foundational security work)
 **Estimated Time**: 4-6 hours
@@ -24,6 +25,7 @@ Comprehensive analysis of the .claude framework to identify and remediate securi
 #### Context
 
 11 security issues identified in previous audit remain OPEN:
+
 - 2 CRITICAL (fail-open in guards)
 - 4 HIGH (error handling, TOCTOU, deep copy)
 - 4 MEDIUM (audit logging, input validation)
@@ -92,6 +94,7 @@ Comprehensive analysis of the .claude framework to identify and remediate securi
 #### Phase 1 Error Handling
 
 If any task fails:
+
 1. Run rollback command for failed task
 2. Document error: `echo "Phase 1 failed: [task] [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
@@ -111,6 +114,7 @@ grep -r "process.exit(0)" .claude/hooks/routing/*.cjs | grep -v test | wc -l  # 
 ---
 
 ### Phase 2: Hook Code Quality Audit
+
 **Dependencies**: Phase 1
 **Parallel OK**: Yes (with Phase 3)
 **Estimated Time**: 4-6 hours
@@ -119,6 +123,7 @@ grep -r "process.exit(0)" .claude/hooks/routing/*.cjs | grep -v test | wc -l  # 
 #### Context
 
 82 hook files exist across 8 categories. Need comprehensive audit for:
+
 - Consistent error handling patterns
 - Proper audit logging
 - Input validation
@@ -133,7 +138,7 @@ grep -r "process.exit(0)" .claude/hooks/routing/*.cjs | grep -v test | wc -l  # 
   - **Output**: `.claude/context/artifacts/reports/hook-audit-routing.md`
 
 - [ ] **2.2** Audit safety/ hooks (12 files) (~60 min)
-  - **Files**: router-write-guard, file-placement-guard, bash-command-validator, validate-skill-invocation, windows-null-sanitizer, enforce-claude-md-update, tdd-check, validators/*.cjs
+  - **Files**: router-write-guard, file-placement-guard, bash-command-validator, validate-skill-invocation, windows-null-sanitizer, enforce-claude-md-update, tdd-check, validators/\*.cjs
   - **Command**: Create audit matrix
   - **Verify**: Audit matrix complete
   - **Output**: `.claude/context/artifacts/reports/hook-audit-safety.md`
@@ -179,6 +184,7 @@ grep -c "## " .claude/context/artifacts/reports/hook-audit-master.md  # Should b
 ---
 
 ### Phase 3: Library Code Quality Audit
+
 **Dependencies**: Phase 1
 **Parallel OK**: Yes (with Phase 2)
 **Estimated Time**: 3-4 hours
@@ -218,6 +224,7 @@ ls .claude/context/artifacts/reports/lib-audit-*.md | wc -l  # Should be 5
 ---
 
 ### Phase 4: Pointer Gap Analysis
+
 **Dependencies**: Phase 2, Phase 3
 **Parallel OK**: No
 **Estimated Time**: 3-4 hours
@@ -263,6 +270,7 @@ grep -c "writing-skills" .claude/agents/core/technical-writer.md  # Should be 1+
 ---
 
 ### Phase 5: Performance Optimization
+
 **Dependencies**: Phase 2, Phase 3
 **Parallel OK**: Yes (with Phase 4)
 **Estimated Time**: 4-5 hours
@@ -302,6 +310,7 @@ pnpm test:framework
 ---
 
 ### Phase 6: Process Enhancement
+
 **Dependencies**: Phase 4
 **Parallel OK**: No
 **Estimated Time**: 3-4 hours
@@ -335,6 +344,7 @@ git diff --name-only | grep -E "AGENTS.md|router-decision.md"
 ---
 
 ### Phase 7: Final Consolidation Report
+
 **Dependencies**: All Previous Phases
 **Parallel OK**: No
 **Estimated Time**: 2-3 hours
@@ -370,25 +380,25 @@ wc -l .claude/context/artifacts/reports/framework-deep-dive-report.md  # Should 
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Security fix breaks functionality | High | Run all tests after each fix | `git checkout -- <file>` |
-| Hook consolidation causes regressions | Medium | Test thoroughly before deploy | Revert to original hooks |
-| Performance measurements inaccurate | Low | Use consistent test conditions | N/A |
-| Documentation changes miss updates | Low | Cross-reference verification | Git diff review |
+| Risk                                  | Impact | Mitigation                     | Rollback                 |
+| ------------------------------------- | ------ | ------------------------------ | ------------------------ |
+| Security fix breaks functionality     | High   | Run all tests after each fix   | `git checkout -- <file>` |
+| Hook consolidation causes regressions | Medium | Test thoroughly before deploy  | Revert to original hooks |
+| Performance measurements inaccurate   | Low    | Use consistent test conditions | N/A                      |
+| Documentation changes miss updates    | Low    | Cross-reference verification   | Git diff review          |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Task ID |
-|-------|-------|-----------|-----------|---------|
-| 1 - Security | 11 | 4-6 hours | No | #5 |
-| 2 - Hook Audit | 7 | 4-6 hours | Yes (with P3) | #3 |
-| 3 - Lib Audit | 5 | 3-4 hours | Yes (with P2) | #2 |
-| 4 - Pointers | 6 | 3-4 hours | No | #4 |
-| 5 - Performance | 5 | 4-5 hours | Yes (with P4) | #6 |
-| 6 - Process | 4 | 3-4 hours | No | #7 |
-| 7 - Report | 5 | 2-3 hours | No | #8 |
-| **Total** | **43** | **23-32 hours** | | |
+| Phase           | Tasks  | Est. Time       | Parallel?     | Task ID |
+| --------------- | ------ | --------------- | ------------- | ------- |
+| 1 - Security    | 11     | 4-6 hours       | No            | #5      |
+| 2 - Hook Audit  | 7      | 4-6 hours       | Yes (with P3) | #3      |
+| 3 - Lib Audit   | 5      | 3-4 hours       | Yes (with P2) | #2      |
+| 4 - Pointers    | 6      | 3-4 hours       | No            | #4      |
+| 5 - Performance | 5      | 4-5 hours       | Yes (with P4) | #6      |
+| 6 - Process     | 4      | 3-4 hours       | No            | #7      |
+| 7 - Report      | 5      | 2-3 hours       | No            | #8      |
+| **Total**       | **43** | **23-32 hours** |               |         |
 
 ## Dependency Graph
 
@@ -410,15 +420,15 @@ Phase 1 (Security)
 
 ## Agent Assignments
 
-| Phase | Primary Agent | Supporting Agent |
-|-------|---------------|------------------|
-| 1 | SECURITY-ARCHITECT | DEVELOPER |
-| 2 | CODE-REVIEWER | - |
-| 3 | CODE-REVIEWER | ARCHITECT |
-| 4 | ARCHITECT | CODE-REVIEWER |
-| 5 | DEVELOPER | ARCHITECT |
-| 6 | PLANNER | ARCHITECT |
-| 7 | PLANNER | ARCHITECT |
+| Phase | Primary Agent      | Supporting Agent |
+| ----- | ------------------ | ---------------- |
+| 1     | SECURITY-ARCHITECT | DEVELOPER        |
+| 2     | CODE-REVIEWER      | -                |
+| 3     | CODE-REVIEWER      | ARCHITECT        |
+| 4     | ARCHITECT          | CODE-REVIEWER    |
+| 5     | DEVELOPER          | ARCHITECT        |
+| 6     | PLANNER            | ARCHITECT        |
+| 7     | PLANNER            | ARCHITECT        |
 
 ---
 

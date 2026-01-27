@@ -7,24 +7,28 @@ This document covers models for specialized single-cell data modalities in scvi-
 **Purpose**: Analysis of single-cell bisulfite sequencing (scBS-seq) data for DNA methylation.
 
 **Key Features**:
+
 - Models methylation patterns at single-cell resolution
 - Handles sparsity in methylation data
 - Batch correction for methylation experiments
 - Label transfer (MethylANVI) for cell type annotation
 
 **When to Use**:
+
 - Analyzing scBS-seq or similar methylation data
 - Studying DNA methylation patterns across cell types
 - Integrating methylation data across batches
 - Cell type annotation based on methylation profiles
 
 **Data Requirements**:
+
 - Methylation count matrices (methylated vs. total reads per CpG site)
 - Format: Cells × CpG sites with methylation ratios or counts
 
 ### MethylVI (Unsupervised)
 
 **Basic Usage**:
+
 ```python
 import scvi
 
@@ -48,6 +52,7 @@ normalized_meth = model.get_normalized_methylation()
 ### MethylANVI (Semi-supervised with cell types)
 
 **Basic Usage**:
+
 ```python
 # Setup with cell type labels
 scvi.model.METHYLANVI.setup_anndata(
@@ -66,10 +71,12 @@ predictions = model.predict()
 ```
 
 **Key Parameters**:
+
 - `n_latent`: Latent dimensionality
 - `region_factors`: Model region-specific effects
 
 **Use Cases**:
+
 - Epigenetic heterogeneity analysis
 - Cell type identification via methylation
 - Integration with gene expression data (separate analysis)
@@ -80,23 +87,27 @@ predictions = model.predict()
 **Purpose**: Batch correction and integration of flow cytometry and mass cytometry (CyTOF) data.
 
 **Key Features**:
+
 - Handles antibody-based protein measurements
 - Corrects batch effects in cytometry data
 - Enables integration across experiments
 - Designed for high-dimensional protein panels
 
 **When to Use**:
+
 - Analyzing flow cytometry or CyTOF data
 - Integrating cytometry experiments across batches
 - Batch correction for protein panels
 - Cross-study cytometry integration
 
 **Data Requirements**:
+
 - Protein expression matrix (cells × proteins)
 - Flow cytometry or CyTOF measurements
 - Batch/experiment annotations
 
 **Basic Usage**:
+
 ```python
 scvi.model.CYTOVI.setup_anndata(
     adata,
@@ -115,10 +126,12 @@ normalized = model.get_normalized_expression()
 ```
 
 **Key Parameters**:
+
 - `n_latent`: Latent space dimensionality
 - `n_layers`: Network depth
 
 **Typical Workflow**:
+
 ```python
 import scanpy as sc
 
@@ -152,16 +165,19 @@ sc.pl.umap(adata, color=["batch", "leiden"])
 **Purpose**: Batch effect correction with emphasis on preserving biological variation.
 
 **Key Features**:
+
 - Specialized batch integration approach
 - Preserves biological signals while removing technical effects
 - Designed for large-scale integration studies
 
 **When to Use**:
+
 - Large-scale multi-batch integration
 - Need to preserve subtle biological variation
 - Systems-level analysis across many studies
 
 **Basic Usage**:
+
 ```python
 scvi.model.SYSVI.setup_anndata(
     adata,
@@ -180,18 +196,21 @@ latent = model.get_latent_representation()
 **Purpose**: Trajectory inference and pseudotime analysis for single-cell data.
 
 **Key Features**:
+
 - Learns cellular trajectories and differentiation paths
 - Pseudotime estimation
 - Accounts for uncertainty in trajectory structure
 - Compatible with scVI embeddings
 
 **When to Use**:
+
 - Studying cellular differentiation
 - Time-course or developmental datasets
 - Understanding cell state transitions
 - Identifying branching points in development
 
 **Basic Usage**:
+
 ```python
 # Typically used after scVI for embeddings
 scvi_model = scvi.model.SCVI(adata)
@@ -208,6 +227,7 @@ adata.obs["pseudotime"] = pseudotime
 ```
 
 **Visualization**:
+
 ```python
 import scanpy as sc
 
@@ -223,17 +243,20 @@ sc.pl.scatter(adata, x="pseudotime", y="gene_of_interest")
 **Purpose**: Linking chromatin accessibility to gene expression for regulatory analysis.
 
 **Key Features**:
+
 - Links ATAC-seq peaks to gene expression
 - Identifies regulatory relationships
 - Works with paired multiome data
 
 **When to Use**:
+
 - Multiome data (RNA + ATAC from same cells)
 - Understanding gene regulation
 - Linking peaks to target genes
 - Regulatory network construction
 
 **Basic Usage**:
+
 ```python
 # Requires paired RNA + ATAC data
 scvi.model.PEREGLM.setup_anndata(
@@ -252,23 +275,27 @@ peak_gene_links = model.get_regulatory_links()
 ## Model-Specific Best Practices
 
 ### MethylVI/MethylANVI
+
 1. **Sparsity**: Methylation data is inherently sparse; model accounts for this
 2. **CpG selection**: Filter CpGs with very low coverage
 3. **Biological interpretation**: Consider genomic context (promoters, enhancers)
 4. **Integration**: For multi-omics, analyze separately then integrate results
 
 ### CytoVI
+
 1. **Protein QC**: Remove low-quality or uninformative proteins
 2. **Compensation**: Ensure proper spectral compensation before analysis
 3. **Batch design**: Include biological and technical replicates
 4. **Controls**: Use control samples to validate batch correction
 
 ### SysVI
+
 1. **Sample size**: Designed for large-scale integration
 2. **Batch definition**: Carefully define batch structure
 3. **Biological validation**: Verify biological signals preserved
 
 ### Decipher
+
 1. **Start point**: Define trajectory start cells if known
 2. **Branching**: Specify expected number of branches
 3. **Validation**: Use known markers to validate pseudotime
@@ -279,6 +306,7 @@ peak_gene_links = model.get_regulatory_links()
 Many specialized models work well in combination:
 
 **Methylation + Expression**:
+
 ```python
 # Analyze separately, then integrate
 methylvi_model = scvi.model.METHYLVI(meth_adata)
@@ -289,6 +317,7 @@ scvi_model = scvi.model.SCVI(rna_adata)
 ```
 
 **Cytometry + CITE-seq**:
+
 ```python
 # CytoVI for flow/CyTOF
 cyto_model = scvi.model.CYTOVI(cyto_adata)
@@ -300,6 +329,7 @@ cite_model = scvi.model.TOTALVI(cite_adata)
 ```
 
 **ATAC + RNA (Multiome)**:
+
 ```python
 # MultiVI for joint analysis
 multivi_model = scvi.model.MULTIVI(multiome_adata)
@@ -378,6 +408,7 @@ meth_adata.write("methylation_analyzed.h5ad")
 Some specialized models are available as external packages:
 
 **SOLO** (doublet detection):
+
 ```python
 from scvi.external import SOLO
 
@@ -387,6 +418,7 @@ doublets = solo.predict()
 ```
 
 **scArches** (reference mapping):
+
 ```python
 from scvi.external import SCARCHES
 
@@ -397,12 +429,12 @@ These external tools extend scvi-tools functionality for specific use cases.
 
 ## Summary Table
 
-| Model | Data Type | Primary Use | Supervised? |
-|-------|-----------|-------------|-------------|
-| MethylVI | Methylation | Unsupervised analysis | No |
-| MethylANVI | Methylation | Cell type annotation | Semi |
-| CytoVI | Cytometry | Batch correction | No |
-| SysVI | scRNA-seq | Large-scale integration | No |
-| Decipher | scRNA-seq | Trajectory inference | No |
-| peRegLM | Multiome | Peak-gene links | No |
-| SOLO | scRNA-seq | Doublet detection | Semi |
+| Model      | Data Type   | Primary Use             | Supervised? |
+| ---------- | ----------- | ----------------------- | ----------- |
+| MethylVI   | Methylation | Unsupervised analysis   | No          |
+| MethylANVI | Methylation | Cell type annotation    | Semi        |
+| CytoVI     | Cytometry   | Batch correction        | No          |
+| SysVI      | scRNA-seq   | Large-scale integration | No          |
+| Decipher   | scRNA-seq   | Trajectory inference    | No          |
+| peRegLM    | Multiome    | Peak-gene links         | No          |
+| SOLO       | scRNA-seq   | Doublet detection       | Semi        |

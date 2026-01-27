@@ -29,6 +29,7 @@ Structured workflow for integrating external codebases (skills, agents, template
 4. **Update learnings.md** - Document integration summary
 
 **Verification (RUN THIS):**
+
 ```bash
 # Check all new items are in CLAUDE.md
 grep "<item-name>" .claude/CLAUDE.md || echo "ERROR: NOT IN CLAUDE.md!"
@@ -69,7 +70,7 @@ Task({
 - What exists in source
 - What already exists in agent-studio (duplicates)
 - What is new and should be imported
-`
+`,
 });
 ```
 
@@ -78,6 +79,7 @@ Task({
 Compare source with existing agent-studio content.
 
 **Check for duplicates:**
+
 ```bash
 # For each skill in source
 grep -l "<skill-name>" .claude/skills/*/SKILL.md
@@ -87,6 +89,7 @@ grep -l "<agent-name>" .claude/agents/**/*.md
 ```
 
 **Create integration plan:**
+
 - NEW: Items that don't exist
 - ENHANCE: Existing items that can be improved
 - SKIP: Duplicates or incompatible items
@@ -99,7 +102,7 @@ Create trackable tasks for each integration item.
 TaskCreate({
   subject: 'Import <item-name> from <source>',
   description: 'Import, transform, validate, test',
-  activeForm: 'Importing <item-name>'
+  activeForm: 'Importing <item-name>',
 });
 ```
 
@@ -108,22 +111,26 @@ TaskCreate({
 For each item, apply necessary transformations:
 
 **Skills:**
+
 1. Add proper YAML frontmatter (name, description, version, model, tools)
 2. Add Memory Protocol section at end
 3. Update paths to use `.claude/` structure
 4. Validate against skill-definition.schema.json
 
 **Agents:**
+
 1. Add proper YAML frontmatter (name, description, tools, model, temperature, skills)
 2. Add Memory Protocol section
 3. Ensure Step 0: Load Skills is present
 4. Validate against agent-definition.schema.json
 
 **Templates:**
+
 1. Place in `.claude/templates/<category>/`
 2. Ensure proper markdown formatting
 
 **Workflows:**
+
 1. Place in `.claude/workflows/` or `.claude/workflows/enterprise/`
 2. Update Task() examples to use proper spawn patterns
 3. Reference correct agent paths
@@ -151,11 +158,13 @@ npm test
 **This step is NOT OPTIONAL. Integration is incomplete without it.**
 
 **For new agents - Add to CLAUDE.md Section 3:**
+
 ```markdown
 | Request Type | agent-name | `.claude/agents/<category>/<name>.md` |
 ```
 
 **For new skills - Add to CLAUDE.md Section 8.5:**
+
 ```markdown
 ### <Skill Name>
 
@@ -169,6 +178,7 @@ Skill({ skill: '<skill-name>' });
 ```
 
 **For new workflows - Add to CLAUDE.md Section 3 Workflows:**
+
 ```markdown
 - `.claude/workflows/<name>.md` - <Description>
 ```
@@ -178,6 +188,7 @@ Skill({ skill: '<skill-name>' });
 Create integration report and update memory.
 
 **Integration Report** (`.claude/context/reports/<source>-integration-report.md`):
+
 ```markdown
 # <Source> Integration Report
 
@@ -185,36 +196,44 @@ Create integration report and update memory.
 **Status**: COMPLETE
 
 ## Items Integrated
+
 - Skills: <count>
 - Agents: <count>
 - Templates: <count>
 - Workflows: <count>
 
 ## Files Created
+
 <list>
 
 ## Files Modified
+
 <list>
 
 ## CLAUDE.md Updates
+
 - Section 3: Added <agents>
 - Section 8.5: Added <skills>
 - Section 3 Workflows: Added <workflows>
 ```
 
 **Update learnings.md:**
+
 ```markdown
 ## [YYYY-MM-DD] <Source> Integration Complete
 
 **Status**: COMPLETE
 
 ### Items Integrated
+
 - <list>
 
 ### Key Patterns
+
 - <patterns adopted>
 
 ### CLAUDE.md Updated
+
 - Section 3: <agents>
 - Section 8.5: <skills>
 ```
@@ -260,16 +279,17 @@ Use this checklist for every integration:
 
 ### Path Updates
 
-| Source Pattern | Target Pattern |
-|----------------|----------------|
-| `conductor/` | `.claude/context/` |
-| `plugins/` | `.claude/` |
-| `~/.config/claude/` | `.claude/` |
-| `superpowers:` | Direct skill reference |
+| Source Pattern      | Target Pattern         |
+| ------------------- | ---------------------- |
+| `conductor/`        | `.claude/context/`     |
+| `plugins/`          | `.claude/`             |
+| `~/.config/claude/` | `.claude/`             |
+| `superpowers:`      | Direct skill reference |
 
 ### Frontmatter Requirements
 
 **Skills:**
+
 ```yaml
 ---
 name: skill-name
@@ -283,6 +303,7 @@ tools: [Read, Write, Edit, Bash, Glob, Grep]
 ```
 
 **Agents:**
+
 ```yaml
 ---
 name: agent-name
@@ -302,6 +323,7 @@ context_files:
 ## Anti-Patterns
 
 ### DO NOT:
+
 - Import without updating CLAUDE.md (Router won't know about new items)
 - Skip Memory Protocol section (Agents will forget learnings)
 - Copy files without transforming paths (Broken references)
@@ -309,6 +331,7 @@ context_files:
 - Create duplicate skills/agents (Confusion, wasted context)
 
 ### DO:
+
 - Check for existing equivalents first
 - Transform all paths to `.claude/` structure
 - Add proper frontmatter
@@ -324,22 +347,26 @@ This skill implements the external integration workflow. For the complete multi-
 **Workflow:** `.claude/workflows/core/external-integration.md`
 
 **Phases covered by this skill:**
+
 - Phase 1: Clone & Isolate (Step 1.1 - isolation to `.claude/context/tmp/`)
 - Phase 6: Execute integration (file copying, registry updates, CLAUDE.md updates)
 - Phase 7: Cleanup (temp directory removal, documentation)
 
 **Phases handled by other agents:**
+
 - Phase 0: Pre-Check (architect - checks if artifact already exists)
 - Phase 2-3: Explore & Plan (architect explores source/target, planner creates integration plan)
 - Phase 4-5: Review & Consolidate (architect + security-architect parallel review, planner merges feedback)
 - Phase 8: Verify (qa - validates integration works correctly)
 
 **Alignment Notes:**
+
 - **Temp Directory**: Use `.claude/context/tmp/<repo-name>/` for isolation (matches workflow)
 - **Rollback**: If integration fails, use `git restore` for CLAUDE.md and registries (see workflow rollback procedure)
 - **Gate Decisions**: Respect workflow gate decisions (BLOCKING issues stop integration)
 
 **When to use this skill vs the workflow:**
+
 - **This skill**: Direct integration when you are the executing agent and have already completed planning/review
 - **Full workflow**: Multi-agent orchestration requiring parallel exploration, security review, and QA verification
 
@@ -355,6 +382,7 @@ This skill implements the external integration workflow. For the complete multi-
 Read `.claude/context/memory/learnings.md`
 
 **After completing:**
+
 - Integration complete -> `.claude/context/memory/learnings.md`
 - Issue encountered -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

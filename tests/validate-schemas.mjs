@@ -81,9 +81,11 @@ function walkSkillSchemas(dir, baseSkillName = '') {
           skillSchemasValid++;
 
           // Check for required fields
-          if (!content.$schema) skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing $schema`);
+          if (!content.$schema)
+            skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing $schema`);
           if (!content.title) skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing title`);
-          if (!content.description) skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing description`);
+          if (!content.description)
+            skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing description`);
         } catch (e) {
           skillSchemasInvalid++;
           skillSchemaIssues.push(`${skillName}/${schemaFile}: Invalid JSON`);
@@ -97,7 +99,9 @@ function walkSkillSchemas(dir, baseSkillName = '') {
 
 walkSkillSchemas(skillSchemasDir);
 
-console.log(`Total Skill Schemas: ${skillSchemasTotal}, Valid: ${skillSchemasValid}, Invalid: ${skillSchemasInvalid}`);
+console.log(
+  `Total Skill Schemas: ${skillSchemasTotal}, Valid: ${skillSchemasValid}, Invalid: ${skillSchemasInvalid}`
+);
 
 if (skillSchemaIssues.length > 0) {
   console.log('\nSkill Schema Issues:');

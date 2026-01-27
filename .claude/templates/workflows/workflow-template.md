@@ -13,6 +13,7 @@
 3. Assign trigger conditions in routing documentation
 
 **Verification:**
+
 ```bash
 grep "{{WORKFLOW_FILE_NAME}}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 ```
@@ -194,14 +195,17 @@ Task({
 After each phase, verify:
 
 **Phase 1 Complete:**
+
 - [ ] {{VERIFICATION_ITEM}}
 - [ ] {{VERIFICATION_ITEM}}
 
 **Phase 2 Complete:**
+
 - [ ] {{VERIFICATION_ITEM}}
 - [ ] {{VERIFICATION_ITEM}}
 
 **Phase 3 Complete:**
+
 - [ ] {{VERIFICATION_ITEM}}
 - [ ] {{VERIFICATION_ITEM}}
 

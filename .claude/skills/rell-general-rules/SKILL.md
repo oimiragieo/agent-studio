@@ -44,7 +44,7 @@ When reviewing or writing code, apply these guidelines:
 - Be concise. Minimize any other prose.
 - If you think there might not be a correct answer, you say so. If you do not know the answer, say so instead of guessing.
 - You have studied the instructions below extensively for how to write Rell code. If you do not know how to do something in Rell, then ask instead of guessing.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -57,6 +57,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

@@ -12,20 +12,22 @@ This document contains detection patterns extracted from the Auto-Claude autonom
 
 Check for these files at project root to identify monorepo projects:
 
-| File | Tool |
-|------|------|
+| File                  | Tool            |
+| --------------------- | --------------- |
 | `pnpm-workspace.yaml` | pnpm workspaces |
-| `lerna.json` | Lerna |
-| `nx.json` | Nx |
-| `turbo.json` | Turborepo |
-| `rush.json` | Rush |
+| `lerna.json`          | Lerna           |
+| `nx.json`             | Nx              |
+| `turbo.json`          | Turborepo       |
+| `rush.json`           | Rush            |
 
 **Detection logic:**
+
 1. If any indicator file exists, mark as monorepo
 2. Extract tool name from filename (strip .json/.yaml extension)
 3. Store as `monorepo_tool` in analysis
 
 **Example:**
+
 ```python
 monorepo_indicators = [
     "pnpm-workspace.yaml",
@@ -47,6 +49,7 @@ for indicator in monorepo_indicators:
 If no indicator files found, check directory structure:
 
 **Packages/Apps directories:**
+
 - Presence of `packages/` directory
 - Presence of `apps/` directory
 
@@ -70,19 +73,19 @@ mobile, desktop, cli, sdk, core, shared, common
 
 Files that indicate a service/package root:
 
-| File | Language/Ecosystem |
-|------|-------------------|
-| `package.json` | Node.js/JavaScript/TypeScript |
-| `requirements.txt` | Python (pip) |
-| `pyproject.toml` | Python (modern) |
-| `Cargo.toml` | Rust |
-| `go.mod` | Go |
-| `Gemfile` | Ruby |
-| `composer.json` | PHP |
-| `pom.xml` | Java (Maven) |
-| `build.gradle` | Java/Kotlin (Gradle) |
-| `Makefile` | Generic build |
-| `Dockerfile` | Containerized service |
+| File               | Language/Ecosystem            |
+| ------------------ | ----------------------------- |
+| `package.json`     | Node.js/JavaScript/TypeScript |
+| `requirements.txt` | Python (pip)                  |
+| `pyproject.toml`   | Python (modern)               |
+| `Cargo.toml`       | Rust                          |
+| `go.mod`           | Go                            |
+| `Gemfile`          | Ruby                          |
+| `composer.json`    | PHP                           |
+| `pom.xml`          | Java (Maven)                  |
+| `build.gradle`     | Java/Kotlin (Gradle)          |
+| `Makefile`         | Generic build                 |
+| `Dockerfile`       | Containerized service         |
 
 ### Service Location Patterns
 
@@ -94,6 +97,7 @@ In monorepos, search these locations for services:
 4. `services/` directory
 
 **For each potential service:**
+
 - Check for SERVICE_ROOT_FILES
 - Verify directory is not in SKIP_DIRS
 - Skip hidden directories (starting with `.`)
@@ -115,59 +119,60 @@ eggs, *.egg-info, .turbo, .cache, .worktrees, .auto-claude
 
 ### Docker Configuration
 
-| Pattern | Detection |
-|---------|-----------|
-| `docker-compose.yml` | Docker Compose |
-| `docker-compose.yaml` | Docker Compose (alt) |
-| `Dockerfile` | Root Dockerfile |
-| `docker/` directory | Docker configurations |
-| `docker/Dockerfile*` | Multiple Dockerfiles |
-| `docker/*.Dockerfile` | Named Dockerfiles |
+| Pattern               | Detection             |
+| --------------------- | --------------------- |
+| `docker-compose.yml`  | Docker Compose        |
+| `docker-compose.yaml` | Docker Compose (alt)  |
+| `Dockerfile`          | Root Dockerfile       |
+| `docker/` directory   | Docker configurations |
+| `docker/Dockerfile*`  | Multiple Dockerfiles  |
+| `docker/*.Dockerfile` | Named Dockerfiles     |
 
 **Extract docker-compose services:**
 Parse `services:` block in YAML and extract service names at 2-space indent.
 
 ### CI/CD Detection
 
-| Pattern | Platform |
-|---------|----------|
+| Pattern              | Platform       |
+| -------------------- | -------------- |
 | `.github/workflows/` | GitHub Actions |
-| `.gitlab-ci.yml` | GitLab CI |
-| `.circleci/` | CircleCI |
+| `.gitlab-ci.yml`     | GitLab CI      |
+| `.circleci/`         | CircleCI       |
 
 ### Deployment Platform Detection
 
-| File | Platform |
-|------|----------|
-| `vercel.json` | Vercel |
-| `netlify.toml` | Netlify |
-| `fly.toml` | Fly.io |
-| `render.yaml` | Render |
-| `railway.json` | Railway |
-| `Procfile` | Heroku |
-| `app.yaml` | Google App Engine |
+| File             | Platform             |
+| ---------------- | -------------------- |
+| `vercel.json`    | Vercel               |
+| `netlify.toml`   | Netlify              |
+| `fly.toml`       | Fly.io               |
+| `render.yaml`    | Render               |
+| `railway.json`   | Railway              |
+| `Procfile`       | Heroku               |
+| `app.yaml`       | Google App Engine    |
 | `serverless.yml` | Serverless Framework |
 
 ## Convention Detection
 
 ### Python Linting
 
-| Pattern | Tool |
-|---------|------|
-| `ruff.toml` | Ruff |
-| `[tool.ruff]` in pyproject.toml | Ruff |
-| `.flake8` | Flake8 |
-| `pylintrc` | Pylint |
+| Pattern                         | Tool   |
+| ------------------------------- | ------ |
+| `ruff.toml`                     | Ruff   |
+| `[tool.ruff]` in pyproject.toml | Ruff   |
+| `.flake8`                       | Flake8 |
+| `pylintrc`                      | Pylint |
 
 ### Python Formatting
 
-| Pattern | Tool |
-|---------|------|
+| Pattern                          | Tool  |
+| -------------------------------- | ----- |
 | `[tool.black]` in pyproject.toml | Black |
 
 ### JavaScript/TypeScript Linting
 
 Check for any of these files:
+
 ```
 .eslintrc
 .eslintrc.js
@@ -179,6 +184,7 @@ eslint.config.js
 ### Prettier Formatting
 
 Check for any of these files:
+
 ```
 .prettierrc
 .prettierrc.js
@@ -188,15 +194,15 @@ prettier.config.js
 
 ### TypeScript Detection
 
-| Pattern | Indicator |
-|---------|-----------|
+| Pattern         | Indicator             |
+| --------------- | --------------------- |
 | `tsconfig.json` | TypeScript configured |
 
 ### Git Hooks
 
-| Pattern | Tool |
-|---------|------|
-| `.husky/` | Husky |
+| Pattern                   | Tool       |
+| ------------------------- | ---------- |
+| `.husky/`                 | Husky      |
 | `.pre-commit-config.yaml` | pre-commit |
 
 ## Integration Notes
@@ -212,6 +218,7 @@ When using these patterns with project-analyzer skill:
 ## Memory Protocol (MANDATORY)
 
 **After using these patterns:**
+
 - Record new patterns discovered in `.claude/context/memory/learnings.md`
 - Document edge cases in `.claude/context/memory/issues.md`
 

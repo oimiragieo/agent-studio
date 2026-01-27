@@ -7,7 +7,13 @@
     "core": {
       "developer": {
         "primary": ["tdd", "debugging", "git-expert"],
-        "secondary": ["code-quality-expert", "code-analyzer", "code-style-validator", "commit-validator", "smart-revert"],
+        "secondary": [
+          "code-quality-expert",
+          "code-analyzer",
+          "code-style-validator",
+          "commit-validator",
+          "smart-revert"
+        ],
         "contextual": {
           "python_project": ["python-backend-expert", "comprehensive-unit-testing-with-pytest"],
           "typescript_project": ["typescript-expert", "testing-expert"],
@@ -98,7 +104,10 @@
         "primary": ["go-expert", "tdd", "debugging"],
         "secondary": ["testing-expert", "api-development-expert", "git-expert"],
         "contextual": {
-          "fiber_project": ["fiber-logging-and-project-structure", "fiber-routing-and-csrf-protection"],
+          "fiber_project": [
+            "fiber-logging-and-project-structure",
+            "fiber-routing-and-csrf-protection"
+          ],
           "grpc_project": ["protocol-buffer-definitions-rule"]
         },
         "always": ["verification-before-completion", "task-management-protocol"]
@@ -153,7 +162,13 @@
         "primary": ["java-expert", "tdd", "debugging"],
         "secondary": ["testing-expert", "api-development-expert"],
         "contextual": {
-          "spring_project": ["dto-conventions", "entity-class-conventions", "service-class-conventions", "repository-class-conventions", "restcontroller-conventions"]
+          "spring_project": [
+            "dto-conventions",
+            "entity-class-conventions",
+            "service-class-conventions",
+            "repository-class-conventions",
+            "restcontroller-conventions"
+          ]
         },
         "always": ["verification-before-completion", "task-management-protocol"]
       },
@@ -198,7 +213,10 @@
         "primary": ["react-expert", "expo-framework-rule", "tdd"],
         "secondary": ["mobile-ui-development-rule", "expo-mobile-app-rule", "testing-expert"],
         "contextual": {
-          "nativewind_styling": ["nativewind-and-tailwind-css-compatibility", "babel-configuration-for-nativewind"]
+          "nativewind_styling": [
+            "nativewind-and-tailwind-css-compatibility",
+            "babel-configuration-for-nativewind"
+          ]
         },
         "always": ["verification-before-completion", "task-management-protocol"]
       },
@@ -240,7 +258,11 @@
           "security_review": ["security-architect"],
           "performance_review": ["debugging"]
         },
-        "always": ["verification-before-completion", "receiving-code-review", "requesting-code-review"]
+        "always": [
+          "verification-before-completion",
+          "receiving-code-review",
+          "requesting-code-review"
+        ]
       },
       "security-architect": {
         "primary": ["security-architect", "auth-security-expert", "authentication-flow-rules"],
@@ -249,21 +271,47 @@
           "web3_project": ["web3-expert"],
           "reverse_engineering": ["binary-analysis-patterns", "memory-forensics"]
         },
-        "always": ["verification-before-completion", "task-management-protocol", "repo-rag", "explaining-rules"]
+        "always": [
+          "verification-before-completion",
+          "task-management-protocol",
+          "repo-rag",
+          "explaining-rules"
+        ]
       },
       "devops": {
         "primary": ["docker-compose", "terraform-infra", "k8s-manifest-generator"],
-        "secondary": ["helm-chart-scaffolding", "gitops-workflow", "k8s-security-policies", "ci-cd-implementation-rule"],
+        "secondary": [
+          "helm-chart-scaffolding",
+          "gitops-workflow",
+          "k8s-security-policies",
+          "ci-cd-implementation-rule"
+        ],
         "contextual": {
           "aws_project": ["aws-cloud-ops"],
           "gcp_project": ["gcloud-cli"],
           "monitoring_focus": ["sentry-monitoring"]
         },
-        "always": ["verification-before-completion", "task-management-protocol", "git-expert", "github-mcp", "filesystem", "containerization-rules", "architecture-review", "database-architect", "consensus-voting", "context-compressor", "kubernetes-flux"]
+        "always": [
+          "verification-before-completion",
+          "task-management-protocol",
+          "git-expert",
+          "github-mcp",
+          "filesystem",
+          "containerization-rules",
+          "architecture-review",
+          "database-architect",
+          "consensus-voting",
+          "context-compressor",
+          "kubernetes-flux"
+        ]
       },
       "devops-troubleshooter": {
         "primary": ["debugging", "docker-compose", "k8s-manifest-generator"],
-        "secondary": ["incident-runbook-templates", "on-call-handoff-patterns", "postmortem-writing"],
+        "secondary": [
+          "incident-runbook-templates",
+          "on-call-handoff-patterns",
+          "postmortem-writing"
+        ],
         "contextual": {
           "cloud_issue": ["aws-cloud-ops", "gcloud-cli"],
           "database_issue": ["database-expert"]
@@ -349,42 +397,114 @@
         "primary": ["research-synthesis", "agent-creator", "skill-creator"],
         "secondary": ["workflow-creator", "hook-creator", "template-creator", "schema-creator"],
         "contextual": {},
-        "always": ["verification-before-completion", "task-management-protocol", "artifact-lifecycle"]
+        "always": [
+          "verification-before-completion",
+          "task-management-protocol",
+          "artifact-lifecycle"
+        ]
       }
     }
   },
   "skillCategories": {
     "core": {
       "description": "Essential development workflow skills",
-      "skills": ["tdd", "debugging", "testing-expert", "code-quality-expert", "code-analyzer", "code-style-validator"]
+      "skills": [
+        "tdd",
+        "debugging",
+        "testing-expert",
+        "code-quality-expert",
+        "code-analyzer",
+        "code-style-validator"
+      ]
     },
     "planning": {
       "description": "Design, planning, and architecture skills",
-      "skills": ["plan-generator", "spec-writing", "spec-gathering", "spec-critique", "complexity-assessment", "brainstorming", "architecture-review", "diagram-generator"]
+      "skills": [
+        "plan-generator",
+        "spec-writing",
+        "spec-gathering",
+        "spec-critique",
+        "complexity-assessment",
+        "brainstorming",
+        "architecture-review",
+        "diagram-generator"
+      ]
     },
     "security": {
       "description": "Security analysis and validation skills",
-      "skills": ["security-architect", "auth-security-expert", "authentication-flow-rules", "binary-analysis-patterns", "memory-forensics", "protocol-reverse-engineering"]
+      "skills": [
+        "security-architect",
+        "auth-security-expert",
+        "authentication-flow-rules",
+        "binary-analysis-patterns",
+        "memory-forensics",
+        "protocol-reverse-engineering"
+      ]
     },
     "languages": {
       "description": "Language-specific expertise skills",
-      "skills": ["python-backend-expert", "typescript-expert", "go-expert", "java-expert", "php-expert", "cpp", "elixir-expert", "nodejs-expert"]
+      "skills": [
+        "python-backend-expert",
+        "typescript-expert",
+        "go-expert",
+        "java-expert",
+        "php-expert",
+        "cpp",
+        "elixir-expert",
+        "nodejs-expert"
+      ]
     },
     "frameworks": {
       "description": "Framework-specific expertise skills",
-      "skills": ["react-expert", "nextjs-expert", "svelte-expert", "vue-expert", "angular-expert", "astro-expert", "flutter-expert", "graphql-expert", "htmx-expert"]
+      "skills": [
+        "react-expert",
+        "nextjs-expert",
+        "svelte-expert",
+        "vue-expert",
+        "angular-expert",
+        "astro-expert",
+        "flutter-expert",
+        "graphql-expert",
+        "htmx-expert"
+      ]
     },
     "mobile": {
       "description": "Mobile development skills",
-      "skills": ["ios-expert", "android-expert", "flutter-expert", "expo-framework-rule", "expo-mobile-app-rule", "mobile-ui-development-rule", "mobile-first-design-rules"]
+      "skills": [
+        "ios-expert",
+        "android-expert",
+        "flutter-expert",
+        "expo-framework-rule",
+        "expo-mobile-app-rule",
+        "mobile-ui-development-rule",
+        "mobile-first-design-rules"
+      ]
     },
     "devops": {
       "description": "Infrastructure and deployment skills",
-      "skills": ["docker-compose", "terraform-infra", "k8s-manifest-generator", "helm-chart-scaffolding", "gitops-workflow", "aws-cloud-ops", "gcloud-cli", "kubernetes-flux", "ci-cd-implementation-rule"]
+      "skills": [
+        "docker-compose",
+        "terraform-infra",
+        "k8s-manifest-generator",
+        "helm-chart-scaffolding",
+        "gitops-workflow",
+        "aws-cloud-ops",
+        "gcloud-cli",
+        "kubernetes-flux",
+        "ci-cd-implementation-rule"
+      ]
     },
     "data": {
       "description": "Data processing and database skills",
-      "skills": ["database-architect", "database-expert", "data-expert", "text-to-sql", "ai-ml-expert", "pandas-data-manipulation-rules", "large-data-with-dask"]
+      "skills": [
+        "database-architect",
+        "database-expert",
+        "data-expert",
+        "text-to-sql",
+        "ai-ml-expert",
+        "pandas-data-manipulation-rules",
+        "large-data-with-dask"
+      ]
     },
     "documentation": {
       "description": "Documentation and writing skills",
@@ -392,23 +512,60 @@
     },
     "git": {
       "description": "Version control skills",
-      "skills": ["git-expert", "gitflow", "github-mcp", "github-ops", "commit-validator", "finishing-a-development-branch", "using-git-worktrees"]
+      "skills": [
+        "git-expert",
+        "gitflow",
+        "github-mcp",
+        "github-ops",
+        "commit-validator",
+        "finishing-a-development-branch",
+        "using-git-worktrees"
+      ]
     },
     "validation": {
       "description": "Quality and validation skills",
-      "skills": ["verification-before-completion", "qa-workflow", "rule-auditor", "code-style-validator", "commit-validator"]
+      "skills": [
+        "verification-before-completion",
+        "qa-workflow",
+        "rule-auditor",
+        "code-style-validator",
+        "commit-validator"
+      ]
     },
     "memory": {
       "description": "Context and memory management skills",
-      "skills": ["context-compressor", "session-handoff", "summarize-changes", "insight-extraction", "operational-modes", "recovery"]
+      "skills": [
+        "context-compressor",
+        "session-handoff",
+        "summarize-changes",
+        "insight-extraction",
+        "operational-modes",
+        "recovery"
+      ]
     },
     "creators": {
       "description": "Self-evolution and artifact creation skills",
-      "skills": ["research-synthesis", "agent-creator", "skill-creator", "workflow-creator", "hook-creator", "template-creator", "schema-creator", "artifact-lifecycle"]
+      "skills": [
+        "research-synthesis",
+        "agent-creator",
+        "skill-creator",
+        "workflow-creator",
+        "hook-creator",
+        "template-creator",
+        "schema-creator",
+        "artifact-lifecycle"
+      ]
     },
     "orchestration": {
       "description": "Multi-agent coordination skills",
-      "skills": ["task-management-protocol", "swarm-coordination", "consensus-voting", "dispatching-parallel-agents", "subagent-driven-development", "track-management"]
+      "skills": [
+        "task-management-protocol",
+        "swarm-coordination",
+        "consensus-voting",
+        "dispatching-parallel-agents",
+        "subagent-driven-development",
+        "track-management"
+      ]
     },
     "scientific": {
       "description": "Scientific research and analysis skills",
@@ -471,7 +628,15 @@
       "description": "Google Cloud project detected"
     },
     "security_review": {
-      "keywords": ["security", "auth", "authentication", "authorization", "vulnerability", "penetration", "threat"],
+      "keywords": [
+        "security",
+        "auth",
+        "authentication",
+        "authorization",
+        "vulnerability",
+        "penetration",
+        "threat"
+      ],
       "description": "Security-focused request"
     },
     "web3_project": {

@@ -16,11 +16,13 @@ Qiskit supports a wide range of quantum algorithms for optimization, chemistry, 
 VQE finds the minimum eigenvalue of a Hamiltonian using a hybrid quantum-classical approach.
 
 **Use Cases:**
+
 - Molecular ground state energy
 - Combinatorial optimization
 - Materials simulation
 
 **Implementation:**
+
 ```python
 from qiskit import QuantumCircuit, transpile
 from qiskit_ibm_runtime import QiskitRuntimeService, EstimatorV2 as Estimator, Session
@@ -88,12 +90,14 @@ print(f"Ground state energy: {energy}")
 QAOA solves combinatorial optimization problems like MaxCut, TSP, and graph coloring.
 
 **Use Cases:**
+
 - MaxCut problems
 - Portfolio optimization
 - Vehicle routing
 - Scheduling problems
 
 **Implementation:**
+
 ```python
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
@@ -148,11 +152,13 @@ qaoa_circuit, params = qaoa_maxcut(G, p=2, backend=backend)
 Quantum search algorithm providing quadratic speedup for unstructured search.
 
 **Use Cases:**
+
 - Database search
 - SAT solving
 - Finding marked items
 
 **Implementation:**
+
 ```python
 from qiskit import QuantumCircuit
 
@@ -224,11 +230,13 @@ qc_grover = grover_algorithm(marked, iterations)
 ### Molecular Ground State Energy
 
 **Install Qiskit Nature:**
+
 ```bash
 uv pip install qiskit-nature qiskit-nature-pyscf
 ```
 
 **Example: H2 Molecule**
+
 ```python
 from qiskit_nature.second_q.drivers import PySCFDriver
 from qiskit_nature.second_q.mappers import JordanWignerMapper, ParityMapper
@@ -314,11 +322,13 @@ excited_states = qeom.solve(problem)
 Quantum computers can compute kernel functions for machine learning.
 
 **Install Qiskit Machine Learning:**
+
 ```bash
 uv pip install qiskit-machine-learning
 ```
 
 **Example: Classification with Quantum Kernel**
+
 ```python
 from qiskit_machine_learning.kernels import FidelityQuantumKernel
 from qiskit_algorithms.state_fidelities import ComputeUncompute
@@ -420,6 +430,7 @@ uv pip install qiskit-algorithms
 ```
 
 **Available Algorithms:**
+
 - Amplitude Estimation
 - Phase Estimation
 - Shor's Algorithm
@@ -427,6 +438,7 @@ uv pip install qiskit-algorithms
 - HHL (Linear systems)
 
 **Example: Quantum Phase Estimation**
+
 ```python
 from qiskit.circuit.library import QFT
 from qiskit_algorithms import PhaseEstimation
@@ -450,12 +462,14 @@ uv pip install qiskit-optimization
 ```
 
 **Supported Problems:**
+
 - Quadratic programs
 - Integer programming
 - Linear programming
 - Constraint satisfaction
 
 **Example: Portfolio Optimization**
+
 ```python
 from qiskit_optimization.applications import PortfolioOptimization
 from qiskit_optimization.algorithms import MinimumEigenOptimizer
@@ -534,13 +548,16 @@ Benchmark quantum algorithms:
 ## Best Practices
 
 ### 1. Start Simple
+
 Begin with small problem instances to validate your approach:
+
 ```python
 # Test with 2-3 qubits first
 # Scale up after confirming correctness
 ```
 
 ### 2. Use Simulators for Development
+
 ```python
 from qiskit.primitives import StatevectorSampler
 
@@ -552,6 +569,7 @@ sampler_sim = StatevectorSampler()
 ```
 
 ### 3. Monitor Convergence
+
 ```python
 convergence_data = []
 
@@ -569,6 +587,7 @@ plt.show()
 ```
 
 ### 4. Parameter Initialization
+
 ```python
 # Use problem-specific initialization when possible
 # Random initialization
@@ -579,6 +598,7 @@ initial_params = np.random.uniform(0, 2*np.pi, num_params)
 ```
 
 ### 5. Save Intermediate Results
+
 ```python
 import json
 
@@ -596,12 +616,14 @@ with open(f'checkpoint_{iteration}.json', 'w') as f:
 ## Resources and Further Reading
 
 **Official Documentation:**
+
 - [Qiskit Textbook](https://qiskit.org/learn)
 - [Qiskit Nature Documentation](https://qiskit.org/ecosystem/nature)
 - [Qiskit Machine Learning Documentation](https://qiskit.org/ecosystem/machine-learning)
 - [Qiskit Optimization Documentation](https://qiskit.org/ecosystem/optimization)
 
 **Research Papers:**
+
 - VQE: Peruzzo et al., Nature Communications (2014)
 - QAOA: Farhi et al., arXiv:1411.4028
 - Quantum Kernels: Havlíček et al., Nature (2019)

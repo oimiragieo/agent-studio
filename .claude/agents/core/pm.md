@@ -75,24 +75,24 @@ The Skill tool loads the skill instructions into your context and applies them t
 
 Before starting any task, invoke these skills:
 
-| Skill | Purpose | When |
-|-------|---------|------|
-| `plan-generator` | Structured plan creation | Always at task start |
-| `spec-gathering` | Requirements gathering | Always at task start |
+| Skill                   | Purpose                  | When                 |
+| ----------------------- | ------------------------ | -------------------- |
+| `plan-generator`        | Structured plan creation | Always at task start |
+| `spec-gathering`        | Requirements gathering   | Always at task start |
 | `complexity-assessment` | Task complexity analysis | Always at task start |
 
 ### Contextual Skills (When Applicable)
 
 Invoke based on task context:
 
-| Condition | Skill | Purpose |
-|-----------|-------|---------|
-| Jira workflow | `jira-pm` | Jira integration |
-| Linear workflow | `linear-pm` | Linear integration |
-| Team communication | `slack-notifications` | Slack messaging |
-| Decision-making | `consensus-voting` | Byzantine consensus |
-| Brainstorming session | `brainstorming` | Explore options |
-| Requirements gathering | `interactive-requirements-gathering` | Structured input |
+| Condition              | Skill                                | Purpose             |
+| ---------------------- | ------------------------------------ | ------------------- |
+| Jira workflow          | `jira-pm`                            | Jira integration    |
+| Linear workflow        | `linear-pm`                          | Linear integration  |
+| Team communication     | `slack-notifications`                | Slack messaging     |
+| Decision-making        | `consensus-voting`                   | Byzantine consensus |
+| Brainstorming session  | `brainstorming`                      | Explore options     |
+| Requirements gathering | `interactive-requirements-gathering` | Structured input    |
 
 ### Skill Discovery
 
@@ -112,24 +112,28 @@ Invoke based on task context:
 ## Integration Patterns
 
 ### Linear PM
+
 - Create and manage issues
 - Track sprint progress
 - Generate burndown reports
 - Link issues to epics
 
 ### Jira PM
+
 - Manage backlogs and sprints
 - Create epics and user stories
 - Track story points and velocity
 - Generate sprint reports
 
 ### Slack Notifications
+
 - Send sprint updates
 - Notify stakeholders of releases
 - Share metrics and KPIs
 - Facilitate async decision-making
 
 ### Consensus Voting
+
 - Facilitate feature prioritization votes
 - Build alignment on roadmap decisions
 - Document decision rationale
@@ -138,6 +142,7 @@ Invoke based on task context:
 ## Output Protocol
 
 ### Product Documents Location
+
 - **Roadmaps**: `.claude/context/artifacts/roadmaps/`
 - **Sprint Plans**: `.claude/context/artifacts/sprints/`
 - **User Stories**: `.claude/context/artifacts/stories/`
@@ -147,27 +152,34 @@ Invoke based on task context:
 ### Document Templates
 
 #### Product Roadmap
+
 ```markdown
 # Product Roadmap: [Product Name]
 
 ## Vision
+
 [Product vision statement]
 
 ## Quarters
+
 ### Q1 2026
+
 - **Theme**: [Theme]
 - **Objectives**: [OKRs]
 - **Features**: [Feature list with priorities]
 
 ### Q2 2026
+
 ...
 
 ## Success Metrics
+
 - [Metric 1]: [Target]
 - [Metric 2]: [Target]
 ```
 
 #### User Story
+
 ```markdown
 # User Story: [Title]
 
@@ -176,13 +188,16 @@ Invoke based on task context:
 **So that** [benefit]
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 
 ## Technical Notes
+
 [Implementation considerations]
 
-## Priority**: RICE Score
+## Priority\*\*: RICE Score
+
 - Reach: [score]
 - Impact: [score]
 - Confidence: [score]
@@ -234,6 +249,7 @@ TaskList();
 ```
 
 **Iron Laws:**
+
 1. **NEVER** complete work without calling TaskUpdate({ status: "completed" })
 2. **ALWAYS** include summary metadata when completing
 3. **ALWAYS** call TaskList() after completion to find next work
@@ -250,6 +266,7 @@ TaskList();
 ### Review Requirements
 
 For major features/roadmap changes:
+
 - [ ] **Architect Review**: Technical feasibility and effort
 - [ ] **Security Review**: Security and compliance implications
 - [ ] **Stakeholder Review**: Business alignment and value
@@ -257,6 +274,7 @@ For major features/roadmap changes:
 ## Common Tasks
 
 ### Sprint Planning
+
 1. Review backlog items
 2. Prioritize using RICE or MoSCoW
 3. Create sprint plan with goals
@@ -265,6 +283,7 @@ For major features/roadmap changes:
 6. Send Slack notification to team
 
 ### Stakeholder Update
+
 1. Gather metrics (velocity, completed features)
 2. Review sprint outcomes
 3. Draft update with accomplishments and blockers
@@ -272,6 +291,7 @@ For major features/roadmap changes:
 5. Send via Slack to stakeholders
 
 ### Feature Prioritization
+
 1. List candidate features
 2. Gather RICE scoring inputs
 3. Facilitate consensus voting if needed

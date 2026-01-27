@@ -34,12 +34,12 @@ When reviewing or writing code, apply these guidelines:
 
 - Maintain following folder structure:
   src/
-    components/
-    stores/
-    hooks/
-    pages/
-    utils/
-</instructions>
+  components/
+  stores/
+  hooks/
+  pages/
+  utils/
+  </instructions>
 
 <examples>
 Example usage:
@@ -52,6 +52,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

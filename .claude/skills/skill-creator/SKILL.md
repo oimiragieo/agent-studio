@@ -6,7 +6,7 @@ model: sonnet
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch]
-args: "<action> [options]"
+args: '<action> [options]'
 best_practices:
   - Always use standardized structure
   - Include Memory Protocol section
@@ -31,6 +31,7 @@ Create, validate, install, and convert skills for the multi-agent ecosystem.
 ```
 
 **Verification:**
+
 ```bash
 grep "<skill-name>" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 grep "<skill-name>" .claude/context/artifacts/skill-catalog.md || echo "ERROR: Skill catalog NOT UPDATED!"
@@ -127,18 +128,18 @@ node .claude/skills/skill-creator/scripts/convert.cjs \
 
 **Known MCP Servers (Auto-detected):**
 
-| Server               | Source | Description                      |
-| -------------------- | ------ | -------------------------------- |
-| @anthropic/mcp-shell | npm    | Shell command execution          |
-| @modelcontextprotocol/server-filesystem | npm | File system operations |
-| @modelcontextprotocol/server-memory | npm | Knowledge graph memory |
-| @modelcontextprotocol/server-github | npm | GitHub API integration |
-| @modelcontextprotocol/server-slack | npm | Slack messaging |
-| mcp-server-git       | pypi   | Git operations                   |
-| mcp-server-time      | pypi   | Time and timezone utilities      |
-| mcp-server-sentry    | pypi   | Sentry error tracking            |
-| mcp/github           | docker | Official GitHub MCP              |
-| mcp/playwright       | docker | Browser automation               |
+| Server                                  | Source | Description                 |
+| --------------------------------------- | ------ | --------------------------- |
+| @anthropic/mcp-shell                    | npm    | Shell command execution     |
+| @modelcontextprotocol/server-filesystem | npm    | File system operations      |
+| @modelcontextprotocol/server-memory     | npm    | Knowledge graph memory      |
+| @modelcontextprotocol/server-github     | npm    | GitHub API integration      |
+| @modelcontextprotocol/server-slack      | npm    | Slack messaging             |
+| mcp-server-git                          | pypi   | Git operations              |
+| mcp-server-time                         | pypi   | Time and timezone utilities |
+| mcp-server-sentry                       | pypi   | Sentry error tracking       |
+| mcp/github                              | docker | Official GitHub MCP         |
+| mcp/playwright                          | docker | Browser automation          |
 
 **Example:**
 
@@ -242,14 +243,14 @@ node .claude/skills/skill-creator/scripts/consolidate.cjs --list-buckets
 
 **Domain Buckets:**
 
-| Bucket | Description |
-|--------|-------------|
-| `react-expert` | React, Shadcn, Radix |
-| `python-backend-expert` | Django, FastAPI, Flask |
-| `nextjs-expert` | Next.js App Router, Server Components |
-| `typescript-expert` | TypeScript, JavaScript |
-| `general-best-practices` | Naming, error handling, docs |
-| ... | 40+ total buckets |
+| Bucket                   | Description                           |
+| ------------------------ | ------------------------------------- |
+| `react-expert`           | React, Shadcn, Radix                  |
+| `python-backend-expert`  | Django, FastAPI, Flask                |
+| `nextjs-expert`          | Next.js App Router, Server Components |
+| `typescript-expert`      | TypeScript, JavaScript                |
+| `general-best-practices` | Naming, error handling, docs          |
+| ...                      | 40+ total buckets                     |
 
 ### `convert-rules` - Convert Legacy Rules to Skills
 
@@ -435,9 +436,11 @@ Concrete usage examples.
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/skills/<skill-name>/`
 
 Each skill directory should contain:
+
 - `SKILL.md` - Main skill definition file
 - `scripts/` - Executable logic (optional)
 - `schemas/` - Input/output validation schemas (optional)
@@ -445,11 +448,13 @@ Each skill directory should contain:
 - `references/` - Reference materials (optional)
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -495,7 +500,7 @@ This step is AUTOMATIC and BLOCKING. Do not skip.
 
 2. **Generate skill entry in this exact format:**
 
-```markdown
+````markdown
 ### {Skill Name (Title Case)}
 
 Use when {trigger condition}:
@@ -503,9 +508,11 @@ Use when {trigger condition}:
 ```javascript
 Skill({ skill: '{skill-name}' });
 ```
+````
 
 {Brief description of what the skill does in 1-2 sentences.}
-```
+
+````
 
 3. **Insert in appropriate section using Edit tool:**
    - Find the end of the target section (before the next ## heading)
@@ -514,7 +521,7 @@ Skill({ skill: '{skill-name}' });
 4. **Verify update with:**
 ```bash
 grep "{skill-name}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED - BLOCKING!"
-```
+````
 
 **BLOCKING**: If CLAUDE.md update fails or skill is not found, skill creation is INCOMPLETE. Do not proceed.
 
@@ -533,18 +540,18 @@ Based on skill domain and purpose, auto-assign to matching agents.
 
 **Matching Rules:**
 
-| Skill Domain | Keywords | Assign To Agents |
-|--------------|----------|------------------|
-| Testing | tdd, test, qa, validate | qa, developer |
-| Security | security, audit, compliance, vulnerability | security-architect, developer |
-| Planning | plan, design, architect, analyze | planner, architect |
-| Coding | code, implement, refactor, debug | developer, all domain-pro agents |
-| Documentation | doc, write, readme, comment | technical-writer, planner |
-| DevOps | deploy, docker, k8s, terraform, ci, cd | devops, devops-troubleshooter |
-| Git/GitHub | git, github, commit, pr, branch | developer, devops |
-| Communication | slack, notify, alert, message | incident-responder |
-| Database | sql, database, migration, schema | database-architect, developer |
-| API | api, rest, graphql, endpoint | developer, architect |
+| Skill Domain  | Keywords                                   | Assign To Agents                 |
+| ------------- | ------------------------------------------ | -------------------------------- |
+| Testing       | tdd, test, qa, validate                    | qa, developer                    |
+| Security      | security, audit, compliance, vulnerability | security-architect, developer    |
+| Planning      | plan, design, architect, analyze           | planner, architect               |
+| Coding        | code, implement, refactor, debug           | developer, all domain-pro agents |
+| Documentation | doc, write, readme, comment                | technical-writer, planner        |
+| DevOps        | deploy, docker, k8s, terraform, ci, cd     | devops, devops-troubleshooter    |
+| Git/GitHub    | git, github, commit, pr, branch            | developer, devops                |
+| Communication | slack, notify, alert, message              | incident-responder               |
+| Database      | sql, database, migration, schema           | database-architect, developer    |
+| API           | api, rest, graphql, endpoint               | developer, architect             |
 
 **Example agent update:**
 
@@ -563,6 +570,7 @@ skills: [tdd, debugging, new-skill-name]
 Update the skill catalog to ensure the new skill is discoverable.
 
 1. **Read current catalog:**
+
    ```bash
    cat .claude/context/artifacts/skill-catalog.md
    ```
@@ -585,6 +593,7 @@ Update the skill catalog to ensure the new skill is discoverable.
    - Specialized Patterns (other domain-specific skills)
 
 3. **Add skill entry to appropriate category table:**
+
    ```markdown
    | {skill-name} | {description} | {tools} |
    ```
@@ -615,13 +624,15 @@ Before marking skill creation complete, verify ALL items:
 - [ ] **Tools array validated** (no MCP tools unless whitelisted)
 
 **Model Validation (CRITICAL):**
+
 - If skill spawns agents, model field MUST be base name only: `haiku`, `sonnet`, or `opus`
 - DO NOT use dated versions like `claude-opus-4-5-20251101`
 - Skills themselves don't have models, but skill templates that generate agents must validate this
 
 **Tools Array Validation:**
+
 - Standard tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill
-- DO NOT add MCP tools (mcp__*) to skill outputs unless whitelisted
+- DO NOT add MCP tools (mcp\_\_\*) to skill outputs unless whitelisted
 - MCP tools cause router enforcement failures
 
 **Verification Commands:**
@@ -652,14 +663,17 @@ tail -20 .claude/context/memory/learnings.md | grep "{skill-name}"
 This skill is part of the unified artifact lifecycle. For complete multi-agent orchestration:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - How the Router discovers and invokes this skill's artifacts
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Discovery, creation, update, deprecation phases
 - Version management and registry updates
 - CLAUDE.md integration requirements
 
 **External Integration:** `.claude/workflows/core/external-integration.md`
+
 - Safe integration of external artifacts
 - Security review and validation phases
 
@@ -670,6 +684,7 @@ This skill is part of the unified artifact lifecycle. For complete multi-agent o
 **Use `.claude/skills/tdd/SKILL.md` as the canonical reference skill.**
 
 Before finalizing any skill, compare against tdd structure:
+
 - [ ] Has all sections tdd has (Overview, When to Use, Iron Law, etc.)
 - [ ] YAML frontmatter is complete (name, description, version, model, invoked_by, user_invocable, tools)
 - [ ] Has Memory Protocol section (MANDATORY)
@@ -678,6 +693,7 @@ Before finalizing any skill, compare against tdd structure:
 - [ ] Has error_handling field
 
 **Quick Comparison:**
+
 ```bash
 # Compare your skill structure against tdd
 diff <(grep "^## " .claude/skills/tdd/SKILL.md) <(grep "^## " .claude/skills/{skill-name}/SKILL.md)
@@ -689,13 +705,13 @@ diff <(grep "^## " .claude/skills/tdd/SKILL.md) <(grep "^## " .claude/skills/{sk
 
 This skill is part of the Creator Ecosystem. After creating a skill, consider if companion artifacts are needed:
 
-| Need | Creator to Invoke | Command |
-|------|-------------------|---------|
-| Dedicated agent for skill | `agent-creator` | `Skill({ skill: "agent-creator" })` |
-| Validation hooks | `hook-creator` | Create hooks in `.claude/hooks/` |
-| Workflow orchestration | `workflow-creator` | Create workflow in `.claude/workflows/` |
-| Code templates | `template-creator` | Create templates in `.claude/templates/` |
-| Input/output validation | `schema-creator` | Create schemas in `.claude/schemas/` |
+| Need                      | Creator to Invoke  | Command                                  |
+| ------------------------- | ------------------ | ---------------------------------------- |
+| Dedicated agent for skill | `agent-creator`    | `Skill({ skill: "agent-creator" })`      |
+| Validation hooks          | `hook-creator`     | Create hooks in `.claude/hooks/`         |
+| Workflow orchestration    | `workflow-creator` | Create workflow in `.claude/workflows/`  |
+| Code templates            | `template-creator` | Create templates in `.claude/templates/` |
+| Input/output validation   | `schema-creator`   | Create schemas in `.claude/schemas/`     |
 
 **Chain Example:**
 
@@ -887,6 +903,7 @@ grep -l "<skill-name>" .claude/agents/**/*.md || echo "WARNING: Not assigned to 
 ### Why This Matters
 
 Agents only use skills that are:
+
 1. Listed in their frontmatter `skills:` array
 2. Explicitly loaded in their workflow
 
@@ -918,18 +935,18 @@ After creating a skill, execute this workflow:
 
 ### Agent-Skill Relevance Matrix
 
-| Skill Domain | Relevant Agents |
-|--------------|-----------------|
-| Testing (tdd, test-*) | developer, qa |
-| Debugging (debug*, troubleshoot*) | developer, devops-troubleshooter |
-| Documentation (doc-*, diagram-*) | planner, architect |
-| Security (*security*, audit*, compliance*) | security-architect |
-| Infrastructure (docker*, k8s*, terraform*) | devops |
-| Code Quality (lint*, style*, analyze*) | developer, architect |
-| Git/GitHub (git*, github*) | developer |
-| Planning (plan*, sequential*) | planner |
-| Architecture (architect*, design*) | architect |
-| Communication (slack*, notification*) | incident-responder |
+| Skill Domain                                | Relevant Agents                  |
+| ------------------------------------------- | -------------------------------- |
+| Testing (tdd, test-\*)                      | developer, qa                    |
+| Debugging (debug*, troubleshoot*)           | developer, devops-troubleshooter |
+| Documentation (doc-_, diagram-_)            | planner, architect               |
+| Security (_security_, audit*, compliance*)  | security-architect               |
+| Infrastructure (docker*, k8s*, terraform\*) | devops                           |
+| Code Quality (lint*, style*, analyze\*)     | developer, architect             |
+| Git/GitHub (git*, github*)                  | developer                        |
+| Planning (plan*, sequential*)               | planner                          |
+| Architecture (architect*, design*)          | architect                        |
+| Communication (slack*, notification*)       | incident-responder               |
 
 ### Implementation
 
@@ -958,6 +975,7 @@ node .claude/skills/skill-creator/scripts/create.cjs \
 ```
 
 This updates:
+
 1. Agent's `skills:` frontmatter array
 2. Agent's workflow to include skill loading step
 
@@ -969,9 +987,10 @@ When updating an agent, ensure their workflow includes:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files to understand specialized workflows:
+
 - `.claude/skills/<skill-1>/SKILL.md`
 - `.claude/skills/<skill-2>/SKILL.md`
-- `.claude/skills/<new-skill>/SKILL.md`  # Newly added
+- `.claude/skills/<new-skill>/SKILL.md` # Newly added
 ```
 
 ## Integration with Agent Creator
@@ -984,6 +1003,7 @@ The skill-creator works with agent-creator for full ecosystem evolution:
 4. **Execute Task** → Agent loads skills and handles request
 
 This enables a self-healing, self-evolving agent ecosystem where:
+
 - New skills are automatically distributed to relevant agents
 - New agents automatically discover and include relevant skills
 - Both intake paths ensure skills are properly loaded and used

@@ -17,6 +17,7 @@ Retrieve the authenticated user's profile information.
 **Endpoint:** `GET /profile`
 
 **Response includes:**
+
 - User ID and username
 - Full name
 - Email address
@@ -27,6 +28,7 @@ Retrieve the authenticated user's profile information.
 - Protocol count and statistics
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/profile"
@@ -39,6 +41,7 @@ Update profile information.
 **Endpoint:** `PATCH /profile`
 
 **Request Body:**
+
 - `first_name`: First name
 - `last_name`: Last name
 - `email`: Email address
@@ -50,6 +53,7 @@ Update profile information.
 - `orcid`: ORCID identifier
 
 **Example Request:**
+
 ```bash
 curl -X PATCH \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -71,9 +75,11 @@ Update profile picture.
 **Request Format**: `multipart/form-data`
 
 **Form Parameters:**
+
 - `image` (required): Image file (JPEG, PNG)
 
 **Recommended specifications:**
+
 - Minimum size: 200x200 pixels
 - Aspect ratio: Square (1:1)
 - Format: JPEG or PNG
@@ -88,6 +94,7 @@ Discover recently published public protocols.
 **Endpoint:** `GET /publications`
 
 **Query Parameters:**
+
 - `key`: Search keywords
 - `category`: Filter by category
   - Example categories: `molecular-biology`, `cell-biology`, `biochemistry`, etc.
@@ -99,12 +106,14 @@ Discover recently published public protocols.
 - `page_id`: Page number for pagination
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/publications?category=molecular-biology&date_from=2025-01-01&order_field=published_on&order_dir=desc"
 ```
 
 **Use Cases:**
+
 - Discover trending protocols
 - Monitor new publications in your field
 - Find recently published protocols for specific techniques
@@ -123,9 +132,11 @@ Document an execution of a protocol.
 **Endpoint:** `POST /protocols/{protocol_id}/runs`
 
 **Path Parameters:**
+
 - `protocol_id`: The protocol's unique identifier
 
 **Request Body:**
+
 - `title` (required): Experiment run title
 - `date`: Date of experiment execution (ISO 8601 format)
 - `status`: Experiment outcome
@@ -138,6 +149,7 @@ Document an execution of a protocol.
 - `attachments`: File IDs for data files or images
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -160,6 +172,7 @@ Retrieve all experiment records for a protocol.
 **Endpoint:** `GET /protocols/{protocol_id}/runs`
 
 **Query Parameters:**
+
 - `status`: Filter by outcome (`success`, `partial`, `failed`)
 - `date_from`: Start date
 - `date_to`: End date
@@ -177,6 +190,7 @@ Retrieve all experiment records for a protocol.
 **Endpoint:** `DELETE /protocols/{protocol_id}/runs/{run_id}`
 
 **Use Cases:**
+
 - Track reproducibility across multiple experiments
 - Document troubleshooting and optimization
 - Share successful modifications with collaborators
@@ -192,6 +206,7 @@ Retrieve notifications for the authenticated user.
 **Endpoint:** `GET /notifications`
 
 **Query Parameters:**
+
 - `type`: Filter by notification type
   - `comment`: New comments on your protocols
   - `mention`: You were mentioned in a comment
@@ -206,6 +221,7 @@ Retrieve notifications for the authenticated user.
 - `page_id`: Page number for pagination
 
 **Response includes:**
+
 - Notification ID and type
 - Message/description
 - Related protocol/comment/workspace
@@ -213,6 +229,7 @@ Retrieve notifications for the authenticated user.
 - Read status
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/notifications?read=false&type=comment"
@@ -223,6 +240,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" \
 **Endpoint:** `PATCH /notifications/{notification_id}`
 
 **Request Body:**
+
 - `read`: Set to `true`
 
 ### Mark All Notifications as Read
@@ -242,9 +260,11 @@ Export all protocols and workspace data from an organization.
 **Endpoint:** `GET /organizations/{organization_id}/export`
 
 **Path Parameters:**
+
 - `organization_id`: The organization's unique identifier
 
 **Query Parameters:**
+
 - `format`: Export format
   - `json`: JSON format with full metadata
   - `csv`: CSV format for spreadsheet import
@@ -255,6 +275,7 @@ Export all protocols and workspace data from an organization.
 **Response**: Download URL for export package
 
 **Use Cases:**
+
 - Institutional archival
 - Compliance and audit requirements
 - Migration to other systems
@@ -262,6 +283,7 @@ Export all protocols and workspace data from an organization.
 - Data analysis and reporting
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/organizations/12345/export?format=json&include_files=true&include_comments=true"
@@ -330,8 +352,12 @@ Most API responses follow this structure:
 {
   "status_code": 0,
   "status_message": "Success",
-  "item": { /* single item data */ },
-  "items": [ /* array of items */ ],
+  "item": {
+    /* single item data */
+  },
+  "items": [
+    /* array of items */
+  ],
   "pagination": {
     "current_page": 0,
     "total_pages": 5,

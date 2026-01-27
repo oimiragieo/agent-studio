@@ -3,9 +3,7 @@
   "title": "doc-generator Output Schema",
   "description": "Output validation schema for doc-generator skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

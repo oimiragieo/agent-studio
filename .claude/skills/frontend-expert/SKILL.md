@@ -38,9 +38,10 @@ You help developers write better code by applying established guidelines and bes
 When reviewing or writing code, apply these guidelines:
 
 4. Frontend Development
-  - Offer suggestions for improving the HTMX-based frontend
-  - Assist with responsive design and user experience enhancements
-  - Help with client-side performance optimization
+
+- Offer suggestions for improving the HTMX-based frontend
+- Assist with responsive design and user experience enhancements
+- Help with client-side performance optimization
 
 Project-Specific Notes:
 The frontend uses HTMX for simplicity. Suggest improvements while maintaining this approach.
@@ -160,7 +161,6 @@ When reviewing or writing code, apply these guidelines:
 
 - The project uses Material UI.
 
-
 </instructions>
 
 <examples>
@@ -174,13 +174,14 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 2 individual skills:
+
 - frontend-expert
 - ui-components-expert
-
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

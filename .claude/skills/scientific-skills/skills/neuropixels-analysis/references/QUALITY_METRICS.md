@@ -6,11 +6,11 @@ Comprehensive guide to unit quality assessment using SpikeInterface metrics and 
 
 Quality metrics assess three aspects of sorted units:
 
-| Category | Question | Key Metrics |
-|----------|----------|-------------|
-| **Contamination** (Type I) | Are spikes from multiple neurons? | ISI violations, SNR |
-| **Completeness** (Type II) | Are we missing spikes? | Amplitude cutoff, presence ratio |
-| **Stability** | Is the unit stable over time? | Drift metrics, amplitude CV |
+| Category                   | Question                          | Key Metrics                      |
+| -------------------------- | --------------------------------- | -------------------------------- |
+| **Contamination** (Type I) | Are spikes from multiple neurons? | ISI violations, SNR              |
+| **Completeness** (Type II) | Are we missing spikes?            | Amplitude cutoff, presence ratio |
+| **Stability**              | Is the unit stable over time?     | Drift metrics, amplitude CV      |
 
 ## Computing Quality Metrics
 
@@ -45,6 +45,7 @@ print(qm.columns.tolist())  # Available metrics
 ### Contamination Metrics
 
 #### ISI Violations Ratio
+
 Fraction of spikes violating refractory period. All neurons have a ~1.5ms refractory period.
 
 ```python
@@ -55,30 +56,32 @@ analyzer.compute('quality_metrics',
                  min_isi_ms=0.0)
 ```
 
-| Value | Interpretation |
-|-------|---------------|
-| < 0.01 | Excellent (well-isolated single unit) |
-| 0.01 - 0.1 | Good (minor contamination) |
-| 0.1 - 0.5 | Moderate (multi-unit activity likely) |
-| > 0.5 | Poor (likely multi-unit) |
+| Value      | Interpretation                        |
+| ---------- | ------------------------------------- |
+| < 0.01     | Excellent (well-isolated single unit) |
+| 0.01 - 0.1 | Good (minor contamination)            |
+| 0.1 - 0.5  | Moderate (multi-unit activity likely) |
+| > 0.5      | Poor (likely multi-unit)              |
 
 **Reference:** Hill et al. (2011) J Neurosci 31:8699-8705
 
 #### Signal-to-Noise Ratio (SNR)
+
 Ratio of peak waveform amplitude to background noise.
 
 ```python
 analyzer.compute('quality_metrics', metric_names=['snr'])
 ```
 
-| Value | Interpretation |
-|-------|---------------|
-| > 10 | Excellent |
-| 5 - 10 | Good |
-| 2 - 5 | Acceptable |
-| < 2 | Poor (may be noise) |
+| Value  | Interpretation      |
+| ------ | ------------------- |
+| > 10   | Excellent           |
+| 5 - 10 | Good                |
+| 2 - 5  | Acceptable          |
+| < 2    | Poor (may be noise) |
 
 #### Isolation Distance
+
 Mahalanobis distance to nearest cluster in PCA space.
 
 ```python
@@ -87,33 +90,36 @@ analyzer.compute('quality_metrics',
                  n_neighbors=4)
 ```
 
-| Value | Interpretation |
-|-------|---------------|
-| > 50 | Well-isolated |
+| Value   | Interpretation      |
+| ------- | ------------------- |
+| > 50    | Well-isolated       |
 | 20 - 50 | Moderately isolated |
-| < 20 | Poorly isolated |
+| < 20    | Poorly isolated     |
 
 #### L-ratio
+
 Contamination measure based on Mahalanobis distances.
 
-| Value | Interpretation |
-|-------|---------------|
-| < 0.05 | Well-isolated |
-| 0.05 - 0.1 | Acceptable |
-| > 0.1 | Contaminated |
+| Value      | Interpretation |
+| ---------- | -------------- |
+| < 0.05     | Well-isolated  |
+| 0.05 - 0.1 | Acceptable     |
+| > 0.1      | Contaminated   |
 
 #### D-prime
+
 Discriminability between unit and nearest neighbor.
 
-| Value | Interpretation |
-|-------|---------------|
-| > 8 | Excellent separation |
-| 5 - 8 | Good separation |
-| < 5 | Poor separation |
+| Value | Interpretation       |
+| ----- | -------------------- |
+| > 8   | Excellent separation |
+| 5 - 8 | Good separation      |
+| < 5   | Poor separation      |
 
 ### Completeness Metrics
 
 #### Amplitude Cutoff
+
 Estimates fraction of spikes below detection threshold.
 
 ```python
@@ -122,16 +128,17 @@ analyzer.compute('quality_metrics',
                  peak_sign='neg')  # 'neg', 'pos', or 'both'
 ```
 
-| Value | Interpretation |
-|-------|---------------|
-| < 0.01 | Excellent (nearly complete) |
-| 0.01 - 0.1 | Good |
-| 0.1 - 0.2 | Moderate (some missed spikes) |
-| > 0.2 | Poor (many missed spikes) |
+| Value      | Interpretation                |
+| ---------- | ----------------------------- |
+| < 0.01     | Excellent (nearly complete)   |
+| 0.01 - 0.1 | Good                          |
+| 0.1 - 0.2  | Moderate (some missed spikes) |
+| > 0.2      | Poor (many missed spikes)     |
 
 **For precise timing analyses:** Use < 0.01
 
 #### Presence Ratio
+
 Fraction of recording time with detected spikes.
 
 ```python
@@ -140,16 +147,17 @@ analyzer.compute('quality_metrics',
                  bin_duration_s=60)  # 1-minute bins
 ```
 
-| Value | Interpretation |
-|-------|---------------|
-| > 0.99 | Excellent |
-| 0.9 - 0.99 | Good |
-| 0.8 - 0.9 | Acceptable |
-| < 0.8 | Unit may have drifted out |
+| Value      | Interpretation            |
+| ---------- | ------------------------- |
+| > 0.99     | Excellent                 |
+| 0.9 - 0.99 | Good                      |
+| 0.8 - 0.9  | Acceptable                |
+| < 0.8      | Unit may have drifted out |
 
 ### Stability Metrics
 
 #### Drift Metrics
+
 Measure unit movement over time.
 
 ```python
@@ -157,31 +165,33 @@ analyzer.compute('quality_metrics',
                  metric_names=['drift_ptp', 'drift_std', 'drift_mad'])
 ```
 
-| Metric | Description | Good Value |
-|--------|-------------|------------|
-| `drift_ptp` | Peak-to-peak drift (μm) | < 40 |
-| `drift_std` | Standard deviation of drift | < 10 |
-| `drift_mad` | Median absolute deviation | < 10 |
+| Metric      | Description                 | Good Value |
+| ----------- | --------------------------- | ---------- |
+| `drift_ptp` | Peak-to-peak drift (μm)     | < 40       |
+| `drift_std` | Standard deviation of drift | < 10       |
+| `drift_mad` | Median absolute deviation   | < 10       |
 
 #### Amplitude CV
+
 Coefficient of variation of spike amplitudes.
 
-| Value | Interpretation |
-|-------|---------------|
-| < 0.25 | Very stable |
-| 0.25 - 0.5 | Acceptable |
-| > 0.5 | Unstable (drift or contamination) |
+| Value      | Interpretation                    |
+| ---------- | --------------------------------- |
+| < 0.25     | Very stable                       |
+| 0.25 - 0.5 | Acceptable                        |
+| > 0.5      | Unstable (drift or contamination) |
 
 ### Cluster Quality Metrics
 
 #### Silhouette Score
+
 Cluster cohesion vs separation (-1 to 1).
 
-| Value | Interpretation |
-|-------|---------------|
-| > 0.5 | Well-defined cluster |
-| 0.25 - 0.5 | Moderate |
-| < 0.25 | Overlapping clusters |
+| Value      | Interpretation       |
+| ---------- | -------------------- |
+| > 0.5      | Well-defined cluster |
+| 0.25 - 0.5 | Moderate             |
+| < 0.25     | Overlapping clusters |
 
 #### Nearest-Neighbor Metrics
 
@@ -191,10 +201,10 @@ analyzer.compute('quality_metrics',
                  n_neighbors=4)
 ```
 
-| Metric | Description | Good Value |
-|--------|-------------|------------|
-| `nn_hit_rate` | Fraction of spikes with same-unit neighbors | > 0.9 |
-| `nn_miss_rate` | Fraction of spikes with other-unit neighbors | < 0.1 |
+| Metric         | Description                                  | Good Value |
+| -------------- | -------------------------------------------- | ---------- |
+| `nn_hit_rate`  | Fraction of spikes with same-unit neighbors  | > 0.9      |
+| `nn_miss_rate` | Fraction of spikes with other-unit neighbors | < 0.1      |
 
 ## Standard Filtering Criteria
 

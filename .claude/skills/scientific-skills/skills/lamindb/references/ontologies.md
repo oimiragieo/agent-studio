@@ -10,21 +10,21 @@ LaminDB integrates the `bionty` plugin to manage standardized biological ontolog
 
 LaminDB provides access to multiple curated ontology sources:
 
-| Registry | Ontology Source | Description |
-|----------|----------------|-------------|
-| **Gene** | Ensembl | Genes across organisms (human, mouse, etc.) |
-| **Protein** | UniProt | Protein sequences and annotations |
-| **CellType** | Cell Ontology (CL) | Standardized cell type classifications |
-| **CellLine** | Cell Line Ontology (CLO) | Cell line annotations |
-| **Tissue** | Uberon | Anatomical structures and tissues |
-| **Disease** | Mondo, DOID | Disease classifications |
-| **Phenotype** | Human Phenotype Ontology (HPO) | Phenotypic abnormalities |
-| **Pathway** | Gene Ontology (GO) | Biological pathways and processes |
-| **ExperimentalFactor** | Experimental Factor Ontology (EFO) | Experimental variables |
-| **DevelopmentalStage** | Various | Developmental stages across organisms |
-| **Ethnicity** | HANCESTRO | Human ancestry ontology |
-| **Drug** | DrugBank | Drug compounds |
-| **Organism** | NCBItaxon | Taxonomic classifications |
+| Registry               | Ontology Source                    | Description                                 |
+| ---------------------- | ---------------------------------- | ------------------------------------------- |
+| **Gene**               | Ensembl                            | Genes across organisms (human, mouse, etc.) |
+| **Protein**            | UniProt                            | Protein sequences and annotations           |
+| **CellType**           | Cell Ontology (CL)                 | Standardized cell type classifications      |
+| **CellLine**           | Cell Line Ontology (CLO)           | Cell line annotations                       |
+| **Tissue**             | Uberon                             | Anatomical structures and tissues           |
+| **Disease**            | Mondo, DOID                        | Disease classifications                     |
+| **Phenotype**          | Human Phenotype Ontology (HPO)     | Phenotypic abnormalities                    |
+| **Pathway**            | Gene Ontology (GO)                 | Biological pathways and processes           |
+| **ExperimentalFactor** | Experimental Factor Ontology (EFO) | Experimental variables                      |
+| **DevelopmentalStage** | Various                            | Developmental stages across organisms       |
+| **Ethnicity**          | HANCESTRO                          | Human ancestry ontology                     |
+| **Drug**               | DrugBank                           | Drug compounds                              |
+| **Organism**           | NCBItaxon                          | Taxonomic classifications                   |
 
 ## Installation and Import
 

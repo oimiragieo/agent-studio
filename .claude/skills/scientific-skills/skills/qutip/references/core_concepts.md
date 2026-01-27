@@ -14,6 +14,7 @@ H = sigmaz()  # Pauli Z operator
 ```
 
 Key attributes:
+
 - `.dims` - Dimension structure
 - `.shape` - Matrix dimensions
 - `.type` - Type (ket, bra, oper, super)

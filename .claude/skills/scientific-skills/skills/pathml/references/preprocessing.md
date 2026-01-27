@@ -28,6 +28,7 @@ pipeline.run(dataset, distributed=True, n_workers=8)
 ```
 
 **Key features:**
+
 - Sequential execution of transforms
 - Automatic handling of tiles and masks
 - Distributed processing support with Dask
@@ -36,6 +37,7 @@ pipeline.run(dataset, distributed=True, n_workers=8)
 ### Transform Base Class
 
 All transforms inherit from the `Transform` base class and implement:
+
 - `apply()` - Core transformation logic
 - `input_type` - Expected input (tile, mask, etc.)
 - `output_type` - Produced output
@@ -58,38 +60,45 @@ PathML provides transforms in six major categories:
 Apply various blurring kernels for noise reduction:
 
 **MedianBlur:**
+
 ```python
 from pathml.preprocessing import MedianBlur
 
 # Apply median filter
 transform = MedianBlur(kernel_size=5)
 ```
+
 - Effective for salt-and-pepper noise
 - Preserves edges better than Gaussian blur
 
 **GaussianBlur:**
+
 ```python
 from pathml.preprocessing import GaussianBlur
 
 # Apply Gaussian blur
 transform = GaussianBlur(kernel_size=5, sigma=1.0)
 ```
+
 - Smooth noise reduction
 - Adjustable sigma controls blur strength
 
 **BoxBlur:**
+
 ```python
 from pathml.preprocessing import BoxBlur
 
 # Apply box filter
 transform = BoxBlur(kernel_size=5)
 ```
+
 - Fastest blur operation
 - Uniform averaging within kernel
 
 ### Intensity Adjustments
 
 **RescaleIntensity:**
+
 ```python
 from pathml.preprocessing import RescaleIntensity
 
@@ -101,16 +110,19 @@ transform = RescaleIntensity(
 ```
 
 **HistogramEqualization:**
+
 ```python
 from pathml.preprocessing import HistogramEqualization
 
 # Global histogram equalization
 transform = HistogramEqualization()
 ```
+
 - Enhances global contrast
 - Spreads out intensity distribution
 
 **AdaptiveHistogramEqualization (CLAHE):**
+
 ```python
 from pathml.preprocessing import AdaptiveHistogramEqualization
 
@@ -120,6 +132,7 @@ transform = AdaptiveHistogramEqualization(
     tile_grid_size=(8, 8)
 )
 ```
+
 - Enhances local contrast
 - Prevents over-amplification with clip_limit
 - Better for images with varying local contrast
@@ -127,6 +140,7 @@ transform = AdaptiveHistogramEqualization(
 ### Superpixel Processing
 
 **SuperpixelInterpolation:**
+
 ```python
 from pathml.preprocessing import SuperpixelInterpolation
 
@@ -136,6 +150,7 @@ transform = SuperpixelInterpolation(
     compactness=10.0
 )
 ```
+
 - Segments image into perceptually meaningful regions
 - Useful for feature extraction and segmentation
 
@@ -144,6 +159,7 @@ transform = SuperpixelInterpolation(
 ### H&E Tissue and Nucleus Detection
 
 **TissueDetectionHE:**
+
 ```python
 from pathml.preprocessing import TissueDetectionHE
 
@@ -154,11 +170,13 @@ transform = TissueDetectionHE(
     min_region_size=500  # Minimum tissue region size in pixels
 )
 ```
+
 - Creates binary tissue mask
 - Filters small regions and artifacts
 - Stores mask in `tile.masks['tissue']`
 
 **NucleusDetectionHE:**
+
 ```python
 from pathml.preprocessing import NucleusDetectionHE
 
@@ -169,6 +187,7 @@ transform = NucleusDetectionHE(
     min_nucleus_size=10
 )
 ```
+
 - Separates hematoxylin stain
 - Thresholds to create nucleus mask
 - Stores mask in `tile.masks['nucleus']`
@@ -176,6 +195,7 @@ transform = NucleusDetectionHE(
 ### Binary Thresholding
 
 **BinaryThreshold:**
+
 ```python
 from pathml.preprocessing import BinaryThreshold
 
@@ -192,6 +212,7 @@ transform = BinaryThreshold(threshold=128)
 ### Foreground Detection
 
 **ForegroundDetection:**
+
 ```python
 from pathml.preprocessing import ForegroundDetection
 
@@ -208,6 +229,7 @@ transform = ForegroundDetection(
 Apply morphological operations to clean up masks:
 
 **MorphOpen:**
+
 ```python
 from pathml.preprocessing import MorphOpen
 
@@ -217,10 +239,12 @@ transform = MorphOpen(
     mask_name='tissue'  # Which mask to modify
 )
 ```
+
 - Erosion followed by dilation
 - Removes small objects and noise
 
 **MorphClose:**
+
 ```python
 from pathml.preprocessing import MorphClose
 
@@ -230,6 +254,7 @@ transform = MorphClose(
     mask_name='tissue'
 )
 ```
+
 - Dilation followed by erosion
 - Fills small holes in mask
 
@@ -251,15 +276,18 @@ transform = StainNormalizationHE(
 ```
 
 **Target modes:**
+
 - `'normalize'` - Normalize both stains to reference
 - `'hematoxylin'` - Extract hematoxylin channel only
 - `'eosin'` - Extract eosin channel only
 
 **Stain estimation methods:**
+
 - `'macenko'` - Macenko et al. 2009 method (faster, more stable)
 - `'vahadane'` - Vahadane et al. 2016 method (more accurate, slower)
 
 **Advanced parameters:**
+
 ```python
 transform = StainNormalizationHE(
     target='normalize',
@@ -272,6 +300,7 @@ transform = StainNormalizationHE(
 ```
 
 **Workflow:**
+
 1. Convert RGB to optical density (OD)
 2. Estimate stain matrix (H&E vectors)
 3. Decompose into stain concentrations
@@ -279,6 +308,7 @@ transform = StainNormalizationHE(
 5. Reconstruct normalized RGB image
 
 **Example with tissue mask:**
+
 ```python
 from pathml.preprocessing import Pipeline, TissueDetectionHE, StainNormalizationHE
 
@@ -297,6 +327,7 @@ pipeline = Pipeline([
 ### Artifact Detection
 
 **LabelArtifactTileHE:**
+
 ```python
 from pathml.preprocessing import LabelArtifactTileHE
 
@@ -306,10 +337,12 @@ transform = LabelArtifactTileHE(
     bubble_threshold=0.5  # Threshold for bubble detection
 )
 ```
+
 - Detects pen markings, bubbles, and other artifacts
 - Labels affected tiles for filtering
 
 **LabelWhiteSpaceHE:**
+
 ```python
 from pathml.preprocessing import LabelWhiteSpaceHE
 
@@ -319,6 +352,7 @@ transform = LabelWhiteSpaceHE(
     mask_name='white_space'
 )
 ```
+
 - Identifies tiles with mostly background
 - Useful for filtering uninformative tiles
 
@@ -327,6 +361,7 @@ transform = LabelWhiteSpaceHE(
 ### Cell Segmentation
 
 **SegmentMIF:**
+
 ```python
 from pathml.preprocessing import SegmentMIF
 
@@ -339,11 +374,13 @@ transform = SegmentMIF(
     compartment='whole-cell'  # 'nuclear', 'cytoplasm', or 'whole-cell'
 )
 ```
+
 - Uses DeepCell Mesmer model for cell segmentation
 - Requires nuclear and cytoplasm channel specification
 - Produces instance segmentation masks
 
 **SegmentMIFRemote:**
+
 ```python
 from pathml.preprocessing import SegmentMIFRemote
 
@@ -355,6 +392,7 @@ transform = SegmentMIFRemote(
     api_url='https://deepcell.org/api'
 )
 ```
+
 - Same functionality as SegmentMIF but uses remote API
 - No local GPU required
 - Suitable for batch processing
@@ -362,6 +400,7 @@ transform = SegmentMIFRemote(
 ### Marker Quantification
 
 **QuantifyMIF:**
+
 ```python
 from pathml.preprocessing import QuantifyMIF
 
@@ -372,6 +411,7 @@ transform = QuantifyMIF(
     output_format='anndata'  # or 'dataframe'
 )
 ```
+
 - Extracts mean marker intensity per segmented cell
 - Computes morphological features (area, perimeter, etc.)
 - Outputs AnnData object for downstream single-cell analysis
@@ -379,6 +419,7 @@ transform = QuantifyMIF(
 ### CODEX/Vectra Specific
 
 **CollapseRunsCODEX:**
+
 ```python
 from pathml.preprocessing import CollapseRunsCODEX
 
@@ -388,10 +429,12 @@ transform = CollapseRunsCODEX(
     run_order=[0, 1, 2]  # Order of acquisition runs
 )
 ```
+
 - Merges channels from multiple CODEX acquisition runs
 - Selects focal plane from z-stacks
 
 **CollapseRunsVectra:**
+
 ```python
 from pathml.preprocessing import CollapseRunsVectra
 
@@ -693,22 +736,26 @@ pipeline = Pipeline([
 ## Common Issues and Solutions
 
 **Issue: Stain normalization produces artifacts**
+
 - Use tissue mask to exclude background
 - Try different stain estimation method (macenko vs. vahadane)
 - Verify optical density parameters match your images
 
 **Issue: Out of memory during pipeline execution**
+
 - Reduce number of Dask workers
 - Decrease tile size
 - Process images at lower pyramid level
 - Enable memory_limit parameter in Dask client
 
 **Issue: Tissue detection misses tissue regions**
+
 - Adjust threshold parameter
 - Use saturation channel: `use_saturation=True`
 - Reduce min_region_size to capture smaller tissue fragments
 
 **Issue: Nucleus detection is inaccurate**
+
 - Verify stain separation quality (visualize hematoxylin channel)
 - Adjust threshold parameter
 - Apply stain normalization before nucleus detection

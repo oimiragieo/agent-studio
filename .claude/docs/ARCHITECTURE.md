@@ -16,10 +16,10 @@ User Request → Router (analyze) → Task tool → Subagent Process → Result
 
 **Key Difference from Persona-Switching:**
 
-| Approach | Description | Parallelism | Isolation |
-|----------|-------------|-------------|-----------|
-| Persona-switching | Same session, different instructions | No | No |
-| **Task-based (this framework)** | Separate subprocess agents | Yes | Yes |
+| Approach                        | Description                          | Parallelism | Isolation |
+| ------------------------------- | ------------------------------------ | ----------- | --------- |
+| Persona-switching               | Same session, different instructions | No          | No        |
+| **Task-based (this framework)** | Separate subprocess agents           | Yes         | Yes       |
 
 ### Spawning Agents
 
@@ -27,9 +27,9 @@ The Router uses the Task tool to spawn agents. **CRITICAL**: Include skill loadi
 
 ```javascript
 Task({
-  subagent_type: "general-purpose",
-  model: "sonnet",  // or haiku/opus
-  description: "Developer fixing bug",
+  subagent_type: 'general-purpose',
+  model: 'sonnet', // or haiku/opus
+  description: 'Developer fixing bug',
   prompt: `You are DEVELOPER.
 
 ## Instructions
@@ -39,8 +39,8 @@ Task({
    - .claude/skills/tdd/SKILL.md
    - .claude/skills/debugging/SKILL.md
 4. Execute the task following agent AND skill workflows
-`
-})
+`,
+});
 ```
 
 ### Skill Invocation Protocol
@@ -49,21 +49,22 @@ Task({
 
 ```javascript
 // CORRECT: Use Skill tool
-Skill({ skill: "tdd" });
-Skill({ skill: "debugging" });
+Skill({ skill: 'tdd' });
+Skill({ skill: 'debugging' });
 
 // WRONG: Just reading files
-Read(".claude/skills/tdd/SKILL.md"); // ❌ Does not apply skill
+Read('.claude/skills/tdd/SKILL.md'); // ❌ Does not apply skill
 ```
 
 **Why the Skill() tool?**
 
-| Approach | What Happens |
-|----------|--------------|
-| `Read("...SKILL.md")` | Just reads text, agent must manually apply |
-| `Skill({ skill: "tdd" })` | Loads AND applies skill workflow to task |
+| Approach                  | What Happens                               |
+| ------------------------- | ------------------------------------------ |
+| `Read("...SKILL.md")`     | Just reads text, agent must manually apply |
+| `Skill({ skill: "tdd" })` | Loads AND applies skill workflow to task   |
 
 **The Router must:**
+
 1. Read the agent's frontmatter to get `skills` list
 2. Include `Skill()` invocation instructions in spawn prompt
 3. Tell the agent to invoke each skill using the tool
@@ -71,6 +72,7 @@ Read(".claude/skills/tdd/SKILL.md"); // ❌ Does not apply skill
 Without explicit skill invocation, agents won't follow their specialized workflows (TDD, debugging methodology, etc.).
 
 **Spawn Prompt Example:**
+
 ```javascript
 Task({
   prompt: `You are DEVELOPER.
@@ -81,8 +83,8 @@ Task({
    - Skill({ skill: "tdd" })
    - Skill({ skill: "debugging" })
 3. Execute task following skill workflows
-`
-})
+`,
+});
 ```
 
 ### Parallel Execution
@@ -91,8 +93,8 @@ Multiple agents can work simultaneously by including multiple Task calls in one 
 
 ```javascript
 // Both spawn in parallel
-Task({ description: "Planner", prompt: "..." })
-Task({ description: "Security review", prompt: "..." })
+Task({ description: 'Planner', prompt: '...' });
+Task({ description: 'Security review', prompt: '...' });
 ```
 
 ### Background Agents
@@ -102,9 +104,9 @@ Long-running tasks can spawn in background:
 ```javascript
 Task({
   run_in_background: true,
-  description: "QA running tests",
-  prompt: "..."
-})
+  description: 'QA running tests',
+  prompt: '...',
+});
 ```
 
 ## Multi-Agent Planning Orchestration
@@ -114,6 +116,7 @@ Task({
 ### Why Multi-Agent Planning?
 
 Single-agent planning misses critical perspectives:
+
 - **Planner** focuses on task breakdown and sequencing
 - **Architect** catches structural issues, pattern violations, scalability concerns
 - **Security Architect** catches vulnerabilities, compliance issues, attack vectors
@@ -122,17 +125,17 @@ Together they produce robust, secure, well-architected plans.
 
 ### Planning Orchestration Matrix
 
-| Task Type | Primary Agent | Required Review Agents | Strategy |
-|-----------|--------------|------------------------|----------|
-| Bug fix (simple) | Developer | - | Single agent |
-| Bug fix (security-related) | Developer | Security Architect | Sequential |
-| New feature | Planner | Architect + Security | Parallel review |
-| Codebase integration | Planner | Architect + Security | Parallel review |
-| Architecture change | Architect | Security Architect | Parallel |
-| External API integration | Planner | Architect + Security | Parallel review |
-| Database changes | Planner | Architect | Parallel |
-| Auth/Security changes | Planner | Security (mandatory) | Parallel review |
-| Code review/audit | Architect | Security Architect | Parallel |
+| Task Type                  | Primary Agent | Required Review Agents | Strategy        |
+| -------------------------- | ------------- | ---------------------- | --------------- |
+| Bug fix (simple)           | Developer     | -                      | Single agent    |
+| Bug fix (security-related) | Developer     | Security Architect     | Sequential      |
+| New feature                | Planner       | Architect + Security   | Parallel review |
+| Codebase integration       | Planner       | Architect + Security   | Parallel review |
+| Architecture change        | Architect     | Security Architect     | Parallel        |
+| External API integration   | Planner       | Architect + Security   | Parallel review |
+| Database changes           | Planner       | Architect              | Parallel        |
+| Auth/Security changes      | Planner       | Security (mandatory)   | Parallel review |
+| Code review/audit          | Architect     | Security Architect     | Parallel        |
 
 ### Phased Execution Pattern
 
@@ -150,37 +153,43 @@ Phase 1: EXPLORE     Phase 2: PLAN        Phase 3: REVIEW       Phase 4: CONSOLI
 ```
 
 **Phase 1 - Exploration**: Gather context from codebases
+
 ```javascript
-Task({ description: "Explore codebase A", prompt: "..." })
-Task({ description: "Explore codebase B", prompt: "..." })  // Parallel
+Task({ description: 'Explore codebase A', prompt: '...' });
+Task({ description: 'Explore codebase B', prompt: '...' }); // Parallel
 ```
 
 **Phase 2 - Planning**: Create initial plan
+
 ```javascript
 Task({
-  description: "Planner creating plan",
-  prompt: "...Save plan to .claude/context/plans/"
-})
+  description: 'Planner creating plan',
+  prompt: '...Save plan to .claude/context/plans/',
+});
 ```
 
 **Phase 3 - Review**: Expert review (parallel for efficiency)
+
 ```javascript
 Task({
-  description: "Architect reviewing plan",
-  prompt: "Review .claude/context/plans/ for architectural concerns. Save to .claude/context/reports/architect-review.md"
-})
+  description: 'Architect reviewing plan',
+  prompt:
+    'Review .claude/context/plans/ for architectural concerns. Save to .claude/context/reports/architect-review.md',
+});
 Task({
-  description: "Security reviewing plan",
-  prompt: "Review .claude/context/plans/ for security concerns. Save to .claude/context/reports/security-review.md"
-})
+  description: 'Security reviewing plan',
+  prompt:
+    'Review .claude/context/plans/ for security concerns. Save to .claude/context/reports/security-review.md',
+});
 ```
 
 **Phase 4 - Consolidation**: Incorporate feedback
+
 ```javascript
 Task({
-  description: "Consolidating reviews",
-  prompt: "Update plan based on reviews in .claude/context/reports/"
-})
+  description: 'Consolidating reviews',
+  prompt: 'Update plan based on reviews in .claude/context/reports/',
+});
 ```
 
 ### Router Detection
@@ -206,6 +215,7 @@ The router-enforcer hook automatically detects when multi-agent planning is requ
 ```
 
 **Triggers for multi-agent planning:**
+
 - Keywords: integrate, migration, codebase, external, api, auth, security
 - Complexity: 2+ complex keywords detected
 - Security: Any auth/security/credential keywords → Security review mandatory
@@ -265,76 +275,76 @@ Each skill has its own directory with:
 
 **Foundation Skills** (Core development patterns):
 
-| Skill | Purpose |
-|-------|---------|
-| `tdd` | Test-Driven Development with Iron Laws |
-| `debugging` | 4-phase systematic debugging |
-| `verification-before-completion` | Gate Function: evidence before claims |
-| `git-expert` | Git operations and workflows |
+| Skill                            | Purpose                                |
+| -------------------------------- | -------------------------------------- |
+| `tdd`                            | Test-Driven Development with Iron Laws |
+| `debugging`                      | 4-phase systematic debugging           |
+| `verification-before-completion` | Gate Function: evidence before claims  |
+| `git-expert`                     | Git operations and workflows           |
 
 **Workflow Skills** (Development processes):
 
-| Skill | Purpose |
-|-------|---------|
-| `brainstorming` | Socratic design refinement |
-| `writing-plans` | Bite-sized task creation (2-5 min each) |
-| `executing-plans` | Batch execution with checkpoints |
-| `subagent-driven-development` | Fresh subagent per task with two-stage review |
-| `using-git-worktrees` | Isolated workspace creation |
-| `finishing-a-development-branch` | Structured merge/PR completion |
-| `requesting-code-review` | Dispatch code-reviewer agent |
-| `receiving-code-review` | Process review feedback |
+| Skill                            | Purpose                                       |
+| -------------------------------- | --------------------------------------------- |
+| `brainstorming`                  | Socratic design refinement                    |
+| `writing-plans`                  | Bite-sized task creation (2-5 min each)       |
+| `executing-plans`                | Batch execution with checkpoints              |
+| `subagent-driven-development`    | Fresh subagent per task with two-stage review |
+| `using-git-worktrees`            | Isolated workspace creation                   |
+| `finishing-a-development-branch` | Structured merge/PR completion                |
+| `requesting-code-review`         | Dispatch code-reviewer agent                  |
+| `receiving-code-review`          | Process review feedback                       |
 
 **Generation Skills** (Content creation):
 
-| Skill | Purpose |
-|-------|---------|
-| `agent-creator` | Create new specialized agents |
-| `skill-creator` | Create skills and convert MCP servers |
-| `diagram-generator` | Generate architecture diagrams |
-| `doc-generator` | Generate documentation |
-| `test-generator` | Generate test code |
+| Skill               | Purpose                               |
+| ------------------- | ------------------------------------- |
+| `agent-creator`     | Create new specialized agents         |
+| `skill-creator`     | Create skills and convert MCP servers |
+| `diagram-generator` | Generate architecture diagrams        |
+| `doc-generator`     | Generate documentation                |
+| `test-generator`    | Generate test code                    |
 
 **Conductor Skills** (Context-Driven Development):
 
-| Skill | Purpose |
-|-------|---------|
-| `context-driven-development` | Project context management |
-| `track-management` | Feature/bug/refactor tracks |
-| `workflow-patterns` | TDD task implementation patterns |
-| `interactive-requirements-gathering` | A/B/C/D/E questionnaires |
-| `smart-revert` | Git-aware revert for tracks/phases/tasks |
+| Skill                                | Purpose                                  |
+| ------------------------------------ | ---------------------------------------- |
+| `context-driven-development`         | Project context management               |
+| `track-management`                   | Feature/bug/refactor tracks              |
+| `workflow-patterns`                  | TDD task implementation patterns         |
+| `interactive-requirements-gathering` | A/B/C/D/E questionnaires                 |
+| `smart-revert`                       | Git-aware revert for tracks/phases/tasks |
 
 **Kubernetes Operations Skills**:
 
-| Skill | Purpose |
-|-------|---------|
+| Skill                    | Purpose                        |
+| ------------------------ | ------------------------------ |
 | `k8s-manifest-generator` | Production-ready K8s manifests |
-| `helm-chart-scaffolding` | Helm chart creation |
-| `gitops-workflow` | ArgoCD/Flux GitOps |
-| `k8s-security-policies` | Pod Security Standards, RBAC |
+| `helm-chart-scaffolding` | Helm chart creation            |
+| `gitops-workflow`        | ArgoCD/Flux GitOps             |
+| `k8s-security-policies`  | Pod Security Standards, RBAC   |
 
 **Reverse Engineering Skills** (Authorized Use Only):
 
-| Skill | Purpose |
-|-------|---------|
-| `binary-analysis-patterns` | x86-64/ARM assembly analysis |
-| `memory-forensics` | Volatility 3 memory analysis |
-| `protocol-reverse-engineering` | Network protocol analysis |
+| Skill                          | Purpose                      |
+| ------------------------------ | ---------------------------- |
+| `binary-analysis-patterns`     | x86-64/ARM assembly analysis |
+| `memory-forensics`             | Volatility 3 memory analysis |
+| `protocol-reverse-engineering` | Network protocol analysis    |
 
 **Advanced Skills**:
 
-| Skill | Purpose |
-|-------|---------|
-| `dispatching-parallel-agents` | Concurrent agent coordination |
-| `writing-skills` | TDD for documentation |
-| `skill-discovery` | How agents discover and use skills |
-| `project-onboarding` | Codebase exploration for new projects |
-| `thinking-tools` | Self-reflection checkpoints |
-| `operational-modes` | Mode-based tool restriction |
-| `summarize-changes` | Structured change documentation |
-| `session-handoff` | Prepare context for new conversations |
-| `codebase-integration` | 8-phase integration workflow |
+| Skill                         | Purpose                               |
+| ----------------------------- | ------------------------------------- |
+| `dispatching-parallel-agents` | Concurrent agent coordination         |
+| `writing-skills`              | TDD for documentation                 |
+| `skill-discovery`             | How agents discover and use skills    |
+| `project-onboarding`          | Codebase exploration for new projects |
+| `thinking-tools`              | Self-reflection checkpoints           |
+| `operational-modes`           | Mode-based tool restriction           |
+| `summarize-changes`           | Structured change documentation       |
+| `session-handoff`             | Prepare context for new conversations |
+| `codebase-integration`        | 8-phase integration workflow          |
 
 **How it works**: Agents are assigned skills in their frontmatter. Agents invoke skills using `Skill({ skill: "name" })` tool. Skills are discovered by scanning `.claude/skills/`.
 
@@ -375,10 +385,10 @@ Contains the "Guardrails". Node.js scripts that run _automatically_ at specific 
 
 **Hook Events:**
 
-| Event              | When                       | Purpose                          |
-| ------------------ | -------------------------- | -------------------------------- |
-| `UserPromptSubmit` | Before model sees message  | Route enforcement, intent analysis |
-| `PreToolUse`       | Before tool execution      | Safety checks (TDD, security)    |
+| Event              | When                      | Purpose                            |
+| ------------------ | ------------------------- | ---------------------------------- |
+| `UserPromptSubmit` | Before model sees message | Route enforcement, intent analysis |
+| `PreToolUse`       | Before tool execution     | Safety checks (TDD, security)      |
 
 **Hook Implementation:**
 
@@ -406,14 +416,18 @@ function parseHookInput() {
 ```json
 {
   "hooks": {
-    "UserPromptSubmit": [{
-      "matcher": "",
-      "hooks": [{ "command": "node .claude/hooks/routing/router-enforcer.cjs" }]
-    }],
-    "PreToolUse": [{
-      "matcher": "Edit|Write|NotebookEdit",
-      "hooks": [{ "command": "node .claude/hooks/safety/tdd-check.cjs" }]
-    }]
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [{ "command": "node .claude/hooks/routing/router-enforcer.cjs" }]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [{ "command": "node .claude/hooks/safety/tdd-check.cjs" }]
+      }
+    ]
   }
 }
 ```
@@ -422,11 +436,11 @@ function parseHookInput() {
 
 Set `TDD_ENFORCEMENT` environment variable:
 
-| Mode    | Behavior                                      |
-| ------- | --------------------------------------------- |
-| `warn`  | Show warning, allow operation (default)       |
-| `block` | Block edits to production code without tests  |
-| `off`   | Disable TDD checking                          |
+| Mode    | Behavior                                     |
+| ------- | -------------------------------------------- |
+| `warn`  | Show warning, allow operation (default)      |
+| `block` | Block edits to production code without tests |
+| `off`   | Disable TDD checking                         |
 
 ### 5. `.claude/context/`
 
@@ -475,12 +489,13 @@ workflows/
 
 **Enterprise Workflows**:
 
-| Workflow | Purpose | Agents Used |
-| -------- | ------- | ----------- |
-| `feature-development-workflow.md` | End-to-end feature from requirements to production | planner, architect, developer, qa, security-architect, devops |
-| `c4-architecture-workflow.md` | C4 model documentation (context → container → component → code) | c4-context, c4-container, c4-component, c4-code |
+| Workflow                          | Purpose                                                         | Agents Used                                                   |
+| --------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| `feature-development-workflow.md` | End-to-end feature from requirements to production              | planner, architect, developer, qa, security-architect, devops |
+| `c4-architecture-workflow.md`     | C4 model documentation (context → container → component → code) | c4-context, c4-container, c4-component, c4-code               |
 
 Auto-generated workflows from skill/agent creation:
+
 - `<agent-name>-workflow.md` - Created by `agent-creator`
 - `<skill-name>-skill-workflow.md` - Created by `skill-creator`
 
@@ -534,16 +549,16 @@ The framework automatically maintains skill-agent relationships:
 
 **Agent-Skill Relevance Matrix:**
 
-| Skill Keywords | Auto-Assigned To |
-|----------------|------------------|
-| test, tdd, coverage | developer, qa |
-| debug, troubleshoot | developer, devops-troubleshooter |
-| doc, diagram | planner, architect |
-| security, audit, auth | security-architect |
-| docker, k8s, terraform, cloud | devops |
-| git, github | developer |
-| plan, sequential, thinking | planner |
-| incident, alert, slack | incident-responder |
+| Skill Keywords                | Auto-Assigned To                 |
+| ----------------------------- | -------------------------------- |
+| test, tdd, coverage           | developer, qa                    |
+| debug, troubleshoot           | developer, devops-troubleshooter |
+| doc, diagram                  | planner, architect               |
+| security, audit, auth         | security-architect               |
+| docker, k8s, terraform, cloud | devops                           |
+| git, github                   | developer                        |
+| plan, sequential, thinking    | planner                          |
+| incident, alert, slack        | incident-responder               |
 
 **What Gets Updated:**
 
@@ -558,6 +573,7 @@ When skills are added/removed from agents, both locations are updated:
 ### Step 0: Load Skills (FIRST)
 
 Read your assigned skill files:
+
 - `.claude/skills/tdd/SKILL.md`
 - `.claude/skills/debugging/SKILL.md`
 ```
@@ -565,6 +581,7 @@ Read your assigned skill files:
 **Skill Merge Updates:**
 
 When skills are merged with `--auto-update`:
+
 - Agent frontmatter: `- old-skill` → `- merged-skill`
 - Workflow paths: `.claude/skills/old-skill/SKILL.md` → `.claude/skills/merged-skill/SKILL.md`
 
@@ -610,15 +627,15 @@ node .claude/tools/doctor.mjs --verbose
 
 **Checks Performed:**
 
-| Check              | Description                                      |
-| ------------------ | ------------------------------------------------ |
-| Required Dirs      | All framework directories exist                  |
-| Required Files     | CLAUDE.md, settings.json, config.yaml exist      |
-| Agents             | Agent files have valid frontmatter               |
-| Skills             | Skills have SKILL.md with proper structure       |
-| Hooks              | Hook scripts referenced in settings.json exist   |
-| MCP Config         | .mcp.json is valid, version pins recommended     |
-| Doc/Path Drift     | Paths referenced in docs still exist             |
+| Check          | Description                                    |
+| -------------- | ---------------------------------------------- |
+| Required Dirs  | All framework directories exist                |
+| Required Files | CLAUDE.md, settings.json, config.yaml exist    |
+| Agents         | Agent files have valid frontmatter             |
+| Skills         | Skills have SKILL.md with proper structure     |
+| Hooks          | Hook scripts referenced in settings.json exist |
+| MCP Config     | .mcp.json is valid, version pins recommended   |
+| Doc/Path Drift | Paths referenced in docs still exist           |
 
 ### Skill Validation
 

@@ -56,12 +56,12 @@ si.plot_drift_raster_map(
 
 ### Interpreting Drift Plots
 
-| Pattern | Interpretation | Action |
-|---------|---------------|--------|
-| Horizontal bands, stable | No significant drift | Skip correction |
-| Diagonal bands (slow) | Gradual settling drift | Use motion correction |
-| Rapid jumps | Brain pulsation or movement | Use non-rigid correction |
-| Chaotic patterns | Severe instability | Consider discarding segment |
+| Pattern                  | Interpretation              | Action                      |
+| ------------------------ | --------------------------- | --------------------------- |
+| Horizontal bands, stable | No significant drift        | Skip correction             |
+| Diagonal bands (slow)    | Gradual settling drift      | Use motion correction       |
+| Rapid jumps              | Brain pulsation or movement | Use non-rigid correction    |
+| Chaotic patterns         | Severe instability          | Consider discarding segment |
 
 ## Motion Correction Methods
 
@@ -77,14 +77,14 @@ rec_corrected = si.correct_motion(
 
 ### Available Presets
 
-| Preset | Speed | Accuracy | Best For |
-|--------|-------|----------|----------|
-| `rigid_fast` | Fast | Low | Quick check, small drift |
-| `kilosort_like` | Medium | Good | Kilosort-compatible results |
-| `nonrigid_accurate` | Slow | High | Publication-quality |
-| `nonrigid_fast_and_accurate` | Medium | High | **Recommended default** |
-| `dredge` | Slow | Highest | Best results, complex drift |
-| `dredge_fast` | Medium | High | DREDge with less compute |
+| Preset                       | Speed  | Accuracy | Best For                    |
+| ---------------------------- | ------ | -------- | --------------------------- |
+| `rigid_fast`                 | Fast   | Low      | Quick check, small drift    |
+| `kilosort_like`              | Medium | Good     | Kilosort-compatible results |
+| `nonrigid_accurate`          | Slow   | High     | Publication-quality         |
+| `nonrigid_fast_and_accurate` | Medium | High     | **Recommended default**     |
+| `dredge`                     | Slow   | Highest  | Best results, complex drift |
+| `dredge_fast`                | Medium | High     | DREDge with less compute    |
 
 ### Full Control Pipeline
 

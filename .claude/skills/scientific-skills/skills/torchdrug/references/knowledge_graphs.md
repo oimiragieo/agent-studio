@@ -9,12 +9,14 @@ Knowledge graphs represent structured information as entities and relations in a
 ### General Knowledge Graphs
 
 **FB15k (Freebase subset):**
+
 - 14,951 entities
 - 1,345 relation types
 - 592,213 triples
 - General world knowledge from Freebase
 
 **FB15k-237:**
+
 - 14,541 entities
 - 237 relation types
 - 310,116 triples
@@ -22,12 +24,14 @@ Knowledge graphs represent structured information as entities and relations in a
 - More challenging benchmark
 
 **WN18 (WordNet):**
+
 - 40,943 entities (word senses)
 - 18 relation types (lexical relations)
 - 151,442 triples
 - Linguistic knowledge graph
 
 **WN18RR:**
+
 - 40,943 entities
 - 11 relation types
 - 93,003 triples
@@ -36,6 +40,7 @@ Knowledge graphs represent structured information as entities and relations in a
 ### Biomedical Knowledge Graphs
 
 **Hetionet:**
+
 - 45,158 entities (genes, compounds, diseases, pathways, etc.)
 - 24 relation types (treats, causes, binds, etc.)
 - 2,250,197 edges
@@ -49,26 +54,31 @@ The primary task for knowledge graphs is link prediction - given a head entity a
 ### Task Modes
 
 **Head Prediction:**
+
 - Given (?, relation, tail), predict head entity
 - "What can cause Disease X?"
 
 **Tail Prediction:**
+
 - Given (head, relation, ?), predict tail entity
 - "What diseases does Gene X cause?"
 
 **Both:**
+
 - Predict both head and tail
 - Standard evaluation protocol
 
 ### Evaluation Metrics
 
 **Ranking Metrics:**
+
 - **Mean Rank (MR)**: Average rank of correct entity
 - **Mean Reciprocal Rank (MRR)**: Average of 1/rank
 - **Hits@K**: Percentage of correct entities in top K predictions
   - Typically reported for K=1, 3, 10
 
 **Filtered vs Raw:**
+
 - **Filtered**: Remove other known true triples from ranking
 - **Raw**: Rank among all possible entities
 - Filtered is standard for evaluation
@@ -78,6 +88,7 @@ The primary task for knowledge graphs is link prediction - given a head entity a
 ### Translational Models
 
 **TransE (Translation Embedding):**
+
 - Represents relations as translations in embedding space
 - h + r ≈ t (head + relation ≈ tail)
 - Simple and effective baseline
@@ -85,6 +96,7 @@ The primary task for knowledge graphs is link prediction - given a head entity a
 - Struggles with N-to-N relations
 
 **RotatE (Rotation Embedding):**
+
 - Relations as rotations in complex space
 - Better handles symmetric and inverse relations
 - State-of-the-art on many benchmarks
@@ -93,18 +105,21 @@ The primary task for knowledge graphs is link prediction - given a head entity a
 ### Semantic Matching Models
 
 **DistMult:**
+
 - Bilinear scoring function
 - Handles symmetric relations naturally
 - Cannot model asymmetric relations
 - Fast and memory efficient
 
 **ComplEx:**
+
 - Complex-valued embeddings
 - Models asymmetric and inverse relations
 - Better than DistMult for most graphs
 - Balances expressiveness and efficiency
 
 **SimplE:**
+
 - Extends DistMult with inverse relations
 - Fully expressive (can represent any relation pattern)
 - Two embeddings per entity (canonical and inverse)
@@ -112,12 +127,14 @@ The primary task for knowledge graphs is link prediction - given a head entity a
 ### Neural Logic Models
 
 **NeuralLP (Neural Logic Programming):**
+
 - Learns logical rules through differentiable operations
 - Interprets predictions via learned rules
 - Good for sparse knowledge graphs
 - Computationally more expensive
 
 **KBGAT (Knowledge Base Graph Attention):**
+
 - Graph attention networks for KG completion
 - Learns entity representations from neighborhood
 - Handles unseen entities through inductive learning
@@ -155,11 +172,13 @@ task = tasks.KnowledgeGraphCompletion(
 ### Negative Sampling
 
 **Strategies:**
+
 - **Uniform**: Sample entities uniformly at random
 - **Self-Adversarial**: Weight samples by current model's scores
 - **Type-Constrained**: Sample only valid entity types for relation
 
 **Parameters:**
+
 - `num_negative`: Number of negative samples per positive triple
 - `adversarial_temperature`: Temperature for self-adversarial weighting
 - Higher temperature = more focus on hard negatives
@@ -167,14 +186,17 @@ task = tasks.KnowledgeGraphCompletion(
 ### Loss Functions
 
 **Binary Cross-Entropy (BCE):**
+
 - Treats each triple independently
 - Balanced classification between positive and negative
 
 **Margin Loss:**
+
 - Ensures positive scores higher than negative by margin
 - `max(0, margin + score_neg - score_pos)`
 
 **Logistic Loss:**
+
 - Smooth version of margin loss
 - Better gradient properties
 
@@ -183,34 +205,42 @@ task = tasks.KnowledgeGraphCompletion(
 ### By Relation Patterns
 
 **1-to-1 Relations:**
+
 - TransE works well
 - Any model will likely succeed
 
 **1-to-N Relations:**
+
 - DistMult, ComplEx, SimplE
 - Avoid TransE
 
 **N-to-1 Relations:**
+
 - DistMult, ComplEx, SimplE
 - Avoid TransE
 
 **N-to-N Relations:**
+
 - ComplEx, SimplE, RotatE
 - Most challenging pattern
 
 **Symmetric Relations:**
+
 - DistMult, ComplEx
 - RotatE with proper initialization
 
 **Antisymmetric Relations:**
+
 - ComplEx, SimplE, RotatE
 - Avoid DistMult
 
 **Inverse Relations:**
+
 - ComplEx, SimplE, RotatE
 - Important for bidirectional reasoning
 
 **Composition:**
+
 - RotatE (best)
 - TransE (reasonable)
 - Captures multi-hop paths
@@ -218,23 +248,28 @@ task = tasks.KnowledgeGraphCompletion(
 ### By Dataset Characteristics
 
 **Small Graphs (< 50k entities):**
+
 - ComplEx or SimplE
 - Lower embedding dimensions (200-500)
 
 **Large Graphs (> 100k entities):**
+
 - DistMult for efficiency
 - RotatE for accuracy
 - Higher dimensions (500-2000)
 
 **Sparse Graphs:**
+
 - NeuralLP (learns rules from limited data)
 - Pre-train embeddings on larger graphs
 
 **Dense, Complete Graphs:**
+
 - Any embedding model works well
 - Choose based on relation patterns
 
 **Biomedical/Domain Graphs:**
+
 - Consider type constraints in sampling
 - Use domain-specific negative sampling
 - Hetionet benefits from relation-specific models
@@ -244,6 +279,7 @@ task = tasks.KnowledgeGraphCompletion(
 ### Multi-Hop Reasoning
 
 Chain multiple relations to answer complex queries:
+
 - "What drugs treat diseases caused by gene X?"
 - Requires path-based or rule-based reasoning
 - NeuralLP naturally supports this
@@ -251,6 +287,7 @@ Chain multiple relations to answer complex queries:
 ### Temporal Knowledge Graphs
 
 Extend to time-varying facts:
+
 - Add temporal information to triples
 - Predict future facts
 - Requires temporal encoding in models
@@ -258,6 +295,7 @@ Extend to time-varying facts:
 ### Few-Shot Learning
 
 Handle relations with few examples:
+
 - Meta-learning approaches
 - Transfer from related relations
 - Important for emerging knowledge
@@ -265,6 +303,7 @@ Handle relations with few examples:
 ### Inductive Learning
 
 Generalize to unseen entities:
+
 - KBGAT and other GNN-based methods
 - Use entity features/descriptions
 - Critical for evolving knowledge graphs
@@ -274,6 +313,7 @@ Generalize to unseen entities:
 ### Drug Repurposing
 
 Predict "drug treats disease" links in Hetionet:
+
 1. Train on known drug-disease associations
 2. Predict new treatment candidates
 3. Filter by mechanism (gene, pathway involvement)
@@ -282,6 +322,7 @@ Predict "drug treats disease" links in Hetionet:
 ### Disease Gene Discovery
 
 Identify genes associated with diseases:
+
 1. Model gene-disease-pathway networks
 2. Predict missing gene-disease links
 3. Incorporate protein interactions, expression data
@@ -290,6 +331,7 @@ Identify genes associated with diseases:
 ### Protein Function Prediction
 
 Link proteins to biological processes:
+
 1. Integrate protein interactions, GO terms
 2. Predict missing GO annotations
 3. Transfer function from similar proteins
@@ -297,15 +339,19 @@ Link proteins to biological processes:
 ## Common Issues and Solutions
 
 **Issue: Poor performance on specific relation types**
+
 - Solution: Analyze relation patterns, choose appropriate model, or use relation-specific models
 
 **Issue: Overfitting on small graphs**
+
 - Solution: Reduce embedding dimension, increase regularization, or use simpler models
 
 **Issue: Slow training on large graphs**
+
 - Solution: Reduce negative samples, use DistMult for efficiency, or implement mini-batch training
 
 **Issue: Cannot handle new entities**
+
 - Solution: Use inductive models (KBGAT), incorporate entity features, or pre-compute embeddings for new entities based on their neighbors
 
 ## Best Practices

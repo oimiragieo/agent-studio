@@ -50,10 +50,12 @@ Based on {{DOMAIN}} best practices:
 ## Tools & Frameworks
 
 **Category 1:**
+
 - **Tool A**: Purpose and usage
 - **Tool B**: Purpose and usage
 
 **Category 2:**
+
 - **Tool C**: Purpose and usage
 - **Tool D**: Purpose and usage
 
@@ -64,8 +66,8 @@ Based on {{DOMAIN}} best practices:
 Invoke your assigned skills using the Skill tool:
 
 ```javascript
-Skill({ skill: 'tdd' });           // Test-driven development
-Skill({ skill: 'debugging' });     // Debugging methodologies
+Skill({ skill: 'tdd' }); // Test-driven development
+Skill({ skill: 'debugging' }); // Debugging methodologies
 Skill({ skill: 'verification-before-completion' }); // Quality gates
 // Add domain-specific skills here
 ```
@@ -102,6 +104,7 @@ Read: {{CONFIG_FILES}}
 ### Step 4: Implement
 
 **Example Implementation:**
+
 ```{{LANGUAGE}}
 // Example code showing best practices for this domain
 {{EXAMPLE_CODE}}
@@ -131,11 +134,13 @@ Read: {{CONFIG_FILES}}
 ### 1. {{COMMON_TASK_1}}
 
 **Process:**
+
 1. Step description
 2. Step description
 3. Step description
 
 **Verification:**
+
 - [ ] Verification item
 - [ ] Verification item
 - [ ] Verification item
@@ -143,11 +148,13 @@ Read: {{CONFIG_FILES}}
 ### 2. {{COMMON_TASK_2}}
 
 **Process:**
+
 1. Step description
 2. Step description
 3. Step description
 
 **Verification:**
+
 - [ ] Verification item
 - [ ] Verification item
 
@@ -184,6 +191,7 @@ Review past patterns, solutions, and decisions relevant to this domain.
 ### Review Requirements
 
 For major changes:
+
 - [ ] **Technical Review**: Architecture and implementation review
 - [ ] **QA Review**: Test coverage and quality
 - [ ] **Security Review**: For sensitive operations
@@ -191,67 +199,76 @@ For major changes:
 ## Best Practices
 
 ### {{DOMAIN}} Specific
+
 - Best practice 1
 - Best practice 2
 - Best practice 3
 
 ### Code Quality
+
 - Follow TDD workflow
 - Use proper error handling
 - Document public interfaces
 - Write comprehensive tests
 
 ### Performance
+
 - Optimization guideline 1
 - Optimization guideline 2
 
 ## Task Synchronization Protocol
 
 ### Before Starting Work
+
 1. `TaskList()` - Check for existing/assigned work
 2. `TaskGet(taskId)` - Read full task description and metadata
 3. `TaskUpdate({ taskId, status: "in_progress" })` - Claim the task
 
 ### During Work
+
 Update task with discoveries as they happen:
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
+  taskId: '{{TASK_ID}}',
   metadata: {
-    discoveries: ["Finding 1", "Finding 2"],
-    discoveredFiles: ["path/to/file.ts"],
-    patterns: ["pattern-name"]
-  }
-})
+    discoveries: ['Finding 1', 'Finding 2'],
+    discoveredFiles: ['path/to/file.ts'],
+    patterns: ['pattern-name'],
+  },
+});
 ```
 
 ### On Blockers
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
+  taskId: '{{TASK_ID}}',
   metadata: {
-    blocker: "Description of blocker",
-    blockerType: "missing_dependency|permission|clarification_needed",
-    needsFrom: "user|other-agent"
-  }
-})
+    blocker: 'Description of blocker',
+    blockerType: 'missing_dependency|permission|clarification_needed',
+    needsFrom: 'user|other-agent',
+  },
+});
 ```
 
 ### On Completion
+
 ```javascript
 TaskUpdate({
-  taskId: "{{TASK_ID}}",
-  status: "completed",
+  taskId: '{{TASK_ID}}',
+  status: 'completed',
   metadata: {
-    summary: "What was accomplished",
-    filesModified: ["file1.ts", "file2.ts"],
-    outputArtifacts: ["path/to/output"]
-  }
-})
-TaskList()  // Check for newly unblocked tasks
+    summary: 'What was accomplished',
+    filesModified: ['file1.ts', 'file2.ts'],
+    outputArtifacts: ['path/to/output'],
+  },
+});
+TaskList(); // Check for newly unblocked tasks
 ```
 
 ### Iron Laws
+
 1. **Never complete without summary** - Always include metadata with summary
 2. **Always update on discovery** - Record findings as they happen
 3. **Always TaskList after completion** - Check for unblocked work

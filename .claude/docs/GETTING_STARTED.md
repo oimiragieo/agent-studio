@@ -39,11 +39,13 @@ All configuration, agents, skills, and workflows are in the `.claude/` directory
 ### 2. Your First Interaction
 
 Just ask Claude Code anything. The **Router** automatically:
+
 - Analyzes your request
 - Selects the best agent(s)
 - Spawns them to handle your task
 
 **Example:**
+
 ```
 You: "Fix the login bug in auth.ts"
 [ROUTER] → Spawns DEVELOPER agent → Bug fixed with tests
@@ -51,18 +53,19 @@ You: "Fix the login bug in auth.ts"
 
 ### 3. Key Concepts
 
-| Concept | What It Does |
-|---------|--------------|
-| **Router** | Analyzes requests, spawns the right agent(s) |
-| **Agents** | Specialized workers (developer, planner, QA, architect, etc.) |
-| **Skills** | Reusable capabilities agents invoke to execute tasks |
-| **Memory** | Persistent context across sessions—nothing gets forgotten |
-| **Tasks** | Trackable work units with dependencies and status |
-| **Workflows** | Multi-agent coordination patterns for complex work |
+| Concept       | What It Does                                                  |
+| ------------- | ------------------------------------------------------------- |
+| **Router**    | Analyzes requests, spawns the right agent(s)                  |
+| **Agents**    | Specialized workers (developer, planner, QA, architect, etc.) |
+| **Skills**    | Reusable capabilities agents invoke to execute tasks          |
+| **Memory**    | Persistent context across sessions—nothing gets forgotten     |
+| **Tasks**     | Trackable work units with dependencies and status             |
+| **Workflows** | Multi-agent coordination patterns for complex work            |
 
 ## Common Workflows
 
 ### Bug Fix
+
 ```
 You: "Fix the null pointer in utils.ts"
 → Router spawns DEVELOPER
@@ -71,6 +74,7 @@ You: "Fix the null pointer in utils.ts"
 ```
 
 ### New Feature
+
 ```
 You: "Add user authentication"
 → Router spawns PLANNER + SECURITY-ARCHITECT (parallel)
@@ -81,6 +85,7 @@ You: "Add user authentication"
 ```
 
 ### Code Review
+
 ```
 You: "Review PR #123"
 → Router spawns CODE-REVIEWER
@@ -89,6 +94,7 @@ You: "Review PR #123"
 ```
 
 ### Architecture Documentation
+
 ```
 You: "Generate C4 diagrams for the system"
 → Router spawns C4-CONTEXT agent
@@ -114,6 +120,7 @@ The Router **never implements work directly**—it always delegates to specializ
 Agent Studio includes 40+ specialized agents organized into categories:
 
 ### Core Agents
+
 - **developer**: Bug fixes, implementation, coding tasks
 - **planner**: Feature planning, task breakdown, estimation
 - **architect**: System design, architecture decisions
@@ -121,6 +128,7 @@ Agent Studio includes 40+ specialized agents organized into categories:
 - **technical-writer**: Documentation creation and updates
 
 ### Specialized Agents
+
 - **security-architect**: Security reviews, threat modeling
 - **code-reviewer**: PR reviews, code quality analysis
 - **devops**: Infrastructure, deployment, CI/CD
@@ -128,12 +136,14 @@ Agent Studio includes 40+ specialized agents organized into categories:
 - **database-architect**: Schema design, optimization
 
 ### Domain Experts
+
 - **typescript-pro**, **python-pro**, **rust-pro**, **golang-pro**
 - **fastapi-pro**, **nextjs-pro**, **react-pro**
 - **ios-pro**, **expo-mobile-developer**
 - **data-engineer**, **graphql-pro**
 
 ### Architecture & Diagrams
+
 - **c4-context**, **c4-container**, **c4-component**, **c4-code**
 
 For the complete list, see the [Agent Routing Table](../CLAUDE.md#3-agent-routing-table).
@@ -143,6 +153,7 @@ For the complete list, see the [Agent Routing Table](../CLAUDE.md#3-agent-routin
 Agents don't just "know things"—they **invoke skills** to execute work. Skills are reusable, tested capabilities.
 
 **Examples:**
+
 - `tdd` - Test-driven development workflow
 - `debugging` - Systematic debugging process
 - `security-architect` - Security review patterns
@@ -187,6 +198,7 @@ Tasks track status, blockers, assignees, and metadata. Use `TaskList()` to see c
 For complex work requiring multiple perspectives, agents work in **parallel** or **sequential** phases:
 
 **Parallel Example** (concurrent work):
+
 ```
 You: "Add payment processing"
 → PLANNER designs feature
@@ -196,6 +208,7 @@ You: "Add payment processing"
 ```
 
 **Sequential Example** (dependent phases):
+
 ```
 You: "Migrate to new database"
 → ARCHITECT designs migration strategy
@@ -241,6 +254,7 @@ Same process creates skills, workflows, hooks, and schemas. The system evolves t
 ## What Makes This Different
 
 Traditional AI assistants:
+
 - Single perspective
 - Context lost between sessions
 - No specialization
@@ -248,6 +262,7 @@ Traditional AI assistants:
 - Manual coordination
 
 Agent Studio:
+
 - Multiple expert perspectives
 - Persistent memory across sessions
 - Domain-specialized agents
@@ -274,6 +289,7 @@ Agent Studio:
 ## Next Steps
 
 Just start using Claude Code naturally. Ask it to:
+
 - Fix bugs
 - Implement features
 - Review code

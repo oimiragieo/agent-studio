@@ -9,11 +9,13 @@ Data preprocessing transforms raw data into a format suitable for machine learni
 ### StandardScaler
 
 **StandardScaler (`sklearn.preprocessing.StandardScaler`)**
+
 - Standardizes features to zero mean and unit variance
 - Formula: z = (x - mean) / std
 - Use when: Features have different scales, algorithm assumes normally distributed data
 - Required for: SVM, KNN, Neural Networks, PCA, Linear Regression with regularization
 - Example:
+
 ```python
 from sklearn.preprocessing import StandardScaler
 
@@ -29,11 +31,13 @@ print(f"Std: {scaler.scale_}")
 ### MinMaxScaler
 
 **MinMaxScaler (`sklearn.preprocessing.MinMaxScaler`)**
+
 - Scales features to a given range (default [0, 1])
 - Formula: X_scaled = (X - X.min) / (X.max - X.min)
 - Use when: Need bounded values, data not normally distributed
 - Sensitive to outliers
 - Example:
+
 ```python
 from sklearn.preprocessing import MinMaxScaler
 
@@ -48,11 +52,13 @@ X_scaled = scaler.fit_transform(X_train)
 ### RobustScaler
 
 **RobustScaler (`sklearn.preprocessing.RobustScaler`)**
+
 - Scales using median and interquartile range (IQR)
 - Formula: X_scaled = (X - median) / IQR
 - Use when: Data contains outliers
 - Robust to outliers
 - Example:
+
 ```python
 from sklearn.preprocessing import RobustScaler
 
@@ -63,10 +69,12 @@ X_scaled = scaler.fit_transform(X_train)
 ### Normalizer
 
 **Normalizer (`sklearn.preprocessing.Normalizer`)**
+
 - Normalizes samples individually to unit norm
 - Common norms: 'l1', 'l2', 'max'
 - Use when: Need to normalize each sample independently (e.g., text features)
 - Example:
+
 ```python
 from sklearn.preprocessing import Normalizer
 
@@ -77,11 +85,13 @@ X_normalized = normalizer.fit_transform(X)
 ### MaxAbsScaler
 
 **MaxAbsScaler (`sklearn.preprocessing.MaxAbsScaler`)**
+
 - Scales by maximum absolute value
 - Range: [-1, 1]
 - Doesn't shift/center data (preserves sparsity)
 - Use when: Data is already centered or sparse
 - Example:
+
 ```python
 from sklearn.preprocessing import MaxAbsScaler
 
@@ -94,9 +104,11 @@ X_scaled = scaler.fit_transform(X_sparse)
 ### OneHotEncoder
 
 **OneHotEncoder (`sklearn.preprocessing.OneHotEncoder`)**
+
 - Creates binary columns for each category
 - Use when: Nominal categories (no order), tree-based models or linear models
 - Example:
+
 ```python
 from sklearn.preprocessing import OneHotEncoder
 
@@ -113,9 +125,11 @@ X_test_encoded = encoder.transform(X_test_categorical)
 ### OrdinalEncoder
 
 **OrdinalEncoder (`sklearn.preprocessing.OrdinalEncoder`)**
+
 - Encodes categories as integers
 - Use when: Ordinal categories (ordered), or tree-based models
 - Example:
+
 ```python
 from sklearn.preprocessing import OrdinalEncoder
 
@@ -131,9 +145,11 @@ X_encoded = encoder.fit_transform(X_categorical)
 ### LabelEncoder
 
 **LabelEncoder (`sklearn.preprocessing.LabelEncoder`)**
+
 - Encodes target labels (y) as integers
 - Use for: Target variable encoding
 - Example:
+
 ```python
 from sklearn.preprocessing import LabelEncoder
 
@@ -161,10 +177,12 @@ X_test_encoded = encoder.transform(X_test_categorical)
 ### Power Transforms
 
 **PowerTransformer**
+
 - Makes data more Gaussian-like
 - Methods: 'yeo-johnson' (works with negative values), 'box-cox' (positive only)
 - Use when: Data is skewed, algorithm assumes normality
 - Example:
+
 ```python
 from sklearn.preprocessing import PowerTransformer
 
@@ -180,10 +198,12 @@ X_transformed = pt.fit_transform(X)
 ### Quantile Transformation
 
 **QuantileTransformer**
+
 - Transforms features to follow uniform or normal distribution
 - Robust to outliers
 - Use when: Want to reduce outlier impact
 - Example:
+
 ```python
 from sklearn.preprocessing import QuantileTransformer
 
@@ -216,9 +236,11 @@ X_log = log_transformer.fit_transform(X)
 ### SimpleImputer
 
 **SimpleImputer (`sklearn.impute.SimpleImputer`)**
+
 - Basic imputation strategies
 - Strategies: 'mean', 'median', 'most_frequent', 'constant'
 - Example:
+
 ```python
 from sklearn.impute import SimpleImputer
 
@@ -238,9 +260,11 @@ X_imputed = imputer.fit_transform(X)
 ### Iterative Imputer
 
 **IterativeImputer**
+
 - Models each feature with missing values as function of other features
 - More sophisticated than SimpleImputer
 - Example:
+
 ```python
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
@@ -252,9 +276,11 @@ X_imputed = imputer.fit_transform(X)
 ### KNN Imputer
 
 **KNNImputer**
+
 - Imputes using k-nearest neighbors
 - Use when: Features are correlated
 - Example:
+
 ```python
 from sklearn.impute import KNNImputer
 
@@ -267,9 +293,11 @@ X_imputed = imputer.fit_transform(X)
 ### Polynomial Features
 
 **PolynomialFeatures**
+
 - Creates polynomial and interaction features
 - Use when: Need non-linear features for linear models
 - Example:
+
 ```python
 from sklearn.preprocessing import PolynomialFeatures
 
@@ -288,10 +316,12 @@ X_interactions = poly.fit_transform(X)
 ### Binning/Discretization
 
 **KBinsDiscretizer**
+
 - Bins continuous features into discrete intervals
 - Strategies: 'uniform', 'quantile', 'kmeans'
 - Encoding: 'onehot', 'ordinal', 'onehot-dense'
 - Example:
+
 ```python
 from sklearn.preprocessing import KBinsDiscretizer
 
@@ -307,8 +337,10 @@ X_binned = binner.fit_transform(X)
 ### Binarization
 
 **Binarizer**
+
 - Converts features to binary (0 or 1) based on threshold
 - Example:
+
 ```python
 from sklearn.preprocessing import Binarizer
 
@@ -319,9 +351,11 @@ X_binary = binarizer.fit_transform(X)
 ### Spline Features
 
 **SplineTransformer**
+
 - Creates spline basis functions
 - Useful for capturing non-linear relationships
 - Example:
+
 ```python
 from sklearn.preprocessing import SplineTransformer
 
@@ -334,9 +368,11 @@ X_splines = spline.fit_transform(X)
 ### CountVectorizer
 
 **CountVectorizer (`sklearn.feature_extraction.text.CountVectorizer`)**
+
 - Converts text to token count matrix
 - Use for: Bag-of-words representation
 - Example:
+
 ```python
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -354,9 +390,11 @@ feature_names = vectorizer.get_feature_names_out()
 ### TfidfVectorizer
 
 **TfidfVectorizer**
+
 - TF-IDF (Term Frequency-Inverse Document Frequency) transformation
 - Better than CountVectorizer for most tasks
 - Example:
+
 ```python
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -374,10 +412,12 @@ X_tfidf = vectorizer.fit_transform(documents)
 ### HashingVectorizer
 
 **HashingVectorizer**
+
 - Uses hashing trick for memory efficiency
 - No fit needed, can't reverse transform
 - Use when: Very large vocabulary, streaming data
 - Example:
+
 ```python
 from sklearn.feature_extraction.text import HashingVectorizer
 
@@ -390,8 +430,10 @@ X_hashed = vectorizer.transform(documents)  # No fit needed
 ### Filter Methods
 
 **Variance Threshold**
+
 - Removes low-variance features
 - Example:
+
 ```python
 from sklearn.feature_selection import VarianceThreshold
 
@@ -400,9 +442,11 @@ X_selected = selector.fit_transform(X)
 ```
 
 **SelectKBest / SelectPercentile**
+
 - Select features based on statistical tests
 - Tests: f_classif, chi2, mutual_info_classif
 - Example:
+
 ```python
 from sklearn.feature_selection import SelectKBest, f_classif
 
@@ -417,9 +461,11 @@ selected_indices = selector.get_support(indices=True)
 ### Wrapper Methods
 
 **Recursive Feature Elimination (RFE)**
+
 - Recursively removes features
 - Uses model feature importances
 - Example:
+
 ```python
 from sklearn.feature_selection import RFE
 from sklearn.ensemble import RandomForestClassifier
@@ -434,8 +480,10 @@ feature_ranking = rfe.ranking_
 ```
 
 **RFECV (with Cross-Validation)**
+
 - RFE with cross-validation to find optimal number of features
 - Example:
+
 ```python
 from sklearn.feature_selection import RFECV
 
@@ -449,9 +497,11 @@ print(f"Optimal number of features: {rfecv.n_features_}")
 ### Embedded Methods
 
 **SelectFromModel**
+
 - Select features based on model coefficients/importances
 - Works with: Linear models (L1), Tree-based models
 - Example:
+
 ```python
 from sklearn.feature_selection import SelectFromModel
 from sklearn.ensemble import RandomForestClassifier
@@ -466,6 +516,7 @@ selected_features = selector.get_support()
 ```
 
 **L1-based Feature Selection**
+
 ```python
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
@@ -544,7 +595,9 @@ X_transformed = transformer.fit_transform(X)
 ## Best Practices
 
 ### Fit on Training Data Only
+
 Always fit transformers on training data only:
+
 ```python
 # Correct
 scaler = StandardScaler()
@@ -557,7 +610,9 @@ X_all_scaled = scaler.fit_transform(np.vstack([X_train, X_test]))
 ```
 
 ### Use Pipelines
+
 Combine preprocessing with models:
+
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -572,7 +627,9 @@ pipeline.fit(X_train, y_train)
 ```
 
 ### Handle Categorical and Numerical Separately
+
 Use ColumnTransformer:
+
 ```python
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -593,14 +650,17 @@ X_transformed = preprocessor.fit_transform(X)
 ### Algorithm-Specific Requirements
 
 **Require Scaling:**
+
 - SVM, KNN, Neural Networks
 - PCA, Linear/Logistic Regression with regularization
 - K-Means clustering
 
 **Don't Require Scaling:**
+
 - Tree-based models (Decision Trees, Random Forest, Gradient Boosting)
 - Naive Bayes
 
 **Encoding Requirements:**
+
 - Linear models, SVM, KNN: One-hot encoding for nominal features
 - Tree-based models: Can handle ordinal encoding directly

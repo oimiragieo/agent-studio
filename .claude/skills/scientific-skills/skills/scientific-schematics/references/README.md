@@ -42,6 +42,7 @@ python scripts/generate_schematic.py "MAPK signaling pathway" -o figures/pathway
 ### Automatic Quality Standards
 
 All diagrams automatically follow:
+
 - Clean white/light background
 - High contrast for readability
 - Clear labels (minimum 10pt font)
@@ -84,6 +85,7 @@ python scripts/generate_schematic.py \
 ```
 
 **Output:**
+
 - `figures/consort_v1.png` - Initial generation
 - `figures/consort_v2.png` - After first review
 - `figures/consort_v3.png` - Final version
@@ -164,26 +166,31 @@ for iteration in results['iterations']:
 ## Prompt Engineering Tips
 
 ### Be Specific About Layout
+
 ✓ "Flowchart with vertical flow, top to bottom"  
 ✓ "Architecture diagram with encoder on left, decoder on right"  
 ✗ "Make a diagram" (too vague)
 
 ### Include Quantitative Details
+
 ✓ "Neural network: input (784), hidden (128), output (10)"  
 ✓ "Flowchart: n=500 screened, n=150 excluded, n=350 randomized"  
 ✗ "Some numbers" (not specific)
 
 ### Specify Visual Style
+
 ✓ "Minimalist block diagram with clean lines"  
 ✓ "Detailed biological pathway with protein structures"  
 ✓ "Technical schematic with engineering notation"
 
 ### Request Specific Labels
+
 ✓ "Label all arrows with activation/inhibition"  
 ✓ "Include layer dimensions in each box"  
 ✓ "Show time progression with timestamps"
 
 ### Mention Color Requirements
+
 ✓ "Use colorblind-friendly colors"  
 ✓ "Grayscale-compatible design"  
 ✓ "Color-code by function: blue=input, green=processing, red=output"
@@ -273,6 +280,7 @@ curl https://openrouter.ai/api/v1/models
 ### Low Quality Scores
 
 If iterations consistently score below 7/10:
+
 1. Make your prompt more specific
 2. Include more details about layout and labels
 3. Specify visual requirements explicitly
@@ -287,6 +295,7 @@ python test_ai_generation.py
 ```
 
 This tests:
+
 - File structure
 - Module imports
 - Class initialization
@@ -297,15 +306,18 @@ This tests:
 ## Cost Considerations
 
 OpenRouter pricing for models used:
+
 - **Nano Banana Pro**: ~$2/M input tokens, ~$12/M output tokens
 
 Typical costs per diagram:
+
 - Simple diagram (1 iteration): ~$0.05-0.15
 - Complex diagram (2 iterations): ~$0.10-0.30
 
 ## Examples Gallery
 
 See the full SKILL.md for extensive examples including:
+
 - CONSORT flowcharts
 - Neural network architectures (Transformers, CNNs, RNNs)
 - Biological pathways
@@ -316,6 +328,7 @@ See the full SKILL.md for extensive examples including:
 ## Support
 
 For issues or questions:
+
 1. Check SKILL.md for detailed documentation
 2. Run test_ai_generation.py to verify setup
 3. Use verbose mode (-v) to see detailed errors
@@ -324,4 +337,3 @@ For issues or questions:
 ## License
 
 Part of the scientific-writer package. See main repository for license information.
-

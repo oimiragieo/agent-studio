@@ -15,6 +15,7 @@
 ## S - SUBJECTIVE
 
 ### Chief Complaint (CC)
+
 "[Patient's chief complaint in their own words]"
 
 ### History of Present Illness (HPI)
@@ -44,6 +45,7 @@
 **Functional impact:** [How does this affect daily activities?]
 
 **Review of Systems (pertinent to visit):**
+
 - Constitutional: [fever, chills, weight change, fatigue, night sweats]
 - [Other relevant systems based on chief complaint]
 - **Pertinent negatives:** [Important symptoms patient denies]
@@ -53,6 +55,7 @@
 ## O - OBJECTIVE
 
 ### Vital Signs
+
 - Temperature: \_\_\_\_\_ °F (oral/axillary/tympanic)
 - Blood Pressure: \_\_\_\_\_/\_\_\_\_\_ mmHg
 - Heart Rate: \_\_\_\_\_ bpm
@@ -68,7 +71,8 @@
 **General Appearance:**  
 [Well-appearing, no distress / ill-appearing / mild/moderate/severe distress]
 
-**HEENT:**  
+**HEENT:**
+
 - Head: [Normocephalic, atraumatic]
 - Eyes: [PERRLA, EOMI, conjunctiva, sclera]
 - Ears: [TMs clear bilaterally, canals patent]
@@ -94,7 +98,8 @@
 **Skin:**  
 [Warm and dry, no rashes, no lesions, normal turgor, capillary refill <2 sec]
 
-**Neurological:**  
+**Neurological:**
+
 - Mental status: [Alert and oriented to person, place, time]
 - Cranial nerves: [II-XII intact] OR [specify abnormalities]
 - Motor: [5/5 strength all extremities, normal tone]
@@ -107,14 +112,17 @@
 [Normal mood and affect, thought process logical and goal-directed, no SI/HI]
 
 ### Laboratory Results (if applicable)
-| Test | Result | Reference Range | Flag |
-|------|--------|----------------|------|
-| [Test name] | [Value] [unit] | [Range] | [H/L/-] |
+
+| Test        | Result         | Reference Range | Flag    |
+| ----------- | -------------- | --------------- | ------- |
+| [Test name] | [Value] [unit] | [Range]         | [H/L/-] |
 
 ### Imaging Results (if applicable)
+
 [Modality] ([Date]): [Key findings]
 
 ### Other Diagnostic Tests
+
 [ECG, etc.]: [Results]
 
 ---
@@ -124,16 +132,19 @@
 ### Problem List with Assessment
 
 **1. [Primary Problem/Diagnosis] ([ICD-10 code])**
-   - [Brief assessment: severity, stability, progress toward goals]
-   - [Relevant exam and lab findings supporting diagnosis]
-   - [Differential diagnosis if uncertain]
+
+- [Brief assessment: severity, stability, progress toward goals]
+- [Relevant exam and lab findings supporting diagnosis]
+- [Differential diagnosis if uncertain]
 
 **2. [Secondary Problem/Diagnosis] ([ICD-10 code])**
-   - [Assessment]
+
+- [Assessment]
 
 **3. [Additional problems as needed]**
 
 ### Overall Assessment
+
 [Summary statement about patient's overall status, response to treatment, trajectory]
 
 ---
@@ -145,10 +156,12 @@
 **1. [Primary Problem]**
 
 **Diagnostics:**
+
 - [Further tests, labs, imaging, consultations needed]
 - [Rationale for testing]
 
 **Therapeutics:**
+
 - [Medications:]
   - [Drug name] [dose] [route] [frequency] x [duration]
   - Indication: [Why prescribed]
@@ -156,37 +169,45 @@
 - [Non-pharmacological interventions]
 
 **Monitoring:**
+
 - [What to monitor, how often]
 - [Parameters for follow-up labs or imaging]
 
 **Education:**
+
 - [Topics discussed with patient]
 - [Patient understanding verified]
 - [Written materials provided]
 
 **Follow-up:**
+
 - [When and where]
 - [Specific goals for follow-up visit]
 
 **Return Precautions:**
+
 - [When to seek urgent/emergency care]
 - [Warning signs discussed]
 
 **2. [Secondary Problem]**
 
 **Diagnostics:**
+
 - [Tests or studies]
 
 **Therapeutics:**
+
 - [Medications or interventions]
 
 **Monitoring:**
+
 - [Parameters to follow]
 
 **3. [Additional Problems]**
 [Plan for each problem]
 
 ### Overall Plan Summary
+
 - Total new prescriptions: [number]
 - Referrals placed: [specialty, reason]
 - Follow-up appointment: [date/timeframe and with whom]
@@ -200,6 +221,7 @@
 **CPT Code:** [E/M code - 99201-99215 for office visits]
 
 **Level of Service Justification:**
+
 - History: [Problem focused / Expanded / Detailed / Comprehensive]
 - Exam: [Problem focused / Expanded / Detailed / Comprehensive]
 - Medical Decision Making: [Straightforward / Low / Moderate / High complexity]
@@ -208,6 +230,7 @@
   - Risk: [Minimal / Low / Moderate / High]
 
 [OR if time-based:]
+
 - Total time: [minutes]
 - Time spent on counseling/coordination: [minutes] (>50% of visit)
 
@@ -224,6 +247,7 @@
 ## Notes for Using This Template
 
 **Best Practices:**
+
 - Document as soon as possible after encounter
 - Be specific and objective in observations
 - Avoid copy-forward errors
@@ -232,12 +256,14 @@
 - Use standard abbreviations only
 
 **Billing Considerations:**
+
 - Document medical necessity
 - Match documentation level to billing code
 - For time-based billing, document total time and counseling time
 - Include relevant history, exam, and MDM elements
 
 **Legal Considerations:**
+
 - Document facts, not opinions
 - Quote patient when relevant
 - Document non-compliance objectively
@@ -245,9 +271,8 @@
 - Ensure legibility
 
 **Customization:**
+
 - Adapt level of detail to setting (quick outpatient visit vs. complex hospital consultation)
 - Include or exclude sections as relevant
 - Follow institutional templates if required
 - Use problem-oriented approach consistently
-
-

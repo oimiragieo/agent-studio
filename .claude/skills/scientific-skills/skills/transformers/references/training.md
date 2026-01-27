@@ -115,27 +115,32 @@ trainer.push_to_hub("username/my-finetuned-model")
 ### Essential Parameters
 
 **output_dir**: Directory for checkpoints and logs
+
 ```python
 output_dir="./results"
 ```
 
 **num_train_epochs**: Number of training epochs
+
 ```python
 num_train_epochs=3
 ```
 
 **per_device_train_batch_size**: Batch size per GPU/CPU
+
 ```python
 per_device_train_batch_size=8
 ```
 
 **learning_rate**: Optimizer learning rate
+
 ```python
 learning_rate=2e-5  # Common for BERT-style models
 learning_rate=5e-5  # Common for smaller models
 ```
 
 **weight_decay**: L2 regularization
+
 ```python
 weight_decay=0.01
 ```
@@ -143,12 +148,14 @@ weight_decay=0.01
 ### Evaluation and Saving
 
 **eval_strategy**: When to evaluate ("no", "steps", "epoch")
+
 ```python
 eval_strategy="epoch"  # Evaluate after each epoch
 eval_strategy="steps"  # Evaluate every eval_steps
 ```
 
 **save_strategy**: When to save checkpoints
+
 ```python
 save_strategy="epoch"
 save_strategy="steps"
@@ -156,6 +163,7 @@ save_steps=500
 ```
 
 **load_best_model_at_end**: Load best checkpoint after training
+
 ```python
 load_best_model_at_end=True
 metric_for_best_model="accuracy"  # Metric to compare
@@ -164,26 +172,31 @@ metric_for_best_model="accuracy"  # Metric to compare
 ### Optimization
 
 **gradient_accumulation_steps**: Accumulate gradients over multiple steps
+
 ```python
 gradient_accumulation_steps=4  # Effective batch size = batch_size * 4
 ```
 
 **fp16**: Enable mixed precision (NVIDIA GPUs)
+
 ```python
 fp16=True
 ```
 
 **bf16**: Enable bfloat16 (newer GPUs)
+
 ```python
 bf16=True
 ```
 
 **gradient_checkpointing**: Trade compute for memory
+
 ```python
 gradient_checkpointing=True  # Slower but uses less memory
 ```
 
 **optim**: Optimizer choice
+
 ```python
 optim="adamw_torch"  # Default
 optim="adamw_8bit"    # 8-bit Adam (requires bitsandbytes)
@@ -193,6 +206,7 @@ optim="adafactor"     # Memory-efficient alternative
 ### Learning Rate Scheduling
 
 **lr_scheduler_type**: Learning rate schedule
+
 ```python
 lr_scheduler_type="linear"       # Linear decay
 lr_scheduler_type="cosine"       # Cosine annealing
@@ -201,6 +215,7 @@ lr_scheduler_type="constant_with_warmup"
 ```
 
 **warmup_steps** or **warmup_ratio**: Warmup period
+
 ```python
 warmup_steps=500
 # Or
@@ -210,16 +225,19 @@ warmup_ratio=0.1  # 10% of total steps
 ### Logging
 
 **logging_dir**: TensorBoard logs directory
+
 ```python
 logging_dir="./logs"
 ```
 
 **logging_steps**: Log every N steps
+
 ```python
 logging_steps=10
 ```
 
 **report_to**: Logging integrations
+
 ```python
 report_to=["tensorboard"]
 report_to=["wandb"]
@@ -229,11 +247,13 @@ report_to=["tensorboard", "wandb"]
 ### Distributed Training
 
 **ddp_backend**: Distributed backend
+
 ```python
 ddp_backend="nccl"  # For multi-GPU
 ```
 
 **deepspeed**: DeepSpeed config file
+
 ```python
 deepspeed="ds_config.json"
 ```
@@ -245,6 +265,7 @@ Handle dynamic padding and special preprocessing:
 ### DataCollatorWithPadding
 
 Pad sequences to longest in batch:
+
 ```python
 from transformers import DataCollatorWithPadding
 
@@ -261,6 +282,7 @@ trainer = Trainer(
 ### DataCollatorForLanguageModeling
 
 For masked language modeling:
+
 ```python
 from transformers import DataCollatorForLanguageModeling
 
@@ -274,6 +296,7 @@ data_collator = DataCollatorForLanguageModeling(
 ### DataCollatorForSeq2Seq
 
 For sequence-to-sequence tasks:
+
 ```python
 from transformers import DataCollatorForSeq2Seq
 
@@ -413,6 +436,7 @@ training_args = TrainingArguments(
 ### Hyperparameter Tuning
 
 Common starting points:
+
 - **Learning rate**: 2e-5 to 5e-5 for BERT-like models, 1e-4 to 1e-3 for smaller models
 - **Batch size**: 8-32 depending on GPU memory
 - **Epochs**: 2-4 for fine-tuning, more for domain adaptation
@@ -446,11 +470,13 @@ best_trial = trainer.hyperparameter_search(
 ### Monitoring Training
 
 Use TensorBoard:
+
 ```bash
 tensorboard --logdir ./logs
 ```
 
 Or Weights & Biases:
+
 ```python
 import wandb
 wandb.init(project="my-project")
@@ -464,6 +490,7 @@ training_args = TrainingArguments(
 ### Resume Training
 
 Resume from checkpoint:
+
 ```python
 trainer.train(resume_from_checkpoint="./results/checkpoint-1000")
 ```
@@ -471,18 +498,21 @@ trainer.train(resume_from_checkpoint="./results/checkpoint-1000")
 ## Common Issues
 
 **CUDA out of memory:**
+
 - Reduce batch size
 - Enable gradient checkpointing
 - Use gradient accumulation
 - Use 8-bit optimizers
 
 **Overfitting:**
+
 - Increase weight_decay
 - Add dropout
 - Use early stopping
 - Reduce model size or training epochs
 
 **Slow training:**
+
 - Increase batch size
 - Enable mixed precision (fp16/bf16)
 - Use multiple GPUs

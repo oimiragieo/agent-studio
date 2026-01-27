@@ -17,10 +17,12 @@ Retrieve all workspaces the authenticated user has access to.
 **Endpoint:** `GET /workspaces`
 
 **Query Parameters:**
+
 - `page_size`: Number of results per page (default: 10, max: 50)
 - `page_id`: Page number for pagination (starts at 0)
 
 **Response includes:**
+
 - Workspace ID and name
 - Workspace type (personal, group, institutional)
 - Member count
@@ -28,6 +30,7 @@ Retrieve all workspaces the authenticated user has access to.
 - Creation date
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/workspaces"
@@ -40,9 +43,11 @@ Retrieve detailed information about a specific workspace.
 **Endpoint:** `GET /workspaces/{workspace_id}`
 
 **Path Parameters:**
+
 - `workspace_id`: The workspace's unique identifier
 
 **Response includes:**
+
 - Complete workspace metadata
 - Member list with roles
 - Workspace settings and permissions
@@ -57,10 +62,12 @@ Retrieve all members of a workspace.
 **Endpoint:** `GET /workspaces/{workspace_id}/members`
 
 **Query Parameters:**
+
 - `page_size`: Number of results per page
 - `page_id`: Page number for pagination
 
 **Response includes:**
+
 - Member name and email
 - Role (owner, admin, member, viewer)
 - Join date
@@ -73,9 +80,11 @@ Request to join a workspace.
 **Endpoint:** `POST /workspaces/{workspace_id}/join-request`
 
 **Request Body:**
+
 - `message` (optional): Message to workspace admins explaining the request
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -103,6 +112,7 @@ Retrieve all protocols in a workspace.
 **Endpoint:** `GET /workspaces/{workspace_id}/protocols`
 
 **Query Parameters:**
+
 - `filter`: Filter protocols
   - `all`: All protocols in the workspace
   - `own`: Only protocols you created
@@ -115,6 +125,7 @@ Retrieve all protocols in a workspace.
 - `content_format`: Content format (`json`, `html`, `markdown`)
 
 **Example Request:**
+
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   "https://protocols.io/api/v3/workspaces/12345/protocols?filter=all&order_field=modified_on&order_dir=desc"

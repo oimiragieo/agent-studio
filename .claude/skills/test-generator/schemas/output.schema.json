@@ -3,9 +3,7 @@
   "title": "test-generator Output Schema",
   "description": "Output validation schema for test-generator skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

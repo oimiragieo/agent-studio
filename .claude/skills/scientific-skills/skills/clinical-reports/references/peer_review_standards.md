@@ -7,6 +7,7 @@
 Peer review ensures that clinical manuscripts meet standards for scientific rigor, ethical conduct, and clear communication before publication.
 
 **Objectives:**
+
 - Assess scientific validity and methodology
 - Evaluate clinical significance
 - Verify ethical compliance
@@ -14,6 +15,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Improve manuscript quality
 
 **Types of peer review:**
+
 - Single-blind (reviewer knows author, author doesn't know reviewer)
 - Double-blind (both parties anonymous)
 - Open peer review (both parties known)
@@ -22,17 +24,20 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Reviewer Responsibilities
 
 **Accept reviews only when:**
+
 - Qualified in the subject area
 - No conflicts of interest
 - Adequate time available (typically 2-3 weeks)
 - Can provide constructive, unbiased evaluation
 
 **Maintain confidentiality:**
+
 - Do not share manuscript content
 - Do not use information for personal advantage
 - Do not involve others without editor permission
 
 **Provide timely review:**
+
 - Complete within requested timeframe
 - Notify editor promptly if unable to complete
 
@@ -41,6 +46,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### CARE Guideline Compliance
 
 **Verify manuscript includes:**
+
 - [ ] Title identifies it as case report
 - [ ] Keywords provided (2-5)
 - [ ] Structured or unstructured abstract
@@ -58,6 +64,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Novelty and Significance
 
 **Assess:**
+
 - Is this case truly novel or does it add to medical knowledge?
 - What makes this case worth reporting?
 - Is the condition rare or presentation unusual?
@@ -65,6 +72,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Are there clinical lessons that can be generalized?
 
 **Red flags:**
+
 - Common presentation of common condition
 - Single case without unique features
 - Overgeneralization from single case
@@ -73,6 +81,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Privacy and Ethical Considerations
 
 **Verify:**
+
 - Informed consent obtained and documented
 - Patient adequately de-identified (18 HIPAA identifiers removed)
 - No identifiable images without explicit consent
@@ -82,6 +91,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Institutional identifiers removed
 
 **Ethical concerns:**
+
 - Missing consent documentation
 - Identifiable information present
 - Lack of IRB approval for retrospective chart review (if applicable)
@@ -90,18 +100,21 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Clinical Quality
 
 **Diagnostic process:**
+
 - Appropriate workup for presenting symptoms
 - Differential diagnosis considered
 - Logical progression to final diagnosis
 - Adequate documentation of findings
 
 **Treatment:**
+
 - Evidence-based interventions
 - Rationale for treatment choices
 - Alternative treatments considered
 - Appropriate monitoring and follow-up
 
 **Outcome:**
+
 - Clear description of clinical outcome
 - Follow-up duration appropriate
 - Complications documented
@@ -110,6 +123,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Literature Review
 
 **Assess:**
+
 - Adequate search of existing literature
 - Similar cases identified and discussed
 - Current understanding of condition reviewed
@@ -120,12 +134,14 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Writing Quality
 
 **Structure:**
+
 - Logical flow and organization
 - CARE guideline structure followed
 - Clear, concise writing
 - Appropriate medical terminology
 
 **Clarity:**
+
 - Medical jargon explained
 - Timeline clear and easy to follow
 - Chronology of events logical
@@ -136,6 +152,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Study Design and Methodology
 
 **Assess:**
+
 - Appropriate study design for research question
 - Clear objectives and hypotheses
 - Well-defined primary and secondary endpoints
@@ -144,6 +161,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Control group appropriate
 
 **Red flags:**
+
 - Post-hoc changes to endpoints
 - Underpowered study claiming equivalence
 - Inappropriate statistical methods
@@ -153,6 +171,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### CONSORT Compliance
 
 **Verify:**
+
 - Title identifies as randomized trial
 - Structured abstract
 - Trial registration number provided
@@ -167,6 +186,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Randomization and Allocation
 
 **Assess:**
+
 - Adequate sequence generation method
 - Allocation concealment appropriate
 - Baseline characteristics balanced
@@ -176,6 +196,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Participant Flow
 
 **Verify:**
+
 - Number screened reported
 - Exclusion reasons provided
 - Number randomized clear
@@ -187,6 +208,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Outcome Measures
 
 **Primary outcome:**
+
 - Clearly defined a priori
 - Clinically meaningful
 - Appropriate for research question
@@ -194,12 +216,14 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Statistical analysis appropriate
 
 **Secondary outcomes:**
+
 - Pre-specified in protocol
 - Analyzed appropriately
 - Multiple comparison correction if needed
 - Not over-interpreted if underpowered
 
 **Exploratory outcomes:**
+
 - Clearly labeled as exploratory or post-hoc
 - Not given same weight as primary
 - Hypothesis-generating, not confirmatory
@@ -207,6 +231,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Statistical Analysis
 
 **Assess:**
+
 - Analysis plan specified before unblinding
 - Appropriate statistical tests
 - Assumptions verified (normality, etc.)
@@ -216,6 +241,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Effect sizes reported
 
 **Common issues:**
+
 - p-hacking (selective reporting)
 - Multiple testing without correction
 - Inappropriate subgroup analyses
@@ -225,6 +251,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Safety Reporting
 
 **Verify:**
+
 - All adverse events reported
 - Serious adverse events detailed
 - Deaths fully described
@@ -235,6 +262,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Clinical Significance
 
 **Assess:**
+
 - Statistical significance vs. clinical significance
 - Magnitude of effect clinically meaningful
 - Number needed to treat (NNT) if applicable
@@ -247,6 +275,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### STARD Guidelines (Standards for Reporting Diagnostic Accuracy Studies)
 
 **Assess compliance:**
+
 - Study design described
 - Participant selection criteria
 - Sampling method
@@ -261,6 +290,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Reference Standard
 
 **Verify:**
+
 - Appropriate gold standard used
 - Same reference standard for all participants
 - Reference standard performed regardless of index test result
@@ -270,6 +300,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Test Performance
 
 **Required metrics:**
+
 - Sensitivity and specificity
 - Positive and negative predictive values (with prevalence)
 - Likelihood ratios
@@ -277,6 +308,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - 95% confidence intervals for all estimates
 
 **Consider:**
+
 - Pre-test and post-test probabilities
 - Clinical utility beyond accuracy
 - Comparison to existing tests
@@ -285,6 +317,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Spectrum and Verification Bias
 
 **Assess:**
+
 - Spectrum of disease severity included
 - Avoiding spectrum bias (only severe cases)
 - Verification bias avoided (all participants get reference standard)
@@ -295,6 +328,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### STROBE Guidelines (Strengthening the Reporting of Observational Studies in Epidemiology)
 
 **For cohort, case-control, or cross-sectional studies, verify:**
+
 - Title and abstract identify study design
 - Background and rationale clear
 - Objectives specified
@@ -311,6 +345,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Exposure and Outcome Assessment
 
 **Assess:**
+
 - Exposure clearly defined
 - Outcome clearly defined
 - Measurement methods valid and reliable
@@ -321,6 +356,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Confounding and Bias
 
 **Verify:**
+
 - Potential confounders identified
 - Adjustment for confounders in analysis
 - Residual confounding discussed
@@ -331,6 +367,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Causality
 
 **Bradford Hill Criteria consideration:**
+
 - Strength of association
 - Consistency across studies
 - Specificity
@@ -342,6 +379,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Analogy
 
 **Avoid:**
+
 - Causal language for observational studies without strong evidence
 - Confusing association with causation
 
@@ -350,6 +388,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### PRISMA Guidelines
 
 **Verify:**
+
 - Title identifies as systematic review/meta-analysis
 - Structured abstract
 - Research question (PICO format)
@@ -367,6 +406,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Search Strategy
 
 **Assess:**
+
 - Multiple databases searched
 - Search terms comprehensive
 - Limits and filters justified
@@ -378,6 +418,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Study Selection
 
 **Verify:**
+
 - Inclusion/exclusion criteria pre-specified
 - Independent screening by ≥2 reviewers
 - Disagreements resolved appropriately
@@ -387,6 +428,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Quality Assessment
 
 **Assess:**
+
 - Appropriate quality assessment tool used
   - RCTs: Cochrane Risk of Bias tool
   - Observational: Newcastle-Ottawa Scale
@@ -398,6 +440,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Statistical Methods
 
 **For meta-analysis:**
+
 - Fixed vs. random effects model justified
 - Heterogeneity assessed (I², Q statistic)
 - Forest plot provided
@@ -408,12 +451,14 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### GRADE Assessment
 
 **Certainty of evidence:**
+
 - High: Very confident in effect estimate
 - Moderate: Moderately confident
 - Low: Limited confidence
 - Very low: Very little confidence
 
 **Factors decreasing certainty:**
+
 - Risk of bias
 - Inconsistency
 - Indirectness
@@ -425,6 +470,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Structure and Organization
 
 **Assess:**
+
 - Logical flow from introduction through discussion
 - Sections appropriately organized
 - Figures and tables support text
@@ -433,12 +479,14 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Writing Quality
 
 **Clarity:**
+
 - Clear, concise language
 - Jargon minimized and defined
 - Abbreviations defined at first use
 - Consistent terminology
 
 **Grammar and style:**
+
 - Correct grammar and spelling
 - Appropriate verb tense (past for study results, present for established facts)
 - Active voice when appropriate
@@ -447,6 +495,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### References
 
 **Verify:**
+
 - Adequate number of references
 - Current literature included
 - Key papers cited
@@ -457,6 +506,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Tables and Figures
 
 **Assess:**
+
 - Appropriate for data type
 - Clear labels and legends
 - High quality images
@@ -469,6 +519,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Conflicts of Interest
 
 **Disclose and recuse if:**
+
 - Personal relationship with authors
 - Financial interest in outcome
 - Competing research
@@ -478,6 +529,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Fair and Constructive Review
 
 **Provide:**
+
 - Balanced assessment of strengths and weaknesses
 - Specific, actionable suggestions
 - Respectful tone
@@ -485,6 +537,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Recognition of limitations of study design
 
 **Avoid:**
+
 - Personal attacks
 - Dismissive language
 - Demanding unreasonable revisions
@@ -494,6 +547,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Confidentiality
 
 **Maintain:**
+
 - Do not share manuscript
 - Do not discuss with colleagues without permission
 - Do not use ideas or data
@@ -502,27 +556,32 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ## Recommendation Categories
 
 **Accept:**
+
 - Manuscript meets publication standards
 - Minor editing only
 
 **Minor revisions:**
+
 - Small issues that can be addressed
 - No additional data required
 - Typically one round of revision
 
 **Major revisions:**
+
 - Significant concerns requiring substantial changes
 - May require additional analyses
 - May require additional data or experiments
 - Typically re-reviewed
 
 **Reject:**
+
 - Fundamental flaws that cannot be corrected
 - Insufficient novelty or significance
 - Unethical conduct
 - Fraudulent data
 
 **Reject and resubmit:**
+
 - Study has potential but needs substantial work
 - Essentially new submission after major changes
 
@@ -531,6 +590,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Structure
 
 **Summary:**
+
 - Brief overview (2-3 sentences)
 - Overall assessment
 - Key strengths (2-3 points)
@@ -538,12 +598,14 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Recommendation
 
 **Major comments:**
+
 - Numbered
 - Significant issues affecting validity, interpretation, or impact
 - Specific and actionable
 - Prioritized
 
 **Minor comments:**
+
 - Numbered
 - Editorial, formatting, or clarification issues
 - Line-specific comments
@@ -552,6 +614,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ### Tone and Language
 
 **Use:**
+
 - Professional, collegial tone
 - "The authors state..." not "You state..."
 - "This study shows..." not "Your study shows..."
@@ -559,6 +622,7 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 - Suggestions for improvement
 
 **Avoid:**
+
 - Harsh or dismissive language
 - Personal pronouns
 - Sarcasm
@@ -582,4 +646,3 @@ Peer review ensures that clinical manuscripts meet standards for scientific rigo
 ---
 
 This reference provides comprehensive peer review standards for clinical manuscripts including case reports, clinical trials, diagnostic studies, observational studies, and systematic reviews. Use these criteria to conduct thorough, constructive peer reviews.
-

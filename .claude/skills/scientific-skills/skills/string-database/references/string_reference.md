@@ -5,6 +5,7 @@
 STRING (Search Tool for the Retrieval of Interacting Genes/Proteins) is a comprehensive database of known and predicted protein-protein interactions integrating data from over 40 sources.
 
 **Database Statistics (v12.0+):**
+
 - Coverage: 5000+ genomes
 - Proteins: ~59.3 million
 - Interactions: 20+ billion
@@ -37,6 +38,7 @@ STRING (Search Tool for the Retrieval of Interacting Genes/Proteins) is a compre
 **Endpoint**: `/api/tsv/get_string_ids`
 
 **Parameters**:
+
 - `identifiers` (required): Protein names/IDs separated by newlines (`%0d`)
 - `species` (required): NCBI taxon ID
 - `limit`: Number of matches per identifier (default: 1)
@@ -44,6 +46,7 @@ STRING (Search Tool for the Retrieval of Interacting Genes/Proteins) is a compre
 - `caller_identity`: Application identifier
 
 **Output Format**: TSV with columns:
+
 - `queryItem`: Original query
 - `queryIndex`: Query position
 - `stringId`: STRING identifier
@@ -53,11 +56,13 @@ STRING (Search Tool for the Retrieval of Interacting Genes/Proteins) is a compre
 - `annotation`: Protein description
 
 **Example**:
+
 ```
 identifiers=TP53%0dBRCA1&species=9606&limit=1
 ```
 
 **Use cases**:
+
 - Converting gene symbols to STRING IDs
 - Validating protein identifiers
 - Finding canonical protein names
@@ -69,6 +74,7 @@ identifiers=TP53%0dBRCA1&species=9606&limit=1
 **Endpoint**: `/api/tsv/network`
 
 **Parameters**:
+
 - `identifiers` (required): Protein IDs separated by `%0d`
 - `species`: NCBI taxon ID
 - `required_score`: Confidence threshold 0-1000 (default: 400)
@@ -81,6 +87,7 @@ identifiers=TP53%0dBRCA1&species=9606&limit=1
 - `caller_identity`: Application identifier
 
 **Output Format**: TSV with columns:
+
 - `stringId_A`, `stringId_B`: Interacting proteins
 - `preferredName_A`, `preferredName_B`: Gene names
 - `ncbiTaxonId`: Species
@@ -94,10 +101,12 @@ identifiers=TP53%0dBRCA1&species=9606&limit=1
 - `tscore`: Text-mining score
 
 **Network Types**:
+
 - **Functional**: All interaction evidence types (recommended for most analyses)
 - **Physical**: Only direct physical binding evidence
 
 **Example**:
+
 ```
 identifiers=9606.ENSP00000269305%0d9606.ENSP00000275493&required_score=700
 ```
@@ -109,6 +118,7 @@ identifiers=9606.ENSP00000269305%0d9606.ENSP00000275493&required_score=700
 **Endpoint**: `/api/image/network`
 
 **Parameters**:
+
 - `identifiers` (required): Protein IDs separated by `%0d`
 - `species`: NCBI taxon ID
 - `required_score`: Confidence threshold 0-1000
@@ -122,11 +132,13 @@ identifiers=9606.ENSP00000269305%0d9606.ENSP00000275493&required_score=700
 **Output**: PNG image (binary data)
 
 **Image Specifications**:
+
 - Format: PNG
 - Size: Automatically scaled based on network size
 - High-resolution option available (add `?highres=1`)
 
 **Example**:
+
 ```
 identifiers=TP53%0dMDM2&species=9606&network_flavor=evidence
 ```
@@ -138,6 +150,7 @@ identifiers=TP53%0dMDM2&species=9606&network_flavor=evidence
 **Endpoint**: `/api/tsv/interaction_partners`
 
 **Parameters**:
+
 - `identifiers` (required): Protein IDs
 - `species`: NCBI taxon ID
 - `required_score`: Confidence threshold 0-1000
@@ -147,11 +160,13 @@ identifiers=TP53%0dMDM2&species=9606&network_flavor=evidence
 **Output Format**: TSV with same columns as `network` method
 
 **Use cases**:
+
 - Finding hub proteins
 - Expanding networks
 - Discovery of novel interactions
 
 **Example**:
+
 ```
 identifiers=TP53&species=9606&limit=20&required_score=700
 ```
@@ -163,11 +178,13 @@ identifiers=TP53&species=9606&limit=20&required_score=700
 **Endpoint**: `/api/tsv/enrichment`
 
 **Parameters**:
+
 - `identifiers` (required): List of protein IDs
 - `species` (required): NCBI taxon ID
 - `caller_identity`: Application identifier
 
 **Enrichment Categories**:
+
 - **Gene Ontology**: Biological Process, Molecular Function, Cellular Component
 - **KEGG Pathways**: Metabolic and signaling pathways
 - **Pfam**: Protein domains
@@ -176,6 +193,7 @@ identifiers=TP53&species=9606&limit=20&required_score=700
 - **UniProt Keywords**: Curated functional keywords
 
 **Output Format**: TSV with columns:
+
 - `category`: Annotation category
 - `term`: Term ID
 - `description`: Term description
@@ -190,6 +208,7 @@ identifiers=TP53&species=9606&limit=20&required_score=700
 **Statistical Method**: Fisher's exact test with Benjamini-Hochberg FDR correction
 
 **Example**:
+
 ```
 identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 ```
@@ -201,22 +220,26 @@ identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 **Endpoint**: `/api/json/ppi_enrichment`
 
 **Parameters**:
+
 - `identifiers` (required): List of protein IDs
 - `species`: NCBI taxon ID
 - `required_score`: Confidence threshold
 - `caller_identity`: Application identifier
 
 **Output Format**: JSON with fields:
+
 - `number_of_nodes`: Proteins in network
 - `number_of_edges`: Interactions observed
 - `expected_number_of_edges`: Expected interactions (random)
 - `p_value`: Statistical significance
 
 **Interpretation**:
+
 - p-value < 0.05: Network is significantly enriched
 - Low p-value indicates proteins form functional module
 
 **Example**:
+
 ```
 identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 ```
@@ -228,6 +251,7 @@ identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 **Endpoint**: `/api/tsv/homology`
 
 **Parameters**:
+
 - `identifiers` (required): Protein IDs
 - `species`: NCBI taxon ID
 - `caller_identity`: Application identifier
@@ -235,6 +259,7 @@ identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 **Output Format**: TSV with homology scores between proteins
 
 **Use cases**:
+
 - Identifying protein families
 - Paralog analysis
 - Cross-species comparisons
@@ -249,28 +274,30 @@ identifiers=TP53%0dMDM2%0dATM%0dCHEK2&species=9606
 
 ## Common Species NCBI Taxon IDs
 
-| Organism | Common Name | Taxon ID |
-|----------|-------------|----------|
-| Homo sapiens | Human | 9606 |
-| Mus musculus | Mouse | 10090 |
-| Rattus norvegicus | Rat | 10116 |
-| Drosophila melanogaster | Fruit fly | 7227 |
-| Caenorhabditis elegans | C. elegans | 6239 |
-| Saccharomyces cerevisiae | Yeast | 4932 |
-| Arabidopsis thaliana | Thale cress | 3702 |
-| Escherichia coli K-12 | E. coli | 511145 |
-| Danio rerio | Zebrafish | 7955 |
-| Gallus gallus | Chicken | 9031 |
+| Organism                 | Common Name | Taxon ID |
+| ------------------------ | ----------- | -------- |
+| Homo sapiens             | Human       | 9606     |
+| Mus musculus             | Mouse       | 10090    |
+| Rattus norvegicus        | Rat         | 10116    |
+| Drosophila melanogaster  | Fruit fly   | 7227     |
+| Caenorhabditis elegans   | C. elegans  | 6239     |
+| Saccharomyces cerevisiae | Yeast       | 4932     |
+| Arabidopsis thaliana     | Thale cress | 3702     |
+| Escherichia coli K-12    | E. coli     | 511145   |
+| Danio rerio              | Zebrafish   | 7955     |
+| Gallus gallus            | Chicken     | 9031     |
 
 Full list: https://string-db.org/cgi/input?input_page_active_form=organisms
 
 ## STRING Identifier Format
 
 STRING uses Ensembl protein IDs with taxon prefix:
+
 - Format: `{taxonId}.{ensemblProteinId}`
 - Example: `9606.ENSP00000269305` (human TP53)
 
 **ID Components**:
+
 - **Taxon ID**: NCBI taxonomy identifier
 - **Protein ID**: Usually Ensembl protein ID (ENSP...)
 
@@ -310,6 +337,7 @@ STRING provides combined confidence scores (0-1000) based on multiple evidence c
 ### Format Selection
 
 Replace `/tsv/` in URL with desired format:
+
 - `/json/network` - JSON format
 - `/xml/network` - XML format
 - `/image/network` - PNG image
@@ -335,6 +363,7 @@ Replace `/tsv/` in URL with desired format:
 ### Bulk Network Upload
 
 For complete proteome analysis:
+
 1. Navigate to https://string-db.org/
 2. Select "Upload proteome" option
 3. Upload FASTA file
@@ -345,6 +374,7 @@ For complete proteome analysis:
 For differential expression/proteomics data:
 
 1. **Get API Key**:
+
 ```
 /api/json/get_api_key
 ```
@@ -352,6 +382,7 @@ For differential expression/proteomics data:
 2. **Submit Data**: Tab-separated protein ID and value pairs
 
 3. **Check Status**:
+
 ```
 /api/json/valuesranks_enrichment_status?job_id={id}
 ```
@@ -359,6 +390,7 @@ For differential expression/proteomics data:
 4. **Retrieve Results**: Access enrichment tables and figures
 
 **Requirements**:
+
 - Complete protein set (no filtering)
 - Numeric values for each protein
 - Proper species identifier
@@ -366,14 +398,17 @@ For differential expression/proteomics data:
 ### Network Customization
 
 **Network Size Control**:
+
 - `add_nodes=N`: Adds N most connected proteins
 - `limit`: Controls partner retrieval
 
 **Confidence Filtering**:
+
 - Adjust `required_score` based on analysis goals
 - Higher scores = fewer false positives, more false negatives
 
 **Network Type Selection**:
+
 - `functional`: All evidence (recommended for pathway analysis)
 - `physical`: Direct binding only (recommended for structural studies)
 
@@ -382,6 +417,7 @@ For differential expression/proteomics data:
 ### Python Libraries
 
 **requests** (recommended):
+
 ```python
 import requests
 url = "https://string-db.org/api/tsv/network"
@@ -390,6 +426,7 @@ response = requests.get(url, params=params)
 ```
 
 **urllib** (standard library):
+
 ```python
 import urllib.request
 url = "https://string-db.org/api/tsv/network?identifiers=TP53&species=9606"
@@ -399,6 +436,7 @@ response = urllib.request.urlopen(url)
 ### R Integration
 
 **STRINGdb Bioconductor package**:
+
 ```R
 library(STRINGdb)
 string_db <- STRINGdb$new(version="12", species=9606)
@@ -407,6 +445,7 @@ string_db <- STRINGdb$new(version="12", species=9606)
 ### Cytoscape
 
 STRING networks can be imported into Cytoscape for visualization and analysis:
+
 1. Use stringApp plugin
 2. Import TSV network data
 3. Apply layouts and styling
@@ -414,6 +453,7 @@ STRING networks can be imported into Cytoscape for visualization and analysis:
 ## Data License
 
 STRING data is freely available under **Creative Commons BY 4.0** license:
+
 - ✓ Free to use for academic and commercial purposes
 - ✓ Attribution required
 - ✓ Modifications allowed
@@ -439,17 +479,20 @@ STRING data is freely available under **Creative Commons BY 4.0** license:
 ## Troubleshooting
 
 **No results returned**:
+
 - Verify species parameter matches identifiers
 - Check identifier format
 - Lower confidence threshold
 - Use identifier mapping first
 
 **Timeout errors**:
+
 - Reduce number of input proteins
 - Split large queries into batches
 - Use bulk download for proteome-scale analyses
 
 **Version inconsistencies**:
+
 - Use version-specific URLs
 - Check STRING version with `/version` endpoint
 - Update identifiers if using old IDs

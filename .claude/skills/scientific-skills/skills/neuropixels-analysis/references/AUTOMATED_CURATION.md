@@ -5,6 +5,7 @@ Guide to automated spike sorting curation using Bombcell, UnitRefine, and other 
 ## Why Automated Curation?
 
 Manual curation is:
+
 - **Slow**: Hours per recording session
 - **Subjective**: Inter-rater variability
 - **Non-reproducible**: Hard to standardize
@@ -13,18 +14,19 @@ Automated tools provide consistent, reproducible quality classification.
 
 ## Available Tools
 
-| Tool | Classification | Language | Integration |
-|------|---------------|----------|-------------|
-| **Bombcell** | 4-class (single/multi/noise/non-somatic) | Python/MATLAB | SpikeInterface, Phy |
-| **UnitRefine** | Machine learning-based | Python | SpikeInterface |
-| **SpikeInterface QM** | Threshold-based | Python | Native |
-| **UnitMatch** | Cross-session tracking | Python/MATLAB | Kilosort, Bombcell |
+| Tool                  | Classification                           | Language      | Integration         |
+| --------------------- | ---------------------------------------- | ------------- | ------------------- |
+| **Bombcell**          | 4-class (single/multi/noise/non-somatic) | Python/MATLAB | SpikeInterface, Phy |
+| **UnitRefine**        | Machine learning-based                   | Python        | SpikeInterface      |
+| **SpikeInterface QM** | Threshold-based                          | Python        | Native              |
+| **UnitMatch**         | Cross-session tracking                   | Python/MATLAB | Kilosort, Bombcell  |
 
 ## Bombcell
 
 ### Overview
 
 Bombcell classifies units into 4 categories:
+
 1. **Single somatic units** - Well-isolated single neurons
 2. **Multi-unit activity (MUA)** - Mixed neuronal signals
 3. **Noise** - Non-neural artifacts
@@ -90,13 +92,13 @@ results = bc.run_bombcell_phy('phy_export/')
 
 Bombcell computes specific metrics for classification:
 
-| Metric | Description | Used For |
-|--------|-------------|----------|
-| `peak_trough_ratio` | Waveform shape | Somatic vs non-somatic |
-| `spatial_decay` | Amplitude across channels | Noise detection |
-| `refractory_period_violations` | ISI violations | Single vs multi |
-| `presence_ratio` | Temporal stability | Unit quality |
-| `waveform_duration` | Peak-to-trough time | Cell type |
+| Metric                         | Description               | Used For               |
+| ------------------------------ | ------------------------- | ---------------------- |
+| `peak_trough_ratio`            | Waveform shape            | Somatic vs non-somatic |
+| `spatial_decay`                | Amplitude across channels | Noise detection        |
+| `refractory_period_violations` | ISI violations            | Single vs multi        |
+| `presence_ratio`               | Temporal stability        | Unit quality           |
+| `waveform_duration`            | Peak-to-trough time       | Cell type              |
 
 ### Custom Thresholds
 
@@ -279,12 +281,12 @@ manual_labels = si.read_phy('phy_review/').get_property('quality')
 
 ## Comparison of Methods
 
-| Method | Pros | Cons |
-|--------|------|------|
-| **Manual (Phy)** | Gold standard, flexible | Slow, subjective |
-| **SpikeInterface QM** | Fast, reproducible | Simple thresholds only |
-| **Bombcell** | Multi-class, validated | Requires waveform extraction |
-| **UnitRefine** | ML-based, learns from data | Needs training data |
+| Method                | Pros                       | Cons                         |
+| --------------------- | -------------------------- | ---------------------------- |
+| **Manual (Phy)**      | Gold standard, flexible    | Slow, subjective             |
+| **SpikeInterface QM** | Fast, reproducible         | Simple thresholds only       |
+| **Bombcell**          | Multi-class, validated     | Requires waveform extraction |
+| **UnitRefine**        | ML-based, learns from data | Needs training data          |
 
 ## Best Practices
 

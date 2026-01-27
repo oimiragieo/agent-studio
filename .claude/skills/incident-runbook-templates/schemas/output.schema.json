@@ -3,9 +3,7 @@
   "title": "incident-runbook-templates Output Schema",
   "description": "Output validation schema for incident-runbook-templates skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

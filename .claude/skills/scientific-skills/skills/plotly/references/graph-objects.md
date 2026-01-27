@@ -290,6 +290,7 @@ for group_name, group_df in df.groupby('category'):
 ## When to Use Graph Objects
 
 Use graph_objects when:
+
 - Creating chart types not available in Plotly Express
 - Building complex multi-trace figures from scratch
 - Need precise control over individual components
@@ -297,6 +298,7 @@ Use graph_objects when:
 - Building subplots with mixed chart types
 
 Use Plotly Express when:
+
 - Creating standard charts quickly
 - Working with tidy DataFrame data
 - Want automatic styling and legends

@@ -3,6 +3,7 @@
 ## Base URL
 
 All API requests use the base URL format:
+
 ```
 https://{tenant}.benchling.com/api/v2
 ```
@@ -20,6 +21,7 @@ The API version is specified in the URL path. Benchling maintains backward compa
 All requests require authentication via HTTP headers:
 
 **API Key (Basic Auth):**
+
 ```bash
 curl -X GET \
   https://your-tenant.benchling.com/api/v2/dna-sequences \
@@ -27,6 +29,7 @@ curl -X GET \
 ```
 
 **OAuth Bearer Token:**
+
 ```bash
 curl -X GET \
   https://your-tenant.benchling.com/api/v2/dna-sequences \
@@ -46,6 +49,7 @@ Accept: application/json
 All responses follow a consistent JSON structure:
 
 **Single Resource:**
+
 ```json
 {
   "id": "seq_abc123",
@@ -56,11 +60,12 @@ All responses follow a consistent JSON structure:
 ```
 
 **List Response:**
+
 ```json
 {
   "results": [
-    {"id": "seq_1", "name": "Sequence 1"},
-    {"id": "seq_2", "name": "Sequence 2"}
+    { "id": "seq_1", "name": "Sequence 1" },
+    { "id": "seq_2", "name": "Sequence 2" }
   ],
   "nextToken": "token_for_next_page"
 }
@@ -71,10 +76,12 @@ All responses follow a consistent JSON structure:
 List endpoints support pagination:
 
 **Query Parameters:**
+
 - `pageSize`: Number of items per page (default: 50, max: 100)
 - `nextToken`: Token from previous response for next page
 
 **Example:**
+
 ```bash
 curl -X GET \
   "https://your-tenant.benchling.com/api/v2/dna-sequences?pageSize=50&nextToken=abc123"
@@ -83,6 +90,7 @@ curl -X GET \
 ## Error Responses
 
 **Format:**
+
 ```json
 {
   "error": {
@@ -94,6 +102,7 @@ curl -X GET \
 ```
 
 **Common Status Codes:**
+
 - `200 OK`: Success
 - `201 Created`: Resource created
 - `400 Bad Request`: Invalid parameters
@@ -109,6 +118,7 @@ curl -X GET \
 ### DNA Sequences
 
 **List DNA Sequences:**
+
 ```http
 GET /api/v2/dna-sequences
 
@@ -122,11 +132,13 @@ Query Parameters:
 ```
 
 **Get DNA Sequence:**
+
 ```http
 GET /api/v2/dna-sequences/{sequenceId}
 ```
 
 **Create DNA Sequence:**
+
 ```http
 POST /api/v2/dna-sequences
 
@@ -147,6 +159,7 @@ Body:
 ```
 
 **Update DNA Sequence:**
+
 ```http
 PATCH /api/v2/dna-sequences/{sequenceId}
 
@@ -160,6 +173,7 @@ Body:
 ```
 
 **Archive DNA Sequence:**
+
 ```http
 POST /api/v2/dna-sequences:archive
 
@@ -173,16 +187,19 @@ Body:
 ### RNA Sequences
 
 **List RNA Sequences:**
+
 ```http
 GET /api/v2/rna-sequences
 ```
 
 **Get RNA Sequence:**
+
 ```http
 GET /api/v2/rna-sequences/{sequenceId}
 ```
 
 **Create RNA Sequence:**
+
 ```http
 POST /api/v2/rna-sequences
 
@@ -198,11 +215,13 @@ Body:
 ```
 
 **Update RNA Sequence:**
+
 ```http
 PATCH /api/v2/rna-sequences/{sequenceId}
 ```
 
 **Archive RNA Sequence:**
+
 ```http
 POST /api/v2/rna-sequences:archive
 ```
@@ -210,16 +229,19 @@ POST /api/v2/rna-sequences:archive
 ### Amino Acid (Protein) Sequences
 
 **List AA Sequences:**
+
 ```http
 GET /api/v2/aa-sequences
 ```
 
 **Get AA Sequence:**
+
 ```http
 GET /api/v2/aa-sequences/{sequenceId}
 ```
 
 **Create AA Sequence:**
+
 ```http
 POST /api/v2/aa-sequences
 
@@ -234,6 +256,7 @@ Body:
 ### Custom Entities
 
 **List Custom Entities:**
+
 ```http
 GET /api/v2/custom-entities
 
@@ -244,11 +267,13 @@ Query Parameters:
 ```
 
 **Get Custom Entity:**
+
 ```http
 GET /api/v2/custom-entities/{entityId}
 ```
 
 **Create Custom Entity:**
+
 ```http
 POST /api/v2/custom-entities
 
@@ -265,6 +290,7 @@ Body:
 ```
 
 **Update Custom Entity:**
+
 ```http
 PATCH /api/v2/custom-entities/{entityId}
 
@@ -279,11 +305,13 @@ Body:
 ### Mixtures
 
 **List Mixtures:**
+
 ```http
 GET /api/v2/mixtures
 ```
 
 **Create Mixture:**
+
 ```http
 POST /api/v2/mixtures
 
@@ -308,6 +336,7 @@ Body:
 ### Containers
 
 **List Containers:**
+
 ```http
 GET /api/v2/containers
 
@@ -318,11 +347,13 @@ Query Parameters:
 ```
 
 **Get Container:**
+
 ```http
 GET /api/v2/containers/{containerId}
 ```
 
 **Create Container:**
+
 ```http
 POST /api/v2/containers
 
@@ -340,6 +371,7 @@ Body:
 ```
 
 **Update Container:**
+
 ```http
 PATCH /api/v2/containers/{containerId}
 
@@ -352,6 +384,7 @@ Body:
 ```
 
 **Transfer Container:**
+
 ```http
 POST /api/v2/containers:transfer
 
@@ -363,6 +396,7 @@ Body:
 ```
 
 **Check Out Container:**
+
 ```http
 POST /api/v2/containers:checkout
 
@@ -374,6 +408,7 @@ Body:
 ```
 
 **Check In Container:**
+
 ```http
 POST /api/v2/containers:checkin
 
@@ -387,6 +422,7 @@ Body:
 ### Boxes
 
 **List Boxes:**
+
 ```http
 GET /api/v2/boxes
 
@@ -396,11 +432,13 @@ Query Parameters:
 ```
 
 **Get Box:**
+
 ```http
 GET /api/v2/boxes/{boxId}
 ```
 
 **Create Box:**
+
 ```http
 POST /api/v2/boxes
 
@@ -416,16 +454,19 @@ Body:
 ### Locations
 
 **List Locations:**
+
 ```http
 GET /api/v2/locations
 ```
 
 **Get Location:**
+
 ```http
 GET /api/v2/locations/{locationId}
 ```
 
 **Create Location:**
+
 ```http
 POST /api/v2/locations
 
@@ -440,16 +481,19 @@ Body:
 ### Plates
 
 **List Plates:**
+
 ```http
 GET /api/v2/plates
 ```
 
 **Get Plate:**
+
 ```http
 GET /api/v2/plates/{plateId}
 ```
 
 **Create Plate:**
+
 ```http
 POST /api/v2/plates
 
@@ -468,6 +512,7 @@ Body:
 ### Entries (Notebook)
 
 **List Entries:**
+
 ```http
 GET /api/v2/entries
 
@@ -478,11 +523,13 @@ Query Parameters:
 ```
 
 **Get Entry:**
+
 ```http
 GET /api/v2/entries/{entryId}
 ```
 
 **Create Entry:**
+
 ```http
 POST /api/v2/entries
 
@@ -499,6 +546,7 @@ Body:
 ```
 
 **Update Entry:**
+
 ```http
 PATCH /api/v2/entries/{entryId}
 
@@ -513,6 +561,7 @@ Body:
 ### Workflow Tasks
 
 **List Workflow Tasks:**
+
 ```http
 GET /api/v2/tasks
 
@@ -523,11 +572,13 @@ Query Parameters:
 ```
 
 **Get Task:**
+
 ```http
 GET /api/v2/tasks/{taskId}
 ```
 
 **Create Task:**
+
 ```http
 POST /api/v2/tasks
 
@@ -545,6 +596,7 @@ Body:
 ```
 
 **Update Task:**
+
 ```http
 PATCH /api/v2/tasks/{taskId}
 
@@ -560,6 +612,7 @@ Body:
 ### Folders
 
 **List Folders:**
+
 ```http
 GET /api/v2/folders
 
@@ -569,11 +622,13 @@ Query Parameters:
 ```
 
 **Get Folder:**
+
 ```http
 GET /api/v2/folders/{folderId}
 ```
 
 **Create Folder:**
+
 ```http
 POST /api/v2/folders
 
@@ -588,11 +643,13 @@ Body:
 ### Projects
 
 **List Projects:**
+
 ```http
 GET /api/v2/projects
 ```
 
 **Get Project:**
+
 ```http
 GET /api/v2/projects/{projectId}
 ```
@@ -600,16 +657,19 @@ GET /api/v2/projects/{projectId}
 ### Users
 
 **Get Current User:**
+
 ```http
 GET /api/v2/users/me
 ```
 
 **List Users:**
+
 ```http
 GET /api/v2/users
 ```
 
 **Get User:**
+
 ```http
 GET /api/v2/users/{userId}
 ```
@@ -617,11 +677,13 @@ GET /api/v2/users/{userId}
 ### Teams
 
 **List Teams:**
+
 ```http
 GET /api/v2/teams
 ```
 
 **Get Team:**
+
 ```http
 GET /api/v2/teams/{teamId}
 ```
@@ -629,6 +691,7 @@ GET /api/v2/teams/{teamId}
 ### Schemas
 
 **List Schemas:**
+
 ```http
 GET /api/v2/schemas
 
@@ -637,6 +700,7 @@ Query Parameters:
 ```
 
 **Get Schema:**
+
 ```http
 GET /api/v2/schemas/{schemaId}
 ```
@@ -644,11 +708,13 @@ GET /api/v2/schemas/{schemaId}
 ### Registries
 
 **List Registries:**
+
 ```http
 GET /api/v2/registries
 ```
 
 **Get Registry:**
+
 ```http
 GET /api/v2/registries/{registryId}
 ```
@@ -658,6 +724,7 @@ GET /api/v2/registries/{registryId}
 ### Batch Archive
 
 **Archive Multiple Entities:**
+
 ```http
 POST /api/v2/{entity-type}:archive
 
@@ -671,6 +738,7 @@ Body:
 ### Batch Transfer
 
 **Transfer Multiple Containers:**
+
 ```http
 POST /api/v2/containers:bulk-transfer
 
@@ -688,6 +756,7 @@ Body:
 Some operations return task IDs for async processing:
 
 **Response:**
+
 ```json
 {
   "taskId": "task_abc123"
@@ -695,6 +764,7 @@ Some operations return task IDs for async processing:
 ```
 
 **Check Task Status:**
+
 ```http
 GET /api/v2/tasks/{taskId}
 
@@ -712,6 +782,7 @@ Response:
 Custom schema fields use a specific format:
 
 **Simple Value:**
+
 ```json
 {
   "field_name": {
@@ -721,37 +792,41 @@ Custom schema fields use a specific format:
 ```
 
 **Dropdown:**
+
 ```json
 {
   "dropdown_field": {
-    "value": "Option1"  // Must match exact option name
+    "value": "Option1" // Must match exact option name
   }
 }
 ```
 
 **Date:**
+
 ```json
 {
   "date_field": {
-    "value": "2025-10-20"  // Format: YYYY-MM-DD
+    "value": "2025-10-20" // Format: YYYY-MM-DD
   }
 }
 ```
 
 **Entity Link:**
+
 ```json
 {
   "entity_link_field": {
-    "value": "seq_abc123"  // Entity ID
+    "value": "seq_abc123" // Entity ID
   }
 }
 ```
 
 **Numeric:**
+
 ```json
 {
   "numeric_field": {
-    "value": "123.45"  // String representation
+    "value": "123.45" // String representation
   }
 }
 ```
@@ -759,6 +834,7 @@ Custom schema fields use a specific format:
 ## Rate Limiting
 
 **Limits:**
+
 - Default: 100 requests per 10 seconds per user/app
 - Rate limit headers included in responses:
   - `X-RateLimit-Limit`: Total allowed requests
@@ -766,12 +842,13 @@ Custom schema fields use a specific format:
   - `X-RateLimit-Reset`: Unix timestamp when limit resets
 
 **Handling 429 Responses:**
+
 ```json
 {
   "error": {
     "type": "RateLimitError",
     "message": "Rate limit exceeded",
-    "retryAfter": 5  // Seconds to wait
+    "retryAfter": 5 // Seconds to wait
   }
 }
 ```
@@ -779,6 +856,7 @@ Custom schema fields use a specific format:
 ## Filtering and Searching
 
 **Common Query Parameters:**
+
 - `name`: Partial name match
 - `modifiedAt`: ISO 8601 datetime
 - `createdAt`: ISO 8601 datetime
@@ -787,6 +865,7 @@ Custom schema fields use a specific format:
 - `archived`: Boolean (include archived items)
 
 **Example:**
+
 ```bash
 curl -X GET \
   "https://tenant.benchling.com/api/v2/dna-sequences?name=plasmid&folderId=fld_abc&archived=false"
@@ -815,15 +894,12 @@ curl -X GET \
 // Example error handling
 async function fetchSequence(id) {
   try {
-    const response = await fetch(
-      `https://tenant.benchling.com/api/v2/dna-sequences/${id}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Accept': 'application/json'
-        }
-      }
-    );
+    const response = await fetch(`https://tenant.benchling.com/api/v2/dna-sequences/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -832,7 +908,7 @@ async function fetchSequence(id) {
         await sleep(retryAfter * 1000);
         return fetchSequence(id);
       } else if (response.status === 404) {
-        return null;  // Not found
+        return null; // Not found
       } else {
         throw new Error(`API error: ${response.status}`);
       }
@@ -862,9 +938,9 @@ async function getAllSequences() {
 
     const response = await fetch(url, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
     });
 
     const data = await response.json();

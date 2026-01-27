@@ -50,7 +50,7 @@ Analyze the current directory to determine project state.
 
 ## Output
 Report: { classification, tech_stack_detected, frameworks, key_files }
-`
+`,
 });
 ```
 
@@ -89,7 +89,7 @@ Create:
 - .claude/context/product-guidelines.md
 
 Use A/B/C/D/E question format from interactive-requirements-gathering skill.
-`
+`,
 });
 ```
 
@@ -129,7 +129,7 @@ Based on tech stack, recommend style guides from:
 Create:
 - .claude/context/tech-stack.md
 - Copy relevant style guides to project if desired
-`
+`,
 });
 ```
 
@@ -166,7 +166,7 @@ Configure the development workflow.
 Create: .claude/context/workflow.md
 
 Use workflow-patterns skill as template.
-`
+`,
 });
 ```
 
@@ -202,7 +202,7 @@ Create the first development track.
 - .claude/context/tracks/<track-id>/plan.md
 - .claude/context/tracks/<track-id>/metadata.json
 - .claude/context/tracks/<track-id>/index.md
-`
+`,
 });
 ```
 
@@ -231,22 +231,22 @@ Finalize the Conductor setup.
 
 ## Output
 Report summary of what was created and next steps.
-`
+`,
 });
 ```
 
 ## Context Artifacts Created
 
-| Artifact | Purpose |
-|----------|---------|
-| `product.md` | Product vision and goals |
-| `product-guidelines.md` | Communication standards |
-| `tech-stack.md` | Technology preferences |
-| `workflow.md` | Development practices |
-| `tracks.md` | Work unit registry |
-| `tracks/<id>/spec.md` | Track requirements |
-| `tracks/<id>/plan.md` | Track implementation plan |
-| `index.md` | Context navigation |
+| Artifact                | Purpose                   |
+| ----------------------- | ------------------------- |
+| `product.md`            | Product vision and goals  |
+| `product-guidelines.md` | Communication standards   |
+| `tech-stack.md`         | Technology preferences    |
+| `workflow.md`           | Development practices     |
+| `tracks.md`             | Work unit registry        |
+| `tracks/<id>/spec.md`   | Track requirements        |
+| `tracks/<id>/plan.md`   | Track implementation plan |
+| `index.md`              | Context navigation        |
 
 ## State Persistence
 
@@ -296,5 +296,6 @@ On resume, check state file and skip completed phases.
 ## Memory Protocol
 
 Record setup decisions in:
+
 - `.claude/context/memory/decisions.md` - Architecture Decision Records
 - `.claude/context/memory/learnings.md` - Project-specific patterns

@@ -5,6 +5,7 @@ This document explains the various normalization methods available in deepTools 
 ## Why Normalize?
 
 Normalization is essential for:
+
 1. **Comparing samples with different sequencing depths**
 2. **Accounting for library size differences**
 3. **Making coverage values interpretable across experiments**
@@ -21,6 +22,7 @@ Without normalization, a sample with 100 million reads will appear to have highe
 **Formula:** `(Number of reads) / (Length of region in kb × Total mapped reads in millions)`
 
 **When to use:**
+
 - Comparing different genomic regions within the same sample
 - Adjusting for both sequencing depth AND region length
 - RNA-seq gene expression analysis
@@ -28,6 +30,7 @@ Without normalization, a sample with 100 million reads will appear to have highe
 **Available in:** `bamCoverage`
 
 **Example:**
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing RPKM
@@ -36,10 +39,12 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Interpretation:** RPKM of 10 means 10 reads per kilobase of feature per million mapped reads.
 
 **Pros:**
+
 - Accounts for both region length and library size
 - Widely used and understood in genomics
 
 **Cons:**
+
 - Not ideal for comparing between samples if total RNA content differs
 - Can be misleading when comparing samples with very different compositions
 
@@ -52,6 +57,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Also known as:** RPM (Reads Per Million)
 
 **When to use:**
+
 - Comparing the same genomic regions across different samples
 - When region length is constant or not relevant
 - ChIP-seq, ATAC-seq, DNase-seq analyses
@@ -59,6 +65,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Available in:** `bamCoverage`, `bamCompare`
 
 **Example:**
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing CPM
@@ -67,11 +74,13 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Interpretation:** CPM of 5 means 5 reads per million mapped reads in that bin.
 
 **Pros:**
+
 - Simple and intuitive
 - Good for comparing samples with different sequencing depths
 - Appropriate when comparing fixed-size bins
 
 **Cons:**
+
 - Does not account for region length
 - Affected by highly abundant regions (e.g., rRNA in RNA-seq)
 
@@ -84,12 +93,14 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Key difference from CPM:** Only considers reads that fall within the analyzed bins, not all mapped reads.
 
 **When to use:**
+
 - Similar to CPM, but when you want to exclude reads outside analyzed regions
 - Comparing specific genomic regions while ignoring background
 
 **Available in:** `bamCoverage`, `bamCompare`
 
 **Example:**
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing BPM
@@ -98,10 +109,12 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Interpretation:** BPM accounts only for reads in the binned regions.
 
 **Pros:**
+
 - Focuses normalization on analyzed regions
 - Less affected by reads in unanalyzed areas
 
 **Cons:**
+
 - Less commonly used, may be harder to compare with published data
 
 ---
@@ -113,6 +126,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Scaling factor:** Calculated to achieve 1× genomic coverage (1 read per base)
 
 **When to use:**
+
 - Want comparable coverage values across samples
 - Need interpretable absolute coverage values
 - Comparing samples with very different total read counts
@@ -123,6 +137,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Requires:** `--effectiveGenomeSize` parameter
 
 **Example:**
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing RPGC \
@@ -132,11 +147,13 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Interpretation:** Signal value approximates the coverage depth (e.g., value of 2 ≈ 2× coverage).
 
 **Pros:**
+
 - Produces 1× normalized coverage
 - Interpretable in terms of genomic coverage
 - Good for comparing samples with different sequencing depths
 
 **Cons:**
+
 - Requires knowing effective genome size
 - Assumes uniform coverage (not true for ChIP-seq with peaks)
 
@@ -147,6 +164,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Formula:** Raw read counts
 
 **When to use:**
+
 - Preliminary analysis
 - When samples have identical library sizes (rare)
 - When downstream tool will perform normalization
@@ -155,6 +173,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Available in:** All tools (usually default)
 
 **Example:**
+
 ```bash
 bamCoverage --bam input.bam --outFileName output.bw \
     --normalizeUsing None
@@ -163,11 +182,13 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Interpretation:** Raw read counts per bin.
 
 **Pros:**
+
 - No assumptions made
 - Useful for seeing raw data
 - Fastest computation
 
 **Cons:**
+
 - Cannot fairly compare samples with different sequencing depths
 - Not suitable for publication figures
 
@@ -178,6 +199,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Method:** Signal Extraction Scaling - more sophisticated method for comparing ChIP to control
 
 **When to use:**
+
 - ChIP-seq analysis with bamCompare
 - Want sophisticated background correction
 - Alternative to simple readCount scaling
@@ -185,6 +207,7 @@ bamCoverage --bam input.bam --outFileName output.bw \
 **Available in:** `bamCompare` only
 
 **Example:**
+
 ```bash
 bamCompare -b1 chip.bam -b2 input.bam -o output.bw \
     --scaleFactorsMethod SES
@@ -199,6 +222,7 @@ bamCompare -b1 chip.bam -b2 input.bam -o output.bw \
 **Method:** Scale by ratio of total read counts between samples
 
 **When to use:**
+
 - Default for `bamCompare`
 - Compensating for sequencing depth differences in comparisons
 - When you trust that total read counts reflect library size
@@ -206,6 +230,7 @@ bamCompare -b1 chip.bam -b2 input.bam -o output.bw \
 **Available in:** `bamCompare`
 
 **Example:**
+
 ```bash
 bamCompare -b1 treatment.bam -b2 control.bam -o output.bw \
     --scaleFactorsMethod readCount
@@ -305,7 +330,7 @@ plotCorrelation -in readCounts.npz \
 
 ### Spike-in Normalization
 
-For experiments with spike-in controls (e.g., *Drosophila* chromatin spike-in for ChIP-seq):
+For experiments with spike-in controls (e.g., _Drosophila_ chromatin spike-in for ChIP-seq):
 
 1. Calculate scaling factors from spike-in reads
 2. Apply custom scaling factors using `--scaleFactor` parameter
@@ -351,22 +376,27 @@ bamCoverage --bam input.bam --outFileName output.bw \
 ## Common Pitfalls
 
 ### 1. Using RPKM for bin-based data
+
 **Problem:** RPKM accounts for region length, but all bins are the same size
 **Solution:** Use CPM or RPGC instead
 
 ### 2. Comparing unnormalized samples
+
 **Problem:** Sample with 2× sequencing depth appears to have 2× signal
 **Solution:** Always normalize when comparing samples
 
 ### 3. Wrong effective genome size
+
 **Problem:** Using hg19 genome size for hg38 data
 **Solution:** Double-check genome assembly and use correct size
 
 ### 4. Ignoring duplicates after GC correction
+
 **Problem:** Can introduce bias
 **Solution:** Never use `--ignoreDuplicates` after `correctGCBias`
 
 ### 5. Using RPGC without effective genome size
+
 **Problem:** Command fails
 **Solution:** Always specify `--effectiveGenomeSize` with RPGC
 
@@ -375,36 +405,41 @@ bamCoverage --bam input.bam --outFileName output.bw \
 ## Normalization for Different Comparisons
 
 ### Within-sample comparisons (different regions)
+
 **Use:** RPKM (accounts for region length)
 
 ### Between-sample comparisons (same regions)
+
 **Use:** CPM, RPGC, or BPM (accounts for library size)
 
 ### Treatment vs Control
+
 **Use:** bamCompare with log2 ratio and readCount/SES scaling
 
 ### Multiple samples correlation
+
 **Use:** CPM or RPGC normalized bigWig files, then multiBigwigSummary
 
 ---
 
 ## Quick Reference Table
 
-| Method | Accounts for Depth | Accounts for Length | Best For | Command |
-|--------|-------------------|---------------------|----------|---------|
-| RPKM | ✓ | ✓ | RNA-seq genes | `--normalizeUsing RPKM` |
-| CPM | ✓ | ✗ | Fixed-size bins | `--normalizeUsing CPM` |
-| BPM | ✓ | ✗ | Specific regions | `--normalizeUsing BPM` |
-| RPGC | ✓ | ✗ | Interpretable coverage | `--normalizeUsing RPGC --effectiveGenomeSize X` |
-| None | ✗ | ✗ | Raw data | `--normalizeUsing None` |
-| SES | ✓ | ✗ | ChIP comparisons | `bamCompare --scaleFactorsMethod SES` |
-| readCount | ✓ | ✗ | ChIP comparisons | `bamCompare --scaleFactorsMethod readCount` |
+| Method    | Accounts for Depth | Accounts for Length | Best For               | Command                                         |
+| --------- | ------------------ | ------------------- | ---------------------- | ----------------------------------------------- |
+| RPKM      | ✓                  | ✓                   | RNA-seq genes          | `--normalizeUsing RPKM`                         |
+| CPM       | ✓                  | ✗                   | Fixed-size bins        | `--normalizeUsing CPM`                          |
+| BPM       | ✓                  | ✗                   | Specific regions       | `--normalizeUsing BPM`                          |
+| RPGC      | ✓                  | ✗                   | Interpretable coverage | `--normalizeUsing RPGC --effectiveGenomeSize X` |
+| None      | ✗                  | ✗                   | Raw data               | `--normalizeUsing None`                         |
+| SES       | ✓                  | ✗                   | ChIP comparisons       | `bamCompare --scaleFactorsMethod SES`           |
+| readCount | ✓                  | ✗                   | ChIP comparisons       | `bamCompare --scaleFactorsMethod readCount`     |
 
 ---
 
 ## Further Reading
 
 For more details on normalization theory and best practices:
+
 - deepTools documentation: https://deeptools.readthedocs.io/
 - ENCODE guidelines for ChIP-seq analysis
 - RNA-seq normalization papers (DESeq2, TMM methods)

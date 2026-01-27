@@ -3,9 +3,9 @@
 
 # Dataset paths
 data:
-  train: "data/train.json"
-  validation: "data/val.json"
-  test: "data/test.json"
+  train: 'data/train.json'
+  validation: 'data/val.json'
+  test: 'data/test.json'
 
   # Dataset should contain:
   # - text_features_1, text_features_2, ... text_features_n (lists of strings)
@@ -13,32 +13,32 @@ data:
 
 # Model configuration
 model:
-  name: "gpt-4"  # or "gpt-3.5-turbo", "claude-3", etc.
-  api_key_env: "OPENAI_API_KEY"  # Environment variable for API key
+  name: 'gpt-4' # or "gpt-3.5-turbo", "claude-3", etc.
+  api_key_env: 'OPENAI_API_KEY' # Environment variable for API key
   temperature: 0.7
   max_tokens: 2048
 
 # Redis caching (optional - reduces API costs)
 cache:
   enabled: true
-  host: "localhost"
+  host: 'localhost'
   port: 6832
 
 # Hypothesis generation parameters
 generation:
-  method: "hypogenic"  # Options: "hypogenic", "hyporefine", "union"
+  method: 'hypogenic' # Options: "hypogenic", "hyporefine", "union"
   num_hypotheses: 20
   batch_size: 5
   max_iterations: 10
 
   # For HypoRefine method
   literature:
-    papers_directory: "papers/"  # Directory containing PDF files
+    papers_directory: 'papers/' # Directory containing PDF files
     num_papers: 10
 
   # For Union methods
   union:
-    literature_hypotheses: "literature_hypotheses.json"
+    literature_hypotheses: 'literature_hypotheses.json'
     deduplicate: true
 
 # Prompt templates
@@ -101,50 +101,50 @@ prompts:
 
 # Inference configuration
 inference:
-  method: "voting"  # Options: "voting", "weighted", "ensemble"
+  method: 'voting' # Options: "voting", "weighted", "ensemble"
   confidence_threshold: 0.7
-  max_samples: 1000  # Limit for large test sets
+  max_samples: 1000 # Limit for large test sets
 
 # Output configuration
 output:
-  directory: "output/"
-  save_intermediate: true  # Save hypotheses after each iteration
-  format: "json"  # Options: "json", "csv"
+  directory: 'output/'
+  save_intermediate: true # Save hypotheses after each iteration
+  format: 'json' # Options: "json", "csv"
   verbose: true
 
 # Custom label extraction (optional)
 # Define a custom function in your code to parse specific output formats
 label_extraction:
-  pattern: "PREDICTION: {label}"  # Regex pattern for extracting predictions
-  valid_labels: ["0", "1"]  # Expected label values
+  pattern: 'PREDICTION: {label}' # Regex pattern for extracting predictions
+  valid_labels: ['0', '1'] # Expected label values
 
 # Task-specific settings
 task:
-  name: "example_task"
-  description: "Binary classification task for [describe your specific domain]"
+  name: 'example_task'
+  description: 'Binary classification task for [describe your specific domain]'
   features:
-    - name: "text_features_1"
-      description: "Primary text content"
-    - name: "text_features_2"
-      description: "Additional contextual information"
+    - name: 'text_features_1'
+      description: 'Primary text content'
+    - name: 'text_features_2'
+      description: 'Additional contextual information'
   labels:
-    - name: "0"
-      description: "Negative class"
-    - name: "1"
-      description: "Positive class"
+    - name: '0'
+      description: 'Negative class'
+    - name: '1'
+      description: 'Positive class'
 
 # Evaluation metrics
 evaluation:
   metrics:
-    - "accuracy"
-    - "precision"
-    - "recall"
-    - "f1"
+    - 'accuracy'
+    - 'precision'
+    - 'recall'
+    - 'f1'
   cross_validation: false
   num_folds: 5
 
 # Logging
 logging:
-  level: "INFO"  # Options: "DEBUG", "INFO", "WARNING", "ERROR"
-  file: "logs/hypogenic.log"
+  level: 'INFO' # Options: "DEBUG", "INFO", "WARNING", "ERROR"
+  file: 'logs/hypogenic.log'
   console: true

@@ -9,6 +9,7 @@ Resources in PyLabRobot represent laboratory equipment, labware, or components u
 ### What is a Resource?
 
 A resource represents:
+
 - A piece of labware (plate, tip rack, trough, tube)
 - Equipment (liquid handler, plate reader)
 - A part of labware (well, tip)
@@ -19,6 +20,7 @@ All resources inherit from the base `Resource` class and form a tree structure (
 ### Resource Attributes
 
 Every resource requires:
+
 - **name**: Unique identifier for the resource
 - **size_x, size_y, size_z**: Dimensions in millimeters (cuboid representation)
 - **location**: Coordinate relative to parent's origin (optional, set when assigned)

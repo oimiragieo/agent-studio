@@ -17,13 +17,16 @@ Retrieve all comments for a protocol.
 **Endpoint:** `GET /protocols/{protocol_id}/comments`
 
 **Path Parameters:**
+
 - `protocol_id`: The protocol's unique identifier
 
 **Query Parameters:**
+
 - `page_size`: Number of results per page (default: 10, max: 50)
 - `page_id`: Page number for pagination (starts at 0)
 
 **Response includes:**
+
 - Comment ID and content
 - Author information (name, affiliation, avatar)
 - Timestamp (created and modified)
@@ -36,10 +39,12 @@ Add a new comment to a protocol.
 **Endpoint:** `POST /protocols/{protocol_id}/comments`
 
 **Request Body:**
+
 - `body` (required): Comment text (supports HTML or Markdown)
 - `parent_comment_id` (optional): ID of parent comment for threaded replies
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -72,6 +77,7 @@ Edit your own comment.
 **Endpoint:** `PATCH /protocols/{protocol_id}/comments/{comment_id}`
 
 **Request Body:**
+
 - `body` (required): Updated comment text
 
 **Authorization**: Only the comment author can edit their comments
@@ -95,10 +101,12 @@ Retrieve all comments for a specific protocol step.
 **Endpoint:** `GET /protocols/{protocol_id}/steps/{step_id}/comments`
 
 **Path Parameters:**
+
 - `protocol_id`: The protocol's unique identifier
 - `step_id`: The step's unique identifier
 
 **Query Parameters:**
+
 - `page_size`: Number of results per page
 - `page_id`: Page number for pagination
 
@@ -109,10 +117,12 @@ Add a comment to a specific step.
 **Endpoint:** `POST /protocols/{protocol_id}/steps/{step_id}/comments`
 
 **Request Body:**
+
 - `body` (required): Comment text
 - `parent_comment_id` (optional): ID of parent comment for replies
 
 **Example Request:**
+
 ```bash
 curl -X POST \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -128,6 +138,7 @@ curl -X POST \
 **Endpoint:** `PATCH /protocols/{protocol_id}/steps/{step_id}/comments/{comment_id}`
 
 **Request Body:**
+
 - `body` (required): Updated comment text
 
 ### Delete Step Comment
@@ -183,6 +194,7 @@ Comments support rich text formatting:
 - **Mentions**: Reference other users (format may vary)
 
 **Example with Markdown:**
+
 ```json
 {
   "body": "## Important Note\n\nWe achieved better results with:\n\n- Increasing temperature to 37°C\n- Extending incubation to 2 hours\n- Using freshly prepared reagents\n\nSee our publication: [doi:10.xxxx/xxxxx](https://doi.org/...)"

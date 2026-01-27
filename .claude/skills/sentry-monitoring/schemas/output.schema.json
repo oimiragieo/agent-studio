@@ -3,9 +3,7 @@
   "title": "sentry-monitoring Output Schema",
   "description": "Output validation schema for sentry-monitoring skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

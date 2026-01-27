@@ -172,6 +172,7 @@ for read in fastq:
 ```
 
 **FastqProxy attributes:**
+
 - `name` - Read identifier (without @ prefix)
 - `sequence` - DNA/RNA sequence
 - `quality` - ASCII-encoded quality string
@@ -189,7 +190,8 @@ for read in fastq:
 ```
 
 Quality scores are Phred-scaled (typically Phred+33 encoding):
-- Q = -10 * log10(P_error)
+
+- Q = -10 \* log10(P_error)
 - ASCII 33 ('!') = Q0
 - ASCII 43 ('+') = Q10
 - ASCII 63 ('?') = Q30
@@ -379,18 +381,21 @@ for feature in gtf.fetch("chr1", 1000000, 2000000, parser=pysam.asGTF()):
 ## Performance Tips
 
 ### FASTA
+
 1. **Always use indexed FASTA** files (create .fai with samtools faidx)
 2. **Batch fetch operations** when extracting multiple regions
 3. **Cache frequently accessed sequences** in memory
 4. **Use appropriate window sizes** to avoid loading excessive sequence data
 
 ### FASTQ
+
 1. **Stream processing** - FASTQ files are read sequentially, process on-the-fly
 2. **Use compressed FASTQ.gz** to save disk space (pysam handles transparently)
 3. **Avoid loading entire file** into memory—process read-by-read
 4. **For large files**, consider parallel processing with file splitting
 
 ### Tabix
+
 1. **Always bgzip and tabix-index** files before region queries
 2. **Use appropriate presets** when creating indices
 3. **Specify parser** for named field access

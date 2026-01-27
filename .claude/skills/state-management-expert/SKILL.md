@@ -95,14 +95,14 @@ When reviewing or writing code, apply these guidelines:
 
 - Follow this folder structure:
   src/
-    components/
-    features/
-    store/
-      slices/
-      hooks.ts
-      store.ts
-    types/
-    utils/
+  components/
+  features/
+  store/
+  slices/
+  hooks.ts
+  store.ts
+  types/
+  utils/
 
 ### redux toolkit best practices
 
@@ -114,7 +114,6 @@ When reviewing or writing code, apply these guidelines:
 - Use selectors for accessing state in components.
 - Use Redux hooks (useSelector, useDispatch) in components.
 - Follow Redux style guide for naming conventions
-
 
 </instructions>
 
@@ -129,6 +128,7 @@ Agent: [Analyzes code against consolidated guidelines and provides specific feed
 ## Consolidated Skills
 
 This expert skill consolidates 11 individual skills:
+
 - mobx-best-practices
 - mobx-dependency-injection
 - mobx-devtools
@@ -141,10 +141,10 @@ This expert skill consolidates 11 individual skills:
 - redux-folder-structure
 - redux-toolkit-best-practices
 
-
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

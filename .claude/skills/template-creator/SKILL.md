@@ -33,6 +33,7 @@ Creates and manages templates for agents, skills, workflows, hooks, and code pat
 ```
 
 **Verification:**
+
 ```bash
 grep "<template-name>" .claude/templates/README.md || echo "ERROR: README NOT UPDATED!"
 ```
@@ -56,25 +57,27 @@ Templates ensure consistency across the multi-agent framework. This skill create
 ## When to Use
 
 **Always:**
+
 - Creating a new type of artifact that will be replicated
 - Standardizing an existing pattern across the codebase
 - Adding a new template category (hooks, schemas, etc.)
 - Improving existing templates with better patterns
 
 **Exceptions:**
+
 - One-off files that will never be replicated
 - Temporary/throwaway code
 
 ## Template Types
 
-| Type | Location | Purpose | Key Fields |
-|------|----------|---------|------------|
-| Agent | `.claude/templates/agents/` | Agent definition templates | name, description, tools, skills, model |
-| Skill | `.claude/templates/skills/` | Skill definition templates | name, version, tools, invoked_by |
-| Workflow | `.claude/templates/workflows/` | Workflow orchestration templates | phases, agents, dependencies |
-| Hook | `.claude/templates/hooks/` | Hook implementation templates | trigger, action, validation |
-| Code | `.claude/templates/code/` | Language-specific code patterns | language, pattern_type |
-| Schema | `.claude/templates/schemas/` | JSON/YAML schema templates | properties, required, validation |
+| Type     | Location                       | Purpose                          | Key Fields                              |
+| -------- | ------------------------------ | -------------------------------- | --------------------------------------- |
+| Agent    | `.claude/templates/agents/`    | Agent definition templates       | name, description, tools, skills, model |
+| Skill    | `.claude/templates/skills/`    | Skill definition templates       | name, version, tools, invoked_by        |
+| Workflow | `.claude/templates/workflows/` | Workflow orchestration templates | phases, agents, dependencies            |
+| Hook     | `.claude/templates/hooks/`     | Hook implementation templates    | trigger, action, validation             |
+| Code     | `.claude/templates/code/`      | Language-specific code patterns  | language, pattern_type                  |
+| Schema   | `.claude/templates/schemas/`   | JSON/YAML schema templates       | properties, required, validation        |
 
 ## The Iron Law
 
@@ -83,11 +86,13 @@ NO TEMPLATE WITHOUT PLACEHOLDER DOCUMENTATION
 ```
 
 Every `{{PLACEHOLDER}}` must have a corresponding comment explaining:
+
 1. What value should replace it
 2. Valid options/formats
 3. Example value
 
 **No exceptions:**
+
 - Every placeholder is documented
 - Every required field is marked
 - Every optional field has a default
@@ -99,8 +104,8 @@ Every `{{PLACEHOLDER}}` must have a corresponding comment explaining:
 Invoke related creator skills for context:
 
 ```javascript
-Skill({ skill: 'agent-creator' });   // For agent template patterns
-Skill({ skill: 'skill-creator' });   // For skill template patterns
+Skill({ skill: 'agent-creator' }); // For agent template patterns
+Skill({ skill: 'skill-creator' }); // For skill template patterns
 ```
 
 ### Step 1: Gather Template Requirements
@@ -114,6 +119,7 @@ Skill({ skill: 'skill-creator' });   // For skill template patterns
 5. **Validation Rules**: What constraints apply?
 
 **Example analysis:**
+
 ```
 Template Request: "Create a hook template for pre-execution validation"
 - Type: Hook
@@ -142,6 +148,7 @@ Read: .claude/templates/workflows/workflow-template.md
 ```
 
 **Pattern extraction checklist:**
+
 - [ ] YAML frontmatter format
 - [ ] Section headings style
 - [ ] Placeholder format (`{{UPPER_CASE}}`)
@@ -153,35 +160,39 @@ Read: .claude/templates/workflows/workflow-template.md
 
 **Placeholder Format Standard:**
 
-| Placeholder Type | Format | Example |
-|-----------------|--------|---------|
-| Required field | `{{FIELD_NAME}}` | `{{AGENT_NAME}}` |
-| Optional field | `{{FIELD_NAME:default}}` | `{{MODEL:sonnet}}` |
-| Multi-line | `{{FIELD_NAME_BLOCK}}` | `{{DESCRIPTION_BLOCK}}` |
-| List item | `{{ITEM_N}}` | `{{TOOL_1}}`, `{{TOOL_2}}` |
+| Placeholder Type | Format                   | Example                    |
+| ---------------- | ------------------------ | -------------------------- |
+| Required field   | `{{FIELD_NAME}}`         | `{{AGENT_NAME}}`           |
+| Optional field   | `{{FIELD_NAME:default}}` | `{{MODEL:sonnet}}`         |
+| Multi-line       | `{{FIELD_NAME_BLOCK}}`   | `{{DESCRIPTION_BLOCK}}`    |
+| List item        | `{{ITEM_N}}`             | `{{TOOL_1}}`, `{{TOOL_2}}` |
 
 **Template Structure:**
 
 ```markdown
 ---
 # YAML Frontmatter with all required fields
-name: {{NAME}}
-description: {{DESCRIPTION}}
+name: { { NAME } }
+description: { { DESCRIPTION } }
 # ... other fields
 ---
 
 # {{DISPLAY_NAME}}
 
 ## POST-CREATION CHECKLIST (BLOCKING - DO NOT SKIP)
+
 <!-- Always include blocking checklist -->
 
 ## Overview
+
 {{OVERVIEW_DESCRIPTION}}
 
 ## Sections
+
 <!-- Domain-specific sections -->
 
 ## Memory Protocol (MANDATORY)
+
 <!-- Always include memory protocol -->
 ```
 
@@ -192,21 +203,23 @@ Add inline documentation for each placeholder:
 ```markdown
 ---
 # [REQUIRED] Unique identifier, lowercase-with-hyphens
-name: {{AGENT_NAME}}
+name: { { AGENT_NAME } }
 
 # [REQUIRED] Single line, describes what it does AND when to use it
 # Example: "Reviews mobile app UX against Apple HIG. Use for iOS UX audits."
-description: {{DESCRIPTION}}
+description: { { DESCRIPTION } }
 
 # [OPTIONAL] Default: sonnet. Options: haiku, sonnet, opus
-model: {{MODEL:sonnet}}
+model: { { MODEL:sonnet } }
 ---
 
 <!-- SECTION: Core Persona -->
 <!-- Define the agent's identity and working style -->
+
 ## Core Persona
 
 **Identity**: {{IDENTITY}}
+
 <!-- Example: "Senior Python Developer", "Security Analyst" -->
 ```
 
@@ -215,6 +228,7 @@ model: {{MODEL:sonnet}}
 Before writing the template file, verify ALL requirements:
 
 **Validation Checklist:**
+
 ```
 [ ] YAML frontmatter is valid syntax
 [ ] All required fields have placeholders
@@ -227,6 +241,7 @@ Before writing the template file, verify ALL requirements:
 ```
 
 **Verification Commands in Template:**
+
 ```bash
 # Include these in the template's POST-CREATION CHECKLIST
 grep "{{" <created-file> && echo "ERROR: Unresolved placeholders!"
@@ -264,6 +279,7 @@ After writing the template, update `.claude/templates/README.md`:
 3. **Add to Quick Reference table**
 
 **Entry format:**
+
 ```markdown
 ### {{Template Type}} Templates (`{{directory}}/`)
 
@@ -272,12 +288,14 @@ Use when {{use case}}.
 **File:** `{{directory}}/{{template-name}}.md`
 
 **Usage:**
+
 1. Copy template to `{{target-path}}`
 2. Replace all `{{PLACEHOLDER}}` values
 3. {{Additional steps}}
 ```
 
 **Verification:**
+
 ```bash
 grep "<template-name>" .claude/templates/README.md || echo "ERROR: README NOT UPDATED - BLOCKING!"
 ```
@@ -301,6 +319,7 @@ After creating a template:
 **BLOCKING**: Template without README entry may not be discovered.
 
 **Analysis Format:**
+
 ```
 [TEMPLATE-CREATOR] System Impact Analysis for: <template-name>
 
@@ -344,6 +363,7 @@ After creating a template:
 **Use `.claude/templates/agent-skill-invocation-section.md` as the canonical reference template.**
 
 Before finalizing any template, compare:
+
 - [ ] Has clear placeholder documentation
 - [ ] Placeholders are UPPERCASE with underscores
 - [ ] Has usage examples section
@@ -353,13 +373,13 @@ Before finalizing any template, compare:
 
 ### Placeholder Standards
 
-| Practice | Good | Bad |
-|----------|------|-----|
-| Naming | `{{AGENT_NAME}}` | `{{name}}`, `{AGENT_NAME}` |
-| Required fields | Always present | Sometimes omitted |
-| Optional fields | `{{FIELD:default}}` | No default indicator |
-| Documentation | Inline comments | Separate docs file |
-| Examples | In comments | None provided |
+| Practice        | Good                | Bad                        |
+| --------------- | ------------------- | -------------------------- |
+| Naming          | `{{AGENT_NAME}}`    | `{{name}}`, `{AGENT_NAME}` |
+| Required fields | Always present      | Sometimes omitted          |
+| Optional fields | `{{FIELD:default}}` | No default indicator       |
+| Documentation   | Inline comments     | Separate docs file         |
+| Examples        | In comments         | None provided              |
 
 ### Structure Standards
 
@@ -383,7 +403,7 @@ Before finalizing any template, compare:
 
 Include validation examples in templates:
 
-```markdown
+````markdown
 ## Validation
 
 After replacing placeholders, validate:
@@ -398,7 +418,9 @@ grep "{{" <file> && echo "ERROR: Unresolved placeholders!"
 # Check required sections present
 grep -E "^## Memory Protocol" <file> || echo "ERROR: Missing Memory Protocol!"
 ```
-```
+````
+
+````
 
 ## Workflow Integration
 
@@ -442,7 +464,7 @@ Skill({ skill: 'hook-creator' });
 // 3. Template created for new agent category
 // 4. Need to update agent-creator to recognize new category
 // Edit .claude/skills/agent-creator/SKILL.md to add category
-```
+````
 
 ## Examples
 
@@ -457,19 +479,19 @@ Skill({ skill: 'hook-creator' });
 3. **Design**: Structure for validation hooks
 4. **Create**: `.claude/templates/hooks/validation-hook-template.md`
 
-```markdown
+````markdown
 ---
 # [REQUIRED] Hook identifier, lowercase-with-hyphens
-name: {{HOOK_NAME}}
+name: { { HOOK_NAME } }
 
 # [REQUIRED] What this hook validates
-description: {{VALIDATION_DESCRIPTION}}
+description: { { VALIDATION_DESCRIPTION } }
 
 # [REQUIRED] Options: pre, post
 trigger: pre
 
 # [REQUIRED] Options: block, warn, log
-on_failure: {{ON_FAILURE:block}}
+on_failure: { { ON_FAILURE:block } }
 ---
 
 # {{HOOK_DISPLAY_NAME}} Hook
@@ -477,6 +499,7 @@ on_failure: {{ON_FAILURE:block}}
 ## POST-CREATION CHECKLIST (BLOCKING)
 
 After creating this hook:
+
 - [ ] Register in `.claude/settings.json`
 - [ ] Test with sample input
 - [ ] Document in hook README
@@ -486,15 +509,21 @@ After creating this hook:
 ```javascript
 // {{VALIDATION_DESCRIPTION}}
 function validate(input) {
-  {{VALIDATION_LOGIC}}
+  {
+    {
+      VALIDATION_LOGIC;
+    }
+  }
 }
 ```
+````
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:** Read `.claude/context/memory/learnings.md`
 **After completing:** Record patterns to learnings.md
-```
+
+````
 
 5. **Update README**: Add hooks section to templates README
 6. **Update Memory**: Record in learnings.md
@@ -549,15 +578,17 @@ export async function {{HANDLER_NAME}}(req: Request, res: Response) {
     {{ERROR_HANDLING}}
   }
 }
-```
+````
 
 ## Validation
 
 After using this pattern:
+
 - [ ] Route registered in router
 - [ ] Input validation added
 - [ ] Error handling implemented
 - [ ] Tests written
+
 ```
 
 ## Troubleshooting
@@ -646,6 +677,7 @@ Read `.claude/context/memory/learnings.md`
 These rules are INVIOLABLE. Breaking them causes inconsistency across the framework.
 
 ```
+
 1. NO TEMPLATE WITHOUT PLACEHOLDER DOCUMENTATION
    - Every {{PLACEHOLDER}} must have an inline comment
    - Comments explain valid values and examples
@@ -673,7 +705,8 @@ These rules are INVIOLABLE. Breaking them causes inconsistency across the framew
 7. NO TEMPLATE WITHOUT VERIFICATION COMMANDS
    - Include commands to validate created artifacts
    - Users can verify their work is correct
-```
+
+````
 
 ## Assigned Agents
 
@@ -689,4 +722,4 @@ This skill is typically invoked by:
 
 ```javascript
 Skill({ skill: 'template-creator' });
-```
+````

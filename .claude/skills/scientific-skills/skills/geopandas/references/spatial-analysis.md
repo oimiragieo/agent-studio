@@ -42,6 +42,7 @@ joined = gpd.sjoin(gdf1, gdf2, how='inner')  # Intersection only
 ```
 
 The `how` parameter determines which geometries are retained:
+
 - **left**: Retains left GeoDataFrame's index and geometry
 - **right**: Retains right GeoDataFrame's index and geometry
 - **inner**: Uses intersection of indices, keeps left geometry
@@ -151,6 +152,7 @@ possible_matches = gdf.iloc[possible_matches_index]
 ```
 
 Spatial indexing significantly speeds up:
+
 - Spatial joins
 - Overlay operations
 - Queries with geometric predicates

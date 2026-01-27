@@ -11,6 +11,7 @@ PyHealth provides comprehensive tools for training models, evaluating prediction
 The `Trainer` class manages the complete model training and evaluation workflow with PyTorch integration.
 
 **Initialization:**
+
 ```python
 from pyhealth.trainer import Trainer
 
@@ -27,6 +28,7 @@ trainer = Trainer(
 Trains models with comprehensive monitoring and checkpointing.
 
 **Parameters:**
+
 - `train_dataloader`: Training data loader
 - `val_dataloader`: Validation data loader (optional)
 - `test_dataloader`: Test data loader (optional)
@@ -40,6 +42,7 @@ Trains models with comprehensive monitoring and checkpointing.
 - `save_path`: Checkpoint save directory
 
 **Usage:**
+
 ```python
 trainer.train(
     train_dataloader=train_loader,
@@ -75,11 +78,13 @@ trainer.train(
 Performs predictions on datasets.
 
 **Parameters:**
+
 - `dataloader`: Data loader for inference
 - `additional_outputs`: List of additional outputs to return
 - `return_patient_ids`: Return patient identifiers
 
 **Usage:**
+
 ```python
 predictions = trainer.inference(
     dataloader=test_loader,
@@ -89,6 +94,7 @@ predictions = trainer.inference(
 ```
 
 **Returns:**
+
 - `y_pred`: Model predictions
 - `y_true`: Ground truth labels
 - `patient_ids`: Patient identifiers (if requested)
@@ -101,10 +107,12 @@ predictions = trainer.inference(
 Computes comprehensive evaluation metrics.
 
 **Parameters:**
+
 - `dataloader`: Data loader for evaluation
 - `metrics`: List of metric functions
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import binary_metrics_fn
 
@@ -120,11 +128,13 @@ print(results)
 ### Checkpoint Management
 
 **save() method**
+
 ```python
 trainer.save("./models/best_model.pt")
 ```
 
 **load() method**
+
 ```python
 trainer.load("./models/best_model.pt")
 ```
@@ -134,6 +144,7 @@ trainer.load("./models/best_model.pt")
 ### Binary Classification Metrics
 
 **Available Metrics:**
+
 - `accuracy`: Overall accuracy
 - `precision`: Positive predictive value
 - `recall`: Sensitivity/True positive rate
@@ -143,6 +154,7 @@ trainer.load("./models/best_model.pt")
 - `cohen_kappa`: Inter-rater reliability
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import binary_metrics_fn
 
@@ -155,6 +167,7 @@ metrics = binary_metrics_fn(
 ```
 
 **Threshold Selection:**
+
 ```python
 # Default threshold: 0.5
 predictions_binary = (predictions > 0.5).astype(int)
@@ -167,6 +180,7 @@ optimal_threshold = thresholds[np.argmax(f1_scores)]
 ```
 
 **Best Practices:**
+
 - **Use AUROC**: Overall model discrimination
 - **Use AUPRC**: Especially for imbalanced classes
 - **Use F1**: Balance precision and recall
@@ -175,6 +189,7 @@ optimal_threshold = thresholds[np.argmax(f1_scores)]
 ### Multi-Class Classification Metrics
 
 **Available Metrics:**
+
 - `accuracy`: Overall accuracy
 - `macro_f1`: Unweighted mean F1 across classes
 - `micro_f1`: Global F1 (total TP, FP, FN)
@@ -182,6 +197,7 @@ optimal_threshold = thresholds[np.argmax(f1_scores)]
 - `cohen_kappa`: Multi-class kappa
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import multiclass_metrics_fn
 
@@ -193,6 +209,7 @@ metrics = multiclass_metrics_fn(
 ```
 
 **Per-Class Metrics:**
+
 ```python
 from sklearn.metrics import classification_report
 
@@ -201,6 +218,7 @@ print(classification_report(y_true, y_pred,
 ```
 
 **Confusion Matrix:**
+
 ```python
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
@@ -212,12 +230,14 @@ sns.heatmap(cm, annot=True, fmt='d')
 ### Multi-Label Classification Metrics
 
 **Available Metrics:**
+
 - `jaccard_score`: Intersection over union
 - `hamming_loss`: Fraction of incorrect labels
 - `example_f1`: F1 per example (micro average)
 - `label_f1`: F1 per label (macro average)
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import multilabel_metrics_fn
 
@@ -230,6 +250,7 @@ metrics = multilabel_metrics_fn(
 ```
 
 **Drug Recommendation Metrics:**
+
 ```python
 # Jaccard similarity (intersection/union)
 jaccard = len(set(true_drugs) & set(pred_drugs)) / len(set(true_drugs) | set(pred_drugs))
@@ -243,12 +264,14 @@ def precision_at_k(y_true, y_pred, k=10):
 ### Regression Metrics
 
 **Available Metrics:**
+
 - `mean_absolute_error`: Average absolute error
 - `mean_squared_error`: Average squared error
 - `root_mean_squared_error`: RMSE
 - `r2_score`: Coefficient of determination
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import regression_metrics_fn
 
@@ -260,6 +283,7 @@ metrics = regression_metrics_fn(
 ```
 
 **Percentage Error Metrics:**
+
 ```python
 # Mean Absolute Percentage Error
 mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
@@ -273,12 +297,14 @@ medape = np.median(np.abs((y_true - y_pred) / y_true)) * 100
 **Purpose:** Assess model bias across demographic groups
 
 **Available Metrics:**
+
 - `demographic_parity`: Equal positive prediction rates
 - `equalized_odds`: Equal TPR and FPR across groups
 - `equal_opportunity`: Equal TPR across groups
 - `predictive_parity`: Equal PPV across groups
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import fairness_metrics_fn
 
@@ -291,6 +317,7 @@ fairness_results = fairness_metrics_fn(
 ```
 
 **Example:**
+
 ```python
 # Evaluate fairness across gender
 male_mask = (demographics == "male")
@@ -310,6 +337,7 @@ print(f"TPR disparity: {tpr_disparity:.3f}")
 **Purpose:** Ensure predicted probabilities match actual frequencies
 
 **Calibration Plot:**
+
 ```python
 from sklearn.calibration import calibration_curve
 import matplotlib.pyplot as plt
@@ -326,6 +354,7 @@ plt.legend()
 ```
 
 **Expected Calibration Error (ECE):**
+
 ```python
 def expected_calibration_error(y_true, y_prob, n_bins=10):
     """Compute ECE"""
@@ -346,6 +375,7 @@ def expected_calibration_error(y_true, y_prob, n_bins=10):
 **Calibration Methods:**
 
 1. **Platt Scaling**: Logistic regression on validation predictions
+
 ```python
 from sklearn.linear_model import LogisticRegression
 
@@ -355,6 +385,7 @@ calibrated_probs = calibrator.predict_proba(test_predictions.reshape(-1, 1))[:, 
 ```
 
 2. **Isotonic Regression**: Non-parametric calibration
+
 ```python
 from sklearn.isotonic import IsotonicRegression
 
@@ -364,6 +395,7 @@ calibrated_probs = calibrator.predict(test_predictions)
 ```
 
 3. **Temperature Scaling**: Scale logits before softmax
+
 ```python
 def find_temperature(logits, labels):
     """Find optimal temperature parameter"""
@@ -388,6 +420,7 @@ calibrated_logits = test_logits / temperature
 Provide prediction sets with guaranteed coverage.
 
 **Usage:**
+
 ```python
 from pyhealth.metrics import prediction_set_metrics_fn
 

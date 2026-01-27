@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - Use React hooks for transaction status management
 - Provide clear UI feedback for blockchain interactions
 - Implement comprehensive error handling for blockchain operations
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

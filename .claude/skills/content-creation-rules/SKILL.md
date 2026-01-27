@@ -36,7 +36,7 @@ When reviewing or writing code, apply these guidelines:
 - Ensure all information is accurate and up-to-date.
 - Tailor the content to the intended audience.
 - Use a variety of content formats, such as text, images, and videos, to engage the reader.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -49,6 +49,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

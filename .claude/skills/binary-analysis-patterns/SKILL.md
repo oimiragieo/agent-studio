@@ -20,6 +20,7 @@ tools: [Read, Write, Edit, Bash, Glob, Grep]
 - **Educational purposes** in controlled environments
 
 **NEVER use for**:
+
 - Creating or enhancing malicious code
 - Unauthorized access to systems
 - Bypassing software licensing illegitimately
@@ -464,6 +465,7 @@ def auto_rename():
 Read `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 
 **After completing:**
+
 - New pattern -> `C:\dev\projects\agent-studio\.claude\context\memory\learnings.md`
 - Issue found -> `C:\dev\projects\agent-studio\.claude\context\memory\issues.md`
 - Decision made -> `C:\dev\projects\agent-studio\.claude\context\memory\decisions.md`

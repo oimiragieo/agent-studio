@@ -1,6 +1,6 @@
 ---
 name: hook-creator
-description: "Creates and registers hooks for the Claude Code framework. Handles pre/post tool execution, validation, memory, and session hooks. Use when new validation, safety, or automation hooks are needed."
+description: 'Creates and registers hooks for the Claude Code framework. Handles pre/post tool execution, validation, memory, and session hooks. Use when new validation, safety, or automation hooks are needed.'
 version: 2.1.0
 model: sonnet
 invoked_by: both
@@ -32,6 +32,7 @@ Creates, validates, and registers hooks for the multi-agent orchestration framew
 ```
 
 **Verification:**
+
 ```bash
 grep "<hook-name>" .claude/hooks/README.md || echo "ERROR: hooks/README.md NOT UPDATED!"
 ```
@@ -52,20 +53,20 @@ This skill creates hooks for the Claude Code framework:
 
 ## Hook Types
 
-| Type | Location | Purpose | When Triggered |
-|------|----------|---------|----------------|
-| Safety | `.claude/hooks/safety/` | Validate commands, block dangerous ops | Before Bash/Write/Edit |
-| Memory | `.claude/hooks/memory/` | Auto-update learnings, extract insights | After task completion |
-| Routing | `.claude/hooks/routing/` | Enforce router-first protocol | On UserPromptSubmit |
-| Session | `.claude/hooks/session/` | Initialize/cleanup sessions | Session start/end |
+| Type    | Location                 | Purpose                                 | When Triggered         |
+| ------- | ------------------------ | --------------------------------------- | ---------------------- |
+| Safety  | `.claude/hooks/safety/`  | Validate commands, block dangerous ops  | Before Bash/Write/Edit |
+| Memory  | `.claude/hooks/memory/`  | Auto-update learnings, extract insights | After task completion  |
+| Routing | `.claude/hooks/routing/` | Enforce router-first protocol           | On UserPromptSubmit    |
+| Session | `.claude/hooks/session/` | Initialize/cleanup sessions             | Session start/end      |
 
 ## Claude Code Hook Types
 
-| Hook Event | When Triggered | Use Case |
-|------------|----------------|----------|
-| `PreToolUse` | Before tool executes | Validation, blocking, permission checks |
-| `PostToolUse` | After tool completes | Logging, cleanup, notifications |
-| `UserPromptSubmit` | Before model sees message | Routing, intent analysis, filtering |
+| Hook Event         | When Triggered            | Use Case                                |
+| ------------------ | ------------------------- | --------------------------------------- |
+| `PreToolUse`       | Before tool executes      | Validation, blocking, permission checks |
+| `PostToolUse`      | After tool completes      | Logging, cleanup, notifications         |
+| `UserPromptSubmit` | Before model sees message | Routing, intent analysis, filtering     |
 
 ## Workflow Steps
 
@@ -74,6 +75,7 @@ This skill creates hooks for the Claude Code framework:
 **Use `.claude/hooks/routing/router-enforcer.cjs` as the canonical reference hook.**
 
 Before finalizing any hook, compare against router-enforcer structure:
+
 - [ ] Has proper CommonJS exports (module.exports)
 - [ ] Exports required functions for hook type (validate, main, etc.)
 - [ ] Has comprehensive test file (.test.cjs)
@@ -103,16 +105,17 @@ Before creating a hook, gather:
 
 ### Step 2: Determine Hook Type and Location
 
-| If hook does... | Type | Location |
-|-----------------|------|----------|
-| Validates commands | Safety | `.claude/hooks/safety/` |
-| Modifies routing | Routing | `.claude/hooks/routing/` |
-| Updates memory | Memory | `.claude/hooks/memory/` |
+| If hook does...      | Type    | Location                 |
+| -------------------- | ------- | ------------------------ |
+| Validates commands   | Safety  | `.claude/hooks/safety/`  |
+| Modifies routing     | Routing | `.claude/hooks/routing/` |
+| Updates memory       | Memory  | `.claude/hooks/memory/`  |
 | Session init/cleanup | Session | `.claude/hooks/session/` |
 
 **Naming Convention:** `<action>-<target>.cjs`
 
 Examples:
+
 - `validate-git-force-push.cjs`
 - `enforce-tdd-workflow.cjs`
 - `extract-workflow-learnings.cjs`
@@ -237,7 +240,7 @@ if (require.main === module) {
 module.exports = {
   validate,
   findProjectRoot,
-  PROJECT_ROOT
+  PROJECT_ROOT,
 };
 ```
 
@@ -254,7 +257,7 @@ describe('Hook Name', () => {
   test('allows valid operations', () => {
     const result = validate({
       tool: 'Bash',
-      parameters: { command: 'git status' }
+      parameters: { command: 'git status' },
     });
     expect(result.valid).toBe(true);
     expect(result.error).toBe('');
@@ -263,7 +266,7 @@ describe('Hook Name', () => {
   test('blocks dangerous operations', () => {
     const result = validate({
       tool: 'Bash',
-      parameters: { command: 'git push --force' }
+      parameters: { command: 'git push --force' },
     });
     expect(result.valid).toBe(false);
     expect(result.error).toContain('force push');
@@ -272,7 +275,7 @@ describe('Hook Name', () => {
   test('handles missing parameters gracefully', () => {
     const result = validate({
       tool: 'Bash',
-      parameters: {}
+      parameters: {},
     });
     expect(result.valid).toBe(true);
   });
@@ -288,12 +291,8 @@ Some hooks require registration in config files:
 ```json
 {
   "hooks": {
-    "pre-tool": [
-      ".claude/hooks/safety/hook-name.cjs"
-    ],
-    "post-tool": [
-      ".claude/hooks/memory/hook-name.cjs"
-    ]
+    "pre-tool": [".claude/hooks/safety/hook-name.cjs"],
+    "post-tool": [".claude/hooks/memory/hook-name.cjs"]
   }
 }
 ```
@@ -316,6 +315,7 @@ After creating a hook, update `.claude/hooks/README.md`:
 
 ```markdown
 #### {Hook Name} (`hook-name.cjs`)
+
 {Description of what the hook does}
 
 **When it runs:** {Trigger condition}
@@ -323,6 +323,7 @@ After creating a hook, update `.claude/hooks/README.md`:
 ```
 
 Verify with:
+
 ```bash
 grep "hook-name" .claude/hooks/README.md || echo "ERROR: Not documented!"
 ```
@@ -440,15 +441,13 @@ function validate(context) {
   const command = parameters?.command || '';
 
   // Check for force push
-  if (command.includes('git push') &&
-      (command.includes('--force') || command.includes('-f'))) {
-
+  if (command.includes('git push') && (command.includes('--force') || command.includes('-f'))) {
     // Check if pushing to protected branch
     for (const branch of PROTECTED_BRANCHES) {
       if (command.includes(branch)) {
         return {
           valid: false,
-          error: `Force push to ${branch} blocked. Use --force-with-lease instead.`
+          error: `Force push to ${branch} blocked. Use --force-with-lease instead.`,
         };
       }
     }
@@ -456,7 +455,7 @@ function validate(context) {
     return {
       valid: true,
       error: '',
-      warning: 'Force push detected. Ensure you know what you are doing.'
+      warning: 'Force push detected. Ensure you know what you are doing.',
     };
   }
 
@@ -556,7 +555,7 @@ function validate(context) {
   return {
     valid: true,
     error: '',
-    warning: 'Consider using Router to spawn appropriate agent via Task tool.'
+    warning: 'Consider using Router to spawn appropriate agent via Task tool.',
   };
 }
 
@@ -590,7 +589,7 @@ function findProjectRoot() {
 const MEMORY_FILES = [
   '.claude/context/memory/learnings.md',
   '.claude/context/memory/issues.md',
-  '.claude/context/memory/decisions.md'
+  '.claude/context/memory/decisions.md',
 ];
 
 function initialize() {
@@ -665,14 +664,17 @@ node .claude/tools/hook-creator/create-hook.mjs \
 This skill is part of the unified artifact lifecycle. For complete multi-agent orchestration:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - How the Router discovers and invokes this skill's artifacts
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Discovery, creation, update, deprecation phases
 - Version management and registry updates
 - CLAUDE.md integration requirements
 
 **External Integration:** `.claude/workflows/core/external-integration.md`
+
 - Safe integration of external artifacts
 - Security review and validation phases
 
@@ -682,13 +684,13 @@ This skill is part of the unified artifact lifecycle. For complete multi-agent o
 
 This skill is part of the **Creator Ecosystem**. After creating a hook, consider if companion artifacts are needed:
 
-| Need | Creator to Invoke | Command |
-|------|-------------------|---------|
-| Dedicated skill for hook logic | `skill-creator` | `Skill({ skill: 'skill-creator' })` |
-| Agent that uses this hook | `agent-creator` | `Skill({ skill: 'agent-creator' })` |
-| Workflow for hook testing | `workflow-creator` | Create in `.claude/workflows/` |
-| Schema for hook config | `schema-creator` | Create in `.claude/schemas/` |
-| Template for hook scaffold | `template-creator` | Create in `.claude/templates/` |
+| Need                           | Creator to Invoke  | Command                             |
+| ------------------------------ | ------------------ | ----------------------------------- |
+| Dedicated skill for hook logic | `skill-creator`    | `Skill({ skill: 'skill-creator' })` |
+| Agent that uses this hook      | `agent-creator`    | `Skill({ skill: 'agent-creator' })` |
+| Workflow for hook testing      | `workflow-creator` | Create in `.claude/workflows/`      |
+| Schema for hook config         | `schema-creator`   | Create in `.claude/schemas/`        |
+| Template for hook scaffold     | `template-creator` | Create in `.claude/templates/`      |
 
 ### Integration Workflow
 
@@ -778,9 +780,11 @@ These rules are INVIOLABLE. Breaking them causes silent failures.
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/hooks/<category>/`
 
 Categories:
+
 - `safety/` - Safety validators (command validation, security checks)
 - `routing/` - Router enforcement hooks
 - `memory/` - Memory management hooks
@@ -788,11 +792,13 @@ Categories:
 - `validation/` - Input/output validation hooks
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -801,16 +807,19 @@ Invalid placements will be blocked in production mode.
 ## Memory Protocol (MANDATORY)
 
 **Before creating a hook:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previously created hooks
 - Known hook patterns
 - User preferences for hook behavior
 
 **After completing:**
+
 - New hook created -> Append to `.claude/context/memory/learnings.md`
 - Issue with hook -> Append to `.claude/context/memory/issues.md`
 - Hook design decision -> Append to `.claude/context/memory/decisions.md`

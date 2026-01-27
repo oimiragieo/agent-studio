@@ -5,6 +5,7 @@ This document provides comprehensive details on all DiffDock configuration param
 ## Model & Checkpoint Settings
 
 ### Model Paths
+
 - **`--model_dir`**: Directory containing the score model checkpoint
   - Default: `./workdir/v1.1/score_model`
   - DiffDock-L model (current default)
@@ -19,6 +20,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Default: `best_model_epoch75.pt`
 
 ### Model Version Flags
+
 - **`--old_score_model`**: Use original DiffDock model instead of DiffDock-L
   - Default: `false` (uses DiffDock-L)
 
@@ -28,6 +30,7 @@ This document provides comprehensive details on all DiffDock configuration param
 ## Input/Output Options
 
 ### Input Specification
+
 - **`--protein_path`**: Path to protein PDB file
   - Example: `--protein_path protein.pdb`
   - Alternative to `--protein_sequence`
@@ -45,6 +48,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Example: `--protein_ligand_csv data/protein_ligand_example.csv`
 
 ### Output Control
+
 - **`--out_dir`**: Output directory for predictions
   - Example: `--out_dir results/user_predictions/`
 
@@ -54,6 +58,7 @@ This document provides comprehensive details on all DiffDock configuration param
 ## Inference Parameters
 
 ### Diffusion Steps
+
 - **`--inference_steps`**: Number of planned inference iterations
   - Default: `20`
   - Higher values may improve accuracy but increase runtime
@@ -65,6 +70,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Default: `true`
 
 ### Sampling Settings
+
 - **`--samples_per_complex`**: Number of samples to generate per complex
   - Default: `10`
   - More samples provide better coverage but increase computation
@@ -78,6 +84,7 @@ This document provides comprehensive details on all DiffDock configuration param
 ### Temperature Parameters
 
 #### Sampling Temperatures (Controls diversity of predictions)
+
 - **`--temp_sampling_tr`**: Translation sampling temperature
   - Default: `1.17`
 
@@ -88,6 +95,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Default: `7.04`
 
 #### Psi Angle Temperatures
+
 - **`--temp_psi_tr`**: Translation psi temperature
   - Default: `0.73`
 
@@ -98,6 +106,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Default: `0.59`
 
 #### Sigma Data Temperatures
+
 - **`--temp_sigma_data_tr`**: Translation data distribution scaling
   - Default: `0.93`
 
@@ -110,6 +119,7 @@ This document provides comprehensive details on all DiffDock configuration param
 ## Processing Options
 
 ### Performance
+
 - **`--batch_size`**: Processing batch size
   - Default: `10`
   - Larger values increase throughput but require more memory
@@ -118,6 +128,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Useful for monitoring long-running jobs
 
 ### Protein Structure
+
 - **`--chain_cutoff`**: Maximum number of protein chains to process
   - Example: `--chain_cutoff 10`
   - Useful for large multi-chain complexes
@@ -127,12 +138,14 @@ This document provides comprehensive details on all DiffDock configuration param
   - Optional optimization
 
 ### Dataset Options
+
 - **`--split`**: Dataset split to use (train/test/val)
   - Used for evaluation on standard benchmarks
 
 ## Advanced Flags
 
 ### Debugging & Testing
+
 - **`--no_model`**: Disable model inference (debugging)
   - Default: `false`
 
@@ -141,6 +154,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Useful for reproducibility testing
 
 ### Alternative Sampling
+
 - **`--ode`**: Use ODE solver instead of SDE
   - Default: `false`
   - Alternative sampling approach
@@ -149,6 +163,7 @@ This document provides comprehensive details on all DiffDock configuration param
   - Default: `false`
 
 ### Error Handling
+
 - **`--limit_failures`**: Maximum allowed failures before stopping
   - Default: `5`
 

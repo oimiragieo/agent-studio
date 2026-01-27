@@ -22,6 +22,7 @@ dx-app-wizard
 ```
 
 This creates:
+
 - `dxapp.json` - Configuration file
 - `src/` - Source code directory
 - `resources/` - Bundled dependencies
@@ -30,16 +31,19 @@ This creates:
 ### Building and Deploying
 
 Build an applet:
+
 ```bash
 dx build
 ```
 
 Build an app:
+
 ```bash
 dx build --app
 ```
 
 The build process:
+
 1. Validates dxapp.json configuration
 2. Bundles source code and resources
 3. Deploys to the platform
@@ -181,6 +185,7 @@ results = [job.get_output_ref("result") for job in subjobs]
 ## Execution Environment
 
 Apps run in isolated Linux VMs (Ubuntu 24.04) with:
+
 - Internet access
 - DNAnexus API access
 - Temporary scratch space in `/home/dnanexus`
@@ -231,17 +236,22 @@ dx watch job-zzzz --get-streams
 ## Common Issues
 
 ### File Not Found
+
 Ensure files are properly downloaded before accessing:
+
 ```python
 dxpy.download_dxfile(file_id, local_path)
 # Now safe to open local_path
 ```
 
 ### Out of Memory
+
 Specify larger instance type in dxapp.json systemRequirements
 
 ### Timeout
+
 Increase timeout in dxapp.json or split into smaller jobs
 
 ### Permission Errors
+
 Ensure app has necessary permissions in dxapp.json

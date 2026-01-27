@@ -7,6 +7,7 @@ BEDspace applies the StarSpace model to genomic data, enabling simultaneous trai
 ## When to Use
 
 Use BEDspace when working with:
+
 - Region sets with associated metadata (cell types, tissues, conditions)
 - Search tasks requiring metadata-aware similarity
 - Cross-modal queries (e.g., "find regions similar to label X")
@@ -30,6 +31,7 @@ geniml bedspace preprocess \
 ```
 
 **Required files:**
+
 - **Input folder**: Directory containing BED files
 - **Metadata CSV**: Must include `file_name` column matching BED filenames, plus metadata columns
 - **Universe file**: Reference BED file for tokenization
@@ -52,6 +54,7 @@ geniml bedspace train \
 ```
 
 **Key training parameters:**
+
 - `--dim`: Embedding dimension (typical: 50-200)
 - `--epochs`: Training epochs (typical: 20-100)
 - `--lr`: Learning rate (typical: 0.01-0.1)
@@ -75,16 +78,19 @@ This step creates a distance matrix needed for similarity searches.
 Retrieve similar items across three scenarios:
 
 **Region-to-Label (r2l)**: Query region set → retrieve similar metadata labels
+
 ```bash
 geniml bedspace search -t r2l -d distances.pkl -q query_regions.bed -n 10
 ```
 
 **Label-to-Region (l2r)**: Query metadata label → retrieve similar region sets
+
 ```bash
 geniml bedspace search -t l2r -d distances.pkl -q "T_cell" -n 10
 ```
 
 **Region-to-Region (r2r)**: Query region set → retrieve similar region sets
+
 ```bash
 geniml bedspace search -t r2r -d distances.pkl -q query_regions.bed -n 10
 ```
@@ -118,6 +124,7 @@ results = model.search(
 ## Output Interpretation
 
 Search results return items ranked by similarity in the joint embedding space:
+
 - **r2l**: Identifies metadata labels characterizing your query regions
 - **l2r**: Finds region sets matching your metadata criteria
 - **r2r**: Discovers region sets with similar genomic content

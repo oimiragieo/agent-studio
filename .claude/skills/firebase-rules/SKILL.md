@@ -35,7 +35,7 @@ When reviewing or writing code, apply these guidelines:
 - Implement proper security rules in Firebase.
 - Use Firebase SDK's offline persistence for better performance and offline support.
 - Optimize queries to minimize read/write operations.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -48,6 +48,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

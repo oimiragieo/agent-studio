@@ -5,6 +5,7 @@ This document provides comprehensive information about the callback system in St
 ## Overview
 
 Callbacks are functions called at specific points during training to:
+
 - Monitor training metrics
 - Save checkpoints
 - Implement early stopping
@@ -37,11 +38,13 @@ model.learn(total_timesteps=100000, callback=eval_callback)
 ```
 
 **Key Features:**
+
 - Automatically saves best model based on mean reward
 - Logs evaluation metrics to TensorBoard
 - Can stop training if reward threshold reached
 
 **Important:** When using vectorized training environments, adjust `eval_freq`:
+
 ```python
 # With 4 parallel environments, divide eval_freq by n_envs
 eval_freq = 10000 // 4  # Evaluate every 10000 total environment steps
@@ -67,6 +70,7 @@ model.learn(total_timesteps=100000, callback=checkpoint_callback)
 ```
 
 **Output Files:**
+
 - `rl_model_10000_steps.zip` - Model at 10k steps
 - `rl_model_20000_steps.zip` - Model at 20k steps
 - etc.
@@ -147,6 +151,7 @@ model.learn(total_timesteps=100000, callback=progress_callback)
 ```
 
 **Output:**
+
 ```
 100%|██████████| 100000/100000 [05:23<00:00, 309.31it/s]
 ```
@@ -432,6 +437,7 @@ class TensorBoardCallback(BaseCallback):
 ```
 
 **View in TensorBoard:**
+
 ```bash
 tensorboard --logdir ./logs/
 ```

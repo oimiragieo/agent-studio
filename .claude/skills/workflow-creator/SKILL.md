@@ -1,6 +1,6 @@
 ---
 name: workflow-creator
-description: "Creates multi-agent orchestration workflows for complex tasks. Handles enterprise workflows, operational procedures, and custom orchestration patterns. Use when user needs to automate multi-phase processes with agent coordination."
+description: 'Creates multi-agent orchestration workflows for complex tasks. Handles enterprise workflows, operational procedures, and custom orchestration patterns. Use when user needs to automate multi-phase processes with agent coordination.'
 version: 2.1.0
 model: sonnet
 invoked_by: both
@@ -32,14 +32,17 @@ Creates multi-agent orchestration workflows for complex tasks that require coord
 **When to use:** {Trigger conditions}
 
 **Phases:**
+
 1. **{Phase Name}** - {Description}
-...
+   ...
 
 **Agents Involved:**
+
 - `{agent-name}` - {Role in workflow}
 ```
 
 **Verification:**
+
 ```bash
 grep "{workflow-name}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md SECTION 8.6 NOT UPDATED!"
 ```
@@ -57,22 +60,22 @@ grep "{workflow-name}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md SECTION 8.6 N
 
 ## Quick Reference
 
-| Operation | Method |
-|-----------|--------|
-| Check existing workflows | `Glob: .claude/workflows/**/*.md` |
+| Operation                | Method                                                  |
+| ------------------------ | ------------------------------------------------------- |
+| Check existing workflows | `Glob: .claude/workflows/**/*.md`                       |
 | Review workflow template | Read `.claude/templates/workflows/workflow-template.md` |
-| Find relevant agents | `Glob: .claude/agents/**/*.md` |
-| Find relevant skills | `Glob: .claude/skills/*/SKILL.md` |
-| Create workflow | Write to `.claude/workflows/<category>/<name>.md` |
+| Find relevant agents     | `Glob: .claude/agents/**/*.md`                          |
+| Find relevant skills     | `Glob: .claude/skills/*/SKILL.md`                       |
+| Create workflow          | Write to `.claude/workflows/<category>/<name>.md`       |
 
 ## Workflow Types
 
-| Type | Location | Purpose | Examples |
-|------|----------|---------|----------|
-| Enterprise | `.claude/workflows/enterprise/` | Complex multi-phase development | feature-development, c4-architecture |
-| Operations | `.claude/workflows/operations/` | Runtime procedures, incident response | incident-response, deployment |
-| Rapid | `.claude/workflows/rapid/` | Quick, focused task automation | fix, refactor, review |
-| Custom | `.claude/workflows/` | Project-specific patterns | conductor-setup |
+| Type       | Location                        | Purpose                               | Examples                             |
+| ---------- | ------------------------------- | ------------------------------------- | ------------------------------------ |
+| Enterprise | `.claude/workflows/enterprise/` | Complex multi-phase development       | feature-development, c4-architecture |
+| Operations | `.claude/workflows/operations/` | Runtime procedures, incident response | incident-response, deployment        |
+| Rapid      | `.claude/workflows/rapid/`      | Quick, focused task automation        | fix, refactor, review                |
+| Custom     | `.claude/workflows/`            | Project-specific patterns             | conductor-setup                      |
 
 ## Workflow Creation Process
 
@@ -91,14 +94,16 @@ If a suitable workflow exists, consider enhancing it instead of creating a dupli
 Before creating a workflow, research existing patterns.
 
 **1. Check existing workflows:**
+
 ```bash
 Glob: .claude/workflows/**/*.md
 ```
 
 **2. Research workflow patterns** (minimum 2 queries):
+
 ```javascript
-WebSearch({ query: "[workflow-type] orchestration best practices" })
-WebSearch({ query: "[domain] multi-agent workflow patterns" })
+WebSearch({ query: '[workflow-type] orchestration best practices' });
+WebSearch({ query: '[domain] multi-agent workflow patterns' });
 ```
 
 **3. Document patterns found** in workflow comments
@@ -109,23 +114,23 @@ WebSearch({ query: "[domain] multi-agent workflow patterns" })
 
 **Analyze the process to break into phases:**
 
-| Question | Determines |
-|----------|-----------|
-| What are the distinct stages? | Phase boundaries |
-| Which agent handles each stage? | Agent assignments |
-| Can any stages run in parallel? | Parallel execution opportunities |
-| What outputs feed into next stage? | Data flow and handoffs |
-| What can go wrong at each stage? | Error recovery procedures |
+| Question                           | Determines                       |
+| ---------------------------------- | -------------------------------- |
+| What are the distinct stages?      | Phase boundaries                 |
+| Which agent handles each stage?    | Agent assignments                |
+| Can any stages run in parallel?    | Parallel execution opportunities |
+| What outputs feed into next stage? | Data flow and handoffs           |
+| What can go wrong at each stage?   | Error recovery procedures        |
 
 **Common Phase Patterns:**
 
-| Pattern | Phases | When to Use |
-|---------|--------|-------------|
-| Discovery -> Design -> Review -> Implement | Feature development |
-| Analyze -> Fix -> Test -> Deploy | Bug fix workflow |
-| Explore -> Plan -> Review | Planning workflow |
-| Triage -> Investigate -> Resolve -> Document | Incident response |
-| Code -> Component -> Container -> Context | C4 architecture documentation |
+| Pattern                                      | Phases                        | When to Use |
+| -------------------------------------------- | ----------------------------- | ----------- |
+| Discovery -> Design -> Review -> Implement   | Feature development           |
+| Analyze -> Fix -> Test -> Deploy             | Bug fix workflow              |
+| Explore -> Plan -> Review                    | Planning workflow             |
+| Triage -> Investigate -> Resolve -> Document | Incident response             |
+| Code -> Component -> Container -> Context    | C4 architecture documentation |
 
 ### Step 3: Define Agent Handoffs
 
@@ -143,15 +148,15 @@ For each phase transition, specify:
 
 Write to `.claude/workflows/<category>/<workflow-name>.md`:
 
-```markdown
+````markdown
 ---
-name: {workflow-name}
-description: {Brief description of workflow purpose}
+name: { workflow-name }
+description: { Brief description of workflow purpose }
 version: 1.0.0
 agents:
-  - {agent-1}
-  - {agent-2}
-tags: [{tag1}, {tag2}, workflow]
+  - { agent-1 }
+  - { agent-2 }
+tags: [{ tag1 }, { tag2 }, workflow]
 ---
 
 # {Workflow Title}
@@ -204,6 +209,7 @@ Task({
 `,
 });
 ```
+````
 
 **Expected Output**: {Description of expected output}
 
@@ -235,10 +241,12 @@ Task({
 ## Error Recovery
 
 ### If Phase 1 fails:
+
 1. {Recovery step}
 2. Restart Phase 1
 
 ### If Phase 2 review finds blockers:
+
 1. {Recovery step}
 2. Re-run reviews
 
@@ -267,6 +275,7 @@ Follow the phased workflow in: .claude/workflows/{category}/{workflow-name}.md
 `,
 });
 ```
+
 ```
 
 ### Step 5: Validate Workflow References (BLOCKING)
@@ -282,12 +291,14 @@ Follow the phased workflow in: .claude/workflows/{category}/{workflow-name}.md
 
 **Validation checklist before writing:**
 ```
+
 [ ] All referenced agents exist
 [ ] All referenced skills exist
 [ ] Output paths are valid
 [ ] Error recovery procedures are complete
 [ ] Success criteria are measurable
-```
+
+````
 
 **BLOCKING**: Do not write workflow file if any reference is invalid.
 
@@ -316,16 +327,18 @@ Task({
   model: 'claude-sonnet-4-20250514',
   // ...
 });
-```
+````
 
 **Tools Array Validation:**
 
 When specifying allowed_tools for spawned agents:
+
 - Use standard tools: Read, Write, Edit, Bash, TaskUpdate, TaskList, etc.
-- DO NOT include MCP tools (mcp__*) unless whitelisted in router-enforcer.cjs
+- DO NOT include MCP tools (mcp\_\_\*) unless whitelisted in router-enforcer.cjs
 - MCP tools cause router enforcement failures
 
 **Allowed tools (standard):**
+
 ```javascript
 allowed_tools: [
   'Read',
@@ -337,15 +350,17 @@ allowed_tools: [
   'TaskCreate',
   'TaskGet',
   'Skill',
-]
+];
 ```
 
 **Restricted tools (require explicit whitelisting):**
+
 - `mcp__Exa__*` - Only for evolution-orchestrator
 - `mcp__github__*` - Only for specific GitHub operations
 - Other MCP tools - Must be whitelisted in router-enforcer.cjs
 
 **Validation checklist for agent spawns:**
+
 ```
 [ ] Model field uses base name (haiku/sonnet/opus)
 [ ] allowed_tools contains only standard tools OR explicitly whitelisted MCP tools
@@ -369,19 +384,23 @@ After workflow file is written, you MUST update CLAUDE.md:
 **When to use:** {Trigger conditions - be specific}
 
 **Phases:**
+
 1. **{Phase 1 Name}** - {Brief description}
 2. **{Phase 2 Name}** - {Brief description}
-...
+   ...
 
 **Configuration Options:**
+
 - {Option category}: `{values}`
 
 **Agents Involved:**
+
 - `{agent-name}` - {Role description}
 ```
 
 3. **Insert in appropriate location** (alphabetical or at end of section)
 4. **Verify with**:
+
 ```bash
 grep "{workflow-name}" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED - BLOCKING!"
 ```
@@ -442,6 +461,7 @@ grep "<workflow-name>" .claude/CLAUDE.md || echo "ERROR: Not in CLAUDE.md - WORK
 ```
 
 **Completion Checklist** (all must be checked):
+
 ```
 [ ] Workflow pattern research completed (Step 2.5)
 [ ] Workflow file created at .claude/workflows/<category>/<name>.md
@@ -515,14 +535,17 @@ These rules are INVIOLABLE. Breaking them causes silent failures.
 This skill is part of the unified artifact lifecycle. For complete multi-agent orchestration:
 
 **Router Decision:** `.claude/workflows/core/router-decision.md`
+
 - How the Router discovers and invokes this skill's artifacts
 
 **Artifact Lifecycle:** `.claude/workflows/core/skill-lifecycle.md`
+
 - Discovery, creation, update, deprecation phases
 - Version management and registry updates
 - CLAUDE.md integration requirements
 
 **External Integration:** `.claude/workflows/core/external-integration.md`
+
 - Safe integration of external artifacts
 - Security review and validation phases
 
@@ -532,13 +555,13 @@ This skill is part of the unified artifact lifecycle. For complete multi-agent o
 
 This skill is part of the **Creator Ecosystem**. After creating a workflow, consider whether companion creators are needed:
 
-| Creator | When to Use | Invocation |
-|---------|-------------|------------|
-| **agent-creator** | Workflow needs agent not in `.claude/agents/` | `Skill({ skill: 'agent-creator' })` |
-| **skill-creator** | Workflow needs skill not in `.claude/skills/` | `Skill({ skill: 'skill-creator' })` |
-| **hook-creator** | Workflow needs entry/exit hooks | Create in `.claude/hooks/` |
-| **template-creator** | Workflow needs code templates | Create in `.claude/templates/` |
-| **schema-creator** | Workflow needs validation schemas | Create in `.claude/schemas/` |
+| Creator              | When to Use                                   | Invocation                          |
+| -------------------- | --------------------------------------------- | ----------------------------------- |
+| **agent-creator**    | Workflow needs agent not in `.claude/agents/` | `Skill({ skill: 'agent-creator' })` |
+| **skill-creator**    | Workflow needs skill not in `.claude/skills/` | `Skill({ skill: 'skill-creator' })` |
+| **hook-creator**     | Workflow needs entry/exit hooks               | Create in `.claude/hooks/`          |
+| **template-creator** | Workflow needs code templates                 | Create in `.claude/templates/`      |
+| **schema-creator**   | Workflow needs validation schemas             | Create in `.claude/schemas/`        |
 
 ### Integration Workflow
 
@@ -623,20 +646,24 @@ Use the template at `.claude/templates/workflows/workflow-template.md` for consi
 ## File Placement & Standards
 
 ### Output Location Rules
+
 This skill outputs to: `.claude/workflows/<category>/`
 
 Categories:
+
 - `core/` - Essential workflows (router-decision, skill-lifecycle)
 - `enterprise/` - Complex multi-agent flows (feature-development)
 - `operations/` - Operational procedures (incident-response)
 - `creators/` - Creator workflow YAML files
 
 ### Mandatory References
+
 - **File Placement**: See `.claude/docs/FILE_PLACEMENT_RULES.md`
 - **Developer Workflow**: See `.claude/docs/DEVELOPER_WORKFLOW.md`
 - **Artifact Naming**: See `.claude/docs/ARTIFACT_NAMING.md`
 
 ### Enforcement
+
 File placement is enforced by `file-placement-guard.cjs` hook.
 Invalid placements will be blocked in production mode.
 
@@ -645,16 +672,19 @@ Invalid placements will be blocked in production mode.
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previously created workflows
 - Workflow patterns that worked well
 - Issues with existing workflows
 
 **After completing:**
+
 - New workflow created -> Append to `.claude/context/memory/learnings.md`
 - Workflow issue found -> Append to `.claude/context/memory/issues.md`
 - Architecture decision -> Append to `.claude/context/memory/decisions.md`

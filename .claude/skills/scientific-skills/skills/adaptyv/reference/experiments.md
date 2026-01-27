@@ -21,12 +21,14 @@ Measure protein-target interactions using biolayer interferometry (BLI), a label
 ### Technology: Biolayer Interferometry (BLI)
 
 BLI measures the interference pattern of reflected light from two surfaces:
+
 - **Reference layer** - Biosensor tip surface
 - **Biological layer** - Accumulated bound molecules
 
 As molecules bind, the optical thickness increases, causing a wavelength shift proportional to binding.
 
 **Advantages:**
+
 - Label-free detection
 - Real-time kinetics
 - High-throughput compatible
@@ -36,11 +38,13 @@ As molecules bind, the optical thickness increases, causing a wavelength shift p
 ### Measured Parameters
 
 **Kinetic constants:**
+
 - **KD** - Equilibrium dissociation constant (binding affinity)
 - **kon** - Association rate constant (binding speed)
 - **koff** - Dissociation rate constant (unbinding speed)
 
 **Typical ranges:**
+
 - Strong binders: KD < 1 nM
 - Moderate binders: KD = 1-100 nM
 - Weak binders: KD > 100 nM
@@ -102,6 +106,7 @@ Quantify protein expression levels in various host systems to assess producibili
 ### Host Systems
 
 Available expression platforms:
+
 - **E. coli** - Rapid, cost-effective, prokaryotic system
 - **Mammalian cells** - Native post-translational modifications
 - **Yeast** - Eukaryotic system with simpler growth requirements
@@ -158,11 +163,13 @@ Measure protein thermal stability to assess structural integrity, predict shelf-
 ### Measurement Techniques
 
 **Differential Scanning Fluorimetry (DSF):**
+
 - Monitors protein unfolding via fluorescent dye binding
 - Determines melting temperature (Tm)
 - High-throughput capable
 
 **Circular Dichroism (CD):**
+
 - Secondary structure analysis
 - Thermal unfolding curves
 - Reversibility assessment
@@ -217,11 +224,13 @@ Measure enzymatic function including substrate turnover, catalytic efficiency, a
 ### Assay Types
 
 **Continuous assays:**
+
 - Chromogenic substrates
 - Fluorogenic substrates
 - Real-time monitoring
 
 **Endpoint assays:**
+
 - HPLC quantification
 - Mass spectrometry
 - Colorimetric detection
@@ -229,12 +238,14 @@ Measure enzymatic function including substrate turnover, catalytic efficiency, a
 ### Measured Parameters
 
 **Kinetic parameters:**
+
 - **kcat** - Turnover number (catalytic rate constant)
 - **KM** - Michaelis constant (substrate affinity)
 - **kcat/KM** - Catalytic efficiency
 - **IC50** - Inhibitor concentration for 50% inhibition
 
 **Activity metrics:**
+
 - Specific activity (units/mg protein)
 - Relative activity vs. reference
 - Substrate specificity profile
@@ -289,6 +300,7 @@ Measure enzymatic function including substrate turnover, catalytic efficiency, a
 ### Quality Control
 
 Adaptyv includes automated QC steps:
+
 - Expression verification before assay
 - Replicate measurements for reliability
 - Positive/negative controls in each batch
@@ -299,6 +311,7 @@ Adaptyv includes automated QC steps:
 **Standard turnaround:** ~21 days from submission to results
 
 **Timeline breakdown:**
+
 - Construct generation: 3-5 days
 - Expression: 5-7 days
 - Purification: 2-3 days
@@ -306,6 +319,7 @@ Adaptyv includes automated QC steps:
 - Analysis and QC: 2-3 days
 
 **Factors affecting timeline:**
+
 - Custom targets (add 1-2 weeks)
 - Novel assay development (add 2-4 weeks)
 - Large batch sizes (may add 1 week)
@@ -322,16 +336,19 @@ Adaptyv includes automated QC steps:
 For comprehensive protein characterization, combine multiple assays:
 
 **Therapeutic antibody development:**
+
 1. Binding assay → Identify high-affinity binders
 2. Expression testing → Select manufacturable candidates
 3. Thermostability → Ensure formulation stability
 
 **Enzyme engineering:**
+
 1. Activity assay → Screen for improved catalysis
 2. Expression testing → Ensure producibility
 3. Thermostability → Validate industrial robustness
 
 **Sequential vs. Parallel:**
+
 - **Sequential** - Use results from early assays to filter candidates
 - **Parallel** - Run all assays simultaneously for faster results
 
@@ -348,12 +365,14 @@ Results integrate with computational workflows:
 ## Support and Troubleshooting
 
 **Common issues:**
+
 - Low expression → Consider sequence optimization (see protein_optimization.md)
 - Poor binding → Verify target specification and expected range
 - Variable results → Check sequence quality and controls
 - Incomplete data → Contact support with experiment ID
 
 **Getting help:**
+
 - Email: support@adaptyvbio.com
 - Include experiment ID and specific question
 - Provide context (design goals, expected results)

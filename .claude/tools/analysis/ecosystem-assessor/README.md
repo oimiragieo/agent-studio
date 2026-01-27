@@ -51,14 +51,14 @@ console.log(result.recommendations);
 
 The hook assessor maps keywords to recommended hooks:
 
-| Category | Keywords | Recommended Hooks |
-|----------|----------|-------------------|
-| Financial | payment, financial, money, transaction | PreToolUse (validation), PostToolUse (audit) |
-| Security | auth, password, token, secret | PreToolUse (scope check), UserPromptSubmit (intent detection) |
-| Database | database, migration, schema, sql | PreToolUse (backup check, dry-run) |
-| Deployment | deploy, release, production | PreToolUse (approval gate), PostToolUse (notify) |
-| Infrastructure | terraform, kubernetes, docker | PreToolUse (plan-first, destructive check) |
-| External API | api, external, webhook, http | PostToolUse (response validation) |
+| Category       | Keywords                               | Recommended Hooks                                             |
+| -------------- | -------------------------------------- | ------------------------------------------------------------- |
+| Financial      | payment, financial, money, transaction | PreToolUse (validation), PostToolUse (audit)                  |
+| Security       | auth, password, token, secret          | PreToolUse (scope check), UserPromptSubmit (intent detection) |
+| Database       | database, migration, schema, sql       | PreToolUse (backup check, dry-run)                            |
+| Deployment     | deploy, release, production            | PreToolUse (approval gate), PostToolUse (notify)              |
+| Infrastructure | terraform, kubernetes, docker          | PreToolUse (plan-first, destructive check)                    |
+| External API   | api, external, webhook, http           | PostToolUse (response validation)                             |
 
 ### Hook Templates
 
@@ -79,14 +79,14 @@ node .claude/tools/ecosystem-assessor/hook-assessor.mjs --templates
 
 The MCP discoverer scans `.claude/.mcp.json` and matches servers to agent purposes:
 
-| MCP Server | Related Skills | Relevant Agents |
-|------------|---------------|-----------------|
-| github | github-ops, github-mcp | developer, architect |
-| git | git-expert | developer |
-| slack | slack-notifications | incident-responder, devops |
-| postgres | text-to-sql | developer, data-expert |
-| kubernetes | kubernetes-flux | devops |
-| terraform | terraform-infra | devops, architect |
+| MCP Server | Related Skills         | Relevant Agents            |
+| ---------- | ---------------------- | -------------------------- |
+| github     | github-ops, github-mcp | developer, architect       |
+| git        | git-expert             | developer                  |
+| slack      | slack-notifications    | incident-responder, devops |
+| postgres   | text-to-sql            | developer, data-expert     |
+| kubernetes | kubernetes-flux        | devops                     |
+| terraform  | terraform-infra        | devops, architect          |
 
 ```bash
 # List configured MCP servers

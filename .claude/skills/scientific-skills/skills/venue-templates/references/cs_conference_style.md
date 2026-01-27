@@ -23,21 +23,24 @@ NLP papers balance empirical rigor with linguistic insight. Human evaluation is 
 ## Audience and Tone
 
 ### Target Reader
+
 - NLP researchers and computational linguists
 - Familiar with transformer architectures, standard benchmarks
 - Expect reproducible results and error analysis
 
 ### Tone Characteristics
-| Characteristic | Description |
-|---------------|-------------|
-| **Task-focused** | Clear problem definition |
-| **Benchmark-oriented** | Standard datasets emphasized |
-| **Analysis-rich** | Error analysis, qualitative examples |
-| **Reproducible** | Full implementation details |
+
+| Characteristic         | Description                          |
+| ---------------------- | ------------------------------------ |
+| **Task-focused**       | Clear problem definition             |
+| **Benchmark-oriented** | Standard datasets emphasized         |
+| **Analysis-rich**      | Error analysis, qualitative examples |
+| **Reproducible**       | Full implementation details          |
 
 ## Abstract (NLP Style)
 
 ### Structure
+
 - **Task/problem** (1 sentence)
 - **Limitation of prior work** (1 sentence)
 - **Your approach** (1-2 sentences)
@@ -47,16 +50,16 @@ NLP papers balance empirical rigor with linguistic insight. Human evaluation is 
 ### Example Abstract
 
 ```
-Coreference resolution remains challenging for pronouns with distant or 
-ambiguous antecedents. Prior neural approaches struggle with these 
-difficult cases due to limited context modeling. We introduce 
-LongContext-Coref, a retrieval-augmented coreference model that 
-dynamically retrieves relevant context from document history. On the 
-OntoNotes 5.0 benchmark, LongContext-Coref achieves 83.4 F1, improving 
-over the previous state-of-the-art by 1.2 points. On the challenging 
-WinoBias dataset, we reduce gender bias by 34% while maintaining 
-accuracy. Qualitative analysis reveals that our model successfully 
-resolves pronouns requiring world knowledge, a known weakness of 
+Coreference resolution remains challenging for pronouns with distant or
+ambiguous antecedents. Prior neural approaches struggle with these
+difficult cases due to limited context modeling. We introduce
+LongContext-Coref, a retrieval-augmented coreference model that
+dynamically retrieves relevant context from document history. On the
+OntoNotes 5.0 benchmark, LongContext-Coref achieves 83.4 F1, improving
+over the previous state-of-the-art by 1.2 points. On the challenging
+WinoBias dataset, we reduce gender bias by 34% while maintaining
+accuracy. Qualitative analysis reveals that our model successfully
+resolves pronouns requiring world knowledge, a known weakness of
 prior approaches.
 ```
 
@@ -89,17 +92,21 @@ prior approaches.
 ## NLP-Specific Requirements
 
 ### Datasets
+
 - Use **standard benchmarks**: GLUE, SQuAD, CoNLL, OntoNotes
 - Report **dataset statistics**: train/dev/test sizes
 - **Data preprocessing**: Document all steps
 
 ### Evaluation Metrics
+
 - **Task-appropriate metrics**: F1, BLEU, ROUGE, accuracy
 - **Statistical significance**: Paired bootstrap, p-values
 - **Multiple runs**: Report mean ± std across seeds
 
 ### Human Evaluation
+
 Increasingly expected for generation tasks:
+
 - **Annotator details**: Number, qualifications, agreement
 - **Evaluation protocol**: Guidelines, interface, payment
 - **Inter-annotator agreement**: Cohen's κ or Krippendorff's α
@@ -138,35 +145,37 @@ HCI papers are fundamentally **user-centered**. Technology novelty alone is insu
 ## Audience and Tone
 
 ### Target Reader
+
 - HCI researchers and practitioners
 - UX designers and product developers
 - Interdisciplinary (CS, psychology, design, social science)
 
 ### Tone Characteristics
-| Characteristic | Description |
-|---------------|-------------|
-| **User-centered** | Focus on people, not technology |
-| **Design-informed** | Grounded in design thinking |
-| **Empirical** | User studies provide evidence |
-| **Reflective** | Consider broader implications |
+
+| Characteristic      | Description                     |
+| ------------------- | ------------------------------- |
+| **User-centered**   | Focus on people, not technology |
+| **Design-informed** | Grounded in design thinking     |
+| **Empirical**       | User studies provide evidence   |
+| **Reflective**      | Consider broader implications   |
 
 ## HCI Abstract
 
 ### Focus on Users and Impact
 
 ```
-Video calling has become essential for remote collaboration, yet 
-current interfaces poorly support the peripheral awareness that makes 
-in-person work effective. Through formative interviews with 24 remote 
-workers, we identified three key challenges: difficulty gauging 
-colleague availability, lack of ambient presence cues, and interruption 
-anxiety. We designed AmbientOffice, a peripheral display system that 
-conveys teammate presence through subtle ambient visualizations. In a 
-two-week deployment study with 18 participants across three distributed 
-teams, AmbientOffice increased spontaneous collaboration by 40% and 
-reduced perceived isolation (p<0.01). Participants valued the system's 
-non-intrusive nature and reported feeling more connected to remote 
-colleagues. We discuss implications for designing ambient awareness 
+Video calling has become essential for remote collaboration, yet
+current interfaces poorly support the peripheral awareness that makes
+in-person work effective. Through formative interviews with 24 remote
+workers, we identified three key challenges: difficulty gauging
+colleague availability, lack of ambient presence cues, and interruption
+anxiety. We designed AmbientOffice, a peripheral display system that
+conveys teammate presence through subtle ambient visualizations. In a
+two-week deployment study with 18 participants across three distributed
+teams, AmbientOffice increased spontaneous collaboration by 40% and
+reduced perceived isolation (p<0.01). Participants valued the system's
+non-intrusive nature and reported feeling more connected to remote
+colleagues. We discuss implications for designing ambient awareness
 systems and the tension between visibility and privacy in remote work.
 ```
 
@@ -227,29 +236,34 @@ systems and the tension between visibility and privacy in remote work.
 ## HCI-Specific Requirements
 
 ### Participant Reporting
+
 - **Demographics**: Age, gender, relevant experience
 - **Recruitment**: How and where recruited
 - **Compensation**: Payment amount and type
 - **IRB approval**: Ethics board statement
 
 ### Quotes in Findings
+
 Use direct quotes to ground findings:
+
 ```
-Participants valued the ambient nature of the display. As P7 described: 
-"It's like having a window to my teammate's office. I don't need to 
-actively check it, but I know they're there." This passive awareness 
+Participants valued the ambient nature of the display. As P7 described:
+"It's like having a window to my teammate's office. I don't need to
+actively check it, but I know they're there." This passive awareness
 reduced the barrier to initiating contact.
 ```
 
 ### Design Implications Section
+
 Translate findings into actionable guidance:
+
 ```
 **Implication 1: Support peripheral awareness without demanding attention.**
-Ambient displays should be visible in peripheral vision but not require 
+Ambient displays should be visible in peripheral vision but not require
 active monitoring. Designers should consider calm technology principles.
 
 **Implication 2: Balance visibility with privacy.**
-Users want to share presence but fear surveillance. Systems should 
+Users want to share presence but fear surveillance. Systems should
 provide granular controls and make visibility mutual.
 ```
 
@@ -273,34 +287,36 @@ Data mining papers emphasize **scalability**, **real-world applicability**, and 
 ## Audience and Tone
 
 ### Target Reader
+
 - Data scientists and ML engineers
 - Industry researchers
 - Applied ML practitioners
 
 ### Tone Characteristics
-| Characteristic | Description |
-|---------------|-------------|
-| **Scalable** | Handle large datasets |
-| **Practical** | Real-world applications |
+
+| Characteristic   | Description              |
+| ---------------- | ------------------------ |
+| **Scalable**     | Handle large datasets    |
+| **Practical**    | Real-world applications  |
 | **Reproducible** | Datasets and code shared |
-| **Industrial** | Industry datasets valued |
+| **Industrial**   | Industry datasets valued |
 
 ## KDD Abstract
 
 ### Emphasize Scale and Application
 
 ```
-Fraud detection in e-commerce requires processing millions of 
-transactions in real-time while adapting to evolving attack patterns. 
-We present FraudShield, a graph neural network framework for real-time 
-fraud detection that scales to billion-edge transaction graphs. Unlike 
-prior methods that require full graph access, FraudShield uses 
-incremental updates with O(1) inference cost per transaction. On a 
-proprietary dataset of 2.3 billion transactions from a major e-commerce 
-platform, FraudShield achieves 94.2% precision at 80% recall, 
-outperforming production baselines by 12%. The system has been deployed 
-at [Company], processing 50K transactions per second and preventing 
-an estimated $400M in annual fraud losses. We release an anonymized 
+Fraud detection in e-commerce requires processing millions of
+transactions in real-time while adapting to evolving attack patterns.
+We present FraudShield, a graph neural network framework for real-time
+fraud detection that scales to billion-edge transaction graphs. Unlike
+prior methods that require full graph access, FraudShield uses
+incremental updates with O(1) inference cost per transaction. On a
+proprietary dataset of 2.3 billion transactions from a major e-commerce
+platform, FraudShield achieves 94.2% precision at 80% recall,
+outperforming production baselines by 12%. The system has been deployed
+at [Company], processing 50K transactions per second and preventing
+an estimated $400M in annual fraud losses. We release an anonymized
 benchmark dataset and code.
 ```
 
@@ -333,12 +349,14 @@ benchmark dataset and code.
 ## KDD-Specific Requirements
 
 ### Scalability
+
 - **Dataset sizes**: Report number of nodes, edges, samples
 - **Runtime analysis**: Wall-clock time comparisons
 - **Complexity**: Time and space complexity stated
 - **Scaling experiments**: Show performance vs. data size
 
 ### Industrial Deployment
+
 - **Case studies**: Real-world deployment stories
 - **A/B tests**: Online evaluation results (if applicable)
 - **Production metrics**: Business impact (if shareable)
@@ -365,11 +383,13 @@ ogbn-papers | 111M   | 1.6B   |  OOM  |   OOM     | 42.3
 ## Writing Quality
 
 ### Clarity
+
 - **One idea per sentence**
 - **Define terms before use**
 - **Use consistent notation**
 
 ### Precision
+
 - **Exact numbers**: "23.4%" not "about 20%"
 - **Clear claims**: Avoid hedging unless necessary
 - **Specific comparisons**: Name the baseline
@@ -377,6 +397,7 @@ ogbn-papers | 111M   | 1.6B   |  OOM  |   OOM     | 42.3
 ## Contribution Bullets
 
 Used across all CS venues:
+
 ```
 Our contributions are:
 • We identify [problem/insight]
@@ -388,6 +409,7 @@ Our contributions are:
 ## Reproducibility Standards
 
 All CS venues increasingly expect:
+
 - **Code availability**: GitHub link (anonymous for review)
 - **Data availability**: Public datasets or release plans
 - **Full hyperparameters**: Training details complete
@@ -396,16 +418,19 @@ All CS venues increasingly expect:
 ## Ethics and Broader Impact
 
 ### NLP (ACL/EMNLP)
+
 - **Limitations section**: Required
 - **Responsible NLP checklist**: Ethical considerations
 - **Bias analysis**: For models affecting people
 
 ### HCI (CHI)
+
 - **IRB/Ethics approval**: Required for human subjects
 - **Informed consent**: Procedure described
 - **Privacy considerations**: Data handling
 
 ### KDD/WWW
+
 - **Societal impact**: Consider misuse potential
 - **Privacy preservation**: For sensitive data
 - **Fairness analysis**: When applicable
@@ -414,20 +439,21 @@ All CS venues increasingly expect:
 
 ## Venue Comparison Table
 
-| Aspect | ACL/EMNLP | CHI | KDD/WWW | SIGIR |
-|--------|-----------|-----|---------|-------|
-| **Focus** | NLP tasks | User studies | Scalable ML | IR/search |
-| **Evaluation** | Benchmarks + human | User studies | Large-scale exp | Datasets |
-| **Theory weight** | Moderate | Low | Moderate | Moderate |
-| **Industry value** | High | Medium | Very high | High |
-| **Page limit** | 8 long / 4 short | 10 + refs | 9 + refs | 10 + refs |
-| **Review style** | ARR | Direct | Direct | Direct |
+| Aspect             | ACL/EMNLP          | CHI          | KDD/WWW         | SIGIR     |
+| ------------------ | ------------------ | ------------ | --------------- | --------- |
+| **Focus**          | NLP tasks          | User studies | Scalable ML     | IR/search |
+| **Evaluation**     | Benchmarks + human | User studies | Large-scale exp | Datasets  |
+| **Theory weight**  | Moderate           | Low          | Moderate        | Moderate  |
+| **Industry value** | High               | Medium       | Very high       | High      |
+| **Page limit**     | 8 long / 4 short   | 10 + refs    | 9 + refs        | 10 + refs |
+| **Review style**   | ARR                | Direct       | Direct          | Direct    |
 
 ---
 
 ## Pre-Submission Checklist
 
 ### All CS Venues
+
 - [ ] Clear contribution statement
 - [ ] Strong baselines
 - [ ] Reproducibility information complete
@@ -435,18 +461,21 @@ All CS venues increasingly expect:
 - [ ] Anonymized (if double-blind)
 
 ### NLP-Specific
+
 - [ ] Standard benchmark results
 - [ ] Error analysis included
 - [ ] Human evaluation (for generation)
 - [ ] Responsible NLP checklist
 
 ### HCI-Specific
+
 - [ ] IRB approval stated
 - [ ] Participant demographics
 - [ ] Direct quotes in findings
 - [ ] Design implications
 
 ### Data Mining-Specific
+
 - [ ] Scalability experiments
 - [ ] Dataset size statistics
 - [ ] Runtime comparisons
@@ -460,4 +489,3 @@ All CS venues increasingly expect:
 - `ml_conference_style.md` - NeurIPS/ICML style guide
 - `conferences_formatting.md` - Technical formatting requirements
 - `reviewer_expectations.md` - What CS reviewers seek
-

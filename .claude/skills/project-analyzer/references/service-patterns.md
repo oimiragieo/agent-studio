@@ -12,16 +12,17 @@ This document contains patterns for detecting service types, frameworks, and ent
 
 Classify services based on directory/service name keywords:
 
-| Keywords | Service Type |
-|----------|--------------|
-| `frontend`, `client`, `web`, `ui`, `app` | frontend |
-| `backend`, `api`, `server`, `service` | backend |
-| `worker`, `job`, `queue`, `task`, `celery` | worker |
-| `scraper`, `crawler`, `spider` | scraper |
-| `proxy`, `gateway`, `router` | proxy |
-| `lib`, `shared`, `common`, `core`, `utils` | library |
+| Keywords                                   | Service Type |
+| ------------------------------------------ | ------------ |
+| `frontend`, `client`, `web`, `ui`, `app`   | frontend     |
+| `backend`, `api`, `server`, `service`      | backend      |
+| `worker`, `job`, `queue`, `task`, `celery` | worker       |
+| `scraper`, `crawler`, `spider`             | scraper      |
+| `proxy`, `gateway`, `router`               | proxy        |
+| `lib`, `shared`, `common`, `core`, `utils` | library      |
 
 **Example:**
+
 ```python
 name_lower = service_name.lower()
 
@@ -39,6 +40,7 @@ elif any(kw in name_lower for kw in ["worker", "job", "queue", "task", "celery"]
 If name does not match, infer from language and file presence:
 
 **Python Backend Indicators:**
+
 - `run.py` exists
 - `main.py` exists
 - `__main__.py` exists
@@ -49,13 +51,13 @@ If name does not match, infer from language and file presence:
 
 ### Python Frameworks
 
-| Pattern in deps | Framework | Type | Default Port |
-|-----------------|-----------|------|--------------|
-| `fastapi` | FastAPI | backend | 8000 |
-| `flask` | Flask | backend | 5000 |
-| `django` | Django | backend | 8000 |
-| `starlette` | Starlette | backend | 8000 |
-| `litestar` | Litestar | backend | 8000 |
+| Pattern in deps | Framework | Type    | Default Port |
+| --------------- | --------- | ------- | ------------ |
+| `fastapi`       | FastAPI   | backend | 8000         |
+| `flask`         | Flask     | backend | 5000         |
+| `django`        | Django    | backend | 8000         |
+| `starlette`     | Starlette | backend | 8000         |
+| `litestar`      | Litestar  | backend | 8000         |
 
 **Task Queue Detection:**
 | Pattern | Queue System |
@@ -131,26 +133,26 @@ If name does not match, infer from language and file presence:
 ### Go Frameworks
 
 | Pattern in go.mod | Framework | Default Port |
-|-------------------|-----------|--------------|
-| `gin-gonic/gin` | Gin | 8080 |
-| `labstack/echo` | Echo | 8080 |
-| `gofiber/fiber` | Fiber | 3000 |
-| `go-chi/chi` | Chi | 8080 |
+| ----------------- | --------- | ------------ |
+| `gin-gonic/gin`   | Gin       | 8080         |
+| `labstack/echo`   | Echo      | 8080         |
+| `gofiber/fiber`   | Fiber     | 3000         |
+| `go-chi/chi`      | Chi       | 8080         |
 
 ### Rust Frameworks
 
 | Pattern in Cargo.toml | Framework | Default Port |
-|-----------------------|-----------|--------------|
-| `actix-web` | Actix Web | 8080 |
-| `axum` | Axum | 3000 |
-| `rocket` | Rocket | 8000 |
+| --------------------- | --------- | ------------ |
+| `actix-web`           | Actix Web | 8080         |
+| `axum`                | Axum      | 3000         |
+| `rocket`              | Rocket    | 8000         |
 
 ### Ruby Frameworks
 
-| Pattern in Gemfile | Framework | Default Port |
-|--------------------|-----------|--------------|
-| `rails` | Ruby on Rails | 3000 |
-| `sinatra` | Sinatra | 4567 |
+| Pattern in Gemfile | Framework     | Default Port |
+| ------------------ | ------------- | ------------ |
+| `rails`            | Ruby on Rails | 3000         |
+| `sinatra`          | Sinatra       | 4567         |
 
 **Task Queue:**
 | Pattern | Queue |
@@ -167,6 +169,7 @@ If name does not match, infer from language and file presence:
 | `AppKit` | AppKit | desktop |
 
 **Apple Frameworks:**
+
 ```
 Combine, CoreData, MapKit, WidgetKit, CoreLocation,
 StoreKit, CloudKit, ActivityKit, UserNotifications
@@ -179,11 +182,13 @@ StoreKit, CloudKit, ActivityKit, UserNotifications
 Check these files in order to find the main entry point:
 
 **Python:**
+
 ```
 main.py, app.py, __main__.py, server.py, wsgi.py, asgi.py
 ```
 
 **JavaScript/TypeScript:**
+
 ```
 index.ts, index.js, main.ts, main.js, server.ts, server.js,
 app.ts, app.js, src/index.ts, src/index.js, src/main.ts,
@@ -192,11 +197,13 @@ pages/_app.tsx, pages/_app.js
 ```
 
 **Go:**
+
 ```
 main.go, cmd/main.go
 ```
 
 **Rust:**
+
 ```
 src/main.rs, src/lib.rs
 ```
@@ -205,44 +212,44 @@ src/main.rs, src/lib.rs
 
 ### Directory Purpose Classification
 
-| Directory | Purpose |
-|-----------|---------|
-| `src/`, `app/`, `lib/` | Source code |
-| `test/`, `tests/`, `__tests__/` | Tests |
-| `config/`, `.config/` | Configuration |
-| `docs/`, `documentation/` | Documentation |
-| `dist/`, `build/`, `out/` | Build output |
-| `scripts/`, `bin/` | Scripts |
-| `assets/`, `static/`, `public/` | Assets |
-| `api/`, `routes/` | API endpoints |
-| `controllers/` | Controllers |
-| `models/`, `schemas/` | Data models |
-| `services/` | Business logic |
-| `components/`, `pages/`, `views/` | UI components |
-| `hooks/` | Custom hooks |
-| `utils/`, `helpers/` | Utilities |
-| `middleware/` | Middleware |
-| `tasks/`, `jobs/`, `workers/` | Background tasks |
+| Directory                         | Purpose          |
+| --------------------------------- | ---------------- |
+| `src/`, `app/`, `lib/`            | Source code      |
+| `test/`, `tests/`, `__tests__/`   | Tests            |
+| `config/`, `.config/`             | Configuration    |
+| `docs/`, `documentation/`         | Documentation    |
+| `dist/`, `build/`, `out/`         | Build output     |
+| `scripts/`, `bin/`                | Scripts          |
+| `assets/`, `static/`, `public/`   | Assets           |
+| `api/`, `routes/`                 | API endpoints    |
+| `controllers/`                    | Controllers      |
+| `models/`, `schemas/`             | Data models      |
+| `services/`                       | Business logic   |
+| `components/`, `pages/`, `views/` | UI components    |
+| `hooks/`                          | Custom hooks     |
+| `utils/`, `helpers/`              | Utilities        |
+| `middleware/`                     | Middleware       |
+| `tasks/`, `jobs/`, `workers/`     | Background tasks |
 
 ## Package Manager Detection
 
 ### Node.js Package Managers
 
-| Lock File | Package Manager |
-|-----------|-----------------|
-| `pnpm-lock.yaml` | pnpm |
-| `yarn.lock` | yarn |
-| `bun.lockb`, `bun.lock` | bun |
-| `package-lock.json` (default) | npm |
+| Lock File                     | Package Manager |
+| ----------------------------- | --------------- |
+| `pnpm-lock.yaml`              | pnpm            |
+| `yarn.lock`                   | yarn            |
+| `bun.lockb`, `bun.lock`       | bun             |
+| `package-lock.json` (default) | npm             |
 
 ### Python Package Managers
 
-| File | Package Manager |
-|------|-----------------|
-| `requirements.txt` | pip |
-| `pyproject.toml` with `[tool.poetry]` | poetry |
-| `pyproject.toml` with `[tool.uv]` | uv |
-| `Pipfile` | pipenv |
+| File                                  | Package Manager |
+| ------------------------------------- | --------------- |
+| `requirements.txt`                    | pip             |
+| `pyproject.toml` with `[tool.poetry]` | poetry          |
+| `pyproject.toml` with `[tool.uv]`     | uv              |
+| `Pipfile`                             | pipenv          |
 
 ## Integration Notes
 
@@ -259,6 +266,7 @@ When using these patterns with project-analyzer skill:
 ## Memory Protocol (MANDATORY)
 
 **After using these patterns:**
+
 - Record new framework patterns in `.claude/context/memory/learnings.md`
 - Document detection edge cases in `.claude/context/memory/issues.md`
 

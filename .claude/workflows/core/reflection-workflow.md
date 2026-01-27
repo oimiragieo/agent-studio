@@ -43,13 +43,13 @@ flowchart TD
 
 ### 1.1 Trigger Types
 
-| Trigger Type | Event | Priority | Scope |
-|--------------|-------|----------|-------|
-| **Task Completion** | TaskUpdate(status="completed") | High | Single task |
-| **Error Recovery** | PostToolUse(Bash) with exit != 0 | Medium | Error context |
-| **Session End** | Session termination signal | Low | All unreflected tasks |
-| **Manual Trigger** | User invokes /reflect command | High | Specified scope |
-| **Batch Trigger** | Scheduled periodic reflection | Low | Multiple tasks |
+| Trigger Type        | Event                            | Priority | Scope                 |
+| ------------------- | -------------------------------- | -------- | --------------------- |
+| **Task Completion** | TaskUpdate(status="completed")   | High     | Single task           |
+| **Error Recovery**  | PostToolUse(Bash) with exit != 0 | Medium   | Error context         |
+| **Session End**     | Session termination signal       | Low      | All unreflected tasks |
+| **Manual Trigger**  | User invokes /reflect command    | High     | Specified scope       |
+| **Batch Trigger**   | Scheduled periodic reflection    | Low      | Multiple tasks        |
 
 ### 1.2 Trigger Detection Logic
 
@@ -60,7 +60,7 @@ if (tool === 'TaskUpdate' && params.status === 'completed') {
   queueForReflection({
     taskId: params.taskId,
     trigger: 'task_completion',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }
 
@@ -70,7 +70,7 @@ if (tool === 'Bash' && exitCode !== 0) {
     context: 'error_recovery',
     trigger: 'error',
     command: params.command,
-    error: stderr
+    error: stderr,
   });
 }
 ```
@@ -97,6 +97,7 @@ if (tool === 'Bash' && exitCode !== 0) {
 ### 1.4 Gate Conditions
 
 Before proceeding to Phase 2:
+
 - [ ] Task exists and has completed status
 - [ ] Task has summary in metadata
 - [ ] Task not already reflected (check reflection-log.jsonl)
@@ -110,13 +111,13 @@ Before proceeding to Phase 2:
 
 ### 2.1 Data Sources
 
-| Source | Location | Content |
-|--------|----------|---------|
-| Task Metadata | TaskGet(taskId) | summary, filesModified, discoveries |
-| Output Files | paths from filesModified | Actual created/modified content |
-| Agent Definition | `.claude/agents/<category>/<agent>.md` | Expected capabilities |
-| Tool Usage | Conversation history | Tools invoked, parameters used |
-| Memory Context | `.claude/context/memory/` | Relevant learnings, decisions |
+| Source           | Location                               | Content                             |
+| ---------------- | -------------------------------------- | ----------------------------------- |
+| Task Metadata    | TaskGet(taskId)                        | summary, filesModified, discoveries |
+| Output Files     | paths from filesModified               | Actual created/modified content     |
+| Agent Definition | `.claude/agents/<category>/<agent>.md` | Expected capabilities               |
+| Tool Usage       | Conversation history                   | Tools invoked, parameters used      |
+| Memory Context   | `.claude/context/memory/`              | Relevant learnings, decisions       |
 
 ### 2.2 Collection Process
 
@@ -145,7 +146,7 @@ return {
   outputs,
   agentDef,
   memory: { learnings, decisions },
-  collectedAt: new Date().toISOString()
+  collectedAt: new Date().toISOString(),
 };
 ```
 
@@ -153,14 +154,14 @@ return {
 
 Determine output type based on agent and task for rubric selection:
 
-| Agent | Output Type | Rubric |
-|-------|-------------|--------|
-| developer | code_output | code_output rubrics |
-| planner | plan_output | plan_output rubrics |
-| architect | architecture_output | architecture_output rubrics |
-| technical-writer | documentation_output | documentation_output rubrics |
+| Agent              | Output Type            | Rubric                         |
+| ------------------ | ---------------------- | ------------------------------ |
+| developer          | code_output            | code_output rubrics            |
+| planner            | plan_output            | plan_output rubrics            |
+| architect          | architecture_output    | architecture_output rubrics    |
+| technical-writer   | documentation_output   | documentation_output rubrics   |
 | security-architect | security_review_output | security_review_output rubrics |
-| *others* | agent_output | agent_output rubrics (default) |
+| _others_           | agent_output           | agent_output rubrics (default) |
 
 ---
 
@@ -180,13 +181,13 @@ const outputRubrics = rubrics.output_types[outputType];
 
 ### 3.2 Scoring Categories
 
-| Category | Weight (Default) | Description |
-|----------|------------------|-------------|
-| **Completeness** | 25% | All required sections present and thoroughly addressed |
-| **Accuracy** | 25% | No factual errors, correct paths, valid syntax |
-| **Clarity** | 15% | Well-structured, readable, easy to understand |
-| **Consistency** | 15% | Follows conventions, style guides, patterns |
-| **Actionability** | 20% | Clear next steps, implementable without ambiguity |
+| Category          | Weight (Default) | Description                                            |
+| ----------------- | ---------------- | ------------------------------------------------------ |
+| **Completeness**  | 25%              | All required sections present and thoroughly addressed |
+| **Accuracy**      | 25%              | No factual errors, correct paths, valid syntax         |
+| **Clarity**       | 15%              | Well-structured, readable, easy to understand          |
+| **Consistency**   | 15%              | Follows conventions, style guides, patterns            |
+| **Actionability** | 20%              | Clear next steps, implementable without ambiguity      |
 
 ### 3.3 Scoring Process
 
@@ -208,9 +209,9 @@ function scoreCategory(category, output, rubrics) {
   const passRate = passed / checkpoints.length;
   let score;
   if (passRate >= 0.95) score = 1.0;
-  else if (passRate >= 0.80) score = 0.75;
-  else if (passRate >= 0.60) score = 0.5;
-  else if (passRate >= 0.40) score = 0.25;
+  else if (passRate >= 0.8) score = 0.75;
+  else if (passRate >= 0.6) score = 0.5;
+  else if (passRate >= 0.4) score = 0.25;
   else score = 0;
 
   return { score, findings };
@@ -231,12 +232,12 @@ function calculateOverallScore(categoryScores, weights) {
 
 ### 3.5 Score Thresholds
 
-| Threshold | Score Range | Action |
-|-----------|-------------|--------|
-| **Excellent** | 0.9 - 1.0 | Log as exemplary, extract patterns |
-| **Pass** | 0.7 - 0.9 | Accept, note minor improvements |
-| **Warning** | 0.4 - 0.7 | Generate recommendations, suggest retry |
-| **Critical Fail** | 0.0 - 0.4 | Block completion, escalate to human |
+| Threshold         | Score Range | Action                                  |
+| ----------------- | ----------- | --------------------------------------- |
+| **Excellent**     | 0.9 - 1.0   | Log as exemplary, extract patterns      |
+| **Pass**          | 0.7 - 0.9   | Accept, note minor improvements         |
+| **Warning**       | 0.4 - 0.7   | Generate recommendations, suggest retry |
+| **Critical Fail** | 0.0 - 0.4   | Block completion, escalate to human     |
 
 ### 3.6 Output-Type-Specific Weights
 
@@ -245,18 +246,18 @@ Each output type has customized weights per rubrics.json:
 ```json
 {
   "code_output": {
-    "completeness": 0.20,
+    "completeness": 0.2,
     "accuracy": 0.35,
     "clarity": 0.15,
-    "consistency": 0.20,
-    "actionability": 0.10
+    "consistency": 0.2,
+    "actionability": 0.1
   },
   "plan_output": {
-    "completeness": 0.30,
-    "accuracy": 0.20,
-    "clarity": 0.20,
-    "consistency": 0.10,
-    "actionability": 0.20
+    "completeness": 0.3,
+    "accuracy": 0.2,
+    "clarity": 0.2,
+    "consistency": 0.1,
+    "actionability": 0.2
   }
 }
 ```
@@ -271,11 +272,11 @@ Each output type has customized weights per rubrics.json:
 
 Based on VIGIL framework diagnosis:
 
-| Category | Definition | Examples |
-|----------|------------|----------|
-| **Roses** | Strengths and successes to reinforce | Efficient implementation, good test coverage, proper tool usage |
-| **Buds** | Growth opportunities, potential improvements | Better error messages, refactoring opportunities, minor enhancements |
-| **Thorns** | Problems, failures, blockers requiring attention | Missing tests, syntax errors, security vulnerabilities |
+| Category   | Definition                                       | Examples                                                             |
+| ---------- | ------------------------------------------------ | -------------------------------------------------------------------- |
+| **Roses**  | Strengths and successes to reinforce             | Efficient implementation, good test coverage, proper tool usage      |
+| **Buds**   | Growth opportunities, potential improvements     | Better error messages, refactoring opportunities, minor enhancements |
+| **Thorns** | Problems, failures, blockers requiring attention | Missing tests, syntax errors, security vulnerabilities               |
 
 ### 4.2 Issue Classification
 
@@ -287,19 +288,19 @@ function classifyIssues(findings) {
     if (finding.score >= 0.9) {
       rbt.roses.push({
         description: finding.description,
-        source: finding.checkpoint
+        source: finding.checkpoint,
       });
     } else if (finding.score >= 0.5) {
       rbt.buds.push({
         description: finding.improvement,
         impact: 'medium',
-        source: finding.checkpoint
+        source: finding.checkpoint,
       });
     } else {
       rbt.thorns.push({
         description: finding.issue,
         severity: finding.score < 0.25 ? 'critical' : 'high',
-        source: finding.checkpoint
+        source: finding.checkpoint,
       });
     }
   }
@@ -310,12 +311,12 @@ function classifyIssues(findings) {
 
 ### 4.3 Severity Levels
 
-| Severity | Score Range | Action Required |
-|----------|-------------|-----------------|
-| **Critical** | < 0.25 | Must fix before acceptance |
-| **High** | 0.25 - 0.5 | Should fix, blocks excellence |
-| **Medium** | 0.5 - 0.75 | Improvement opportunity |
-| **Low** | > 0.75 | Minor enhancement |
+| Severity     | Score Range | Action Required               |
+| ------------ | ----------- | ----------------------------- |
+| **Critical** | < 0.25      | Must fix before acceptance    |
+| **High**     | 0.25 - 0.5  | Should fix, blocks excellence |
+| **Medium**   | 0.5 - 0.75  | Improvement opportunity       |
+| **Low**      | > 0.75      | Minor enhancement             |
 
 ### 4.4 Issue Linking
 
@@ -348,12 +349,12 @@ Link issues to their source for actionability:
 
 Based on MARS framework metacognitive techniques:
 
-| Technique | Purpose | Implementation |
-|-----------|---------|----------------|
+| Technique           | Purpose                 | Implementation                        |
+| ------------------- | ----------------------- | ------------------------------------- |
 | **Self-Monitoring** | Track reasoning quality | Confidence scores, consistency checks |
-| **Self-Evaluation** | Assess output quality | Rubric-based scoring (Phase 3) |
-| **Self-Regulation** | Adjust behavior | Strategy switching recommendations |
-| **Self-Reflection** | Learn from experience | Pattern extraction (this phase) |
+| **Self-Evaluation** | Assess output quality   | Rubric-based scoring (Phase 3)        |
+| **Self-Regulation** | Adjust behavior         | Strategy switching recommendations    |
+| **Self-Reflection** | Learn from experience   | Pattern extraction (this phase)       |
 
 ### 5.2 Extraction Process
 
@@ -367,7 +368,7 @@ function extractLearnings(context, scores, rbt) {
       type: 'pattern',
       description: `Exemplary ${context.outputType}: ${summarizeApproach(context)}`,
       source: context.taskId,
-      confidence: 'high'
+      confidence: 'high',
     });
   }
 
@@ -377,7 +378,7 @@ function extractLearnings(context, scores, rbt) {
       type: 'anti-pattern',
       description: `Avoid: ${thorn.description}`,
       prevention: `Check: ${thorn.source.checkpoint}`,
-      source: context.taskId
+      source: context.taskId,
     });
   }
 
@@ -387,7 +388,7 @@ function extractLearnings(context, scores, rbt) {
       type: 'improvement',
       description: bud.description,
       impact: bud.impact,
-      source: context.taskId
+      source: context.taskId,
     });
   }
 
@@ -397,13 +398,13 @@ function extractLearnings(context, scores, rbt) {
 
 ### 5.3 Pattern Categories
 
-| Category | Description | Example |
-|----------|-------------|---------|
-| **Effective Solutions** | Approaches that worked well | "Async context managers for resource cleanup" |
-| **Anti-Patterns** | Approaches to avoid | "Direct string concatenation for SQL queries" |
-| **Workflow Improvements** | Process enhancements | "Run tests before commit, not after" |
-| **Tool Usage Patterns** | Effective tool combinations | "Parallel Read for multi-file context gathering" |
-| **Decision Rationale** | Why choices were made | "Chose Redis over Memcached for pub/sub support" |
+| Category                  | Description                 | Example                                          |
+| ------------------------- | --------------------------- | ------------------------------------------------ |
+| **Effective Solutions**   | Approaches that worked well | "Async context managers for resource cleanup"    |
+| **Anti-Patterns**         | Approaches to avoid         | "Direct string concatenation for SQL queries"    |
+| **Workflow Improvements** | Process enhancements        | "Run tests before commit, not after"             |
+| **Tool Usage Patterns**   | Effective tool combinations | "Parallel Read for multi-file context gathering" |
+| **Decision Rationale**    | Why choices were made       | "Chose Redis over Memcached for pub/sub support" |
 
 ### 5.4 Decision Documentation (ADR Format)
 
@@ -428,12 +429,12 @@ For significant decisions, create lightweight ADRs:
 
 ### 6.1 Memory File Mapping
 
-| Learning Type | Target File | Format |
-|---------------|-------------|--------|
-| Patterns | `.claude/context/memory/learnings.md` | Markdown list |
-| Anti-patterns | `.claude/context/memory/learnings.md` | Markdown list |
-| Decisions | `.claude/context/memory/decisions.md` | ADR format |
-| Issues | `.claude/context/memory/issues.md` | Issue format |
+| Learning Type    | Target File                                   | Format             |
+| ---------------- | --------------------------------------------- | ------------------ |
+| Patterns         | `.claude/context/memory/learnings.md`         | Markdown list      |
+| Anti-patterns    | `.claude/context/memory/learnings.md`         | Markdown list      |
+| Decisions        | `.claude/context/memory/decisions.md`         | ADR format         |
+| Issues           | `.claude/context/memory/issues.md`            | Issue format       |
 | Reflection Entry | `.claude/context/memory/reflection-log.jsonl` | JSON (append-only) |
 
 ### 6.2 Update Process
@@ -452,10 +453,7 @@ async function updateMemory(learnings, rbt, scores, context) {
   // 2. Update decisions.md for significant decisions
   const decisions = learnings.filter(l => l.type === 'decision');
   if (decisions.length > 0) {
-    await appendToFile(
-      '.claude/context/memory/decisions.md',
-      formatDecisionsAsADR(decisions)
-    );
+    await appendToFile('.claude/context/memory/decisions.md', formatDecisionsAsADR(decisions));
   }
 
   // 3. Update issues.md for blockers
@@ -485,9 +483,9 @@ async function updateMemory(learnings, rbt, scores, context) {
   "scores": {
     "completeness": 0.75,
     "accuracy": 0.95,
-    "clarity": 0.80,
+    "clarity": 0.8,
     "consistency": 0.85,
-    "actionability": 0.70
+    "actionability": 0.7
   },
   "overallScore": 0.83,
   "threshold": "pass",
@@ -515,13 +513,13 @@ async function updateMemory(learnings, rbt, scores, context) {
 
 ### 7.1 Recommendation Categories
 
-| Category | Trigger | Example |
-|----------|---------|---------|
-| **Workflow Optimization** | Repeated inefficiencies | "Consider caching context between related tasks" |
-| **Agent Improvement** | Consistent low scores | "Add edge case handling to developer checklist" |
-| **Skill Creation Need** | Missing capability pattern | "Create input-validation skill for common patterns" |
-| **Tool Usage Improvement** | Suboptimal tool selection | "Use parallel Read for multi-file context" |
-| **Process Enhancement** | Workflow gaps | "Add pre-commit test hook" |
+| Category                   | Trigger                    | Example                                             |
+| -------------------------- | -------------------------- | --------------------------------------------------- |
+| **Workflow Optimization**  | Repeated inefficiencies    | "Consider caching context between related tasks"    |
+| **Agent Improvement**      | Consistent low scores      | "Add edge case handling to developer checklist"     |
+| **Skill Creation Need**    | Missing capability pattern | "Create input-validation skill for common patterns" |
+| **Tool Usage Improvement** | Suboptimal tool selection  | "Use parallel Read for multi-file context"          |
+| **Process Enhancement**    | Workflow gaps              | "Add pre-commit test hook"                          |
 
 ### 7.2 Recommendation Generation
 
@@ -540,7 +538,7 @@ function generateRecommendations(scores, rbt, context, history) {
     recommendations.push({
       type: 'systemic',
       description: `Recurring issue detected: ${patterns.recurringIssues[0]}`,
-      suggestion: 'Consider creating preventive hook or skill'
+      suggestion: 'Consider creating preventive hook or skill',
     });
   }
 
@@ -549,7 +547,7 @@ function generateRecommendations(scores, rbt, context, history) {
     recommendations.push({
       type: 'agent_improvement',
       description: `${context.agent} consistently scores below target`,
-      suggestion: 'Review agent definition, add skills or guidance'
+      suggestion: 'Review agent definition, add skills or guidance',
     });
   }
 
@@ -563,16 +561,19 @@ function generateRecommendations(scores, rbt, context, history) {
 ## Improvement Recommendations
 
 ### Critical (Must Fix)
+
 1. [Accuracy] Fix syntax error in line 42 of auth.py
    - **Why**: Code will not compile
    - **Fix**: Change `if x = 1` to `if x == 1`
 
 ### High Priority (Should Fix)
+
 2. [Completeness] Add missing error handling for edge case X
    - **Why**: Null inputs will cause crash
    - **Fix**: Add null check at function entry
 
 ### Improvements (Can Fix)
+
 3. [Clarity] Extract complex logic into helper function
    - **Why**: Current function has 50+ lines
    - **Fix**: Extract lines 20-45 into `validateInput()` helper
@@ -582,12 +583,12 @@ function generateRecommendations(scores, rbt, context, history) {
 
 Recommendations may trigger self-healing workflows:
 
-| Pattern Detected | Self-Healing Action |
-|------------------|---------------------|
-| Same error in 5+ tasks | Create skill to prevent error |
-| Agent consistently scores < 0.7 | Suggest agent definition improvements |
+| Pattern Detected                 | Self-Healing Action                   |
+| -------------------------------- | ------------------------------------- |
+| Same error in 5+ tasks           | Create skill to prevent error         |
+| Agent consistently scores < 0.7  | Suggest agent definition improvements |
 | Missing tool pattern in 3+ tasks | Recommend adding tool to agent skills |
-| Recurring security issue | Escalate to security-architect review |
+| Recurring security issue         | Escalate to security-architect review |
 
 **Security Constraint**: Self-healing follows Immutable Security Core pattern - cannot modify protected paths without human approval.
 
@@ -597,11 +598,11 @@ Recommendations may trigger self-healing workflows:
 
 ### Hooks That Trigger This Workflow
 
-| Hook | File | Trigger |
-|------|------|---------|
+| Hook                             | File                        | Trigger                                   |
+| -------------------------------- | --------------------------- | ----------------------------------------- |
 | `task-completion-reflection.cjs` | `.claude/hooks/reflection/` | PostToolUse(TaskUpdate, status=completed) |
-| `error-recovery-reflection.cjs` | `.claude/hooks/reflection/` | PostToolUse(Bash, exit!=0) |
-| `session-end-reflection.cjs` | `.claude/hooks/reflection/` | Session end |
+| `error-recovery-reflection.cjs`  | `.claude/hooks/reflection/` | PostToolUse(Bash, exit!=0)                |
+| `session-end-reflection.cjs`     | `.claude/hooks/reflection/` | Session end                               |
 
 ### Hook: task-completion-reflection.cjs
 
@@ -616,7 +617,7 @@ module.exports = async ({ tool, params }) => {
   queue.pending.push({
     taskId: params.taskId,
     trigger: 'task_completion',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
   fs.writeFileSync(REFLECTION_QUEUE_PATH, JSON.stringify(queue, null, 2));
 
@@ -626,34 +627,34 @@ module.exports = async ({ tool, params }) => {
 
 ### Integration with Other Workflows
 
-| Workflow | Integration Point |
-|----------|-------------------|
-| **Router Decision** | Reflection scores inform agent capability assessment |
-| **Evolution Workflow** | Low scores may trigger self-healing evolution |
-| **Feature Development** | Reflection runs after each phase completion |
-| **Incident Response** | Post-incident reflection is mandatory |
+| Workflow                | Integration Point                                    |
+| ----------------------- | ---------------------------------------------------- |
+| **Router Decision**     | Reflection scores inform agent capability assessment |
+| **Evolution Workflow**  | Low scores may trigger self-healing evolution        |
+| **Feature Development** | Reflection runs after each phase completion          |
+| **Incident Response**   | Post-incident reflection is mandatory                |
 
 ### Integration with Memory System
 
-| Memory Component | Integration |
-|------------------|-------------|
+| Memory Component      | Integration                                    |
+| --------------------- | ---------------------------------------------- |
 | **STM/MTM/LTM Tiers** | Reflection entries flow through tier promotion |
-| **Smart Pruner** | Old reflection entries pruned by utility score |
-| **Memory Dashboard** | Reflection metrics included in health score |
-| **Memory Scheduler** | Weekly reflection log summarization |
+| **Smart Pruner**      | Old reflection entries pruned by utility score |
+| **Memory Dashboard**  | Reflection metrics included in health score    |
+| **Memory Scheduler**  | Weekly reflection log summarization            |
 
 ---
 
 ## Output Locations
 
-| Output Type | Location |
-|-------------|----------|
+| Output Type            | Location                                                                   |
+| ---------------------- | -------------------------------------------------------------------------- |
 | **Reflection Reports** | `.claude/context/artifacts/reflections/reflection-{taskId}-{timestamp}.md` |
-| **Reflection Log** | `.claude/context/memory/reflection-log.jsonl` |
-| **Pattern Updates** | `.claude/context/memory/learnings.md` |
-| **Decision Records** | `.claude/context/memory/decisions.md` |
-| **Issue Records** | `.claude/context/memory/issues.md` |
-| **Metrics History** | `.claude/context/memory/metrics/` |
+| **Reflection Log**     | `.claude/context/memory/reflection-log.jsonl`                              |
+| **Pattern Updates**    | `.claude/context/memory/learnings.md`                                      |
+| **Decision Records**   | `.claude/context/memory/decisions.md`                                      |
+| **Issue Records**      | `.claude/context/memory/issues.md`                                         |
+| **Metrics History**    | `.claude/context/memory/metrics/`                                          |
 
 ---
 
@@ -665,58 +666,71 @@ module.exports = async ({ tool, params }) => {
 # Reflection Report: Task #{taskId}
 
 ## Overview
+
 - **Task**: {subject}
 - **Agent**: {agent}
 - **Output Type**: {outputType}
 - **Completed**: {timestamp}
 
 ## Quality Assessment
+
 - **Overall Score**: {overallScore} / 1.0 ({threshold})
 
 ### Category Scores
-| Category | Score | Weight | Weighted |
-|----------|-------|--------|----------|
-| Completeness | {score} | {weight} | {weighted} |
-| Accuracy | {score} | {weight} | {weighted} |
-| Clarity | {score} | {weight} | {weighted} |
-| Consistency | {score} | {weight} | {weighted} |
+
+| Category      | Score   | Weight   | Weighted   |
+| ------------- | ------- | -------- | ---------- |
+| Completeness  | {score} | {weight} | {weighted} |
+| Accuracy      | {score} | {weight} | {weighted} |
+| Clarity       | {score} | {weight} | {weighted} |
+| Consistency   | {score} | {weight} | {weighted} |
 | Actionability | {score} | {weight} | {weighted} |
 
 ## RBT Diagnosis
 
 ### Roses (Strengths)
+
 - {rose_1}
 - {rose_2}
 
 ### Buds (Opportunities)
+
 - {bud_1}
 - {bud_2}
 
 ### Thorns (Issues)
+
 - {thorn_1}
 - {thorn_2}
 
 ## Learnings Extracted
+
 1. {learning_1}
 2. {learning_2}
 
 ## Recommendations
+
 ### Critical
+
 1. {critical_recommendation}
 
 ### High Priority
+
 2. {high_recommendation}
 
 ### Improvements
+
 3. {improvement_recommendation}
 
 ## Memory Updates
+
 - [x] learnings.md updated with {n} patterns
 - [x] decisions.md updated with {m} ADRs
 - [x] reflection-log.jsonl entry appended
 
 ---
-*Generated by Reflection Agent | Task #{taskId} | {timestamp}*
+
+_Generated by Reflection Agent | Task #{taskId} | {timestamp}_
 ```
 
 ---
@@ -744,12 +758,12 @@ Before accepting any task output:
 
 ### Escalation Triggers
 
-| Condition | Escalation |
-|-----------|------------|
-| Score < 0.4 (critical fail) | Immediate human review |
-| 2 retries without improvement | Human review required |
-| Security-related thorns | Security architect review |
-| Same issue 3+ times | Systemic review required |
+| Condition                     | Escalation                |
+| ----------------------------- | ------------------------- |
+| Score < 0.4 (critical fail)   | Immediate human review    |
+| 2 retries without improvement | Human review required     |
+| Security-related thorns       | Security architect review |
+| Same issue 3+ times           | Systemic review required  |
 
 ---
 
@@ -789,6 +803,7 @@ Self-healing circuit breaker prevents runaway reflection:
 ```
 
 When OPEN:
+
 - Skip automatic reflection triggers
 - Allow only manual /reflect commands
 - Require human intervention to CLOSE

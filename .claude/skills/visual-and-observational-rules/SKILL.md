@@ -37,7 +37,7 @@ When reviewing or writing code, apply these guidelines:
 - The game should aim to be similar to Conway's Game of Life, where the nations are the living organisms.
 - Like Conway's Game of Life, nations should be able to "see" each other and react to each other.
 - Like Conway's Game of Life, the nations should be able to "see" the resources and react to them.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -50,6 +50,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

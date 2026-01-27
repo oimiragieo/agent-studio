@@ -9,17 +9,20 @@ Clinical decision algorithms provide systematic, step-by-step guidance for diagn
 ### Key Components
 
 **Decision Nodes**
+
 - **Question/Criteria**: Clear, measurable clinical parameter
 - **Binary vs Multi-Way**: Yes/no (simple) vs multiple options (complex)
 - **Objective**: Lab value, imaging finding vs Subjective: Clinical judgment
 
 **Action Nodes**
+
 - **Treatment**: Specific intervention with dosing
 - **Test**: Additional diagnostic procedure
 - **Referral**: Specialist consultation, higher level of care
 - **Observation**: Watchful waiting with defined follow-up
 
 **Terminal Nodes**
+
 - **Outcome**: Final decision point
 - **Follow-up**: Schedule for reassessment
 - **Exit criteria**: When to exit algorithm
@@ -27,24 +30,28 @@ Clinical decision algorithms provide systematic, step-by-step guidance for diagn
 ### Design Criteria
 
 **Clarity**
+
 - Unambiguous decision points
 - Mutually exclusive pathways
 - No circular loops (unless intentional reassessment cycles)
 - Clear entry and exit points
 
 **Clinical Validity**
+
 - Evidence-based decision criteria
 - Validated cut-points for biomarkers
 - Guideline-concordant recommendations
 - Expert consensus where evidence limited
 
 **Usability**
+
 - Maximum 7 decision points per pathway (cognitive load)
 - Visual hierarchy (most common path highlighted)
 - Printable single-page format preferred
 - Color coding for urgency/safety
 
 **Completeness**
+
 - All possible scenarios covered
 - Default pathway for edge cases
 - Safety-net provisions for unusual presentations
@@ -90,7 +97,7 @@ Entry: Suspected PE
 Step 1: Calculate Wells Score
   Clinical features points:
   - Clinical signs of DVT: 3 points
-  - PE more likely than alternative diagnosis: 3 points  
+  - PE more likely than alternative diagnosis: 3 points
   - Heart rate >100: 1.5 points
   - Immobilization/surgery in past 4 weeks: 1.5 points
   - Previous PE/DVT: 1.5 points
@@ -178,7 +185,7 @@ Step 4: Platinum Doublet Selection (if applicable)
   │  └─ Carboplatin AUC 6 + paclitaxel 200 mg/m² Q3W (4 cycles)
   │      or Carboplatin AUC 5 + nab-paclitaxel 100 mg/m² D1,8,15 Q4W
   │
-  └─ Non-squamous histology  
+  └─ Non-squamous histology
      └─ Carboplatin AUC 6 + pemetrexed 500 mg/m² Q3W (4 cycles)
          Continue pemetrexed maintenance if responding
          Add bevacizumab 15 mg/kg if eligible (no hemoptysis, brain mets)
@@ -402,6 +409,7 @@ Clinical Application:
 ### Visual Design Principles
 
 **Node Styling**
+
 ```latex
 % Decision nodes (diamond)
 \tikzstyle{decision} = [diamond, draw, fill=yellow!20, text width=4.5em, text centered, inner sep=0pt]
@@ -417,6 +425,7 @@ Clinical Application:
 ```
 
 **Color Coding by Urgency**
+
 - **Red**: Life-threatening, immediate action required
 - **Orange**: Urgent, action within hours
 - **Yellow**: Semi-urgent, action within 24-48 hours
@@ -424,6 +433,7 @@ Clinical Application:
 - **Blue**: Informational, monitoring only
 
 **Pathway Emphasis**
+
 - Bold arrows for most common pathway
 - Dashed arrows for rare scenarios
 - Arrow thickness proportional to pathway frequency
@@ -451,7 +461,7 @@ Clinical Application:
     \node [alert, below of=decision1, node distance=2.5cm] (alert1) {Immediate action};
     \node [process, right of=decision1, node distance=4cm] (process1) {Standard evaluation};
     \node [terminal, below of=process1, node distance=2.5cm] (end) {Outcome};
-    
+
     % Arrows
     \draw [arrow] (start) -- (decision1);
     \draw [arrow] (decision1) -- node {Yes} (alert1);
@@ -468,30 +478,35 @@ Clinical Application:
 ### Development Process
 
 **Step 1: Literature Review and Evidence Synthesis**
+
 - Systematic review of guidelines (NCCN, ASCO, ESMO, AHA/ACC)
 - Meta-analyses of clinical trials
 - Expert consensus statements
 - Local practice patterns and resource availability
 
 **Step 2: Draft Algorithm Development**
+
 - Multidisciplinary team input (physicians, nurses, pharmacists)
 - Define decision nodes and criteria
 - Specify actions and outcomes
 - Identify areas of uncertainty
 
 **Step 3: Pilot Testing**
+
 - Retrospective application to historical cases (n=20-50)
 - Identify scenarios not covered by algorithm
 - Refine decision criteria
 - Usability testing with end-users
 
 **Step 4: Prospective Validation**
+
 - Implement in clinical practice with data collection
 - Track adherence rate (target >80%)
 - Monitor outcomes vs historical controls
 - User satisfaction surveys
 
 **Step 5: Continuous Quality Improvement**
+
 - Quarterly review of algorithm performance
 - Update based on new evidence
 - Address deviations and reasons for non-adherence
@@ -500,17 +515,20 @@ Clinical Application:
 ### Performance Metrics
 
 **Process Metrics**
+
 - Algorithm adherence rate (% cases following algorithm)
 - Time to decision (median time from presentation to treatment start)
 - Completion rate (% cases reaching terminal node)
 
 **Outcome Metrics**
+
 - Appropriateness of care (concordance with guidelines)
 - Clinical outcomes (mortality, morbidity, readmissions)
 - Resource utilization (length of stay, unnecessary tests)
 - Safety (adverse events, errors)
 
 **User Experience Metrics**
+
 - Ease of use (Likert scale survey)
 - Time to use (median time to navigate algorithm)
 - Perceived utility (% users reporting algorithm helpful)
@@ -521,18 +539,21 @@ Clinical Application:
 ### Integration into Clinical Workflow
 
 **Electronic Health Record Integration**
+
 - Clinical decision support (CDS) alerts at key decision points
 - Order sets linked to algorithm pathways
 - Auto-population of risk scores from EHR data
 - Documentation templates following algorithm structure
 
 **Point-of-Care Tools**
+
 - Pocket cards for quick reference
 - Mobile apps with interactive algorithms
 - Wall posters in clinical areas
 - QR codes linking to full algorithm
 
 **Education and Training**
+
 - Didactic presentation of algorithm rationale
 - Case-based exercises
 - Simulation scenarios
@@ -541,6 +562,7 @@ Clinical Application:
 ### Overcoming Barriers
 
 **Common Barriers**
+
 - Algorithm complexity (too many decision points)
 - Lack of awareness (not disseminated effectively)
 - Disagreement with recommendations (perceived as cookbook medicine)
@@ -548,6 +570,7 @@ Clinical Application:
 - Resource limitations (recommended tests/treatments not available)
 
 **Mitigation Strategies**
+
 - Simplify algorithms (≤7 decision points per pathway preferred)
 - Champion network (local opinion leaders promoting algorithm)
 - Customize to local context (allow flexibility for clinical judgment)
@@ -559,6 +582,7 @@ Clinical Application:
 ### Version Control
 
 **Change Log Documentation**
+
 ```
 Algorithm: NSCLC First-Line Treatment
 Version: 3.2
@@ -586,19 +610,21 @@ Next Review Date: July 1, 2024
 ### Trigger for Updates
 
 **Mandatory Updates (Within 3 Months)**
+
 - FDA approval of new drug for algorithm indication
 - Guideline change (NCCN, ASCO, ESMO Category 1 recommendation)
 - Safety alert or black box warning added to recommended agent
 - Major clinical trial results changing standard of care
 
 **Routine Updates (Annually)**
+
 - Minor evidence updates
 - Optimization based on local performance data
 - Formatting or usability improvements
 - Addition of new clinical scenarios encountered
 
 **Emergency Updates (Within 1 Week)**
+
 - Drug shortage requiring alternative pathways
 - Drug recall or safety withdrawal
 - Outbreak or pandemic requiring modified protocols
-

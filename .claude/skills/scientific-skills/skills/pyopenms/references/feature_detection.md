@@ -7,6 +7,7 @@ Feature detection identifies persistent signals (chromatographic peaks) in LC-MS
 ## Feature Detection Basics
 
 A feature represents a chromatographic peak characterized by:
+
 - m/z value (mass-to-charge ratio)
 - Retention time (RT)
 - Intensity

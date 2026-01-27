@@ -6,7 +6,7 @@ model: opus
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, Bash, WebFetch]
-args: "<action> [options]"
+args: '<action> [options]'
 best_practices:
   - Always run in sandboxed environment (Docker/VM)
   - Use coordinate scaling for different resolutions
@@ -43,6 +43,7 @@ Desktop automation specialist that enables Claude to interact with computer envi
 Before using Computer Use, ensure proper sandboxed environment:
 
 1. **Docker Container** (Recommended):
+
    ```bash
    # Use Anthropic's reference container
    docker run -it --rm \
@@ -61,15 +62,16 @@ Configure the computer use tool with display settings:
 
 ```javascript
 const computerTool = {
-  type: "computer_20250124",  // or "computer_20251124" for Opus 4.5
-  name: "computer",
+  type: 'computer_20250124', // or "computer_20251124" for Opus 4.5
+  name: 'computer',
   display_width_px: 1024,
   display_height_px: 768,
-  display_number: 1
+  display_number: 1,
 };
 ```
 
 **Resolution Guidelines**:
+
 - XGA (1024x768): Default, works well for most tasks
 - WXGA (1280x800): Better for wide content
 - 1920x1080: Only if needed, may reduce accuracy
@@ -80,42 +82,42 @@ The core pattern for computer use is an agent loop:
 
 ```javascript
 async function computerUseAgentLoop(task, maxIterations = 50) {
-  const messages = [{ role: "user", content: task }];
+  const messages = [{ role: 'user', content: task }];
 
   for (let i = 0; i < maxIterations; i++) {
     // 1. Call Claude with computer tool
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 4096,
       tools: [computerTool],
       messages,
-      betas: ["computer-use-2025-01-24"]
+      betas: ['computer-use-2025-01-24'],
     });
 
     // 2. Check if task complete
-    if (response.stop_reason === "end_turn") {
+    if (response.stop_reason === 'end_turn') {
       return extractFinalResult(response);
     }
 
     // 3. Process tool use requests
     const toolResults = [];
     for (const block of response.content) {
-      if (block.type === "tool_use" && block.name === "computer") {
+      if (block.type === 'tool_use' && block.name === 'computer') {
         const result = await executeComputerAction(block.input);
         toolResults.push({
-          type: "tool_result",
+          type: 'tool_result',
           tool_use_id: block.id,
-          content: result
+          content: result,
         });
       }
     }
 
     // 4. Add assistant response and tool results
-    messages.push({ role: "assistant", content: response.content });
-    messages.push({ role: "user", content: toolResults });
+    messages.push({ role: 'assistant', content: response.content });
+    messages.push({ role: 'user', content: toolResults });
   }
 
-  throw new Error("Max iterations reached");
+  throw new Error('Max iterations reached');
 }
 ```
 
@@ -128,34 +130,34 @@ async function executeComputerAction(input) {
   const { action, coordinate, text, scroll_direction, scroll_amount } = input;
 
   switch (action) {
-    case "screenshot":
+    case 'screenshot':
       return await captureScreenshot();
 
-    case "left_click":
+    case 'left_click':
       await click(coordinate[0], coordinate[1]);
       return await captureScreenshot();
 
-    case "type":
+    case 'type':
       await typeText(text);
       return await captureScreenshot();
 
-    case "key":
+    case 'key':
       await pressKey(text);
       return await captureScreenshot();
 
-    case "mouse_move":
+    case 'mouse_move':
       await moveMouse(coordinate[0], coordinate[1]);
       return await captureScreenshot();
 
-    case "scroll":
+    case 'scroll':
       await scroll(coordinate, scroll_direction, scroll_amount);
       return await captureScreenshot();
 
-    case "left_click_drag":
+    case 'left_click_drag':
       await drag(input.start_coordinate, coordinate);
       return await captureScreenshot();
 
-    case "wait":
+    case 'wait':
       await sleep(input.duration * 1000);
       return await captureScreenshot();
 
@@ -171,17 +173,17 @@ When display resolution differs from tool configuration:
 
 ```javascript
 function scaleCoordinates(x, y, fromWidth, fromHeight, toWidth, toHeight) {
-  return [
-    Math.round(x * toWidth / fromWidth),
-    Math.round(y * toHeight / fromHeight)
-  ];
+  return [Math.round((x * toWidth) / fromWidth), Math.round((y * toHeight) / fromHeight)];
 }
 
 // Example: Scale from 1024x768 to actual 1920x1080
 const [scaledX, scaledY] = scaleCoordinates(
-  500, 400,  // Claude's coordinates
-  1024, 768, // Tool configuration
-  1920, 1080 // Actual display
+  500,
+  400, // Claude's coordinates
+  1024,
+  768, // Tool configuration
+  1920,
+  1080 // Actual display
 );
 ```
 
@@ -214,24 +216,24 @@ const [scaledX, scaledY] = scaleCoordinates(
 **Complete Agent Loop Example (Node.js)**
 
 ```javascript
-const Anthropic = require("@anthropic-ai/sdk");
+const Anthropic = require('@anthropic-ai/sdk');
 
 const anthropic = new Anthropic();
 
 // Tool configuration
 const computerTool = {
-  type: "computer_20250124",
-  name: "computer",
+  type: 'computer_20250124',
+  name: 'computer',
   display_width_px: 1024,
   display_height_px: 768,
-  display_number: 1
+  display_number: 1,
 };
 
 // Main agent loop
 async function runComputerUseTask(task) {
   console.log(`Starting task: ${task}`);
 
-  const messages = [{ role: "user", content: task }];
+  const messages = [{ role: 'user', content: task }];
   let iterations = 0;
   const maxIterations = 50;
 
@@ -240,55 +242,58 @@ async function runComputerUseTask(task) {
     console.log(`Iteration ${iterations}`);
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 4096,
       tools: [computerTool],
       messages,
-      betas: ["computer-use-2025-01-24"]
+      betas: ['computer-use-2025-01-24'],
     });
 
     // Check for completion
-    if (response.stop_reason === "end_turn") {
-      const textBlocks = response.content.filter(b => b.type === "text");
-      return textBlocks.map(b => b.text).join("\n");
+    if (response.stop_reason === 'end_turn') {
+      const textBlocks = response.content.filter(b => b.type === 'text');
+      return textBlocks.map(b => b.text).join('\n');
     }
 
     // Process tool calls
     const toolResults = [];
     for (const block of response.content) {
-      if (block.type === "tool_use" && block.name === "computer") {
+      if (block.type === 'tool_use' && block.name === 'computer') {
         console.log(`Action: ${block.input.action}`);
 
         // Execute action and get screenshot
         const screenshot = await executeAction(block.input);
 
         toolResults.push({
-          type: "tool_result",
+          type: 'tool_result',
           tool_use_id: block.id,
-          content: [{
-            type: "image",
-            source: {
-              type: "base64",
-              media_type: "image/png",
-              data: screenshot
-            }
-          }]
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: 'image/png',
+                data: screenshot,
+              },
+            },
+          ],
         });
       }
     }
 
-    messages.push({ role: "assistant", content: response.content });
-    messages.push({ role: "user", content: toolResults });
+    messages.push({ role: 'assistant', content: response.content });
+    messages.push({ role: 'user', content: toolResults });
   }
 
-  throw new Error("Task did not complete within iteration limit");
+  throw new Error('Task did not complete within iteration limit');
 }
 
 // Example usage
-runComputerUseTask("Open the calculator app and compute 25 * 47")
-  .then(result => console.log("Result:", result))
-  .catch(err => console.error("Error:", err));
+runComputerUseTask('Open the calculator app and compute 25 * 47')
+  .then(result => console.log('Result:', result))
+  .catch(err => console.error('Error:', err));
 ```
+
 </code_example>
 
 <code_example>
@@ -380,6 +385,7 @@ def execute_action(action_input: dict[str, Any]) -> str:
     # Capture and return screenshot
     return capture_screenshot_base64()
 ```
+
 </code_example>
 
 <usage_example>
@@ -408,6 +414,7 @@ def execute_action(action_input: dict[str, Any]) -> str:
 // Opus 4.5 only (computer_20251124 with enable_zoom: true)
 { "action": "zoom", "coordinate": [500, 300], "zoom_direction": "in", "zoom_amount": 2 }
 ```
+
 </usage_example>
 
 <usage_example>
@@ -433,16 +440,17 @@ docker run -it --rm \
 # - Streamlit UI: http://localhost:8501
 # - API: http://localhost:8080
 ```
+
 </usage_example>
 
 </examples>
 
 ## Tool Versions
 
-| Version | Beta Header | Model Support | Key Features |
-|---------|-------------|---------------|--------------|
+| Version             | Beta Header               | Model Support | Key Features                                |
+| ------------------- | ------------------------- | ------------- | ------------------------------------------- |
 | `computer_20250124` | `computer-use-2025-01-24` | Sonnet, Haiku | Enhanced actions (scroll, drag, wait, etc.) |
-| `computer_20251124` | `computer-use-2025-11-24` | Opus 4.5 only | Zoom action (requires `enable_zoom: true`) |
+| `computer_20251124` | `computer-use-2025-11-24` | Opus 4.5 only | Zoom action (requires `enable_zoom: true`)  |
 
 ## Security Requirements
 
@@ -459,28 +467,31 @@ Computer Use provides direct control over a computer environment. **NEVER** run 
 ### Prompt Injection Risks
 
 Malicious content displayed on screen can attempt to manipulate Claude:
+
 - Validate that actions align with the original task
 - Implement allowlists for permitted applications/websites
 - Monitor for suspicious instruction patterns in screenshots
 
 ## Error Handling
 
-| Error | Cause | Resolution |
-|-------|-------|------------|
+| Error                   | Cause               | Resolution                               |
+| ----------------------- | ------------------- | ---------------------------------------- |
 | `invalid_request_error` | Missing beta header | Add `betas: ["computer-use-2025-01-24"]` |
-| `tool_use_error` | Invalid coordinates | Ensure coordinates within display bounds |
-| `rate_limit_error` | Too many requests | Implement exponential backoff |
-| Action has no effect | UI not ready | Add `wait` action before retrying |
-| Wrong element clicked | Coordinate drift | Re-capture screenshot and recalculate |
+| `tool_use_error`        | Invalid coordinates | Ensure coordinates within display bounds |
+| `rate_limit_error`      | Too many requests   | Implement exponential backoff            |
+| Action has no effect    | UI not ready        | Add `wait` action before retrying        |
+| Wrong element clicked   | Coordinate drift    | Re-capture screenshot and recalculate    |
 
 ## Integration with Agents
 
 ### Primary Agents
+
 - **developer**: Automated testing, UI verification
 - **qa**: End-to-end testing, visual regression
 - **devops-troubleshooter**: System debugging, log inspection
 
 ### Use Cases
+
 - Automated form filling and data entry
 - Application testing and QA automation
 - Desktop application interaction
@@ -491,16 +502,19 @@ Malicious content displayed on screen can attempt to manipulate Claude:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previous computer use configurations
 - Known automation patterns
 - Environment-specific settings
 
 **After completing:**
+
 - New pattern discovered -> `.claude/context/memory/learnings.md`
 - Security concern found -> `.claude/context/memory/issues.md`
 - Architecture decision -> `.claude/context/memory/decisions.md`

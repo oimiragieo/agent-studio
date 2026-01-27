@@ -9,10 +9,12 @@ Supervised learning algorithms learn from labeled training data to make predicti
 ### Regression
 
 **Linear Regression (`sklearn.linear_model.LinearRegression`)**
+
 - Ordinary least squares regression
 - Fast, interpretable, no hyperparameters
 - Use when: Linear relationships, interpretability matters
 - Example:
+
 ```python
 from sklearn.linear_model import LinearRegression
 
@@ -22,10 +24,12 @@ predictions = model.predict(X_test)
 ```
 
 **Ridge Regression (`sklearn.linear_model.Ridge`)**
+
 - L2 regularization to prevent overfitting
 - Key parameter: `alpha` (regularization strength, default=1.0)
 - Use when: Multicollinearity present, need regularization
 - Example:
+
 ```python
 from sklearn.linear_model import Ridge
 
@@ -34,11 +38,13 @@ model.fit(X_train, y_train)
 ```
 
 **Lasso (`sklearn.linear_model.Lasso`)**
+
 - L1 regularization with feature selection
 - Key parameter: `alpha` (regularization strength)
 - Use when: Want sparse models, feature selection
 - Can reduce some coefficients to exactly zero
 - Example:
+
 ```python
 from sklearn.linear_model import Lasso
 
@@ -49,10 +55,12 @@ print(f"Non-zero coefficients: {sum(model.coef_ != 0)}")
 ```
 
 **ElasticNet (`sklearn.linear_model.ElasticNet`)**
+
 - Combines L1 and L2 regularization
 - Key parameters: `alpha`, `l1_ratio` (0=Ridge, 1=Lasso)
 - Use when: Need both feature selection and regularization
 - Example:
+
 ```python
 from sklearn.linear_model import ElasticNet
 
@@ -63,11 +71,13 @@ model.fit(X_train, y_train)
 ### Classification
 
 **Logistic Regression (`sklearn.linear_model.LogisticRegression`)**
+
 - Binary and multiclass classification
 - Key parameters: `C` (inverse regularization), `penalty` ('l1', 'l2', 'elasticnet')
 - Returns probability estimates
 - Use when: Need probabilistic predictions, interpretability
 - Example:
+
 ```python
 from sklearn.linear_model import LogisticRegression
 
@@ -77,11 +87,13 @@ probas = model.predict_proba(X_test)
 ```
 
 **Stochastic Gradient Descent (SGD)**
+
 - `SGDClassifier`, `SGDRegressor`
 - Efficient for large-scale learning
 - Key parameters: `loss`, `penalty`, `alpha`, `learning_rate`
 - Use when: Very large datasets (>10^4 samples)
 - Example:
+
 ```python
 from sklearn.linear_model import SGDClassifier
 
@@ -92,11 +104,13 @@ model.fit(X_train, y_train)
 ## Support Vector Machines
 
 **SVC (`sklearn.svm.SVC`)**
+
 - Classification with kernel methods
 - Key parameters: `C`, `kernel` ('linear', 'rbf', 'poly'), `gamma`
 - Use when: Small to medium datasets, complex decision boundaries
 - Note: Does not scale well to large datasets
 - Example:
+
 ```python
 from sklearn.svm import SVC
 
@@ -109,10 +123,12 @@ model_rbf.fit(X_train, y_train)
 ```
 
 **SVR (`sklearn.svm.SVR`)**
+
 - Regression with kernel methods
 - Similar parameters to SVC
 - Additional parameter: `epsilon` (tube width)
 - Example:
+
 ```python
 from sklearn.svm import SVR
 
@@ -123,6 +139,7 @@ model.fit(X_train, y_train)
 ## Decision Trees
 
 **DecisionTreeClassifier / DecisionTreeRegressor**
+
 - Non-parametric model learning decision rules
 - Key parameters:
   - `max_depth`: Maximum tree depth (prevents overfitting)
@@ -132,6 +149,7 @@ model.fit(X_train, y_train)
 - Use when: Need interpretable model, non-linear relationships, mixed feature types
 - Prone to overfitting - use ensembles or pruning
 - Example:
+
 ```python
 from sklearn.tree import DecisionTreeClassifier
 
@@ -153,6 +171,7 @@ plot_tree(model, feature_names=feature_names, class_names=class_names)
 ### Random Forests
 
 **RandomForestClassifier / RandomForestRegressor**
+
 - Ensemble of decision trees with bagging
 - Key parameters:
   - `n_estimators`: Number of trees (default=100)
@@ -162,6 +181,7 @@ plot_tree(model, feature_names=feature_names, class_names=class_names)
 - Use when: High accuracy needed, can afford computation
 - Provides feature importance
 - Example:
+
 ```python
 from sklearn.ensemble import RandomForestClassifier
 
@@ -180,6 +200,7 @@ importances = model.feature_importances_
 ### Gradient Boosting
 
 **GradientBoostingClassifier / GradientBoostingRegressor**
+
 - Sequential ensemble building trees on residuals
 - Key parameters:
   - `n_estimators`: Number of boosting stages
@@ -189,6 +210,7 @@ importances = model.feature_importances_
 - Use when: Need high accuracy, can afford training time
 - Often achieves best performance
 - Example:
+
 ```python
 from sklearn.ensemble import GradientBoostingClassifier
 
@@ -202,11 +224,13 @@ model.fit(X_train, y_train)
 ```
 
 **HistGradientBoostingClassifier / HistGradientBoostingRegressor**
+
 - Faster gradient boosting with histogram-based algorithm
 - Native support for missing values and categorical features
 - Key parameters: Similar to GradientBoosting
 - Use when: Large datasets, need faster training
 - Example:
+
 ```python
 from sklearn.ensemble import HistGradientBoostingClassifier
 
@@ -222,10 +246,12 @@ model.fit(X_train, y_train)
 ### Other Ensemble Methods
 
 **AdaBoost**
+
 - Adaptive boosting focusing on misclassified samples
 - Key parameters: `n_estimators`, `learning_rate`, `estimator` (base estimator)
 - Use when: Simple boosting approach needed
 - Example:
+
 ```python
 from sklearn.ensemble import AdaBoostClassifier
 
@@ -234,10 +260,12 @@ model.fit(X_train, y_train)
 ```
 
 **Voting Classifier / Regressor**
+
 - Combines predictions from multiple models
 - Types: 'hard' (majority vote) or 'soft' (average probabilities)
 - Use when: Want to ensemble different model types
 - Example:
+
 ```python
 from sklearn.ensemble import VotingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -256,10 +284,12 @@ model.fit(X_train, y_train)
 ```
 
 **Stacking Classifier / Regressor**
+
 - Trains a meta-model on predictions from base models
 - More sophisticated than voting
 - Key parameter: `final_estimator` (meta-learner)
 - Example:
+
 ```python
 from sklearn.ensemble import StackingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -279,6 +309,7 @@ model.fit(X_train, y_train)
 ## K-Nearest Neighbors
 
 **KNeighborsClassifier / KNeighborsRegressor**
+
 - Non-parametric method based on distance
 - Key parameters:
   - `n_neighbors`: Number of neighbors (default=5)
@@ -287,6 +318,7 @@ model.fit(X_train, y_train)
 - Use when: Small dataset, simple baseline needed
 - Slow prediction on large datasets
 - Example:
+
 ```python
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -297,6 +329,7 @@ model.fit(X_train, y_train)
 ## Naive Bayes
 
 **GaussianNB, MultinomialNB, BernoulliNB**
+
 - Probabilistic classifiers based on Bayes' theorem
 - Fast training and prediction
 - GaussianNB: Continuous features (assumes Gaussian distribution)
@@ -304,6 +337,7 @@ model.fit(X_train, y_train)
 - BernoulliNB: Binary features
 - Use when: Text classification, fast baseline, probabilistic predictions
 - Example:
+
 ```python
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 
@@ -318,6 +352,7 @@ model_multinomial.fit(X_train, y_train)
 ## Neural Networks
 
 **MLPClassifier / MLPRegressor**
+
 - Multi-layer perceptron (feedforward neural network)
 - Key parameters:
   - `hidden_layer_sizes`: Tuple of hidden layer sizes, e.g., (100, 50)
@@ -328,6 +363,7 @@ model_multinomial.fit(X_train, y_train)
 - Use when: Complex non-linear patterns, large datasets
 - Requires feature scaling
 - Example:
+
 ```python
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
@@ -351,28 +387,33 @@ model.fit(X_train_scaled, y_train)
 ### Choose based on:
 
 **Dataset size:**
+
 - Small (<1k samples): KNN, SVM, Decision Trees
 - Medium (1k-100k): Random Forest, Gradient Boosting, Linear Models
 - Large (>100k): SGD, Linear Models, HistGradientBoosting
 
 **Interpretability:**
+
 - High: Linear Models, Decision Trees
 - Medium: Random Forest (feature importance)
 - Low: SVM with RBF kernel, Neural Networks
 
 **Accuracy vs Speed:**
+
 - Fast training: Naive Bayes, Linear Models, KNN
 - High accuracy: Gradient Boosting, Random Forest, Stacking
 - Fast prediction: Linear Models, Naive Bayes
 - Slow prediction: KNN (on large datasets), SVM
 
 **Feature types:**
+
 - Continuous: Most algorithms work well
 - Categorical: Trees, HistGradientBoosting (native support)
 - Mixed: Trees, Gradient Boosting
 - Text: Naive Bayes, Linear Models with TF-IDF
 
 **Common starting points:**
+
 1. Logistic Regression (classification) / Linear Regression (regression) - fast baseline
 2. Random Forest - good default choice
 3. Gradient Boosting - optimize for best accuracy

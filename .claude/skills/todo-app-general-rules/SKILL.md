@@ -34,7 +34,7 @@ When reviewing or writing code, apply these guidelines:
 
 - Use the project specifications and guidelines to build the Todo app.
 - Todo is a web app that allows you to manage your todos.
-</instructions>
+  </instructions>
 
 <examples>
 Example usage:
@@ -47,6 +47,7 @@ Agent: [Analyzes code against guidelines and provides specific feedback]
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
