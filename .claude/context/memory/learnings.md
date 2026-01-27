@@ -47,3 +47,27 @@ These patterns allow memory file writes regardless of router state, fixing the r
 1. Check if old hooks are cached in process memory (restart Claude session)
 2. Verify settings.json only has routing-guard.cjs for routing checks
 3. Use `DEBUG_HOOKS=true` to see detailed hook logging
+
+---
+
+## 2026-01-27: Bash Tool Uses Git Bash on Windows
+
+**Context**: Encountered "syntax error: unexpected end of file" when using Windows CMD syntax in Bash tool.
+
+**Root Cause**: The Bash tool runs through Git Bash (`/usr/bin/bash`), NOT Windows CMD or PowerShell.
+
+**Key Rules**:
+1. **Always use bash/POSIX syntax** for shell commands
+2. **Never use** Windows CMD syntax (`if not exist`, `copy`, `del`, `type`)
+3. **Never use** PowerShell syntax (`Remove-Item`, `New-Item`, `Test-Path`)
+
+**Common Patterns**:
+| Task | ✅ Correct | ❌ Wrong |
+|------|-----------|---------|
+| Create dir | `mkdir -p path` | `if not exist path mkdir path` |
+| Create file | `echo "" > file` | `echo. > file` |
+| Check exists | `[ -d "path" ]` | `if exist path` |
+
+**Updated Skill**: `.claude/skills/windows-compatibility/SKILL.md` (v2.0.0)
+
+**Action**: Always reference this skill when writing Bash commands on Windows environments.
