@@ -26,6 +26,8 @@
 .claude/context/tasks/
 .claude/context/todos/
 .claude/context/test-results/
+.claude/context/self-healing/anomaly-log.jsonl
+.claude/context/self-healing/anomaly-state.json
 
 # Config data (version-controlled) - NEW PATTERNS
 !.claude/context/config/
