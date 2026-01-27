@@ -1,0 +1,368 @@
+# Schema Creator Workflow
+#
+# EVOLVE workflow for creating JSON Schemas via the schema-creator skill.
+# Executable by WorkflowEngine at .claude/lib/workflow/workflow-engine.cjs
+#
+# Key differences from agent-creator:
+# - Creates .json schema files in .claude/schemas/
+# - Validates against JSON Schema draft-07 or draft-2020-12
+# - Used for validating YAML frontmatter, API responses, configuration files
+# - No settings.json registration (schemas are loaded on demand)
+
+name: schema-creator-workflow
+description: Create, validate, and register JSON schemas following the EVOLVE process
+version: 1.0.0
+artifact_type: schema
+output_location: .claude/schemas/
+
+# Schema-specific configuration
+schema_config:
+  drafts:
+    - draft-07
+    - draft-2020-12
+  categories:
+    - agents
+    - skills
+    - workflows
+    - hooks
+    - templates
+    - config
+    - api
+  required_fields:
+    - $schema
+    - $id
+    - title
+    - type
+  registration_targets:
+    - ".claude/context/memory/learnings.md"
+  naming_convention: "kebab-case"
+  file_extension: ".json"
+
+phases:
+  evaluate:
+    description: Determine schema purpose and confirm need
+    steps:
+      - id: check-evolution-state
+        action: function
+        handler: checkEvolutionState
+        description: Verify evolution state is idle or can accept new evolution
+      - id: identify-schema-purpose
+        action: prompt
+        description: Gather schema requirements
+        outputs:
+          - purpose
+          - target_type
+          - properties
+          - required_fields
+          - category
+      - id: determine-schema-category
+        action: function
+        handler: determineSchemaCategory
+        description: Classify into agents, skills, workflows, hooks, templates, config, or api
+        inputs:
+          - purpose
+          - target_type
+        outputs:
+          - schema_category
+      - id: check-existing-schemas
+        action: function
+        handler: checkExistingSchemas
+        description: Search for similar schemas that might already exist
+        inputs:
+          - schema_category
+          - purpose
+        outputs:
+          - existing_matches
+          - gap_confirmed
+      - id: update-state-evaluate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to evaluating
+        inputs:
+          - schema_category
+          - schema_name
+    gates:
+      - id: gate-evaluate
+        condition: "steps['check-existing-schemas'].output.gap_confirmed === true"
+        on_fail: abort
+        message: "Similar schema already exists. Consider enhancing existing schema instead."
+
+  validate:
+    description: Check naming convention and no conflicts
+    steps:
+      - id: validate-naming
+        action: function
+        handler: validateNaming
+        description: Ensure schema name follows kebab-case-schema convention
+        inputs:
+          - schema_name
+        outputs:
+          - name_valid
+          - suggested_name
+      - id: check-naming-conflicts
+        action: function
+        handler: checkNamingConflicts
+        description: Grep for existing schemas with same name
+        inputs:
+          - schema_name
+          - schema_category
+        outputs:
+          - conflict_found
+          - conflicting_paths
+      - id: validate-property-names
+        action: function
+        handler: validatePropertyNames
+        description: Verify property names follow conventions
+        inputs:
+          - properties
+        outputs:
+          - properties_valid
+          - property_errors
+      - id: update-state-validate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to validating
+    gates:
+      - id: gate-validate-name
+        condition: "steps['validate-naming'].output.name_valid === true"
+        on_fail: block
+        message: "Schema name must be kebab-case"
+      - id: gate-validate-conflict
+        condition: "steps['check-naming-conflicts'].output.conflict_found === false"
+        on_fail: abort
+        message: "Schema with this name already exists"
+      - id: gate-validate-properties
+        condition: "steps['validate-property-names'].output.properties_valid === true"
+        on_fail: block
+        message: "Property names must follow JSON Schema conventions"
+
+  obtain:
+    description: Research schema patterns and existing standards (optional)
+    optional: true
+    steps:
+      - id: analyze-similar-schemas
+        action: function
+        handler: analyzeSimilarSchemas
+        description: Read existing schemas in same category for patterns
+        inputs:
+          - schema_category
+        outputs:
+          - pattern_analysis
+          - common_patterns
+      - id: determine-draft-version
+        action: function
+        handler: determineDraftVersion
+        description: Select appropriate JSON Schema draft version
+        inputs:
+          - purpose
+          - properties
+        outputs:
+          - draft_version
+          - draft_features
+      - id: research-best-practices
+        action: prompt
+        description: Optional research for complex schemas
+        optional: true
+        outputs:
+          - research_findings
+          - external_sources
+      - id: update-state-obtain
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to obtaining
+    gates:
+      - id: gate-obtain
+        condition: "steps['determine-draft-version'].output.draft_version !== null"
+        on_fail: block
+        message: "Failed to determine JSON Schema draft version"
+
+  lock:
+    description: Create schema JSON file with proper structure
+    steps:
+      - id: generate-schema-json
+        action: function
+        handler: generateSchemaJson
+        description: Generate JSON Schema content using requirements
+        inputs:
+          - schema_name
+          - schema_category
+          - purpose
+          - properties
+          - required_fields
+          - draft_version
+        outputs:
+          - schema_json
+          - schema_path
+      - id: write-schema-file
+        action: write
+        description: Write the .json schema file
+        inputs:
+          - schema_json
+          - schema_path
+        outputs:
+          - schema_file_created
+      - id: validate-json-syntax
+        action: function
+        handler: validateJsonSyntax
+        description: Validate JSON syntax is correct
+        inputs:
+          - schema_path
+        outputs:
+          - json_valid
+          - json_errors
+      - id: validate-schema-structure
+        action: function
+        handler: validateSchemaStructure
+        description: Validate schema follows JSON Schema specification
+        inputs:
+          - schema_path
+          - draft_version
+        outputs:
+          - structure_valid
+          - structure_errors
+      - id: update-state-lock
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to locking
+    gates:
+      - id: gate-lock-schema
+        condition: "steps['write-schema-file'].output.schema_file_created === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Failed to create schema file"
+      - id: gate-lock-json
+        condition: "steps['validate-json-syntax'].output.json_valid === true"
+        on_fail: retry
+        max_retries: 3
+        message: "JSON syntax validation failed"
+      - id: gate-lock-structure
+        condition: "steps['validate-schema-structure'].output.structure_valid === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Schema structure validation failed"
+
+  verify:
+    description: Validate schema against test data
+    steps:
+      - id: validate-required-fields
+        action: function
+        handler: validateRequiredFields
+        description: Verify all required JSON Schema fields are present
+        inputs:
+          - schema_path
+        outputs:
+          - fields_present
+          - missing_fields
+      - id: test-schema-validation
+        action: function
+        handler: testSchemaValidation
+        description: Test schema with valid and invalid sample data
+        inputs:
+          - schema_path
+        outputs:
+          - validation_tests_passed
+          - test_results
+      - id: check-self-referential
+        action: function
+        handler: checkSelfReferential
+        description: Ensure schema validates itself if applicable
+        inputs:
+          - schema_path
+        outputs:
+          - self_valid
+          - self_errors
+      - id: update-state-verify
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to verifying
+    gates:
+      - id: gate-verify-fields
+        condition: "steps['validate-required-fields'].output.fields_present === true"
+        on_fail: return_to_lock
+        message: "Required JSON Schema fields missing ($schema, $id, title, type)"
+      - id: gate-verify-tests
+        condition: "steps['test-schema-validation'].output.validation_tests_passed === true"
+        on_fail: return_to_lock
+        message: "Schema validation tests failed"
+
+  enable:
+    description: Register schema and update memory
+    steps:
+      - id: create-schema-index-entry
+        action: function
+        handler: createSchemaIndexEntry
+        description: Add schema to .claude/schemas/index.json if exists
+        inputs:
+          - schema_name
+          - schema_path
+          - schema_category
+          - purpose
+        outputs:
+          - index_updated
+      - id: update-memory
+        action: function
+        handler: updateMemory
+        description: Record schema creation in learnings.md
+        inputs:
+          - schema_name
+          - schema_path
+          - schema_category
+        outputs:
+          - memory_updated
+      - id: update-state-enable
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to idle with completed evolution
+        inputs:
+          - schema_name
+          - schema_path
+      - id: verify-registration
+        action: function
+        handler: verifyRegistration
+        description: Verify schema file exists and is valid JSON
+        inputs:
+          - schema_name
+          - schema_path
+        outputs:
+          - verification_passed
+    gates:
+      - id: gate-enable-verify
+        condition: "steps['verify-registration'].output.verification_passed === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Schema registration verification failed"
+
+# Rollback/compensate actions for each phase
+compensate:
+  lock:
+    - action: delete_file
+      target: schema_path
+      description: Remove created schema file
+  enable:
+    - action: remove_from_index
+      target: ".claude/schemas/index.json"
+      description: Remove schema from index if added
+    - action: revert_memory
+      target: ".claude/context/memory/learnings.md"
+      description: Remove schema entry from learnings
+
+# Iron Laws for schema creation
+iron_laws:
+  - id: no-schema-without-draft
+    rule: "Every schema MUST specify $schema (draft-07 or draft-2020-12)"
+    enforcement: gate-verify-fields
+  - id: no-schema-without-id
+    rule: "Every schema MUST have unique $id"
+    enforcement: gate-verify-fields
+  - id: no-schema-without-title
+    rule: "Every schema MUST have descriptive title"
+    enforcement: gate-verify-fields
+  - id: no-schema-without-type
+    rule: "Every schema MUST specify root type"
+    enforcement: gate-verify-fields
+  - id: json-syntax-valid
+    rule: "JSON must parse without errors"
+    enforcement: gate-lock-json
+  - id: schema-structure-valid
+    rule: "Schema must follow JSON Schema specification"
+    enforcement: gate-lock-structure

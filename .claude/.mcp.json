@@ -3,27 +3,32 @@
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem@0", "."]
     },
     "git": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-git", "."]
+      "args": ["-y", "@modelcontextprotocol/server-git@0", "."]
     },
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": ["-y", "@modelcontextprotocol/server-memory@0"]
     },
     "sequential-thinking": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@0"]
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"]
+      "args": ["-y", "@modelcontextprotocol/server-github@0"]
     },
     "sqlite": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sqlite", "--db", ".claude/context/memory/vectors.db"]
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite@0",
+        "--db",
+        ".claude/context/memory/vectors.db"
+      ]
     }
   }
 }

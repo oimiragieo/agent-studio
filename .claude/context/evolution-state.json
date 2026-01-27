@@ -1,0 +1,135 @@
+{
+  "version": "1.0.0",
+  "state": "idle",
+  "currentEvolution": null,
+  "evolutions": [
+    {
+      "type": "agent",
+      "name": "gamedev-pro",
+      "path": ".claude/agents/domain/gamedev-pro.md",
+      "completedAt": "2026-01-25T21:30:00.000Z",
+      "description": "Multi-engine game development expert for Unity, Unreal Engine, and Godot with ECS architecture, game loops, shaders, physics, game AI, and cross-platform optimization",
+      "registrations": [
+        "CLAUDE.md routing table",
+        "router-enforcer.cjs (gamedev INTENT_TO_AGENT mapping)",
+        "router-enforcer.cjs (domainBoosts gamedev-pro keywords)"
+      ],
+      "researchReport": ".claude/context/artifacts/research-reports/gamedev-pro-research.md",
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "skills": ["gamedev-expert", "tdd", "debugging", "git-expert", "verification-before-completion", "cpp"],
+      "domains": ["Unity", "Unreal Engine", "Godot", "ECS", "Game Physics", "Shaders", "Game AI", "Cross-platform"]
+    },
+    {
+      "type": "agent",
+      "name": "web3-blockchain-expert",
+      "path": ".claude/agents/domain/web3-blockchain-expert.md",
+      "completedAt": "2026-01-25T21:00:00.000Z",
+      "description": "Web3, blockchain, and smart contract development expert. Specializes in Solidity, DeFi protocols, security auditing, gas optimization, and multi-chain development. Handles OWASP Smart Contract Top 10 vulnerabilities.",
+      "registrations": [
+        "CLAUDE.md routing table",
+        "router-enforcer.cjs (ROUTING_TABLE web3/blockchain entries)",
+        "router-enforcer.cjs (web3 intentKeywords)",
+        "router-enforcer.cjs (INTENT_TO_AGENT web3 mapping)",
+        "router-enforcer.cjs (domainBoosts web3-blockchain-expert)"
+      ],
+      "researchReport": ".claude/context/artifacts/research-reports/web3-blockchain-expert-research.md",
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "skills": ["web3-expert", "security-architect", "auth-security-expert", "tdd", "debugging", "git-expert", "verification-before-completion"],
+      "domains": ["Solidity", "DeFi", "Smart Contracts", "Gas Optimization", "OWASP SC Top 10", "Hardhat", "Foundry", "OpenZeppelin"]
+    },
+    {
+      "type": "agent",
+      "name": "android-pro",
+      "path": ".claude/agents/domain/android-pro.md",
+      "completedAt": "2026-01-25T20:30:00.000Z",
+      "description": "Native Android development specialist for Kotlin, Jetpack Compose, and Android SDK with Material Design 3",
+      "registrations": [
+        "CLAUDE.md routing table",
+        "router-enforcer.cjs (android intent keywords + domainBoosts)",
+        "router-enforcer.cjs (mobile disambiguation rules)"
+      ],
+      "researchReport": ".claude/context/artifacts/research-reports/android-pro-research.md",
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "skills": ["android-expert", "testing-expert", "tdd", "debugging", "verification-before-completion"],
+      "domains": ["Kotlin", "Jetpack Compose", "Android SDK", "Hilt", "Room", "Retrofit", "Material Design 3"]
+    },
+    {
+      "type": "agent",
+      "name": "ai-ml-specialist",
+      "path": ".claude/agents/domain/ai-ml-specialist.md",
+      "completedAt": "2026-01-25T19:30:00.000Z",
+      "description": "AI/ML specialist for machine learning, deep learning, MLOps, experiment tracking, and model deployment",
+      "registrations": ["CLAUDE.md routing table"],
+      "researchReport": ".claude/context/artifacts/research-reports/ai-ml-specialist-research.md",
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "skills": ["ai-ml-expert", "python-backend-expert", "data-expert", "scientific-skills"],
+      "domains": ["PyTorch", "TensorFlow", "scikit-learn", "Hugging Face", "MLflow", "MLOps"]
+    },
+    {
+      "type": "agent",
+      "name": "evolution-orchestrator",
+      "path": ".claude/agents/orchestrators/evolution-orchestrator.md",
+      "completedAt": "2026-01-25T14:31:00.000Z",
+      "description": "Meta-agent that orchestrates the EVOLVE workflow for creating new artifacts",
+      "registrations": ["CLAUDE.md routing table"],
+      "phases": ["E", "V", "O", "L", "V", "E"]
+    },
+    {
+      "id": "evolution-scientific-skills-retroactive",
+      "type": "skill",
+      "name": "scientific-skills",
+      "path": ".claude/skills/scientific-skills/SKILL.md",
+      "source": "K-Dense-AI/claude-scientific-skills",
+      "completedAt": "2026-01-25T16:00:00.000Z",
+      "description": "Comprehensive scientific research toolkit with 139 specialized skills for biology, chemistry, medicine, data science",
+      "registrations": [
+        "skill-catalog.md",
+        "router-enforcer.cjs (scientific intent keywords)",
+        "CLAUDE.md routing table (python-pro agent)"
+      ],
+      "phases": {
+        "evaluate": { "completed": true, "retroactive": true, "note": "Need confirmed: 139 scientific skills for research workflows" },
+        "validate": { "completed": true, "retroactive": true, "note": "No conflicts with existing skills" },
+        "obtain": { "completed": true, "retroactive": true, "researchReport": "scientific-skills-retroactive-research.md" },
+        "lock": { "completed": true, "retroactive": true, "note": "Integrated from K-Dense v2.17.0" },
+        "verify": { "completed": true, "retroactive": true, "note": "Structure validated, SKILL.md complete" },
+        "enable": { "completed": true, "retroactive": true, "note": "Router keywords added, catalog updated" }
+      },
+      "outcome": "success",
+      "notes": "Retroactive EVOLVE compliance applied to manually-integrated K-Dense scientific-skills library. Research report created documenting best practices validation."
+    },
+    {
+      "id": "retroactive-utils-2026-01-26",
+      "type": "utility",
+      "name": "lib-utils",
+      "path": ".claude/lib/utils/",
+      "completedAt": "2026-01-26T00:00:00.000Z",
+      "description": "Core utility modules for security and reliability fixes",
+      "registrations": [],
+      "phases": {
+        "evaluate": { "completed": true, "retroactive": true, "note": "Created to fix SEC-007, BUG-001" },
+        "validate": { "completed": true, "retroactive": true, "note": "No conflicts" },
+        "obtain": { "completed": true, "retroactive": true, "note": "Based on security audit findings" },
+        "lock": { "completed": true, "retroactive": true, "note": "All files have tests" },
+        "verify": { "completed": true, "retroactive": true, "note": "Tests passing" },
+        "enable": { "completed": true, "retroactive": true, "note": "Integrated into hooks" }
+      },
+      "outcome": "success",
+      "notes": "Retroactive EVOLVE compliance for utility modules created during SEC-007/BUG-001 fixes. Includes project-root.cjs (BUG-001 fix for nested .claude folders), safe-json.cjs (SEC-007 JSON parsing security), and atomic-write.cjs (reliable file writes)."
+    }
+  ],
+  "patterns": [
+    {
+      "name": "EVOLVE workflow",
+      "description": "6-phase workflow: Evaluate -> Validate -> Obtain -> Lock -> Verify -> Enable",
+      "source": "evolution-orchestrator agent definition"
+    },
+    {
+      "name": "Retroactive EVOLVE compliance",
+      "description": "When artifacts are integrated without EVOLVE, create retroactive research reports and history entries to maintain audit trail",
+      "source": "scientific-skills integration 2026-01-25"
+    }
+  ],
+  "suggestions": [],
+  "lastUpdated": "2026-01-26T01:00:00.000Z"
+}

@@ -4,6 +4,11 @@ description: Orchestrates multi-agent system by analyzing requests and spawning 
 tools:
   - Read
   - Task
+  - TaskUpdate
+  - TaskList
+  - TaskCreate
+  - TaskGet
+  - Skill
 model: sonnet
 temperature: 0.0
 priority: highest

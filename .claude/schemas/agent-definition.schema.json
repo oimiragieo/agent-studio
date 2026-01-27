@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude-code.anthropic.com/schemas/agent-definition",
+  "title": "Agent Definition Schema",
+  "description": "Schema for validating Claude Code agent definition files",
+  "type": "object",
+  "required": ["frontmatter", "content"],
+  "properties": {
+    "frontmatter": {
+      "type": "object",
+      "required": ["name", "description"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Agent name in lowercase-with-hyphens format"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 500,
+          "description": "Description of what the agent does and WHEN to use it"
+        },
+        "tools": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            {
+              "type": "string",
+              "description": "Comma-separated list of tools"
+            }
+          ],
+          "description": "Tools available to the agent"
+        },
+        "disallowedTools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Tools explicitly denied to the agent"
+        },
+        "model": {
+          "type": "string",
+          "enum": ["sonnet", "opus", "haiku", "inherit", "claude-sonnet-4-5", "claude-opus-4-5-20251101", "claude-haiku-4-5"],
+          "description": "Model to use for the agent"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Temperature for model responses"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["lowest", "low", "medium", "high", "highest"],
+          "description": "Agent priority for routing decisions"
+        },
+        "skills": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Skills to preload for the agent"
+        },
+        "context_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files to load into agent context"
+        },
+        "context_strategy": {
+          "type": "string",
+          "enum": ["minimal", "lazy_load", "full"],
+          "description": "How to load context"
+        },
+        "extended_thinking": {
+          "type": "boolean",
+          "description": "Enable extended thinking mode"
+        },
+        "hooks": {
+          "type": "object",
+          "properties": {
+            "PreToolUse": { "type": "array" },
+            "PostToolUse": { "type": "array" },
+            "Stop": { "type": "array" }
+          },
+          "description": "Hooks for tool use events"
+        }
+      }
+    },
+    "content": {
+      "type": "string",
+      "minLength": 100,
+      "description": "Markdown content with agent instructions"
+    }
+  },
+  "examples": [
+    {
+      "frontmatter": {
+        "name": "ux-reviewer",
+        "description": "UX/UI expert for reviewing mobile and web applications. Use for design critiques, accessibility audits, and user experience evaluations.",
+        "tools": ["Read", "WebSearch", "WebFetch", "Write"],
+        "model": "sonnet",
+        "temperature": 0.4,
+        "priority": "medium",
+        "skills": ["diagram-generator", "doc-generator"]
+      },
+      "content": "# UX Reviewer Agent\n\n## Core Persona\n..."
+    }
+  ]
+}

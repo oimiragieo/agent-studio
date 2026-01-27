@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude-code.anthropic.com/schemas/hook-definition",
+  "title": "Hook Definition Schema",
+  "description": "Schema for validating Claude Code hook definition and registration",
+  "type": "object",
+  "required": ["name", "type", "purpose"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Hook name in lowercase-with-hyphens format"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["PreToolUse", "PostToolUse", "UserPromptSubmit"],
+      "description": "Hook trigger type"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 500,
+      "description": "Description of what the hook does"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["safety", "routing", "memory", "audit", "security", "validation", "custom"],
+      "default": "custom",
+      "description": "Hook category for organization"
+    },
+    "matcher": {
+      "type": "string",
+      "description": "Regex pattern for matching tool names (e.g., 'Edit|Write|Bash')"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 50,
+      "description": "Hook execution priority (higher = runs first)"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the hook is enabled"
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Environment variables for the hook"
+    },
+    "exitCodes": {
+      "type": "object",
+      "properties": {
+        "allow": {
+          "type": "integer",
+          "default": 0,
+          "description": "Exit code to allow operation"
+        },
+        "block": {
+          "type": "integer",
+          "default": 1,
+          "description": "Exit code to block operation"
+        }
+      },
+      "description": "Exit code meanings"
+    },
+    "agents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Agents this hook is assigned to"
+    },
+    "skills": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Skills this hook is associated with"
+    }
+  },
+  "examples": [
+    {
+      "name": "tdd-check",
+      "type": "PreToolUse",
+      "purpose": "Enforces Test-Driven Development by checking for test files",
+      "category": "safety",
+      "matcher": "Edit|Write|NotebookEdit",
+      "environment": {
+        "TDD_ENFORCEMENT": "warn"
+      },
+      "agents": ["developer", "qa"]
+    },
+    {
+      "name": "audit-logger",
+      "type": "PostToolUse",
+      "purpose": "Logs all tool operations to audit trail",
+      "category": "audit",
+      "matcher": "Edit|Write",
+      "agents": ["developer", "security-architect"]
+    },
+    {
+      "name": "router-enforcer",
+      "type": "UserPromptSubmit",
+      "purpose": "Routes user requests to appropriate agents based on intent analysis",
+      "category": "routing",
+      "agents": ["router"]
+    }
+  ]
+}

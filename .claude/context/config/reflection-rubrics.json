@@ -1,0 +1,343 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "version": "1.0.0",
+  "description": "Reflection quality assessment rubrics for evaluating agent outputs, plans, and code. Used by reflection-agent to score and improve outputs before completion.",
+  "metadata": {
+    "created": "2026-01-25T22:00:00Z",
+    "updated": "2026-01-25T22:00:00Z",
+    "author": "developer-agent",
+    "purpose": "Standardized scoring criteria for reflection-based quality gates"
+  },
+  "categories": {
+    "completeness": {
+      "weight": 0.25,
+      "description": "All required sections present and thoroughly addressed",
+      "scoring": {
+        "0": "Missing multiple required sections or critical content gaps",
+        "0.25": "Missing one required section with significant gaps",
+        "0.5": "All sections present but some lack depth",
+        "0.75": "All sections present with adequate coverage",
+        "1": "All required sections present with comprehensive detail"
+      },
+      "checkpoints": [
+        "All required sections exist",
+        "No placeholder content remaining",
+        "Each section has substantive content",
+        "All subtasks addressed if multi-part request"
+      ]
+    },
+    "accuracy": {
+      "weight": 0.25,
+      "description": "No factual errors, correct paths, valid syntax, and accurate references",
+      "scoring": {
+        "0": "Multiple factual errors or critical inaccuracies",
+        "0.25": "One major error or several minor inaccuracies",
+        "0.5": "Minor errors present that don't affect functionality",
+        "0.75": "Mostly accurate with trivial issues",
+        "1": "Fully accurate with no errors detected"
+      },
+      "checkpoints": [
+        "File paths are valid and exist",
+        "Code syntax is correct",
+        "Referenced APIs/functions exist",
+        "Version numbers are current",
+        "No hallucinated dependencies"
+      ]
+    },
+    "clarity": {
+      "weight": 0.15,
+      "description": "Well-structured, readable, and easy to understand",
+      "scoring": {
+        "0": "Poorly organized, confusing, hard to follow",
+        "0.25": "Disorganized with unclear sections",
+        "0.5": "Adequate structure but could be clearer",
+        "0.75": "Clear organization with good flow",
+        "1": "Excellent structure, highly readable, logical progression"
+      },
+      "checkpoints": [
+        "Logical ordering of content",
+        "Clear headings and sections",
+        "Appropriate use of formatting",
+        "Concise without sacrificing clarity",
+        "Technical terms explained when needed"
+      ]
+    },
+    "consistency": {
+      "weight": 0.15,
+      "description": "Follows project conventions, style guides, and established patterns",
+      "scoring": {
+        "0": "Ignores conventions, inconsistent throughout",
+        "0.25": "Significant deviation from conventions",
+        "0.5": "Partially follows conventions with some inconsistencies",
+        "0.75": "Mostly consistent with minor deviations",
+        "1": "Fully consistent with all project conventions"
+      },
+      "checkpoints": [
+        "Naming conventions followed",
+        "Code style matches project",
+        "Documentation format consistent",
+        "Pattern usage aligns with codebase",
+        "Error handling follows project standards"
+      ]
+    },
+    "actionability": {
+      "weight": 0.20,
+      "description": "Clear next steps defined, implementable without ambiguity",
+      "scoring": {
+        "0": "No actionable items or completely vague",
+        "0.25": "Vague suggestions without clear steps",
+        "0.5": "Some actionable items but lacks specificity",
+        "0.75": "Clear next steps with minor ambiguities",
+        "1": "Specific, implementable next steps with clear ownership"
+      },
+      "checkpoints": [
+        "Next steps are explicit",
+        "Steps are ordered by priority/dependency",
+        "Effort estimates provided where relevant",
+        "Blockers and dependencies identified",
+        "Success criteria defined"
+      ]
+    }
+  },
+  "thresholds": {
+    "pass": 0.7,
+    "excellent": 0.9,
+    "critical_fail": 0.4,
+    "descriptions": {
+      "pass": "Minimum acceptable quality - output can proceed",
+      "excellent": "High quality output - exemplary work",
+      "critical_fail": "Unacceptable quality - must be revised before proceeding"
+    }
+  },
+  "output_types": {
+    "agent_output": {
+      "description": "General agent task completion output",
+      "required_sections": [
+        "summary",
+        "changes_made",
+        "verification"
+      ],
+      "category_weights": {
+        "completeness": 0.25,
+        "accuracy": 0.30,
+        "clarity": 0.15,
+        "consistency": 0.15,
+        "actionability": 0.15
+      },
+      "specific_checks": [
+        "TaskUpdate called with completed status",
+        "Summary accurately reflects work done",
+        "All modified files listed",
+        "Verification evidence provided"
+      ]
+    },
+    "plan_output": {
+      "description": "Planning phase output (from planner agent)",
+      "required_sections": [
+        "overview",
+        "phases",
+        "tasks",
+        "dependencies",
+        "risks"
+      ],
+      "category_weights": {
+        "completeness": 0.30,
+        "accuracy": 0.20,
+        "clarity": 0.20,
+        "consistency": 0.10,
+        "actionability": 0.20
+      },
+      "specific_checks": [
+        "All phases have clear deliverables",
+        "Task dependencies are explicit",
+        "Risks have mitigations",
+        "Effort estimates reasonable",
+        "Success criteria defined per phase"
+      ]
+    },
+    "code_output": {
+      "description": "Code implementation output",
+      "required_sections": [
+        "implementation",
+        "tests",
+        "documentation"
+      ],
+      "category_weights": {
+        "completeness": 0.20,
+        "accuracy": 0.35,
+        "clarity": 0.15,
+        "consistency": 0.20,
+        "actionability": 0.10
+      },
+      "specific_checks": [
+        "Code compiles/parses without errors",
+        "Tests exist for new functionality",
+        "Tests pass",
+        "No TODO placeholders in critical paths",
+        "Error handling implemented",
+        "Edge cases addressed"
+      ]
+    },
+    "documentation_output": {
+      "description": "Documentation and technical writing output",
+      "required_sections": [
+        "overview",
+        "content",
+        "examples"
+      ],
+      "category_weights": {
+        "completeness": 0.25,
+        "accuracy": 0.25,
+        "clarity": 0.30,
+        "consistency": 0.15,
+        "actionability": 0.05
+      },
+      "specific_checks": [
+        "Code examples are correct",
+        "Links are valid",
+        "No outdated information",
+        "Audience-appropriate language",
+        "Navigation/structure aids findability"
+      ]
+    },
+    "security_review_output": {
+      "description": "Security audit and review output",
+      "required_sections": [
+        "threat_model",
+        "findings",
+        "recommendations"
+      ],
+      "category_weights": {
+        "completeness": 0.30,
+        "accuracy": 0.30,
+        "clarity": 0.15,
+        "consistency": 0.10,
+        "actionability": 0.15
+      },
+      "specific_checks": [
+        "All attack vectors considered",
+        "Severity ratings justified",
+        "Remediation steps specific",
+        "No false positives claimed as issues",
+        "Compliance requirements addressed"
+      ]
+    },
+    "architecture_output": {
+      "description": "Architecture design and review output",
+      "required_sections": [
+        "context",
+        "design",
+        "tradeoffs",
+        "decisions"
+      ],
+      "category_weights": {
+        "completeness": 0.25,
+        "accuracy": 0.25,
+        "clarity": 0.25,
+        "consistency": 0.15,
+        "actionability": 0.10
+      },
+      "specific_checks": [
+        "Requirements traced to design decisions",
+        "Alternatives considered",
+        "Tradeoffs explicitly documented",
+        "Scalability addressed",
+        "Integration points defined"
+      ]
+    }
+  },
+  "scoring_examples": {
+    "excellent_agent_output": {
+      "scenario": "Developer agent completing a bug fix",
+      "scores": {
+        "completeness": 1.0,
+        "accuracy": 0.95,
+        "clarity": 0.9,
+        "consistency": 1.0,
+        "actionability": 0.85
+      },
+      "weighted_total": 0.95,
+      "notes": "All sections complete, fix verified with tests, clear summary, follows project conventions"
+    },
+    "passing_plan_output": {
+      "scenario": "Planner creating feature implementation plan",
+      "scores": {
+        "completeness": 0.75,
+        "accuracy": 0.8,
+        "clarity": 0.7,
+        "consistency": 0.75,
+        "actionability": 0.7
+      },
+      "weighted_total": 0.74,
+      "notes": "Adequate coverage, some phases lack detail, dependencies clear, risks identified"
+    },
+    "failing_code_output": {
+      "scenario": "Code with syntax errors and missing tests",
+      "scores": {
+        "completeness": 0.5,
+        "accuracy": 0.25,
+        "clarity": 0.5,
+        "consistency": 0.5,
+        "actionability": 0.25
+      },
+      "weighted_total": 0.38,
+      "notes": "Code has syntax errors, no tests provided, TODOs in critical paths - must revise"
+    }
+  },
+  "reflection_process": {
+    "steps": [
+      {
+        "step": 1,
+        "name": "identify_output_type",
+        "description": "Determine which output_type rubric to apply based on agent and task"
+      },
+      {
+        "step": 2,
+        "name": "evaluate_categories",
+        "description": "Score each category using checkpoints and scoring criteria"
+      },
+      {
+        "step": 3,
+        "name": "calculate_weighted_score",
+        "description": "Apply output_type-specific weights to category scores"
+      },
+      {
+        "step": 4,
+        "name": "check_thresholds",
+        "description": "Compare weighted score against thresholds"
+      },
+      {
+        "step": 5,
+        "name": "generate_feedback",
+        "description": "If below pass threshold, generate specific improvement recommendations"
+      },
+      {
+        "step": 6,
+        "name": "record_result",
+        "description": "Log reflection result to memory for learning"
+      }
+    ],
+    "retry_policy": {
+      "max_retries": 2,
+      "escalation_after_retries": "human_review",
+      "improvement_required_per_retry": 0.1
+    }
+  },
+  "integration_hooks": {
+    "pre_completion": {
+      "description": "Hook that fires before TaskUpdate(completed) to trigger reflection",
+      "trigger": "PreToolUse(TaskUpdate)",
+      "condition": "status === 'completed'"
+    },
+    "post_agent": {
+      "description": "Hook that fires after agent task completion for logging",
+      "trigger": "PostToolUse(Task)",
+      "condition": "task_completed"
+    }
+  },
+  "weight_validation": {
+    "rule": "All category weights must sum to 1.0",
+    "default_weights_sum": 1.0,
+    "per_output_type_validated": true
+  }
+}

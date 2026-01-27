@@ -1,3 +1,6 @@
+# Archive (cleanup items for potential restoration)
+.claude/.archive/
+
 # Personal Configuration (Not Team-Shared)
 .claude/_cfg/settings.local.yaml
 .claude/_cfg/settings.local.json
@@ -124,3 +127,6 @@ ENV/
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
+
+# Archive folder (old .claude backup)
+.claude.archive/

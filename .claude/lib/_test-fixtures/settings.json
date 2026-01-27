@@ -1,0 +1,8 @@
+{
+  "hooks": [
+    {
+      "matcher": "PreToolUse",
+      "path": ".claude/hooks/safety/test-hook.cjs"
+    }
+  ]
+}

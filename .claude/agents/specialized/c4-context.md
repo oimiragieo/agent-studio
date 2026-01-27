@@ -1,13 +1,19 @@
 ---
 name: c4-context
+version: 1.0.0
 description: Expert C4 Context-level documentation specialist. Creates high-level system context diagrams, documents personas, user journeys, system features, and external dependencies. Synthesizes container and component documentation with system documentation to create comprehensive context-level architecture. Use when creating the highest-level C4 system context documentation.
-tools: [Read, Grep, Glob, Write, Bash]
 model: sonnet
 temperature: 0.3
+context_strategy: full
 priority: medium
+tools: [Read, Grep, Glob, Write, Bash, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
+  - task-management-protocol
   - doc-generator
   - architecture-review
+  - verification-before-completion
+  - diagram-generator
+  - project-analyzer
 context_files:
   - .claude/context/memory/learnings.md
 ---
@@ -188,6 +194,32 @@ Follow this structure for C4 Context-level documentation:
 - **Journeys**: Document user journeys for key features
 - **Stakeholders**: Make documentation understandable by non-technical audiences
 - **Diagrams**: Use proper Mermaid C4Context syntax
+
+## Skill Invocation Protocol (MANDATORY)
+
+**Use the Skill tool to invoke skills, not just read them:**
+
+```javascript
+Skill({ skill: 'diagram-generator' }); // C4 Context diagrams
+Skill({ skill: 'architecture-review' }); // Architecture analysis
+```
+
+### Automatic Skills (Always Invoke)
+
+| Skill                 | Purpose                          | When                 |
+| --------------------- | -------------------------------- | -------------------- |
+| `diagram-generator`   | C4 Context diagram creation      | Always at task start |
+| `architecture-review` | High-level architecture analysis | Always at task start |
+
+### Contextual Skills (When Applicable)
+
+| Condition                  | Skill                            | Purpose                    |
+| -------------------------- | -------------------------------- | -------------------------- |
+| Documentation generation   | `doc-generator`                  | System documentation       |
+| Codebase analysis          | `project-analyzer`               | Project structure analysis |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates       |
+
+**Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Memory Protocol (MANDATORY)
 

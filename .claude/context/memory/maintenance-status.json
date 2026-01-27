@@ -1,0 +1,43 @@
+{
+  "lastDaily": "2026-01-26T04:12:03.796Z",
+  "lastWeekly": null,
+  "history": [
+    {
+      "type": "daily",
+      "timestamp": "2026-01-26T04:12:03.796Z",
+      "tasks": [
+        {
+          "type": "consolidation",
+          "success": false
+        },
+        {
+          "type": "healthCheck",
+          "success": true
+        },
+        {
+          "type": "metricsLog",
+          "success": true
+        }
+      ]
+    },
+    {
+      "type": "daily",
+      "timestamp": "2026-01-25T21:51:15.838Z",
+      "tasks": [
+        {
+          "type": "consolidation",
+          "success": false
+        },
+        {
+          "type": "healthCheck",
+          "success": true
+        },
+        {
+          "type": "metricsLog",
+          "success": true
+        }
+      ]
+    }
+  ],
+  "lastRun": "2026-01-26T04:12:03.796Z"
+}

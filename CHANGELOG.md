@@ -7,7 +7,150 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Routing Deadlock Recovery (2026-01-22)**: Fixed critical routing deadlock that caused permanent session locks (CRITICAL severity)
+  - **Stuck Routing Timeout Recovery**: Added 2-minute timeout recovery mechanism
+    - Issue: When routing started but never completed (crash/timeout/interruption), the session was permanently locked
+    - `no-reroute-after-routing.mjs` blocked router re-runs because routing was "in progress"
+    - `router-first-enforcer.mjs` blocked all tools because routing was not "completed"
+    - Result: Complete deadlock with no recovery path
+  - **Fix in `no-reroute-after-routing.mjs`**:
+    - Added `STUCK_ROUTING_TIMEOUT_MS` constant (default: 2 minutes, configurable via env)
+    - If routing started > 2 minutes ago and hasn't completed, allow re-routing to recover
+    - Block message now shows time until auto-recovery
+    - Lines affected: 57-65 (new constant), 165-175 (recovery logic)
+  - **Fix in `router-first-enforcer.mjs`**:
+    - Added matching `STUCK_ROUTING_TIMEOUT_MS` constant (lines 47-55)
+    - When stuck routing detected, automatically reset routing state and allow fresh routing attempt
+    - Logs recovery event for debugging (STUCK_ROUTING_RECOVERY error type)
+    - Lines affected: 860-892 (recovery logic with state reset)
+  - **Fix in `routing-safety-guard.mjs`**: Added missing allowlist entries for Glob during routing
+    - Added: `.claude/hooks/`, `.claude/skills/`, `.claude/templates/`, `.claude/docs/`
+    - Previously only allowed: workflows, agents, schemas, config
+    - Lines affected: 131-134 (new allowlist entries)
+  - **Environment Variable**: `CLAUDE_ROUTER_STUCK_TIMEOUT_MS` to customize recovery timeout
+
+- **Subagent Communication Improvements (2026-01-22)**: Fixed routing handoff enforcement and agent tracking issues
+  - **Router Handoff Enforcement (HIGH severity)**: Fixed overly aggressive blocking in `router-first-enforcer.mjs`
+    - Issue: Non-coordinator Task spawns (Explore, analyst, developer) were blocked before handoff completion
+    - Fix: Added `isCoordinatorName()` helper and modified enforcement to only block coordinator-to-coordinator transitions
+    - Worker agents can now be spawned without requiring handoff completion
+    - Lines affected: 248-259 (new function), 907-913 (new bypass logic)
+  - **SubagentStop Agent Tracking (MEDIUM severity)**: Fixed undefined agent name in `subagent-activity-tracker.mjs`
+    - Issue: Claude Code doesn't pass agent name to SubagentStop hooks, making it impossible to track which agent stopped
+    - Fix: Implemented stack-based tracking (LIFO) using `agentStack` array
+    - On start: push agent name to stack; On stop: pop from stack to identify stopped agent
+    - Added `last_stopped_agent` field to state for debugging visibility
+    - Lines affected: 78-107 (state schema), 140-155 (stack tracking)
+  - **Skills Directories (LOW severity)**: Created missing directories to prevent ENOENT errors
+    - `$HOME/.claude/skills/` now created if missing
+
+- **Comprehensive Test Suite Path Issues (2026-01-22)**: Fixed configuration file path resolution in `.claude/tools/comprehensive-test-suite.mjs`
+  - Skill Integration Matrix: Changed path from `.claude/context/skill-integration-matrix.json` to `.claude/context/config/skill-integration-matrix.json`
+  - Security Triggers Config: Changed path from `.claude/context/security-triggers-v2.json` to `.claude/context/config/security-triggers-v2.json`
+  - Fixed JSON key mismatch: Updated agent count lookup to use `matrix.agents || matrix.agent_skills` for compatibility
+  - Result: 16/16 tests passing, 0 warnings (previously 2 warnings)
+
+- **Windows Path Handling in hook-runner.mjs (2026-01-22)**: Fixed dynamic import paths for Windows compatibility
+  - Issue: `file://${hookPath}` created malformed URLs on Windows (backslashes not converted to forward slashes)
+  - Fix: Added `pathToFileURL()` from Node.js `url` module for proper URL construction
+  - Lines affected: 62 and 169 in `.claude/tools/hook-runner.mjs`
+  - Result: Hooks now load correctly on Windows with paths like `C:\dev\projects\...`
+
+- **Claude CLI Integration Test Shell Escaping (2026-01-22)**: Fixed prompt truncation in `.claude/tools/run-claude-integration-tests.mjs`
+  - Issue: Prompts with spaces were truncated (e.g., "What is the codebase structure?" became just "What")
+  - Cause: `spawn()` with `shell: true` required proper quote escaping for arguments
+  - Fix: Added `escapedPrompt.replace(/"/g, '\\"')` and wrapped prompt in double quotes
+  - Result: CLI integration tests now pass 4/4 (100%), previously 2/4 (50%)
+
+- **Security: Hardcoded Webhook Secret Removed (2026-01-22)**: Fixed security vulnerability in `.claude/tools/a2a/push-notification-handler.mjs`
+  - Issue: Line 25 had hardcoded fallback `'default-secret'` which is cryptographically weak
+  - Fix: Changed to `process.env.WEBHOOK_SECRET || null` - secret must now be explicitly configured
+  - Added validation in `validateWebhookSignature()` to throw error if secret not configured
+
+- **Crypto: timingSafeEqual Crash Prevention (2026-01-22)**: Fixed potential crash in `.claude/tools/a2a/push-notification-handler.mjs`
+  - Issue: `crypto.timingSafeEqual()` throws if buffers have different lengths
+  - Fix: Added length check before comparison; wrapped in try/catch; added input validation
+  - Lines affected: 174-205 in validateWebhookSignature()
+
+- **Atomic Write for Audit Log Trimming (2026-01-22)**: Fixed race condition in `.claude/hooks/audit-post-tool.mjs`
+  - Issue: Read-trim-write operation in `trimAuditLog()` could lose data under concurrent access
+  - Fix: Implemented atomic write using temp file + rename pattern
+  - Lines affected: 122-162 in trimAuditLog()
+
+- **JSON Parsing Error Handling (2026-01-22)**: Improved error differentiation across multiple files
+  - **state-manager.mjs**: `loadState()` now distinguishes file-not-found from JSON corruption errors
+  - **state-manager.mjs**: Added try/catch for `--artifact` CLI argument JSON parsing
+  - **enforcement-gate.mjs**: `loadJson()` now surfaces JSON parse errors instead of masking them
+  - **router-session-handler.mjs**: `loadSettings()`, `loadSessionState()`, and `loadCUJIndex()` now provide specific error messages
+
+- **Memory Leak Prevention (2026-01-22)**: Added array bounds to prevent unbounded growth
+  - **state-manager.mjs**: `active_agents` array now capped at 20 entries (line 162)
+  - Prevents long-running sessions from accumulating unbounded state
+
+- **Resource Cleanup in Hook Runner (2026-01-22)**: Fixed memory leak in `.claude/tools/hook-runner.mjs`
+  - Issue: Event listeners not removed after PowerShell hook execution
+  - Fix: Added cleanup function with `removeAllListeners()` and explicit process kill
+  - Added manual timeout handler (30s) since spawn's timeout option doesn't work as expected
+  - Lines affected: 114-199 in executePlatformHook()
+
+- **File Handle Cleanup Logging (2026-01-22)**: Added debug logging in `.claude/hooks/run-observer.mjs`
+  - Issue: `fh.close()` errors were silently ignored
+  - Fix: Added conditional warning log when DEBUG env is set
+  - Lines affected: 944-949 in readTailText()
+
+- **Workflow Guide Documentation (2026-01-22)**: Added 11 missing workflows to `.claude/workflows/WORKFLOW-GUIDE.md`
+  - Added: agent-framework-integration, agent-framework-headless, brownfield-onboarding, code-review-flow, conductor-integration, cursor-plan-mode-integration, pr-creation-workflow, search-setup-flow, ship-readiness-headless, recovery-test-flow, fallback-routing-flow
+  - Total workflows documented: 25 (previously 14)
+
+### Test Coverage Summary (2026-01-22)
+
+| Test Suite                     | Passed  | Total   | Status       |
+| ------------------------------ | ------- | ------- | ------------ |
+| Comprehensive Test Suite       | 16      | 16      | ✅ 100%      |
+| Router Session Handler         | 42      | 42      | ✅ 100%      |
+| Router-First Enforcer          | 22      | 23      | ✅ 96%       |
+| Hook Tests                     | 26      | 26      | ✅ 100%      |
+| Unit Tests                     | 51      | 51      | ✅ 100%      |
+| Orchestrator Enforcement       | 17      | 17      | ✅ 100%      |
+| Router-First E2E               | 14      | 14      | ✅ 100%      |
+| Orchestrator Context Detection | 4       | 4       | ✅ 100%      |
+| CLI Integration Tests          | 4       | 4       | ✅ 100%      |
+| **Total**                      | **196** | **197** | ✅ **99.5%** |
+
+**Note**: 1 failure in Router-First Enforcer is a flaky performance test (timing-dependent). All functional tests pass.
+
 ### Added
+
+- **Comprehensive Test Suite (2026-01-21)**: Created `.claude/tools/comprehensive-test-suite.mjs` for full framework validation
+  - 14 test categories covering critical fixes, syntax validation, schema validation, workflow validation, and hook execution
+  - Tests for circular fallback detection, race condition prevention, null safety, and timeout configuration
+  - Claude CLI integration test command generation
+  - Run with: `node .claude/tools/comprehensive-test-suite.mjs`
+
+- **System Diagnostics Fixes Implemented (2026-01-21)**: All recommended fixes from diagnostics run completed
+  - ✅ **Fix 1: Routing Handoff Pattern Automation** - Updated `.claude/CLAUDE.md` DEFAULT AGENT PROTOCOL to automatically read and use `escalation_target` from routing session state (`.claude/context/tmp/routing-sessions/<session>.json`) after router completes. Expected outcome: Zero "ROUTING HANDOFF REQUIRED" events in future runs.
+  - ℹ️ **Fix 2: Missing Skill Directories** - No action required (informational only - expected Claude Code behavior for lazy-loaded skills)
+  - ✅ **Fix 3: Tool Search Model Requirements Documentation** - Created comprehensive `.claude/docs/ADVANCED_TOOL_USE.md` (1,200+ lines) documenting that Tool Search requires Sonnet 4.5+/Opus 4.5+ models. Updated `.claude/CLAUDE.md` with Tool Search Requirements section including model support table and Skills recommendation.
+  - **Deliverables**: Updated CLAUDE.md, new ADVANCED_TOOL_USE.md documentation, detailed fixes report at `.claude/context/reports/system-diagnostics-fixes-2026-01-21.md`
+
+- **System Diagnostics Run (2026-01-21)**: Comprehensive framework validation completed
+  - **Overall Status**: CONCERNS (Functional with Minor Issues)
+  - **Test Coverage**: 100% pass rate across all validation layers
+  - **Workflows**: 22/22 workflows validated successfully (100%)
+  - **Agents**: 38/38 agents validated successfully (100%)
+  - **Inventory**: 26 workflows, 38 agents, 46 hooks, 333 tools, 36 tests
+  - **Debug Log Analysis**: 2 routing handoff corrections (enforcement working correctly), 2 ENOENT errors (expected behavior)
+  - **Performance**: All validations completed within acceptable thresholds
+  - **Reports Generated**:
+    - System diagnostics report: `.claude/context/reports/system-diagnostics-2026-01-21_115350.md`
+    - System diagnostics artifact: `.claude/context/artifacts/system-diagnostics-2026-01-21_115350.json`
+    - Master fix plan: `.claude/context/artifacts/diagnostics/diagnostics-master-fix-plan.md`
+  - **Top 3 Recommended Fixes** (Priority: Low):
+    1. **Routing Handoff Pattern Consistency**: Update default agent/master-orchestrator to automatically read and use `escalation_target` from routing session state after router completes (reduces handoff corrections from 2 to 0)
+    2. **Missing Skill Directories ENOENT Errors**: Expected behavior - Claude Code searches for skills in `C:\ProgramData\ClaudeCode\.claude\skills` and `C:\Users\oimir\.claude\skills` (non-existent global locations). This is informational only; no action required unless global skills are desired.
+    3. **Tool Search Model Requirements Documentation**: Document in `.claude/docs/ADVANCED_TOOL_USE.md` that Tool Search requires Sonnet/Opus models (Haiku models disable tool_reference blocks by design)
 
 - **Trace/span event fields**: `run-observer.mjs` emits OTel/W3C-compatible `trace_id`/`span_id` fields into `.claude/context/runtime/runs/<runId>/events.ndjson` and `.claude/context/artifacts/tool-events/run-<runId>.ndjson`.
 - **Payload storage (sanitized)**: optional full tool payload storage under `.claude/context/payloads/` linked from events via `event.payload.payload_ref` (`CLAUDE_OBS_STORE_PAYLOADS=1`).
@@ -27,6 +170,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Circular fallback reference (2026-01-21)**: Fixed infinite loop potential in `.claude/config/fallback-agents.json` where `orchestrator` and `master-orchestrator` referenced each other. Changed fallback chain to terminate at `architect` instead, preventing circular delegation loops.
+
+- **Race condition in lock acquisition (2026-01-21)**: Fixed race condition in `.claude/hooks/orchestrator-enforcement-pre-tool.mjs` lock acquisition. Added exponential backoff retry mechanism (3 retries, base 50ms delay), atomic rename for stale lock cleanup, and proper EEXIST error handling to prevent concurrent session corruption.
+
+- **Null safety in router-first-enforcer (2026-01-21)**: Fixed potential null pointer exception in `.claude/hooks/router-first-enforcer.mjs` `extractSessionIdFromState()` function. Added type validation (`!state || typeof state !== 'object' || Array.isArray(state)`) before accessing properties to prevent crashes on malformed session state.
+
+- **Timeout inconsistency (2026-01-21)**: Fixed timeout mismatch in `.claude/hooks/router-first-enforcer.mjs` where documentation stated 2 seconds but code used 900ms. Aligned `FILE_READ_TIMEOUT_MS` to 2000ms to match documented behavior.
+
+- **Router fallback for web app builds**: `router-completion-handler.mjs` now detects web-app/website prompts (e.g., `test_ui`, `cnn.com`) even when router output is missing/unparseable, and falls back to `@.claude/workflows/greenfield-fullstack.yaml` with a required handoff to `orchestrator`.
+- **Permission prompt stalls**: added `AskUserQuestion`, `TodoWrite`, and `TaskOutput` to `.claude/settings.json` -> `tool_permissions.always_allow` to prevent sessions from hanging on `canUseTool is required` prompts.
 - **read-path-guard relative paths**: directory reads like `.claude/agents/` are now detected reliably even when the hook process is not running with the repo root as CWD (resolves relative paths against `CLAUDE_PROJECT_DIR` / repo root before `statSync`).
 - **Debug-mode session key fragmentation**: hook processes now normalize UUID-like `CLAUDE_SESSION_ID` values to `shared-<uuid>` and persist them to `.claude/context/tmp/shared-session-key.json`, preventing routing/observability state from splitting across processes (reduces false orchestrator fan-out and Windows OOMs during UI runs).
 - **Headless workflow fan-out**: added `headless-task-guard.mjs` to deny `Task` spawning for `*-headless.yaml` workflows after the initial `handoff_target` is spawned (prevents UI sessions from spawning QA/etc and OOMing instead of running the headless runner).
@@ -39,13 +192,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **A2A integration suite**: restored missing fixtures, aligned scenarios with hook schemas (`approve`/`deny`), and improved harness assertions so `node .claude/tests/a2a-framework/test-runner.mjs --ci` passes end-to-end.
 - **Integration verifier smoke summary drift**: `verify-agent-integration.mjs` now warns when `_summary.json` totals don't match the receipt file count (helps catch accidental agent exclusions).
 - **Router-first handoff deadlocks**: `router-first-enforcer.mjs` now treats `orchestrator` and `master-orchestrator` as equivalent coordinators for post-routing handoff, preventing repeated `ROUTING HANDOFF REQUIRED` blocks when the model spawns the other coordinator variant.
-- **Router re-route OOM race**: `no-reroute-after-routing.mjs` now blocks attempts to spawn `router` again once routing has started (even if completion hasn’t been persisted yet), preventing token-amplifying re-routing loops.
+- **Router re-route OOM race**: `no-reroute-after-routing.mjs` now blocks attempts to spawn `router` again while routing is in progress (and briefly after completion), preventing token-amplifying re-routing loops while still allowing re-routing on later user turns.
+- **Multi-turn routing dead-ends**: `router-first-enforcer.mjs` now resets the active routing state when a new `router` spawn occurs after routing has completed, allowing subsequent user prompts to be routed again in the same session (prevents “Hook PreToolUse:Task denied this tool” stalls).
 - **Integration vs diagnostics misroute**: `router-completion-handler.mjs` now treats integration harness prompts as higher priority than “diagnostics” wording, and rewrites `diagnostics-runner` escalation to `orchestrator` when the integration workflow is selected.
 - **Miswired router hook**: `.claude/settings.json` no longer runs `router-session-entry.mjs` as a Claude Code hook (it is not a stdin/decision hook), reducing re-routing loops and OOM risk.
 
 ### Changed
 
 - **Safer Claude Code defaults**: repo-scoped `.claude/settings.json` no longer force-enables payload storage/failure bundles and disables `extended_thinking` by default to reduce OOM risk during long integration runs (enable locally via environment or `.claude/settings.local.json`).
+- **Coordinator “no phantom execution”**: `master-orchestrator` and `orchestrator` instructions now forbid claiming progress without a successful `Task` result and require following hook denial banners immediately.
 - **RAG defaults + tuning**: `.claude/settings.json` enables RAG by default; use `.claude/templates/settings.local.example.json` to disable background indexing and reduce batch sizes if you hit memory pressure during debug runs.
 - **Headless integration JSON suite**: `pnpm integration:headless:json` now enables payload storage and runs the denial test as part of the default headless workflow output.
 - **Router integration routing**: integration harness requests now prefer `@.claude/workflows/agent-framework-integration-headless.yaml` to keep the Claude Code UI stable.

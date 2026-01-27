@@ -51,19 +51,22 @@
     "validate:workflow-gates": "node --max-old-space-size=4096 --expose-gc .claude/tools/validate-workflow-rating-gates.mjs",
     "test:codex-integration": "node .claude/tools/test-codex-skills-integration.mjs",
     "test:codex-integration:mock": "node .claude/tools/test-codex-skills-integration.mjs --mock",
-    "test": "node .claude/tests/test-all-hooks.mjs && node --test --test-concurrency=1 tests/*.test.mjs",
-    "test:hooks": "node .claude/tests/test-all-hooks.mjs",
-    "test:hooks:memory": "node .claude/tests/test-hook-memory.mjs",
-    "test:hooks:stress": "node .claude/tests/test-hook-stress.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:hooks": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",
+    "test:hooks:memory": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",
+    "test:hooks:stress": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",
     "test:unit": "node --test --test-concurrency=1 tests/validate-cujs.test.mjs tests/validate-skills.test.mjs tests/run-cuj.test.mjs tests/cuj-measurability.test.mjs",
     "test:integration": "node --test tests/integration/*.test.mjs",
-    "test:tools": "node --test --test-concurrency=1 .claude/tools/*.test.mjs .claude/tools/tests/*.test.mjs",
-    "test:all": "pnpm test:hooks && pnpm test:unit && pnpm test:integration && pnpm test:tools",
+    "test:tools": "node --test --test-concurrency=1 \".claude/tools/**/*.test.mjs\" \".claude/tools/**/*.test.cjs\"",
+    "test:framework": "node --test --test-concurrency=1 .claude/hooks/**/*.test.cjs .claude/lib/**/*.test.cjs",
+    "test:framework:hooks": "node --test --test-concurrency=1 .claude/hooks/**/*.test.cjs",
+    "test:framework:lib": "node --test --test-concurrency=1 .claude/lib/**/*.test.cjs",
+    "test:all": "pnpm test && pnpm test:framework && pnpm test:tools",
     "test:ci": "node --test --test-concurrency=1 --test-reporter=spec tests/*.test.mjs tests/integration/*.test.mjs",
     "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage tests/*.test.mjs",
-    "test:a2a": "node .claude/tests/a2a-framework/test-runner.mjs",
-    "test:a2a:verbose": "node .claude/tests/a2a-framework/test-runner.mjs --verbose",
-    "test:a2a:ci": "node .claude/tests/a2a-framework/test-runner.mjs --ci"
+    "test:a2a": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'",
+    "test:a2a:verbose": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'",
+    "test:a2a:ci": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'"
   },
   "keywords": [
     "claude",
@@ -80,22 +83,12 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.3",
-    "ajv-formats": "^3.0.1",
-    "better-sqlite3": "11.10.0",
-    "commander": "^12.1.0",
-    "glob": "^13.0.0",
-    "hnswlib-node": "^3.0.0",
-    "nanoid": "^5.0.9",
-    "openai": "^4.104.0",
-    "ws": "^8.19.0",
-    "zod": "^4.3.5"
+    "@jest/globals": "^30.2.0",
+    "ajv": "^8.17.1",
+    "glob": "^13.0.0"
   },
   "devDependencies": {
-    "ajv": "^8.17.1",
     "js-yaml": "^4.1.1",
-    "prettier": "^3.7.4",
-    "stream-chain": "^2.2.5",
-    "stream-json": "^1.9.1"
+    "prettier": "^3.7.4"
   }
 }

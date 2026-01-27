@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude-code.anthropic.com/schemas/skill-definition",
+  "title": "Skill Definition Schema",
+  "description": "Schema for validating Claude Code skill definitions (SKILL.md frontmatter)",
+  "type": "object",
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Skill name in lowercase-with-hyphens format"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Clear description of what the skill does"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "default": "1.0",
+      "description": "Semantic version number"
+    },
+    "model": {
+      "type": "string",
+      "enum": ["sonnet", "opus", "haiku", "inherit"],
+      "default": "sonnet",
+      "description": "Preferred model for this skill"
+    },
+    "invoked_by": {
+      "type": "string",
+      "enum": ["user", "agent", "both"],
+      "default": "both",
+      "description": "Who can invoke this skill"
+    },
+    "user_invocable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether users can invoke directly via /skill-name"
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tools this skill uses"
+    },
+    "allowed-tools": {
+      "type": "string",
+      "description": "Comma-separated list of allowed tools (alternative format)"
+    },
+    "args": {
+      "type": "string",
+      "description": "Argument format for skill invocation"
+    },
+    "best_practices": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of best practices for this skill"
+    },
+    "templates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Available templates this skill can generate"
+    },
+    "error_handling": {
+      "type": "string",
+      "enum": ["graceful", "strict", "warn"],
+      "default": "graceful",
+      "description": "How errors are handled"
+    },
+    "streaming": {
+      "type": "string",
+      "enum": ["supported", "required", "disabled"],
+      "default": "supported",
+      "description": "Streaming output support"
+    },
+    "context_fork": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether skill runs in forked context"
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin of skill (e.g., mcp-npm, custom, converted)"
+    },
+    "original_server": {
+      "type": "string",
+      "description": "Original MCP server name if converted"
+    }
+  },
+  "additionalProperties": true
+}

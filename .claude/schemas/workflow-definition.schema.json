@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude-code.anthropic.com/schemas/workflow-definition",
+  "title": "Workflow Definition Schema",
+  "description": "Schema for validating Claude Code workflow definition files",
+  "type": "object",
+  "required": ["name", "steps"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Workflow name in lowercase-with-hyphens format"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Description of what the workflow does"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["rapid", "enterprise", "operations"],
+      "description": "Workflow category"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "Simple step name"
+          },
+          {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$",
+                "description": "Step identifier"
+              },
+              "description": {
+                "type": "string",
+                "description": "Step description"
+              },
+              "agent": {
+                "type": "string",
+                "description": "Agent to execute this step"
+              },
+              "skills": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Skills to load for this step"
+              },
+              "inputs": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Required inputs for this step"
+              },
+              "outputs": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Outputs produced by this step"
+              },
+              "validation": {
+                "type": "object",
+                "properties": {
+                  "schema": {
+                    "type": "string",
+                    "description": "Schema to validate step output"
+                  },
+                  "required": {
+                    "type": "boolean",
+                    "description": "Whether validation is required to proceed"
+                  }
+                },
+                "description": "Validation configuration for step outputs"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Condition for executing this step"
+              },
+              "parallel": {
+                "type": "boolean",
+                "description": "Whether this step can run in parallel with previous"
+              }
+            }
+          }
+        ]
+      },
+      "description": "Workflow steps"
+    },
+    "hooks": {
+      "type": "object",
+      "properties": {
+        "entry": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Hooks to run when workflow starts"
+        },
+        "exit": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Hooks to run when workflow completes"
+        },
+        "error": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Hooks to run on workflow error"
+        }
+      },
+      "description": "Workflow lifecycle hooks"
+    },
+    "agents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Agents that can execute this workflow"
+    },
+    "timeout": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Workflow timeout in seconds"
+    },
+    "retries": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Number of retries on failure"
+    }
+  },
+  "examples": [
+    {
+      "name": "fix",
+      "steps": ["reproduce", "fix", "verify"]
+    },
+    {
+      "name": "code-review",
+      "description": "Comprehensive code review workflow",
+      "category": "enterprise",
+      "steps": [
+        {
+          "id": "analyze",
+          "description": "Analyze the code changes",
+          "agent": "developer",
+          "skills": ["code-analyzer"]
+        },
+        {
+          "id": "review",
+          "description": "Review for quality and security",
+          "agent": "architect",
+          "skills": ["code-analyzer"]
+        },
+        {
+          "id": "approve",
+          "description": "Final approval",
+          "agent": "architect"
+        }
+      ],
+      "hooks": {
+        "entry": ["review-start-logger"],
+        "exit": ["review-complete-notifier"]
+      }
+    }
+  ]
+}

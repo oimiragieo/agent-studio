@@ -1,0 +1,84 @@
+{
+  "skill_name": "aws-cloud-ops",
+  "version": "1.0.0",
+  "created_date": "2026-01-05",
+  "files_created": [
+    ".claude/skills/aws-cloud-ops/SKILL.md",
+    ".claude/skills/aws-cloud-ops/dev-manifest.json"
+  ],
+  "files_modified": [],
+  "dependencies_added": [],
+  "tests_created": [],
+  "description": "AWS cloud operations skill for CloudWatch, S3, Lambda, EC2, and IAM management",
+  "context_savings": "90%+ vs raw MCP server (~20,000 tokens → ~400 tokens metadata)",
+  "agent_mapping": {
+    "primary": ["devops", "cloud-integrator"],
+    "secondary": [
+      "gcp-cloud-agent",
+      "incident-responder",
+      "security-architect",
+      "developer",
+      "performance-engineer"
+    ]
+  },
+  "service_categories": {
+    "cloudwatch": {
+      "tools": 5,
+      "operations": ["logs", "metrics", "alarms"]
+    },
+    "s3": {
+      "tools": 7,
+      "operations": ["bucket operations", "object management", "bucket policies"]
+    },
+    "lambda": {
+      "tools": 6,
+      "operations": ["function management", "invocation", "code updates"]
+    },
+    "ec2": {
+      "tools": 6,
+      "operations": ["instance operations", "security groups", "start/stop instances"]
+    },
+    "iam": {
+      "tools": 4,
+      "operations": ["role management (read-only)", "policy review"]
+    }
+  },
+  "progressive_disclosure": {
+    "initial_load": "400 tokens (metadata only)",
+    "service_load": "700-800 tokens per service category",
+    "on_demand_execution": "detailed parameters loaded only when tool is invoked"
+  },
+  "requirements": {
+    "aws_cli": "required",
+    "aws_credentials": "required (via aws configure, env vars, or IAM role)",
+    "python": "3.8+ with boto3 (optional, for programmatic access)"
+  },
+  "security_features": {
+    "iam_read_only": "IAM tools are read-only by default",
+    "least_privilege": "Documented minimum IAM permissions per service",
+    "credential_methods": ["aws configure", "environment variables", "IAM roles"]
+  },
+  "use_cases": [
+    "Application monitoring via CloudWatch",
+    "Serverless Lambda deployment and management",
+    "S3 data pipeline operations",
+    "EC2 instance management during deployments",
+    "Security audit (IAM roles and security groups)"
+  ],
+  "pattern_compliance": {
+    "follows_cloud_run_pattern": true,
+    "follows_scaffolder_pattern": true,
+    "yaml_frontmatter": true,
+    "progressive_disclosure": true,
+    "tool_documentation": "complete",
+    "agent_integration": "documented",
+    "troubleshooting": "comprehensive",
+    "security_section": "extensive"
+  },
+  "implementation_notes": {
+    "based_on": "awslabs/mcp project",
+    "skill_template": "cloud-run and scaffolder patterns",
+    "multi_service_approach": "unified skill vs separate MCP servers per service",
+    "token_efficiency": "category-based progressive disclosure"
+  }
+}

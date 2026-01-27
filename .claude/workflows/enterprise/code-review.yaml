@@ -1,0 +1,5 @@
+name: code-review
+steps:
+  - analyze
+  - critique
+  - approve

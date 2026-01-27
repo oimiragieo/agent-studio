@@ -1,0 +1,377 @@
+# Template Creator Workflow
+#
+# EVOLVE workflow for creating templates via the template-creator skill.
+# Executable by WorkflowEngine at .claude/lib/workflow/workflow-engine.cjs
+#
+# Key differences from agent-creator:
+# - Creates template files in .claude/templates/
+# - Templates use Mustache/Handlebars-style placeholders {{variable}}
+# - Templates can be for agents, skills, workflows, READMEs, etc.
+# - Registers template in template registry
+
+name: template-creator-workflow
+description: Create, validate, and register templates following the EVOLVE process
+version: 1.0.0
+artifact_type: template
+output_location: .claude/templates/
+
+# Template-specific configuration
+template_config:
+  categories:
+    - agents
+    - skills
+    - workflows
+    - hooks
+    - schemas
+    - readmes
+    - configs
+    - reports
+  placeholder_syntax:
+    - "{{variable}}"
+    - "{{#section}}...{{/section}}"
+    - "{{^section}}...{{/section}}"
+  required_placeholders:
+    - "{{name}}"
+    - "{{description}}"
+  registration_targets:
+    - ".claude/templates/registry.json"
+    - ".claude/context/memory/learnings.md"
+  naming_convention: "kebab-case"
+  file_extension: ".md"
+
+phases:
+  evaluate:
+    description: Determine template type and confirm need
+    steps:
+      - id: check-evolution-state
+        action: function
+        handler: checkEvolutionState
+        description: Verify evolution state is idle or can accept new evolution
+      - id: identify-template-purpose
+        action: prompt
+        description: Gather template requirements
+        outputs:
+          - purpose
+          - target_artifact_type
+          - placeholders
+          - sections
+          - category
+      - id: determine-template-category
+        action: function
+        handler: determineTemplateCategory
+        description: Classify into agents, skills, workflows, hooks, schemas, readmes, configs, or reports
+        inputs:
+          - purpose
+          - target_artifact_type
+        outputs:
+          - template_category
+      - id: check-existing-templates
+        action: function
+        handler: checkExistingTemplates
+        description: Search for similar templates that might already exist
+        inputs:
+          - template_category
+          - purpose
+        outputs:
+          - existing_matches
+          - gap_confirmed
+      - id: update-state-evaluate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to evaluating
+        inputs:
+          - template_category
+          - template_name
+    gates:
+      - id: gate-evaluate
+        condition: "steps['check-existing-templates'].output.gap_confirmed === true"
+        on_fail: abort
+        message: "Similar template already exists. Consider enhancing existing template instead."
+
+  validate:
+    description: Check naming convention and no conflicts
+    steps:
+      - id: validate-naming
+        action: function
+        handler: validateNaming
+        description: Ensure template name follows kebab-case-template convention
+        inputs:
+          - template_name
+        outputs:
+          - name_valid
+          - suggested_name
+      - id: check-naming-conflicts
+        action: function
+        handler: checkNamingConflicts
+        description: Grep for existing templates with same name
+        inputs:
+          - template_name
+          - template_category
+        outputs:
+          - conflict_found
+          - conflicting_paths
+      - id: validate-placeholder-syntax
+        action: function
+        handler: validatePlaceholderSyntax
+        description: Verify placeholders follow Mustache/Handlebars syntax
+        inputs:
+          - placeholders
+        outputs:
+          - syntax_valid
+          - syntax_errors
+      - id: update-state-validate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to validating
+    gates:
+      - id: gate-validate-name
+        condition: "steps['validate-naming'].output.name_valid === true"
+        on_fail: block
+        message: "Template name must be kebab-case"
+      - id: gate-validate-conflict
+        condition: "steps['check-naming-conflicts'].output.conflict_found === false"
+        on_fail: abort
+        message: "Template with this name already exists"
+      - id: gate-validate-syntax
+        condition: "steps['validate-placeholder-syntax'].output.syntax_valid === true"
+        on_fail: block
+        message: "Placeholder syntax must follow Mustache/Handlebars format"
+
+  obtain:
+    description: Research template patterns and target artifact structure (optional)
+    optional: true
+    steps:
+      - id: analyze-target-artifacts
+        action: function
+        handler: analyzeTargetArtifacts
+        description: Read existing artifacts of target type to understand structure
+        inputs:
+          - target_artifact_type
+        outputs:
+          - artifact_structure
+          - required_sections
+      - id: analyze-similar-templates
+        action: function
+        handler: analyzeSimilarTemplates
+        description: Read existing templates in same category for patterns
+        inputs:
+          - template_category
+        outputs:
+          - pattern_analysis
+          - common_patterns
+      - id: research-best-practices
+        action: prompt
+        description: Optional research for complex templates
+        optional: true
+        outputs:
+          - research_findings
+          - external_sources
+      - id: update-state-obtain
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to obtaining
+    gates:
+      - id: gate-obtain
+        condition: "steps['analyze-target-artifacts'].output.artifact_structure !== null"
+        on_fail: block
+        message: "Failed to analyze target artifact structure"
+
+  lock:
+    description: Create template file with proper structure
+    steps:
+      - id: generate-template-content
+        action: function
+        handler: generateTemplateContent
+        description: Generate template content with placeholders
+        inputs:
+          - template_name
+          - template_category
+          - purpose
+          - placeholders
+          - sections
+          - artifact_structure
+        outputs:
+          - template_content
+          - template_path
+      - id: write-template-file
+        action: write
+        description: Write the template file
+        inputs:
+          - template_content
+          - template_path
+        outputs:
+          - template_file_created
+      - id: validate-placeholders
+        action: function
+        handler: validatePlaceholders
+        description: Validate all placeholders are well-formed
+        inputs:
+          - template_path
+        outputs:
+          - placeholders_valid
+          - placeholder_errors
+      - id: create-example-output
+        action: function
+        handler: createExampleOutput
+        description: Generate example output by filling placeholders
+        inputs:
+          - template_path
+        outputs:
+          - example_output
+          - example_valid
+      - id: update-state-lock
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to locking
+    gates:
+      - id: gate-lock-template
+        condition: "steps['write-template-file'].output.template_file_created === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Failed to create template file"
+      - id: gate-lock-placeholders
+        condition: "steps['validate-placeholders'].output.placeholders_valid === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Template placeholders validation failed"
+      - id: gate-lock-example
+        condition: "steps['create-example-output'].output.example_valid === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Template example output generation failed"
+
+  verify:
+    description: Validate template produces valid artifacts
+    steps:
+      - id: validate-required-placeholders
+        action: function
+        handler: validateRequiredPlaceholders
+        description: Verify template has required placeholders (name, description)
+        inputs:
+          - template_path
+        outputs:
+          - required_present
+          - missing_required
+      - id: test-template-rendering
+        action: function
+        handler: testTemplateRendering
+        description: Test template with sample data produces valid output
+        inputs:
+          - template_path
+        outputs:
+          - rendering_successful
+          - rendered_output
+      - id: validate-rendered-output
+        action: function
+        handler: validateRenderedOutput
+        description: Verify rendered output matches target artifact structure
+        inputs:
+          - rendered_output
+          - target_artifact_type
+        outputs:
+          - output_valid
+          - validation_errors
+      - id: update-state-verify
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to verifying
+    gates:
+      - id: gate-verify-required
+        condition: "steps['validate-required-placeholders'].output.required_present === true"
+        on_fail: return_to_lock
+        message: "Required placeholders missing (name, description)"
+      - id: gate-verify-render
+        condition: "steps['test-template-rendering'].output.rendering_successful === true"
+        on_fail: return_to_lock
+        message: "Template rendering failed"
+      - id: gate-verify-output
+        condition: "steps['validate-rendered-output'].output.output_valid === true"
+        on_fail: return_to_lock
+        message: "Rendered output does not match target artifact structure"
+
+  enable:
+    description: Register template in registry and update memory
+    steps:
+      - id: update-template-registry
+        action: function
+        handler: updateTemplateRegistry
+        description: Add template to .claude/templates/registry.json
+        inputs:
+          - template_name
+          - template_path
+          - template_category
+          - placeholders
+          - purpose
+        outputs:
+          - registry_updated
+      - id: update-memory
+        action: function
+        handler: updateMemory
+        description: Record template creation in learnings.md
+        inputs:
+          - template_name
+          - template_path
+          - template_category
+        outputs:
+          - memory_updated
+      - id: update-state-enable
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to idle with completed evolution
+        inputs:
+          - template_name
+          - template_path
+      - id: verify-registration
+        action: function
+        handler: verifyRegistration
+        description: Verify template is in registry and discoverable
+        inputs:
+          - template_name
+        outputs:
+          - verification_passed
+    gates:
+      - id: gate-enable-registry
+        condition: "steps['update-template-registry'].output.registry_updated === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Failed to update template registry"
+      - id: gate-enable-verify
+        condition: "steps['verify-registration'].output.verification_passed === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Template registration verification failed"
+
+# Rollback/compensate actions for each phase
+compensate:
+  lock:
+    - action: delete_file
+      target: template_path
+      description: Remove created template file
+  enable:
+    - action: remove_from_registry
+      target: ".claude/templates/registry.json"
+      description: Remove template from registry
+    - action: revert_memory
+      target: ".claude/context/memory/learnings.md"
+      description: Remove template entry from learnings
+
+# Iron Laws for template creation
+iron_laws:
+  - id: no-template-without-name-placeholder
+    rule: "Every template MUST have {{name}} placeholder"
+    enforcement: gate-verify-required
+  - id: no-template-without-description-placeholder
+    rule: "Every template MUST have {{description}} placeholder"
+    enforcement: gate-verify-required
+  - id: no-template-without-render-test
+    rule: "Template MUST render successfully with sample data"
+    enforcement: gate-verify-render
+  - id: no-template-without-registry
+    rule: "Template MUST be registered in registry.json"
+    enforcement: gate-enable-registry
+  - id: placeholder-syntax-valid
+    rule: "Placeholders must follow Mustache/Handlebars syntax"
+    enforcement: gate-lock-placeholders
+  - id: output-matches-target
+    rule: "Rendered output must match target artifact structure"
+    enforcement: gate-verify-output

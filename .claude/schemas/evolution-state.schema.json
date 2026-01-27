@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude-code.anthropic.com/schemas/evolution-state",
+  "title": "Evolution State",
+  "description": "Tracks the state of self-evolution operations in the Claude Code Enterprise Framework",
+  "type": "object",
+  "required": ["version", "state", "evolutions", "patterns", "suggestions"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the evolution state schema"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["idle", "evaluating", "validating", "obtaining", "locking", "verifying", "enabling", "blocked", "aborted"],
+      "description": "Current state of the evolution system. Terminal states: blocked (evolution cannot proceed due to conflict/error), aborted (evolution was explicitly cancelled)"
+    },
+    "currentEvolution": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/activeEvolution" }
+      ],
+      "description": "Currently active evolution operation, or null if idle"
+    },
+    "evolutions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/completedEvolution" },
+      "description": "History of completed evolutions"
+    },
+    "patterns": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/pattern" },
+      "description": "Extracted patterns from codebase usage"
+    },
+    "suggestions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/suggestion" },
+      "description": "Suggested evolutions based on patterns"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last state update"
+    }
+  },
+  "$defs": {
+    "activeEvolution": {
+      "type": "object",
+      "required": ["id", "type", "name", "trigger", "phase", "startedAt"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^evo-[a-z0-9]{8}$",
+          "description": "Unique evolution identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["agent", "skill", "workflow", "hook", "schema", "template"],
+          "description": "Type of artifact being evolved"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Name of the artifact being created/modified"
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What triggered this evolution (user request, pattern detection, etc.)"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["evaluate", "validate", "obtain", "lock", "verify", "enable"],
+          "description": "Current phase of the evolution process"
+        },
+        "research": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/researchEntry" },
+          "default": [],
+          "description": "Research gathered during evolution"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this evolution started"
+        },
+        "blockedReason": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string" }
+          ],
+          "description": "Reason if evolution is blocked, null otherwise"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Additional metadata for the evolution"
+        }
+      }
+    },
+    "researchEntry": {
+      "type": "object",
+      "required": ["query", "source", "findings", "timestamp"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Research query or question"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source of research (web, codebase, documentation, etc.)"
+        },
+        "findings": {
+          "type": "string",
+          "description": "Summary of research findings"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When research was conducted"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence level in findings (0-1)"
+        }
+      }
+    },
+    "completedEvolution": {
+      "type": "object",
+      "required": ["id", "type", "name", "createdAt", "filesCreated"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^evo-[a-z0-9]{8}$",
+          "description": "Unique evolution identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["agent", "skill", "workflow", "hook", "schema", "template"],
+          "description": "Type of artifact evolved"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the artifact"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of what was evolved"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What triggered this evolution"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When evolution completed"
+        },
+        "filesCreated": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of files created during evolution"
+        },
+        "filesModified": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of files modified during evolution"
+        },
+        "researchSources": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of research sources consulted"
+        },
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Duration of evolution in milliseconds"
+        },
+        "success": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether evolution completed successfully"
+        },
+        "rollbackInfo": {
+          "type": "object",
+          "properties": {
+            "canRollback": { "type": "boolean" },
+            "rollbackCommit": { "type": "string" }
+          },
+          "description": "Information for rolling back this evolution"
+        }
+      }
+    },
+    "pattern": {
+      "type": "object",
+      "required": ["id", "description", "frequency", "lastSeen"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^pat-[a-z0-9]{8}$",
+          "description": "Unique pattern identifier"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable pattern description"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["usage", "error", "request", "workflow", "integration"],
+          "description": "Category of the pattern"
+        },
+        "frequency": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many times this pattern was observed"
+        },
+        "firstSeen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When pattern was first observed"
+        },
+        "lastSeen": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When pattern was last observed"
+        },
+        "suggestedAction": {
+          "type": "string",
+          "description": "Recommended action based on pattern"
+        },
+        "examples": {
+          "type": "array",
+          "items": { "type": "string" },
+          "maxItems": 5,
+          "description": "Example occurrences of this pattern"
+        },
+        "relatedPatterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of related patterns"
+        }
+      }
+    },
+    "suggestion": {
+      "type": "object",
+      "required": ["id", "type", "name", "reason", "confidence"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^sug-[a-z0-9]{8}$",
+          "description": "Unique suggestion identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["agent", "skill", "workflow", "hook", "schema", "template"],
+          "description": "Type of artifact suggested"
+        },
+        "name": {
+          "type": "string",
+          "description": "Suggested name for the artifact"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why this suggestion is being made"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score (0-1) for this suggestion"
+        },
+        "basedOnPatterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Pattern IDs that led to this suggestion"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium",
+          "description": "Priority level of the suggestion"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When suggestion was created"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "accepted", "rejected", "implemented"],
+          "default": "pending",
+          "description": "Current status of the suggestion"
+        },
+        "implementedBy": {
+          "type": "string",
+          "description": "Evolution ID if this suggestion was implemented"
+        }
+      }
+    }
+  }
+}

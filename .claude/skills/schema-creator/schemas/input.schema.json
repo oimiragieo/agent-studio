@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/schema-creator-input",
+  "title": "Schema Creator Input Schema",
+  "description": "Input validation schema for schema-creator skill",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["input", "output", "global", "definition"],
+      "description": "Type of schema to create: input (skill input), output (skill output), global (framework-wide), definition (agent/skill/hook/workflow)"
+    },
+    "skill": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Skill name for skill-specific schemas (input/output types)"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Schema name for global schemas"
+    },
+    "entity": {
+      "type": "string",
+      "enum": ["agent", "skill", "hook", "workflow", "custom"],
+      "description": "Entity type for definition schemas"
+    },
+    "fromExample": {
+      "type": "string",
+      "description": "Path to JSON file to generate schema from"
+    },
+    "validate": {
+      "type": "string",
+      "description": "Path to schema file to validate"
+    },
+    "validateData": {
+      "type": "string",
+      "description": "Path to data file to validate against schema"
+    },
+    "schema": {
+      "type": "string",
+      "description": "Path to schema file for data validation"
+    },
+    "output": {
+      "type": "string",
+      "description": "Output path for generated schema"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "type": "input",
+      "skill": "my-skill"
+    },
+    {
+      "type": "global",
+      "name": "my-data-format"
+    },
+    {
+      "type": "definition",
+      "entity": "workflow"
+    },
+    {
+      "validate": ".claude/schemas/my-schema.schema.json"
+    },
+    {
+      "fromExample": "example.json",
+      "output": ".claude/schemas/generated.schema.json"
+    }
+  ]
+}

@@ -1,0 +1,522 @@
+#!/usr/bin/env node
+/**
+ * Security Lint Tool
+ *
+ * Pre-commit security scanner for detecting potential security issues.
+ * Designed to be run as a pre-commit hook or manually.
+ *
+ * Usage:
+ *   node security-lint.cjs [files...]
+ *   node security-lint.cjs --staged
+ *   node security-lint.cjs --all
+ *
+ * Exit codes:
+ *   0 - No security issues found
+ *   1 - Security issues detected
+ *   2 - Error during execution
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+// =============================================================================
+// Configuration
+// =============================================================================
+
+const CONFIG = {
+  // Maximum file size to scan (in bytes)
+  maxFileSize: 1024 * 1024, // 1MB
+
+  // File extensions to scan
+  scanExtensions: [
+    '.js',
+    '.cjs',
+    '.mjs',
+    '.ts',
+    '.tsx',
+    '.jsx',
+    '.json',
+    '.yaml',
+    '.yml',
+    '.env',
+    '.sh',
+    '.bash',
+    '.py',
+    '.rb',
+    '.go',
+    '.rs',
+    '.md',
+    '.txt',
+  ],
+
+  // Directories to skip
+  skipDirs: ['node_modules', '.git', 'dist', 'build', 'coverage', '.next', '.nuxt', 'vendor'],
+
+  // Severity levels
+  severityLevels: {
+    critical: 3,
+    high: 2,
+    medium: 1,
+    low: 0,
+  },
+};
+
+// =============================================================================
+// Security Rules
+// =============================================================================
+
+/**
+ * Security rules to check
+ * Each rule has: id, name, severity, pattern, description, fix
+ */
+const SECURITY_RULES = [
+  // Secrets & Credentials
+  {
+    id: 'SEC-001',
+    name: 'Hardcoded API Key',
+    severity: 'critical',
+    pattern: /(?:api[-_]?key|apikey)\s*[:=]\s*['"`]([A-Za-z0-9_\-]{20,})['"`]/gi,
+    description: 'Hardcoded API key detected',
+    fix: 'Use environment variables: process.env.API_KEY',
+  },
+  {
+    id: 'SEC-002',
+    name: 'Hardcoded Password',
+    severity: 'critical',
+    pattern: /(?:password|passwd|pwd)\s*[:=]\s*['"`]([^'"`]{4,})['"`]/gi,
+    description: 'Hardcoded password detected',
+    fix: 'Use environment variables or a secrets manager',
+  },
+  {
+    id: 'SEC-003',
+    name: 'Private Key',
+    severity: 'critical',
+    pattern: /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/i,
+    description: 'Private key detected in file',
+    fix: 'Remove private keys from source code',
+  },
+  {
+    id: 'SEC-004',
+    name: 'AWS Credentials',
+    severity: 'critical',
+    pattern: /(?:AKIA|ABIA|ACCA|ASIA)[A-Z0-9]{16}/,
+    description: 'AWS access key ID detected',
+    fix: 'Use AWS IAM roles or environment variables',
+  },
+  {
+    id: 'SEC-005',
+    name: 'JWT Secret',
+    severity: 'critical',
+    pattern: /(?:jwt[-_]?secret|jwt[-_]?key)\s*[:=]\s*['"`]([^'"`]{8,})['"`]/gi,
+    description: 'Hardcoded JWT secret detected',
+    fix: 'Use environment variables for JWT secrets',
+  },
+
+  // Injection Vulnerabilities
+  {
+    id: 'SEC-010',
+    name: 'SQL Injection Risk',
+    severity: 'high',
+    pattern: /(?:query|execute)\s*\(\s*['"`].*\$\{.*\}.*['"`]\s*\)/gi,
+    description: 'Potential SQL injection via string interpolation',
+    fix: 'Use parameterized queries',
+  },
+  {
+    id: 'SEC-011',
+    name: 'Command Injection Risk',
+    severity: 'high',
+    pattern: /(?:exec|execSync|spawn|spawnSync)\s*\([^)]*\$\{/gi,
+    description: 'Potential command injection via string interpolation',
+    fix: 'Use array arguments instead of string interpolation',
+  },
+  {
+    id: 'SEC-012',
+    name: 'Eval Usage',
+    severity: 'high',
+    pattern: /\beval\s*\(/g,
+    description: 'eval() usage detected - potential code injection',
+    fix: 'Avoid eval(); use safer alternatives',
+  },
+  {
+    id: 'SEC-013',
+    name: 'Function Constructor',
+    severity: 'high',
+    pattern: /new\s+Function\s*\(/g,
+    description: 'Function constructor usage - similar to eval()',
+    fix: 'Avoid dynamic function creation',
+  },
+
+  // Insecure Patterns
+  {
+    id: 'SEC-020',
+    name: 'HTTP Without TLS',
+    severity: 'medium',
+    pattern: /['"`]http:\/\/(?!localhost|127\.0\.0\.1)/gi,
+    description: 'HTTP URL detected (non-localhost)',
+    fix: 'Use HTTPS for secure communication',
+  },
+  {
+    id: 'SEC-021',
+    name: 'Disabled SSL Verification',
+    severity: 'high',
+    pattern: /rejectUnauthorized\s*:\s*false/gi,
+    description: 'SSL certificate verification disabled',
+    fix: 'Enable SSL certificate verification',
+  },
+  {
+    id: 'SEC-022',
+    name: 'Weak Crypto Algorithm',
+    severity: 'medium',
+    pattern: /createCipher\s*\(\s*['"`](?:des|rc4|md5)/gi,
+    description: 'Weak cryptographic algorithm detected',
+    fix: 'Use strong algorithms like AES-256-GCM',
+  },
+  {
+    id: 'SEC-023',
+    name: 'MD5 Hash',
+    severity: 'medium',
+    pattern: /createHash\s*\(\s*['"`]md5['"`]\s*\)/gi,
+    description: 'MD5 hash detected - cryptographically weak',
+    fix: 'Use SHA-256 or better for security purposes',
+  },
+
+  // Debug/Development Code
+  {
+    id: 'SEC-030',
+    name: 'Console Log Credentials',
+    severity: 'high',
+    pattern: /console\.(?:log|debug|info)\s*\([^)]*(?:password|secret|key|token|credential)/gi,
+    description: 'Logging sensitive data',
+    fix: 'Remove sensitive data from logs',
+  },
+  {
+    id: 'SEC-031',
+    name: 'Debugger Statement',
+    severity: 'low',
+    pattern: /\bdebugger\b/g,
+    description: 'debugger statement found',
+    fix: 'Remove debugger statements before commit',
+  },
+
+  // File System
+  {
+    id: 'SEC-040',
+    name: 'Unsafe Path Join',
+    severity: 'medium',
+    pattern: /path\.join\s*\([^)]*(?:req\.|request\.)/gi,
+    description: 'Path constructed from user input',
+    fix: 'Validate and sanitize user-provided paths',
+  },
+
+  // Prototype Pollution
+  {
+    id: 'SEC-050',
+    name: 'Prototype Access',
+    severity: 'high',
+    pattern: /\[['"`]__proto__['"`]\]|\[['"`]constructor['"`]\]|\[['"`]prototype['"`]\]/g,
+    description: 'Direct prototype access - pollution risk',
+    fix: 'Use Object.create(null) for dictionaries',
+  },
+];
+
+// =============================================================================
+// File Scanning
+// =============================================================================
+
+/**
+ * Get list of files to scan
+ * @param {string[]} args - Command line arguments
+ * @returns {string[]} List of file paths
+ */
+function getFilesToScan(args) {
+  // Check for --staged flag (git staged files)
+  if (args.includes('--staged')) {
+    try {
+      const output = execSync('git diff --cached --name-only --diff-filter=ACMR', {
+        encoding: 'utf8',
+      });
+      return output.trim().split('\n').filter(Boolean);
+    } catch (err) {
+      console.error('Error getting staged files:', err.message);
+      return [];
+    }
+  }
+
+  // Check for --all flag (all tracked files)
+  if (args.includes('--all')) {
+    try {
+      const output = execSync('git ls-files', { encoding: 'utf8' });
+      return output.trim().split('\n').filter(Boolean);
+    } catch (err) {
+      console.error('Error getting tracked files:', err.message);
+      return [];
+    }
+  }
+
+  // Specific files provided
+  const files = args.filter(arg => !arg.startsWith('--'));
+  if (files.length > 0) {
+    return files;
+  }
+
+  // Default: scan current directory
+  return walkDirectory('.');
+}
+
+/**
+ * Recursively walk directory and collect files
+ * @param {string} dir - Directory to walk
+ * @returns {string[]} List of file paths
+ */
+function walkDirectory(dir) {
+  const files = [];
+
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        // Skip excluded directories
+        if (CONFIG.skipDirs.includes(entry.name)) {
+          continue;
+        }
+        files.push(...walkDirectory(fullPath));
+      } else if (entry.isFile()) {
+        files.push(fullPath);
+      }
+    }
+  } catch (err) {
+    // Skip directories we can't read
+  }
+
+  return files;
+}
+
+/**
+ * Check if file should be scanned
+ * @param {string} filePath - File path
+ * @returns {boolean} Whether to scan
+ */
+function shouldScanFile(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+
+  // Check extension
+  if (!CONFIG.scanExtensions.includes(ext) && !filePath.includes('.env')) {
+    return false;
+  }
+
+  // Check file size
+  try {
+    const stats = fs.statSync(filePath);
+    if (stats.size > CONFIG.maxFileSize) {
+      return false;
+    }
+  } catch (err) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Scan a single file for security issues
+ * @param {string} filePath - File path
+ * @returns {Object[]} Array of findings
+ */
+function scanFile(filePath) {
+  const findings = [];
+
+  // Read file content
+  let content;
+  try {
+    content = fs.readFileSync(filePath, 'utf8');
+  } catch (err) {
+    return findings;
+  }
+
+  // Check each rule
+  for (const rule of SECURITY_RULES) {
+    // Create fresh regex to reset lastIndex
+    const pattern = new RegExp(rule.pattern.source, rule.pattern.flags);
+
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      // Find line number
+      const upToMatch = content.substring(0, match.index);
+      const lineNumber = upToMatch.split('\n').length;
+
+      findings.push({
+        ruleId: rule.id,
+        ruleName: rule.name,
+        severity: rule.severity,
+        description: rule.description,
+        fix: rule.fix,
+        file: filePath,
+        line: lineNumber,
+        column: match.index - upToMatch.lastIndexOf('\n'),
+        match: match[0].substring(0, 50) + (match[0].length > 50 ? '...' : ''),
+      });
+
+      // Prevent infinite loops for non-global patterns
+      if (!pattern.global) break;
+    }
+  }
+
+  return findings;
+}
+
+// =============================================================================
+// Output Formatting
+// =============================================================================
+
+/**
+ * Format findings for console output
+ * @param {Object[]} findings - All findings
+ * @returns {string} Formatted output
+ */
+function formatFindings(findings) {
+  if (findings.length === 0) {
+    return '\n\x1b[32m[PASS] No security issues found\x1b[0m\n';
+  }
+
+  // Group by file
+  const byFile = {};
+  for (const f of findings) {
+    if (!byFile[f.file]) byFile[f.file] = [];
+    byFile[f.file].push(f);
+  }
+
+  // Count by severity
+  const counts = { critical: 0, high: 0, medium: 0, low: 0 };
+  for (const f of findings) {
+    counts[f.severity]++;
+  }
+
+  let output = '\n\x1b[31m[FAIL] Security issues detected\x1b[0m\n\n';
+
+  // Summary
+  output += '\x1b[1mSummary:\x1b[0m\n';
+  if (counts.critical > 0) output += `  \x1b[31m* Critical: ${counts.critical}\x1b[0m\n`;
+  if (counts.high > 0) output += `  \x1b[33m* High: ${counts.high}\x1b[0m\n`;
+  if (counts.medium > 0) output += `  \x1b[34m* Medium: ${counts.medium}\x1b[0m\n`;
+  if (counts.low > 0) output += `  \x1b[90m* Low: ${counts.low}\x1b[0m\n`;
+  output += '\n';
+
+  // Details by file
+  for (const [file, fileFindings] of Object.entries(byFile)) {
+    output += `\x1b[1m${file}\x1b[0m\n`;
+
+    for (const f of fileFindings) {
+      const severityColor = {
+        critical: '\x1b[31m',
+        high: '\x1b[33m',
+        medium: '\x1b[34m',
+        low: '\x1b[90m',
+      }[f.severity];
+
+      output += `  ${severityColor}${f.line}:${f.column}\x1b[0m  ${f.ruleId} ${f.description}\n`;
+      output += `           \x1b[90mMatch: ${f.match}\x1b[0m\n`;
+      output += `           \x1b[36mFix: ${f.fix}\x1b[0m\n`;
+    }
+    output += '\n';
+  }
+
+  return output;
+}
+
+/**
+ * Format findings as JSON
+ * @param {Object[]} findings - All findings
+ * @returns {string} JSON output
+ */
+function formatJson(findings) {
+  return JSON.stringify(
+    {
+      success: findings.length === 0,
+      totalFindings: findings.length,
+      findings,
+      scannedAt: new Date().toISOString(),
+    },
+    null,
+    2
+  );
+}
+
+// =============================================================================
+// Main Execution
+// =============================================================================
+
+/**
+ * Main function
+ */
+function main() {
+  const args = process.argv.slice(2);
+
+  // Help
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`
+Security Lint - Pre-commit security scanner
+
+Usage:
+  security-lint.cjs [options] [files...]
+
+Options:
+  --staged    Scan git staged files
+  --all       Scan all git tracked files
+  --json      Output results as JSON
+  --help, -h  Show this help
+
+Examples:
+  security-lint.cjs --staged           # Pre-commit hook
+  security-lint.cjs src/auth.js        # Scan specific file
+  security-lint.cjs --all --json       # Full scan with JSON output
+`);
+    process.exit(0);
+  }
+
+  // Get files to scan
+  const files = getFilesToScan(args);
+  const filesToScan = files.filter(shouldScanFile);
+
+  if (filesToScan.length === 0) {
+    console.log('No files to scan');
+    process.exit(0);
+  }
+
+  // Scan all files
+  const allFindings = [];
+  for (const file of filesToScan) {
+    const findings = scanFile(file);
+    allFindings.push(...findings);
+  }
+
+  // Output results
+  if (args.includes('--json')) {
+    console.log(formatJson(allFindings));
+  } else {
+    console.log(formatFindings(allFindings));
+    console.log(`Scanned ${filesToScan.length} file(s)`);
+  }
+
+  // Exit with appropriate code
+  const hasCriticalOrHigh = allFindings.some(
+    f => f.severity === 'critical' || f.severity === 'high'
+  );
+  process.exit(hasCriticalOrHigh ? 1 : 0);
+}
+
+// Run main
+main();
+
+// Export for testing
+module.exports = {
+  SECURITY_RULES,
+  scanFile,
+  shouldScanFile,
+  CONFIG,
+};

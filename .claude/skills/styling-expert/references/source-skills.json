@@ -1,0 +1,26 @@
+{
+  "bucket": "styling-expert",
+  "skills": [
+    "css-specific-rules",
+    "styled-components-attrs-method",
+    "styled-components-best-practices-general",
+    "styled-components-conditional-styling-css-prop",
+    "styled-components-css-in-js",
+    "styled-components-documentation",
+    "styled-components-naming-conventions",
+    "styled-components-theming",
+    "styled-components-typescript-support",
+    "tailwind-and-inertiajs-rules",
+    "tailwind-css-and-shadcn-ui-conventions",
+    "tailwind-css-best-practices",
+    "tailwind-css-configuration",
+    "tailwind-css-integration",
+    "tailwind-css-purging",
+    "tailwind-css-styling",
+    "tailwind-css-styling-rule",
+    "tailwind-css-styling-rules",
+    "tailwind-custom-styles",
+    "tailwind-dark-mode"
+  ],
+  "consolidatedAt": "2026-01-23T14:51:54.490Z"
+}

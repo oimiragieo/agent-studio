@@ -1,0 +1,244 @@
+#!/usr/bin/env node
+/**
+ * Safe JSON Parser (SEC-007)
+ * ==========================
+ *
+ * Provides safe JSON parsing with schema validation to prevent:
+ * - Prototype pollution attacks
+ * - Injection of unknown/malicious properties
+ * - State poisoning through corrupted files
+ *
+ * Usage:
+ *   const { safeParseJSON, safeReadJSON, SCHEMAS } = require('./safe-json.cjs');
+ *
+ *   // Parse JSON string with schema validation
+ *   const state = safeParseJSON(jsonString, 'router-state');
+ *
+ *   // Read and parse JSON file with schema validation
+ *   const state = safeReadJSON('/path/to/file.json', 'router-state');
+ */
+
+'use strict';
+
+const fs = require('fs');
+
+// =============================================================================
+// Schema Definitions
+// =============================================================================
+
+/**
+ * Schema definitions for known state files
+ * Each schema defines:
+ * - required: Array of required property names (currently unused but reserved)
+ * - defaults: Default values for all known properties
+ */
+const SCHEMAS = {
+  'router-state': {
+    required: [],
+    defaults: {
+      mode: 'router',
+      complexity: 'unknown',
+      plannerSpawned: false,
+    },
+  },
+  'loop-state': {
+    required: [],
+    defaults: {
+      // SEC-007 FIX: Schema aligned with loop-prevention.cjs getDefaultState()
+      sessionId: '',
+      evolutionCount: 0,
+      lastEvolutions: {},
+      spawnDepth: 0,
+      actionHistory: [],
+      createdAt: null,
+      updatedAt: null,
+    },
+  },
+  // SEC-SF-001 FIX: Add evolution-state schema for safe parsing
+  'evolution-state': {
+    required: [],
+    defaults: {
+      state: 'idle',
+      currentEvolution: null,
+      evolutions: [],
+      patterns: [],
+      suggestions: [],
+      lastUpdated: null,
+      spawnDepth: 0, // SEC-AS-004: Track spawn depth
+      circuitBreaker: {
+        timestamps: [], // SEC-AS-001: Use timestamps not counters
+      },
+    },
+  },
+  // BUG-NEW-001 FIX: Add settings-json schema for system-registration-handler.cjs
+  'settings-json': {
+    required: [],
+    defaults: {
+      hooks: [],
+      model: null,
+      permissions: {},
+    },
+  },
+  // BUG-NEW-002 FIX: Add anomaly-entry schema for dashboard.cjs JSONL parsing
+  'anomaly-entry': {
+    required: [],
+    defaults: {
+      timestamp: null,
+      type: null,
+      detected: false,
+      tool: null,
+      current: null,
+      average: null,
+      count: null,
+    },
+  },
+  // BUG-NEW-002 FIX: Add rollback-entry schema for dashboard.cjs JSONL parsing
+  'rollback-entry': {
+    required: [],
+    defaults: {
+      timestamp: null,
+      operation: null,
+      checkpointId: null,
+      restoredCount: 0,
+      failedCount: 0,
+      skippedCount: 0,
+      success: null,
+    },
+  },
+};
+
+// =============================================================================
+// Safe JSON Parsing
+// =============================================================================
+
+/**
+ * Safely parse JSON with schema validation
+ *
+ * Security features:
+ * 1. Returns defaults on parse error (no exceptions for invalid JSON)
+ * 2. Strips unknown properties (prevents injection)
+ * 3. Uses Object.create(null) to avoid prototype pollution
+ * 4. Only copies known properties from defaults
+ *
+ * @param {string} content - JSON string to parse
+ * @param {string|null} schemaName - Name of schema to validate against
+ * @returns {Object} Parsed object with only known properties, or defaults on error
+ */
+function safeParseJSON(content, schemaName) {
+  // If no schema, do simple parse with fallback
+  if (!schemaName || !SCHEMAS[schemaName]) {
+    try {
+      return JSON.parse(content);
+    } catch (e) {
+      return {};
+    }
+  }
+
+  const schema = SCHEMAS[schemaName];
+
+  // Try to parse JSON
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch (e) {
+    // Return defaults on parse error
+    return { ...schema.defaults };
+  }
+
+  // Create validated object starting with defaults
+  // Use Object.create(null) to create object without prototype
+  const validated = Object.create(null);
+
+  // Copy defaults first
+  for (const key of Object.keys(schema.defaults)) {
+    validated[key] = schema.defaults[key];
+  }
+
+  // Only copy known properties from parsed data
+  // This strips unknown/malicious properties like __proto__, constructor, etc.
+  if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+    for (const key of Object.keys(schema.defaults)) {
+      if (Object.prototype.hasOwnProperty.call(parsed, key)) {
+        // SEC-AUDIT-006 FIX: Deep copy for all nested objects to prevent reference issues
+        // Use JSON.parse(JSON.stringify()) for complete deep copy
+        const value = parsed[key];
+        if (value === null || value === undefined) {
+          validated[key] = value;
+        } else if (Array.isArray(value)) {
+          // Deep copy arrays with all nested content
+          try {
+            validated[key] = JSON.parse(JSON.stringify(value));
+          } catch (e) {
+            // If deep copy fails, use default
+            validated[key] = schema.defaults[key];
+          }
+        } else if (typeof value === 'object') {
+          // Deep copy nested objects
+          try {
+            validated[key] = JSON.parse(JSON.stringify(value));
+          } catch (e) {
+            // If deep copy fails, use default
+            validated[key] = schema.defaults[key];
+          }
+        } else {
+          // Primitives can be assigned directly
+          validated[key] = value;
+        }
+      }
+    }
+  }
+
+  // Convert back to regular object for compatibility
+  return Object.assign({}, validated);
+}
+
+/**
+ * Safely read and parse JSON from a file
+ *
+ * @param {string} filePath - Path to JSON file
+ * @param {string|null} schemaName - Name of schema to validate against
+ * @returns {Object} Parsed object with only known properties, or defaults on error
+ */
+function safeReadJSON(filePath, schemaName) {
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    // Return defaults if schema exists, empty object otherwise
+    if (schemaName && SCHEMAS[schemaName]) {
+      return { ...SCHEMAS[schemaName].defaults };
+    }
+    return {};
+  }
+
+  // Try to read file
+  let content;
+  try {
+    content = fs.readFileSync(filePath, 'utf-8');
+  } catch (e) {
+    // Return defaults on read error
+    if (schemaName && SCHEMAS[schemaName]) {
+      return { ...SCHEMAS[schemaName].defaults };
+    }
+    return {};
+  }
+
+  // Empty file returns defaults
+  if (!content || content.trim() === '') {
+    if (schemaName && SCHEMAS[schemaName]) {
+      return { ...SCHEMAS[schemaName].defaults };
+    }
+    return {};
+  }
+
+  // Parse with schema validation
+  return safeParseJSON(content, schemaName);
+}
+
+// =============================================================================
+// Exports
+// =============================================================================
+
+module.exports = {
+  safeParseJSON,
+  safeReadJSON,
+  SCHEMAS,
+};

@@ -6,12 +6,14 @@ The goal is simple: copy `.claude/` into another repo and get consistent routing
 
 ## What You Get
 
-- Agent definitions: `.claude/agents/*.md`
-- Hooks/guards (router-first, path guards, audit logging, etc.): `.claude/hooks/`
-- Workflows + runners: `.claude/workflows/`, `.claude/tools/`
-- Schemas for structured artifacts: `.claude/schemas/`
-- Copy/paste prompts (UI-friendly): `.claude/prompts/`
-- Headless verification (recommended for CI + reliability): `pnpm ship-readiness:headless:json`, `pnpm integration:headless:json`
+- **45 Specialized Agents**: Core, domain, specialized, and orchestrator agents (`.claude/agents/`)
+- **426+ Reusable Skills**: Development, security, DevOps, scientific research, and more (`.claude/skills/`)
+- **Agent-Skill Discovery System**: Central mapping of agents to skills with contextual loading (`.claude/context/config/agent-skill-matrix.json`)
+- **Hooks/Guards**: Router-first enforcement, path guards, audit logging (`.claude/hooks/`)
+- **Workflows + Runners**: Enterprise workflows and automation (`.claude/workflows/`, `.claude/tools/`)
+- **Schemas**: Structured artifact validation (`.claude/schemas/`)
+- **Prompts**: Copy/paste prompts for UI (`.claude/prompts/`)
+- **Headless Verification**: CI-friendly testing (`pnpm ship-readiness:headless:json`, `pnpm integration:headless:json`)
 
 Notes:
 
@@ -23,6 +25,13 @@ Notes:
 1. Copy `.claude/` into your target project.
 2. (Optional) Copy `.cursor/` if you also support Cursor IDE.
 3. Open the project in Claude Code and run a normal request; routing + hooks + workflows apply automatically.
+
+**What happens automatically:**
+
+- Router analyzes your request and spawns appropriate specialized agents
+- Agents discover and invoke relevant skills based on project type
+- Contextual skills load automatically (e.g., Python skills when `.py` files detected)
+- Enforcement hooks ensure quality gates and routing protocols
 
 If you also want the repo’s CLI validation utilities (recommended), install deps:
 
@@ -61,6 +70,24 @@ Use these when you want a user-like UI run (not CI):
 - `.claude/prompts/agent-framework-integration.md`
 
 For stability, prefer the **headless harnesses** above. UI multi-agent orchestration can hit platform memory limits depending on model/context.
+
+## Documentation
+
+**Key Guides:**
+
+- **Getting Started**: `.claude/docs/GETTING_STARTED.md`
+- **Agents System**: `.claude/docs/AGENTS.md` (45 agents, roles, and usage)
+- **Agent-Skill Discovery**: `.claude/docs/AGENT-SKILL-DISCOVERY.md` (how agents find and use skills)
+- **Skills System**: `.claude/docs/SKILLS.md` (426+ skills organized by category)
+- **Router Protocol**: `.claude/docs/ROUTER_PROTOCOL.md` (routing and enforcement)
+- **Memory System**: `.claude/docs/MEMORY_SYSTEM.md` (persistence across sessions)
+- **Self-Evolution**: `.claude/docs/SELF_EVOLUTION.md` (creating agents and skills)
+
+**Quick References:**
+
+- **Agent-Skill Matrix**: `.claude/context/config/agent-skill-matrix.json` (central mapping)
+- **Skill Catalog**: `.claude/context/artifacts/skill-catalog.md` (complete skill list)
+- **Router Keywords**: `.claude/docs/ROUTER_KEYWORD_GUIDE.md` (intent routing)
 
 ## Observability / Debugging
 

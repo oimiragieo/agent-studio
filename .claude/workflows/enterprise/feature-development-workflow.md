@@ -35,6 +35,7 @@ Orchestrate end-to-end feature development from requirements to production deplo
 **Agent**: Planner with brainstorming skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -59,7 +60,7 @@ Analyze feature requirements for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record decisions to .claude/context/memory/decisions.md
-`
+`,
 });
 ```
 
@@ -70,6 +71,7 @@ Analyze feature requirements for: $FEATURE_NAME
 **Agent**: Architect
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -94,7 +96,7 @@ Design technical architecture for feature: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record architectural decisions to .claude/context/memory/decisions.md
-`
+`,
 });
 ```
 
@@ -105,6 +107,7 @@ Design technical architecture for feature: $FEATURE_NAME
 **Agent**: Security Architect
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -129,7 +132,7 @@ Assess security implications and risks for feature: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record security findings to .claude/context/memory/issues.md
-`
+`,
 });
 ```
 
@@ -142,6 +145,7 @@ Assess security implications and risks for feature: $FEATURE_NAME
 **Agent**: Developer with backend-expert and tdd skills
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -169,7 +173,7 @@ Implement backend services for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -180,6 +184,7 @@ Implement backend services for: $FEATURE_NAME
 **Agent**: Developer with frontend-expert skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -206,7 +211,7 @@ Build frontend components for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record UI patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -217,6 +222,7 @@ Build frontend components for: $FEATURE_NAME
 **Agent**: Developer with data-engineering-expert skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -241,7 +247,7 @@ Build data pipelines for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record data patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -254,6 +260,7 @@ Build data pipelines for: $FEATURE_NAME
 **Agent**: QA with tdd skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -281,7 +288,7 @@ Create comprehensive test suite for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record testing patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -292,6 +299,7 @@ Create comprehensive test suite for: $FEATURE_NAME
 **Agent**: Security Architect
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -317,7 +325,7 @@ Perform security testing for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record vulnerabilities to .claude/context/memory/issues.md
-`
+`,
 });
 ```
 
@@ -328,6 +336,7 @@ Perform security testing for: $FEATURE_NAME
 **Agent**: Developer with performance-optimization skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -353,7 +362,7 @@ Optimize performance for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record optimizations to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -366,6 +375,7 @@ Optimize performance for: $FEATURE_NAME
 **Agent**: DevOps
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -395,7 +405,7 @@ Prepare deployment for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record deployment patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -406,6 +416,7 @@ Prepare deployment for: $FEATURE_NAME
 **Agent**: DevOps with observability skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -431,7 +442,7 @@ Set up observability for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record monitoring patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -442,6 +453,7 @@ Set up observability for: $FEATURE_NAME
 **Agent**: Developer with documentation skill
 
 **Task Spawn**:
+
 ```javascript
 Task({
   subagent_type: 'general-purpose',
@@ -468,7 +480,7 @@ Generate comprehensive documentation for: $FEATURE_NAME
 ## Memory Protocol
 1. Read .claude/context/memory/learnings.md first
 2. Record documentation patterns to .claude/context/memory/learnings.md
-`
+`,
 });
 ```
 
@@ -536,25 +548,25 @@ Task({
 Follow the phased workflow in: .claude/workflows/enterprise/feature-development-workflow.md
 
 Execute each phase sequentially, spawning appropriate agents with correct skills.
-`
+`,
 });
 ```
 
 ## Agent-Skill Mapping Reference
 
-| Original Agent Type | Framework Agent | Required Skills |
-|---------------------|-----------------|-----------------|
-| `business-analytics::business-analyst` | planner | brainstorming |
-| `comprehensive-review::architect-review` | architect | - |
-| `security-scanning::security-auditor` | security-architect | security-architect |
-| `backend-architect` | developer | backend-expert, tdd |
-| `frontend-mobile-development::frontend-developer` | developer | frontend-expert, react-expert |
-| `data-engineering::data-engineer` | developer | data-engineering-expert |
-| `unit-testing::test-automator` | qa | tdd |
-| `application-performance::performance-engineer` | developer | performance-optimization |
-| `deployment-strategies::deployment-engineer` | devops | cicd-expert, deployment-strategies |
-| `observability-monitoring::observability-engineer` | devops | observability-expert |
-| `documentation-generation::docs-architect` | developer | documentation-expert |
+| Original Agent Type                                | Framework Agent    | Required Skills                    |
+| -------------------------------------------------- | ------------------ | ---------------------------------- |
+| `business-analytics::business-analyst`             | planner            | brainstorming                      |
+| `comprehensive-review::architect-review`           | architect          | -                                  |
+| `security-scanning::security-auditor`              | security-architect | security-architect                 |
+| `backend-architect`                                | developer          | backend-expert, tdd                |
+| `frontend-mobile-development::frontend-developer`  | developer          | frontend-expert, react-expert      |
+| `data-engineering::data-engineer`                  | developer          | data-engineering-expert            |
+| `unit-testing::test-automator`                     | qa                 | tdd                                |
+| `application-performance::performance-engineer`    | developer          | performance-optimization           |
+| `deployment-strategies::deployment-engineer`       | devops             | cicd-expert, deployment-strategies |
+| `observability-monitoring::observability-engineer` | devops             | observability-expert               |
+| `documentation-generation::docs-architect`         | developer          | documentation-expert               |
 
 ## Notes
 

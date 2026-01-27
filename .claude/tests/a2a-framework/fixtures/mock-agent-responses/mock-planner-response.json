@@ -1,5 +1,0 @@
-{
-  "agent": "planner",
-  "content": "Plan: run code review workflow and produce required artifacts.",
-  "artifacts": [".claude/context/artifacts/plan-cr-001.json"]
-}

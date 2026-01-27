@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sentry-monitoring Input Schema",
+  "description": "Input validation schema for sentry-monitoring skill",
+  "type": "object",
+  "required": [],
+  "properties": {},
+  "additionalProperties": true
+}

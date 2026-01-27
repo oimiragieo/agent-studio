@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://claude.ai/schemas/schema-creator-output",
+  "title": "Schema Creator Output Schema",
+  "description": "Output validation schema for schema-creator skill",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": {
+      "type": "boolean",
+      "description": "Whether the schema operation completed successfully"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["created", "validated", "generated"],
+      "description": "The action that was performed"
+    },
+    "schemaPath": {
+      "type": "string",
+      "description": "Path to the created or validated schema file"
+    },
+    "schemaType": {
+      "type": "string",
+      "enum": ["input", "output", "global", "definition"],
+      "description": "Type of schema that was created"
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation results when validating schema or data",
+      "properties": {
+        "valid": {
+          "type": "boolean",
+          "description": "Whether validation passed"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "description": "JSON path to the error"
+              },
+              "message": {
+                "type": "string",
+                "description": "Error message"
+              },
+              "keyword": {
+                "type": "string",
+                "description": "JSON Schema keyword that failed"
+              }
+            }
+          },
+          "description": "List of validation errors"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Schema title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Schema description"
+        },
+        "propertyCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of properties in schema"
+        },
+        "requiredCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of required properties"
+        }
+      },
+      "description": "Metadata about the created schema"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message if operation failed"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "success": true,
+      "action": "created",
+      "schemaPath": ".claude/skills/my-skill/schemas/input.schema.json",
+      "schemaType": "input",
+      "metadata": {
+        "title": "My Skill Input Schema",
+        "description": "Input validation for my-skill",
+        "propertyCount": 5,
+        "requiredCount": 2
+      }
+    },
+    {
+      "success": true,
+      "action": "validated",
+      "schemaPath": ".claude/schemas/my-schema.schema.json",
+      "validation": {
+        "valid": true,
+        "errors": []
+      }
+    },
+    {
+      "success": false,
+      "action": "validated",
+      "schemaPath": ".claude/schemas/broken.schema.json",
+      "validation": {
+        "valid": false,
+        "errors": [
+          {
+            "path": "/properties/name",
+            "message": "must have required property 'type'",
+            "keyword": "required"
+          }
+        ]
+      },
+      "error": "Schema validation failed with 1 error(s)"
+    }
+  ]
+}

@@ -19,6 +19,14 @@
           {
             "type": "command",
             "command": "node .claude/hooks/session/memory-reminder.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/evolution-trigger-detector.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/memory/memory-health-check.cjs"
           }
         ]
       }
@@ -38,15 +46,48 @@
         ]
       },
       {
+        "matcher": "Glob|Grep|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/routing-guard.cjs"
+          }
+        ]
+      },
+      {
         "matcher": "Edit|Write|NotebookEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/safety/router-write-guard.cjs"
+            "command": "node .claude/hooks/safety/file-placement-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/routing-guard.cjs"
           },
           {
             "type": "command",
             "command": "node .claude/hooks/safety/tdd-check.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/validation/plan-evolution-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/research-enforcement.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/evolution-state-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/conflict-detector.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/quality-gate-validator.cjs"
           }
         ]
       },
@@ -58,9 +99,57 @@
             "command": "node .claude/hooks/safety/validate-skill-invocation.cjs"
           }
         ]
+      },
+      {
+        "matcher": "TaskCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/routing-guard.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/agent-context-pre-tracker.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/routing-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/documentation-routing-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/self-healing/loop-prevention.cjs"
+          }
+        ]
       }
     ],
     "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/self-healing/anomaly-detector.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/self-healing/auto-rerouter.cjs"
+          }
+        ]
+      },
       {
         "matcher": "Edit|Write",
         "hooks": [
@@ -93,6 +182,55 @@
           {
             "type": "command",
             "command": "node .claude/hooks/memory/session-memory-extractor.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/task-completion-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/evolution/evolution-audit.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/task-update-tracker.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/reflection/task-completion-reflection.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/reflection/error-recovery-reflection.cjs"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/memory/session-end-recorder.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/reflection/session-end-reflection.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/reflection/reflection-queue-processor.cjs"
           }
         ]
       }

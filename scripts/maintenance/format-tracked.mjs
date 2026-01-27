@@ -25,7 +25,7 @@ if (mode !== 'check' && !argv.has('--write')) {
   process.exit(2);
 }
 
-const prettierExtensions = new Set(['.js', '.mjs', '.json', '.md', '.yaml', '.yml']);
+const prettierExtensions = new Set(['.js', '.mjs', '.cjs', '.json', '.md', '.yaml', '.yml']);
 
 function isWindows() {
   return process.platform === 'win32';

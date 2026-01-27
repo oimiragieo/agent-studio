@@ -1,0 +1,392 @@
+# Workflow Creator Workflow
+#
+# EVOLVE workflow for creating new workflows via the workflow-creator skill.
+# Executable by WorkflowEngine at .claude/lib/workflow/workflow-engine.cjs
+#
+# Key differences from agent-creator:
+# - Creates YAML files in .claude/workflows/
+# - Workflows define multi-step processes with phases
+# - Must validate YAML structure and handler references
+# - Registers in CLAUDE.md Section 8.6 (Enterprise Workflows)
+
+name: workflow-creator-workflow
+description: Create, validate, and register workflows following the EVOLVE process
+version: 1.0.0
+artifact_type: workflow
+output_location: .claude/workflows/
+
+# Workflow-specific configuration
+workflow_config:
+  categories:
+    - core
+    - enterprise
+    - operations
+    - creators
+    - updaters
+  required_sections:
+    - name
+    - description
+    - version
+    - phases
+  phase_types:
+    - evaluate
+    - validate
+    - obtain
+    - lock
+    - verify
+    - enable
+  registration_targets:
+    - ".claude/CLAUDE.md"
+    - ".claude/context/memory/learnings.md"
+  naming_convention: "kebab-case"
+  file_extension: ".yaml"
+
+phases:
+  evaluate:
+    description: Determine workflow type and confirm need
+    steps:
+      - id: check-evolution-state
+        action: function
+        handler: checkEvolutionState
+        description: Verify evolution state is idle or can accept new evolution
+      - id: identify-workflow-purpose
+        action: prompt
+        description: Gather workflow requirements
+        outputs:
+          - purpose
+          - phases
+          - triggers
+          - artifact_type
+          - category
+      - id: determine-workflow-category
+        action: function
+        handler: determineWorkflowCategory
+        description: Classify into core, enterprise, operations, creators, or updaters
+        inputs:
+          - purpose
+          - artifact_type
+        outputs:
+          - workflow_category
+      - id: check-existing-workflows
+        action: function
+        handler: checkExistingWorkflows
+        description: Search for similar workflows that might already exist
+        inputs:
+          - workflow_category
+          - purpose
+        outputs:
+          - existing_matches
+          - gap_confirmed
+      - id: update-state-evaluate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to evaluating
+        inputs:
+          - workflow_category
+          - workflow_name
+    gates:
+      - id: gate-evaluate
+        condition: "steps['check-existing-workflows'].output.gap_confirmed === true"
+        on_fail: abort
+        message: "Similar workflow already exists. Consider enhancing existing workflow instead."
+
+  validate:
+    description: Check naming convention and no conflicts
+    steps:
+      - id: validate-naming
+        action: function
+        handler: validateNaming
+        description: Ensure workflow name follows kebab-case-workflow convention
+        inputs:
+          - workflow_name
+        outputs:
+          - name_valid
+          - suggested_name
+      - id: check-naming-conflicts
+        action: function
+        handler: checkNamingConflicts
+        description: Grep for existing workflows with same name
+        inputs:
+          - workflow_name
+          - workflow_category
+        outputs:
+          - conflict_found
+          - conflicting_paths
+      - id: validate-phase-structure
+        action: function
+        handler: validatePhaseStructure
+        description: Verify proposed phases follow EVOLVE pattern
+        inputs:
+          - phases
+        outputs:
+          - phases_valid
+          - phase_errors
+      - id: update-state-validate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to validating
+    gates:
+      - id: gate-validate-name
+        condition: "steps['validate-naming'].output.name_valid === true"
+        on_fail: block
+        message: "Workflow name must be kebab-case ending with -workflow"
+      - id: gate-validate-conflict
+        condition: "steps['check-naming-conflicts'].output.conflict_found === false"
+        on_fail: abort
+        message: "Workflow with this name already exists"
+      - id: gate-validate-phases
+        condition: "steps['validate-phase-structure'].output.phases_valid === true"
+        on_fail: block
+        message: "Workflow phases must follow EVOLVE pattern (evaluate, validate, obtain, lock, verify, enable)"
+
+  obtain:
+    description: Research workflow patterns and best practices (optional but recommended)
+    optional: true
+    steps:
+      - id: analyze-similar-workflows
+        action: function
+        handler: analyzeSimilarWorkflows
+        description: Read existing workflows in same category for patterns
+        inputs:
+          - workflow_category
+        outputs:
+          - pattern_analysis
+          - common_patterns
+      - id: read-workflow-template
+        action: function
+        handler: readWorkflowTemplate
+        description: Load standard workflow template structure
+        outputs:
+          - template_content
+          - required_fields
+      - id: research-best-practices
+        action: prompt
+        description: Optional research for complex workflows
+        optional: true
+        outputs:
+          - research_findings
+          - external_sources
+      - id: update-state-obtain
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to obtaining
+    gates:
+      - id: gate-obtain
+        condition: "steps['read-workflow-template'].output.template_content !== null"
+        on_fail: block
+        message: "Failed to load workflow template"
+
+  lock:
+    description: Create workflow YAML file with proper structure
+    steps:
+      - id: generate-workflow-yaml
+        action: function
+        handler: generateWorkflowYaml
+        description: Generate workflow YAML content using template and requirements
+        inputs:
+          - workflow_name
+          - workflow_category
+          - purpose
+          - phases
+          - triggers
+          - artifact_type
+          - template_content
+        outputs:
+          - workflow_yaml
+          - workflow_path
+      - id: write-workflow-file
+        action: write
+        description: Write the .yaml workflow file
+        inputs:
+          - workflow_yaml
+          - workflow_path
+        outputs:
+          - workflow_file_created
+      - id: validate-yaml-syntax
+        action: function
+        handler: validateYamlSyntax
+        description: Validate YAML syntax is correct
+        inputs:
+          - workflow_path
+        outputs:
+          - yaml_valid
+          - yaml_errors
+      - id: generate-test-file
+        action: function
+        handler: generateTestFile
+        description: Generate test file for workflow validation
+        inputs:
+          - workflow_name
+          - workflow_path
+        outputs:
+          - test_code
+          - test_path
+      - id: write-test-file
+        action: write
+        description: Write the .test.cjs test file
+        inputs:
+          - test_code
+          - test_path
+        outputs:
+          - test_file_created
+      - id: update-state-lock
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to locking
+    gates:
+      - id: gate-lock-workflow
+        condition: "steps['write-workflow-file'].output.workflow_file_created === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Failed to create workflow file"
+      - id: gate-lock-yaml
+        condition: "steps['validate-yaml-syntax'].output.yaml_valid === true"
+        on_fail: retry
+        max_retries: 3
+        message: "YAML syntax validation failed"
+
+  verify:
+    description: Run tests and validate structure
+    steps:
+      - id: run-tests
+        action: function
+        handler: runWorkflowTests
+        description: Execute the test file to verify workflow structure
+        inputs:
+          - test_path
+        outputs:
+          - tests_passed
+          - test_results
+          - failure_reason
+      - id: validate-phases
+        action: function
+        handler: validateWorkflowPhases
+        description: Verify all 6 EVOLVE phases are present with gates
+        inputs:
+          - workflow_path
+        outputs:
+          - all_phases_present
+          - missing_phases
+      - id: validate-gates
+        action: function
+        handler: validateWorkflowGates
+        description: Verify each phase has at least one gate
+        inputs:
+          - workflow_path
+        outputs:
+          - gates_valid
+          - missing_gates
+      - id: check-handler-references
+        action: function
+        handler: checkHandlerReferences
+        description: Ensure all referenced handlers exist or are documented
+        inputs:
+          - workflow_path
+        outputs:
+          - handlers_documented
+          - undocumented_handlers
+      - id: update-state-verify
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to verifying
+    gates:
+      - id: gate-verify-tests
+        condition: "steps['run-tests'].output.tests_passed === true"
+        on_fail: return_to_lock
+        message: "Tests failed. Fix workflow structure."
+      - id: gate-verify-phases
+        condition: "steps['validate-phases'].output.all_phases_present === true"
+        on_fail: return_to_lock
+        message: "Workflow must have all 6 EVOLVE phases"
+      - id: gate-verify-gates
+        condition: "steps['validate-gates'].output.gates_valid === true"
+        on_fail: return_to_lock
+        message: "Each phase must have at least one gate"
+
+  enable:
+    description: Register in CLAUDE.md and update memory
+    steps:
+      - id: update-claude-md
+        action: function
+        handler: updateClaudeMd
+        description: Add workflow to CLAUDE.md Section 8.6 Enterprise Workflows
+        inputs:
+          - workflow_name
+          - workflow_path
+          - purpose
+        outputs:
+          - claude_md_updated
+      - id: update-memory
+        action: function
+        handler: updateMemory
+        description: Record workflow creation in learnings.md
+        inputs:
+          - workflow_name
+          - workflow_path
+          - workflow_category
+        outputs:
+          - memory_updated
+      - id: update-state-enable
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to idle with completed evolution
+        inputs:
+          - workflow_name
+          - workflow_path
+      - id: verify-registration
+        action: function
+        handler: verifyRegistration
+        description: Grep to confirm workflow is registered and discoverable
+        inputs:
+          - workflow_name
+        outputs:
+          - verification_passed
+    gates:
+      - id: gate-enable-claude-md
+        condition: "steps['update-claude-md'].output.claude_md_updated === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Failed to update CLAUDE.md"
+      - id: gate-enable-verify
+        condition: "steps['verify-registration'].output.verification_passed === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Workflow registration verification failed"
+
+# Rollback/compensate actions for each phase
+compensate:
+  lock:
+    - action: delete_file
+      target: workflow_path
+      description: Remove created workflow file
+    - action: delete_file
+      target: test_path
+      description: Remove created test file
+  enable:
+    - action: revert_claude_md
+      target: ".claude/CLAUDE.md"
+      description: Remove workflow entry from CLAUDE.md
+    - action: revert_memory
+      target: ".claude/context/memory/learnings.md"
+      description: Remove workflow entry from learnings
+
+# Iron Laws for workflow creation
+iron_laws:
+  - id: no-workflow-without-evolve
+    rule: "Every workflow MUST follow EVOLVE phase structure"
+    enforcement: gate-verify-phases
+  - id: no-workflow-without-gates
+    rule: "Every phase MUST have at least one gate"
+    enforcement: gate-verify-gates
+  - id: no-workflow-without-test
+    rule: "Every workflow needs <workflow-name>.test.cjs"
+    enforcement: gate-lock-yaml
+  - id: no-workflow-without-claude-md
+    rule: "Add to CLAUDE.md Section 8.6"
+    enforcement: gate-enable-claude-md
+  - id: yaml-syntax-valid
+    rule: "YAML must parse without errors"
+    enforcement: gate-lock-yaml
+  - id: handlers-documented
+    rule: "All step handlers must be documented or implemented"
+    enforcement: check-handler-references

@@ -1,0 +1,274 @@
+# MCP Server Catalog
+# Popular MCP servers for conversion to Skills
+# Used by mcp-converter skill for batch conversion
+
+mcp_servers:
+  # Development Tools
+  - name: github
+    description: GitHub integration for PRs, issues, and repository management
+    tool_count: 25
+    estimated_tokens: 45000
+    conversion_priority: high
+    keep_as_mcp: true # Keep as MCP due to frequent use
+    reason: 'Frequently used, keep as MCP for better performance'
+
+  - name: git
+    description: Git version control operations
+    tool_count: 15
+    estimated_tokens: 25000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - version-control
+      - development
+
+  - name: filesystem
+    description: File system operations
+    tool_count: 12
+    estimated_tokens: 18000
+    conversion_priority: medium
+    keep_as_mcp: true # Core tool, keep as MCP
+    reason: 'Core file operations, always needed'
+
+  # Database Tools
+  - name: sqlite
+    description: SQLite database operations
+    tool_count: 8
+    estimated_tokens: 12000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - database
+      - data
+
+  - name: postgres
+    description: PostgreSQL database operations
+    tool_count: 20
+    estimated_tokens: 35000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - database
+      - data
+
+  # Cloud Services
+  - name: aws
+    description: AWS cloud services integration
+    tool_count: 50
+    estimated_tokens: 90000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - cloud
+      - infrastructure
+
+  - name: gcp
+    description: Google Cloud Platform services
+    tool_count: 45
+    estimated_tokens: 80000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - cloud
+      - infrastructure
+
+  - name: azure
+    description: Microsoft Azure services
+    tool_count: 40
+    estimated_tokens: 75000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - cloud
+      - infrastructure
+
+  # Communication & Collaboration
+  - name: slack
+    description: Slack integration for notifications and messaging
+    tool_count: 18
+    estimated_tokens: 28000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - communication
+      - collaboration
+
+  - name: discord
+    description: Discord bot integration
+    tool_count: 15
+    estimated_tokens: 22000
+    conversion_priority: low
+    keep_as_mcp: false
+    categories:
+      - communication
+
+  # Documentation & Content
+  - name: markitdown
+    description: Documentation generation and formatting
+    tool_count: 10
+    estimated_tokens: 15000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - documentation
+      - content
+
+  - name: paper-search
+    description: Academic and technical paper research
+    tool_count: 8
+    estimated_tokens: 12000
+    conversion_priority: low
+    keep_as_mcp: false
+    categories:
+      - research
+      - documentation
+
+  # Testing & Quality
+  - name: playwright
+    description: Playwright browser automation
+    tool_count: 30
+    estimated_tokens: 50000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - testing
+      - automation
+
+  - name: cypress
+    description: Cypress end-to-end testing
+    tool_count: 25
+    estimated_tokens: 42000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - testing
+      - automation
+
+  # Infrastructure
+  - name: docker
+    description: Docker container management
+    tool_count: 20
+    estimated_tokens: 35000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - infrastructure
+      - containers
+
+  - name: kubernetes
+    description: Kubernetes cluster management
+    tool_count: 35
+    estimated_tokens: 60000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - infrastructure
+      - orchestration
+
+  - name: terraform
+    description: Terraform infrastructure as code
+    tool_count: 28
+    estimated_tokens: 48000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - infrastructure
+      - iac
+
+  # AI & ML
+  - name: openai
+    description: OpenAI API integration
+    tool_count: 15
+    estimated_tokens: 25000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - ai
+      - ml
+
+  - name: anthropic
+    description: Anthropic Claude API integration
+    tool_count: 12
+    estimated_tokens: 20000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - ai
+      - ml
+
+  # Monitoring & Analytics
+  - name: datadog
+    description: Datadog monitoring and analytics
+    tool_count: 22
+    estimated_tokens: 38000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - monitoring
+      - analytics
+
+  - name: newrelic
+    description: New Relic APM and monitoring
+    tool_count: 20
+    estimated_tokens: 35000
+    conversion_priority: medium
+    keep_as_mcp: false
+    categories:
+      - monitoring
+      - analytics
+
+  # Security
+  - name: vault
+    description: HashiCorp Vault secrets management
+    tool_count: 18
+    estimated_tokens: 30000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - security
+      - secrets
+
+  - name: snyk
+    description: Snyk security scanning
+    tool_count: 15
+    estimated_tokens: 25000
+    conversion_priority: high
+    keep_as_mcp: false
+    categories:
+      - security
+      - scanning
+
+# Conversion Rules
+conversion_rules:
+  # Auto-convert servers with these criteria
+  auto_convert:
+    enabled: true
+    threshold:
+      tool_count: 10
+      estimated_tokens: 15000
+    exceptions:
+      - github # Keep as MCP
+      - filesystem # Keep as MCP
+      - memory # Keep as MCP
+
+  # Batch conversion settings
+  batch_conversion:
+    enabled: true
+    max_concurrent: 3
+    timeout_seconds: 300
+
+  # Validation settings
+  validation:
+    enabled: true
+    check_structure: true
+    test_execution: true
+    verify_installation: true
+
+# Conversion Statistics
+statistics:
+  total_servers: 25
+  recommended_for_conversion: 22
+  keep_as_mcp: 3
+  estimated_context_savings: 85 # Percentage
+  average_tool_count: 22
+  average_tokens_per_server: 35000

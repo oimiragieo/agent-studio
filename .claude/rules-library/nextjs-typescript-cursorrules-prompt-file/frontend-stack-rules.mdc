@@ -1,9 +1,0 @@
----
-description: Specifies the frontend technology stack including React, TypeScript, Shadcn/UI, Tailwind CSS, and Lucide React, applying to all frontend files.
-globs: frontend/**/*.*
----
-- Framework: Next.js 15+ (App Router required, React 19)
-- Language: TypeScript 5.6+
-- UI Components: shadcn/ui (based on Radix UI primitives)
-- Styling: Tailwind CSS
-- Icons: Lucide React

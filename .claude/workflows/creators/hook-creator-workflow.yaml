@@ -1,0 +1,416 @@
+# Hook Creator Workflow
+#
+# EVOLVE workflow for creating hooks via the hook-creator skill.
+# Executable by WorkflowEngine at .claude/lib/workflow/workflow-engine.cjs
+#
+# Key differences from agent-creator:
+# - Creates .cjs files in .claude/hooks/
+# - Must create test file alongside (.test.cjs)
+# - Registers in settings.json (PreToolUse/PostToolUse) or config.yaml
+# - Hook types: safety, routing, memory, evolution, session
+
+name: hook-creator-workflow
+description: Create, validate, and register hooks following the EVOLVE process
+version: 1.0.0
+artifact_type: hook
+output_location: .claude/hooks/
+
+# Hook-specific configuration
+hook_config:
+  types:
+    - safety
+    - routing
+    - memory
+    - evolution
+    - session
+  events:
+    - PreToolUse
+    - PostToolUse
+    - UserPromptSubmit
+    - SessionStart
+    - SessionEnd
+  registration_targets:
+    - ".claude/settings.json"
+    - ".claude/config.yaml"
+    - ".claude/hooks/README.md"
+  naming_convention: "kebab-case"
+  file_extension: ".cjs"
+  test_extension: ".test.cjs"
+
+phases:
+  evaluate:
+    description: Determine hook type and confirm need
+    steps:
+      - id: check-evolution-state
+        action: function
+        handler: checkEvolutionState
+        description: Verify evolution state is idle or can accept new evolution
+      - id: identify-hook-purpose
+        action: prompt
+        description: Gather hook requirements
+        outputs:
+          - purpose
+          - trigger
+          - target_tools
+          - behavior
+          - exit_codes
+      - id: determine-hook-type
+        action: function
+        handler: determineHookType
+        description: Classify into safety, routing, memory, evolution, or session
+        inputs:
+          - purpose
+          - trigger
+        outputs:
+          - hook_type
+          - hook_category
+      - id: check-existing-hooks
+        action: function
+        handler: checkExistingHooks
+        description: Search for similar hooks that might already exist
+        inputs:
+          - hook_type
+          - purpose
+        outputs:
+          - existing_matches
+          - gap_confirmed
+      - id: update-state-evaluate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to evaluating
+        inputs:
+          - hook_type
+          - hook_name
+    gates:
+      - id: gate-evaluate
+        condition: "steps['check-existing-hooks'].output.gap_confirmed === true"
+        on_fail: abort
+        message: "Similar hook already exists. Consider enhancing existing hook instead."
+
+  validate:
+    description: Check naming convention and no conflicts
+    steps:
+      - id: validate-naming
+        action: function
+        handler: validateNaming
+        description: Ensure hook name follows kebab-case convention
+        inputs:
+          - hook_name
+        outputs:
+          - name_valid
+          - suggested_name
+      - id: check-naming-conflicts
+        action: function
+        handler: checkNamingConflicts
+        description: Grep for existing hooks with same name
+        inputs:
+          - hook_name
+          - hook_type
+        outputs:
+          - conflict_found
+          - conflicting_paths
+      - id: validate-hook-event
+        action: function
+        handler: validateHookEvent
+        description: Verify hook event type is valid (PreToolUse, PostToolUse, etc.)
+        inputs:
+          - trigger
+        outputs:
+          - event_valid
+          - event_type
+      - id: update-state-validate
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to validating
+    gates:
+      - id: gate-validate-name
+        condition: "steps['validate-naming'].output.name_valid === true"
+        on_fail: block
+        message: "Hook name must be kebab-case (lowercase letters, numbers, hyphens)"
+      - id: gate-validate-conflict
+        condition: "steps['check-naming-conflicts'].output.conflict_found === false"
+        on_fail: abort
+        message: "Hook with this name already exists"
+      - id: gate-validate-event
+        condition: "steps['validate-hook-event'].output.event_valid === true"
+        on_fail: block
+        message: "Invalid hook event type. Must be PreToolUse, PostToolUse, UserPromptSubmit, SessionStart, or SessionEnd"
+
+  obtain:
+    description: Research best hook patterns (optional but recommended)
+    optional: true
+    steps:
+      - id: analyze-similar-hooks
+        action: function
+        handler: analyzeSimilarHooks
+        description: Read existing hooks in same category for patterns
+        inputs:
+          - hook_type
+        outputs:
+          - pattern_analysis
+          - common_patterns
+      - id: read-hook-template
+        action: function
+        handler: readHookTemplate
+        description: Load the standard hook template from SKILL.md
+        outputs:
+          - template_content
+          - required_exports
+      - id: research-best-practices
+        action: prompt
+        description: Optional research for complex hooks
+        optional: true
+        outputs:
+          - research_findings
+          - external_sources
+      - id: update-state-obtain
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to obtaining
+    gates:
+      - id: gate-obtain
+        condition: "steps['read-hook-template'].output.template_content !== null"
+        on_fail: block
+        message: "Failed to load hook template"
+
+  lock:
+    description: Create hook.cjs and hook.test.cjs files
+    steps:
+      - id: generate-hook-code
+        action: function
+        handler: generateHookCode
+        description: Generate hook implementation using template and requirements
+        inputs:
+          - hook_name
+          - hook_type
+          - purpose
+          - trigger
+          - target_tools
+          - behavior
+          - template_content
+        outputs:
+          - hook_code
+          - hook_path
+      - id: write-hook-file
+        action: write
+        description: Write the .cjs hook file
+        inputs:
+          - hook_code
+          - hook_path
+        outputs:
+          - hook_file_created
+      - id: generate-test-code
+        action: function
+        handler: generateTestCode
+        description: Generate test file for the hook
+        inputs:
+          - hook_name
+          - hook_type
+          - hook_path
+        outputs:
+          - test_code
+          - test_path
+      - id: write-test-file
+        action: write
+        description: Write the .test.cjs test file
+        inputs:
+          - test_code
+          - test_path
+        outputs:
+          - test_file_created
+      - id: update-state-lock
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to locking
+    gates:
+      - id: gate-lock-hook
+        condition: "steps['write-hook-file'].output.hook_file_created === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Failed to create hook file"
+      - id: gate-lock-test
+        condition: "steps['write-test-file'].output.test_file_created === true"
+        on_fail: retry
+        max_retries: 3
+        message: "Failed to create test file"
+
+  verify:
+    description: Run tests and validate exports
+    steps:
+      - id: run-tests
+        action: function
+        handler: runHookTests
+        description: Execute the test file to verify hook functionality
+        inputs:
+          - test_path
+        outputs:
+          - tests_passed
+          - test_results
+          - failure_reason
+      - id: validate-exports
+        action: function
+        handler: validateExports
+        description: Verify hook exports validate() function and follows contract
+        inputs:
+          - hook_path
+        outputs:
+          - exports_valid
+          - missing_exports
+      - id: check-graceful-degradation
+        action: function
+        handler: checkGracefulDegradation
+        description: Verify hook defaults to warn mode, not block
+        inputs:
+          - hook_path
+        outputs:
+          - graceful_degradation
+      - id: lint-hook
+        action: function
+        handler: lintHook
+        description: Check for common issues (hardcoded paths, missing error handling)
+        inputs:
+          - hook_path
+        outputs:
+          - lint_passed
+          - lint_issues
+      - id: update-state-verify
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to verifying
+    gates:
+      - id: gate-verify-tests
+        condition: "steps['run-tests'].output.tests_passed === true"
+        on_fail: return_to_lock
+        message: "Tests failed. Fix hook implementation."
+      - id: gate-verify-exports
+        condition: "steps['validate-exports'].output.exports_valid === true"
+        on_fail: return_to_lock
+        message: "Hook must export validate() function"
+      - id: gate-verify-graceful
+        condition: "steps['check-graceful-degradation'].output.graceful_degradation === true"
+        on_fail: return_to_lock
+        message: "Hook must default to warn mode, not block"
+
+  enable:
+    description: Register in settings.json, update hooks/README.md, update memory
+    steps:
+      - id: determine-registration-target
+        action: function
+        handler: determineRegistrationTarget
+        description: Decide if hook goes in settings.json or config.yaml
+        inputs:
+          - trigger
+          - hook_type
+        outputs:
+          - registration_target
+          - registration_section
+      - id: register-hook
+        action: function
+        handler: registerHook
+        description: Add hook to settings.json PreToolUse/PostToolUse or config.yaml
+        inputs:
+          - hook_path
+          - registration_target
+          - registration_section
+          - trigger
+          - target_tools
+        outputs:
+          - registration_success
+      - id: update-hooks-readme
+        action: function
+        handler: updateHooksReadme
+        description: Add hook documentation to .claude/hooks/README.md
+        inputs:
+          - hook_name
+          - hook_type
+          - hook_path
+          - purpose
+          - trigger
+        outputs:
+          - readme_updated
+      - id: update-memory
+        action: function
+        handler: updateMemory
+        description: Record hook creation in learnings.md
+        inputs:
+          - hook_name
+          - hook_path
+          - hook_type
+        outputs:
+          - memory_updated
+      - id: update-state-enable
+        action: function
+        handler: updateEvolutionState
+        description: Update evolution-state.json to idle with completed evolution
+        inputs:
+          - hook_name
+          - hook_path
+      - id: verify-registration
+        action: function
+        handler: verifyRegistration
+        description: Grep to confirm hook is registered and discoverable
+        inputs:
+          - hook_name
+          - registration_target
+        outputs:
+          - verification_passed
+    gates:
+      - id: gate-enable-register
+        condition: "steps['register-hook'].output.registration_success === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Failed to register hook"
+      - id: gate-enable-readme
+        condition: "steps['update-hooks-readme'].output.readme_updated === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Failed to update hooks README"
+      - id: gate-enable-verify
+        condition: "steps['verify-registration'].output.verification_passed === true"
+        on_fail: retry
+        max_retries: 2
+        message: "Hook registration verification failed"
+
+# Rollback/compensate actions for each phase
+compensate:
+  lock:
+    - action: delete_file
+      target: hook_path
+      description: Remove created hook file
+    - action: delete_file
+      target: test_path
+      description: Remove created test file
+  enable:
+    - action: unregister_hook
+      target: registration_target
+      description: Remove hook from settings.json or config.yaml
+    - action: revert_readme
+      target: ".claude/hooks/README.md"
+      description: Remove hook entry from README
+
+# Iron Laws for hook creation (from SKILL.md)
+iron_laws:
+  - id: no-hook-without-validate
+    rule: "Every hook MUST export validate() function"
+    enforcement: gate-verify-exports
+  - id: no-hook-without-main
+    rule: "Every hook MUST have main() for CLI execution"
+    enforcement: gate-verify-exports
+  - id: no-hook-without-graceful
+    rule: "Default to 'warn' mode, not 'block'"
+    enforcement: gate-verify-graceful
+  - id: no-hook-without-error-handling
+    rule: "Wrap JSON.parse in try/catch, handle missing parameters"
+    enforcement: lint-hook
+  - id: no-hook-without-test
+    rule: "Every hook needs <hook-name>.test.cjs"
+    enforcement: gate-lock-test
+  - id: no-hook-without-documentation
+    rule: "Add to .claude/hooks/README.md"
+    enforcement: gate-enable-readme
+  - id: cross-platform-paths
+    rule: "Use path.join() not string concatenation"
+    enforcement: lint-hook
+  - id: no-creation-without-system-impact
+    rule: "Check if hook requires settings.json or config.yaml registration"
+    enforcement: gate-enable-register

@@ -1,0 +1,243 @@
+name: agent-creator
+version: 1.0.0
+description: Executable workflow for creating new agents following the EVOLVE state machine
+triggers:
+  - pattern: create.*agent
+  - pattern: new agent
+  - pattern: no matching agent
+  - pattern: need.*agent
+
+phases:
+  evaluate:
+    description: Confirm need for new agent before investing time
+    steps:
+      - id: search_existing_agents
+        action: search
+        handler: searchExistingAgents
+        description: Search for existing agent that might match the request
+        paths:
+          - .claude/agents/core/
+          - .claude/agents/domain/
+          - .claude/agents/specialized/
+          - .claude/agents/orchestrators/
+
+      - id: confirm_gap
+        action: prompt
+        handler: confirmGap
+        description: Confirm no existing agent matches the need
+        validation:
+          required: true
+
+      - id: document_need
+        action: write
+        handler: documentNeed
+        description: Document the gap analysis
+        path: .claude/context/artifacts/gap-analysis/{{name}}-gap.md
+
+    gates:
+      - type: assertion
+        condition: steps.confirm_gap.output.confirmed === true
+        message: Gap must be confirmed before proceeding
+
+  validate:
+    description: Check naming conventions and conflicts
+    steps:
+      - id: check_naming_convention
+        action: validate
+        handler: validateNaming
+        description: Validate agent name follows conventions
+        rules:
+          pattern: ^[a-z][a-z0-9-]*$
+          maxLength: 30
+          noReservedWords: true
+
+      - id: check_conflicts
+        action: search
+        handler: checkConflicts
+        description: Check for naming conflicts with existing agents
+
+      - id: determine_category
+        action: classify
+        handler: determineCategory
+        description: Determine agent category based on capabilities
+        categories:
+          - core
+          - domain
+          - specialized
+          - orchestrators
+
+    gates:
+      - type: assertion
+        condition: steps.check_conflicts.output.conflicts.length === 0
+        message: No naming conflicts allowed
+
+  obtain:
+    description: Research keywords and best practices (MANDATORY - CANNOT SKIP)
+    steps:
+      - id: research_role
+        action: exa_search
+        handler: exaSearch
+        description: Research agent role and responsibilities
+        query: {{name}} agent role responsibilities tasks
+        required: true
+
+      - id: research_keywords
+        action: exa_search
+        handler: exaSearch
+        description: Research common keywords and terminology
+        query: {{name}} common keywords phrases terminology
+        required: true
+
+      - id: research_patterns
+        action: exa_search
+        handler: exaSearch
+        description: Research best practices and patterns
+        query: {{name}} best practices patterns
+        required: true
+
+      - id: generate_research_report
+        action: write
+        handler: writeResearchReport
+        description: Generate and save research report
+        path: .claude/context/artifacts/research-reports/agent-keywords-{{name}}.md
+        template: research-report
+
+    gates:
+      - type: research
+        minQueries: 3
+        minSources: 3
+        reportRequired: true
+        message: Research phase requires minimum 3 queries and 3 sources
+
+  lock:
+    description: Create agent artifact with schema validation
+    steps:
+      - id: create_agent_directory
+        action: mkdir
+        handler: createDirectory
+        description: Ensure agent directory exists
+        path: .claude/agents/{{category}}/
+        compensate:
+          type: directory:create
+
+      - id: write_agent_file
+        action: write
+        handler: writeAgent
+        description: Create the agent definition file
+        path: .claude/agents/{{category}}/{{name}}.md
+        template: agent-definition
+        compensate:
+          type: file:create
+
+      - id: add_routing_keywords
+        action: edit
+        handler: addRoutingKeywords
+        description: Add routing keywords to router-enforcer.cjs
+        target: .claude/hooks/routing/router-enforcer.cjs
+        compensate:
+          type: file:modify
+
+      - id: add_routing_table_entry
+        action: edit
+        handler: addRoutingTable
+        description: Add entry to ROUTING_TABLE in router-enforcer.cjs
+        target: .claude/hooks/routing/router-enforcer.cjs
+        compensate:
+          type: file:modify
+
+    gates:
+      - type: file_exists
+        path: .claude/agents/{{category}}/{{name}}.md
+        message: Agent file must exist
+
+  verify:
+    description: Quality validation before deployment
+    steps:
+      - id: validate_yaml_frontmatter
+        action: validate
+        handler: validateYaml
+        description: Validate YAML frontmatter is correct
+        target: .claude/agents/{{category}}/{{name}}.md
+
+      - id: check_required_sections
+        action: validate
+        handler: checkSections
+        description: Check all required sections are present
+        required:
+          - Task Progress Protocol
+          - Memory Protocol
+          - Iron Laws
+          - Core Persona
+          - Responsibilities
+          - Workflow
+
+      - id: check_placeholders
+        action: validate
+        handler: checkPlaceholders
+        description: Ensure no placeholder content remains
+        pattern: TODO|TBD|FIXME|\\[FILL
+        mustBeEmpty: true
+
+      - id: validate_skill_references
+        action: validate
+        handler: validateSkillRefs
+        description: All referenced skills must exist
+
+    gates:
+      - type: assertion
+        condition: steps.check_placeholders.output.found.length === 0
+        message: No placeholders allowed in final artifact
+      - type: assertion
+        condition: steps.validate_skill_references.output.missing.length === 0
+        message: All referenced skills must exist
+
+  enable:
+    description: Register agent in system for discovery
+    steps:
+      - id: update_claude_md_routing_table
+        action: edit
+        handler: updateClaudeMd
+        description: Add agent to CLAUDE.md routing table
+        target: .claude/CLAUDE.md
+        section: 3. AGENT ROUTING TABLE
+        compensate:
+          type: file:modify
+
+      - id: update_memory_learnings
+        action: append
+        handler: appendMemory
+        description: Record new agent to learnings.md
+        target: .claude/context/memory/learnings.md
+
+      - id: run_validation_tests
+        action: command
+        handler: runTests
+        description: Run validation to ensure agent is registered
+        command: node .claude/hooks/routing/router-enforcer.test.cjs
+
+    gates:
+      - type: registration
+        targets:
+          - type: claude_md
+            section: AGENT ROUTING TABLE
+          - type: router_enforcer
+            object: intentKeywords
+        message: Agent must be registered in CLAUDE.md and router-enforcer.cjs
+
+rollback:
+  strategy: saga
+  compensations:
+    - file:create: delete file
+    - file:modify: restore from backup
+    - directory:create: delete directory
+    - registration:add: remove registration
+
+metadata:
+  author: evolution-orchestrator
+  created: 2026-01-25
+  iron_laws:
+    - NO AGENT WITHOUT ROUTER KEYWORDS
+    - RESEARCH BEFORE CREATE
+    - MEMORY PROTOCOL MANDATORY
+    - NO AGENT WITHOUT TASK TRACKING
+    - NO AGENT WITHOUT CLAUDE.MD ENTRY

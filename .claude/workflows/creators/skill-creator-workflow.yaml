@@ -1,0 +1,408 @@
+# Skill Creator Workflow
+# EVOLVE-compliant executable workflow for skill creation
+# Enforces: E(valuate) -> V(alidate) -> O(btain) -> L(ock) -> V(erify) -> E(nable)
+#
+# Usage:
+#   const { WorkflowEngine } = require('.claude/lib/workflow/workflow-engine.cjs');
+#   const engine = new WorkflowEngine('.claude/workflows/creators/skill-creator-workflow.yaml');
+#   await engine.load();
+#   await engine.execute({ skillName: 'my-skill', description: 'What it does' });
+
+name: skill-creator-workflow
+description: Create a new skill following EVOLVE phases with validation, research, and registration
+version: 1.0.0
+artifact_type: skill
+output_location: .claude/skills/{skill-name}/SKILL.md
+
+phases:
+  evaluate:
+    description: Confirm skill is actually needed before investing time
+    steps:
+      - id: check-existing-skill
+        action: function
+        handler: checkExistingSkill
+        description: Search for existing skills matching the requested capability
+        inputs:
+          - skillName
+          - description
+        outputs:
+          - existingSkillPath
+          - gapConfirmed
+
+      - id: read-skill-catalog
+        action: function
+        handler: readSkillCatalog
+        description: Load skill catalog to check for similar capabilities
+        inputs:
+          - catalogPath
+        outputs:
+          - catalogContent
+          - existingCategories
+
+      - id: analyze-gap
+        action: function
+        handler: analyzeGap
+        description: Determine if a genuine capability gap exists
+        inputs:
+          - skillName
+          - description
+          - catalogContent
+        outputs:
+          - gapAnalysis
+          - recommendedCategory
+          - similarSkills
+
+    gates:
+      - condition: steps.analyzeGap.output.gapConfirmed === true
+        failure_action: abort
+        failure_message: No capability gap found. Consider using existing skill or enhancing it.
+
+  validate:
+    description: Ensure no conflicts with existing ecosystem artifacts
+    steps:
+      - id: check-naming-conflict
+        action: function
+        handler: checkNamingConflict
+        description: Verify skill name is unique and follows conventions
+        inputs:
+          - skillName
+        outputs:
+          - isUnique
+          - conflictPath
+          - suggestedName
+
+      - id: validate-naming-convention
+        action: function
+        handler: validateNamingConvention
+        description: Check skill name follows kebab-case pattern
+        inputs:
+          - skillName
+        outputs:
+          - isValid
+          - validationErrors
+
+      - id: check-capability-overlap
+        action: function
+        handler: checkCapabilityOverlap
+        description: Ensure no routing ambiguity with existing skills
+        inputs:
+          - skillName
+          - description
+          - similarSkills
+        outputs:
+          - hasOverlap
+          - overlapDetails
+
+    gates:
+      - condition: steps.checkNamingConflict.output.isUnique === true
+        failure_action: abort
+        failure_message: Naming conflict detected. Skill name already exists.
+
+      - condition: steps.validateNamingConvention.output.isValid === true
+        failure_action: abort
+        failure_message: Skill name does not follow naming conventions (kebab-case required).
+
+      - condition: steps.checkCapabilityOverlap.output.hasOverlap === false
+        failure_action: warn
+        failure_message: Capability overlap detected. Consider enhancing existing skill instead.
+
+  obtain:
+    description: Research best practices for skill type (recommended but optional for simple skills)
+    steps:
+      - id: determine-research-need
+        action: function
+        handler: determineResearchNeed
+        description: Check if skill is complex enough to warrant research
+        inputs:
+          - skillName
+          - description
+          - tools
+        outputs:
+          - researchRequired
+          - complexity
+
+      - id: research-best-practices
+        action: function
+        handler: researchBestPractices
+        description: Execute research queries for skill type best practices
+        inputs:
+          - skillName
+          - description
+          - researchRequired
+        outputs:
+          - researchReport
+          - bestPractices
+          - exampleImplementations
+
+      - id: analyze-existing-patterns
+        action: function
+        handler: analyzeExistingPatterns
+        description: Examine similar skills in codebase for patterns
+        inputs:
+          - similarSkills
+          - recommendedCategory
+        outputs:
+          - codebasePatterns
+          - requiredSections
+          - toolRecommendations
+
+    gates:
+      - condition: steps.determineResearchNeed.output.researchRequired === false || steps.researchBestPractices.output.researchReport !== null
+        failure_action: block
+        failure_message: Research required for complex skills. Complete at least 3 queries.
+
+  lock:
+    description: Create the skill directory structure and SKILL.md file
+    steps:
+      - id: create-skill-directory
+        action: function
+        handler: createSkillDirectory
+        description: Create skill directory at .claude/skills/{skill-name}/
+        inputs:
+          - skillName
+        outputs:
+          - skillDir
+          - created
+
+      - id: generate-skill-md
+        action: function
+        handler: generateSkillMd
+        description: Generate SKILL.md with YAML frontmatter and content
+        inputs:
+          - skillName
+          - description
+          - tools
+          - bestPractices
+          - codebasePatterns
+          - recommendedCategory
+        outputs:
+          - skillMdPath
+          - skillMdContent
+
+      - id: create-optional-directories
+        action: function
+        handler: createOptionalDirectories
+        description: Create hooks/, scripts/, schemas/ directories if needed
+        inputs:
+          - skillDir
+          - hasHooks
+          - hasSchemas
+          - hasScripts
+        outputs:
+          - createdDirs
+
+      - id: create-main-script
+        action: function
+        handler: createMainScript
+        description: Create scripts/main.cjs for executable logic (optional)
+        inputs:
+          - skillDir
+          - skillName
+          - hasScripts
+        outputs:
+          - mainScriptPath
+
+      - id: validate-yaml-frontmatter
+        action: function
+        handler: validateYamlFrontmatter
+        description: Validate SKILL.md YAML frontmatter against schema
+        inputs:
+          - skillMdPath
+        outputs:
+          - isValid
+          - validationErrors
+
+    gates:
+      - condition: steps.createSkillDirectory.output.created === true
+        failure_action: retry
+        failure_message: Failed to create skill directory. Check permissions.
+
+      - condition: steps.validateYamlFrontmatter.output.isValid === true
+        failure_action: retry
+        failure_message: YAML frontmatter validation failed. Fix errors and retry.
+
+  verify:
+    description: Quality assurance before deployment
+    steps:
+      - id: check-placeholders
+        action: function
+        handler: checkPlaceholders
+        description: Ensure no TODO, TBD, or placeholder content remains
+        inputs:
+          - skillMdPath
+        outputs:
+          - hasPlaceholders
+          - placeholderLocations
+
+      - id: verify-memory-protocol
+        action: function
+        handler: verifyMemoryProtocol
+        description: Ensure Memory Protocol section is complete
+        inputs:
+          - skillMdPath
+        outputs:
+          - hasMemoryProtocol
+          - memoryProtocolComplete
+
+      - id: verify-required-sections
+        action: function
+        handler: verifyRequiredSections
+        description: Check all required sections are present
+        inputs:
+          - skillMdPath
+          - requiredSections
+        outputs:
+          - sectionsComplete
+          - missingSections
+
+      - id: verify-tools-array
+        action: function
+        handler: verifyToolsArray
+        description: Validate tools array contains valid Claude tools
+        inputs:
+          - skillMdPath
+        outputs:
+          - toolsValid
+          - invalidTools
+
+      - id: check-content-quality
+        action: function
+        handler: checkContentQuality
+        description: Verify minimum content length and quality
+        inputs:
+          - skillMdPath
+        outputs:
+          - qualityScore
+          - qualityIssues
+
+    gates:
+      - condition: steps.checkPlaceholders.output.hasPlaceholders === false
+        failure_action: return_to_lock
+        failure_message: Placeholder content found. Return to LOCK and complete content.
+
+      - condition: steps.verifyMemoryProtocol.output.memoryProtocolComplete === true
+        failure_action: return_to_lock
+        failure_message: Memory Protocol section incomplete. Add required sections.
+
+      - condition: steps.verifyRequiredSections.output.sectionsComplete === true
+        failure_action: return_to_lock
+        failure_message: Required sections missing. Add missing sections.
+
+      - condition: steps.verifyToolsArray.output.toolsValid === true
+        failure_action: return_to_lock
+        failure_message: Invalid tools in tools array. Fix tool names.
+
+  enable:
+    description: Deploy skill to ecosystem and register for discovery
+    steps:
+      - id: update-skill-catalog
+        action: function
+        handler: updateSkillCatalog
+        description: Add skill entry to skill catalog
+        inputs:
+          - skillName
+          - description
+          - tools
+          - recommendedCategory
+        outputs:
+          - catalogUpdated
+          - catalogPath
+
+      - id: update-claude-md
+        action: function
+        handler: updateClaudeMd
+        description: Add skill to CLAUDE.md Section 8.5 if user-invocable
+        inputs:
+          - skillName
+          - description
+          - userInvocable
+        outputs:
+          - claudeMdUpdated
+          - section
+
+      - id: assign-to-agents
+        action: function
+        handler: assignToAgents
+        description: Add skill to relevant agents based on domain
+        inputs:
+          - skillName
+          - description
+          - tools
+        outputs:
+          - agentsUpdated
+          - assignedAgents
+
+      - id: update-memory
+        action: function
+        handler: updateMemory
+        description: Record skill creation in learnings.md
+        inputs:
+          - skillName
+          - skillMdPath
+          - assignedAgents
+        outputs:
+          - memoryUpdated
+
+      - id: trigger-hook-creator
+        action: function
+        handler: triggerHookCreator
+        description: Optionally invoke hook-creator for skill hooks
+        inputs:
+          - skillDir
+          - hasHooks
+        outputs:
+          - hooksCreated
+
+      - id: verify-registration
+        action: function
+        handler: verifyRegistration
+        description: Confirm skill is discoverable via grep
+        inputs:
+          - skillName
+        outputs:
+          - registrationVerified
+          - verificationResults
+
+    gates:
+      - condition: steps.updateSkillCatalog.output.catalogUpdated === true
+        failure_action: retry
+        failure_message: Failed to update skill catalog. Retry registration.
+
+      - condition: steps.verifyRegistration.output.registrationVerified === true
+        failure_action: retry
+        failure_message: Skill not discoverable. Fix registration and verify.
+
+# Compensating actions for rollback
+compensate:
+  - phase: enable
+    actions:
+      - handler: removeFromCatalog
+        description: Remove skill from skill catalog
+      - handler: removeFromClaudeMd
+        description: Remove skill from CLAUDE.md
+      - handler: removeFromAgents
+        description: Remove skill from agent assignments
+
+  - phase: lock
+    actions:
+      - handler: deleteSkillDirectory
+        description: Delete the created skill directory
+
+# Metadata for workflow engine
+metadata:
+  created_by: skill-creator
+  creation_date: 2026-01-25
+  references:
+    skill_md_source: .claude/skills/skill-creator/SKILL.md
+    catalog_location: .claude/context/artifacts/skill-catalog.md
+    claude_md_section: 8.5
+  agent_domain_mapping:
+    testing: [qa, developer]
+    security: [security-architect, developer]
+    planning: [planner, architect]
+    coding: [developer]
+    documentation: [technical-writer, planner]
+    devops: [devops, devops-troubleshooter]
+    git: [developer, devops]
+    database: [database-architect, developer]
+    api: [developer, architect]

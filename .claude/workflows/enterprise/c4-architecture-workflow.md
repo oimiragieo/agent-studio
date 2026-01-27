@@ -46,6 +46,9 @@ For each directory, starting from the deepest:
 ```
 You are the C4-CODE agent. Read .claude/agents/specialized/c4-code.md
 
+## Instructions
+1. Invoke skills: Skill({ skill: 'diagram-generator' })
+
 ## Task
 Analyze the code in directory: [directory_path]
 
@@ -88,13 +91,13 @@ Use a sanitized directory name (replace / with -, remove special chars) for the 
 - Expected output: c4-code-<directory-name>.md file in C4-Documentation/
 - Context: All files in the directory and its subdirectories
 
-**Repeat for every subdirectory** until all directories have corresponding c4-code-*.md files.
+**Repeat for every subdirectory** until all directories have corresponding c4-code-\*.md files.
 
 ## Phase 2: Component-Level Synthesis
 
 ### 2.1 Analyze All Code-Level Documentation
 
-- Collect all c4-code-*.md files created in Phase 1
+- Collect all c4-code-\*.md files created in Phase 1
 - Analyze code structure, dependencies, and relationships
 - Identify logical component boundaries based on:
   - Domain boundaries (related business functionality)
@@ -110,6 +113,9 @@ For each identified component:
 
 ```
 You are the C4-COMPONENT agent. Read .claude/agents/specialized/c4-component.md
+
+## Instructions
+1. Invoke skills: Skill({ skill: 'diagram-generator' })
 
 ## Task
 Synthesize the following C4 Code-level documentation files into a logical component.
@@ -162,7 +168,7 @@ Use a sanitized component name for the filename.
 ```
 
 - Expected output: c4-component-<name>.md file for each component
-- Context: All relevant c4-code-*.md files for this component
+- Context: All relevant c4-code-\*.md files for this component
 
 ### 2.3 Create Master Component Index
 
@@ -171,6 +177,9 @@ Use a sanitized component name for the filename.
 
 ```
 You are the C4-COMPONENT agent. Read .claude/agents/specialized/c4-component.md
+
+## Instructions
+1. Invoke skills: Skill({ skill: 'diagram-generator' })
 
 ## Task
 Create a master component index that lists all components in the system.
@@ -197,13 +206,13 @@ Save the output as: C4-Documentation/c4-component.md
 ```
 
 - Expected output: Master c4-component.md file
-- Context: All c4-component-*.md files
+- Context: All c4-component-\*.md files
 
 ## Phase 3: Container-Level Synthesis
 
 ### 3.1 Analyze Components and Deployment Definitions
 
-- Review all c4-component-*.md files
+- Review all c4-component-\*.md files
 - Search for deployment/infrastructure definitions:
   - Dockerfiles
   - Kubernetes manifests (deployments, services, etc.)
@@ -219,6 +228,9 @@ Save the output as: C4-Documentation/c4-component.md
 
 ```
 You are the C4-CONTAINER agent. Read .claude/agents/specialized/c4-container.md
+
+## Instructions
+1. Invoke skills: Skill({ skill: 'diagram-generator' })
 
 ## Task
 Synthesize components into containers based on deployment definitions.
@@ -312,6 +324,9 @@ Save the output as: C4-Documentation/c4-container.md
 ```
 You are the C4-CONTEXT agent. Read .claude/agents/specialized/c4-context.md
 
+## Instructions
+1. Invoke skills: Skill({ skill: 'diagram-generator' })
+
 ## Task
 Create comprehensive C4 Context-level documentation for the system.
 
@@ -395,7 +410,7 @@ Ensure the documentation is:
 
 ## Success Criteria
 
-- ✅ Every subdirectory has a corresponding c4-code-*.md file
+- ✅ Every subdirectory has a corresponding c4-code-\*.md file
 - ✅ All code-level documentation includes complete function signatures
 - ✅ Components are logically grouped with clear boundaries
 - ✅ All components have interface documentation

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sequential-thinking Input Schema",
+  "description": "Input validation schema for sequential-thinking skill",
+  "type": "object",
+  "required": [],
+  "properties": {},
+  "additionalProperties": true
+}

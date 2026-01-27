@@ -1,0 +1,21 @@
+{
+  "skill_name": "github",
+  "command": "docker",
+  "args": [
+    "run",
+    "-i",
+    "--rm",
+    "-e",
+    "GITHUB_PERSONAL_ACCESS_TOKEN",
+    "ghcr.io/github/github-mcp-server"
+  ],
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+  },
+  "description": "GitHub API operations - repositories, issues, PRs, actions, security",
+  "converted_at": "2026-01-03T03:55:00.000Z",
+  "source": "https://github.com/github/github-mcp-server",
+  "package": "ghcr.io/github/github-mcp-server",
+  "package_manager": "docker",
+  "notes": "Requires Docker and GITHUB_PERSONAL_ACCESS_TOKEN environment variable"
+}

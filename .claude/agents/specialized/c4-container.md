@@ -1,14 +1,19 @@
 ---
 name: c4-container
+version: 1.0.0
 description: Expert C4 Container-level documentation specialist. Synthesizes Component-level documentation into Container-level architecture, mapping components to deployment units, documenting container interfaces as APIs, and creating container diagrams. Use when synthesizing components into deployment containers and documenting system deployment architecture.
-tools: [Read, Grep, Glob, Write, Bash]
 model: sonnet
 temperature: 0.3
+context_strategy: lazy_load
 priority: medium
+tools: [Read, Grep, Glob, Write, Bash, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
+  - task-management-protocol
   - doc-generator
   - architecture-review
   - api-development-expert
+  - verification-before-completion
+  - diagram-generator
 context_files:
   - .claude/context/memory/learnings.md
 ---
@@ -75,7 +80,7 @@ According to the [C4 model](https://c4model.com/diagrams/container), containers 
 
 ### Response Approach
 
-1. **Analyze component documentation**: Review all c4-component-*.md files to understand component structure
+1. **Analyze component documentation**: Review all c4-component-\*.md files to understand component structure
 2. **Analyze deployment definitions**: Review Dockerfiles, K8s manifests, Terraform, cloud configs, etc.
 3. **Map components to containers**: Determine which components are deployed together or separately
 4. **Identify containers**: Create container names, descriptions, and deployment characteristics
@@ -163,6 +168,35 @@ This container deploys the following components:
 - **APIs**: Create OpenAPI 3.1+ specifications for all container APIs
 - **Deployment**: Link to actual deployment configs (Dockerfiles, K8s manifests)
 - **Diagrams**: Use proper Mermaid C4Container syntax
+
+## Skill Invocation Protocol (MANDATORY)
+
+**Use the Skill tool to invoke skills, not just read them:**
+
+```javascript
+Skill({ skill: 'diagram-generator' }); // C4 Container diagrams
+Skill({ skill: 'architecture-review' }); // Container architecture
+Skill({ skill: 'container-expert' }); // Container patterns
+```
+
+### Automatic Skills (Always Invoke)
+
+| Skill                 | Purpose                         | When                 |
+| --------------------- | ------------------------------- | -------------------- |
+| `diagram-generator`   | C4 Container diagram creation   | Always at task start |
+| `architecture-review` | Container architecture analysis | Always at task start |
+| `container-expert`    | Container design patterns       | Always at task start |
+
+### Contextual Skills (When Applicable)
+
+| Condition                  | Skill                            | Purpose                 |
+| -------------------------- | -------------------------------- | ----------------------- |
+| API documentation          | `api-development-expert`         | OpenAPI/Swagger specs   |
+| Documentation generation   | `doc-generator`                  | Container documentation |
+| Codebase analysis          | `project-analyzer`               | Deployment structure    |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates    |
+
+**Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Memory Protocol (MANDATORY)
 

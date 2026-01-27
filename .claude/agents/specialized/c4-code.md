@@ -1,13 +1,17 @@
 ---
 name: c4-code
+version: 1.0.0
 description: Expert C4 Code-level documentation specialist. Analyzes code directories to create comprehensive C4 code-level documentation including function signatures, arguments, dependencies, and code structure. Use when documenting code at the lowest C4 level for individual directories and code modules.
-tools: [Read, Grep, Glob, Write, Bash]
 model: sonnet
 temperature: 0.3
+context_strategy: lazy_load
 priority: medium
+tools: [Read, Grep, Glob, Write, Bash, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
+  - task-management-protocol
   - doc-generator
   - code-analyzer
+  - verification-before-completion
 context_files:
   - .claude/context/memory/learnings.md
 ---
@@ -148,6 +152,31 @@ Follow this structure for C4 Code-level documentation:
 - **Completeness**: Document ALL significant code elements
 - **Accuracy**: Ensure function signatures are complete and correct
 - **Links**: Always include links to source code locations
+
+## Skill Invocation Protocol (MANDATORY)
+
+**Use the Skill tool to invoke skills, not just read them:**
+
+```javascript
+Skill({ skill: 'diagram-generator' }); // C4 Code diagrams
+Skill({ skill: 'code-analyzer' }); // Code structure analysis
+```
+
+### Automatic Skills (Always Invoke)
+
+| Skill               | Purpose                  | When                 |
+| ------------------- | ------------------------ | -------------------- |
+| `diagram-generator` | C4 Code diagram creation | Always at task start |
+| `code-analyzer`     | Code structure analysis  | Always at task start |
+
+### Contextual Skills (When Applicable)
+
+| Condition                  | Skill                            | Purpose              |
+| -------------------------- | -------------------------------- | -------------------- |
+| Documentation generation   | `doc-generator`                  | Code documentation   |
+| Before claiming completion | `verification-before-completion` | Evidence-based gates |
+
+**Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 
 ## Memory Protocol (MANDATORY)
 

@@ -53,6 +53,7 @@ flowchart TD
 3. Update learnings.md with integration summary
 
 **Verification:**
+
 ```bash
 grep "external-integration" .claude/CLAUDE.md || echo "ERROR: CLAUDE.md NOT UPDATED!"
 ```
@@ -125,12 +126,47 @@ Check if artifact already exists in the framework before integration.
    - .claude/templates/ (if integrating template)
    - .claude/hooks/ (if integrating hook)
 4. If artifact exists:
-   - Compare versions (if versioned)
+   - Compare versions using the Version Comparison Protocol below
    - Determine if update is needed
    - Save findings to: .claude/context/tmp/pre-check-results.md
 5. If artifact does NOT exist:
    - Document in .claude/context/tmp/pre-check-results.md
    - Indicate integration should proceed
+
+## Version Comparison Protocol (CRITICAL)
+
+Use the following priority order to determine if an update is needed:
+
+### Priority 1: Semantic Versioning (semver)
+If both source and target have version fields in frontmatter or package.json:
+- Parse versions as semver (MAJOR.MINOR.PATCH)
+- Use semver comparison: source > target means update needed
+- Example: 1.2.0 > 1.1.5 -> update needed
+- Prerelease versions (e.g., 1.0.0-beta) are lower than release versions
+
+### Priority 2: Git Commit SHA
+If no semver available but artifacts are from git repos:
+- Compare commit SHAs
+- If SHAs differ, check commit dates to determine which is newer
+- Newer commit date = update needed
+
+### Priority 3: File Modification Date
+If no version or SHA available:
+- Compare file modification timestamps
+- Source newer than target = update needed
+- Use ISO 8601 format for timestamp comparison
+
+### Priority 4: Content Checksum
+If timestamps are unreliable or identical:
+- Calculate SHA-256 checksum of file contents
+- Different checksum = potential update (requires manual review)
+
+### Document Comparison Method Used
+Always record in pre-check-results.md:
+- Method used (semver/SHA/date/checksum)
+- Source value
+- Target value
+- Decision (UPDATE_NEEDED/NO_UPDATE/MANUAL_REVIEW)
 
 ## Output
 - .claude/context/tmp/pre-check-results.md with existence check results
@@ -142,7 +178,7 @@ Check if artifact already exists in the framework before integration.
 });
 ```
 
-**Expected Output**: `.claude/context/tmp/pre-check-results.md` with artifact existence status and version comparison
+**Expected Output**: `.claude/context/tmp/pre-check-results.md` with artifact existence status and version comparison (including method used)
 
 **Gate Decision**: If artifact exists and is up-to-date, STOP workflow. If update needed or new artifact, proceed to Phase 1.
 
@@ -756,38 +792,47 @@ Verify the integrated artifact works correctly in the framework.
 After each phase, verify:
 
 **Phase 0 Complete:**
+
 - [ ] Pre-check results documented
 - [ ] Decision made: proceed or skip
 
 **Phase 1 Complete:**
+
 - [ ] Artifact isolated in .claude/context/tmp/
 - [ ] Structure documented
 
 **Phase 2 Complete:**
+
 - [ ] Source analysis complete
 - [ ] Target analysis complete
 
 **Phase 3 Complete:**
+
 - [ ] Integration plan created with all required sections
 
 **Phase 4 Complete:**
+
 - [ ] Architect review complete
 - [ ] Security review complete
 - [ ] No BLOCKING issues or workflow stopped
 
 **Phase 5 Complete:**
+
 - [ ] Final plan incorporates all mitigations
 
 **Phase 6 Complete:**
+
 - [ ] Artifact integrated
 - [ ] CLAUDE.md updated
 - [ ] Registries updated
 
 **Phase 7 Complete:**
+
 - [ ] Temp directory removed
 - [ ] Learnings documented
 
 **Phase 8 Complete:**
+
 - [ ] Verification passed
 - [ ] Integration confirmed functional
 
@@ -858,6 +903,36 @@ After each phase, verify:
 
 **When to rollback**: Phase 6 failure, Phase 8 verification failure, user request
 
+### Rollback Strategy Selection
+
+**CRITICAL**: The rollback method depends on whether changes were committed during integration.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    ROLLBACK DECISION TREE                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. Run: git status --porcelain                                    │
+│                                                                     │
+│  2. Check: Were integration changes committed?                      │
+│     - Run: git log --oneline -5                                    │
+│     - Look for integration-related commit messages                  │
+│                                                                     │
+│  3. Select rollback method:                                         │
+│                                                                     │
+│     ┌──────────────────────┬──────────────────────────────────┐    │
+│     │ Changes Status       │ Rollback Method                  │    │
+│     ├──────────────────────┼──────────────────────────────────┤    │
+│     │ Uncommitted only     │ git restore <files>              │    │
+│     │ Committed            │ git revert <commit-sha>          │    │
+│     │ Mixed (both)         │ git restore + git revert         │    │
+│     └──────────────────────┴──────────────────────────────────┘    │
+│                                                                     │
+│  4. NEVER use: git reset --hard (destroys unrelated work)          │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
 **Rollback steps**:
 
 ```javascript
@@ -874,24 +949,88 @@ Rollback failed integration to restore framework to pre-integration state.
 
 ## Instructions
 1. Read your agent definition: .claude/agents/core/developer.md
-2. Execute rollback steps:
-   - Remove artifact from target location
-   - Git restore .claude/CLAUDE.md
-   - Git restore .claude/context/artifacts/creator-registry.json
-   - Git restore .claude/context/artifacts/skill-catalog.md (if skill)
-   - Preserve .claude/context/tmp/<repo-name>/ for analysis
-3. Verify rollback:
-   - Confirm artifact removed from target
-   - Confirm CLAUDE.md reverted
-   - Confirm registries reverted
-4. Document rollback in: .claude/context/reports/rollback-complete.md
+
+2. **FIRST: Assess Git State** (CRITICAL - DO NOT SKIP)
+   Run these commands and record the output:
+   \`\`\`bash
+   # Check for uncommitted changes
+   git status --porcelain
+
+   # Check recent commits for integration-related changes
+   git log --oneline -10
+
+   # Identify files modified by integration
+   git diff --name-only HEAD~5 HEAD  # Adjust range as needed
+   \`\`\`
+
+3. **Select and Execute Rollback Method**:
+
+   **Case A: Uncommitted Changes Only**
+   (git status shows modified files, no integration commits found)
+   \`\`\`bash
+   # Restore specific files
+   git restore .claude/CLAUDE.md
+   git restore .claude/context/artifacts/creator-registry.json
+   git restore .claude/context/artifacts/skill-catalog.md
+
+   # Remove new untracked files (integration artifacts)
+   rm -rf <target-artifact-path>
+   \`\`\`
+
+   **Case B: Changes Were Committed**
+   (git log shows integration commit(s))
+   \`\`\`bash
+   # Identify the integration commit SHA
+   INTEGRATION_COMMIT=$(git log --oneline -10 | grep -i "integrat" | head -1 | cut -d' ' -f1)
+
+   # Revert the commit (creates new commit undoing changes)
+   git revert --no-edit $INTEGRATION_COMMIT
+
+   # If multiple commits, revert each in reverse order
+   # git revert --no-edit <newer-sha>
+   # git revert --no-edit <older-sha>
+   \`\`\`
+
+   **Case C: Mixed (Uncommitted + Committed)**
+   \`\`\`bash
+   # First restore uncommitted changes
+   git restore <modified-files>
+
+   # Then revert committed changes
+   git revert --no-edit <commit-sha>
+   \`\`\`
+
+4. **Verify Rollback**:
+   \`\`\`bash
+   # Confirm artifact removed from target
+   ls -la <target-artifact-path>  # Should not exist or be reverted
+
+   # Confirm CLAUDE.md reverted
+   git diff HEAD .claude/CLAUDE.md  # Should show no changes
+
+   # Confirm registries reverted
+   git diff HEAD .claude/context/artifacts/creator-registry.json
+   \`\`\`
+
+5. **Preserve Evidence**:
+   - Keep .claude/context/tmp/<repo-name>/ for post-mortem analysis
+   - Document rollback method used in rollback-complete.md
 
 ## Rollback Checklist
+- [ ] Git state assessed (committed vs uncommitted)
+- [ ] Correct rollback method selected
 - [ ] Artifact removed from target location
 - [ ] CLAUDE.md reverted
 - [ ] Registries reverted
-- [ ] Temp directory preserved
-- [ ] Rollback verified
+- [ ] Temp directory preserved for analysis
+- [ ] Rollback verified with git diff
+- [ ] Rollback method documented
+
+## SAFETY RULES
+- NEVER use git reset --hard (destroys unrelated work)
+- NEVER use git checkout . (same problem)
+- ALWAYS use git revert for committed changes (creates audit trail)
+- ALWAYS verify with git diff before declaring success
 
 ## Output
 - Framework restored to pre-integration state
@@ -899,6 +1038,7 @@ Rollback failed integration to restore framework to pre-integration state.
 
 ## Memory Protocol
 1. Record rollback reason to .claude/context/memory/issues.md
+2. Record rollback method used to .claude/context/memory/learnings.md
 `,
 });
 ```
@@ -906,8 +1046,9 @@ Rollback failed integration to restore framework to pre-integration state.
 ## Related Workflows
 
 - **Codebase Integration Skill**: For integrating entire codebases, use `Skill({ skill: "codebase-integration" })`
-- **Feature Development Workflow**: May spawn external-integration as sub-workflow for third-party libraries
-- **Security Review Workflow**: Phase 4 Security Review can be extracted as standalone workflow
+- **Skill Lifecycle Workflow**: For managing artifact creation/update/deprecation, see `.claude/workflows/core/skill-lifecycle.md`
+- **Feature Development Workflow**: May spawn external-integration as sub-workflow for third-party libraries (`.claude/workflows/enterprise/feature-development-workflow.md`)
+- **Router Decision Workflow**: Master routing workflow that may invoke this workflow (`.claude/workflows/core/router-decision.md`)
 
 ## Customization Points
 

@@ -1,0 +1,59 @@
+{
+  "name": "kubernetes-flux",
+  "version": "1.0.0",
+  "description": "Kubernetes cluster management and troubleshooting via kubectl",
+  "executor": "executor.py",
+  "environment": {
+    "KUBECONFIG": {
+      "description": "Path to kubeconfig file",
+      "default": "~/.kube/config",
+      "required": false
+    },
+    "KUBECTL_CONTEXT": {
+      "description": "Default kubectl context",
+      "default": "current-context",
+      "required": false
+    },
+    "KUBECTL_NAMESPACE": {
+      "description": "Default namespace",
+      "default": "default",
+      "required": false
+    },
+    "KUBECTL_TIMEOUT": {
+      "description": "Command timeout in seconds",
+      "default": "30",
+      "required": false
+    }
+  },
+  "dependencies": {
+    "kubectl": {
+      "type": "binary",
+      "description": "Kubernetes command-line tool",
+      "install": {
+        "macOS": "brew install kubectl",
+        "linux": "curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl",
+        "windows": "choco install kubernetes-cli"
+      }
+    },
+    "python": {
+      "type": "runtime",
+      "version": ">=3.7",
+      "description": "Python runtime for executor"
+    }
+  },
+  "safety": {
+    "blocked_operations": [
+      "delete",
+      "exec with destructive commands (rm, dd, mkfs, sudo)",
+      "secret value display"
+    ],
+    "confirmation_required": [
+      "scale in production namespaces",
+      "switch to production context",
+      "exec with write operations"
+    ],
+    "masked_output": ["secret values", "authentication tokens", "database passwords", "API keys"]
+  },
+  "tools_count": 18,
+  "context_savings": "~92%"
+}
