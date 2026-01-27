@@ -42,6 +42,7 @@ ls .claude/context/artifacts/reports/open-security-issues.md
 ```
 
 **Success Criteria**:
+
 - All 3 audit reports generated
 - Priority ranking established for remaining fixes
 - No new CRITICAL security issues discovered
@@ -87,6 +88,7 @@ ls .claude/context/artifacts/reports/open-security-issues.md
 #### Phase 2 Error Handling
 
 If any task fails:
+
 1. Document error in `.claude/context/memory/issues.md`
 2. Continue with remaining tasks (independent audits)
 3. Consolidate findings in Phase 9
@@ -104,6 +106,7 @@ ls .claude/context/artifacts/reports/lib-utils-integration-audit.md
 ```
 
 **Success Criteria**:
+
 - All 6 audit reports generated
 - Bugs classified by severity (CRITICAL/HIGH/MEDIUM/LOW)
 - Test coverage gaps identified
@@ -147,6 +150,7 @@ ls .claude/context/artifacts/reports/doc-implementation-drift.md
 ```
 
 **Success Criteria**:
+
 - All 4 pointer validation reports generated
 - Broken pointers categorized by impact (blocking vs informational)
 - Orphaned artifacts identified
@@ -190,6 +194,7 @@ ls .claude/context/artifacts/reports/test-performance.md
 ```
 
 **Success Criteria**:
+
 - Latency baselines established for all hook categories
 - Duplication hotspots identified with % duplication metrics
 - State I/O caching strategy proposed
@@ -233,6 +238,7 @@ ls .claude/context/artifacts/reports/missing-cli-tools.md
 ```
 
 **Success Criteria**:
+
 - All 4 tool audit reports generated
 - Bugs categorized by severity
 - Missing tools identified with use case justification
@@ -281,6 +287,7 @@ ls .claude/context/artifacts/reports/onboarding-review.md
 ```
 
 **Success Criteria**:
+
 - All 5 process audit reports generated
 - Workflow gaps prioritized by frequency of need
 - Automation opportunities ranked by ROI
@@ -326,6 +333,7 @@ ls .claude/context/artifacts/reports/missing-tests.md
 ```
 
 **Success Criteria**:
+
 - Coverage baseline established (current %)
 - Flaky tests documented with root cause
 - Test maintainability issues prioritized
@@ -369,6 +377,7 @@ grep -i "APPROVED" .claude/context/artifacts/reports/consolidated-findings.md
 ```
 
 **Success Criteria**:
+
 - All findings consolidated with severity/priority
 - Remediation roadmap has clear phase gates
 - Health scorecard establishes measurable baseline
@@ -387,15 +396,18 @@ grep -i "APPROVED" .claude/context/artifacts/reports/consolidated-findings.md
 3. Check for evolution opportunities (new agents/skills needed)
 
 **Spawn Command**:
+
 ```javascript
 Task({
-  subagent_type: "reflection-agent",
-  description: "Session reflection and learning extraction",
-  prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created)."
-})
+  subagent_type: 'reflection-agent',
+  description: 'Session reflection and learning extraction',
+  prompt:
+    'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
+});
 ```
 
 **Success Criteria**:
+
 - Reflection-agent spawned and completed
 - Learnings extracted to `.claude/context/memory/learnings.md`
 - Evolution opportunities logged if any detected
@@ -404,29 +416,30 @@ Task({
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| Analysis uncovers systemic architectural flaw | High | Phase 8 includes architect review to catch fundamental issues early | Roadmap can be revised before implementation |
-| Test runs interfere with production state files | Medium | Use test isolation (--test-concurrency=1) and backup state files before tests | Restore from `.claude/context/memory/archive/` |
-| Performance profiling impacts system performance | Low | Run profiling during off-hours, use isolated test environment | Stop profiling script |
-| Large number of findings overwhelms remediation capacity | High | Phase 8 prioritization focuses on P0/P1 only; P2/P3/P4 deferred to future | Accept technical debt for lower priorities |
+| Risk                                                     | Impact | Mitigation                                                                    | Rollback                                       |
+| -------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- | ---------------------------------------------- |
+| Analysis uncovers systemic architectural flaw            | High   | Phase 8 includes architect review to catch fundamental issues early           | Roadmap can be revised before implementation   |
+| Test runs interfere with production state files          | Medium | Use test isolation (--test-concurrency=1) and backup state files before tests | Restore from `.claude/context/memory/archive/` |
+| Performance profiling impacts system performance         | Low    | Run profiling during off-hours, use isolated test environment                 | Stop profiling script                          |
+| Large number of findings overwhelms remediation capacity | High   | Phase 8 prioritization focuses on P0/P1 only; P2/P3/P4 deferred to future     | Accept technical debt for lower priorities     |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Dependencies |
-|-------|-------|-----------|-----------|--------------|
-| 1 | 3 | 65 min | Partial | None |
-| 2 | 6 | 240 min | Partial | P1 |
-| 3 | 4 | 150 min | Partial | P1, P2 |
-| 4 | 4 | 165 min | Partial | P2, P3 |
-| 5 | 4 | 125 min | No | P2, P3 |
-| 6 | 5 | 210 min | Partial | P4 |
-| 7 | 4 | 125 min | Partial | P2 |
-| 8 | 4 | 180 min | Sequential | ALL |
-| FINAL | 1 | 30 min | No | P8 |
-| **Total** | **35** | **~20 hours** | | |
+| Phase     | Tasks  | Est. Time     | Parallel?  | Dependencies |
+| --------- | ------ | ------------- | ---------- | ------------ |
+| 1         | 3      | 65 min        | Partial    | None         |
+| 2         | 6      | 240 min       | Partial    | P1           |
+| 3         | 4      | 150 min       | Partial    | P1, P2       |
+| 4         | 4      | 165 min       | Partial    | P2, P3       |
+| 5         | 4      | 125 min       | No         | P2, P3       |
+| 6         | 5      | 210 min       | Partial    | P4           |
+| 7         | 4      | 125 min       | Partial    | P2           |
+| 8         | 4      | 180 min       | Sequential | ALL          |
+| FINAL     | 1      | 30 min        | No         | P8           |
+| **Total** | **35** | **~20 hours** |            |              |
 
 **Notes**:
+
 - Sequential execution: ~20 hours
 - Maximum parallelization: ~12-14 hours (Phases 2, 3, 4, 6, 7 have parallel tasks)
 - Recommended approach: 2-3 focused sessions over 3-5 days

@@ -28,13 +28,13 @@
 
 'use strict';
 
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
 const {
   parseHookInputAsync,
   getToolInput: sharedGetToolInput,
-} = require('../../lib/utils/hook-input.cjs');
+} = require('../../../lib/utils/hook-input.cjs');
 
 /**
  * Patterns to detect PLANNER agent spawns

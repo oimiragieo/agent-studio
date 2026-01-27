@@ -13,7 +13,7 @@ const fs = require('fs');
 
 // Import the module under test
 const { validate, isPlannerSpawn } = require('./planner-first-guard.cjs');
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // Test utilities
 let testsPassed = 0;

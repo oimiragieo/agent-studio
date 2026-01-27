@@ -15,6 +15,8 @@
 !.claude/context/artifacts/.gitkeep
 !.claude/context/artifacts/reference/
 !.claude/context/artifacts/reference/**
+!.claude/context/artifacts/diagrams/
+!.claude/context/artifacts/diagrams/**
 
 # Runtime data (gitignored)
 .claude/context/runtime/

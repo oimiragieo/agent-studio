@@ -27,7 +27,14 @@ function findProjectRoot() {
 }
 
 const PROJECT_ROOT = findProjectRoot();
-const HOOK_PATH = path.join(PROJECT_ROOT, '.claude', 'hooks', 'routing', 'task-create-guard.cjs');
+const HOOK_PATH = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'hooks',
+  'routing',
+  '_legacy',
+  'task-create-guard.cjs'
+);
 const STATE_MODULE_PATH = path.join(
   PROJECT_ROOT,
   '.claude',

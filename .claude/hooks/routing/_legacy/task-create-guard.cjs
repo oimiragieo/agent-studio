@@ -25,10 +25,10 @@
 
 'use strict';
 
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // PERF-006: Use shared hook-input utility instead of duplicated 55-line parseHookInput function
-const { parseHookInputAsync, getToolName } = require('../../lib/utils/hook-input.cjs');
+const { parseHookInputAsync, getToolName } = require('../../../lib/utils/hook-input.cjs');
 
 /**
  * Format the violation message for output.

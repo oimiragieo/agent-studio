@@ -10,7 +10,7 @@ const assert = require('assert');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 function resetState() {
   const state = {

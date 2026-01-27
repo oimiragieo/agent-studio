@@ -8,7 +8,7 @@
 'use strict';
 
 const assert = require('assert');
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // Test utilities
 let testsPassed = 0;
