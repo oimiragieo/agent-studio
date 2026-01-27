@@ -31,9 +31,15 @@
 .claude/context/reflection-queue.jsonl
 
 # Memory tier files (session-specific runtime data)
-.claude/context/memory/mtm/
-.claude/context/memory/ltm/
-.claude/context/memory/sessions/
+# Ignore contents but keep directory structure via .gitkeep
+.claude/context/memory/stm/*
+!.claude/context/memory/stm/.gitkeep
+.claude/context/memory/mtm/*
+!.claude/context/memory/mtm/.gitkeep
+.claude/context/memory/ltm/*
+!.claude/context/memory/ltm/.gitkeep
+.claude/context/memory/sessions/*
+!.claude/context/memory/sessions/.gitkeep
 
 # Config data (version-controlled) - NEW PATTERNS
 !.claude/context/config/
