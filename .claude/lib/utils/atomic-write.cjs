@@ -112,4 +112,104 @@ function atomicWriteJSONSync(filePath, data) {
   atomicWriteSync(filePath, content, 'utf8');
 }
 
-module.exports = { atomicWriteSync, atomicWriteJSONSync };
+/**
+ * HOOK-006 FIX: Create a backup of existing file before modification
+ * Creates a .bak file with timestamp to preserve previous state
+ *
+ * @param {string} filePath - Absolute path to file to backup
+ * @param {Object} [options] - Backup options
+ * @param {boolean} [options.keepMultiple=false] - Keep multiple backups with timestamps
+ * @returns {string|null} Path to backup file if created, null if no existing file
+ */
+function createBackup(filePath, options = {}) {
+  const { keepMultiple = false } = options;
+
+  // Only backup if file exists
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  try {
+    const backupPath = keepMultiple ? `${filePath}.bak.${Date.now()}` : `${filePath}.bak`;
+
+    // Read current content and write to backup
+    const content = fs.readFileSync(filePath);
+    atomicWriteSync(backupPath, content);
+
+    if (process.env.DEBUG_ATOMIC_WRITE) {
+      console.error(`[atomic-write] Backup created: ${backupPath}`);
+    }
+
+    return backupPath;
+  } catch (e) {
+    // Backup failure should not block the main operation
+    if (process.env.DEBUG_ATOMIC_WRITE) {
+      console.error(`[atomic-write] Backup failed: ${e.message}`);
+    }
+    return null;
+  }
+}
+
+/**
+ * HOOK-006 FIX: Restore from backup file
+ *
+ * @param {string} filePath - Absolute path to file to restore
+ * @param {string} [backupPath] - Path to backup file (defaults to filePath.bak)
+ * @returns {boolean} True if restore successful, false otherwise
+ */
+function restoreFromBackup(filePath, backupPath = null) {
+  const backup = backupPath || `${filePath}.bak`;
+
+  if (!fs.existsSync(backup)) {
+    if (process.env.DEBUG_ATOMIC_WRITE) {
+      console.error(`[atomic-write] No backup found: ${backup}`);
+    }
+    return false;
+  }
+
+  try {
+    const content = fs.readFileSync(backup);
+    atomicWriteSync(filePath, content);
+
+    if (process.env.DEBUG_ATOMIC_WRITE) {
+      console.error(`[atomic-write] Restored from: ${backup}`);
+    }
+
+    return true;
+  } catch (e) {
+    if (process.env.DEBUG_ATOMIC_WRITE) {
+      console.error(`[atomic-write] Restore failed: ${e.message}`);
+    }
+    return false;
+  }
+}
+
+/**
+ * Write JSON atomically with automatic backup (HOOK-006 FIX)
+ *
+ * Creates a backup of the existing file before writing new content.
+ * Use this for critical state files where recovery is important.
+ *
+ * @param {string} filePath - Absolute path to target file
+ * @param {*} data - Data to serialize to JSON
+ * @param {Object} [options] - Options
+ * @param {boolean} [options.backup=true] - Create backup before writing
+ * @throws {Error} If serialization, write, or rename fails
+ */
+function atomicWriteJSONSyncWithBackup(filePath, data, options = {}) {
+  const { backup = true } = options;
+
+  if (backup) {
+    createBackup(filePath);
+  }
+
+  atomicWriteJSONSync(filePath, data);
+}
+
+module.exports = {
+  atomicWriteSync,
+  atomicWriteJSONSync,
+  atomicWriteJSONSyncWithBackup,
+  createBackup,
+  restoreFromBackup,
+};

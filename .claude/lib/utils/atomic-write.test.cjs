@@ -258,4 +258,147 @@ describe('atomic-write', () => {
       }
     });
   });
+
+  describe('HOOK-006: State file backup functionality', () => {
+    describe('createBackup', () => {
+      it('should create a .bak file from existing file', () => {
+        const filePath = path.join(testDir, 'state.json');
+        const originalContent = JSON.stringify({ mode: 'router' });
+        fs.writeFileSync(filePath, originalContent);
+
+        const backupPath = atomicWrite.createBackup(filePath);
+
+        assert.ok(backupPath, 'Should return backup path');
+        assert.strictEqual(backupPath, `${filePath}.bak`);
+        assert.ok(fs.existsSync(backupPath), 'Backup file should exist');
+        assert.strictEqual(fs.readFileSync(backupPath, 'utf8'), originalContent);
+      });
+
+      it('should return null if file does not exist', () => {
+        const filePath = path.join(testDir, 'nonexistent.json');
+
+        const backupPath = atomicWrite.createBackup(filePath);
+
+        assert.strictEqual(backupPath, null);
+      });
+
+      it('should create timestamped backup when keepMultiple is true', () => {
+        const filePath = path.join(testDir, 'multi.json');
+        fs.writeFileSync(filePath, 'content1');
+
+        const backupPath1 = atomicWrite.createBackup(filePath, { keepMultiple: true });
+
+        assert.ok(backupPath1, 'Should return backup path');
+        assert.ok(backupPath1.includes('.bak.'), 'Should have timestamp in name');
+        assert.ok(fs.existsSync(backupPath1), 'First backup should exist');
+
+        // Slight delay to ensure different timestamp
+        const start = Date.now();
+        while (Date.now() - start < 5) {}
+
+        fs.writeFileSync(filePath, 'content2');
+        const backupPath2 = atomicWrite.createBackup(filePath, { keepMultiple: true });
+
+        assert.ok(backupPath2, 'Should return second backup path');
+        assert.notStrictEqual(backupPath1, backupPath2, 'Should have different paths');
+        assert.ok(fs.existsSync(backupPath1), 'First backup should still exist');
+        assert.ok(fs.existsSync(backupPath2), 'Second backup should exist');
+      });
+
+      it('should overwrite single backup by default', () => {
+        const filePath = path.join(testDir, 'single.json');
+        fs.writeFileSync(filePath, 'content1');
+
+        atomicWrite.createBackup(filePath);
+
+        fs.writeFileSync(filePath, 'content2');
+        const backupPath = atomicWrite.createBackup(filePath);
+
+        assert.strictEqual(backupPath, `${filePath}.bak`);
+        assert.strictEqual(fs.readFileSync(backupPath, 'utf8'), 'content2');
+      });
+    });
+
+    describe('restoreFromBackup', () => {
+      it('should restore file from backup', () => {
+        const filePath = path.join(testDir, 'restore.json');
+        const originalContent = JSON.stringify({ mode: 'original' });
+        fs.writeFileSync(filePath, originalContent);
+
+        // Create backup
+        atomicWrite.createBackup(filePath);
+
+        // Modify original
+        fs.writeFileSync(filePath, JSON.stringify({ mode: 'modified' }));
+
+        // Restore
+        const result = atomicWrite.restoreFromBackup(filePath);
+
+        assert.strictEqual(result, true, 'Should return true on success');
+        assert.strictEqual(fs.readFileSync(filePath, 'utf8'), originalContent);
+      });
+
+      it('should return false if no backup exists', () => {
+        const filePath = path.join(testDir, 'nobackup.json');
+
+        const result = atomicWrite.restoreFromBackup(filePath);
+
+        assert.strictEqual(result, false);
+      });
+
+      it('should restore from custom backup path', () => {
+        const filePath = path.join(testDir, 'custom.json');
+        const customBackup = path.join(testDir, 'my-backup.json');
+        const content = 'custom content';
+
+        fs.writeFileSync(customBackup, content);
+
+        const result = atomicWrite.restoreFromBackup(filePath, customBackup);
+
+        assert.strictEqual(result, true);
+        assert.ok(fs.existsSync(filePath), 'Restored file should exist');
+        assert.strictEqual(fs.readFileSync(filePath, 'utf8'), content);
+      });
+    });
+
+    describe('atomicWriteJSONSyncWithBackup', () => {
+      it('should create backup before writing by default', () => {
+        const filePath = path.join(testDir, 'with-backup.json');
+        const originalData = { mode: 'original' };
+        fs.writeFileSync(filePath, JSON.stringify(originalData));
+
+        const newData = { mode: 'new' };
+        atomicWrite.atomicWriteJSONSyncWithBackup(filePath, newData);
+
+        // Check new content
+        assert.deepStrictEqual(JSON.parse(fs.readFileSync(filePath, 'utf8')), newData);
+
+        // Check backup exists with old content
+        const backupPath = `${filePath}.bak`;
+        assert.ok(fs.existsSync(backupPath), 'Backup should exist');
+        assert.deepStrictEqual(JSON.parse(fs.readFileSync(backupPath, 'utf8')), originalData);
+      });
+
+      it('should skip backup when backup option is false', () => {
+        const filePath = path.join(testDir, 'no-backup.json');
+        fs.writeFileSync(filePath, JSON.stringify({ old: true }));
+
+        atomicWrite.atomicWriteJSONSyncWithBackup(filePath, { new: true }, { backup: false });
+
+        const backupPath = `${filePath}.bak`;
+        assert.ok(!fs.existsSync(backupPath), 'Backup should not exist');
+      });
+
+      it('should work when no existing file (no backup created)', () => {
+        const filePath = path.join(testDir, 'new-file.json');
+        const data = { created: true };
+
+        atomicWrite.atomicWriteJSONSyncWithBackup(filePath, data);
+
+        assert.deepStrictEqual(JSON.parse(fs.readFileSync(filePath, 'utf8')), data);
+        // No backup since file didn't exist
+        assert.ok(!fs.existsSync(`${filePath}.bak`));
+      });
+    });
+  });
 });

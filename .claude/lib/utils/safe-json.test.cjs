@@ -101,7 +101,7 @@ async function runTests() {
       const result = safeJson.safeParseJSON(content, 'router-state');
 
       assertEqual(result.mode, 'router', 'mode should default to router');
-      assertEqual(result.complexity, 'unknown', 'complexity should default to unknown');
+      assertEqual(result.complexity, 'trivial', 'complexity should default to trivial');
       assertEqual(result.plannerSpawned, false, 'plannerSpawned should default to false');
     });
 
@@ -137,7 +137,7 @@ async function runTests() {
       const result = safeJson.safeParseJSON(content, 'router-state');
 
       assertEqual(result.mode, 'agent', 'mode should be agent');
-      assertEqual(result.complexity, 'unknown', 'complexity should default to unknown');
+      assertEqual(result.complexity, 'trivial', 'complexity should default to trivial');
       assertEqual(result.plannerSpawned, false, 'plannerSpawned should default to false');
     });
 
@@ -194,7 +194,7 @@ async function runTests() {
       const result = safeJson.safeReadJSON('/nonexistent/path/file.json', 'router-state');
 
       assertEqual(result.mode, 'router', 'mode should default to router');
-      assertEqual(result.complexity, 'unknown', 'complexity should default to unknown');
+      assertEqual(result.complexity, 'trivial', 'complexity should default to trivial');
       assertEqual(result.plannerSpawned, false, 'plannerSpawned should default to false');
     });
 
@@ -205,7 +205,7 @@ async function runTests() {
         const result = safeJson.safeReadJSON(tmpFile, 'router-state');
 
         assertEqual(result.mode, 'router', 'mode should default to router');
-        assertEqual(result.complexity, 'unknown', 'complexity should default to unknown');
+        assertEqual(result.complexity, 'trivial', 'complexity should default to trivial');
         assertEqual(result.plannerSpawned, false, 'plannerSpawned should default to false');
       } finally {
         cleanupTempFile(tmpFile);
@@ -232,7 +232,7 @@ async function runTests() {
         const result = safeJson.safeReadJSON(tmpFile, 'router-state');
 
         assertEqual(result.mode, 'router', 'mode should default to router');
-        assertEqual(result.complexity, 'unknown', 'complexity should default to unknown');
+        assertEqual(result.complexity, 'trivial', 'complexity should default to trivial');
         assertEqual(result.plannerSpawned, false, 'plannerSpawned should default to false');
       } finally {
         cleanupTempFile(tmpFile);

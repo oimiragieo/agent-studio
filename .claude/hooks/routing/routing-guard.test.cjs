@@ -49,6 +49,10 @@ describe('routing-guard', () => {
     for (const [key, value] of Object.entries(originalEnv)) {
       process.env[key] = value;
     }
+    // PERF-001: Invalidate cached state between tests
+    if (routingGuard && routingGuard.invalidateCachedState) {
+      routingGuard.invalidateCachedState();
+    }
   });
 
   describe('module exports', () => {
@@ -689,6 +693,8 @@ describe('routing-guard', () => {
       // Set agent mode
       routerState.enterAgentMode();
       routerState.invalidateStateCache();
+      // PERF-001: Also invalidate routing-guard's internal cache
+      routingGuard.invalidateCachedState();
 
       process.env.ROUTER_BASH_GUARD = 'block';
 
@@ -703,6 +709,8 @@ describe('routing-guard', () => {
       // Set router mode
       routerState.resetToRouterMode();
       routerState.invalidateStateCache();
+      // PERF-001: Also invalidate routing-guard's internal cache
+      routingGuard.invalidateCachedState();
 
       process.env.ROUTER_BASH_GUARD = 'block';
 

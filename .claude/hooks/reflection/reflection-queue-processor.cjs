@@ -34,6 +34,8 @@
 
 const fs = require('fs');
 const path = require('path');
+// ATOMIC-001 FIX: Use atomic write utility to prevent data corruption
+const { atomicWriteSync } = require('../../lib/utils/atomic-write.cjs');
 
 // Find project root
 function findProjectRoot() {
@@ -246,9 +248,9 @@ function markEntriesProcessed(processedEntries, queueFile) {
       }
     }
 
-    const tempFile = queueFile + '.tmp';
-    fs.writeFileSync(tempFile, updatedLines.join('\n') + '\n');
-    fs.renameSync(tempFile, queueFile); // Atomic on POSIX/Windows
+    // ATOMIC-001 FIX: Use atomicWriteSync utility for safe atomic writes
+    // This handles temp file creation, writing, and atomic rename internally
+    atomicWriteSync(queueFile, updatedLines.join('\n') + '\n');
   } catch (err) {
     if (process.env.DEBUG_HOOKS) {
       console.error(

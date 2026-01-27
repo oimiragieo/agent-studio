@@ -33,12 +33,29 @@ const fs = require('fs');
  * - defaults: Default values for all known properties
  */
 const SCHEMAS = {
+  // SEC-AUDIT-015 FIX: Complete router-state schema with all fields from router-state.cjs getDefaultState()
   'router-state': {
     required: [],
     defaults: {
       mode: 'router',
-      complexity: 'unknown',
+      lastReset: null,
+      taskSpawned: false,
+      taskSpawnedAt: null,
+      taskDescription: null,
+      sessionId: null,
+      // Complexity tracking fields
+      complexity: 'trivial',
+      requiresPlannerFirst: false,
       plannerSpawned: false,
+      requiresSecurityReview: false,
+      securitySpawned: false,
+      // TaskUpdate tracking fields
+      lastTaskUpdateCall: null,
+      lastTaskUpdateTaskId: null,
+      lastTaskUpdateStatus: null,
+      taskUpdatesThisSession: 0,
+      // Optimistic concurrency version field
+      version: 0,
     },
   },
   'loop-state': {

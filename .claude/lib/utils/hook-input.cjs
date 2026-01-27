@@ -319,11 +319,16 @@ function formatResult(result, message = '') {
 }
 
 /**
- * Audit log helper for security hooks
+ * HOOK-007 FIX: Standardized audit log helper for all hooks
+ * Use this for consistent JSON logging instead of console.error/console.log
  *
- * @param {string} hookName - Name of the hook
- * @param {string} event - Event type
+ * @param {string} hookName - Name of the hook (e.g., 'routing-guard')
+ * @param {string} event - Event type (e.g., 'block', 'allow', 'error', 'warn')
  * @param {Object} [extra] - Additional fields to log
+ * @example
+ *   auditLog('routing-guard', 'block', { reason: 'Router using blacklisted tool', tool: 'Edit' });
+ *   auditLog('bash-validator', 'allow', { command: 'git status' });
+ *   auditLog('security-trigger', 'warn', { file: '/path/to/auth.ts', reasons: ['contains auth'] });
  */
 function auditLog(hookName, event, extra = {}) {
   process.stderr.write(
@@ -334,6 +339,77 @@ function auditLog(hookName, event, extra = {}) {
       ...extra,
     }) + '\n'
   );
+}
+
+/**
+ * HOOK-007/HOOK-010 FIX: Safe debug log helper that sanitizes error output
+ * Only logs when DEBUG_HOOKS=true to prevent information disclosure in production
+ *
+ * @param {string} hookName - Name of the hook
+ * @param {string} message - Log message (should not contain sensitive paths)
+ * @param {Error} [err] - Error object (only message will be logged, not stack)
+ * @example
+ *   debugLog('routing-guard', 'Failed to parse input', err);
+ */
+function debugLog(hookName, message, err = null) {
+  if (process.env.DEBUG_HOOKS !== 'true') {
+    return;
+  }
+
+  const entry = {
+    hook: hookName,
+    event: 'debug',
+    timestamp: new Date().toISOString(),
+    message,
+  };
+
+  if (err) {
+    // HOOK-010: Only include error message, not stack trace
+    // Stack traces can reveal internal paths and structure
+    entry.error = err.message || String(err);
+  }
+
+  process.stderr.write(JSON.stringify(entry) + '\n');
+}
+
+/**
+ * HOOK-009 FIX: Security audit log for security-critical hooks
+ * Logs to both stderr (for debugging) and an audit file (for retention)
+ *
+ * @param {string} hookName - Name of the security hook
+ * @param {string} action - Action taken (block, allow, warn, error)
+ * @param {Object} details - Details of the action
+ * @param {string} [details.tool] - Tool being validated
+ * @param {string} [details.command] - Command being validated (if Bash)
+ * @param {string} [details.reason] - Reason for action
+ * @param {string} [details.file] - File being accessed (if relevant)
+ */
+function securityAuditLog(hookName, action, details = {}) {
+  const entry = {
+    hook: hookName,
+    event: `security_${action}`,
+    timestamp: new Date().toISOString(),
+    ...details,
+  };
+
+  // Always log to stderr for immediate visibility
+  process.stderr.write(JSON.stringify(entry) + '\n');
+
+  // Optionally append to audit file if SECURITY_AUDIT_FILE is set
+  const auditFile = process.env.SECURITY_AUDIT_FILE;
+  if (auditFile) {
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const dir = path.dirname(auditFile);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.appendFileSync(auditFile, JSON.stringify(entry) + '\n');
+    } catch (e) {
+      // Best effort - don't fail the hook if audit logging fails
+    }
+  }
 }
 
 module.exports = {
@@ -356,6 +432,10 @@ module.exports = {
   // Output functions
   formatResult,
   auditLog,
+
+  // HOOK-007/HOOK-009/HOOK-010: Standardized logging helpers
+  debugLog,
+  securityAuditLog,
 
   // Constants
   DEFAULT_TIMEOUT_MS,

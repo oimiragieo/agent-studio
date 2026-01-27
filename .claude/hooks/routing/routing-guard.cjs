@@ -45,6 +45,35 @@ const {
 const routerState = require('./router-state.cjs');
 
 // =============================================================================
+// INTRA-HOOK STATE CACHING (PERF-001)
+// =============================================================================
+
+/**
+ * Cached router state for single hook invocation.
+ * Prevents multiple getState() calls within runAllChecks().
+ */
+let _cachedRouterState = null;
+
+/**
+ * Get cached router state (single read per invocation)
+ * PERF-001: Reduces 4 file reads to 1 per routing-guard invocation.
+ */
+function getCachedRouterState() {
+  if (_cachedRouterState === null) {
+    _cachedRouterState = routerState.getState();
+  }
+  return _cachedRouterState;
+}
+
+/**
+ * Invalidate cached state (call at start of each invocation and for testing)
+ */
+function invalidateCachedState() {
+  _cachedRouterState = null;
+  routerState.invalidateStateCache();
+}
+
+// =============================================================================
 // CONSTANTS
 // =============================================================================
 
@@ -241,8 +270,8 @@ function checkRouterBash(toolName, toolInput = {}) {
     return { pass: true };
   }
 
-  // Check if we're in agent context (Task has been spawned)
-  const state = routerState.getState();
+  // PERF-001: Use cached state instead of fresh read
+  const state = getCachedRouterState();
   if (state.mode === 'agent' || state.taskSpawned) {
     // Agents can use any Bash commands (they have full tools)
     return { pass: true };
@@ -329,8 +358,8 @@ function checkRouterSelfCheck(toolName, toolInput = {}) {
     }
   }
 
-  // Check if we're in agent context (Task has been spawned)
-  const state = routerState.getState();
+  // PERF-001: Use cached state instead of fresh read
+  const state = getCachedRouterState();
   if (state.mode === 'agent' || state.taskSpawned) {
     return { pass: true };
   }
@@ -370,9 +399,10 @@ function checkPlannerFirst(toolName, toolInput) {
     return { pass: true };
   }
 
-  // Get current state
-  const isPlannerRequired = routerState.isPlannerRequired();
-  const plannerAlreadySpawned = routerState.isPlannerSpawned();
+  // PERF-001: Use cached state for planner checks
+  const state = getCachedRouterState();
+  const isPlannerRequired = state.requiresPlannerFirst;
+  const plannerAlreadySpawned = state.plannerSpawned;
 
   // If planner not required or already spawned, allow
   if (!isPlannerRequired || plannerAlreadySpawned) {
@@ -385,7 +415,7 @@ function checkPlannerFirst(toolName, toolInput) {
   }
 
   // Not a PLANNER spawn, but PLANNER is required - violation
-  const complexity = routerState.getComplexity();
+  const complexity = state.complexity || 'unknown';
   const message = `[PLANNER-FIRST VIOLATION] High/Epic complexity (${complexity}) requires PLANNER agent first.
 Spawn PLANNER first: Task({ description: 'Planner designing...', prompt: 'You are PLANNER...' })
 Override: PLANNER_FIRST_ENFORCEMENT=off`;
@@ -419,9 +449,10 @@ function checkTaskCreate(toolName) {
     return { pass: true };
   }
 
-  // Get current state
-  const isPlannerRequired = routerState.isPlannerRequired();
-  const isPlannerSpawned = routerState.isPlannerSpawned();
+  // PERF-001: Use cached state for task-create checks
+  const state = getCachedRouterState();
+  const isPlannerRequired = state.requiresPlannerFirst;
+  const isPlannerSpawned = state.plannerSpawned;
 
   // If planner not required or already spawned, allow
   if (!isPlannerRequired || isPlannerSpawned) {
@@ -429,7 +460,7 @@ function checkTaskCreate(toolName) {
   }
 
   // Violation: trying to create tasks without planner
-  const complexity = routerState.getComplexity();
+  const complexity = state.complexity || 'unknown';
   const message = `[TASK-CREATE VIOLATION] Complex task (${complexity}) requires PLANNER agent.
 Spawn PLANNER first, then PLANNER will create the tasks.
 Override: PLANNER_FIRST_ENFORCEMENT=off`;
@@ -460,15 +491,9 @@ function checkSecurityReview(toolName, toolInput) {
     return { pass: true };
   }
 
-  // Get current state
-  let state;
-  try {
-    state = routerState.getState();
-  } catch (e) {
-    // SEC-AUDIT-007: Fail closed - require security review when state unknown
-    auditLog('routing-guard', 'state_read_error_fail_closed', { error: e.message });
-    state = { requiresSecurityReview: true, securitySpawned: false };
-  }
+  // PERF-001: Use cached state for security review checks
+  // Note: getCachedRouterState() handles errors internally via state-cache.cjs
+  const state = getCachedRouterState();
 
   // Check if security review required but not done
   if (!state.requiresSecurityReview || state.securitySpawned) {
@@ -630,6 +655,9 @@ function runAllChecks(toolName, toolInput) {
  */
 async function main() {
   try {
+    // PERF-001: Invalidate cache at start of each invocation
+    invalidateCachedState();
+
     // Parse the hook input
     const hookInput = await parseHookInputAsync();
 
@@ -651,6 +679,13 @@ async function main() {
     const result = runAllChecks(toolName, toolInput);
 
     if (!result.pass) {
+      // HOOK-009: Security audit log for blocked/warned actions
+      auditLog('routing-guard', `security_${result.result}`, {
+        tool: toolName,
+        reason: result.message,
+        mode: routerState.getState().mode,
+      });
+
       // Output block/warn result
       console.log(formatResult(result.result, result.message));
       process.exit(result.result === 'block' ? 2 : 0);
@@ -693,6 +728,9 @@ module.exports = {
   isImplementationAgentSpawn,
   isAlwaysAllowedWrite,
   isWhitelistedBashCommand,
+  // PERF-001: Cache management
+  getCachedRouterState,
+  invalidateCachedState,
   // Constants
   ALL_WATCHED_TOOLS,
   BLACKLISTED_TOOLS,

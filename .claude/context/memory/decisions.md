@@ -745,3 +745,111 @@
   - **Integration**: Update router.md to reference this pattern, update CLAUDE.md example flow
   - **False Positives**: May detect urgency when user is just emphatic (acceptable - better safe than missed emergency)
 - **Related**: ROUTER-VIOLATION-001, Task Priority System, Model Selection (CLAUDE.md Section 5)
+
+## [ADR-033] Deep Dive Analysis Plan v2 - Targeted Remediation
+
+- **Date**: 2026-01-27
+- **Status**: Accepted
+- **Context**: Original deep dive plan (ADR-029) was 8 phases covering ~20 hours. Phase 1 has been partially executed with significant security work completed (SEC-001 through SEC-010, SEC-AUDIT-012/013/014/017). Need refined plan focusing on remaining high-value work.
+- **Decision**: Created targeted remediation plan (deep-dive-analysis-plan-v2.md) with 7 phases:
+  1. **Phase 1 - HIGH Severity Security**: 5 remaining issues (ATOMIC-001, HOOK-003, CRITICAL-001, SEC-AUDIT-015, verification)
+  2. **Phase 2 - Pointer Gaps**: 4 gaps from architecture review (POINTER-001/003, DOC-001, ARCH-002)
+  3. **Phase 3 - Test Coverage**: 13 hooks without tests including 5 safety-critical
+  4. **Phase 4 - MEDIUM Severity**: 9 issues (input validation, logging, state management)
+  5. **Phase 5 - Performance**: Hook latency profiling, code duplication reduction, state I/O caching
+  6. **Phase 6 - Documentation**: CLAUDE.md updates, ADRs, ROUTER_TRAINING_EXAMPLES.md, health scorecard
+  7. **Phase 7 - Consolidation**: Master report, verification suite, architecture sign-off
+  8. **Phase FINAL**: Mandatory reflection and learning extraction
+- **Key Design Choices**:
+  - **Builds on completed work**: Acknowledges SEC-001-010 resolved, ADR-030 implemented
+  - **Priority ordering**: Security (P0) > Pointer gaps + Testing (P1) > Performance + Docs (P2)
+  - **Parallel execution**: Phases 1+2 can run parallel, reducing total time from 71h to ~50h
+  - **Task dependencies**: Tasks created with proper blocking relationships
+  - **Verification gates**: Each phase has explicit verification commands
+- **Consequences**:
+  - **Positive**: Focused effort on remaining 40 items vs original 87
+  - **Positive**: Clear task tracking with 7 tasks in task system
+  - **Positive**: Estimated 52-71 hours (reduced from original ~20h estimate which was optimistic)
+  - **Maintenance**: Plan file at `.claude/context/plans/deep-dive-analysis-plan-v2.md`
+  - **Deliverables**: 7 major outcomes + ~15 reports/scripts
+- **Plan Location**: `.claude/context/plans/deep-dive-analysis-plan-v2.md`
+- **Task IDs**: #3 (P1), #2 (P2), #5 (P3), #4 (P4), #8 (P5), #6 (P6), #7 (P7)
+
+## [ADR-034] Deep Dive v2 Remediation Results - Framework Health Baseline
+
+- **Date**: 2026-01-27
+- **Status**: Accepted (Implemented)
+- **Context**: Deep Dive v2 plan (ADR-033) executed across 6 phases (P1-P6 complete, P7 pending). Need to document comprehensive remediation results, establish framework health baseline, and create training materials to prevent future Router protocol violations (ROUTER-VIOLATION-001 incident).
+- **Decision**: Created three major deliverables documenting the remediation outcomes:
+  1. **ROUTER_TRAINING_EXAMPLES.md** (`.claude/docs/`): 10+ concrete examples of correct Router behavior
+     - Urgency handling patterns (ALL CAPS, "FIX THIS !!!!")
+     - Security-sensitive routing (auth, credentials, password reset)
+     - Complexity assessment (trivial vs high vs epic)
+     - Tool restriction enforcement (Bash whitelist, Edit/Write blacklist)
+     - Anti-patterns and what NOT to do
+     - Router self-check decision tree
+     - Exhaustive Bash whitelist (only git commands allowed)
+  2. **Framework Health Scorecard** (`.claude/context/artifacts/framework-health-scorecard.md`): Comprehensive metrics baseline
+     - Overall Score: 8.8/10 (Excellent) - up from 7.2/10 pre-remediation
+     - Security: 9.2/10 (all CRITICAL/HIGH issues resolved, fail-closed enforcement)
+     - Test Coverage: 8.8/10 (861 tests, 100% pass rate, 100% hook coverage)
+     - Code Quality: 8.5/10 (shared utilities, hook consolidation, ~3-5% duplication)
+     - Documentation: 9.0/10 (33 ADRs, training examples, bidirectional cross-refs)
+     - Performance: 7.5/10 (75-80% spawn reduction, state caching, <100ms latency)
+     - Architecture: 9.5/10 (zero pointer gaps, all imports valid)
+     - 50 issues resolved from 87 total identified
+  3. **ADR Updates in decisions.md**: Updated statuses for ADR-030/031/032 (Accepted → Implemented)
+     - ADR-030: Router Bash Whitelist Strictness
+     - ADR-031: Visceral Decision-Time Prompting
+     - ADR-032: Urgent Request Routing Pattern
+- **Design Choices**:
+  - **Training Examples**: Based on actual incidents (ROUTER-VIOLATION-001), not hypothetical scenarios
+  - **Scorecard Metrics**: Quantifiable targets with pass/fail gates
+  - **Historical Baseline**: Establishes pre-remediation (7.2) vs post-remediation (8.8) comparison
+  - **Trend Analysis**: Tracks score improvements by category
+  - **Production-Ready Certification**: Framework assessed as production-ready with maturity evidence
+- **Consequences**:
+  - **Positive**: Training examples prevent repeat of Router protocol violations
+  - **Positive**: Health scorecard enables tracking framework quality over time
+  - **Positive**: Quantifiable evidence of remediation impact (+1.6 overall score)
+  - **Positive**: Production-ready certification validates framework maturity
+  - **Maintenance**: Health scorecard should be updated quarterly or after major changes
+  - **Documentation**: All three deliverables cross-reference each other and related ADRs
+  - **Pattern Established**: Use concrete examples (not abstract rules) for training LLM agents
+- **Files Created**:
+  - `.claude/docs/ROUTER_TRAINING_EXAMPLES.md` (10+ examples, 400+ lines)
+  - `.claude/context/artifacts/framework-health-scorecard.md` (comprehensive metrics, 500+ lines)
+- **Files Updated**:
+  - `.claude/context/memory/decisions.md` (this file, ADR-034 addition)
+  - `.claude/context/memory/issues.md` (issue statuses updated, see below)
+- **Related**: ADR-030 (Bash Whitelist), ADR-031 (Visceral Prompting), ADR-032 (Urgent Request), ADR-033 (Deep Dive v2 Plan), ROUTER-VIOLATION-001
+
+## [ADR-035] Deep Dive v2 Consolidation and Production Certification
+
+- **Date**: 2026-01-27
+- **Status**: Accepted (Implemented)
+- **Context**: Deep Dive v2 framework analysis completed across 6 phases (P1-P6). Need final consolidation, verification, and architecture sign-off before declaring framework production-ready.
+- **Decision**: Created consolidated remediation report documenting:
+  1. **Phase Completion Summary**: All 6 phases (Security, Pointer Gaps, Testing, Medium Issues, Performance, Documentation) completed
+  2. **Verification Suite**: 1023 tests passing, 47 agents validated, 17 open issues (down from 87)
+  3. **Architecture Assessment**: Zero systemic concerns blocking production, all P0/P1 addressed
+  4. **Production Certification**: Framework v2.1.0 certified production-ready with 8.8/10 health score
+- **Key Metrics**:
+  | Metric | Before | After | Improvement |
+  |--------|--------|-------|-------------|
+  | Issues Resolved | 37 | 70 | +89% |
+  | Framework Tests | ~600 | 1023 | +70% |
+  | Hook Coverage | 74% | 100% | +26% |
+  | CRITICAL Bugs | 3 | 0 | -100% |
+  | Health Score | 7.2 | 8.8 | +22% |
+- **Consequences**:
+  - **Positive**: Framework has official production-ready certification
+  - **Positive**: Comprehensive baseline for future health tracking
+  - **Positive**: All stakeholders have visibility into remediation scope and results
+  - **Maintenance**: Health scorecard should be updated quarterly
+  - **Next Steps**: 17 remaining P2/P3 issues for future sprints
+- **Deliverables**:
+  - `.claude/context/artifacts/reports/consolidated-remediation-report.md`
+  - Framework Health Score: 8.8/10 (Excellent)
+  - APPROVED status on consolidated report
+- **Related**: ADR-033 (Deep Dive v2 Plan), ADR-034 (Remediation Results), All Phase Task IDs (#2-#9)

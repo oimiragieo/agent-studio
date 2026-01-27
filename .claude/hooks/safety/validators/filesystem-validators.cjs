@@ -46,9 +46,15 @@ const DANGEROUS_RM_PATTERNS = [
   /^\/lib$/, // /lib
   /^\/opt$/, // /opt
   // Windows system directories
+  // Note: \W in regex is the "non-word character" metacharacter
+  // This works for matching Windows paths because backslash (\) IS a non-word char
+  // So /^C:\Windows/i matches "C:" + any-non-word-char + "indows"
+  // Which correctly matches "C:\Windows" since \ is a non-word character
   /^C:\\Windows/i,
   /^C:\\Program Files/i,
   /^C:\\Users$/i,
+  /^C:\\System32/i,
+  /^C:\\ProgramData/i,
 ];
 
 /**
@@ -68,7 +74,10 @@ function parseCommand(commandString) {
     const char = commandString[i];
 
     if (escaped) {
-      current += char;
+      // SECURITY FIX: Preserve the backslash in the token
+      // This is critical for Windows path validation (e.g., C:\Windows)
+      // Without this, paths like C:\Windows become C:Windows and bypass security checks
+      current += '\\' + char;
       escaped = false;
       continue;
     }
@@ -101,6 +110,11 @@ function parseCommand(commandString) {
 
   if (inSingleQuote || inDoubleQuote) {
     return null;
+  }
+
+  // Handle trailing backslash (no character after it)
+  if (escaped) {
+    current += '\\';
   }
 
   if (current.length > 0) {
