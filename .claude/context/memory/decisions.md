@@ -524,3 +524,37 @@
 **Context**: 40+ hooks had duplicated utility functions
 **Decision**: Consolidate into shared modules: hook-input.cjs, project-root.cjs, state-cache.cjs
 **Consequences**: Reduced duplication, centralized maintenance, consistent behavior
+
+## ADR-026: Routing Hook Consolidation Architecture
+
+**Date**: 2026-01-26
+**Status**: Accepted (Implementation Complete)
+**Context**: 5 routing guard hooks (task-create-guard, planner-first-guard, security-review-guard, router-self-check, router-write-guard) fired on similar triggers causing 500-1000ms overhead per Task spawn due to multiple Node.js process spawns.
+**Decision**: Consolidate all routing guards into single `routing-guard.cjs` hook that:
+
+1. Registers for unified trigger: PreToolUse(Task|TaskCreate|Edit|Write|NotebookEdit|Glob|Grep|WebSearch)
+2. Internally dispatches to appropriate check logic based on tool name
+3. Shares state file read (single I/O operation)
+4. Preserves individual enforcement modes via environment variables
+   **Consequences**:
+
+- 80% reduction in hook spawn overhead for routing checks
+- Single point of maintenance for routing logic
+- Original individual hook files remain for reference/testing (but are not registered in settings.json)
+- CLAUDE.md Section 1.3 updated to document unified architecture (2026-01-27)
+  **Files**:
+- Primary: `.claude/hooks/routing/routing-guard.cjs`
+- Legacy (not registered): task-create-guard.cjs, planner-first-guard.cjs, security-review-guard.cjs, router-self-check.cjs, router-write-guard.cjs
+
+## [ADR-027] CLAUDE.md Documentation Sync - Architecture Review Findings
+
+- **Date**: 2026-01-27
+- **Status**: Accepted
+- **Context**: Architecture review identified 4 documentation drift issues in CLAUDE.md where documented structure didn't match actual codebase organization.
+- **Decision**: Update CLAUDE.md with targeted edits for: Section 1.3 (hook consolidation - single routing-guard.cjs), Section 8.6 (7 missing workflows), Section 10.2 hooks/ (8 categories not 3), Section 10.2 lib/ (added self-healing and utils directories).
+- **Consequences**:
+  - CLAUDE.md now accurately reflects framework structure
+  - All workflow references verified via Glob before adding to documentation
+  - lib/ directory shows actual organization with self-healing/ and utils/ subdirectories
+  - hooks/ directory accurately shows 8 categories including safety/validators/ subdirectory
+  - Documentation remains single source of truth for framework structure
