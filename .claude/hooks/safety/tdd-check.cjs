@@ -225,4 +225,15 @@ function main() {
   process.exit(0);
 }
 
-main();
+// Export functions for testing
+module.exports = {
+  isTestFile,
+  shouldIgnore,
+  findTestFile,
+  parseHookInput, // Alias for parseHookInputSync from hook-input.cjs
+};
+
+// Only run main if executed directly (not when required for testing)
+if (require.main === module) {
+  main();
+}

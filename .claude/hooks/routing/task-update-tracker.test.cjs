@@ -60,10 +60,8 @@ test('can require task-update-tracker module', () => {
   const tracker = require('./task-update-tracker.cjs');
   assertTrue(tracker, 'Module should export something');
   assertTrue(typeof tracker.main === 'function', 'Module should export main function');
-  assertTrue(
-    typeof tracker.parseHookInput === 'function',
-    'Module should export parseHookInput function'
-  );
+  // parseHookInput is now imported from shared utilities (hook-input.cjs)
+  // No longer exported directly from this hook
 });
 
 // ===========================================

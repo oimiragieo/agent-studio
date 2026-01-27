@@ -75,6 +75,116 @@ const ROUTING_TABLE = {
   defi: 'web3-blockchain-expert',
   ethereum: 'web3-blockchain-expert',
   nft: 'web3-blockchain-expert',
+  // Frontend/Web
+  frontend: 'frontend-pro',
+  react: 'frontend-pro',
+  vue: 'frontend-pro',
+  css: 'frontend-pro',
+  html: 'frontend-pro',
+  ui: 'frontend-pro',
+  web: 'frontend-pro',
+  // Node.js Backend
+  nodejs: 'nodejs-pro',
+  node: 'nodejs-pro',
+  express: 'nodejs-pro',
+  nestjs: 'nodejs-pro',
+  // Java
+  java: 'java-pro',
+  spring: 'java-pro',
+  springboot: 'java-pro',
+  maven: 'java-pro',
+  gradle: 'java-pro',
+  // PHP
+  php: 'php-pro',
+  laravel: 'php-pro',
+  symfony: 'php-pro',
+  wordpress: 'php-pro',
+  // iOS
+  ios: 'ios-pro',
+  swift: 'ios-pro',
+  xcode: 'ios-pro',
+  apple: 'ios-pro',
+  // Android
+  android: 'android-pro',
+  kotlin: 'android-pro',
+  // Next.js
+  nextjs: 'nextjs-pro',
+  next: 'nextjs-pro',
+  vercel: 'nextjs-pro',
+  appserver: 'nextjs-pro',
+  // SvelteKit
+  svelte: 'sveltekit-expert',
+  sveltekit: 'sveltekit-expert',
+  // Tauri
+  tauri: 'tauri-desktop-developer',
+  desktop: 'tauri-desktop-developer',
+  // Expo/React Native
+  expo: 'expo-mobile-developer',
+  reactnative: 'expo-mobile-developer',
+  mobile: 'expo-mobile-developer',
+  // Data Engineering
+  data: 'data-engineer',
+  etl: 'data-engineer',
+  pipeline: 'data-engineer',
+  dataengineering: 'data-engineer',
+  // Database
+  database: 'database-architect',
+  schema: 'database-architect',
+  sql: 'database-architect',
+  postgres: 'database-architect',
+  postgresql: 'database-architect',
+  mysql: 'database-architect',
+  // GraphQL
+  graphql: 'graphql-pro',
+  apollo: 'graphql-pro',
+  federation: 'graphql-pro',
+  // Mobile UX
+  mobileui: 'mobile-ux-reviewer',
+  appux: 'mobile-ux-reviewer',
+  mobiledesign: 'mobile-ux-reviewer',
+  // Scientific
+  scientific: 'scientific-research-expert',
+  research: 'scientific-research-expert',
+  academic: 'scientific-research-expert',
+  // AI/ML
+  ai: 'ai-ml-specialist',
+  ml: 'ai-ml-specialist',
+  machinelearning: 'ai-ml-specialist',
+  deeplearning: 'ai-ml-specialist',
+  neural: 'ai-ml-specialist',
+  // Game Development
+  game: 'gamedev-pro',
+  gamedev: 'gamedev-pro',
+  unity: 'gamedev-pro',
+  unreal: 'gamedev-pro',
+  godot: 'gamedev-pro',
+  // Orchestration
+  orchestrate: 'master-orchestrator',
+  coordinate: 'master-orchestrator',
+  multiagent: 'master-orchestrator',
+  // Swarm
+  swarm: 'swarm-coordinator',
+  parallel: 'swarm-coordinator',
+  coordination: 'swarm-coordinator',
+  // Evolution
+  evolve: 'evolution-orchestrator',
+  evolution: 'evolution-orchestrator',
+  selfimprove: 'evolution-orchestrator',
+  // Context Compression
+  compress: 'context-compressor',
+  context: 'context-compressor',
+  summarize: 'context-compressor',
+  token: 'context-compressor',
+  // Context-Driven
+  conductor: 'conductor-validator',
+  cdd: 'conductor-validator',
+  // Reverse Engineering
+  reverseengineer: 'reverse-engineer',
+  decompile: 'reverse-engineer',
+  binary: 'reverse-engineer',
+  // Incident Response
+  oncall: 'incident-responder',
+  pagerduty: 'incident-responder',
 };
 
 /**

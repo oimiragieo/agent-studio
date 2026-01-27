@@ -485,7 +485,15 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.gotchas
       );
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -499,7 +507,15 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.patterns
       );
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -513,7 +529,15 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         .map(([path, info]) => ({ path, ...info }));
       result.discoveries = truncateItems(discoveries, CONFIG.MAX_CONTEXT_CHARS.discoveries);
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -536,7 +560,15 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
           tasks_completed: session.tasks_completed?.slice(0, 5),
         });
       } catch (e) {
-        /* ignore */
+        if (process.env.METRICS_DEBUG === 'true') {
+          console.error(
+            JSON.stringify({
+              module: 'memory-manager',
+              error: e.message,
+              timestamp: new Date().toISOString(),
+            })
+          );
+        }
       }
     }
   }
@@ -552,7 +584,15 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
           ? '...' + content.slice(-CONFIG.MAX_CONTEXT_CHARS.legacy)
           : content;
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -753,7 +793,15 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.gotchas
       );
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -767,7 +815,15 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.patterns
       );
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -781,7 +837,15 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         .map(([filePath, info]) => ({ path: filePath, ...info }));
       result.discoveries = truncateItems(discoveries, CONFIG.MAX_CONTEXT_CHARS.discoveries);
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -807,7 +871,15 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
           });
         }
       } catch (e) {
-        /* ignore */
+        if (process.env.METRICS_DEBUG === 'true') {
+          console.error(
+            JSON.stringify({
+              module: 'memory-manager',
+              error: e.message,
+              timestamp: new Date().toISOString(),
+            })
+          );
+        }
       }
     }
   } catch (e) {
@@ -918,7 +990,15 @@ function getMemoryHealth(projectRoot = PROJECT_ROOT) {
         );
       }
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -958,7 +1038,15 @@ function getMemoryStats(projectRoot = PROJECT_ROOT) {
       stats.gotchas_count = gotchas.length;
       stats.total_size_bytes += fs.statSync(gotchasFile).size;
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -970,7 +1058,15 @@ function getMemoryStats(projectRoot = PROJECT_ROOT) {
       stats.patterns_count = patterns.length;
       stats.total_size_bytes += fs.statSync(patternsFile).size;
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 
@@ -982,7 +1078,15 @@ function getMemoryStats(projectRoot = PROJECT_ROOT) {
       stats.discoveries_count = Object.keys(map.discovered_files || {}).length;
       stats.total_size_bytes += fs.statSync(mapFile).size;
     } catch (e) {
-      /* ignore */
+      if (process.env.METRICS_DEBUG === 'true') {
+        console.error(
+          JSON.stringify({
+            module: 'memory-manager',
+            error: e.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
     }
   }
 

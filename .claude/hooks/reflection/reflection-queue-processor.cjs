@@ -246,7 +246,9 @@ function markEntriesProcessed(processedEntries, queueFile) {
       }
     }
 
-    fs.writeFileSync(queueFile, updatedLines.join('\n') + '\n');
+    const tempFile = queueFile + '.tmp';
+    fs.writeFileSync(tempFile, updatedLines.join('\n') + '\n');
+    fs.renameSync(tempFile, queueFile); // Atomic on POSIX/Windows
   } catch (err) {
     if (process.env.DEBUG_HOOKS) {
       console.error(

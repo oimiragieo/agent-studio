@@ -91,7 +91,16 @@ function readStatus(projectRoot = PROJECT_ROOT) {
       return JSON.parse(fs.readFileSync(statusPath, 'utf8'));
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-scheduler',
+          function: 'readStatus',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
   return { lastDaily: null, lastWeekly: null, history: [] };
 }

@@ -32,6 +32,7 @@ const path = require('path');
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
 const { getCachedState, invalidateCache } = require('../../lib/utils/state-cache.cjs');
+const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
 
 // Evolution trigger patterns
 const EVOLUTION_TRIGGERS = [
@@ -217,7 +218,7 @@ function saveEvolutionState(state) {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(EVOLUTION_STATE_PATH, JSON.stringify(state, null, 2));
+    atomicWriteJSONSync(EVOLUTION_STATE_PATH, state);
     // PERF-004: Invalidate cache after writing to ensure consistency
     invalidateCache(EVOLUTION_STATE_PATH);
   } catch (e) {

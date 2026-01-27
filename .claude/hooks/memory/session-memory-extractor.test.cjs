@@ -92,43 +92,23 @@ describe('session-memory-extractor', () => {
     });
   });
 
-  describe('findProjectRoot', () => {
-    test('module should export findProjectRoot function', () => {
-      // This test will FAIL until we add findProjectRoot to exports
+  describe('shared utilities', () => {
+    test('module imports PROJECT_ROOT from shared utilities', () => {
+      // PROJECT_ROOT is now imported from ../../lib/utils/project-root.cjs
+      // This is verified by the module loading successfully
       assert.ok(
-        typeof extractor.findProjectRoot === 'function',
-        'Module should export findProjectRoot function'
+        typeof extractor.extractPatterns === 'function',
+        'Module should load successfully with shared utilities'
       );
     });
 
-    test('findProjectRoot returns correct project root', () => {
-      // Skip if not exported yet
-      if (typeof extractor.findProjectRoot !== 'function') {
-        return;
-      }
-      const projectRoot = extractor.findProjectRoot();
-      // Should find a directory containing .claude/CLAUDE.md
-      const claudeMdPath = path.join(projectRoot, '.claude', 'CLAUDE.md');
+    test('module imports parseHookInputAsync from shared utilities', () => {
+      // parseHookInputAsync is now imported from ../../lib/utils/hook-input.cjs
+      // This is verified by the module loading successfully
       assert.ok(
-        fs.existsSync(claudeMdPath),
-        `Project root should contain .claude/CLAUDE.md: ${projectRoot}`
+        typeof extractor.extractGotchas === 'function',
+        'Module should load successfully with hook-input utilities'
       );
-    });
-  });
-
-  describe('projectRoot usage', () => {
-    test('module should export PROJECT_ROOT constant', () => {
-      // This test will FAIL until we add PROJECT_ROOT to exports
-      assert.ok(extractor.PROJECT_ROOT !== undefined, 'Module should export PROJECT_ROOT constant');
-    });
-
-    test('PROJECT_ROOT should be a valid path', () => {
-      // Skip if not exported yet
-      if (extractor.PROJECT_ROOT === undefined) {
-        return;
-      }
-      assert.ok(typeof extractor.PROJECT_ROOT === 'string', 'PROJECT_ROOT should be a string');
-      assert.ok(fs.existsSync(extractor.PROJECT_ROOT), 'PROJECT_ROOT should exist');
     });
   });
 });

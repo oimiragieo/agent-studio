@@ -121,6 +121,16 @@ function readSTMEntry(projectRoot = PROJECT_ROOT) {
   try {
     return JSON.parse(fs.readFileSync(stmPath, 'utf8'));
   } catch (e) {
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-tiers',
+          function: 'readSTMEntry',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
     return null;
   }
 }
@@ -159,6 +169,17 @@ function getMTMSessions(projectRoot = PROJECT_ROOT) {
         const data = JSON.parse(fs.readFileSync(path.join(mtmDir, f), 'utf8'));
         return { ...data, _filename: f };
       } catch (e) {
+        if (process.env.METRICS_DEBUG === 'true') {
+          console.error(
+            JSON.stringify({
+              module: 'memory-tiers',
+              function: 'getMTMSessions',
+              file: f,
+              error: e.message,
+              timestamp: new Date().toISOString(),
+            })
+          );
+        }
         return null;
       }
     })
@@ -184,6 +205,16 @@ function consolidateSession(sessionId, projectRoot = PROJECT_ROOT) {
   try {
     sessionData = JSON.parse(fs.readFileSync(stmPath, 'utf8'));
   } catch (e) {
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-tiers',
+          function: 'consolidateSession',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
     return { success: false, error: 'Failed to read STM session' };
   }
 

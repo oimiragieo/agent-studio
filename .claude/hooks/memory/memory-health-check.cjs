@@ -21,6 +21,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
 
 // Import memory manager functions
 const PROJECT_ROOT = process.env.CLAUDE_PROJECT_DIR || process.cwd();
@@ -211,7 +212,7 @@ function main() {
             targetCount: SMART_PRUNE_CONFIG.PATTERNS_MAX_COUNT,
             similarityThreshold: 0.4,
           });
-          fs.writeFileSync(patternsPath, JSON.stringify(result.kept, null, 2));
+          atomicWriteJSONSync(patternsPath, result.kept);
           if (result.deduplicated > 0 || result.removed.length > 0) {
             autoActions.push(
               `Smart-pruned patterns.json: ${result.deduplicated} deduped, ${result.removed.length} pruned`
@@ -251,7 +252,7 @@ function main() {
             targetCount: SMART_PRUNE_CONFIG.GOTCHAS_MAX_COUNT,
             similarityThreshold: 0.4,
           });
-          fs.writeFileSync(gotchasPath, JSON.stringify(result.kept, null, 2));
+          atomicWriteJSONSync(gotchasPath, result.kept);
           if (result.deduplicated > 0 || result.removed.length > 0) {
             autoActions.push(
               `Smart-pruned gotchas.json: ${result.deduplicated} deduped, ${result.removed.length} pruned`

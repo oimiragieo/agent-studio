@@ -163,7 +163,8 @@ function testModuleExports() {
   }
 
   assert(typeof hook.main === 'function', 'Should export main function');
-  assert(typeof hook.parseHookInput === 'function', 'Should export parseHookInput function');
+  // parseHookInput is now imported from shared utilities (hook-input.cjs)
+  // No longer exported directly from this hook
   assert(
     typeof hook.extractTaskDescription === 'function',
     'Should export extractTaskDescription function'

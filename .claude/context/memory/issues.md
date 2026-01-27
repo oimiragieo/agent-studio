@@ -2180,3 +2180,429 @@ If DEVELOPER encounters issues or makes design changes:
 2. **Skill Catalog**: Accurate with proper deprecation aliases - PASS
 3. **Memory Protocol Files**: All exist - PASS
 4. **Settings.json Registrations**: All registered hooks exist - PASS
+
+## 2026-01-28: ROUTING-001 Agent Routing Table Path Errors
+
+**Context**: Task #10 audit of Agent Routing Table completeness in CLAUDE.md Section 3.
+
+**Critical Finding**: 3 agents have INCORRECT file paths in CLAUDE.md routing table.
+
+### Path Errors (Critical)
+
+**File**: C:\dev\projects\agent-studio\.claude\CLAUDE.md
+
+| Mapping in CLAUDE.md                                               | Actual Location                                    | Status    |
+| ------------------------------------------------------------------ | -------------------------------------------------- | --------- |
+| `code-reviewer` → `.claude/agents/core/code-reviewer.md`           | `.claude/agents/specialized/code-reviewer.md`      | **WRONG** |
+| `security-architect` → `.claude/agents/core/security-architect.md` | `.claude/agents/specialized/security-architect.md` | **WRONG** |
+| `devops` → `.claude/agents/core/devops.md`                         | `.claude/agents/specialized/devops.md`             | **WRONG** |
+
+**Action Required**: Update lines in CLAUDE.md Section 3 (Agent Routing Table):
+
+- Line 388: Change `.claude/agents/core/code-reviewer.md` → `.claude/agents/specialized/code-reviewer.md`
+- Line 389: Change `.claude/agents/core/security-architect.md` → `.claude/agents/specialized/security-architect.md`
+- Line 390: Change `.claude/agents/core/devops.md` → `.claude/agents/specialized/devops.md`
+
+### Audit Results Summary
+
+**Total Agents**:
+
+- In CLAUDE.md routing table: 45
+- In filesystem (.claude/agents): 46
+- Match: 100% (no missing agents, 3 path errors)
+
+**CLAUDE.md vs Filesystem**:
+
+- ✓ All 45 agents in routing table exist in filesystem
+- ✓ 26 agents in filesystem have routing table entries
+- ⚠️ 26 agents in filesystem have NO routing table entries (see below)
+
+### Agents with NO Routing Table Entries (26)
+
+These agents exist but are NOT documented in CLAUDE.md Section 3:
+
+**Domain Specialists (11)**:
+
+- `ai-ml-specialist`
+- `android-pro`
+- `frontend-pro`
+- `gamedev-pro`
+- `graphql-pro`
+- `ios-pro`
+- `java-pro`
+- `nodejs-pro`
+- `php-pro`
+- `tauri-desktop-developer`
+- `expo-mobile-developer`
+
+**Core Agents (3)**:
+
+- `pm` (Product Management)
+- `reflection-agent` (Quality Reflection)
+- `context-compressor` (Context Compression)
+- `router` (System Routing - Meta)
+
+**Specialized Agents (2)**:
+
+- `conductor-validator` (Context-Driven Dev)
+- `database-architect` (Database Design)
+
+**Orchestrators (2)**:
+
+- `master-orchestrator` (Project Orchestration)
+- `swarm-coordinator` (Swarm Coordination)
+- `evolution-orchestrator` (Self-Evolution)
+
+**Other (5)**:
+
+- `data-engineer` (Data Engineering/ETL)
+- `mobile-ux-reviewer` (Mobile UX Review)
+- `scientific-research-expert` (Scientific Research)
+
+**Note**: These agents all exist as files and are functional, but lack documentation in CLAUDE.md routing table.
+
+### Router Intent Keyword Coverage (Important)
+
+**File**: C:\dev\projects\agent-studio\.claude\hooks\routing\router-enforcer.cjs
+
+**ROUTING_TABLE keyword coverage**:
+
+- Agents with intent keywords: 20
+- Agents WITHOUT intent keywords: 26
+
+**Missing from ROUTING_TABLE**:
+
+- `ai-ml-specialist` (no keywords)
+- `android-pro` (no keywords)
+- `conductor-validator` (no keywords)
+- `context-compressor` (no keywords)
+- `database-architect` (no keywords)
+- `data-engineer` (no keywords)
+- `evolution-orchestrator` (no keywords)
+- `expo-mobile-developer` (no keywords)
+- `frontend-pro` (no keywords)
+- `gamedev-pro` (no keywords)
+- `graphql-pro` (no keywords)
+- `ios-pro` (no keywords)
+- `java-pro` (no keywords)
+- `master-orchestrator` (no keywords)
+- `mobile-ux-reviewer` (no keywords)
+- `nextjs-pro` (no keywords)
+- `nodejs-pro` (no keywords)
+- `php-pro` (no keywords)
+- `pm` (no keywords)
+- `reflection-agent` (no keywords)
+- `reverse-engineer` (no keywords)
+- `router` (no keywords)
+- `scientific-research-expert` (no keywords)
+- `sveltekit-expert` (no keywords)
+- `swarm-coordinator` (no keywords)
+- `tauri-desktop-developer` (no keywords)
+
+**Impact**: When users request work related to these domains, router-enforcer.cjs cannot recommend these agents because ROUTING_TABLE has no intent keywords for them.
+
+**Example**: User says "I need a React frontend component" but `frontend-pro` agent has no keywords mapping, so router cannot suggest it.
+
+### How This Breaks the System
+
+1. **CLAUDE.md Documentation**: Tells users "Use frontend-pro for React" (line 406)
+2. **Router Implementation**: router-enforcer.cjs has no intent keywords for frontend-pro
+3. **Result**: Users read CLAUDE.md, expect router to suggest frontend-pro, but router cannot detect "react/frontend" intent
+
+**System Consistency**: CLAUDE.md and router-enforcer.cjs are out of sync.
+
+### Severity
+
+- **Critical**: Path errors (3 agents with wrong locations)
+- **Important**: Missing intent keywords (26 agents unroutable by router)
+- **Minor**: Missing routing table entries (26 agents not documented)
+
+### Recommended Fixes
+
+**Phase 1 (Critical)**: Fix 3 path errors in CLAUDE.md (10 minutes)
+
+- Update lines 388-390 with correct `.claude/agents/specialized/` paths
+
+**Phase 2 (Important)**: Add missing intent keywords to router-enforcer.cjs (2 hours)
+
+- Add ROUTING_TABLE entries for all 26 agents
+- Keywords examples:
+  - `frontend-pro`: "react", "vue", "frontend", "ui"
+  - `nodejs-pro`: "node.js", "express", "nestjs", "backend"
+  - `pm`: "product", "management", "roadmap"
+  - `database-architect`: "database", "schema", "sql"
+  - etc.
+
+**Phase 3 (Minor)**: Add missing agents to CLAUDE.md routing table (1 hour)
+
+- Add 26 agents to CLAUDE.md Section 3 table
+- Maintain alphabetical order by request type
+
+### Testing Recommendation
+
+After fixes, verify:
+
+1. `comm` comparison shows routing table agents match filesystem agents
+2. All agents in filesystem appear in CLAUDE.md
+3. All agents in CLAUDE.md have corresponding intent keywords in router-enforcer.cjs
+4. File paths in CLAUDE.md match actual file locations
+5. router-enforcer.cjs ROUTING_TABLE values match agent names
+
+---
+
+## [TESTING-002] Hook Test Coverage Gaps - 13 Hooks Without Tests
+
+- **Date**: 2026-01-28
+- **Severity**: Critical (5 hooks) | High (6 hooks) | Medium (2 hooks)
+- **Status**: Open
+- **Total Hooks**: 49 (excluding validator utility files)
+- **Hooks With Tests**: 36 (73.5%)
+- **Hooks Without Tests**: 13 (26.5%)
+- **Description**: Systematic audit identified 13 hooks without test files, including critical safety and blocking hooks
+
+### CRITICAL Priority Hooks (5 hooks requiring 6-10 hours total)
+
+**TESTING-CRIT-001: enforce-claude-md-update.cjs**
+
+- **File**: `.claude/hooks/safety/enforce-claude-md-update.cjs`
+- **Issue**: No test file exists + exit code bug (line 241: exit(1) should be exit(2))
+- **Impact**: CLAUDE.md update validation not tested; blocking behavior broken
+- **Effort**: 1-2 hours (includes exit code fix)
+- **Test Cases**: Block mode (exit 2), Warn mode (exit 0 + message), Off mode
+
+**TESTING-CRIT-002: security-trigger.cjs**
+
+- **File**: `.claude/hooks/safety/security-trigger.cjs`
+- **Issue**: No test file exists
+- **Impact**: Security-sensitive file operation detection not verified
+- **Effort**: 1-2 hours
+- **Test Cases**: Credential detection, blocking behavior, warn mode
+
+**TESTING-CRIT-003: tdd-check.cjs**
+
+- **File**: `.claude/hooks/safety/tdd-check.cjs`
+- **Issue**: No test file exists
+- **Impact**: TDD enforcement not tested
+- **Effort**: 1 hour
+- **Test Cases**: Test file regex validation, blocking without tests, passing with tests
+
+**TESTING-CRIT-004: validate-skill-invocation.cjs**
+
+- **File**: `.claude/hooks/safety/validate-skill-invocation.cjs`
+- **Issue**: No test file exists
+- **Impact**: Skill() tool validation not verified
+- **Effort**: 1-2 hours
+- **Test Cases**: Valid/invalid skill names, blocking invalid, warn modes
+
+**TESTING-CRIT-005: agent-context-tracker.cjs**
+
+- **File**: `.claude/hooks/routing/agent-context-tracker.cjs`
+- **Issue**: No test file exists (only routing hook without tests)
+- **Impact**: Router state tracking for Task tool not verified - CRITICAL for router-first protocol
+- **Effort**: 2-3 hours (complex state tracking)
+- **Test Cases**: Task tool detection, state persistence, PLANNER/SECURITY-ARCHITECT detection, state accumulation
+
+### HIGH Priority Hooks (6 hooks requiring 5-8 hours total)
+
+**TESTING-HIGH-001: format-memory.cjs** (1-2 hours)
+**TESTING-HIGH-002: memory-health-check.cjs** (2-3 hours)
+**TESTING-HIGH-003: memory-reminder.cjs** (30 minutes)
+**TESTING-HIGH-004: database-validators.cjs** (1-1.5 hours)
+**TESTING-HIGH-005: filesystem-validators.cjs** (1-1.5 hours)
+**TESTING-HIGH-006: git-validators.cjs** (1-1.5 hours)
+
+### MEDIUM Priority Hooks (2 hooks requiring 1.5 hours total)
+
+**TESTING-MED-001: process-validators.cjs** (1 hour)
+**TESTING-MED-002: windows-null-sanitizer.cjs** (30 minutes)
+
+### Test Coverage Summary
+
+| Category       | With Tests | Without Tests | Coverage |
+| -------------- | ---------- | ------------- | -------- |
+| Routing (11)   | 10         | 1             | 91%      |
+| Safety (15)    | 9          | 6             | 60%      |
+| Memory (5)     | 2          | 3             | 40%      |
+| Evolution (7)  | 7          | 0             | 100%     |
+| Reflection (4) | 4          | 0             | 100%     |
+| Validators (7) | 3          | 4             | 43%      |
+
+**Total**: 49 hooks, 36 with tests, 13 without = 73.5% coverage
+
+### Implementation Roadmap
+
+**P0 (This Week)**: 6-10 hours - CRITICAL hooks
+**P1 (Next Week)**: 5-8 hours - HIGH hooks
+**P2 (Week After)**: 1.5 hours - MEDIUM hooks
+
+**Total**: 11-18 hours to reach 100% hook test coverage
+
+### Success Criteria
+
+- All 13 hooks have test files (HOOK_NAME.test.cjs)
+- CRITICAL hooks verified: exit(2) for blocking, exit(0) for warn/off
+- HIGH hooks verified: file I/O, pattern detection, thresholds
+- MEDIUM hooks verified: edge cases, platform-specific behavior
+- Test suite passes: `pnpm test:framework`
+- Coverage reaches 100% (49/49)
+
+### Related Issues
+
+- **HOOK-001**: Exit code bug in enforce-claude-md-update.cjs line 241 (change exit(1) to exit(2))
+
+### Framework Health Assessment
+
+**Status**: Safety-critical gaps exist - MUST fix before production
+**Estimated Completion**: 11-18 hours total work
+**Risk Level**: HIGH - 13 hooks (26.5%) lack verification
+
+---
+
+## [ATOMIC-001] Missing Atomic Writes in State-Modifying Hooks
+
+- **Date**: 2026-01-28
+- **Severity**: Critical
+- **Status**: Open
+- **Description**: Deep dive Task #4 found 3 hooks writing state files without atomic writes. If process crashes mid-write, state corruption occurs.
+- **Pattern**: Should use `atomicWriteJSONSync()` from `.claude/lib/utils/atomic-write.cjs`
+
+### Affected Files
+
+**ATOMIC-001a: evolution-trigger-detector.cjs**
+
+- **File**: `.claude/hooks/evolution/evolution-trigger-detector.cjs`
+- **Line**: 220
+- **Current**: `fs.writeFileSync(EVOLUTION_STATE_PATH, JSON.stringify(state, null, 2))`
+- **Fix**: `atomicWriteJSONSync(EVOLUTION_STATE_PATH, state)`
+- **Effort**: 15 minutes
+
+**ATOMIC-001b: memory-health-check.cjs (patterns.json)**
+
+- **File**: `.claude/hooks/memory/memory-health-check.cjs`
+- **Line**: 214
+- **Current**: `fs.writeFileSync(patternsPath, JSON.stringify(result.kept, null, 2))`
+- **Fix**: `atomicWriteJSONSync(patternsPath, result.kept)`
+- **Effort**: 15 minutes
+
+**ATOMIC-001c: memory-health-check.cjs (gotchas.json)**
+
+- **File**: `.claude/hooks/memory/memory-health-check.cjs`
+- **Line**: 254
+- **Current**: `fs.writeFileSync(gotchasPath, JSON.stringify(result.kept, null, 2))`
+- **Fix**: `atomicWriteJSONSync(gotchasPath, result.kept)`
+- **Effort**: 15 minutes
+
+**ATOMIC-001d: reflection-queue-processor.cjs (JSONL)**
+
+- **File**: `.claude/hooks/reflection/reflection-queue-processor.cjs`
+- **Line**: 249
+- **Current**: `fs.writeFileSync(queueFile, updatedLines.join('\n') + '\n')`
+- **Note**: JSONL file - use temp+rename pattern, not atomicWriteJSONSync
+- **Effort**: 30 minutes
+
+**Total Effort**: 1-1.5 hours
+
+---
+
+## [DEBUG-001] Empty Catch Blocks Without Conditional Debug Logging
+
+- **Date**: 2026-01-28
+- **Severity**: Medium
+- **Status**: Open
+- **Description**: Task #6 and #11 found empty catch blocks that hide errors. Should use METRICS_DEBUG pattern from memory-dashboard.cjs.
+
+### Affected Files
+
+**Memory Manager (8 locations)**
+
+- **File**: `.claude/lib/memory/memory-manager.cjs`
+- **Lines**: 488, 502, 516, 539, 555, 921, 961, 973, 985
+- **Pattern Missing**: METRICS_DEBUG conditional logging
+
+**Memory Tiers (3 locations)**
+
+- **File**: `.claude/lib/memory/memory-tiers.cjs`
+- **Lines**: 124, 163, 188
+- **Pattern Missing**: METRICS_DEBUG conditional logging
+
+**Memory Scheduler (1 location)**
+
+- **File**: `.claude/lib/memory/memory-scheduler.cjs`
+- **Line**: 94
+- **Pattern Missing**: METRICS_DEBUG conditional logging
+
+**Hooks (4 locations)**
+
+- Various hooks with empty catches identified in Task #6
+
+### Correct Pattern (from memory-dashboard.cjs)
+
+```javascript
+} catch (e) {
+  if (process.env.METRICS_DEBUG === 'true') {
+    console.error(JSON.stringify({
+      module: 'memory-manager',
+      function: 'loadMemoryForContext',
+      error: e.message,
+      timestamp: new Date().toISOString()
+    }));
+  }
+}
+```
+
+**Total Effort**: 2-3 hours
+
+---
+
+## [PERF-003] Hook Consolidation Opportunities
+
+- **Date**: 2026-01-28
+- **Severity**: Medium (Performance)
+- **Status**: Open
+- **Description**: Task #15 identified 8 consolidation opportunities following PERF-002 pattern (73% latency reduction).
+
+### High Priority Consolidations (70% of gains)
+
+**1. task-pre-use-guard.cjs** (consolidate 4 hooks)
+
+- agent-context-pre-tracker.cjs
+- loop-prevention.cjs
+- anomaly-detector.cjs
+- auto-rerouter.cjs
+- **Impact**: 4→1 process spawns on PreToolUse(Task)
+- **Effort**: 2-3 hours
+
+**2. task-post-use-guard.cjs** (consolidate 5 hooks)
+
+- agent-context-tracker.cjs
+- task-update-tracker.cjs
+- task-completion-guard.cjs
+- session-memory-extractor.cjs
+- task-completion-reflection.cjs
+- **Impact**: 5→1 process spawns on PostToolUse(Task)
+- **Effort**: 3-4 hours
+
+**3. prompt-submit-guard.cjs** (consolidate 5 hooks)
+
+- evolution-trigger-detector.cjs
+- memory-reminder.cjs
+- router-mode-reset.cjs
+- router-enforcer.cjs
+- session-end-reflection.cjs
+- **Impact**: 5→1 process spawns on UserPromptSubmit
+- **Effort**: 2-3 hours
+
+### Medium Priority (3 consolidations, 20% of gains)
+
+- Edit tool safety hooks
+- Write tool safety hooks
+- Evolution hooks (already partially consolidated)
+
+### Estimated Performance Improvement
+
+- Before: ~300ms average hook latency per event
+- After: ~80ms average (73% reduction, matches PERF-002)
+- Total hooks: 49
+- After consolidation: ~25 unique hook processes
+
+**Total Effort**: 11-16 hours for all consolidations

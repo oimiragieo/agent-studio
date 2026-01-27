@@ -157,21 +157,21 @@ async function runTests() {
     });
 
     await test('should handle loop-state schema', () => {
-      const content = '{"evolutionBudget": 5, "spawnDepth": 2, "patterns": ["a", "b"]}';
+      const content = '{"sessionId": "test-123", "spawnDepth": 2, "evolutionCount": 1}';
       const result = safeJson.safeParseJSON(content, 'loop-state');
 
-      assertEqual(result.evolutionBudget, 5, 'evolutionBudget should be 5');
+      assertEqual(result.sessionId, 'test-123', 'sessionId should be test-123');
       assertEqual(result.spawnDepth, 2, 'spawnDepth should be 2');
-      assertDeepEqual(result.patterns, ['a', 'b'], 'patterns should match');
+      assertEqual(result.evolutionCount, 1, 'evolutionCount should be 1');
     });
 
     await test('should return loop-state defaults for invalid JSON', () => {
       const content = 'invalid';
       const result = safeJson.safeParseJSON(content, 'loop-state');
 
-      assertEqual(result.evolutionBudget, 3, 'evolutionBudget should default to 3');
+      assertEqual(result.sessionId, '', 'sessionId should default to empty string');
       assertEqual(result.spawnDepth, 0, 'spawnDepth should default to 0');
-      assertDeepEqual(result.patterns, [], 'patterns should default to empty array');
+      assertEqual(result.evolutionCount, 0, 'evolutionCount should default to 0');
     });
   });
 

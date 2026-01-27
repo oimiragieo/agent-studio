@@ -117,7 +117,7 @@ describe('error-recovery-reflection.cjs', () => {
       const input = {
         tool_name: 'Bash',
         tool_input: { command: 'npm test' },
-        tool_result: { exit_code: 1, stderr: 'Test failed' },
+        tool_output: { exit_code: 1, stderr: 'Test failed' },
       };
       assertEqual(hook.shouldTriggerReflection(input), true);
     });
@@ -126,16 +126,16 @@ describe('error-recovery-reflection.cjs', () => {
       const input = {
         tool_name: 'Bash',
         tool_input: { command: 'npm test' },
-        tool_result: { exit_code: 0 },
+        tool_output: { exit_code: 0 },
       };
       assertEqual(hook.shouldTriggerReflection(input), false);
     });
 
-    it('should return true when tool_result contains error field', () => {
+    it('should return true when tool_output contains error field', () => {
       const input = {
         tool_name: 'Read',
         tool_input: { file_path: '/nonexistent' },
-        tool_result: { error: 'File not found' },
+        tool_output: { error: 'File not found' },
       };
       assertEqual(hook.shouldTriggerReflection(input), true);
     });
@@ -144,7 +144,7 @@ describe('error-recovery-reflection.cjs', () => {
       const input = {
         tool_name: 'Read',
         tool_input: { file_path: '/some/path' },
-        tool_result: { content: 'file content' },
+        tool_output: { content: 'file content' },
       };
       assertEqual(hook.shouldTriggerReflection(input), false);
     });
@@ -217,7 +217,7 @@ describe('error-recovery-reflection.cjs', () => {
       const input = {
         tool_name: 'Bash',
         tool_input: { command: 'npm test' },
-        tool_result: { exit_code: 1, stderr: 'FAILED: 3 tests failed' },
+        tool_output: { exit_code: 1, stderr: 'FAILED: 3 tests failed' },
       };
 
       const entry = hook.createReflectionEntry(input);
@@ -236,7 +236,7 @@ describe('error-recovery-reflection.cjs', () => {
       const input = {
         tool_name: 'Read',
         tool_input: { file_path: '/missing/file.txt' },
-        tool_result: { error: 'ENOENT: file not found' },
+        tool_output: { error: 'ENOENT: file not found' },
       };
 
       const entry = hook.createReflectionEntry(input);
