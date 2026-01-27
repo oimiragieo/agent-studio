@@ -16,7 +16,7 @@
 !.claude/context/artifacts/reference/
 !.claude/context/artifacts/reference/**
 
-# Runtime data (gitignored) - NEW PATTERNS
+# Runtime data (gitignored)
 .claude/context/runtime/
 .claude/context/analytics/
 .claude/context/audit/
@@ -28,6 +28,12 @@
 .claude/context/test-results/
 .claude/context/self-healing/anomaly-log.jsonl
 .claude/context/self-healing/anomaly-state.json
+.claude/context/reflection-queue.jsonl
+
+# Memory tier files (session-specific runtime data)
+.claude/context/memory/mtm/
+.claude/context/memory/ltm/
+.claude/context/memory/sessions/
 
 # Config data (version-controlled) - NEW PATTERNS
 !.claude/context/config/
@@ -125,10 +131,16 @@ venv/
 env/
 ENV/
 
-# Dependency Locks (Optional - remove if you want to track them)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+# Dependency Locks (using pnpm, ignore npm/yarn locks)
+package-lock.json
+yarn.lock
+# pnpm-lock.yaml  # Keep pnpm lock tracked
+
+# Backup files
+*.backup
+*.bak
+*.old
+.claude/lib/_test-fixtures/backups/
 
 # Archive folder (old .claude backup)
 .claude.archive/
