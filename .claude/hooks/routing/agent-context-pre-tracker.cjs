@@ -23,46 +23,11 @@
 
 const routerState = require('./router-state.cjs');
 
-/**
- * Parse hook input from stdin
- * PreToolUse hooks receive input via stdin as JSON
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let data = '';
-    let hasData = false;
+// PERF-006: Use shared hook-input utility instead of duplicated 35-line parseHookInput function
+const { parseHookInputAsync, getToolInput } = require('../../lib/utils/hook-input.cjs');
 
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      data += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !data.trim()) {
-        resolve(null);
-        return;
-      }
-      try {
-        resolve(JSON.parse(data));
-      } catch {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    // Timeout to prevent hanging on empty input
-    setTimeout(() => {
-      if (!hasData) resolve(null);
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// PERF-006: Alias for backward compatibility with exports
+const parseHookInput = parseHookInputAsync;
 
 /**
  * Extract task description from tool input
@@ -89,21 +54,8 @@ async function main() {
   try {
     const input = await parseHookInput();
 
-    // Extract tool input - may come in different formats
-    let toolInput = null;
-    if (input) {
-      if (typeof input.tool_input === 'string') {
-        try {
-          toolInput = JSON.parse(input.tool_input);
-        } catch {
-          toolInput = {};
-        }
-      } else if (input.tool_input) {
-        toolInput = input.tool_input;
-      } else if (input.input) {
-        toolInput = input.input;
-      }
-    }
+    // PERF-006: Extract tool input using shared helper
+    const toolInput = getToolInput(input);
 
     // Extract task description
     const taskDescription = extractTaskDescription(toolInput);

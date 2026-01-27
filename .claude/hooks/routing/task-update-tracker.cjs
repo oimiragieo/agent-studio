@@ -12,64 +12,24 @@
 
 const routerState = require('./router-state.cjs');
 
-/**
- * Parse hook input from Claude Code.
- * Input comes as JSON via stdin.
- *
- * @returns {Promise<object|null>} Parsed hook context or null
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let data = '';
-    let hasData = false;
-
-    // Set encoding for proper text handling
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      data += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !data.trim()) {
-        resolve(null);
-        return;
-      }
-      try {
-        resolve(JSON.parse(data));
-      } catch {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    setTimeout(() => {
-      if (!hasData) resolve(null);
-    }, 100);
-
-    // Resume stdin if it was paused
-    process.stdin.resume();
-  });
-}
+// PERF-006/PERF-007: Use shared hook-input.cjs utility
+const { parseHookInputAsync, getToolInput } = require('../../lib/utils/hook-input.cjs');
 
 /**
  * Main execution function.
  */
 async function main() {
   try {
-    const input = await parseHookInput();
+    // PERF-006/PERF-007: Use shared hook-input.cjs utility
+    const input = await parseHookInputAsync();
 
     if (!input) {
       process.exit(0);
       return;
     }
 
-    // PostToolUse provides tool_input with the parameters
-    const toolInput = input.tool_input || {};
+    // PostToolUse provides tool_input with the parameters (using shared helper)
+    const toolInput = getToolInput(input);
 
     // Extract taskId and status from TaskUpdate call
     const taskId = toolInput.taskId;
@@ -102,4 +62,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { main, parseHookInput };
+module.exports = { main };

@@ -23,19 +23,16 @@
 const fs = require('fs');
 const path = require('path');
 
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+} = require('../../lib/utils/hook-input.cjs');
 
-const PROJECT_ROOT = findProjectRoot();
+// PERF-006: Alias for backward compatibility with exports
+const parseHookInput = parseHookInputAsync;
 
 // Configuration
 let QUEUE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'reflection-queue.jsonl');
@@ -67,9 +64,9 @@ function isEnabled() {
 function shouldTriggerReflection(input) {
   if (!input) return false;
 
-  // Support both input formats
-  const toolName = input.tool_name || input.tool;
-  const toolInput = input.tool_input || input.input || {};
+  // PERF-006: Use shared helpers
+  const toolName = getToolName(input);
+  const toolInput = getToolInput(input);
 
   // Only trigger on TaskUpdate with status=completed
   if (toolName !== 'TaskUpdate') return false;
@@ -84,7 +81,8 @@ function shouldTriggerReflection(input) {
  * @returns {object} Reflection entry for the queue
  */
 function createReflectionEntry(input) {
-  const toolInput = input.tool_input || input.input || {};
+  // PERF-006: Use shared helper
+  const toolInput = getToolInput(input);
 
   const entry = {
     taskId: toolInput.taskId,
@@ -135,60 +133,8 @@ function queueReflection(entry, queueFile = QUEUE_FILE) {
   }
 }
 
-/**
- * Parse hook input from Claude Code
- * Input comes via stdin as JSON
- * @returns {Promise<object|null>} Parsed input or null
- */
-async function parseHookInput() {
-  // Try command line argument first (older format)
-  if (process.argv[2]) {
-    try {
-      return JSON.parse(process.argv[2]);
-    } catch (e) {
-      // Not valid JSON, try stdin
-    }
-  }
-
-  // Read from stdin
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    // Timeout in case stdin never ends
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// PERF-006: parseHookInput is now imported from hook-input.cjs at the top of the file
+// Removed 50-line duplicated function
 
 /**
  * Main execution

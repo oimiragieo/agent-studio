@@ -7,6 +7,14 @@
  * rather than just Read()ing the SKILL.md files.
  */
 
+// PERF-006/PERF-007: Use shared hook-input.cjs utility
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+  extractFilePath,
+} = require('../../lib/utils/hook-input.cjs');
+
 const SKILL_PATH_PATTERN = /\.claude[\/\\]skills[\/\\][^\/\\]+[\/\\]SKILL\.md/i;
 
 /**
@@ -61,67 +69,8 @@ function validate(context) {
   };
 }
 
-/**
- * Parse hook input from Claude Code.
- * Input comes as JSON via stdin.
- *
- * @returns {Promise<object|null>} Parsed hook context or null
- */
-async function parseHookInput() {
-  // Try command line argument first (older hook format)
-  if (process.argv[2]) {
-    try {
-      return JSON.parse(process.argv[2]);
-    } catch (e) {
-      // Not valid JSON, try stdin
-    }
-  }
-
-  // Read from stdin (current hook format)
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    // Set encoding for proper text handling
-    process.stdin.setEncoding('utf8');
-
-    // Handle stdin data
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    // Handle end of input
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        // Invalid JSON
-        resolve(null);
-      }
-    });
-
-    // Handle errors
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    // Set a timeout in case stdin never ends
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    // Resume stdin if it was paused
-    process.stdin.resume();
-  });
-}
+// parseHookInput removed - now using parseHookInputAsync from shared hook-input.cjs
+// PERF-006/PERF-007: Eliminated ~55 lines of duplicated parsing code
 
 /**
  * Main execution function.
@@ -129,24 +78,24 @@ async function parseHookInput() {
  */
 async function main() {
   try {
-    // Parse the hook input
-    const hookInput = await parseHookInput();
+    // PERF-006/PERF-007: Use shared hook-input.cjs utility
+    const hookInput = await parseHookInputAsync();
 
     if (!hookInput) {
       // No input provided - fail open
       process.exit(0);
     }
 
-    // Verify this is a Read tool call
-    const toolName = hookInput.tool_name || hookInput.tool;
+    // Verify this is a Read tool call using shared helper
+    const toolName = getToolName(hookInput);
     if (toolName !== 'Read') {
       // Not a Read tool - allow
       process.exit(0);
     }
 
-    // Extract file path
-    const toolInput = hookInput.tool_input || hookInput.input || {};
-    const filePath = toolInput.file_path || '';
+    // Extract file path using shared helpers
+    const toolInput = getToolInput(hookInput);
+    const filePath = extractFilePath(toolInput) || '';
 
     // Check if this is a skill file
     if (!isSkillFile(filePath)) {
@@ -183,7 +132,6 @@ module.exports = {
   validate,
   isSkillFile,
   extractSkillName,
-  parseHookInput,
   main,
   SKILL_PATH_PATTERN,
 };

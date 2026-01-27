@@ -6,42 +6,32 @@
  * Ensures consistent formatting across all memory files.
  *
  * Trigger: PostToolUse (after Edit/Write to memory files)
+ *
+ * PERF-006: Uses shared hook-input utility to eliminate code duplication.
+ * PERF-007: Uses shared project-root utility to eliminate findProjectRoot duplication.
  */
+
+'use strict';
 
 const { spawnSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputSync,
+  getToolName,
+  getToolInput,
+  extractFilePath,
+} = require('../../lib/utils/hook-input.cjs');
 
 // Memory paths to watch
 const MEMORY_PATHS = ['.claude/context/memory', '.claude/context/reports', '.claude/context/plans'];
 
-/**
- * Parse hook input from Claude Code
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Handle parse errors gracefully
-  }
-  return null;
-}
+// PERF-006: parseHookInput is now imported from hook-input.cjs
+// Alias for backward compatibility
+const parseHookInput = parseHookInputSync;
 
 /**
  * Check if file is in a memory directory
@@ -154,22 +144,23 @@ function formatFile(filePath) {
  * Main execution
  */
 function main() {
-  const input = parseHookInput();
+  // PERF-006: Use shared utility for parsing
+  const input = parseHookInputSync();
   if (!input) {
     process.exit(0);
   }
 
-  // Get tool info
-  const toolName = input.tool_name || input.tool;
-  const toolInput = input.tool_input || input.input || {};
+  // PERF-006: Get tool info using shared utilities
+  const toolName = getToolName(input);
+  const toolInput = getToolInput(input);
 
   // Only process Edit/Write tools
   if (toolName !== 'Edit' && toolName !== 'Write') {
     process.exit(0);
   }
 
-  // Get file path
-  const filePath = toolInput.file_path || toolInput.filePath || toolInput.path;
+  // PERF-006: Get file path using shared utility
+  const filePath = extractFilePath(toolInput);
   if (!filePath) {
     process.exit(0);
   }

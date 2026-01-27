@@ -9,74 +9,23 @@
  * - 0: Allow operation (command is safe or no validator exists)
  * - 2: Block operation (command is dangerous)
  *
- * The hook fails open (exits 0) on errors to avoid blocking legitimate work.
+ * The hook fails CLOSED (exits 2) on errors to prevent security bypass.
+ * Set BASH_VALIDATOR_FAIL_OPEN=true to override for debugging only.
+ *
+ * PERF-006: Uses shared hook-input utility to eliminate code duplication.
  */
 
 'use strict';
 
 const { validateCommand } = require('./validators/registry.cjs');
 
-/**
- * Parse hook input from Claude Code.
- * Input comes as JSON via stdin or command line argument.
- *
- * @returns {Promise<object|null>} Parsed hook context or null
- */
-async function parseHookInput() {
-  // Try command line argument first (older hook format)
-  if (process.argv[2]) {
-    try {
-      return JSON.parse(process.argv[2]);
-    } catch (e) {
-      // Not valid JSON, try stdin
-    }
-  }
-
-  // Read from stdin (current hook format)
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    // Set encoding for proper text handling
-    process.stdin.setEncoding('utf8');
-
-    // Handle stdin data
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    // Handle end of input
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        // Invalid JSON
-        resolve(null);
-      }
-    });
-
-    // Handle errors
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    // Set a timeout in case stdin never ends
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    // Resume stdin if it was paused
-    process.stdin.resume();
-  });
-}
+// PERF-006: Use shared hook-input utility instead of duplicated 55-line parseHookInput function
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+  auditLog,
+} = require('../../lib/utils/hook-input.cjs');
 
 /**
  * Extract the bash command from hook input.
@@ -87,8 +36,8 @@ async function parseHookInput() {
 function extractCommand(hookInput) {
   if (!hookInput) return null;
 
-  // Try different input structures
-  const toolInput = hookInput.tool_input || hookInput.input || {};
+  // PERF-006: Use shared utility to get tool input
+  const toolInput = getToolInput(hookInput);
 
   // The Bash tool uses 'command' parameter
   if (toolInput.command && typeof toolInput.command === 'string') {
@@ -128,16 +77,16 @@ function formatBlockedMessage(command, reason) {
  */
 async function main() {
   try {
-    // Parse the hook input
-    const hookInput = await parseHookInput();
+    // PERF-006: Parse the hook input using shared utility
+    const hookInput = await parseHookInputAsync();
 
     if (!hookInput) {
       // No input provided - fail open
       process.exit(0);
     }
 
-    // Verify this is a Bash tool call
-    const toolName = hookInput.tool_name || hookInput.tool;
+    // PERF-006: Verify this is a Bash tool call using shared helper
+    const toolName = getToolName(hookInput);
     if (toolName !== 'Bash') {
       // Not a Bash tool - should not happen but fail open
       process.exit(0);
@@ -163,11 +112,23 @@ async function main() {
     // Command is safe - allow
     process.exit(0);
   } catch (err) {
-    // SECURITY FIX: Fail CLOSED on errors to prevent bypass attacks
+    // SEC-008: Fail CLOSED on errors to prevent bypass attacks
     // An attacker could craft input that triggers errors to bypass validation
     // Defense-in-depth principle: deny by default when security state is unknown
-    console.error('Bash command validator error - BLOCKING for safety:', err.message);
+
+    // Allow debug override for troubleshooting
+    if (process.env.BASH_VALIDATOR_FAIL_OPEN === 'true') {
+      auditLog('bash-command-validator', 'fail_open_override', {
+        error: err.message,
+        warning: 'Failing open due to BASH_VALIDATOR_FAIL_OPEN override',
+      });
+      process.exit(0);
+    }
+
+    auditLog('bash-command-validator', 'error_fail_closed', { error: err.message });
+
     if (process.env.DEBUG_HOOKS) {
+      console.error('Bash command validator error - BLOCKING for safety:', err.message);
       console.error('Stack trace:', err.stack);
     }
     process.exit(2);
@@ -178,4 +139,10 @@ async function main() {
 main();
 
 // Export for testing
-module.exports = { main, extractCommand, formatBlockedMessage };
+// PERF-006: Alias parseHookInput for backward compatibility
+module.exports = {
+  main,
+  extractCommand,
+  formatBlockedMessage,
+  parseHookInput: parseHookInputAsync,
+};

@@ -6,7 +6,7 @@ model: sonnet
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, Edit, Bash]
-globs: "**/*"
+globs: '**/*'
 best_practices:
   - Always use bash syntax for Bash tool commands
   - Use cross-platform Node.js APIs when possible
@@ -26,6 +26,7 @@ You are an expert at writing cross-platform code that works correctly on Windows
 **The Bash tool runs commands through Git Bash (`/usr/bin/bash`), NOT Windows CMD or PowerShell.**
 
 This means:
+
 - Use **bash/POSIX syntax** for all shell commands
 - Do NOT use Windows CMD syntax (`if not exist`, `copy`, `del`)
 - Do NOT use PowerShell syntax (`Remove-Item`, `New-Item`)
@@ -34,30 +35,30 @@ This means:
 
 ### Directory Operations
 
-| Task | ✅ Correct (Bash) | ❌ Wrong (CMD) | ❌ Wrong (PowerShell) |
-|------|-------------------|----------------|----------------------|
+| Task             | ✅ Correct (Bash)      | ❌ Wrong (CMD)      | ❌ Wrong (PowerShell)          |
+| ---------------- | ---------------------- | ------------------- | ------------------------------ |
 | Create directory | `mkdir -p path/to/dir` | `mkdir path\to\dir` | `New-Item -ItemType Directory` |
-| Check if exists | `[ -d "path" ] && ...` | `if exist path ...` | `Test-Path path` |
-| Remove directory | `rm -rf path/to/dir` | `rmdir /s /q path` | `Remove-Item -Recurse` |
-| List files | `ls -la` | `dir` | `Get-ChildItem` |
+| Check if exists  | `[ -d "path" ] && ...` | `if exist path ...` | `Test-Path path`               |
+| Remove directory | `rm -rf path/to/dir`   | `rmdir /s /q path`  | `Remove-Item -Recurse`         |
+| List files       | `ls -la`               | `dir`               | `Get-ChildItem`                |
 
 ### File Operations
 
-| Task | ✅ Correct (Bash) | ❌ Wrong (CMD) | ❌ Wrong (PowerShell) |
-|------|-------------------|----------------|----------------------|
-| Create empty file | `touch file.txt` or `echo "" > file.txt` | `echo. > file.txt` | `New-Item file.txt` |
-| Copy file | `cp src dest` | `copy src dest` | `Copy-Item` |
-| Move file | `mv src dest` | `move src dest` | `Move-Item` |
-| Delete file | `rm file.txt` | `del file.txt` | `Remove-Item` |
-| Read file | `cat file.txt` | `type file.txt` | `Get-Content` |
+| Task              | ✅ Correct (Bash)                        | ❌ Wrong (CMD)     | ❌ Wrong (PowerShell) |
+| ----------------- | ---------------------------------------- | ------------------ | --------------------- |
+| Create empty file | `touch file.txt` or `echo "" > file.txt` | `echo. > file.txt` | `New-Item file.txt`   |
+| Copy file         | `cp src dest`                            | `copy src dest`    | `Copy-Item`           |
+| Move file         | `mv src dest`                            | `move src dest`    | `Move-Item`           |
+| Delete file       | `rm file.txt`                            | `del file.txt`     | `Remove-Item`         |
+| Read file         | `cat file.txt`                           | `type file.txt`    | `Get-Content`         |
 
 ### Conditional Operations
 
-| Task | ✅ Correct (Bash) | ❌ Wrong (CMD) |
-|------|-------------------|----------------|
-| If directory exists | `[ -d "path" ] && echo "exists"` | `if exist path\ echo exists` |
-| If file exists | `[ -f "file" ] && echo "exists"` | `if exist file echo exists` |
-| Multi-line conditional | `if [ condition ]; then ... fi` | `if condition ( ... )` |
+| Task                   | ✅ Correct (Bash)                | ❌ Wrong (CMD)               |
+| ---------------------- | -------------------------------- | ---------------------------- |
+| If directory exists    | `[ -d "path" ] && echo "exists"` | `if exist path\ echo exists` |
+| If file exists         | `[ -f "file" ] && echo "exists"` | `if exist file echo exists`  |
+| Multi-line conditional | `if [ condition ]; then ... fi`  | `if condition ( ... )`       |
 
 ### Path Handling
 
@@ -68,6 +69,7 @@ This means:
 ## Common Mistakes to Avoid
 
 ### ❌ Windows CMD Multi-line If
+
 ```batch
 # WRONG - Git Bash cannot parse this
 if not exist "path" mkdir "path"
@@ -75,6 +77,7 @@ if not exist "other" mkdir "other"
 ```
 
 ### ✅ Bash Equivalent
+
 ```bash
 # CORRECT - Use bash syntax
 mkdir -p path other
@@ -83,12 +86,14 @@ mkdir -p path other
 ```
 
 ### ❌ Touch Command Failure Handling
+
 ```bash
 # WRONG - touch may not exist on Windows, fails silently
 touch file.txt 2>/dev/null
 ```
 
 ### ✅ Portable Alternative
+
 ```bash
 # CORRECT - echo works everywhere in bash
 echo "" > file.txt
@@ -116,6 +121,7 @@ if (process.platform === 'win32') {
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```

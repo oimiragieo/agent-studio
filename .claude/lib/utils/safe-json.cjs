@@ -105,6 +105,27 @@ const SCHEMAS = {
       success: null,
     },
   },
+  // NEW-CRIT-001 FIX: Add anomaly-state schema for anomaly-detector.cjs
+  'anomaly-state': {
+    required: [],
+    defaults: {
+      tokenHistory: [],
+      durationHistory: [],
+      failureTracking: {},
+      promptPatterns: [],
+      lastUpdated: null,
+    },
+  },
+  // NEW-CRIT-002 FIX: Add rerouter-state schema for auto-rerouter.cjs
+  'rerouter-state': {
+    required: [],
+    defaults: {
+      agentFailures: {},
+      taskStartTimes: {},
+      modelUsage: {},
+      lastUpdated: null,
+    },
+  },
 };
 
 // =============================================================================

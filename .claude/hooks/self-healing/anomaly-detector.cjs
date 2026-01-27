@@ -30,20 +30,17 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// SEC-007 FIX: Use safe JSON parsing to prevent prototype pollution
+const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
+// NEW-HIGH-003 FIX: Use atomic writes to prevent state file corruption
+const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolOutput,
+} = require('../../lib/utils/hook-input.cjs');
 
 // Configurable paths (can be overridden for testing)
 let STATE_FILE = path.join(
@@ -118,13 +115,15 @@ function createDefaultState() {
 
 /**
  * Load state from file
+ * SEC-007 FIX: Use safeParseJSON to prevent prototype pollution attacks
  * @returns {Object} Current state
  */
 function loadState() {
   try {
     if (fs.existsSync(STATE_FILE)) {
       const content = fs.readFileSync(STATE_FILE, 'utf8');
-      const state = JSON.parse(content);
+      // SEC-007: Use safe JSON parsing with schema validation
+      const state = safeParseJSON(content, 'anomaly-state');
       // Ensure all fields exist
       return {
         ...createDefaultState(),
@@ -141,6 +140,7 @@ function loadState() {
 
 /**
  * Save state to file
+ * NEW-HIGH-003 FIX: Use atomic writes to prevent state file corruption during crashes
  * @param {Object} state - State to save
  */
 function saveState(state) {
@@ -150,7 +150,8 @@ function saveState(state) {
       fs.mkdirSync(dir, { recursive: true });
     }
     state.lastUpdated = new Date().toISOString();
-    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+    // Use atomic write: writes to temp file, then renames (atomic on POSIX)
+    atomicWriteJSONSync(STATE_FILE, state);
   } catch (e) {
     if (process.env.DEBUG_HOOKS) {
       console.error('[anomaly-detector] Error saving state:', e.message);
@@ -477,48 +478,8 @@ function clearFailures(tool, state) {
   }
 }
 
-/**
- * Parse hook input from stdin
- * @returns {Promise<Object|null>}
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// parseHookInput removed - now using parseHookInputAsync from shared hook-input.cjs
+// PERF-006/PERF-007: Eliminated ~40 lines of duplicated parsing code
 
 /**
  * Main execution
@@ -530,8 +491,8 @@ async function main() {
       process.exit(0);
     }
 
-    // Parse hook input
-    const hookInput = await parseHookInput();
+    // PERF-006/PERF-007: Use shared hook-input.cjs utility
+    const hookInput = await parseHookInputAsync();
 
     if (!hookInput) {
       process.exit(0);
@@ -542,10 +503,10 @@ async function main() {
     const thresholds = getThresholds();
     const anomalies = [];
 
-    // Extract relevant data from hook input
+    // Extract relevant data from hook input using shared helpers
     const tokenCount = hookInput.tokens || hookInput.token_count || null;
     const duration = hookInput.duration || hookInput.execution_time || null;
-    const tool = hookInput.tool_name || hookInput.tool || null;
+    const tool = getToolName(hookInput);
     const toolError = hookInput.error || null;
     const toolSuccess = hookInput.success !== false && !toolError;
     const prompt = hookInput.prompt || hookInput.user_message || null;

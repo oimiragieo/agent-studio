@@ -42,11 +42,11 @@ Your project should look like this:
 your-project/
 ├── CLAUDE.md           # Root instructions (required)
 ├── .claude/            # Configuration directory
-│   ├── agents/         # 35 specialized agents
-│   ├── skills/         # 108 utility skills
-│   ├── workflows/      # 14 workflow definitions
-│   ├── hooks/          # Security and audit hooks
-│   ├── commands/       # 13 slash commands
+│   ├── agents/         # 46 specialized agents (core, domain, specialized, orchestrators)
+│   ├── skills/         # 427+ utility skills
+│   ├── workflows/      # 16+ workflow definitions (core, enterprise, operations)
+│   ├── hooks/          # Consolidated security and routing hooks (8 categories)
+│   ├── lib/            # Shared utilities (memory, workflow, utils, self-healing)
 │   ├── tools/          # Enterprise tools (cost, sessions, analytics)
 │   │   ├── a2a/        # A2A Protocol Integration (12 modules)
 │   │   │   ├── agent-card-generator.mjs       # Generate A2A AgentCards

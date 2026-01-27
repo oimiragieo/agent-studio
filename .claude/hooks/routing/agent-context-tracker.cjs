@@ -17,19 +17,12 @@
 
 const routerState = require('./router-state.cjs');
 
-/**
- * Parse hook input from Claude Code
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing
-  }
-  return null;
-}
+// PERF-006: Use shared hook-input utility instead of duplicated parseHookInput function
+const { parseHookInputSync, getToolName, getToolInput } = require('../../lib/utils/hook-input.cjs');
+
+// PERF-006: parseHookInput is now imported from hook-input.cjs
+// Alias for backward compatibility
+const parseHookInput = parseHookInputSync;
 
 /**
  * Extract task description from tool input
@@ -107,15 +100,15 @@ function isSecuritySpawn(toolInput) {
 function main() {
   const hookInput = parseHookInput();
 
-  // Validate this is a Task tool call
-  const toolName = hookInput?.tool_name || hookInput?.tool;
+  // PERF-006: Validate this is a Task tool call using shared helper
+  const toolName = getToolName(hookInput);
   if (toolName !== 'Task') {
     // Not a Task tool, skip
     process.exit(0);
   }
 
-  // Get tool input to extract description
-  const toolInput = hookInput?.tool_input || hookInput?.input || {};
+  // PERF-006: Get tool input to extract description using shared helper
+  const toolInput = getToolInput(hookInput);
   const description = extractTaskDescription(toolInput);
 
   // Enter agent mode

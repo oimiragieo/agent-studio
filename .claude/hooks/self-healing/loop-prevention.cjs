@@ -43,6 +43,8 @@ const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
 
 // SEC-007 FIX: Import safe JSON parser to prevent prototype pollution
 const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
+// NEW-HIGH-003 FIX: Use atomic writes to prevent state file corruption
+const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
 
 // ==========================================
 // Constants
@@ -283,6 +285,7 @@ function getState(stateFile = DEFAULT_STATE_FILE) {
 /**
  * Save state to file (internal use)
  * SEC-AUDIT-005 FIX: Uses file locking to prevent TOCTOU race conditions
+ * NEW-HIGH-003 FIX: Uses atomic writes to prevent state file corruption
  * @param {Object} state - State to save
  * @param {string} stateFile - Path to state file
  */
@@ -292,7 +295,8 @@ function _saveState(state, stateFile = DEFAULT_STATE_FILE) {
   try {
     ensureStateDir(stateFile);
     state.updatedAt = new Date().toISOString();
-    fs.writeFileSync(stateFile, JSON.stringify(state, null, 2));
+    // NEW-HIGH-003: Use atomic write: writes to temp file, then renames (atomic on POSIX)
+    atomicWriteJSONSync(stateFile, state);
   } catch (e) {
     if (process.env.DEBUG_HOOKS) {
       console.error('[loop-prevention] Warning: Could not save state:', e.message);

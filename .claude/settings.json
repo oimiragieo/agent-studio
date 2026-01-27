@@ -75,19 +75,7 @@
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/evolution/research-enforcement.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/evolution/evolution-state-guard.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/evolution/conflict-detector.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/evolution/quality-gate-validator.cjs"
+            "command": "node .claude/hooks/evolution/unified-evolution-guard.cjs"
           }
         ]
       },

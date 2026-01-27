@@ -25,6 +25,13 @@
 
 'use strict';
 
+// PERF-006: Use shared hook-input utility instead of duplicated 55-line parseHookInput function
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+} = require('../../lib/utils/hook-input.cjs');
+
 /**
  * Documentation-related keywords that indicate a doc task
  * High-confidence keywords that strongly indicate documentation work
@@ -149,67 +156,9 @@ function isTechWriterSpawn(toolInput) {
   return false;
 }
 
-/**
- * Parse hook input from Claude Code.
- * Input comes as JSON via stdin or command line argument.
- *
- * @returns {Promise<object|null>} Parsed hook context or null
- */
-async function parseHookInput() {
-  // Try command line argument first (older hook format)
-  if (process.argv[2]) {
-    try {
-      return JSON.parse(process.argv[2]);
-    } catch (e) {
-      // Not valid JSON, try stdin
-    }
-  }
-
-  // Read from stdin (current hook format)
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    // Set encoding for proper text handling
-    process.stdin.setEncoding('utf8');
-
-    // Handle stdin data
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    // Handle end of input
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        // Invalid JSON
-        resolve(null);
-      }
-    });
-
-    // Handle errors
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    // Set a timeout in case stdin never ends
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    // Resume stdin if it was paused
-    process.stdin.resume();
-  });
-}
+// PERF-006: parseHookInput is now imported from hook-input.cjs
+// Alias for backward compatibility with exports
+const parseHookInput = parseHookInputAsync;
 
 /**
  * Format the violation message for output.
@@ -292,16 +241,16 @@ async function main() {
       process.exit(0);
     }
 
-    // Verify this is a Task tool call
-    const toolName = hookInput.tool_name || hookInput.tool;
+    // PERF-006: Verify this is a Task tool call using shared helper
+    const toolName = getToolName(hookInput);
     if (toolName !== 'Task') {
       // Not a Task tool - should not happen but fail open
       console.log(JSON.stringify({ result: 'allow', message: 'Not a Task tool call' }));
       process.exit(0);
     }
 
-    // Get tool input
-    const toolInput = hookInput.tool_input || hookInput.input || hookInput;
+    // PERF-006: Get tool input using shared helper
+    const toolInput = getToolInput(hookInput);
 
     // Validate
     const result = validate(toolInput);

@@ -21,19 +21,14 @@
 const fs = require('fs');
 const path = require('path');
 
-// Find project root by looking for .claude directory
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputSync,
+  getToolName,
+  getToolInput,
+  extractFilePath,
+} = require('../../lib/utils/hook-input.cjs');
 const ENFORCEMENT_MODE = process.env.CLAUDE_MD_ENFORCEMENT || 'warn';
 
 // Paths that require CLAUDE.md update
@@ -105,36 +100,8 @@ function getArtifactType(filePath) {
   return 'artifact';
 }
 
-/**
- * Parse hook input from Claude Code
- * @returns {Object|null} Parsed hook input or null
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing or invalid input
-  }
-  return null;
-}
-
-/**
- * Extract file path from tool input
- * @param {Object} toolInput - The tool input object
- * @returns {string|null} The file path or null
- */
-function getFilePath(toolInput) {
-  if (!toolInput) return null;
-
-  // Try common parameter names
-  if (toolInput.file_path) return toolInput.file_path;
-  if (toolInput.filePath) return toolInput.filePath;
-  if (toolInput.path) return toolInput.path;
-
-  return null;
-}
+// parseHookInput and getFilePath removed - now using shared hook-input.cjs utilities
+// PERF-006/PERF-007: See getToolName, getToolInput, extractFilePath from hook-input.cjs
 
 /**
  * Validate hook - called after Write/Edit operations
@@ -192,22 +159,23 @@ function main() {
     process.exit(0);
   }
 
-  const hookInput = parseHookInput();
+  // PERF-006/PERF-007: Use shared hook-input.cjs utilities
+  const hookInput = parseHookInputSync();
   if (!hookInput) {
     process.exit(0);
   }
 
-  // Get tool name and input
-  const toolName = hookInput.tool_name || hookInput.tool;
-  const toolInput = hookInput.tool_input || hookInput.input || {};
+  // Get tool name and input using shared helpers
+  const toolName = getToolName(hookInput);
+  const toolInput = getToolInput(hookInput);
 
   // Only check write tools
   if (!WRITE_TOOLS.includes(toolName)) {
     process.exit(0);
   }
 
-  // Get the file being modified
-  const filePath = getFilePath(toolInput);
+  // Get the file being modified using shared helper
+  const filePath = extractFilePath(toolInput);
   if (!filePath) {
     process.exit(0);
   }
@@ -238,7 +206,7 @@ function main() {
       console.log(`\n  Please update CLAUDE.md ${section} first.`);
       console.log(`\n  Set CLAUDE_MD_ENFORCEMENT=warn to allow anyway.`);
       console.log('='.repeat(55) + '\n');
-      process.exit(1);
+      process.exit(2); // Exit 2 = block operation (convention: 0=allow, 2=block)
     } else {
       console.log('\n' + '-'.repeat(55));
       console.log(' REMINDER: Update CLAUDE.md');

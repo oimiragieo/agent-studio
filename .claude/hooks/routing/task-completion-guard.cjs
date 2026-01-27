@@ -16,6 +16,9 @@
 
 const routerState = require('./router-state.cjs');
 
+// PERF-006/PERF-007: Use shared hook-input.cjs utility
+const { parseHookInputAsync, getToolOutput } = require('../../lib/utils/hook-input.cjs');
+
 // Phrases that indicate task completion
 const COMPLETION_INDICATORS = [
   /task.*(?:complete|completed|done|finished)/i,
@@ -75,45 +78,8 @@ function formatWarning(output) {
 `;
 }
 
-/**
- * Parse hook input from stdin.
- * @returns {Promise<object|null>} Parsed input or null
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let data = '';
-    let hasData = false;
-
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      data += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !data.trim()) {
-        resolve(null);
-        return;
-      }
-      try {
-        resolve(JSON.parse(data));
-      } catch {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    setTimeout(() => {
-      if (!hasData) resolve(null);
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// parseHookInput removed - now using parseHookInputAsync from shared hook-input.cjs
+// PERF-006/PERF-007: Eliminated ~35 lines of duplicated parsing code
 
 /**
  * Main execution function.
@@ -126,14 +92,20 @@ async function main() {
     return;
   }
 
-  const input = await parseHookInput();
+  // PERF-006/PERF-007: Use shared hook-input.cjs utility
+  const input = await parseHookInputAsync();
 
-  if (!input || !input.tool_output) {
+  if (!input) {
     process.exit(0);
     return;
   }
 
-  const output = input.tool_output;
+  // Use shared helper to extract tool output
+  const output = getToolOutput(input);
+  if (!output) {
+    process.exit(0);
+    return;
+  }
 
   // Check if output indicates completion
   if (!detectsCompletion(output)) {
@@ -168,4 +140,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { main, parseHookInput, detectsCompletion, COMPLETION_INDICATORS };
+module.exports = { main, detectsCompletion, COMPLETION_INDICATORS };

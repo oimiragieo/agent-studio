@@ -125,12 +125,17 @@ Router: Task({ prompt: "You are DEVELOPER. List all TypeScript files..." })
 
 The Router-First protocol is enforced by blocking hooks that prevent violations:
 
-| Hook                        | Location                 | Trigger                 | Default | Env Variable                  |
-| --------------------------- | ------------------------ | ----------------------- | ------- | ----------------------------- |
-| `task-create-guard.cjs`     | `.claude/hooks/routing/` | PreToolUse(TaskCreate)  | block   | `PLANNER_FIRST_ENFORCEMENT`   |
-| `planner-first-guard.cjs`   | `.claude/hooks/routing/` | PreToolUse(Task)        | block   | `PLANNER_FIRST_ENFORCEMENT`   |
-| `security-review-guard.cjs` | `.claude/hooks/routing/` | PreToolUse(Task)        | block   | `SECURITY_REVIEW_ENFORCEMENT` |
-| `router-write-guard.cjs`    | `.claude/hooks/safety/`  | PreToolUse(Edit\|Write) | block   | `ROUTER_WRITE_GUARD`          |
+| Hook                | Location                 | Trigger          | Default | Env Variable                |
+| ------------------- | ------------------------ | ---------------- | ------- | --------------------------- |
+| `routing-guard.cjs` | `.claude/hooks/routing/` | PreToolUse(Task) | block   | See individual guards below |
+
+The unified `routing-guard.cjs` consolidates 5 checks:
+
+- Planner-first enforcement (PLANNER_FIRST_ENFORCEMENT)
+- Task-create complexity guard (PLANNER_FIRST_ENFORCEMENT)
+- Security review guard (SECURITY_REVIEW_ENFORCEMENT)
+- Router self-check
+- Documentation routing guard
 
 **Enforcement Modes:**
 
@@ -710,17 +715,24 @@ All spawned agents MUST follow Memory Protocol:
 
 ## 8.6 ENTERPRISE WORKFLOWS
 
-| Workflow                 | Path                                                           | Purpose                                     |
-| ------------------------ | -------------------------------------------------------------- | ------------------------------------------- |
-| **Router Decision**      | `.claude/workflows/core/router-decision.md`                    | Master routing workflow for ALL requests    |
-| **External Integration** | `.claude/workflows/core/external-integration.md`               | Safely integrate external artifacts         |
-| **Artifact Lifecycle**   | `.claude/workflows/core/skill-lifecycle.md`                    | Manage artifact creation/update/deprecation |
-| **Feature Development**  | `.claude/workflows/enterprise/feature-development-workflow.md` | End-to-end feature development              |
-| **C4 Architecture**      | `.claude/workflows/enterprise/c4-architecture-workflow.md`     | C4 model documentation                      |
-| **Conductor Setup**      | `.claude/workflows/conductor-setup-workflow.md`                | CDD project setup                           |
-| **Incident Response**    | `.claude/workflows/operations/incident-response.md`            | Production incident handling                |
-| **Evolution Workflow**   | `.claude/workflows/core/evolution-workflow.md`                 | Locked-in EVOLVE process for self-evolution |
-| **Reflection Workflow**  | `.claude/workflows/core/reflection-workflow.md`                | Quality assessment and learning extraction  |
+| Workflow                 | Path                                                                | Purpose                                     |
+| ------------------------ | ------------------------------------------------------------------- | ------------------------------------------- |
+| **Router Decision**      | `.claude/workflows/core/router-decision.md`                         | Master routing workflow for ALL requests    |
+| **External Integration** | `.claude/workflows/core/external-integration.md`                    | Safely integrate external artifacts         |
+| **Artifact Lifecycle**   | `.claude/workflows/core/skill-lifecycle.md`                         | Manage artifact creation/update/deprecation |
+| **Feature Development**  | `.claude/workflows/enterprise/feature-development-workflow.md`      | End-to-end feature development              |
+| **C4 Architecture**      | `.claude/workflows/enterprise/c4-architecture-workflow.md`          | C4 model documentation                      |
+| **Conductor Setup**      | `.claude/workflows/conductor-setup-workflow.md`                     | CDD project setup                           |
+| **Incident Response**    | `.claude/workflows/operations/incident-response.md`                 | Production incident handling                |
+| **Evolution Workflow**   | `.claude/workflows/core/evolution-workflow.md`                      | Locked-in EVOLVE process for self-evolution |
+| **Reflection Workflow**  | `.claude/workflows/core/reflection-workflow.md`                     | Quality assessment and learning extraction  |
+| **Security Audit**       | `.claude/workflows/security-architect-skill-workflow.md`            | Comprehensive security audit                |
+| **Architecture Review**  | `.claude/workflows/architecture-review-skill-workflow.md`           | System architecture review                  |
+| **Consensus Voting**     | `.claude/workflows/consensus-voting-skill-workflow.md`              | Byzantine consensus for decisions           |
+| **Swarm Coordination**   | `.claude/workflows/enterprise/swarm-coordination-skill-workflow.md` | Multi-agent swarm patterns                  |
+| **Database Design**      | `.claude/workflows/database-architect-skill-workflow.md`            | Database schema workflows                   |
+| **Context Compression**  | `.claude/workflows/context-compressor-skill-workflow.md`            | Context summarization                       |
+| **Hook Consolidation**   | `.claude/workflows/operations/hook-consolidation.md`                | Consolidate related hooks                   |
 
 ## 9. EXAMPLE FULL FLOW
 
@@ -909,12 +921,15 @@ context/
 
 ```
 hooks/
-├── routing/             # Router enforcement hooks
-│   ├── router-state.cjs         # Router state management
-│   └── task-create-guard.cjs    # TaskCreate complexity enforcement
-├── safety/              # Safety guardrails
-│   └── router-write-guard.cjs   # Blocks Router from writing files
-└── validation/          # Input/output validation hooks
+├── evolution/           # Evolution workflow enforcement (6 hooks)
+├── memory/              # Memory extraction and management (5 hooks)
+├── reflection/          # Reflection queue and processing (4 hooks)
+├── routing/             # Router enforcement and guards (14 hooks)
+├── safety/              # Safety guardrails (14 hooks + validators/)
+│   └── validators/      # Command validators
+├── self-healing/        # Loop prevention, anomaly detection (3 hooks)
+├── session/             # Session lifecycle hooks (1 hook)
+└── validation/          # Input/output validation (1 hook)
 ```
 
 #### lib/ - Internal Libraries
@@ -922,16 +937,26 @@ hooks/
 ```
 lib/
 ├── workflow/            # Workflow execution engine
-│   ├── workflow-engine.js       # Core workflow runner
-│   ├── workflow-validator.js    # Schema validation
-│   └── checkpoint-manager.js    # State checkpointing
+│   ├── workflow-engine.cjs       # Core workflow runner
+│   ├── workflow-validator.cjs    # Schema validation
+│   └── checkpoint-manager.cjs    # State checkpointing
 ├── memory/              # Memory management system
-│   ├── memory-manager.js        # Memory CRUD operations
-│   ├── memory-scheduler.js      # Scheduled memory tasks
-│   ├── memory-tiers.js          # Hot/warm/cold storage
-│   └── memory-pruner.js         # Memory cleanup
+│   ├── memory-manager.cjs        # Memory CRUD operations
+│   ├── memory-scheduler.cjs      # Scheduled memory tasks
+│   ├── memory-tiers.cjs          # Hot/warm/cold storage
+│   └── smart-pruner.cjs          # Memory cleanup
+├── self-healing/        # Self-healing system
+│   ├── dashboard.cjs             # Metrics and monitoring
+│   ├── rollback-manager.cjs      # State rollback
+│   └── validator.cjs             # Validation utilities
+├── utils/               # Shared utilities
+│   ├── hook-input.cjs            # Hook input parsing
+│   ├── project-root.cjs          # Project root detection
+│   ├── safe-json.cjs             # Safe JSON parsing
+│   ├── atomic-write.cjs          # Atomic file writes
+│   └── state-cache.cjs           # State caching
 └── integration/         # System integrations
-    └── system-registration-handler.js
+    └── system-registration-handler.cjs
 ```
 
 #### tools/ - CLI Tools & Integrations

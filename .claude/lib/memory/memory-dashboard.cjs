@@ -80,7 +80,16 @@ function getFileSizeKB(filePath) {
       return Math.round(fs.statSync(filePath).size / 1024);
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'getFileSizeKB',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
   return 0;
 }
@@ -100,7 +109,16 @@ function getJsonEntryCount(filePath) {
       }
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'getJsonEntryCount',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
   return 0;
 }
@@ -114,7 +132,16 @@ function countDirFiles(dirPath, pattern = /\.json$/) {
       return fs.readdirSync(dirPath).filter(f => pattern.test(f)).length;
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'countDirFiles',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
   return 0;
 }
@@ -354,7 +381,16 @@ function getFileLineCount(filePath) {
       return content.split('\n').length;
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'getFileLineCount',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
   return 0;
 }
@@ -407,11 +443,32 @@ function getMetricsHistory(days = 7, projectRoot = PROJECT_ROOT) {
           ...data,
         });
       } catch (e) {
-        /* ignore corrupt files */
+        if (process.env.METRICS_DEBUG === 'true') {
+          console.error(
+            JSON.stringify({
+              module: 'memory-dashboard',
+              function: 'getMetricsHistory',
+              context: 'parsing file',
+              file: file,
+              error: e.message,
+              timestamp: new Date().toISOString(),
+            })
+          );
+        }
       }
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'getMetricsHistory',
+          context: 'reading directory',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
 
   return history;
@@ -440,7 +497,16 @@ function cleanupOldMetrics(projectRoot = PROJECT_ROOT) {
       }
     }
   } catch (e) {
-    /* ignore */
+    if (process.env.METRICS_DEBUG === 'true') {
+      console.error(
+        JSON.stringify({
+          module: 'memory-dashboard',
+          function: 'cleanupOldMetrics',
+          error: e.message,
+          timestamp: new Date().toISOString(),
+        })
+      );
+    }
   }
 
   return removedCount;

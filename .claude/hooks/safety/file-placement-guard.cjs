@@ -481,20 +481,9 @@ function validateHookInput(content) {
   }
 }
 
-/**
- * Parse hook input from Claude Code
- * SEC-AUDIT-010 FIX: Uses validateHookInput() for schema validation
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return validateHookInput(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing
-  }
-  return null;
-}
+// parseHookInput removed - now using parseHookInputAsync from shared hook-input.cjs
+// SEC-AUDIT-010: The shared utility already provides sanitization via sanitizeObject()
+// PERF-006/PERF-007: This is the shared utility migration
 
 /**
  * Extract file path from tool input
@@ -767,22 +756,24 @@ function main() {
     process.exit(0);
   }
 
-  const hookInput = parseHookInput();
+  // PERF-006/PERF-007: Use shared hook-input.cjs utility
+  // SEC-AUDIT-010: validateHookInput provides schema validation
+  const hookInput = validateHookInput(process.argv[2]);
   if (!hookInput) {
     process.exit(0);
   }
 
-  // Get tool name and input
-  const toolName = hookInput.tool_name || hookInput.tool;
-  const toolInput = hookInput.tool_input || hookInput.input || {};
+  // Get tool name and input using shared helpers
+  const toolName = sharedGetToolName(hookInput);
+  const toolInput = sharedGetToolInput(hookInput);
 
   // Only check write tools
   if (!WRITE_TOOLS.includes(toolName)) {
     process.exit(0);
   }
 
-  // Get file path
-  const filePath = getFilePath(toolInput);
+  // Get file path using shared helper
+  const filePath = sharedExtractFilePath(toolInput);
 
   if (!filePath) {
     process.exit(0);

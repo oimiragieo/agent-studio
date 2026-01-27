@@ -6,14 +6,15 @@ The goal is simple: copy `.claude/` into another repo and get consistent routing
 
 ## What You Get
 
-- **45 Specialized Agents**: Core, domain, specialized, and orchestrator agents (`.claude/agents/`)
-- **426+ Reusable Skills**: Development, security, DevOps, scientific research, and more (`.claude/skills/`)
+- **46 Specialized Agents**: Core, domain, specialized, and orchestrator agents (`.claude/agents/`)
+- **427+ Reusable Skills**: Development, security, DevOps, scientific research, and more (`.claude/skills/`)
 - **Agent-Skill Discovery System**: Central mapping of agents to skills with contextual loading (`.claude/context/config/agent-skill-matrix.json`)
-- **Hooks/Guards**: Router-first enforcement, path guards, audit logging (`.claude/hooks/`)
-- **Workflows + Runners**: Enterprise workflows and automation (`.claude/workflows/`, `.claude/tools/`)
+- **Consolidated Hooks/Guards**: Unified routing and evolution guards with 75-80% latency reduction (`.claude/hooks/`)
+- **Workflows + Runners**: 16+ enterprise workflows including security audit, consensus voting, swarm coordination (`.claude/workflows/`, `.claude/tools/`)
 - **Schemas**: Structured artifact validation (`.claude/schemas/`)
 - **Prompts**: Copy/paste prompts for UI (`.claude/prompts/`)
 - **Headless Verification**: CI-friendly testing (`pnpm ship-readiness:headless:json`, `pnpm integration:headless:json`)
+- **Memory System**: Persistent learnings, decisions, and issues across sessions (`.claude/context/memory/`)
 
 Notes:
 
@@ -129,3 +130,10 @@ node .claude/tools/workflow-dryrun-suite.mjs
 ```
 
 See also: `GETTING_STARTED.md` and `CHANGELOG.md`.
+
+## Recent Updates (v2.1.0)
+
+- **Security Hardening**: SEC-007 safe JSON parsing, SEC-008 fail-closed patterns
+- **Performance**: Unified `routing-guard.cjs` (80% spawn reduction), `unified-evolution-guard.cjs` (75% spawn reduction)
+- **Code Quality**: Shared `hook-input.cjs` utility eliminates 2000+ lines of duplication
+- **Documentation**: CLAUDE.md synchronized with codebase (zero drift)

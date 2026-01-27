@@ -14,25 +14,15 @@
 
 const routerState = require('./router-state.cjs');
 
-/**
- * Parse hook input from Claude Code
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing
-  }
-  return null;
-}
+// PERF-006/PERF-007: Use shared hook-input.cjs utility
+const { parseHookInputSync } = require('../../lib/utils/hook-input.cjs');
 
 /**
  * Main execution
  */
 function main() {
-  const hookInput = parseHookInput();
+  // PERF-006/PERF-007: Use shared hook-input.cjs utility
+  const hookInput = parseHookInputSync();
 
   // Get the user prompt for logging
   let userPrompt = '';

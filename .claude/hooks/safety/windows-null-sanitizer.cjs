@@ -23,50 +23,12 @@
 
 const isWindows = process.platform === 'win32';
 
-/**
- * Parse hook input from Claude Code.
- * Input comes as JSON via stdin.
- *
- * @returns {Promise<object|null>} Parsed hook context or null
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// PERF-006/PERF-007: Use shared hook-input.cjs utility
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+} = require('../../lib/utils/hook-input.cjs');
 
 /**
  * Sanitize a command by replacing /dev/null with NUL on Windows.
@@ -106,21 +68,22 @@ async function main() {
       process.exit(0);
     }
 
-    const hookInput = await parseHookInput();
+    // PERF-006/PERF-007: Use shared hook-input.cjs utility
+    const hookInput = await parseHookInputAsync();
 
     if (!hookInput) {
       process.exit(0);
     }
 
-    // Verify this is a Bash tool call
-    const toolName = hookInput.tool_name || hookInput.tool;
+    // Verify this is a Bash tool call using shared helper
+    const toolName = getToolName(hookInput);
     if (toolName !== 'Bash') {
       process.exit(0);
     }
 
-    // Extract the command
-    const toolInput = hookInput.tool_input || hookInput.input || {};
-    const command = toolInput.command;
+    // Extract the command using shared helper
+    const toolInputData = getToolInput(hookInput);
+    const command = toolInputData.command;
 
     if (!command || typeof command !== 'string') {
       process.exit(0);
@@ -136,7 +99,7 @@ async function main() {
 
     // Output the modified tool_input to update the command
     const modifiedInput = {
-      ...toolInput,
+      ...toolInputData,
       command: sanitizedCommand,
     };
 

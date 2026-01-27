@@ -13,26 +13,28 @@
  *
  * Exit codes:
  * - 0: Allow operation
- * - 1: Block operation (when TDD_ENFORCEMENT=block)
+ * - 2: Block operation (when TDD_ENFORCEMENT=block)
+ *
+ * PERF-006: Uses shared hook-input utility to eliminate code duplication.
+ * PERF-007: Uses shared project-root utility to eliminate findProjectRoot duplication.
  */
+
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
 
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputSync,
+  getToolName,
+  getToolInput,
+  extractFilePath,
+  getEnforcementMode,
+} = require('../../lib/utils/hook-input.cjs');
 
-const PROJECT_ROOT = findProjectRoot();
-const ENFORCEMENT_MODE = process.env.TDD_ENFORCEMENT || 'warn';
+const ENFORCEMENT_MODE = getEnforcementMode('TDD_ENFORCEMENT', 'warn');
 
 // Tools that modify files
 const WRITE_TOOLS = ['Edit', 'Write', 'NotebookEdit'];
@@ -71,19 +73,9 @@ const IGNORE_PATTERNS = [
   /pnpm-lock/,
 ];
 
-/**
- * Parse hook input from Claude Code
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing
-  }
-  return null;
-}
+// PERF-006: parseHookInput is now imported from hook-input.cjs
+// Alias for backward compatibility with exports
+const parseHookInput = parseHookInputSync;
 
 /**
  * Check if a file is a test file
@@ -141,20 +133,9 @@ function findTestFile(sourceFile) {
   return null;
 }
 
-/**
- * Extract file path from tool input
- */
-function getFilePath(toolInput) {
-  if (!toolInput) return null;
-
-  // Try common parameter names
-  if (toolInput.file_path) return toolInput.file_path;
-  if (toolInput.filePath) return toolInput.filePath;
-  if (toolInput.path) return toolInput.path;
-  if (toolInput.notebook_path) return toolInput.notebook_path;
-
-  return null;
-}
+// PERF-006: getFilePath is now extractFilePath from hook-input.cjs
+// Alias for backward compatibility
+const getFilePath = extractFilePath;
 
 /**
  * Main execution
@@ -165,14 +146,15 @@ function main() {
     process.exit(0);
   }
 
-  const hookInput = parseHookInput();
+  // PERF-006: Use shared utility for parsing
+  const hookInput = parseHookInputSync();
   if (!hookInput) {
     process.exit(0);
   }
 
-  // Get tool name and input
-  const toolName = hookInput.tool_name || hookInput.tool;
-  const toolInput = hookInput.tool_input || hookInput.input || {};
+  // PERF-006: Get tool name and input using shared utilities
+  const toolName = getToolName(hookInput);
+  const toolInput = getToolInput(hookInput);
 
   // Only check write tools
   if (!WRITE_TOOLS.includes(toolName)) {
@@ -223,7 +205,7 @@ function main() {
       console.log('│                                                 │');
       console.log('│ Set TDD_ENFORCEMENT=warn to allow anyway.      │');
       console.log('└─────────────────────────────────────────────────┘\n');
-      process.exit(1);
+      process.exit(2); // Exit 2 = block operation (convention: 0=allow, 2=block)
     } else {
       console.log('\n┌─────────────────────────────────────────────────┐');
       console.log('│ ⚠️  TDD WARNING                                  │');

@@ -16,19 +16,9 @@ const fs = require('fs');
 const path = require('path');
 const routerState = require('./router-state.cjs');
 
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const { parseHookInputSync } = require('../../lib/utils/hook-input.cjs');
 const AGENTS_DIR = path.join(PROJECT_ROOT, '.claude', 'agents');
 
 // BUG-NEW-006 FIX: Add module-level cache with TTL to prevent race conditions
@@ -95,20 +85,8 @@ function getPreferredAgent(intent) {
   return ROUTING_TABLE[intent] || null;
 }
 
-/**
- * Parse hook input from Claude Code
- * Claude Code passes JSON via process.argv[2] for hooks
- */
-function parseHookInput() {
-  try {
-    if (process.argv[2]) {
-      return JSON.parse(process.argv[2]);
-    }
-  } catch (e) {
-    // Fallback for testing or direct invocation
-  }
-  return null;
-}
+// parseHookInput removed - now using parseHookInputSync from shared hook-input.cjs
+// PERF-006/PERF-007: Eliminated ~10 lines of duplicated parsing code
 
 /**
  * Load agent metadata from frontmatter
@@ -2523,7 +2501,8 @@ function scoreAgents(prompt, agents) {
  * Main execution
  */
 function main() {
-  const hookInput = parseHookInput();
+  // PERF-006/PERF-007: Use shared hook-input.cjs utility
+  const hookInput = parseHookInputSync();
 
   // Get the user prompt
   let userPrompt = '';

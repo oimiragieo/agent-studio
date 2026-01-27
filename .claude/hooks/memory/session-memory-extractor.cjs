@@ -14,23 +14,13 @@
 const path = require('path');
 const fs = require('fs');
 
-/**
- * Find project root by searching for .claude/CLAUDE.md
- * This ensures memory is written to correct location regardless of CWD
- */
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-// Find project root once at module load time
-const PROJECT_ROOT = findProjectRoot();
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolOutput,
+} = require('../../lib/utils/hook-input.cjs');
 
 // Import memory manager
 let memoryManager;
@@ -121,67 +111,29 @@ function extractDiscoveries(output) {
   return discoveries.slice(0, 5); // Max 5 discoveries per task
 }
 
-/**
- * Parse hook input from stdin
- */
-async function parseHookInput() {
-  return new Promise(resolve => {
-    let input = '';
-    let hasData = false;
-
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('data', chunk => {
-      hasData = true;
-      input += chunk;
-    });
-
-    process.stdin.on('end', () => {
-      if (!hasData || !input.trim()) {
-        resolve(null);
-        return;
-      }
-
-      try {
-        resolve(JSON.parse(input));
-      } catch (e) {
-        resolve(null);
-      }
-    });
-
-    process.stdin.on('error', () => {
-      resolve(null);
-    });
-
-    setTimeout(() => {
-      if (!hasData) {
-        resolve(null);
-      }
-    }, 100);
-
-    process.stdin.resume();
-  });
-}
+// PERF-006: parseHookInput is now imported from hook-input.cjs at the top of the file
+// Removed 35-line duplicated function
 
 /**
  * Main execution
  */
 async function main() {
   try {
-    const hookInput = await parseHookInput();
+    // PERF-006: Use shared utility
+    const hookInput = await parseHookInputAsync();
 
     if (!hookInput) {
       process.exit(0);
     }
 
-    // Only process Task tool results
-    const toolName = hookInput.tool_name || hookInput.tool;
+    // PERF-006: Only process Task tool results using shared helper
+    const toolName = getToolName(hookInput);
     if (toolName !== 'Task') {
       process.exit(0);
     }
 
-    // Get the tool output/result
-    const toolOutput = hookInput.tool_output || hookInput.result || '';
+    // PERF-006: Get the tool output/result using shared helper
+    const toolOutput = getToolOutput(hookInput) || '';
 
     if (!toolOutput || typeof toolOutput !== 'string' || toolOutput.length < 50) {
       process.exit(0);
@@ -241,6 +193,5 @@ module.exports = {
   extractPatterns,
   extractGotchas,
   extractDiscoveries,
-  findProjectRoot,
   PROJECT_ROOT,
 };

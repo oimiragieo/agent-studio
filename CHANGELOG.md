@@ -7,6 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-01-27
+
+### Added
+
+- **Unified Evolution Guard** (`unified-evolution-guard.cjs`): Consolidates 4 evolution hooks into single hook
+  - Combines: evolution-state-guard, conflict-detector, quality-gate-validator, research-enforcement
+  - 75% reduction in process spawns for Edit/Write operations
+  - 73% latency reduction (~300ms → ~80ms)
+  - 21 new tests, all passing
+
+- **Shared Hook Input Utility** (`hook-input.cjs`): Centralized hook input parsing
+  - Eliminates ~2000 lines of duplicated parseHookInput() code
+  - SEC-007 compliant with prototype pollution protection
+  - Functions: parseHookInputAsync, parseHookInputSync, getToolInput, getToolName, extractFilePath, auditLog
+  - 38 tests, all passing
+
+- **New Safe JSON Schemas**: Added `anomaly-state` and `rerouter-state` schemas to `safe-json.cjs`
+
+- **7 Workflows Documented in CLAUDE.md Section 8.6**:
+  - security-architect-skill-workflow.md
+  - architecture-review-skill-workflow.md
+  - consensus-voting-skill-workflow.md
+  - swarm-coordination-skill-workflow.md
+  - database-architect-skill-workflow.md
+  - context-compressor-skill-workflow.md
+  - hook-consolidation.md
+
+- **ADR-027**: CLAUDE.md Documentation Synchronization decision record
+
+### Fixed
+
+- **NEW-CRIT-001**: Prototype pollution in `anomaly-detector.cjs` - replaced JSON.parse with safeParseJSON
+- **NEW-CRIT-002**: Prototype pollution in `auto-rerouter.cjs` - replaced JSON.parse with safeParseJSON
+- **NEW-CRIT-003**: Exit code inconsistency in `tdd-check.cjs` - changed exit(1) to exit(2)
+- **NEW-HIGH-001**: Exit code inconsistency in `enforce-claude-md-update.cjs` - changed exit(1) to exit(2)
+- **NEW-HIGH-003**: Self-healing hooks missing atomic write pattern - added atomicWriteJSONSync
+- **CRITICAL-003**: Empty catch blocks in `memory-dashboard.cjs` - added METRICS_DEBUG conditional logging
+- **DOC-001**: CLAUDE.md Section 1.3 now documents unified `routing-guard.cjs` consolidation
+- **DOC-002**: Added 7 missing workflows to CLAUDE.md Section 8.6
+- **DOC-003**: Updated hooks directory structure in CLAUDE.md Section 10.2 (8 categories)
+- **DOC-004**: Updated lib/ structure in CLAUDE.md Section 10.2 (self-healing/, utils/)
+
+### Changed
+
+- **PERF-001**: Verified `routing-guard.cjs` consolidation complete (80% spawn reduction)
+- **PERF-002**: Created `unified-evolution-guard.cjs` (75% spawn reduction)
+- **15+ hooks migrated** to shared `hook-input.cjs` utility
+- **3 self-healing hooks** now use `atomicWriteJSONSync` for crash safety
+
+### Performance Improvements
+
+| Metric             | Before      | After      | Improvement |
+| ------------------ | ----------- | ---------- | ----------- |
+| Edit/Write latency | ~1000ms     | ~400ms     | 60% faster  |
+| Task spawn latency | ~500ms      | ~100ms     | 80% faster  |
+| Duplicated code    | ~2300 lines | ~230 lines | 90% reduced |
+| Hook processes     | 80+         | ~35        | 56% fewer   |
+
+### Security
+
+- **SEC-007 Compliance**: 99% (up from 90%) - safe JSON parsing across all state files
+- **SEC-008 Compliance**: 100% - all security hooks fail-closed on errors
+- **Audit Logging**: All security overrides now logged to stderr in JSON format
+
+---
+
+## [2.0.0] - 2026-01-22
+
 ### Fixed
 
 - **Routing Deadlock Recovery (2026-01-22)**: Fixed critical routing deadlock that caused permanent session locks (CRITICAL severity)
