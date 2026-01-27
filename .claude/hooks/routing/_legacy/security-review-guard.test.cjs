@@ -11,7 +11,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Mock router state
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // Import the hook's validation function
 const { validate, readState } = require('./security-review-guard.cjs');

@@ -17,14 +17,14 @@
 
 'use strict';
 
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
 const {
   parseHookInputAsync,
   getToolInput: sharedGetToolInput,
   getToolName: sharedGetToolName,
-} = require('../../lib/utils/hook-input.cjs');
+} = require('../../../lib/utils/hook-input.cjs');
 
 // Agents that need security review before spawning (implementation agents)
 const IMPLEMENTATION_AGENTS = ['developer', 'qa', 'devops'];

@@ -17,7 +17,7 @@
  */
 
 const path = require('path');
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
 const {
@@ -25,7 +25,7 @@ const {
   getToolName: sharedGetToolName,
   extractFilePath,
   getToolInput,
-} = require('../../lib/utils/hook-input.cjs');
+} = require('../../../lib/utils/hook-input.cjs');
 
 // Tools that Router should NEVER use directly (must spawn agent)
 const BLACKLISTED_TOOLS = ['Glob', 'Grep', 'Edit', 'Write', 'NotebookEdit', 'WebSearch'];

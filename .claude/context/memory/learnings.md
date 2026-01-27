@@ -1,3 +1,31 @@
+## Framework Architecture Diagrams Pattern (2026-01-27)
+
+**Task**: Generate visual documentation of framework architecture using Mermaid diagrams.
+
+**Diagram Types Created**:
+
+1. **System Architecture** (flowchart TB) - High-level component relationships
+2. **Agent Hierarchy** (flowchart TB) - Agent organization by category
+3. **Hook System Flow** (flowchart TB) - Hook lifecycle and enforcement
+4. **Skill Invocation Flow** (sequenceDiagram) - How agents discover/invoke skills
+5. **EVOLVE State Machine** (stateDiagram-v2) - Self-evolution workflow phases
+
+**Mermaid Best Practices Applied**:
+
+- Use `subgraph` for logical grouping of related components
+- Use `direction TB/LR` within subgraphs for layout control
+- Use `classDef` for consistent color-coding by component type
+- Use `note` annotations in sequence/state diagrams for context
+- Include accompanying tables for details that don't fit in diagrams
+
+**Output Location**: `.claude/context/artifacts/diagrams/`
+
+**File Naming Convention**: `##-<descriptive-name>.md` (e.g., `01-system-architecture.md`)
+
+**Key Insight**: The diagram-generator skill provides the syntax guidelines, but effective diagrams require reading the actual codebase structure (settings.json for hooks, agents/ directory for hierarchy, workflows/ for processes).
+
+---
+
 ## SEC-AUDIT-013/014: Windows Atomic Write and TOCTOU Lock Fix (2026-01-27)
 
 **Problem #1 (SEC-AUDIT-013)**: `fs.renameSync()` is not truly atomic on Windows NTFS. Can fail if:
@@ -521,3 +549,49 @@ When consolidating hooks into a single unified hook:
 **Result**: All 8 pointer gaps resolved (DOC-001, POINTER-003). Framework now has complete bidirectional cross-references between skills, workflows, and agents.
 
 **Next Steps**: Template this pattern into creator skills (skill-creator, workflow-creator, agent-creator) to prevent future gaps.
+
+---
+
+## Legacy Hook Import Path Fix (2026-01-27)
+
+**Problem**: After consolidating 4 routing hooks into `routing-guard.cjs` (ADR-026), the original hooks were moved to `_legacy/` folder for reference/rollback. However, the import paths were not updated, causing 6 test failures.
+
+**Root Cause**: Files in `_legacy/` were importing from `./router-state.cjs` and `../../lib/utils/hook-input.cjs`, but since they were moved one directory deeper, the paths should be `../router-state.cjs` and `../../../lib/utils/hook-input.cjs`.
+
+**Files Fixed** (10 total):
+
+**Hook files (4)**:
+
+- `.claude/hooks/routing/_legacy/planner-first-guard.cjs`
+- `.claude/hooks/routing/_legacy/task-create-guard.cjs`
+- `.claude/hooks/routing/_legacy/router-self-check.cjs`
+- `.claude/hooks/routing/_legacy/security-review-guard.cjs`
+
+**Test files (6)**:
+
+- `.claude/hooks/routing/_legacy/planner-first-guard.test.cjs`
+- `.claude/hooks/routing/_legacy/planner-first-guard.integration.test.cjs`
+- `.claude/hooks/routing/_legacy/router-self-check.test.cjs`
+- `.claude/hooks/routing/_legacy/security-review-guard.test.cjs`
+- `.claude/hooks/routing/_legacy/security-review-guard.integration.test.cjs`
+- `.claude/hooks/routing/_legacy/task-create-guard.test.cjs`
+
+**Key Changes**:
+
+1. `require('./router-state.cjs')` -> `require('../router-state.cjs')` (in hooks and tests)
+2. `require('../../lib/utils/hook-input.cjs')` -> `require('../../../lib/utils/hook-input.cjs')` (in hooks)
+3. `path.join(__dirname, 'router-enforcer.cjs')` -> `path.join(__dirname, '..', 'router-enforcer.cjs')` (in integration tests)
+4. Updated HOOK_PATH in task-create-guard.test.cjs to include `_legacy` in path
+
+**Test Results After Fix**:
+
+- Hook tests: 533/533 pass (0 failures)
+- Lib tests: 152/152 pass (0 failures)
+- Combined framework tests: 685/685 pass (0 failures)
+
+**Lesson**: When moving files to subdirectories (like `_legacy/`), always audit and fix:
+
+1. Relative imports in the moved files themselves
+2. Relative imports in associated test files
+3. Dynamic path construction (PROJECT_ROOT + path.join patterns)
+4. References to files that did NOT move to the new directory

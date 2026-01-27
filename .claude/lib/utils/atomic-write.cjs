@@ -87,12 +87,14 @@ function atomicWriteSync(filePath, content, options = {}) {
     fs.renameSync(tempFile, filePath);
   } catch (e) {
     // Clean up temp file on error
+    // CRITICAL-NEW-001 FIX: Remove TOCTOU race by handling ENOENT directly
     try {
-      if (fs.existsSync(tempFile)) {
-        fs.unlinkSync(tempFile);
+      fs.unlinkSync(tempFile);
+    } catch (cleanupErr) {
+      // ENOENT is fine - file was already cleaned up or never created
+      if (cleanupErr.code !== 'ENOENT' && process.env.DEBUG_ATOMIC_WRITE) {
+        console.error(`[atomic-write] Cleanup failed: ${cleanupErr.message}`);
       }
-    } catch {
-      // Ignore cleanup errors
     }
     throw e;
   }

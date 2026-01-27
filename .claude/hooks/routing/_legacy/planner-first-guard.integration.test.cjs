@@ -20,7 +20,7 @@ const assert = require('assert');
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const routerState = require('./router-state.cjs');
+const routerState = require('../router-state.cjs');
 
 /**
  * Reset the router state to a clean default
@@ -82,7 +82,7 @@ function runHook(hookInput, env = {}) {
  * @returns {Object} { exitCode, stdout, stderr }
  */
 function runRouterEnforcer(userPrompt) {
-  const hookPath = path.join(__dirname, 'router-enforcer.cjs');
+  const hookPath = path.join(__dirname, '..', 'router-enforcer.cjs');
   const hookInput = JSON.stringify({ prompt: userPrompt });
 
   try {
