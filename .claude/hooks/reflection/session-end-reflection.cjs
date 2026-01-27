@@ -194,7 +194,6 @@ module.exports = {
   createReflectionEntry,
   getSessionStats,
   queueReflection,
-  parseHookInput,
   main,
   SESSION_END_EVENTS,
   get QUEUE_FILE() {

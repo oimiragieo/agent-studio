@@ -292,7 +292,6 @@ if (require.main === module) {
 // Export for testing
 module.exports = {
   main,
-  parseHookInput,
   getEnforcementMode,
   extractArtifactName,
   extractArtifactCategory,

@@ -607,20 +607,24 @@ async function main() {
   } catch (err) {
     // SEC-008: Fail closed on errors
     if (process.env.HOOK_FAIL_OPEN === 'true') {
-      console.error(JSON.stringify({
-        hook: 'unified-evolution-guard',
-        event: 'fail_open_override',
-        error: err.message,
-      }));
+      console.error(
+        JSON.stringify({
+          hook: 'unified-evolution-guard',
+          event: 'fail_open_override',
+          error: err.message,
+        })
+      );
       process.exit(0);
     }
 
-    console.error(JSON.stringify({
-      hook: 'unified-evolution-guard',
-      event: 'error_fail_closed',
-      error: err.message,
-      timestamp: new Date().toISOString(),
-    }));
+    console.error(
+      JSON.stringify({
+        hook: 'unified-evolution-guard',
+        event: 'error_fail_closed',
+        error: err.message,
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     process.exit(2);
   }

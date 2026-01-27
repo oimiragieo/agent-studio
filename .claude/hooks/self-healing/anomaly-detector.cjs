@@ -621,7 +621,6 @@ module.exports = {
   logAnomaly,
 
   // Main
-  parseHookInput,
   main,
 
   // Constants for testing

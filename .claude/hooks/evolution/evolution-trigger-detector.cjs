@@ -307,7 +307,6 @@ if (require.main === module) {
 // Export for testing
 module.exports = {
   main,
-  parseHookInput,
   isDetectionEnabled,
   detectTriggers,
   extractContext,

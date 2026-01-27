@@ -81,4 +81,4 @@ async function main() {
 
 main();
 
-module.exports = { main, parseHookInput, extractTaskDescription };
+module.exports = { main, extractTaskDescription };

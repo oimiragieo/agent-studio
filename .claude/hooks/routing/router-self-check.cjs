@@ -226,7 +226,6 @@ if (require.main === module) {
 module.exports = {
   main,
   validate,
-  parseHookInput,
   isAlwaysAllowedWrite,
   BLACKLISTED_TOOLS,
   WHITELISTED_TOOLS,

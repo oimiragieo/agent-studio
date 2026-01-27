@@ -293,7 +293,6 @@ module.exports = {
   validate,
   isTechWriterSpawn,
   detectDocumentationIntent,
-  parseHookInput,
   main,
   DOC_KEYWORDS_HIGH,
   DOC_KEYWORDS_MEDIUM,

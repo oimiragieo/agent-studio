@@ -210,7 +210,6 @@ module.exports = {
   shouldTriggerReflection,
   createReflectionEntry,
   queueReflection,
-  parseHookInput,
   main,
   get QUEUE_FILE() {
     return QUEUE_FILE;

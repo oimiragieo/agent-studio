@@ -92,14 +92,22 @@ test('exports checkResearchEnforcement function', () => {
 // Test 2: Evolution state check - valid transition
 test('checkEvolutionStateTransition allows valid transition idle->evaluating', () => {
   const mockState = { state: 'idle' };
-  const mockInput = createMockHookInput('Write', '.claude/context/evolution-state.json', '{"state": "evaluating"}');
+  const mockInput = createMockHookInput(
+    'Write',
+    '.claude/context/evolution-state.json',
+    '{"state": "evaluating"}'
+  );
   const result = unifiedGuard.checkEvolutionStateTransition(mockState, mockInput);
   assert.strictEqual(result.block, false);
 });
 
 test('checkEvolutionStateTransition blocks invalid transition idle->locking', () => {
   const mockState = { state: 'idle' };
-  const mockInput = createMockHookInput('Write', '.claude/context/evolution-state.json', '{"state": "locking"}');
+  const mockInput = createMockHookInput(
+    'Write',
+    '.claude/context/evolution-state.json',
+    '{"state": "locking"}'
+  );
   const result = unifiedGuard.checkEvolutionStateTransition(mockState, mockInput);
   assert.strictEqual(result.block, true);
   assert.ok(result.message.includes('Invalid state transition'));
@@ -122,14 +130,22 @@ test('checkConflicts blocks invalid artifact name', () => {
 // Test 4: Quality gate validation
 test('checkQualityGates allows writes when not in VERIFY phase', () => {
   const mockState = { state: 'locking' };
-  const mockInput = createMockHookInput('Write', '.claude/agents/core/test-agent.md', 'Short content');
+  const mockInput = createMockHookInput(
+    'Write',
+    '.claude/agents/core/test-agent.md',
+    'Short content'
+  );
   const result = unifiedGuard.checkQualityGates(mockState, mockInput);
   assert.strictEqual(result.block, false);
 });
 
 test('checkQualityGates blocks placeholder content in VERIFY phase', () => {
   const mockState = { state: 'verifying', currentEvolution: { phase: 'verify' } };
-  const mockInput = createMockHookInput('Write', '.claude/agents/core/test-agent.md', 'This has TODO: finish this');
+  const mockInput = createMockHookInput(
+    'Write',
+    '.claude/agents/core/test-agent.md',
+    'This has TODO: finish this'
+  );
   const result = unifiedGuard.checkQualityGates(mockState, mockInput);
   assert.strictEqual(result.block, true);
   assert.ok(result.message.includes('quality gate'));

@@ -247,7 +247,6 @@ module.exports = {
   isPlanFile,
   hasEvolutionPhase,
   EVOLUTION_PATTERNS,
-  parseHookInput,
   extractFilePath,
   extractContent,
   formatMissingEvolutionError,

@@ -239,4 +239,4 @@ if (require.main === module) {
 }
 
 // Export for testing
-module.exports = { validate, isPlannerSpawn, parseHookInput, main };
+module.exports = { validate, isPlannerSpawn, main };
