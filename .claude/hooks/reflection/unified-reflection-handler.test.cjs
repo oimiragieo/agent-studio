@@ -423,9 +423,7 @@ describe('unified-reflection-handler.cjs', () => {
 
     it('should limit extracted items to prevent memory bloat', () => {
       // Generate output with many patterns
-      const manyPatterns = Array(10)
-        .fill('pattern: Use this approach for better code')
-        .join('. ');
+      const manyPatterns = Array(10).fill('pattern: Use this approach for better code').join('. ');
       const input = {
         tool_name: 'Task',
         tool_output: manyPatterns,

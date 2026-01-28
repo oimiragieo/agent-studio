@@ -697,7 +697,6 @@ function formatBlockedMessage(toolName, filePath, result) {
     '║    docs/        -> docs/{NAME}.md                                ║',
     '╠══════════════════════════════════════════════════════════════════╣',
     '║  See: .claude/docs/FILE_PLACEMENT_RULES.md                       ║',
-    '║  Override: FILE_PLACEMENT_OVERRIDE=true                          ║',
     '╚══════════════════════════════════════════════════════════════════╝',
     '',
   ];
@@ -751,8 +750,6 @@ function formatEvolveBlockedMessage(toolName, filePath, evolveResult) {
     '+-----------------------------------------------------------------------+',
     '|  Task({ subagent_type: "evolution-orchestrator",                      |',
     '|         prompt: "Create new artifact: <name>" })                      |',
-    '+-----------------------------------------------------------------------+',
-    '|  Override: EVOLVE_ENFORCEMENT_OVERRIDE=true                           |',
     '+=======================================================================+',
     '',
   ];

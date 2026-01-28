@@ -268,11 +268,12 @@ test('block message includes Task example', () => {
   assertIncludes(result.message, 'Task(', 'Message should include Task example');
 });
 
-test('block message includes override instructions', () => {
-  process.env.ROUTER_SELF_CHECK = 'block';
-  const result = validate('Glob');
-  assertIncludes(result.message, 'ROUTER_SELF_CHECK=warn', 'Message should include override info');
-});
+// SEC-AUDIT-021: Override hints removed from user-facing error messages
+// test('block message includes override instructions', () => {
+//   process.env.ROUTER_SELF_CHECK = 'block';
+//   const result = validate('Glob');
+//   assertIncludes(result.message, 'ROUTER_SELF_CHECK=warn', 'Message should include override info');
+// });
 
 // ===========================================
 // Always-Allowed Write Paths Tests (FIX for reflection-agent bug)

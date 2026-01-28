@@ -309,7 +309,6 @@ function checkRouterBash(toolName, toolInput = {}) {
 |      prompt: 'You are QA. Run tests and analyze results...'          |
 |    })                                                                |
 |                                                                      |
-|  Override: ROUTER_BASH_GUARD=warn or ROUTER_BASH_GUARD=off           |
 +======================================================================+
 `;
 
@@ -384,8 +383,7 @@ function checkRouterSelfCheck(toolName, toolInput = {}) {
   // Router is using blacklisted tool directly - violation
   if (DEBUG) console.error('[DEBUG] BLOCKING - all checks passed, should block now');
   const message = `[ROUTER SELF-CHECK VIOLATION] Router attempted to use blacklisted tool: ${toolName}
-Spawn an agent via Task() tool to perform this operation.
-Override: ROUTER_SELF_CHECK=warn or ROUTER_SELF_CHECK=off`;
+Spawn an agent via Task() tool to perform this operation.`;
 
   if (enforcement === 'block') {
     if (DEBUG) console.error('[DEBUG] Returning BLOCK');
@@ -437,8 +435,7 @@ function checkPlannerFirst(toolName, toolInput) {
   // Not a PLANNER spawn, but PLANNER is required - violation
   const complexity = state.complexity || 'unknown';
   const message = `[PLANNER-FIRST VIOLATION] High/Epic complexity (${complexity}) requires PLANNER agent first.
-Spawn PLANNER first: Task({ description: 'Planner designing...', prompt: 'You are PLANNER...' })
-Override: PLANNER_FIRST_ENFORCEMENT=off`;
+Spawn PLANNER first: Task({ description: 'Planner designing...', prompt: 'You are PLANNER...' })`;
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };
@@ -482,8 +479,7 @@ function checkTaskCreate(toolName) {
   // Violation: trying to create tasks without planner
   const complexity = state.complexity || 'unknown';
   const message = `[TASK-CREATE VIOLATION] Complex task (${complexity}) requires PLANNER agent.
-Spawn PLANNER first, then PLANNER will create the tasks.
-Override: PLANNER_FIRST_ENFORCEMENT=off`;
+Spawn PLANNER first, then PLANNER will create the tasks.`;
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };
@@ -532,8 +528,7 @@ function checkSecurityReview(toolName, toolInput) {
 
   // Violation: implementation agent without security review
   const message = `[SEC-004] Security review required before implementation.
-Spawn SECURITY-ARCHITECT first to review security implications.
-Override: SECURITY_REVIEW_ENFORCEMENT=off`;
+Spawn SECURITY-ARCHITECT first to review security implications.`;
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };
@@ -582,8 +577,7 @@ function checkRouterWrite(toolName, toolInput) {
   // Violation: write without agent context
   const fileName = filePath ? path.basename(filePath) : 'unknown';
   const message = `[ROUTER WRITE BLOCKED] Tool: ${toolName}, File: ${fileName}
-The Router cannot directly edit files. Spawn an agent using the Task tool.
-Override: ROUTER_WRITE_GUARD=warn or ROUTER_WRITE_GUARD=off`;
+The Router cannot directly edit files. Spawn an agent using the Task tool.`;
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };

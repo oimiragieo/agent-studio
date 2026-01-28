@@ -80,11 +80,6 @@ function formatBlockedMessage(toolName, filePath, state) {
     '│     description: "Fix login bug",              │',
     '│     prompt: "..."                              │',
     '│   })                                           │',
-    '│                                                 │',
-    '│ Escape hatches:                                │',
-    '│   ROUTER_WRITE_GUARD=warn  (warning only)      │',
-    '│   ROUTER_WRITE_GUARD=off   (disable guard)     │',
-    '│   ALLOW_ROUTER_WRITE=true  (one-time override) │',
     '└─────────────────────────────────────────────────┘',
     '',
   ];

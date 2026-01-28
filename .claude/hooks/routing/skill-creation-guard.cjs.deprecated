@@ -294,8 +294,6 @@ function validateSkillCreation(toolName, toolInput) {
 |    - Router (won't appear in routing decisions)                      |
 |    - Agents (won't be assigned to any agent)                         |
 |    - Users (won't appear in skill catalog)                           |
-|                                                                      |
-|  Override: SKILL_CREATION_GUARD=warn or SKILL_CREATION_GUARD=off     |
 +======================================================================+
 `;
 

@@ -292,8 +292,6 @@ function generateViolationMessage(filePath, requiredCreator, artifactType) {
 |    - Router won't know about it                                      |
 |    - Agents won't be assigned it                                     |
 |    - Users can't discover it                                         |
-|                                                                      |
-|  Override: CREATOR_GUARD=warn or CREATOR_GUARD=off                   |
 +======================================================================+
 `;
 }

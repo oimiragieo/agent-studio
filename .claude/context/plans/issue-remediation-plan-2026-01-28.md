@@ -8,12 +8,12 @@ Prioritized remediation plan for 44 open issues identified in `.claude/context/m
 
 ### Priority Breakdown
 
-| Priority | Count | Issues |
-|----------|-------|--------|
-| CRITICAL/P0 | 5 | SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014, ENFORCEMENT-002, ENFORCEMENT-003 |
-| HIGH/P1 | 8 | WORKFLOW-VIOLATION-001, ENFORCEMENT-001, SEC-REMEDIATION-001/002/003, SEC-AUDIT-013/015, TESTING-003 |
-| MEDIUM/P2 | 20 | Documentation, pointer gaps, process improvements |
-| LOW/P3 | 11 | Future enhancements, recommendations |
+| Priority    | Count | Issues                                                                                               |
+| ----------- | ----- | ---------------------------------------------------------------------------------------------------- |
+| CRITICAL/P0 | 5     | SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014, ENFORCEMENT-002, ENFORCEMENT-003                        |
+| HIGH/P1     | 8     | WORKFLOW-VIOLATION-001, ENFORCEMENT-001, SEC-REMEDIATION-001/002/003, SEC-AUDIT-013/015, TESTING-003 |
+| MEDIUM/P2   | 20    | Documentation, pointer gaps, process improvements                                                    |
+| LOW/P3      | 11    | Future enhancements, recommendations                                                                 |
 
 ### Dependency Analysis
 
@@ -76,6 +76,7 @@ TESTING-002 (hook test coverage)
 #### Phase 1 Error Handling
 
 If any task fails:
+
 1. Run rollback commands for completed tasks (reverse order)
 2. Document error: `echo "Phase 1 failed: [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2
@@ -382,7 +383,7 @@ pnpm test -- --grep "workflow-validator"
 - [ ] **6.4** Fix STRUCT-001: Move skill workflows (~2 hours)
   - **Files**: `.claude/workflows/`
   - **Command**: Spawn DEVELOPER
-  - **Fix**: Move *-skill-workflow.md to workflows/skills/ or keep in root with documentation
+  - **Fix**: Move \*-skill-workflow.md to workflows/skills/ or keep in root with documentation
   - **Verify**: Consistent placement documented
 
 - [ ] **6.5** Fix NEW-MED-002: Debug logging for dashboard (~1 hour)
@@ -406,12 +407,14 @@ pnpm test -- --grep "workflow-validator"
 3. Check for evolution opportunities (new agents/skills needed)
 
 **Spawn Command**:
+
 ```javascript
 Task({
-  subagent_type: "reflection-agent",
-  description: "Session reflection and learning extraction",
-  prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created)."
-})
+  subagent_type: 'reflection-agent',
+  description: 'Session reflection and learning extraction',
+  prompt:
+    'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
+});
 ```
 
 **Success Criteria**:
@@ -424,26 +427,26 @@ Task({
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| ENFORCEMENT-003 fix breaks workflows | High | Test in warn mode first | `ROUTER_WRITE_GUARD=off` |
-| Shell-quote library breaks existing commands | High | Keep custom parser as fallback | Git revert |
-| Windows atomic write changes break Linux | Medium | Platform-specific paths | Conditional logic |
-| State file HMAC breaks existing sessions | Medium | Migration script | Remove signature check |
-| Hook consolidation breaks event handling | High | Keep original hooks for reference | Register original hooks |
+| Risk                                         | Impact | Mitigation                        | Rollback                 |
+| -------------------------------------------- | ------ | --------------------------------- | ------------------------ |
+| ENFORCEMENT-003 fix breaks workflows         | High   | Test in warn mode first           | `ROUTER_WRITE_GUARD=off` |
+| Shell-quote library breaks existing commands | High   | Keep custom parser as fallback    | Git revert               |
+| Windows atomic write changes break Linux     | Medium | Platform-specific paths           | Conditional logic        |
+| State file HMAC breaks existing sessions     | Medium | Migration script                  | Remove signature check   |
+| Hook consolidation breaks event handling     | High   | Keep original hooks for reference | Register original hooks  |
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Priority |
-|-------|-------|-----------|-----------|----------|
-| 1 | 5 | 24-37h | Partial | P0 (CRITICAL) |
-| 2 | 7 | 17-28h | Yes | P1 (HIGH) |
-| 3 | 8 | 17-23h | Yes | P2 (MEDIUM) |
-| 4 | 7 | 16-19h | Partial | P2-P3 |
-| 5 | 6 | 26-37h | Yes | P2 |
-| 6 | 5 | 18h | Yes | P3 (LOW) |
-| FINAL | 1 | 1-2h | No | Required |
-| **Total** | **39** | **~119-164h** | | |
+| Phase     | Tasks  | Est. Time     | Parallel? | Priority      |
+| --------- | ------ | ------------- | --------- | ------------- |
+| 1         | 5      | 24-37h        | Partial   | P0 (CRITICAL) |
+| 2         | 7      | 17-28h        | Yes       | P1 (HIGH)     |
+| 3         | 8      | 17-23h        | Yes       | P2 (MEDIUM)   |
+| 4         | 7      | 16-19h        | Partial   | P2-P3         |
+| 5         | 6      | 26-37h        | Yes       | P2            |
+| 6         | 5      | 18h           | Yes       | P3 (LOW)      |
+| FINAL     | 1      | 1-2h          | No        | Required      |
+| **Total** | **39** | **~119-164h** |           |               |
 
 ## Quick Wins Summary (< 1 hour each)
 
@@ -461,15 +464,15 @@ These can be done immediately for fast progress:
 
 ## Agent Assignment Matrix
 
-| Phase | Primary Agent | Supporting Agents |
-|-------|--------------|-------------------|
-| 1 | SECURITY-ARCHITECT | DEVELOPER |
-| 2 | DEVELOPER | SECURITY-ARCHITECT |
-| 3 | TECHNICAL-WRITER | QA, DEVELOPER |
-| 4 | DEVELOPER | ARCHITECT |
-| 5 | DEVELOPER | CODE-REVIEWER, SECURITY-ARCHITECT |
-| 6 | TECHNICAL-WRITER | DEVELOPER |
-| FINAL | REFLECTION-AGENT | - |
+| Phase | Primary Agent      | Supporting Agents                 |
+| ----- | ------------------ | --------------------------------- |
+| 1     | SECURITY-ARCHITECT | DEVELOPER                         |
+| 2     | DEVELOPER          | SECURITY-ARCHITECT                |
+| 3     | TECHNICAL-WRITER   | QA, DEVELOPER                     |
+| 4     | DEVELOPER          | ARCHITECT                         |
+| 5     | DEVELOPER          | CODE-REVIEWER, SECURITY-ARCHITECT |
+| 6     | TECHNICAL-WRITER   | DEVELOPER                         |
+| FINAL | REFLECTION-AGENT   | -                                 |
 
 ---
 

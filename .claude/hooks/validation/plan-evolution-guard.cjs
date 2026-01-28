@@ -113,8 +113,6 @@ function formatMissingEvolutionError() {
     description: "Session reflection and learning extraction",
     prompt: "You are REFLECTION-AGENT..."
   })
-
-  Override: PLAN_EVOLUTION_GUARD=off (not recommended)
 ========================================================================
 `;
 }

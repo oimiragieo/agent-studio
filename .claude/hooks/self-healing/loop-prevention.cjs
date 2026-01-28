@@ -756,8 +756,7 @@ const parseHookInput = parseHookInputAsync;
 function formatViolationMessage(result) {
   return `[LOOP PREVENTION] ${result.reason}
 
-This is a safety mechanism to prevent infinite loops.
-Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
+This is a safety mechanism to prevent infinite loops.`;
 }
 
 // ==========================================

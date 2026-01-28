@@ -73,7 +73,6 @@ function formatWarning(output) {
 |  AGENTS MUST call TaskUpdate({ status: "completed" }) when done!     |
 |                                                                      |
 |  This may indicate the agent ignored task tracking instructions.     |
-|  Override: TASK_COMPLETION_GUARD=off                                 |
 +======================================================================+
 `;
 }

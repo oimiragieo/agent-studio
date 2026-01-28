@@ -495,8 +495,7 @@ function checkRoutingGuard(toolName, toolInput) {
       // Not a PLANNER spawn, but PLANNER is required
       const complexity = state.complexity || 'unknown';
       const message = `[PLANNER-FIRST VIOLATION] High/Epic complexity (${complexity}) requires PLANNER agent first.
-Spawn PLANNER first: Task({ description: 'Planner designing...', prompt: 'You are PLANNER...' })
-Override: PLANNER_FIRST_ENFORCEMENT=off`;
+Spawn PLANNER first: Task({ description: 'Planner designing...', prompt: 'You are PLANNER...' })`;
 
       if (plannerEnforcement === 'block') {
         return { pass: false, result: 'block', message };
@@ -518,8 +517,7 @@ Override: PLANNER_FIRST_ENFORCEMENT=off`;
       // Check if spawning an implementation agent
       if (isImplementationAgentSpawn(toolInput)) {
         const message = `[SEC-004] Security review required before implementation.
-Spawn SECURITY-ARCHITECT first to review security implications.
-Override: SECURITY_REVIEW_ENFORCEMENT=off`;
+Spawn SECURITY-ARCHITECT first to review security implications.`;
 
         if (securityEnforcement === 'block') {
           return { pass: false, result: 'block', message };
@@ -570,9 +568,7 @@ Keywords matched: ${detection.matchedKeywords.join(', ')}
 
 Documentation tasks should be routed to technical-writer agent:
   Task({ subagent_type: 'general-purpose', description: 'Technical writer creating docs...',
-         prompt: 'You are TECHNICAL-WRITER...' })
-
-Set DOCUMENTATION_ROUTING_GUARD=off to disable (not recommended).`;
+         prompt: 'You are TECHNICAL-WRITER...' })`;
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };
@@ -623,8 +619,7 @@ function checkLoopPrevention(hookInput) {
   if (loopState.spawnDepth >= depthLimit) {
     const message = `[LOOP PREVENTION] Spawn depth limit exceeded (${loopState.spawnDepth}/${depthLimit}). Too many nested agent spawns.
 
-This is a safety mechanism to prevent infinite loops.
-Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
+This is a safety mechanism to prevent infinite loops.`;
 
     if (enforcement === 'block') {
       return { pass: false, result: 'block', message };
@@ -644,8 +639,7 @@ Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
   if (count >= threshold) {
     const message = `[LOOP PREVENTION] Pattern detected: "${spawnAction}" repeated ${count} times. Threshold is ${threshold}.
 
-This is a safety mechanism to prevent infinite loops.
-Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
+This is a safety mechanism to prevent infinite loops.`;
 
     if (enforcement === 'block') {
       return { pass: false, result: 'block', message };
@@ -660,8 +654,7 @@ Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
     if (loopState.evolutionCount >= budget) {
       const message = `[LOOP PREVENTION] Evolution budget exhausted (${loopState.evolutionCount}/${budget}). Session limit reached.
 
-This is a safety mechanism to prevent infinite loops.
-Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
+This is a safety mechanism to prevent infinite loops.`;
 
       if (enforcement === 'block') {
         return { pass: false, result: 'block', message };
@@ -682,8 +675,7 @@ Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
         const remainingMin = Math.ceil(remainingMs / 60000);
         const message = `[LOOP PREVENTION] Cooldown period active for ${evolutionType} evolution. Wait ${remainingMin} minute(s).
 
-This is a safety mechanism to prevent infinite loops.
-Override: LOOP_PREVENTION_MODE=warn or LOOP_PREVENTION_MODE=off`;
+This is a safety mechanism to prevent infinite loops.`;
 
         if (enforcement === 'block') {
           return { pass: false, result: 'block', message };

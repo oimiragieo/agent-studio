@@ -95,8 +95,6 @@ function formatBlockMessage(toolName) {
     description: 'Search codebase',
     prompt: '...'
   });
-
-  Override: ROUTER_SELF_CHECK=warn or ROUTER_SELF_CHECK=off
 ========================================================================
 `;
 }
@@ -111,7 +109,6 @@ function formatWarnMessage(toolName) {
 WARNING: ROUTER SELF-CHECK
 Tool: ${toolName}
 Router should spawn an agent for exploration/modification tasks.
-Override: ROUTER_SELF_CHECK=off to disable this warning.
 `;
 }
 

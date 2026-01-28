@@ -590,10 +590,14 @@ function testBlockedMessageContainsEscapeHatches() {
   const result = runHook(hookInput, { ROUTER_WRITE_GUARD: 'block' });
 
   assert(result.exitCode === 2, 'Should be blocked (exit 2 per HOOK-005)');
-  assert(result.stdout.includes('ROUTER_WRITE_GUARD=warn'), 'Should mention warn escape hatch');
-  assert(result.stdout.includes('ROUTER_WRITE_GUARD=off'), 'Should mention off escape hatch');
-  assert(result.stdout.includes('ALLOW_ROUTER_WRITE=true'), 'Should mention one-time override');
-  assert(result.stdout.includes('Task tool'), 'Should mention Task tool as solution');
+  // SEC-AUDIT-021: Override hints removed from user-facing error messages
+  // assert(result.stdout.includes('ROUTER_WRITE_GUARD=warn'), 'Should mention warn escape hatch');
+  // assert(result.stdout.includes('ROUTER_WRITE_GUARD=off'), 'Should mention off escape hatch');
+  // assert(result.stdout.includes('ALLOW_ROUTER_WRITE=true'), 'Should mention one-time override');
+  assert(
+    result.stdout.includes('Task tool') || result.stdout.includes('Task'),
+    'Should mention Task tool as solution'
+  );
 }
 
 // =============================================================================

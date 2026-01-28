@@ -720,7 +720,8 @@ describe('routing-guard', () => {
       assert.ok(result.message.includes('ADR-030'), 'Message should reference ADR-030');
       assert.ok(result.message.includes('git status'), 'Message should list allowed commands');
       assert.ok(result.message.includes('Spawn'), 'Message should tell user to spawn agent');
-      assert.ok(result.message.includes('ROUTER_BASH_GUARD'), 'Message should mention override');
+      // SEC-AUDIT-021: Override hints removed from user-facing error messages
+      // assert.ok(result.message.includes('ROUTER_BASH_GUARD'), 'Message should mention override');
     });
   });
 

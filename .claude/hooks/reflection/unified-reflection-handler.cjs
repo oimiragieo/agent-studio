@@ -491,7 +491,12 @@ function recordMemoryItems(extracted) {
 
     for (const discovery of extracted.discoveries || []) {
       if (
-        memoryManager.recordDiscovery(discovery.path, discovery.description, 'general', PROJECT_ROOT)
+        memoryManager.recordDiscovery(
+          discovery.path,
+          discovery.description,
+          'general',
+          PROJECT_ROOT
+        )
       ) {
         recorded++;
       }
