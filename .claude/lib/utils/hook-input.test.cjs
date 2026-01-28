@@ -387,6 +387,114 @@ describe('hook-input', () => {
     });
   });
 
+  describe('auditSecurityOverride (SEC-AUDIT-016)', () => {
+    it('should export auditSecurityOverride function', () => {
+      assert.ok(hookInput, 'Module should be loadable');
+      assert.strictEqual(
+        typeof hookInput.auditSecurityOverride,
+        'function',
+        'auditSecurityOverride should be a function'
+      );
+    });
+
+    it('should output JSON to stderr with SECURITY_OVERRIDE type', () => {
+      assert.ok(hookInput, 'Module should be loadable');
+
+      // Capture stderr
+      let captured = '';
+      const originalStderr = process.stderr.write.bind(process.stderr);
+      process.stderr.write = chunk => {
+        captured += chunk;
+        return true;
+      };
+
+      hookInput.auditSecurityOverride(
+        'routing-guard',
+        'ROUTER_BASH_GUARD',
+        'off',
+        'Router can use any Bash command'
+      );
+
+      process.stderr.write = originalStderr;
+
+      // Parse captured output
+      const parsed = JSON.parse(captured.trim());
+      assert.strictEqual(parsed.type, 'SECURITY_OVERRIDE');
+      assert.strictEqual(parsed.hook, 'routing-guard');
+      assert.strictEqual(parsed.envVar, 'ROUTER_BASH_GUARD');
+      assert.strictEqual(parsed.value, 'off');
+      assert.strictEqual(parsed.impact, 'Router can use any Bash command');
+      assert.ok(parsed.timestamp, 'Should have timestamp');
+      assert.ok(parsed.pid, 'Should have process ID');
+    });
+
+    it('should include timestamp in ISO format', () => {
+      assert.ok(hookInput, 'Module should be loadable');
+
+      let captured = '';
+      const originalStderr = process.stderr.write.bind(process.stderr);
+      process.stderr.write = chunk => {
+        captured += chunk;
+        return true;
+      };
+
+      hookInput.auditSecurityOverride('test-hook', 'TEST_VAR', 'warn', 'Test impact');
+
+      process.stderr.write = originalStderr;
+
+      const parsed = JSON.parse(captured.trim());
+      // Validate ISO date format
+      const date = new Date(parsed.timestamp);
+      assert.ok(!isNaN(date.getTime()), 'Timestamp should be valid ISO date');
+    });
+
+    it('should include process ID for correlation', () => {
+      assert.ok(hookInput, 'Module should be loadable');
+
+      let captured = '';
+      const originalStderr = process.stderr.write.bind(process.stderr);
+      process.stderr.write = chunk => {
+        captured += chunk;
+        return true;
+      };
+
+      hookInput.auditSecurityOverride('test-hook', 'TEST_VAR', 'off', 'Test impact');
+
+      process.stderr.write = originalStderr;
+
+      const parsed = JSON.parse(captured.trim());
+      assert.strictEqual(parsed.pid, process.pid, 'Should include actual process ID');
+    });
+
+    it('should distinguish from regular auditLog by type field', () => {
+      assert.ok(hookInput, 'Module should be loadable');
+
+      let captured = '';
+      const originalStderr = process.stderr.write.bind(process.stderr);
+      process.stderr.write = chunk => {
+        captured += chunk;
+        return true;
+      };
+
+      // Call both audit functions
+      hookInput.auditSecurityOverride('test-hook', 'TEST_VAR', 'off', 'Security override');
+      hookInput.auditLog('test-hook', 'regular_event', { data: 'value' });
+
+      process.stderr.write = originalStderr;
+
+      // Parse both lines
+      const lines = captured.trim().split('\n');
+      const securityLog = JSON.parse(lines[0]);
+      const regularLog = JSON.parse(lines[1]);
+
+      // Security override has type field
+      assert.strictEqual(securityLog.type, 'SECURITY_OVERRIDE');
+      // Regular auditLog has event field but no type field
+      assert.strictEqual(regularLog.event, 'regular_event');
+      assert.strictEqual(regularLog.type, undefined, 'Regular auditLog should not have type field');
+    });
+  });
+
   describe('ALLOWED_HOOK_INPUT_KEYS', () => {
     it('should export allowed keys constant', () => {
       assert.ok(hookInput, 'Module should be loadable');

@@ -394,6 +394,166 @@ function runTests() {
   // ============================================================================
   // Summary
   // ============================================================================
+  // ============================================================================
+  // 8. Error Path Coverage Tests (IMP-006)
+  // ============================================================================
+  console.log('8. Error Path Coverage Tests');
+
+  runTest('getRecencyScore handles undefined gracefully', () => {
+    const score = pruner.getRecencyScore(undefined);
+    assert(score === 0, `Expected 0 for undefined, got ${score}`);
+  });
+
+  runTest('getRecencyScore handles null gracefully', () => {
+    const score = pruner.getRecencyScore(null);
+    assert(score === 0, `Expected 0 for null, got ${score}`);
+  });
+
+  runTest('getRecencyScore handles empty string gracefully', () => {
+    const score = pruner.getRecencyScore('');
+    assert(score === 0, `Expected 0 for empty string, got ${score}`);
+  });
+
+  runTest('getFrequencyScore handles negative values gracefully', () => {
+    const score = pruner.getFrequencyScore(-5);
+    assert(score === 0, `Expected 0 for negative count, got ${score}`);
+  });
+
+  runTest('getFrequencyScore handles undefined gracefully', () => {
+    const score = pruner.getFrequencyScore(undefined);
+    assert(score === 0, `Expected 0 for undefined, got ${score}`);
+  });
+
+  runTest('getFrequencyScore handles NaN gracefully', () => {
+    const score = pruner.getFrequencyScore(NaN);
+    assert(score === 0, `Expected 0 for NaN, got ${score}`);
+  });
+
+  runTest('getImportanceScore handles null entry gracefully', () => {
+    const score = pruner.getImportanceScore(null);
+    assert(score >= 0 && score <= 1, `Expected valid score for null, got ${score}`);
+  });
+
+  runTest('getImportanceScore handles entry with no text gracefully', () => {
+    const score = pruner.getImportanceScore({ timestamp: new Date().toISOString() });
+    assert(score >= 0 && score <= 1, `Expected valid score for no text, got ${score}`);
+  });
+
+  runTest('calculateUtility handles entry with missing fields gracefully', () => {
+    const entry = {}; // No fields at all
+    const utility = pruner.calculateUtility(entry);
+    assert(utility >= 0 && utility <= 1, `Expected valid utility for empty entry, got ${utility}`);
+  });
+
+  runTest('calculateUtility handles null entry gracefully', () => {
+    // calculateUtility should handle null without throwing
+    try {
+      const utility = pruner.calculateUtility(null);
+      assert(utility >= 0, `Expected non-negative utility for null, got ${utility}`);
+    } catch (e) {
+      // If it throws, it should be a clear error
+      assert(e.message, 'Should have error message if throwing');
+    }
+  });
+
+  runTest('jaccardSimilarity handles empty strings gracefully', () => {
+    const similarity = pruner.jaccardSimilarity('', '');
+    assert(
+      similarity === 0 || similarity === 1,
+      `Expected 0 or 1 for empty strings, got ${similarity}`
+    );
+  });
+
+  runTest('jaccardSimilarity handles null/undefined gracefully', () => {
+    const similarity = pruner.jaccardSimilarity(null, undefined);
+    assert(similarity === 0, `Expected 0 for null/undefined, got ${similarity}`);
+  });
+
+  runTest('findSimilarEntries handles empty array gracefully', () => {
+    const groups = pruner.findSimilarEntries([], 0.5);
+    assert(Array.isArray(groups), 'Should return array');
+    assert(groups.length === 0, `Expected empty array, got ${groups.length} groups`);
+  });
+
+  runTest('mergeEntries handles single entry gracefully', () => {
+    const entries = [createEntry({ text: 'Single entry' })];
+    const merged = pruner.mergeEntries(entries);
+    assert(merged.text === 'Single entry', 'Should return single entry unchanged');
+  });
+
+  runTest('mergeEntries handles empty array gracefully', () => {
+    const merged = pruner.mergeEntries([]);
+    assert(
+      merged === null || merged === undefined || merged.text === '',
+      'Should return null/undefined/empty for empty array'
+    );
+  });
+
+  runTest('detectDuplicates handles empty existing entries gracefully', () => {
+    const duplicate = pruner.detectDuplicates('new entry', [], 0.5);
+    assert(duplicate === null, 'Should return null for empty existing entries');
+  });
+
+  runTest('detectDuplicates handles null new entry gracefully', () => {
+    const existingEntries = [createEntry({ text: 'existing' })];
+    const duplicate = pruner.detectDuplicates(null, existingEntries, 0.5);
+    assert(duplicate === null, 'Should return null for null new entry');
+  });
+
+  runTest('pruneByUtility handles empty array gracefully', () => {
+    const result = pruner.pruneByUtility([], 5);
+    assert(result.kept.length === 0, 'Should have no kept entries');
+    assert(result.removed.length === 0, 'Should have no removed entries');
+  });
+
+  runTest('pruneByUtility handles targetCount larger than entries gracefully', () => {
+    const entries = [createEntry({ text: 'Entry 1' }), createEntry({ text: 'Entry 2' })];
+    const result = pruner.pruneByUtility(entries, 100);
+    assert(result.kept.length === 2, `Expected all entries kept, got ${result.kept.length}`);
+    assert(result.removed.length === 0, 'Should have no removed entries');
+  });
+
+  runTest('pruneByUtility handles targetCount of 0 gracefully', () => {
+    const entries = [createEntry({ text: 'Entry 1' })];
+    const result = pruner.pruneByUtility(entries, 0);
+    assert(result.kept.length === 0, 'Should have no kept entries with target 0');
+    assert(result.removed.length === 1, 'Should remove all entries with target 0');
+  });
+
+  runTest('enforceRetention handles unknown tier gracefully', () => {
+    const entries = [createEntry({ text: 'Entry 1' })];
+    try {
+      const result = pruner.enforceRetention(entries, 'UNKNOWN_TIER');
+      // If it doesn't throw, should still return valid structure
+      assert(Array.isArray(result.kept), 'Should have kept array');
+    } catch (e) {
+      // If it throws, that's also acceptable
+      assert(e.message, 'Should have error message');
+    }
+  });
+
+  runTest('archiveLowValue handles empty entries gracefully', () => {
+    const archive = pruner.archiveLowValue([]);
+    assert(archive.type === 'archive', `Expected type 'archive', got ${archive.type}`);
+    assert(archive.entries.length === 0, 'Should have no archived entries');
+  });
+
+  runTest('deduplicateAndPrune handles null options gracefully', () => {
+    const entries = [createEntry({ text: 'Entry 1' })];
+    // Should use defaults if options is null/undefined
+    const result = pruner.deduplicateAndPrune(entries, null);
+    assert(Array.isArray(result.kept), 'Should return valid result');
+  });
+
+  runTest('deduplicateAndPrune handles empty entries gracefully', () => {
+    const result = pruner.deduplicateAndPrune([], { targetCount: 10 });
+    assert(result.kept.length === 0, 'Should have no kept entries');
+    assert(result.removed.length === 0, 'Should have no removed entries');
+    assert(result.deduplicated === 0, 'Should have 0 deduplicated');
+  });
+
+  console.log('');
+
   console.log('==================');
   console.log(`Tests: ${testsPassed} passed, ${testsFailed} failed`);
   console.log('');

@@ -2,7 +2,7 @@
 name: graphql-pro
 version: 1.0.0
 description: GraphQL API development expert with schema design, resolver patterns, performance optimization, and security. Use for building GraphQL APIs, optimizing queries, implementing subscriptions, and API architecture.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

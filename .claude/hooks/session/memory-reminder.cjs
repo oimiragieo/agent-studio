@@ -1,5 +1,20 @@
 #!/usr/bin/env node
 /**
+ * @deprecated PERF-003 (2026-01-27): Use user-prompt-unified.cjs instead
+ *
+ * This hook has been CONSOLIDATED into:
+ *   .claude/hooks/routing/user-prompt-unified.cjs
+ *
+ * The unified hook handles memory reminders as part of Check 3 (lines 488-566).
+ * This file is retained for reference and backward compatibility but is
+ * NOT registered in settings.json and will NOT execute.
+ *
+ * See: .claude/workflows/operations/hook-consolidation.md for consolidation details.
+ *
+ * ============================================================================
+ * ORIGINAL DOCUMENTATION (preserved for reference)
+ * ============================================================================
+ *
  * Memory Reminder Hook
  *
  * Runs on SessionStart to remind agents to read memory files.
@@ -113,4 +128,9 @@ function main() {
   process.exit(0);
 }
 
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main };
 main();

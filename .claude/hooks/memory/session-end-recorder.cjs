@@ -25,6 +25,7 @@ const { execSync } = require('child_process');
 
 // Import memory manager and memory tiers
 const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
+const { debugLog } = require('../../lib/utils/hook-input.cjs');
 const memoryManager = require(
   path.join(PROJECT_ROOT, '.claude', 'lib', 'memory', 'memory-manager.cjs')
 );
@@ -195,25 +196,19 @@ async function main() {
         PROJECT_ROOT
       );
 
-      if (process.env.DEBUG_HOOKS) {
-        console.error(`[session-end] Consolidated session to MTM: ${consolidateResult.mtmPath}`);
-      }
+      debugLog('session-end-recorder', `Consolidated session to MTM: ${consolidateResult.mtmPath}`);
     }
 
     // Also call legacy memory-manager.cjs saveSession for backward compatibility
     const result = memoryManager.saveSession(sessionData, PROJECT_ROOT);
 
     // Log success (for debugging)
-    if (process.env.DEBUG_HOOKS) {
-      console.error(`[session-end] Saved session ${result.sessionNum} to ${result.file}`);
-    }
+    debugLog('session-end-recorder', `Saved session ${result.sessionNum} to ${result.file}`);
 
     process.exit(0);
   } catch (err) {
     // Fail gracefully - session ends regardless
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[session-end] Error:', err.message);
-    }
+    debugLog('session-end-recorder', 'Session recording error', err);
     process.exit(0); // Non-blocking - session ends regardless
   }
 }

@@ -38,6 +38,8 @@ const path = require('path');
 const { atomicWriteSync } = require('../../lib/utils/atomic-write.cjs');
 // PROC-002: Use shared utility instead of duplicated findProjectRoot
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+// HOOK-006 FIX: Use standardized audit logging
+const { auditLog, debugLog } = require('../../lib/utils/hook-input.cjs');
 
 // Configuration
 let QUEUE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'reflection-queue.jsonl');
@@ -89,17 +91,13 @@ function readQueueEntries(queueFile) {
         }
       } catch (parseErr) {
         // Skip malformed JSON lines, log if debug enabled
-        if (process.env.DEBUG_HOOKS) {
-          console.error('[reflection-queue-processor] Skipping malformed line:', line);
-        }
+        debugLog('reflection-queue-processor', 'Skipping malformed line in queue', parseErr);
       }
     }
 
     return entries;
   } catch (err) {
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection-queue-processor] Error reading queue:', err.message);
-    }
+    debugLog('reflection-queue-processor', 'Error reading queue file', err);
     return [];
   }
 }
@@ -240,12 +238,7 @@ function markEntriesProcessed(processedEntries, queueFile) {
     // This handles temp file creation, writing, and atomic rename internally
     atomicWriteSync(queueFile, updatedLines.join('\n') + '\n');
   } catch (err) {
-    if (process.env.DEBUG_HOOKS) {
-      console.error(
-        '[reflection-queue-processor] Error marking entries as processed:',
-        err.message
-      );
-    }
+    debugLog('reflection-queue-processor', 'Error marking entries as processed', err);
   }
 }
 
@@ -305,7 +298,7 @@ async function main() {
 
       const mode = process.env.REFLECTION_HOOK_MODE || 'block';
       if (mode === 'warn') {
-        console.log(`[reflection-queue-processor] Processed ${result.processed} entries`);
+        auditLog('reflection-queue-processor', 'processed', { count: result.processed });
       }
     }
 
@@ -313,9 +306,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     // Fail open - log error but don't block
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection-queue-processor] Error:', err.message);
-    }
+    debugLog('reflection-queue-processor', 'Hook error during processing', err);
     process.exit(0);
   }
 }

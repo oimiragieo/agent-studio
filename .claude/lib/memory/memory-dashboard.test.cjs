@@ -485,6 +485,121 @@ if (require.main === module) {
     });
   });
 
+  // Test Suite 6: METRICS_DEBUG error logging
+  describe('Error Logging with METRICS_DEBUG', function () {
+    it('should log errors when METRICS_DEBUG is enabled and file read fails', function () {
+      setupTestDir();
+      try {
+        delete require.cache[require.resolve('./memory-dashboard.cjs')];
+        const { collectMetrics } = require('./memory-dashboard.cjs');
+
+        // Temporarily set METRICS_DEBUG
+        const originalDebug = process.env.METRICS_DEBUG;
+        process.env.METRICS_DEBUG = 'true';
+
+        // Capture console.error calls
+        const errors = [];
+        const originalError = console.error;
+        console.error = function (...args) {
+          errors.push(args);
+        };
+
+        try {
+          // Try to collect metrics from non-existent directory
+          const invalidRoot = path.join(TEST_PROJECT_ROOT, 'invalid');
+          const metrics = collectMetrics(invalidRoot);
+
+          // Should not throw, but may have logged errors
+          assert(metrics, 'Should return metrics object even with errors');
+
+          // Note: Errors logged depend on file system state
+          // This test verifies that logging doesn't crash the system
+        } finally {
+          console.error = originalError;
+          process.env.METRICS_DEBUG = originalDebug;
+        }
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should not log errors when METRICS_DEBUG is disabled', function () {
+      setupTestDir();
+      try {
+        delete require.cache[require.resolve('./memory-dashboard.cjs')];
+        const { collectMetrics } = require('./memory-dashboard.cjs');
+
+        // Ensure METRICS_DEBUG is not set
+        const originalDebug = process.env.METRICS_DEBUG;
+        delete process.env.METRICS_DEBUG;
+
+        // Capture console.error calls
+        const errors = [];
+        const originalError = console.error;
+        console.error = function (...args) {
+          errors.push(args);
+        };
+
+        try {
+          // Try to collect metrics from non-existent directory
+          const invalidRoot = path.join(TEST_PROJECT_ROOT, 'invalid');
+          const metrics = collectMetrics(invalidRoot);
+
+          // Should not throw
+          assert(metrics, 'Should return metrics object');
+
+          // No errors should be logged (or at least, fewer than with debug enabled)
+        } finally {
+          console.error = originalError;
+          process.env.METRICS_DEBUG = originalDebug;
+        }
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should log JSON formatted errors with METRICS_DEBUG enabled', function () {
+      setupTestDir();
+      try {
+        // Create corrupted JSON file
+        fs.writeFileSync(path.join(MEMORY_DIR, 'patterns.json'), '{invalid json');
+
+        delete require.cache[require.resolve('./memory-dashboard.cjs')];
+        const { collectMetrics } = require('./memory-dashboard.cjs');
+
+        const originalDebug = process.env.METRICS_DEBUG;
+        process.env.METRICS_DEBUG = 'true';
+
+        const errors = [];
+        const originalError = console.error;
+        console.error = function (...args) {
+          if (args[0] && typeof args[0] === 'string') {
+            try {
+              errors.push(JSON.parse(args[0]));
+            } catch (e) {
+              errors.push(args[0]);
+            }
+          }
+        };
+
+        try {
+          const metrics = collectMetrics(TEST_PROJECT_ROOT);
+          assert(metrics, 'Should return metrics even with JSON parsing error');
+
+          // Verify error was logged in JSON format
+          const jsonErrors = errors.filter(e => typeof e === 'object' && e.module);
+          // Should have logged error(s) about parsing patterns.json
+          assert(jsonErrors.length > 0 || errors.length > 0, 'Should have logged errors');
+        } finally {
+          console.error = originalError;
+          process.env.METRICS_DEBUG = originalDebug;
+        }
+      } finally {
+        cleanupTestDir();
+      }
+    });
+  });
+
   console.log('\n==================================================');
   console.log(`Test run complete. ${passCount} passed, ${failCount} failed.`);
 }

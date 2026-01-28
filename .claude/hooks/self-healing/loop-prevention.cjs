@@ -39,12 +39,18 @@ const path = require('path');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
-const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
+const {
+  parseHookInputAsync,
+  auditSecurityOverride,
+  auditLog,
+} = require('../../lib/utils/hook-input.cjs');
 
 // SEC-007 FIX: Import safe JSON parser to prevent prototype pollution
 const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
 // NEW-HIGH-003 FIX: Use atomic writes to prevent state file corruption
 const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
+// PERF-005 FIX: Import state cache for TTL-based caching of loop-state.json
+const { getCachedState, invalidateCache } = require('../../lib/utils/state-cache.cjs');
 
 // ==========================================
 // Constants
@@ -361,35 +367,78 @@ function ensureStateDir(stateFile) {
  * Only known properties from the 'loop-state' schema are retained.
  *
  * SEC-AUDIT-005 FIX: Uses file locking to prevent TOCTOU race conditions.
+ *
+ * PERF-005 FIX: Uses state-cache.cjs for TTL-based caching to reduce I/O.
+ * Caching reduces ~100-200ms overhead from repeated file locking per read.
  */
 function getState(stateFile = DEFAULT_STATE_FILE) {
-  // SEC-AUDIT-005 FIX: Acquire lock before reading
-  const lockAcquired = acquireLock(stateFile);
+  const defaults = getDefaultState();
+
   try {
     ensureStateDir(stateFile);
-    if (fs.existsSync(stateFile)) {
-      const content = fs.readFileSync(stateFile, 'utf-8');
-      // SEC-007 FIX: Use safeParseJSON with schema validation
-      // This strips unknown properties including __proto__, constructor, etc.
-      const state = safeParseJSON(content, 'loop-state');
-      // Merge with defaults to ensure all required properties exist
-      return { ...getDefaultState(), ...state };
+    // PERF-005 FIX: Try cached state first (1 second TTL default)
+    // This reduces redundant file reads and lock acquisitions
+    const cached = getCachedState(stateFile, null);
+    if (cached !== null && typeof cached === 'object') {
+      // SEC-007 FIX: Extract only known properties to prevent prototype pollution
+      // This is equivalent to safeParseJSON but without re-serialization overhead
+      const result = { ...defaults };
+
+      if (typeof cached.sessionId === 'string') {
+        result.sessionId = cached.sessionId;
+      }
+      if (typeof cached.evolutionCount === 'number') {
+        result.evolutionCount = cached.evolutionCount;
+      }
+      if (cached.lastEvolutions && typeof cached.lastEvolutions === 'object') {
+        // Deep copy to prevent reference manipulation
+        result.lastEvolutions = {};
+        for (const key of Object.keys(cached.lastEvolutions)) {
+          if (typeof cached.lastEvolutions[key] === 'string') {
+            result.lastEvolutions[key] = cached.lastEvolutions[key];
+          }
+        }
+      }
+      if (typeof cached.spawnDepth === 'number') {
+        result.spawnDepth = cached.spawnDepth;
+      }
+      // actionHistory contains objects with { action: string, count: number, lastAt?: string }
+      if (Array.isArray(cached.actionHistory)) {
+        result.actionHistory = cached.actionHistory
+          .filter(item => item && typeof item === 'object')
+          .map(item => {
+            const entry = {
+              action: typeof item.action === 'string' ? item.action : '',
+              count: typeof item.count === 'number' ? item.count : 0,
+            };
+            // Optional lastAt timestamp
+            if (typeof item.lastAt === 'string') {
+              entry.lastAt = item.lastAt;
+            }
+            return entry;
+          })
+          .filter(item => item.action); // Remove invalid entries
+      }
+      if (typeof cached.createdAt === 'string') {
+        result.createdAt = cached.createdAt;
+      }
+      if (typeof cached.updatedAt === 'string') {
+        result.updatedAt = cached.updatedAt;
+      }
+
+      return result;
     }
   } catch (e) {
     // File might be corrupted or locked, return default
-  } finally {
-    // SEC-AUDIT-005 FIX: Always release lock
-    if (lockAcquired) {
-      releaseLock(stateFile);
-    }
   }
-  return getDefaultState();
+  return defaults;
 }
 
 /**
  * Save state to file (internal use)
  * SEC-AUDIT-005 FIX: Uses file locking to prevent TOCTOU race conditions
  * NEW-HIGH-003 FIX: Uses atomic writes to prevent state file corruption
+ * PERF-005 FIX: Invalidates cache after write to ensure next read is fresh
  * @param {Object} state - State to save
  * @param {string} stateFile - Path to state file
  */
@@ -401,6 +450,8 @@ function _saveState(state, stateFile = DEFAULT_STATE_FILE) {
     state.updatedAt = new Date().toISOString();
     // NEW-HIGH-003: Use atomic write: writes to temp file, then renames (atomic on POSIX)
     atomicWriteJSONSync(stateFile, state);
+    // PERF-005 FIX: Invalidate cache so subsequent getState() calls see new data
+    invalidateCache(stateFile);
   } catch (e) {
     if (process.env.DEBUG_HOOKS) {
       console.error('[loop-prevention] Warning: Could not save state:', e.message);
@@ -764,7 +815,39 @@ This is a safety mechanism to prevent infinite loops.`;
 // ==========================================
 
 /**
- * Main execution function
+ * Main entry point for loop prevention hook.
+ *
+ * Prevents runaway loops in self-healing and evolution processes by
+ * enforcing budgets, cooldowns, depth limits, and pattern detection.
+ *
+ * Tracks:
+ * - Evolution budget (max 3 per session)
+ * - Cooldown period (5 min between same-type evolutions)
+ * - Spawn depth limit (max 5 nested agent spawns)
+ * - Pattern detection (blocks same action repeated 3+ times)
+ *
+ * State File: .claude/context/self-healing/loop-state.json
+ *
+ * @async
+ * @returns {Promise<void>} Exits with:
+ *   - 0 if operation is allowed
+ *   - 2 if operation is blocked or error occurs (fail-closed)
+ *
+ * @throws {Error} Caught internally; triggers fail-closed behavior.
+ *   When loop state is unknown or corrupted, exits with code 2.
+ *
+ * Environment Variables:
+ *   - LOOP_PREVENTION_MODE: block (default) | warn | off
+ *   - LOOP_EVOLUTION_BUDGET: max evolutions (default: 3)
+ *   - LOOP_COOLDOWN_MS: min time between evolutions (default: 300000)
+ *   - LOOP_DEPTH_LIMIT: max nested spawns (default: 5)
+ *   - LOOP_PATTERN_THRESHOLD: max repetitions (default: 3)
+ *
+ * Exit Behavior:
+ *   - Allowed: process.exit(0)
+ *   - Blocked: process.exit(2) + JSON message to stdout
+ *   - Warning: process.exit(0) + JSON message to stdout (warn mode)
+ *   - Error: process.exit(2) + JSON audit log to stderr
  */
 async function main() {
   try {
@@ -823,21 +906,18 @@ async function main() {
     // Security hooks must deny by default when state is unknown
     // Override: Set LOOP_PREVENTION_FAIL_OPEN=true for debugging only
     if (process.env.LOOP_PREVENTION_FAIL_OPEN === 'true') {
-      if (process.env.DEBUG_HOOKS) {
-        console.error('[loop-prevention] Error (fail-open override):', err.message);
-      }
+      // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+      auditSecurityOverride(
+        'loop-prevention',
+        'LOOP_PREVENTION_FAIL_OPEN',
+        'true',
+        'Hook fails open on errors (debug mode)'
+      );
       process.exit(0);
     }
 
     // Log the error for audit trail
-    console.error(
-      JSON.stringify({
-        hook: 'loop-prevention',
-        event: 'error_fail_closed',
-        error: err.message,
-        timestamp: new Date().toISOString(),
-      })
-    );
+    auditLog('loop-prevention', 'error_fail_closed', { error: err.message });
 
     if (process.env.DEBUG_HOOKS) {
       console.error('[loop-prevention] Error:', err.message);
@@ -857,6 +937,40 @@ if (require.main === module) {
 // ==========================================
 // Exports
 // ==========================================
+
+/**
+ * Module exports for loop-prevention hook.
+ *
+ * Prevents infinite loops in self-evolution by tracking evolution budget,
+ * cooldown periods, spawn depth, and action patterns.
+ *
+ * @typedef {Object} LoopPreventionExports
+ * @property {Function} main - Main entry point for loop prevention hook
+ * @property {Function} getState - Get current loop prevention state
+ * @property {Function} resetState - Reset loop prevention state
+ * @property {Function} _saveState - Save state to persistent storage (private)
+ * @property {Function} checkEvolutionBudget - Check if evolution budget exceeded
+ * @property {Function} recordEvolution - Record evolution event in state
+ * @property {Function} checkCooldownPeriod - Check if in cooldown period
+ * @property {Function} checkSpawnDepth - Check spawn nesting depth limit
+ * @property {Function} recordSpawn - Record agent spawn in depth tracking
+ * @property {Function} decrementSpawnDepth - Decrement spawn depth on exit
+ * @property {Function} checkPatternDetection - Detect repetitive action patterns
+ * @property {Function} recordAction - Record action for pattern analysis
+ * @property {Function} checkPreToolUse - Combined check for PreToolUse event
+ * @property {Function} getEnforcementMode - Get enforcement mode (block/warn/off)
+ * @property {Function} detectEvolutionType - Detect type of evolution event
+ * @property {Function} isEvolutionTrigger - Check if event is evolution trigger
+ * @property {Function} extractAgentType - Extract agent type from hook input
+ * @property {Function} tryClaimStaleLock - Try to claim stale lock (SEC-AUDIT-014)
+ * @property {Function} isProcessAlive - Check if process is alive
+ * @property {number} DEFAULT_EVOLUTION_BUDGET - Max evolution attempts per session
+ * @property {number} DEFAULT_COOLDOWN_MS - Cooldown period in milliseconds
+ * @property {number} DEFAULT_DEPTH_LIMIT - Maximum spawn nesting depth
+ * @property {number} DEFAULT_PATTERN_THRESHOLD - Pattern repetition threshold
+ * @property {string} DEFAULT_STATE_FILE - Path to loop prevention state file
+ * @property {string} PROJECT_ROOT - Project root directory path
+ */
 
 module.exports = {
   // State management

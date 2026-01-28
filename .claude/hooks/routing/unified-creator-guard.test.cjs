@@ -18,6 +18,9 @@ const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 
+// HOOK-002 FIX: Use shared project-root utility instead of duplicated function
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+
 // Module under test - will be implemented
 const {
   findRequiredCreator,
@@ -31,20 +34,6 @@ const {
   DEFAULT_TTL_MS,
   WATCHED_TOOLS,
 } = require('./unified-creator-guard.cjs');
-
-// Test helpers
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
 const STATE_PATH = path.join(PROJECT_ROOT, STATE_FILE);
 
 // Save and restore state file
@@ -493,10 +482,12 @@ describe('generateViolationMessage', () => {
     assert.ok(msg.includes('SKILL.md') || msg.includes('test'));
   });
 
-  it('includes correct override instructions', () => {
+  it('includes creator name but not override hints (SEC-AUDIT-021)', () => {
+    // SEC-AUDIT-021: Override hints removed from user-facing messages
     const msg = generateViolationMessage('.claude/agents/core/test.md', 'agent-creator', 'agent');
-    assert.ok(msg.includes('CREATOR_GUARD'));
-    assert.ok(msg.includes('agent-creator'));
+    assert.ok(msg.includes('agent-creator'), 'Should include creator name');
+    // Override hints removed per SEC-AUDIT-021 (security override discovery risk)
+    // Overrides are documented in code comments only, not in user-facing strings
   });
 });
 

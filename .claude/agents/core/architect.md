@@ -2,7 +2,7 @@
 name: architect
 version: 1.0.0
 description: System designer. Makes high-level technical decisions, chooses stacks, and ensures scalability and maintainability.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.4
 context_strategy: full
 priority: high

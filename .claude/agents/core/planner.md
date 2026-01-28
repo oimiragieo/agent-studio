@@ -16,7 +16,7 @@ tools:
   - TaskCreate
   - TaskGet
   - Skill
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.5
 extended_thinking: true
 priority: high

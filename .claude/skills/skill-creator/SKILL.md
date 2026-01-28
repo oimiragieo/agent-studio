@@ -18,6 +18,35 @@ streaming: supported
 
 # Skill Creator
 
+```
++======================================================================+
+|  WARNING: SKILL CREATION WORKFLOW IS MANDATORY - READ THIS FIRST     |
++======================================================================+
+|                                                                      |
+|  DO NOT WRITE SKILL.md FILES DIRECTLY!                               |
+|                                                                      |
+|  This includes:                                                      |
+|    - Copying archived skills                                         |
+|    - Restoring from backup                                           |
+|    - "Quick" manual creation                                         |
+|                                                                      |
+|  WHY: Direct writes bypass MANDATORY post-creation steps:            |
+|    1. CLAUDE.md routing table update (skill INVISIBLE to Router)     |
+|    2. Skill catalog update (skill NOT discoverable)                  |
+|    3. Agent assignment (skill NEVER invoked)                         |
+|    4. Validation (broken references UNDETECTED)                      |
+|                                                                      |
+|  RESULT: Skill EXISTS in filesystem but is NEVER USED.               |
+|                                                                      |
+|  ENFORCEMENT: unified-creator-guard.cjs blocks direct SKILL.md       |
+|  writes. Override: CREATOR_GUARD=off (DANGEROUS - skill invisible)   |
+|                                                                      |
+|  ALWAYS invoke this skill properly:                                  |
+|    Skill({ skill: "skill-creator" })                                 |
+|                                                                      |
++======================================================================+
+```
+
 Create, validate, install, and convert skills for the multi-agent ecosystem.
 
 ## ROUTER UPDATE REQUIRED (CRITICAL - DO NOT SKIP)

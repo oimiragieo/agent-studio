@@ -2,7 +2,7 @@
 name: data-engineer
 version: 1.0.0
 description: Data engineering expert for ETL pipelines, data validation, analytics, and data infrastructure. Use for building data pipelines, data quality checks, data transformations, and analytics workflows.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

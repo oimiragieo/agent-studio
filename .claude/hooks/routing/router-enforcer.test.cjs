@@ -10,19 +10,8 @@ const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 
-// Find project root (same logic as the module)
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// HOOK-002 FIX: Use shared project-root utility instead of duplicated function
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 const STATE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'runtime', 'router-state.json');
 
 // Import the router-state module to check state

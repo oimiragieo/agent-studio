@@ -2,7 +2,7 @@
 name: frontend-pro
 version: 1.0.0
 description: Frontend development expert for React, Vue, modern CSS, component libraries, and UI/UX implementation. Use for building user interfaces, component libraries, responsive designs, accessibility, and frontend architecture.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

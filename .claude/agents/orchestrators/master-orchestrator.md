@@ -2,7 +2,7 @@
 name: master-orchestrator
 version: 1.0.0
 description: The "CEO" agent. Manages the project lifecycle, coordinates subagents, and handles high-level user requests. Never implements code directly.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.6
 context_strategy: lazy_load
 priority: highest

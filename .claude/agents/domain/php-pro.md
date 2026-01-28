@@ -2,7 +2,7 @@
 name: php-pro
 version: 1.0.0
 description: PHP 8.x and Laravel 11+ development expert. Use for building modern PHP applications, REST APIs, Laravel apps, and PHP backend systems with best practices.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

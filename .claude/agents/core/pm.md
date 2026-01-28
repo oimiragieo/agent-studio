@@ -2,7 +2,7 @@
 name: pm
 version: 1.0.0
 description: Product Manager. Manages product backlogs, sprint planning, stakeholder communication, and feature prioritization. Use for roadmap planning, user story creation, stakeholder updates, and agile workflow management.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.5
 context_strategy: lazy_load
 priority: high

@@ -13,6 +13,9 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+// PERF-004 FIX: Import state cache utilities for test cleanup
+const { invalidateCache, clearAllCache } = require('../../lib/utils/state-cache.cjs');
+
 // We'll test the module by importing it after mocking dependencies
 let guardModule;
 
@@ -26,9 +29,12 @@ function createTempProjectRoot() {
 }
 
 // Helper to write evolution state for testing
+// PERF-004 FIX: Also invalidate cache so subsequent reads see the new data
 function writeEvolutionState(projectRoot, state) {
   const statePath = path.join(projectRoot, '.claude', 'context', 'evolution-state.json');
   fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
+  // Invalidate cache entry so getEvolutionState reads fresh data
+  invalidateCache(statePath);
 }
 
 // Helper to create artifact directories for testing

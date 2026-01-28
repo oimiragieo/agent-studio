@@ -67,4 +67,9 @@ function main() {
   process.exit(0);
 }
 
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main };
 main();

@@ -31,7 +31,7 @@ const path = require('path');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
-const { parseHookInputAsync } = require('../../lib/utils/hook-input.cjs');
+const { parseHookInputAsync, auditLog, debugLog } = require('../../lib/utils/hook-input.cjs');
 
 // PERF-006: Alias for backward compatibility with exports
 const parseHookInput = parseHookInputAsync;
@@ -135,15 +135,14 @@ function queueReflection(entry, queueFile = QUEUE_FILE) {
     // Log in warn mode
     const mode = process.env.REFLECTION_HOOK_MODE || 'block';
     if (mode === 'warn') {
-      console.log(
-        `[reflection] Queued session-end reflection for ${entry.sessionId || 'unknown session'}`
-      );
+      auditLog('session-end-reflection', 'queued', {
+        sessionId: entry.sessionId,
+        trigger: 'session_end',
+      });
     }
   } catch (err) {
     // Log error but don't fail the hook
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection] Error queueing reflection:', err.message);
-    }
+    debugLog('session-end-reflection', 'Error queueing reflection', err);
   }
 }
 
@@ -180,9 +179,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     // Fail open
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection] Error:', err.message);
-    }
+    debugLog('session-end-reflection', 'Hook error during processing', err);
     process.exit(0);
   }
 }

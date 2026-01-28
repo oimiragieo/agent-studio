@@ -2,7 +2,7 @@
 name: evolution-orchestrator
 version: 1.0.0
 description: Meta-agent that orchestrates the EVOLVE workflow for creating new agents, skills, workflows, hooks, and schemas. Ensures research-first, validation-gated artifact creation.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.3
 context_strategy: full
 priority: critical

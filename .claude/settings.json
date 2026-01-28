@@ -125,6 +125,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/self-healing/auto-rerouter.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/post-task-unified.cjs"
           }
         ]
       },
@@ -134,12 +138,7 @@
           {
             "type": "command",
             "command": "node .claude/hooks/memory/format-memory.cjs"
-          }
-        ]
-      },
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
+          },
           {
             "type": "command",
             "command": "node .claude/hooks/safety/enforce-claude-md-update.cjs"
@@ -147,38 +146,7 @@
         ]
       },
       {
-        "matcher": "Task",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/post-task-unified.cjs"
-          }
-        ]
-      },
-      {
-        "matcher": "TaskUpdate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/routing/task-update-tracker.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
-          }
-        ]
-      },
-      {
-        "matcher": "Task",
+        "matcher": "Task|TaskUpdate|Bash",
         "hooks": [
           {
             "type": "command",

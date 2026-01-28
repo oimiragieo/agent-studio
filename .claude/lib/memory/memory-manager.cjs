@@ -79,7 +79,13 @@ const CONFIG = {
 };
 
 /**
- * Get the memory directory path
+ * Get the memory directory path for the given project root.
+ *
+ * @param {string} [projectRoot=PROJECT_ROOT] - The project root directory path
+ * @returns {string} The absolute path to the memory directory (.claude/context/memory)
+ * @example
+ * const memDir = getMemoryDir('/path/to/project');
+ * // Returns: '/path/to/project/.claude/context/memory'
  */
 function getMemoryDir(projectRoot = PROJECT_ROOT) {
   return path.join(projectRoot, '.claude', 'context', 'memory');
@@ -114,7 +120,31 @@ function getCurrentSessionNumber(memoryDir) {
 }
 
 /**
- * Save a new session
+ * Save a new session with insights from agent work.
+ *
+ * Creates a numbered session file (e.g., session_001.json) containing
+ * the session summary, tasks completed, patterns found, and gotchas.
+ * Also records any patterns and gotchas to their respective files.
+ *
+ * @param {Object} insights - Session insights to save
+ * @param {string} [insights.summary] - Brief summary of the session
+ * @param {string[]} [insights.tasks_completed] - List of completed tasks
+ * @param {string[]} [insights.files_modified] - List of modified files
+ * @param {string[]} [insights.discoveries] - New discoveries made
+ * @param {string[]} [insights.patterns_found] - Reusable patterns identified
+ * @param {string[]} [insights.gotchas_encountered] - Pitfalls encountered
+ * @param {string[]} [insights.decisions_made] - Decisions made during session
+ * @param {string[]} [insights.next_steps] - Recommended next steps
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {{sessionNum: number, file: string}} Session number and file path
+ * @throws {Error} If projectRoot is invalid or outside PROJECT_ROOT
+ * @example
+ * const result = saveSession({
+ *   summary: 'Implemented user authentication',
+ *   tasks_completed: ['Add JWT middleware', 'Create login endpoint'],
+ *   patterns_found: ['Use bcrypt for password hashing']
+ * });
+ * // Returns: { sessionNum: 1, file: '/path/.claude/context/memory/sessions/session_001.json' }
  */
 function saveSession(insights, projectRoot = PROJECT_ROOT) {
   // CRITICAL-001-MEMORY FIX: Validate projectRoot
@@ -341,7 +371,21 @@ function pruneCodebaseMap(projectRoot = PROJECT_ROOT) {
 }
 
 /**
- * Record a gotcha (pitfall to avoid)
+ * Record a gotcha (pitfall to avoid) in the memory system.
+ *
+ * Gotchas are stored in gotchas.json and help agents avoid repeating mistakes.
+ * Duplicate gotchas (case-insensitive match) are automatically rejected.
+ *
+ * @param {string|Object} gotcha - The gotcha text or object with text property
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {boolean} True if gotcha was added, false if duplicate
+ * @throws {Error} If projectRoot is invalid or outside PROJECT_ROOT
+ * @example
+ * // Record a simple gotcha
+ * recordGotcha('Always close DB connections in workers');
+ *
+ * // Record with additional metadata
+ * recordGotcha({ text: 'Never use sync fs in hooks', category: 'performance' });
  */
 function recordGotcha(gotcha, projectRoot = PROJECT_ROOT) {
   // CRITICAL-001-MEMORY FIX: Validate projectRoot
@@ -381,7 +425,21 @@ function recordGotcha(gotcha, projectRoot = PROJECT_ROOT) {
 }
 
 /**
- * Record a pattern (reusable solution)
+ * Record a pattern (reusable solution) in the memory system.
+ *
+ * Patterns are stored in patterns.json and help agents reuse successful solutions.
+ * Duplicate patterns (case-insensitive match) are automatically rejected.
+ *
+ * @param {string|Object} pattern - The pattern text or object with text property
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {boolean} True if pattern was added, false if duplicate
+ * @throws {Error} If projectRoot is invalid or outside PROJECT_ROOT
+ * @example
+ * // Record a simple pattern
+ * recordPattern('Use async/await for all API calls');
+ *
+ * // Record with additional metadata
+ * recordPattern({ text: 'Validate input at boundary', category: 'security' });
  */
 function recordPattern(pattern, projectRoot = PROJECT_ROOT) {
   // CRITICAL-001-MEMORY FIX: Validate projectRoot
@@ -421,8 +479,21 @@ function recordPattern(pattern, projectRoot = PROJECT_ROOT) {
 }
 
 /**
- * Record a codebase discovery
- * Now includes last_accessed for TTL-based pruning
+ * Record a codebase discovery in the memory system.
+ *
+ * Discoveries are stored in codebase_map.json and help agents remember
+ * important files and their purposes. Each discovery includes a last_accessed
+ * timestamp for TTL-based pruning (entries older than 90 days are pruned).
+ *
+ * @param {string} filePath - Path to the discovered file (relative or absolute)
+ * @param {string} description - Description of what the file contains/does
+ * @param {string} [category='general'] - Category for the discovery (e.g., 'config', 'api', 'test')
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {boolean} Always returns true on success
+ * @throws {Error} If projectRoot is invalid or outside PROJECT_ROOT
+ * @example
+ * recordDiscovery('src/auth.ts', 'JWT authentication handler', 'security');
+ * recordDiscovery('.claude/hooks/routing/router-enforcer.cjs', 'Main routing hook');
  */
 function recordDiscovery(filePath, description, category = 'general', projectRoot = PROJECT_ROOT) {
   // CRITICAL-001-MEMORY FIX: Validate projectRoot
@@ -459,8 +530,24 @@ function recordDiscovery(filePath, description, category = 'general', projectRoo
 }
 
 /**
- * Load memory with truncation for context efficiency
- * This is the key function - loads only what fits in context
+ * Load memory with truncation for context efficiency.
+ *
+ * This is the key function for loading memory into agent context.
+ * It loads gotchas, patterns, discoveries, and recent sessions with
+ * truncation to fit within context limits defined in CONFIG.
+ *
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {Object} Memory context object
+ * @returns {Array<{text: string, timestamp: string}>} returns.gotchas - Recent gotchas
+ * @returns {Array<{text: string, timestamp: string}>} returns.patterns - Recent patterns
+ * @returns {Array<{path: string, description: string}>} returns.discoveries - File discoveries
+ * @returns {Array<Object>} returns.recent_sessions - Recent session summaries
+ * @returns {string} returns.legacy_summary - Truncated learnings.md content
+ * @throws {Error} If projectRoot is invalid or outside PROJECT_ROOT
+ * @example
+ * const memory = loadMemoryForContext();
+ * console.log(memory.gotchas); // [{text: '...', timestamp: '...'}]
+ * console.log(memory.patterns); // [{text: '...', timestamp: '...'}]
  */
 function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
   // CRITICAL-001-MEMORY FIX: Validate projectRoot
@@ -485,14 +572,8 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.gotchas
       );
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemory (gotchas):', e.message);
       }
     }
   }
@@ -507,14 +588,8 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.patterns
       );
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemory (patterns):', e.message);
       }
     }
   }
@@ -529,14 +604,8 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
         .map(([path, info]) => ({ path, ...info }));
       result.discoveries = truncateItems(discoveries, CONFIG.MAX_CONTEXT_CHARS.discoveries);
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemory (discoveries):', e.message);
       }
     }
   }
@@ -560,14 +629,8 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
           tasks_completed: session.tasks_completed?.slice(0, 5),
         });
       } catch (e) {
-        if (process.env.METRICS_DEBUG === 'true') {
-          console.error(
-            JSON.stringify({
-              module: 'memory-manager',
-              error: e.message,
-              timestamp: new Date().toISOString(),
-            })
-          );
+        if (process.env.MEMORY_DEBUG) {
+          console.error('[MEMORY_DEBUG]', 'loadMemory (sessions):', e.message);
         }
       }
     }
@@ -584,14 +647,8 @@ function loadMemoryForContext(projectRoot = PROJECT_ROOT) {
           ? '...' + content.slice(-CONFIG.MAX_CONTEXT_CHARS.legacy)
           : content;
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemory (learnings):', e.message);
       }
     }
   }
@@ -793,14 +850,8 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.gotchas
       );
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemoryAsync (gotchas):', e.message);
       }
     }
   }
@@ -815,14 +866,8 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         CONFIG.MAX_CONTEXT_CHARS.patterns
       );
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemoryAsync (patterns):', e.message);
       }
     }
   }
@@ -837,14 +882,8 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         .map(([filePath, info]) => ({ path: filePath, ...info }));
       result.discoveries = truncateItems(discoveries, CONFIG.MAX_CONTEXT_CHARS.discoveries);
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'loadMemoryAsync (discoveries):', e.message);
       }
     }
   }
@@ -948,11 +987,26 @@ function formatMemoryAsMarkdown(projectRoot = PROJECT_ROOT) {
 }
 
 /**
- * Get memory health status for monitoring
- * Checks:
+ * Get memory health status for monitoring.
+ *
+ * Checks various health indicators and returns warnings when thresholds
+ * are exceeded:
  * - learnings.md size (warn if > 35KB)
  * - codebase_map.json entry count (warn if > 400)
  * - sessions directory count
+ *
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {Object} Health status object
+ * @returns {'healthy'|'warning'} returns.status - Overall health status
+ * @returns {string[]} returns.warnings - Array of warning messages
+ * @returns {number} returns.learningsSizeKB - Size of learnings.md in KB
+ * @returns {number} returns.codebaseMapEntries - Number of codebase_map entries
+ * @returns {number} returns.sessionsCount - Number of session files
+ * @example
+ * const health = getMemoryHealth();
+ * if (health.status === 'warning') {
+ *   console.log('Warnings:', health.warnings);
+ * }
  */
 function getMemoryHealth(projectRoot = PROJECT_ROOT) {
   const memoryDir = getMemoryDir(projectRoot);
@@ -990,14 +1044,8 @@ function getMemoryHealth(projectRoot = PROJECT_ROOT) {
         );
       }
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'getMemoryHealth (codebaseMap):', e.message);
       }
     }
   }
@@ -1058,14 +1106,8 @@ function getMemoryStats(projectRoot = PROJECT_ROOT) {
       stats.patterns_count = patterns.length;
       stats.total_size_bytes += fs.statSync(patternsFile).size;
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'getMemoryStats (patterns):', e.message);
       }
     }
   }
@@ -1078,14 +1120,8 @@ function getMemoryStats(projectRoot = PROJECT_ROOT) {
       stats.discoveries_count = Object.keys(map.discovered_files || {}).length;
       stats.total_size_bytes += fs.statSync(mapFile).size;
     } catch (e) {
-      if (process.env.METRICS_DEBUG === 'true') {
-        console.error(
-          JSON.stringify({
-            module: 'memory-manager',
-            error: e.message,
-            timestamp: new Date().toISOString(),
-          })
-        );
+      if (process.env.MEMORY_DEBUG) {
+        console.error('[MEMORY_DEBUG]', 'getMemoryStats (discoveries):', e.message);
       }
     }
   }

@@ -440,8 +440,96 @@ rm -rf .claude/hooks/_backup/YYYYMMDD/
 | Execution time      | X ms   | Y ms  | 50% reduction        |
 | Process spawns      | N      | 1     | Single process       |
 
+## Case Study: PERF-003 Reflection Hooks Consolidation
+
+Real-world example of successful hook consolidation from 2026-01-27.
+
+### Before (5 hooks, 5 processes)
+
+| Hook                             | Event                  | Purpose                             |
+| -------------------------------- | ---------------------- | ----------------------------------- |
+| `task-completion-reflection.cjs` | PostToolUse:TaskUpdate | Queue reflection on task completion |
+| `error-recovery-reflection.cjs`  | PostToolUse:Bash       | Queue reflection on errors          |
+| `session-end-reflection.cjs`     | SessionEnd             | Queue reflection at session end     |
+| `session-memory-extractor.cjs`   | PostToolUse:Task       | Extract memory from spawned agents  |
+| `session-end-recorder.cjs`       | SessionEnd             | Record session metrics              |
+
+**Problems**:
+
+- 5 Node.js process spawns per relevant event
+- ~800 lines of duplicated code (input parsing, queue handling, path resolution)
+- Inconsistent error handling patterns
+- Multiple reads of same state files
+
+### After (1 hook, 1 process)
+
+Created: `unified-reflection-handler.cjs`
+
+**Consolidation Approach**:
+
+1. Single entry point with event-type routing:
+
+```javascript
+function detectEventType(input) {
+  // Route to appropriate handler based on input
+  if (isSessionEnd(input)) return 'session_end';
+  if (isTaskCompletion(input)) return 'task_completion';
+  if (isErrorRecovery(input)) return 'error_recovery';
+  if (isMemoryExtraction(input)) return 'memory_extraction';
+  return null;
+}
+```
+
+2. Shared utilities:
+
+```javascript
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const { parseHookInputAsync, auditLog, debugLog } = require('../../lib/utils/hook-input.cjs');
+```
+
+3. Single queue file handling (instead of 5 separate implementations)
+
+### Results
+
+| Metric         | Before | After | Improvement       |
+| -------------- | ------ | ----- | ----------------- |
+| Process spawns | 5      | 1     | **80% reduction** |
+| Lines of code  | ~800   | ~400  | **50% reduction** |
+| Test files     | 5      | 1     | Consolidated      |
+| Tests          | 39     | 39    | 100% coverage     |
+
+### Deprecation Strategy
+
+Original hooks retained but marked deprecated:
+
+```javascript
+/**
+ * @deprecated PERF-003: Use unified-reflection-handler.cjs instead
+ * This hook has been consolidated into unified-reflection-handler.cjs
+ * which handles task-completion, error-recovery, session-end reflection,
+ * and memory extraction in a single process.
+ */
+```
+
+### Files Modified
+
+| File                                  | Change                     |
+| ------------------------------------- | -------------------------- |
+| `unified-reflection-handler.cjs`      | NEW - consolidated handler |
+| `unified-reflection-handler.test.cjs` | NEW - 39 tests             |
+| `settings.json`                       | Updated hook registrations |
+| 5 original hooks                      | Added @deprecated notice   |
+
+### Lessons Learned
+
+1. **Event routing is key**: Single entry point that routes to appropriate handler is clean and efficient
+2. **Shared utilities essential**: Use hook-input.cjs and project-root.cjs instead of duplicating
+3. **Preserve exact behavior**: Consolidation must not change behavior, just structure
+4. **Keep originals as reference**: Deprecated files help during debugging and rollback
+
 ## Related Documentation
 
+- **Code Deduplication Guide**: `.claude/docs/CODE_DEDUPLICATION_GUIDE.md`
 - **Hooks Reference**: `.claude/docs/HOOKS_REFERENCE.md`
 - **Hook Development Guide**: `.claude/docs/HOOK_DEVELOPMENT_GUIDE.md`
 - **State Cache Utility**: `.claude/lib/utils/state-cache.cjs`

@@ -2,7 +2,7 @@
 name: database-architect
 version: 1.0.0
 description: Database schema design, query optimization, migration planning, and data modeling. Use for designing database schemas, optimizing queries, planning migrations, data consistency validation, and database performance tuning.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.3
 context_strategy: lazy_load
 priority: high

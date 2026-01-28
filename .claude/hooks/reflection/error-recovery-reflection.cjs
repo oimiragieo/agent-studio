@@ -36,6 +36,8 @@ const {
   getToolName,
   getToolInput,
   getToolOutput,
+  auditLog,
+  debugLog,
 } = require('../../lib/utils/hook-input.cjs');
 
 // PERF-006: Alias for backward compatibility with exports
@@ -154,13 +156,11 @@ function queueReflection(entry, queueFile = QUEUE_FILE) {
     // Log in warn mode
     const mode = process.env.REFLECTION_HOOK_MODE || 'block';
     if (mode === 'warn') {
-      console.log(`[reflection] Queued error from ${entry.tool} for reflection`);
+      auditLog('error-recovery-reflection', 'queued', { tool: entry.tool, trigger: 'error' });
     }
   } catch (err) {
     // Log error but don't fail the hook
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection] Error queueing reflection:', err.message);
-    }
+    debugLog('error-recovery-reflection', 'Error queueing reflection', err);
   }
 }
 
@@ -197,9 +197,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     // Fail open
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[reflection] Error:', err.message);
-    }
+    debugLog('error-recovery-reflection', 'Hook error during processing', err);
     process.exit(0);
   }
 }

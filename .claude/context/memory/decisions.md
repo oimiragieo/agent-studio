@@ -947,3 +947,45 @@
   - **Effort**: 119-164 hours total
   - **Maintenance**: Plan at `.claude/context/plans/issue-remediation-plan-2026-01-28.md`
 - **Related**: ADR-033 (Deep Dive v2), ADR-035 (Production Certification)
+
+## [ADR-039] Issues Remediation Plan v2 - 30 OPEN Issues Phased Approach
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Framework has 30 OPEN issues (2 CRITICAL, 5 HIGH, 18 MEDIUM, 5 LOW). Previous remediation reduced from 112 total to 30 remaining. Need structured approach for final remediation with focus on quick wins, security, and code deduplication.
+- **Decision**: Created 4-phase remediation plan with mandatory reflection phase:
+  1. **Phase 1 - Quick Wins** (10 issues, ~6h): Low-effort, high-value fixes
+     - PERF-008/009: Silent error swallowing and path traversal
+     - HOOK-006/007/008/009: Audit logging, magic numbers, JSDoc, exports
+     - DEBUG-001/NEW-MED-002: Empty catch blocks
+     - IMP-007: workflow-validator step validation
+     - ARCH-003: Workflow directory documentation
+     - SEC-AUDIT-011: Race condition documentation (informational)
+  2. **Phase 2 - Security Fixes** (4 issues, ~12h): Remaining HIGH severity
+     - SEC-AUDIT-013: Atomic write race on Windows (CRITICAL)
+     - SEC-AUDIT-014: Lock file TOCTOU (CRITICAL)
+     - SEC-AUDIT-016: Security override logging
+     - SEC-AUDIT-018: Evolution state tampering (DEFERRED - HMAC complexity)
+  3. **Phase 3 - Code Deduplication** (3 issues, ~6h): 2200+ lines saved
+     - HOOK-001: parseHookInput() consolidation (~2000 lines, 40+ hooks)
+     - HOOK-002: findProjectRoot() consolidation (~200 lines, 20+ hooks)
+  4. **Phase 4 - Performance & Process** (13+ issues, ~25h): Ongoing improvements
+     - State cache integration (HOOK-004, PERF-004/005)
+     - Hook consolidation (HOOK-PERF-001, PERF-003)
+     - Process documentation (PROC-001/002/004/005/007/008/010)
+     - Researcher agent security (SEC-REMEDIATION-003)
+- **Key Design Choices**:
+  - **Quick wins first**: 10 issues in Phase 1 provide immediate momentum
+  - **Security isolation**: Phase 2 requires Security-Architect review
+  - **Deduplication benefits**: Phase 3 saves ~2200 lines with single maintenance point
+  - **Performance deferred**: Phase 4 can be done incrementally over time
+  - **Mandatory reflection**: Phase FINAL ensures learning extraction
+- **Tasks Created**: 10 tasks for Phase 1 (#3-#12)
+- **Consequences**:
+  - **Positive**: Clear prioritization with quick wins first
+  - **Positive**: Security fixes isolated for focused review
+  - **Positive**: Code deduplication provides long-term maintenance benefit
+  - **Positive**: Mandatory reflection ensures continuous improvement
+  - **Effort**: 45-65 hours total estimated
+  - **Maintenance**: Plan at `.claude/context/plans/issues-remediation-plan-2026-01-28.md`
+- **Related**: ADR-038 (Previous remediation plan), ADR-035 (Production Certification)

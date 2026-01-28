@@ -69,7 +69,15 @@ function ensureDir(dirPath) {
 }
 
 /**
- * Get tier directory path
+ * Get the directory path for a specific memory tier.
+ *
+ * @param {'STM'|'MTM'|'LTM'} tier - Memory tier identifier
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {string} Absolute path to the tier directory
+ * @throws {Error} If tier is unknown (not STM, MTM, or LTM)
+ * @example
+ * const stmPath = getTierPath('STM');
+ * // Returns: '/project/.claude/context/memory/stm'
  */
 function getTierPath(tier, projectRoot = PROJECT_ROOT) {
   const memoryDir = getMemoryDir(projectRoot);
@@ -90,7 +98,23 @@ function getTierPath(tier, projectRoot = PROJECT_ROOT) {
 // ============================================================================
 
 /**
- * Write current session data to STM
+ * Write current session data to Short-Term Memory (STM).
+ *
+ * STM holds the current session's context and is cleared after
+ * consolidation to MTM. Only one session can exist in STM at a time.
+ *
+ * @param {Object} sessionData - Session data to write
+ * @param {string} [sessionData.session_id] - Unique session identifier
+ * @param {string} [sessionData.timestamp] - Session timestamp
+ * @param {string} [sessionData.summary] - Session summary
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {{success: boolean, path: string}} Result with success status and file path
+ * @example
+ * const result = writeSTMEntry({
+ *   session_id: 'session-123',
+ *   timestamp: new Date().toISOString(),
+ *   summary: 'Implementing memory tiers'
+ * });
  */
 function writeSTMEntry(sessionData, projectRoot = PROJECT_ROOT) {
   const stmDir = getTierPath('STM', projectRoot);
@@ -121,15 +145,8 @@ function readSTMEntry(projectRoot = PROJECT_ROOT) {
   try {
     return JSON.parse(fs.readFileSync(stmPath, 'utf8'));
   } catch (e) {
-    if (process.env.METRICS_DEBUG === 'true') {
-      console.error(
-        JSON.stringify({
-          module: 'memory-tiers',
-          function: 'readSTMEntry',
-          error: e.message,
-          timestamp: new Date().toISOString(),
-        })
-      );
+    if (process.env.MEMORY_DEBUG) {
+      console.error('[MEMORY_DEBUG]', 'readSTMEntry:', e.message);
     }
     return null;
   }
@@ -169,16 +186,8 @@ function getMTMSessions(projectRoot = PROJECT_ROOT) {
         const data = JSON.parse(fs.readFileSync(path.join(mtmDir, f), 'utf8'));
         return { ...data, _filename: f };
       } catch (e) {
-        if (process.env.METRICS_DEBUG === 'true') {
-          console.error(
-            JSON.stringify({
-              module: 'memory-tiers',
-              function: 'getMTMSessions',
-              file: f,
-              error: e.message,
-              timestamp: new Date().toISOString(),
-            })
-          );
+        if (process.env.MEMORY_DEBUG) {
+          console.error('[MEMORY_DEBUG]', 'getMTMSessions:', e.message);
         }
         return null;
       }
@@ -187,8 +196,24 @@ function getMTMSessions(projectRoot = PROJECT_ROOT) {
 }
 
 /**
- * Consolidate session from STM to MTM
- * Called when a session ends
+ * Consolidate session from STM to MTM (Mid-Term Memory).
+ *
+ * Called when a session ends to move the current session data from
+ * STM to MTM. If MTM exceeds max sessions (10), triggers summarization
+ * of oldest sessions to LTM.
+ *
+ * @param {string} sessionId - Session identifier (used for tracking)
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {Object} Consolidation result
+ * @returns {boolean} returns.success - Whether consolidation succeeded
+ * @returns {string} [returns.mtmPath] - Path to the new MTM file (on success)
+ * @returns {string} [returns.sessionId] - Session ID that was consolidated
+ * @returns {string} [returns.error] - Error message (on failure)
+ * @example
+ * const result = consolidateSession('session-123');
+ * if (result.success) {
+ *   console.log('Session saved to:', result.mtmPath);
+ * }
  */
 function consolidateSession(sessionId, projectRoot = PROJECT_ROOT) {
   const stmDir = getTierPath('STM', projectRoot);
@@ -205,15 +230,8 @@ function consolidateSession(sessionId, projectRoot = PROJECT_ROOT) {
   try {
     sessionData = JSON.parse(fs.readFileSync(stmPath, 'utf8'));
   } catch (e) {
-    if (process.env.METRICS_DEBUG === 'true') {
-      console.error(
-        JSON.stringify({
-          module: 'memory-tiers',
-          function: 'consolidateSession',
-          error: e.message,
-          timestamp: new Date().toISOString(),
-        })
-      );
+    if (process.env.MEMORY_DEBUG) {
+      console.error('[MEMORY_DEBUG]', 'consolidateSession:', e.message);
     }
     return { success: false, error: 'Failed to read STM session' };
   }
@@ -275,7 +293,23 @@ function findMTMSession(sessionId, projectRoot = PROJECT_ROOT) {
 // ============================================================================
 
 /**
- * Promote a high-value session from MTM to LTM
+ * Promote a high-value session from MTM to LTM (Long-Term Memory).
+ *
+ * Used for manually promoting important sessions to permanent storage.
+ * The session is moved from MTM to LTM with promotion metadata added.
+ *
+ * @param {string} sessionId - Session ID to promote (must exist in MTM)
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {Object} Promotion result
+ * @returns {boolean} returns.success - Whether promotion succeeded
+ * @returns {string} [returns.ltmPath] - Path to the new LTM file (on success)
+ * @returns {string} [returns.sessionId] - Session ID that was promoted
+ * @returns {string} [returns.error] - Error message (on failure)
+ * @example
+ * const result = promoteToLTM('important-session-001');
+ * if (result.success) {
+ *   console.log('Session promoted to:', result.ltmPath);
+ * }
  */
 function promoteToLTM(sessionId, projectRoot = PROJECT_ROOT) {
   const mtmDir = getTierPath('MTM', projectRoot);
@@ -442,7 +476,22 @@ function summarizeOldSessions(projectRoot = PROJECT_ROOT) {
 // ============================================================================
 
 /**
- * Get health status of all memory tiers
+ * Get health status of all memory tiers.
+ *
+ * Returns session counts for each tier and warnings when MTM
+ * is approaching its limit (8+ sessions out of 10 max).
+ *
+ * @param {string} [projectRoot=PROJECT_ROOT] - Project root directory path
+ * @returns {Object} Tier health status
+ * @returns {{sessionCount: number, warnings: string[]}} returns.stm - STM health
+ * @returns {{sessionCount: number, warnings: string[]}} returns.mtm - MTM health
+ * @returns {{summaryCount: number, warnings: string[]}} returns.ltm - LTM health
+ * @returns {'healthy'|'warning'} returns.overall - Overall health status
+ * @example
+ * const health = getTierHealth();
+ * if (health.overall === 'warning') {
+ *   console.log('MTM warnings:', health.mtm.warnings);
+ * }
  */
 function getTierHealth(projectRoot = PROJECT_ROOT) {
   const result = {

@@ -25,6 +25,8 @@ const {
   parseHookInputAsync,
   getToolName,
   getToolOutput,
+  auditLog,
+  debugLog,
 } = require('../../lib/utils/hook-input.cjs');
 
 // Import memory manager
@@ -178,16 +180,14 @@ async function main() {
     }
 
     // Log if we recorded anything (for debugging)
-    if (recorded > 0 && process.env.DEBUG_HOOKS) {
-      console.error(`[memory] Recorded ${recorded} items from Task output`);
+    if (recorded > 0) {
+      debugLog('session-memory-extractor', `Recorded ${recorded} items from Task output`);
     }
 
     process.exit(0);
   } catch (err) {
     // Fail silently - memory extraction is non-critical
-    if (process.env.DEBUG_HOOKS) {
-      console.error('Session memory extractor error:', err.message);
-    }
+    debugLog('session-memory-extractor', 'Memory extraction error', err);
     process.exit(0);
   }
 }

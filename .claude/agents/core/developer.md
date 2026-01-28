@@ -2,7 +2,7 @@
 name: developer
 version: 1.0.0
 description: TDD-focused implementer. Writes code, runs tests, and refactors. Follows Red-Green-Refactor strictly.
-model: claude-sonnet-4-5
+model: sonnet
 temperature: 0.3
 context_strategy: lazy_load
 priority: high

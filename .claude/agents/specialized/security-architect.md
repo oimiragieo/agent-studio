@@ -2,7 +2,7 @@
 name: security-architect
 version: 1.0.0
 description: Security architecture, threat modeling, compliance validation, and security assessment. Use for designing authentication systems, evaluating vulnerabilities, security code review, penetration testing planning, and compliance validation (SOC2, HIPAA, GDPR). Specializes in zero-trust architecture and defense-in-depth. Also handles blockchain and smart contract security.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.4
 context_strategy: full
 priority: high

@@ -2,7 +2,7 @@
 name: qa
 version: 1.0.0
 description: Quality Assurance specialist. Writes comprehensive test suites, performs regression testing, and validates releases.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.3
 context_strategy: lazy_load
 priority: high

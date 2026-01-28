@@ -373,6 +373,39 @@ function debugLog(hookName, message, err = null) {
 }
 
 /**
+ * SEC-AUDIT-016 FIX: Centralized audit log for security override usage
+ * Provides consistent JSON logging to stderr when security env var overrides are used.
+ *
+ * This function MUST be used whenever a hook detects a security override env var
+ * (e.g., *_ENFORCEMENT=off, *_GUARD=off, *_OVERRIDE=true) to ensure:
+ * 1. Consistent JSON format across all hooks
+ * 2. All overrides are audited (none are silent)
+ * 3. Process ID included for correlation across hook calls
+ *
+ * @param {string} hookName - Name of the hook (e.g., 'routing-guard')
+ * @param {string} envVar - Environment variable being overridden (e.g., 'ROUTER_BASH_GUARD')
+ * @param {string} value - Override value (e.g., 'off', 'warn', 'true')
+ * @param {string} impact - What the override allows (e.g., 'Router can use any Bash command')
+ * @example
+ *   auditSecurityOverride('routing-guard', 'ROUTER_BASH_GUARD', 'off', 'Router can use any Bash command');
+ *   auditSecurityOverride('file-placement-guard', 'FILE_PLACEMENT_GUARD', 'off', 'File placement validation bypassed');
+ *   auditSecurityOverride('loop-prevention', 'LOOP_PREVENTION_FAIL_OPEN', 'true', 'Hook fails open on errors');
+ */
+function auditSecurityOverride(hookName, envVar, value, impact) {
+  process.stderr.write(
+    JSON.stringify({
+      type: 'SECURITY_OVERRIDE',
+      hook: hookName,
+      envVar,
+      value,
+      impact,
+      timestamp: new Date().toISOString(),
+      pid: process.pid,
+    }) + '\n'
+  );
+}
+
+/**
  * HOOK-009 FIX: Security audit log for security-critical hooks
  * Logs to both stderr (for debugging) and an audit file (for retention)
  *
@@ -436,6 +469,7 @@ module.exports = {
   // HOOK-007/HOOK-009/HOOK-010: Standardized logging helpers
   debugLog,
   securityAuditLog,
+  auditSecurityOverride,
 
   // Constants
   DEFAULT_TIMEOUT_MS,

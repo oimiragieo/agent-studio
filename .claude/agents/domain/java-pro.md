@@ -2,7 +2,7 @@
 name: java-pro
 version: 1.0.0
 description: Java 21+ and Spring Boot 3.x development expert for enterprise backend systems. Use for building Spring Boot microservices, REST APIs, JPA repositories, and Java enterprise applications.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

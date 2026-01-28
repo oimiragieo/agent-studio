@@ -2,7 +2,7 @@
 name: nextjs-pro
 version: 1.0.0
 description: Next.js 14+ App Router expert with React Server Components, Server Actions, and modern full-stack patterns. Use for building Next.js applications with SSR, SSG, ISR, and React Server Components.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

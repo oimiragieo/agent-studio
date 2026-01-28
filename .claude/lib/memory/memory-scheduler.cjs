@@ -22,7 +22,8 @@ const fs = require('fs');
 const path = require('path');
 
 // BUG-001 Fix: Import findProjectRoot to prevent nested .claude folder creation
-const { PROJECT_ROOT } = require('../utils/project-root.cjs');
+// CRITICAL-001 FIX: Path traversal prevention
+const { PROJECT_ROOT, validatePathWithinProject } = require('../utils/project-root.cjs');
 
 // ============================================================================
 // Configuration
@@ -48,9 +49,26 @@ const CONFIG = {
 // ============================================================================
 
 /**
+ * Validate projectRoot parameter for path traversal safety
+ * CRITICAL-001-MEMORY FIX: All functions that accept projectRoot MUST call this first
+ * @param {string} projectRoot - The project root path to validate
+ * @throws {Error} If path is invalid or outside PROJECT_ROOT
+ */
+function validateProjectRoot(projectRoot) {
+  if (projectRoot !== PROJECT_ROOT) {
+    const validation = validatePathWithinProject(projectRoot, PROJECT_ROOT);
+    if (!validation.safe) {
+      throw new Error(`Invalid projectRoot: ${validation.reason}`);
+    }
+  }
+}
+
+/**
  * Get the memory directory path
  */
 function getMemoryDir(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   return path.join(projectRoot, '.claude', 'context', 'memory');
 }
 
@@ -85,21 +103,16 @@ function getStatusPath(projectRoot = PROJECT_ROOT) {
  * Read maintenance status
  */
 function readStatus(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const statusPath = getStatusPath(projectRoot);
   try {
     if (fs.existsSync(statusPath)) {
       return JSON.parse(fs.readFileSync(statusPath, 'utf8'));
     }
   } catch (e) {
-    if (process.env.METRICS_DEBUG === 'true') {
-      console.error(
-        JSON.stringify({
-          module: 'memory-scheduler',
-          function: 'readStatus',
-          error: e.message,
-          timestamp: new Date().toISOString(),
-        })
-      );
+    if (process.env.MEMORY_DEBUG) {
+      console.error('[MEMORY_DEBUG]', 'readStatus:', e.message);
     }
   }
   return { lastDaily: null, lastWeekly: null, history: [] };
@@ -109,6 +122,8 @@ function readStatus(projectRoot = PROJECT_ROOT) {
  * Write maintenance status
  */
 function writeStatus(status, projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const statusPath = getStatusPath(projectRoot);
   const memoryDir = getMemoryDir(projectRoot);
   if (!fs.existsSync(memoryDir)) {
@@ -124,7 +139,9 @@ function writeStatus(status, projectRoot = PROJECT_ROOT) {
 /**
  * Run consolidation task (STM -> MTM)
  */
-function runConsolidation(projectRoot) {
+function runConsolidation(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const memoryTiers = safeRequire(path.join(libDir, 'memory-tiers.cjs'));
 
@@ -154,7 +171,9 @@ function runConsolidation(projectRoot) {
 /**
  * Run health check task
  */
-function runHealthCheck(projectRoot) {
+function runHealthCheck(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const dashboard = safeRequire(path.join(libDir, 'memory-dashboard.cjs'));
 
@@ -187,7 +206,9 @@ function runHealthCheck(projectRoot) {
 /**
  * Run metrics logging task
  */
-function runMetricsLog(projectRoot) {
+function runMetricsLog(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const dashboard = safeRequire(path.join(libDir, 'memory-dashboard.cjs'));
 
@@ -219,7 +240,9 @@ function runMetricsLog(projectRoot) {
 /**
  * Run summarization task (MTM -> LTM)
  */
-function runSummarization(projectRoot) {
+function runSummarization(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const memoryTiers = safeRequire(path.join(libDir, 'memory-tiers.cjs'));
 
@@ -249,7 +272,9 @@ function runSummarization(projectRoot) {
 /**
  * Run deduplication task
  */
-function runDeduplication(projectRoot) {
+function runDeduplication(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const smartPruner = safeRequire(path.join(libDir, 'smart-pruner.cjs'));
   const memoryDir = getMemoryDir(projectRoot);
@@ -313,7 +338,9 @@ function runDeduplication(projectRoot) {
 /**
  * Run pruning task
  */
-function runPruning(projectRoot) {
+function runPruning(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const memoryManager = safeRequire(path.join(libDir, 'memory-manager.cjs'));
 
@@ -350,7 +377,9 @@ function runPruning(projectRoot) {
 /**
  * Run weekly report generation
  */
-function runWeeklyReport(projectRoot) {
+function runWeeklyReport(projectRoot = PROJECT_ROOT) {
+  // CRITICAL-001-MEMORY FIX: Validate projectRoot
+  validateProjectRoot(projectRoot);
   const libDir = getLibDir(projectRoot);
   const dashboard = safeRequire(path.join(libDir, 'memory-dashboard.cjs'));
 

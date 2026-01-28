@@ -194,6 +194,100 @@ phases:
           type: file:create
 `;
 
+const INVALID_WORKFLOW_STEP_MISSING_ID = `
+name: test
+version: 1.0.0
+description: Step missing id
+phases:
+  evaluate:
+    steps:
+      - action: prompt
+        description: This step is missing an id field
+  validate:
+    steps:
+      - id: step2
+        action: validate
+  obtain:
+    steps:
+      - id: step3
+        action: search
+  lock:
+    steps:
+      - id: step4
+        action: write
+  verify:
+    steps:
+      - id: step5
+        action: validate
+  enable:
+    steps:
+      - id: step6
+        action: edit
+`;
+
+const INVALID_WORKFLOW_STEP_MISSING_HANDLER = `
+name: test
+version: 1.0.0
+description: Step missing handler
+phases:
+  evaluate:
+    steps:
+      - id: step1
+        description: This step is missing a handler or action field
+  validate:
+    steps:
+      - id: step2
+        action: validate
+  obtain:
+    steps:
+      - id: step3
+        action: search
+  lock:
+    steps:
+      - id: step4
+        action: write
+  verify:
+    steps:
+      - id: step5
+        action: validate
+  enable:
+    steps:
+      - id: step6
+        action: edit
+`;
+
+const VALID_WORKFLOW_WITH_HANDLER = `
+name: test
+version: 1.0.0
+description: Workflow with step using handler instead of action
+phases:
+  evaluate:
+    steps:
+      - id: step1
+        handler: customHandler
+        description: Step with handler field
+  validate:
+    steps:
+      - id: step2
+        action: validate
+  obtain:
+    steps:
+      - id: step3
+        action: search
+  lock:
+    steps:
+      - id: step4
+        action: write
+  verify:
+    steps:
+      - id: step5
+        action: validate
+  enable:
+    steps:
+      - id: step6
+        action: edit
+`;
+
 // =============================================================================
 // Tests
 // =============================================================================
@@ -412,6 +506,128 @@ describe('Rollback Action Validation', () => {
     const result = await validator.validate(testPath);
     // Workflow has compensate but no rollback - should warn
     assert(result.warnings && result.warnings.length > 0, 'Should have warnings');
+  });
+});
+
+describe('Step Schema Validation', () => {
+  it('should validate a single step with required id', () => {
+    const { validateSingleStep } = require('./workflow-validator.cjs');
+    const step = { id: 'step1', handler: 'myHandler' };
+    const errors = validateSingleStep(step, 'evaluate', 1);
+    assert(errors.length === 0, 'Step with id and handler should be valid');
+  });
+
+  it('should detect step missing id field', () => {
+    const { validateSingleStep } = require('./workflow-validator.cjs');
+    const step = { handler: 'myHandler' };
+    const errors = validateSingleStep(step, 'evaluate', 1);
+    assert(errors.length > 0, 'Should have errors');
+    assert(
+      errors.some(e => e.includes('missing') && e.includes('id')),
+      'Should mention missing id'
+    );
+  });
+
+  it('should detect step missing handler/action field', () => {
+    const { validateSingleStep } = require('./workflow-validator.cjs');
+    const step = { id: 'step1' };
+    const errors = validateSingleStep(step, 'evaluate', 1);
+    assert(errors.length > 0, 'Should have errors');
+    assert(
+      errors.some(e => (e.includes('handler') || e.includes('action')) && e.includes('missing')),
+      'Should mention missing handler or action'
+    );
+  });
+
+  it('should validate step with action field instead of handler', () => {
+    const { validateSingleStep } = require('./workflow-validator.cjs');
+    const step = { id: 'step1', action: 'prompt' };
+    const errors = validateSingleStep(step, 'evaluate', 1);
+    assert(errors.length === 0, 'Step with id and action should be valid');
+  });
+
+  it('should validate entire workflow step schemas', async () => {
+    const { WorkflowValidator } = require('./workflow-validator.cjs');
+    const validator = new WorkflowValidator();
+
+    const workflow = {
+      phases: {
+        evaluate: {
+          steps: [{ id: 'step1', action: 'prompt' }],
+        },
+      },
+    };
+
+    const result = validator.validateStepSchema(workflow);
+    assert(result.valid === true, 'Workflow with valid steps should pass');
+    assert(result.errors.length === 0, 'Should have no errors');
+  });
+
+  it('should detect invalid steps across all phases', async () => {
+    const { WorkflowValidator } = require('./workflow-validator.cjs');
+    const validator = new WorkflowValidator();
+
+    const workflow = {
+      phases: {
+        evaluate: {
+          steps: [{ id: 'step1', action: 'prompt' }],
+        },
+        validate: {
+          steps: [{ action: 'validate' }], // Missing id
+        },
+        obtain: {
+          steps: [{ id: 'step3' }], // Missing handler/action
+        },
+      },
+    };
+
+    const result = validator.validateStepSchema(workflow);
+    assert(result.valid === false, 'Should be invalid');
+    assert(result.errors.length >= 2, 'Should detect both errors');
+  });
+
+  it('should reject workflow with step missing id field', async () => {
+    const { WorkflowValidator } = require('./workflow-validator.cjs');
+    const validator = new WorkflowValidator();
+
+    const testPath = path.join(TEST_DIR, 'step-missing-id.yaml');
+    fs.writeFileSync(testPath, INVALID_WORKFLOW_STEP_MISSING_ID);
+
+    const result = await validator.validate(testPath);
+    assert(result.valid === false, 'Should be invalid');
+    assert(
+      result.errors.some(e => e.includes('missing') && e.includes('id')),
+      'Should mention missing id in step'
+    );
+  });
+
+  it('should reject workflow with step missing handler', async () => {
+    const { WorkflowValidator } = require('./workflow-validator.cjs');
+    const validator = new WorkflowValidator();
+
+    const testPath = path.join(TEST_DIR, 'step-missing-handler.yaml');
+    fs.writeFileSync(testPath, INVALID_WORKFLOW_STEP_MISSING_HANDLER);
+
+    const result = await validator.validate(testPath);
+    assert(result.valid === false, 'Should be invalid');
+    assert(
+      result.errors.some(
+        e => (e.includes('handler') || e.includes('action')) && e.includes('missing')
+      ),
+      'Should mention missing handler or action'
+    );
+  });
+
+  it('should accept workflow with handler field', async () => {
+    const { WorkflowValidator } = require('./workflow-validator.cjs');
+    const validator = new WorkflowValidator();
+
+    const testPath = path.join(TEST_DIR, 'valid-handler.yaml');
+    fs.writeFileSync(testPath, VALID_WORKFLOW_WITH_HANDLER);
+
+    const result = await validator.validate(testPath);
+    assert(result.valid === true, 'Workflow with valid handler should pass');
+    assert(result.errors.length === 0, 'Should have no errors');
   });
 });
 

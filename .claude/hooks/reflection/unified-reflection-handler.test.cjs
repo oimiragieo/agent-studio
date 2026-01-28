@@ -162,12 +162,13 @@ describe('unified-reflection-handler.cjs', () => {
       assertEqual(hook.detectEventType(input), 'task_completion');
     });
 
-    it('should return null for TaskUpdate with status=in_progress', () => {
+    // PERF-003 #2: Now tracks all TaskUpdate calls (was task-update-tracker.cjs)
+    it('should detect task_update for TaskUpdate with status=in_progress', () => {
       const input = {
         tool_name: 'TaskUpdate',
         tool_input: { taskId: '42', status: 'in_progress' },
       };
-      assertEqual(hook.detectEventType(input), null);
+      assertEqual(hook.detectEventType(input), 'task_update');
     });
 
     it('should detect error_recovery for Bash with non-zero exit code', () => {
@@ -285,6 +286,22 @@ describe('unified-reflection-handler.cjs', () => {
       const entry = hook.handleTaskCompletion(input);
 
       assertEqual(entry.summary, 'Completed auth feature');
+    });
+  });
+
+  // PERF-003 #2: Tests for TaskUpdate tracking (consolidated from task-update-tracker.cjs)
+  describe('handleTaskUpdate()', () => {
+    it('should exist as exported function', () => {
+      assert(typeof hook.handleTaskUpdate === 'function', 'handleTaskUpdate should be exported');
+    });
+
+    it('should not throw when called with valid input', () => {
+      const input = {
+        tool_name: 'TaskUpdate',
+        tool_input: { taskId: '99', status: 'in_progress' },
+      };
+      // Should not throw
+      hook.handleTaskUpdate(input);
     });
   });
 

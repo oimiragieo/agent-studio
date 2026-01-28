@@ -2,7 +2,7 @@
 name: swarm-coordinator
 version: 1.0.0
 description: Manages multi-agent swarms (Queen/Worker topology). Handles consensus, task distribution, and result aggregation.
-model: claude-opus-4-5-20251101
+model: opus
 temperature: 0.5
 context_strategy: minimal
 priority: high

@@ -125,6 +125,8 @@ function getFrequencyScore(accessCount) {
  * @returns {number} Score between 0 and 1
  */
 function getImportanceScore(entry) {
+  // Handle null/undefined entry gracefully
+  if (!entry) return CONFIG.BASE_IMPORTANCE;
   const text = entry.text || entry.content || entry.description || '';
 
   let maxWeight = CONFIG.BASE_IMPORTANCE;
@@ -144,11 +146,26 @@ function getImportanceScore(entry) {
 // ============================================================================
 
 /**
- * Calculate overall utility score combining recency, frequency, and importance
- * Formula: Score = 0.3*recency + 0.3*frequency + 0.4*importance
+ * Calculate overall utility score combining recency, frequency, and importance.
  *
- * @param {Object} entry - Entry with lastAccessed, accessCount, and text fields
- * @returns {number} Utility score between 0 and 1
+ * Uses weighted formula: Score = 0.3*recency + 0.3*frequency + 0.4*importance
+ * Higher scores indicate more valuable entries that should be retained.
+ *
+ * @param {Object} entry - Memory entry to score
+ * @param {string} [entry.lastAccessed] - ISO timestamp of last access
+ * @param {string} [entry.last_accessed] - Alternative key for last access time
+ * @param {number} [entry.accessCount] - Number of times entry was accessed
+ * @param {number} [entry.access_count] - Alternative key for access count
+ * @param {string} [entry.text] - Entry text content (used for importance scoring)
+ * @param {string} [entry.content] - Alternative key for text content
+ * @returns {number} Utility score between 0 and 1 (1 = highest value)
+ * @example
+ * const score = calculateUtility({
+ *   text: 'CRITICAL: Always run tests',
+ *   lastAccessed: new Date().toISOString(),
+ *   accessCount: 10
+ * });
+ * // Returns: ~0.9+ (high recency, frequency, and importance)
  */
 function calculateUtility(entry) {
   const recencyScore = getRecencyScore(entry.lastAccessed || entry.last_accessed);
@@ -326,11 +343,19 @@ function detectDuplicates(
 // ============================================================================
 
 /**
- * Prune entries by utility score, keeping only top N
+ * Prune entries by utility score, keeping only top N highest-scoring entries.
  *
- * @param {Array} entries - Array of entries
+ * Calculates utility scores for all entries and keeps those with the
+ * highest scores, removing low-value entries to meet the target count.
+ *
+ * @param {Array<Object>} entries - Array of memory entries to prune
  * @param {number} targetCount - Maximum number of entries to keep
- * @returns {Object} { kept: [...], removed: [...] }
+ * @returns {Object} Pruning result
+ * @returns {Array<Object>} returns.kept - Entries retained (highest utility)
+ * @returns {Array<Object>} returns.removed - Entries removed (lowest utility)
+ * @example
+ * const result = pruneByUtility(entries, 10);
+ * console.log(`Kept ${result.kept.length}, removed ${result.removed.length}`);
  */
 function pruneByUtility(entries, targetCount) {
   if (!entries || entries.length === 0) {
@@ -358,11 +383,24 @@ function pruneByUtility(entries, targetCount) {
 }
 
 /**
- * Enforce retention policy for a specific tier
+ * Enforce retention policy for a specific memory tier.
  *
- * @param {Array} entries - Array of entries
- * @param {string} tier - Memory tier: 'STM', 'MTM', or 'LTM'
- * @returns {Object} { kept: [...], removed: [...], archived: [...] }
+ * Applies tier-specific limits:
+ * - STM: 5 entries (current session only)
+ * - MTM: 15 entries (recent sessions)
+ * - LTM: 100 entries (permanent but summarized)
+ *
+ * @param {Array<Object>} entries - Array of entries to enforce limits on
+ * @param {'STM'|'MTM'|'LTM'} tier - Memory tier to apply limits for
+ * @returns {Object} Enforcement result
+ * @returns {Array<Object>} returns.kept - Entries within retention limit
+ * @returns {Array<Object>} returns.removed - Entries exceeding limit
+ * @returns {Array<Object>} returns.archived - Archived entries (empty, caller handles archival)
+ * @example
+ * const result = enforceRetention(entries, 'MTM');
+ * if (result.removed.length > 0) {
+ *   console.log(`Removed ${result.removed.length} entries exceeding MTM limit`);
+ * }
  */
 function enforceRetention(entries, tier) {
   const limit = RETENTION_LIMITS[tier];
@@ -443,14 +481,32 @@ function archiveLowValue(entries) {
 // ============================================================================
 
 /**
- * Deduplicate and prune entries in one operation
+ * Deduplicate and prune entries in one operation.
  *
- * @param {Array} entries - Array of entries to process
- * @param {Object} options - { targetCount, similarityThreshold }
- * @returns {Object} { kept, removed, deduplicated, archived }
+ * Performs a two-step cleanup:
+ * 1. Finds and merges duplicate entries using Jaccard similarity
+ * 2. Prunes remaining entries by utility score to meet target count
+ *
+ * @param {Array<Object>} entries - Array of entries to process
+ * @param {Object} [options={}] - Processing options
+ * @param {number} [options.targetCount=20] - Maximum entries to keep after pruning
+ * @param {number} [options.similarityThreshold=0.4] - Jaccard similarity threshold (0-1)
+ * @returns {Object} Processing result
+ * @returns {Array<Object>} returns.kept - Entries retained after deduplication and pruning
+ * @returns {Array<Object>} returns.removed - Entries removed during pruning
+ * @returns {number} returns.deduplicated - Count of entries merged as duplicates
+ * @returns {Object|null} returns.archived - Archive object if entries were archived
+ * @example
+ * const result = deduplicateAndPrune(entries, {
+ *   targetCount: 30,
+ *   similarityThreshold: 0.5
+ * });
+ * console.log(`Deduplicated ${result.deduplicated}, kept ${result.kept.length}`);
  */
 function deduplicateAndPrune(entries, options = {}) {
-  const { targetCount = 20, similarityThreshold = CONFIG.DEFAULT_SIMILARITY_THRESHOLD } = options;
+  // Handle null options gracefully
+  const opts = options || {};
+  const { targetCount = 20, similarityThreshold = CONFIG.DEFAULT_SIMILARITY_THRESHOLD } = opts;
 
   if (!entries || entries.length === 0) {
     return {

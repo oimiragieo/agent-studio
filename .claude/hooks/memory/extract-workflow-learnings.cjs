@@ -14,6 +14,8 @@ const path = require('path');
 
 // PROC-002: Use shared utility instead of duplicated findProjectRoot
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+// HOOK-001: Use shared hook-input utility instead of inline argv parsing
+const { parseHookInputSync, auditLog, debugLog } = require('../../lib/utils/hook-input.cjs');
 const LEARNINGS_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'memory', 'learnings.md');
 
 // Workflow completion markers
@@ -97,7 +99,7 @@ function appendLearnings(learnings, workflowName = 'Unknown Workflow') {
     fs.appendFileSync(LEARNINGS_PATH, entry);
     return true;
   } catch (err) {
-    console.error('Failed to append learnings:', err.message);
+    debugLog('extract-workflow-learnings', 'Failed to append learnings', err);
     return false;
   }
 }
@@ -141,15 +143,8 @@ function validate(context) {
  */
 function main() {
   try {
-    // Parse input from command line argument
-    let input = null;
-    try {
-      if (process.argv[2]) {
-        input = JSON.parse(process.argv[2]);
-      }
-    } catch (e) {
-      // Handle parse errors gracefully - not a security issue for PostToolUse
-    }
+    // HOOK-001: Use shared hook-input utility instead of inline argv parsing
+    const input = parseHookInputSync();
 
     if (!input) {
       process.exit(0);
@@ -164,14 +159,7 @@ function main() {
   } catch (err) {
     // For PostToolUse hooks, we fail open since the tool has already executed.
     // However, we still audit log the error for observability.
-    console.error(
-      JSON.stringify({
-        hook: 'extract-workflow-learnings',
-        event: 'error_post_tool',
-        error: err.message,
-        timestamp: new Date().toISOString(),
-      })
-    );
+    auditLog('extract-workflow-learnings', 'error_post_tool', { error: err.message });
 
     // PostToolUse hooks should not block (tool already ran), so exit 0
     process.exit(0);

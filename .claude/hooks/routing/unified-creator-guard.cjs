@@ -38,6 +38,7 @@ const {
   getEnforcementMode,
   formatResult,
   auditLog,
+  auditSecurityOverride,
 } = require('../../lib/utils/hook-input.cjs');
 // MED-001 FIX: Use shared PROJECT_ROOT utility instead of duplicating
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
@@ -315,9 +316,13 @@ function validateCreatorWorkflow(toolName, toolInput) {
   // Check enforcement mode
   const enforcement = getEnforcementMode('CREATOR_GUARD', 'block');
   if (enforcement === 'off') {
-    auditLog('unified-creator-guard', 'security_override_used', {
-      override: 'CREATOR_GUARD=off',
-    });
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'unified-creator-guard',
+      'CREATOR_GUARD',
+      'off',
+      'Creator workflow requirement bypassed'
+    );
     return { pass: true };
   }
 
@@ -355,7 +360,29 @@ function validateCreatorWorkflow(toolName, toolInput) {
 // =============================================================================
 
 /**
- * Main execution function
+ * Main entry point for unified creator guard hook.
+ *
+ * Enforces creator workflow compliance by blocking direct writes to
+ * artifact paths (skills, agents, hooks, workflows, templates, schemas)
+ * without invoking the corresponding creator skill first.
+ *
+ * Prevents "invisible artifacts" that lack CLAUDE.md updates,
+ * catalog registration, and agent assignment.
+ *
+ * @async
+ * @returns {Promise<void>} Exits with:
+ *   - 0 if operation is allowed or warning issued
+ *   - 2 if operation is blocked (fail-closed on error)
+ *
+ * @throws {Error} Caught internally; triggers fail-closed behavior.
+ *   When creator state is unknown, exits with code 2 to prevent bypass.
+ *
+ * Checked by: isCreatorActive(), checkRecentCreatorInvocation()
+ * Exit Behavior:
+ *   - Allowed: process.exit(0)
+ *   - Blocked: process.exit(2) + message to stdout
+ *   - Warning: process.exit(0) + message to stderr (warn mode)
+ *   - Error: process.exit(2) + JSON audit log to stderr
  */
 async function main() {
   try {
@@ -421,6 +448,24 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
+/**
+ * Module exports for unified-creator-guard hook.
+ *
+ * @typedef {Object} CreatorGuardExports
+ * @property {Function} main - Main entry point for creator guard hook
+ * @property {Function} validateCreatorWorkflow - Validate creator workflow state
+ * @property {Function} findRequiredCreator - Find creator needed for artifact type
+ * @property {Function} generateViolationMessage - Generate formatted violation message
+ * @property {Function} isCreatorActive - Check if creator is currently active
+ * @property {Function} markCreatorActive - Mark creator as active in state
+ * @property {Function} clearCreatorActive - Clear creator active state
+ * @property {Object} CREATOR_CONFIGS - Configuration for each creator type
+ * @property {string} STATE_FILE - Path to creator state file
+ * @property {number} DEFAULT_TTL_MS - Default time-to-live for creator state
+ * @property {Array<string>} WATCHED_TOOLS - Tools that trigger creator check
+ * @property {string} PROJECT_ROOT - Project root directory path
+ */
 
 // Export for testing and programmatic use
 module.exports = {

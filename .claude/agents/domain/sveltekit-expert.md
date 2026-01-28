@@ -2,7 +2,7 @@
 name: sveltekit-expert
 version: 1.0.0
 description: SvelteKit and Svelte 5 runes expert for full-stack web apps. Use for building reactive web applications, SSR/SSG apps, form handling, SEO optimization, and full-stack development with SvelteKit.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

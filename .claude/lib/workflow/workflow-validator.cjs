@@ -122,6 +122,64 @@ function checkDuplicateStepIds(workflow) {
 }
 
 /**
+ * Validate a single step's schema
+ *
+ * @param {Object} step - Step definition
+ * @param {string} phaseName - Name of the phase
+ * @param {number} stepNumber - 1-based step number for error messages
+ * @returns {string[]} Array of error messages (empty if valid)
+ */
+function validateSingleStep(step, phaseName, stepNumber) {
+  const errors = [];
+
+  // Check for required 'id' field
+  if (!step.id) {
+    errors.push(`Phase ${phaseName}, Step ${stepNumber}: missing 'id'`);
+  }
+
+  // Check for required 'handler' or 'action' field
+  if (!step.handler && !step.action) {
+    errors.push(`Phase ${phaseName}, Step ${stepNumber}: missing 'handler' or 'action'`);
+  }
+
+  return errors;
+}
+
+/**
+ * Validate step schema (required fields: id, handler/action)
+ *
+ * @param {Object} workflow - Parsed workflow definition
+ * @returns {{ valid: boolean, errors: string[] }}
+ */
+function validateStepSchema(workflow) {
+  const result = {
+    valid: true,
+    errors: [],
+  };
+
+  if (!workflow.phases) {
+    return result;
+  }
+
+  for (const [phaseName, phaseConfig] of Object.entries(workflow.phases)) {
+    if (phaseConfig && phaseConfig.steps) {
+      for (let stepIndex = 0; stepIndex < phaseConfig.steps.length; stepIndex++) {
+        const step = phaseConfig.steps[stepIndex];
+        const stepNumber = stepIndex + 1;
+        const stepErrors = validateSingleStep(step, phaseName, stepNumber);
+
+        if (stepErrors.length > 0) {
+          result.errors.push(...stepErrors);
+          result.valid = false;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+/**
  * Check if workflow has compensate steps but no rollback config
  *
  * @param {Object} workflow - Parsed workflow definition
@@ -214,6 +272,13 @@ class WorkflowValidator {
         result.valid = false;
       }
 
+      // Check step schema
+      const stepSchemaResult = this.validateStepSchema(workflow);
+      if (!stepSchemaResult.valid) {
+        result.errors.push(...stepSchemaResult.errors);
+        result.valid = false;
+      }
+
       // Check gates
       const gateResult = this.checkGates(workflow);
       if (!gateResult.valid) {
@@ -273,6 +338,16 @@ class WorkflowValidator {
     }
 
     return results;
+  }
+
+  /**
+   * Validate step schema (required fields: id, handler/action)
+   *
+   * @param {Object} workflow - Parsed workflow definition
+   * @returns {{ valid: boolean, errors: string[] }}
+   */
+  validateStepSchema(workflow) {
+    return validateStepSchema(workflow);
   }
 
   /**
@@ -520,6 +595,8 @@ module.exports = {
   WorkflowValidator,
   validateEvolvePhases,
   checkDuplicateStepIds,
+  validateStepSchema,
+  validateSingleStep,
   hasCompensateSteps,
   EVOLVE_PHASES,
   VALID_GATE_TYPES,

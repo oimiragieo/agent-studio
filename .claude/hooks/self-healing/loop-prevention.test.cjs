@@ -14,6 +14,9 @@
 const fs = require('fs');
 const path = require('path');
 
+// PERF-005 FIX: Import state cache utilities for test cleanup
+const { invalidateCache, clearAllCache } = require('../../lib/utils/state-cache.cjs');
+
 // Test state tracking
 let testsRun = 0;
 let testsPassed = 0;
@@ -100,10 +103,13 @@ if (!fs.existsSync(STATE_DIR)) {
 }
 
 // Clean up test state before each test suite
+// PERF-005 FIX: Also invalidate cache to ensure fresh reads
 function cleanupTestState() {
   if (fs.existsSync(TEST_STATE_FILE)) {
     fs.unlinkSync(TEST_STATE_FILE);
   }
+  // Invalidate cache entry so getState reads fresh (or returns defaults for missing file)
+  invalidateCache(TEST_STATE_FILE);
 }
 
 // Load the module under test
@@ -519,6 +525,7 @@ describe('SEC-007: Prototype Pollution Protection', () => {
       __proto__: { polluted: true },
     };
     fs.writeFileSync(TEST_STATE_FILE, JSON.stringify(maliciousState));
+    invalidateCache(TEST_STATE_FILE); // PERF-005 FIX: Invalidate cache for fresh read
 
     // Read the state - should NOT have __proto__ pollution
     const state = loopPrevention.getState(TEST_STATE_FILE);
@@ -543,6 +550,7 @@ describe('SEC-007: Prototype Pollution Protection', () => {
       constructor: { prototype: { polluted: true } },
     };
     fs.writeFileSync(TEST_STATE_FILE, JSON.stringify(maliciousState));
+    invalidateCache(TEST_STATE_FILE); // PERF-005 FIX: Invalidate cache for fresh read
 
     // Read the state - should NOT have constructor pollution
     const state = loopPrevention.getState(TEST_STATE_FILE);
@@ -556,6 +564,7 @@ describe('SEC-007: Prototype Pollution Protection', () => {
   it('should return defaults for corrupted JSON', () => {
     // Write corrupted JSON
     fs.writeFileSync(TEST_STATE_FILE, '{ invalid json }}}');
+    invalidateCache(TEST_STATE_FILE); // PERF-005 FIX: Invalidate cache for fresh read
 
     // Should return defaults, not throw
     const state = loopPrevention.getState(TEST_STATE_FILE);
@@ -577,6 +586,7 @@ describe('SEC-007: Prototype Pollution Protection', () => {
       anotherBadProp: { nested: 'data' },
     };
     fs.writeFileSync(TEST_STATE_FILE, JSON.stringify(maliciousState));
+    invalidateCache(TEST_STATE_FILE); // PERF-005 FIX: Invalidate cache for fresh read
 
     // Read the state
     const state = loopPrevention.getState(TEST_STATE_FILE);
@@ -678,11 +688,13 @@ describe('SEC-AUDIT-014: Lock Mechanism', () => {
       })
     );
 
-    // Should detect dead process and remove lock
+    // PERF-005 FIX: Reads (getState) no longer acquire locks for performance
+    // Stale lock cleanup happens during writes (_saveState)
+    // Use a write operation to trigger stale lock detection
     const state = loopPrevention.getState(TEST_STATE_FILE);
-    expect(state).toBeTruthy();
+    loopPrevention._saveState(state, TEST_STATE_FILE);
 
-    // Lock should be removed
+    // Lock should be removed after write operation
     expect(fs.existsSync(lockFile)).toBeFalsy();
   });
 
@@ -699,22 +711,20 @@ describe('SEC-AUDIT-014: Lock Mechanism', () => {
       })
     );
 
-    // Should NOT remove lock just because it's old
-    // (would timeout waiting for lock to be released)
+    // PERF-005 FIX: Reads (getState) no longer acquire locks for performance
+    // Lock checking happens during writes (_saveState)
+    // Write operation should wait for lock (not remove it just because it's old)
     const startTime = Date.now();
-    let timedOut = false;
 
-    try {
-      // This should wait/timeout, not immediately succeed
-      loopPrevention.getState(TEST_STATE_FILE);
-    } catch {
-      timedOut = true;
-    }
+    // _saveState should wait for lock to be released (since PID is current process, lock appears held)
+    // This will timeout after MAX_LOCK_WAIT_MS (2000ms)
+    const state = loopPrevention.getState(TEST_STATE_FILE);
+    loopPrevention._saveState(state, TEST_STATE_FILE);
 
     const elapsed = Date.now() - startTime;
 
-    // Should have waited (indicating it didn't remove lock)
-    // If it removed the lock immediately, elapsed would be < 10ms
+    // Should have waited (indicating it didn't remove lock just because of old timestamp)
+    // If it removed the lock immediately based on time, elapsed would be < 10ms
     expect(elapsed).toBeGreaterThan(50);
   });
 
@@ -765,11 +775,12 @@ describe('SEC-AUDIT-014 TOCTOU Fix: Atomic Stale Lock Cleanup', () => {
       })
     );
 
-    // Acquire lock - should atomically claim the stale lock
+    // PERF-005 FIX: Reads (getState) no longer acquire locks for performance
+    // Stale lock claiming happens during writes (_saveState)
     const state = loopPrevention.getState(TEST_STATE_FILE);
-    expect(state).toBeTruthy();
+    loopPrevention._saveState(state, TEST_STATE_FILE);
 
-    // Lock should be cleaned up
+    // Lock should be cleaned up after write operation
     expect(fs.existsSync(lockFile)).toBeFalsy();
 
     // No .claiming files should be left behind

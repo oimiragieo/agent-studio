@@ -2,7 +2,7 @@
 name: tauri-desktop-developer
 version: 1.0.0
 description: Tauri 2.0 desktop application development expert with Rust backend and web frontend integration. Use for building cross-platform desktop apps, native system integrations, and secure desktop applications.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

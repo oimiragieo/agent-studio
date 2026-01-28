@@ -26,6 +26,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const lockfile = require('proper-lockfile');
 
 /**
  * Write file atomically (write to temp, then rename)
@@ -97,6 +98,73 @@ function atomicWriteSync(filePath, content, options = {}) {
       }
     }
     throw e;
+  }
+}
+
+/**
+ * SEC-AUDIT-013/014 FIX: Write file atomically with cross-platform locking (async)
+ *
+ * Uses proper-lockfile to prevent race conditions during concurrent writes.
+ * This is the async version that provides stronger guarantees than atomicWriteSync
+ * by using battle-tested locking with stale lock detection.
+ *
+ * @param {string} filePath - Absolute path to target file
+ * @param {string|Buffer} content - Content to write
+ * @param {Object|string} [options] - fs.promises.writeFile options (encoding, mode, flag)
+ * @param {Object} [options.lockOptions] - proper-lockfile options override
+ * @returns {Promise<void>}
+ * @throws {Error} If write, rename, or locking fails
+ */
+async function atomicWriteAsync(filePath, content, options = {}) {
+  const dir = path.dirname(filePath);
+  const tempFile = path.join(dir, `.tmp-${crypto.randomBytes(4).toString('hex')}`);
+
+  // Ensure directory exists
+  await fs.promises.mkdir(dir, { recursive: true });
+
+  // Determine lock target: file if exists, directory if not
+  const lockTarget = fs.existsSync(filePath) ? filePath : dir;
+
+  // Configure locking with stale lock detection
+  const lockOptions = options.lockOptions || {
+    stale: 5000, // Consider lock stale after 5 seconds
+    retries: {
+      retries: 5,
+      factor: 2,
+      minTimeout: 100,
+      maxTimeout: 1000,
+    },
+  };
+
+  // Acquire exclusive lock
+  const release = await lockfile.lock(lockTarget, lockOptions);
+
+  try {
+    // Write to temp file
+    await fs.promises.writeFile(tempFile, content, options);
+
+    // On Windows, we need to handle the rename differently
+    if (process.platform === 'win32') {
+      // Delete target if exists (under lock protection)
+      try {
+        await fs.promises.unlink(filePath);
+      } catch (e) {
+        if (e.code !== 'ENOENT') throw e;
+      }
+    }
+
+    // Rename (now safe because we hold lock)
+    await fs.promises.rename(tempFile, filePath);
+  } finally {
+    // Always release lock
+    await release();
+
+    // Clean up temp file if it still exists (belt and suspenders)
+    try {
+      await fs.promises.unlink(tempFile);
+    } catch (e) {
+      // Ignore - either succeeded or rename moved it
+    }
   }
 }
 
@@ -208,6 +276,7 @@ function atomicWriteJSONSyncWithBackup(filePath, data, options = {}) {
 
 module.exports = {
   atomicWriteSync,
+  atomicWriteAsync, // SEC-AUDIT-013/014 FIX: async version with proper-lockfile
   atomicWriteJSONSync,
   atomicWriteJSONSyncWithBackup,
   createBackup,

@@ -851,6 +851,303 @@ if (require.main === module) {
       });
     });
 
+    // Test Suite 7: Error Path Coverage (IMP-006)
+    await describe('Error Path Coverage - Corrupted JSON', async function () {
+      await it('should handle corrupted gotchas.json gracefully', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const gotchasFile = path.join(MEMORY_DIR, 'gotchas.json');
+          fs.writeFileSync(gotchasFile, '{ invalid json content');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { loadMemoryForContext } = require('./memory-manager.cjs');
+
+          // Should not throw, should return empty gotchas
+          const memory = loadMemoryForContext(TEST_PROJECT_ROOT);
+          assert.strictEqual(
+            memory.gotchas.length,
+            0,
+            'Should return empty gotchas for corrupted file'
+          );
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle corrupted patterns.json gracefully', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const patternsFile = path.join(MEMORY_DIR, 'patterns.json');
+          fs.writeFileSync(patternsFile, 'not valid json [');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { loadMemoryForContext } = require('./memory-manager.cjs');
+
+          // Should not throw, should return empty patterns
+          const memory = loadMemoryForContext(TEST_PROJECT_ROOT);
+          assert.strictEqual(
+            memory.patterns.length,
+            0,
+            'Should return empty patterns for corrupted file'
+          );
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle corrupted codebase_map.json gracefully', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const mapFile = path.join(MEMORY_DIR, 'codebase_map.json');
+          fs.writeFileSync(mapFile, '{ "discovered_files": ');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { loadMemoryForContext } = require('./memory-manager.cjs');
+
+          // Should not throw, should return empty discoveries
+          const memory = loadMemoryForContext(TEST_PROJECT_ROOT);
+          assert.strictEqual(
+            memory.discoveries.length,
+            0,
+            'Should return empty discoveries for corrupted file'
+          );
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle corrupted session files gracefully', function () {
+        setupTestDir();
+        try {
+          // Write corrupted session file
+          const sessionFile = path.join(MEMORY_DIR, 'sessions', 'session_001.json');
+          fs.writeFileSync(sessionFile, '{ broken json');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { loadMemoryForContext } = require('./memory-manager.cjs');
+
+          // Should not throw, should return empty sessions
+          const memory = loadMemoryForContext(TEST_PROJECT_ROOT);
+          assert.strictEqual(
+            memory.recent_sessions.length,
+            0,
+            'Should return empty sessions for corrupted file'
+          );
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should reset corrupted gotchas.json when recording new gotcha', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const gotchasFile = path.join(MEMORY_DIR, 'gotchas.json');
+          fs.writeFileSync(gotchasFile, '{ invalid json');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { recordGotcha } = require('./memory-manager.cjs');
+
+          // Should not throw, should create new valid file
+          const result = recordGotcha('new gotcha after corruption', TEST_PROJECT_ROOT);
+          assert.strictEqual(result, true, 'Should successfully record gotcha');
+
+          // Verify file is now valid
+          const gotchas = JSON.parse(fs.readFileSync(gotchasFile, 'utf8'));
+          assert.strictEqual(gotchas.length, 1, 'Should have one gotcha');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should reset corrupted patterns.json when recording new pattern', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const patternsFile = path.join(MEMORY_DIR, 'patterns.json');
+          fs.writeFileSync(patternsFile, 'corrupted [[[');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { recordPattern } = require('./memory-manager.cjs');
+
+          // Should not throw, should create new valid file
+          const result = recordPattern('new pattern after corruption', TEST_PROJECT_ROOT);
+          assert.strictEqual(result, true, 'Should successfully record pattern');
+
+          // Verify file is now valid
+          const patterns = JSON.parse(fs.readFileSync(patternsFile, 'utf8'));
+          assert.strictEqual(patterns.length, 1, 'Should have one pattern');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+    });
+
+    await describe('Error Path Coverage - Missing Directories', async function () {
+      await it('should handle missing memory directory gracefully in loadMemoryForContext', function () {
+        // Use a non-existent project root path
+        const nonExistentRoot = path.join(
+          __dirname,
+          '..',
+          'context',
+          'memory',
+          '.nonexistent-project'
+        );
+
+        delete require.cache[require.resolve('./memory-manager.cjs')];
+        const { loadMemoryForContext } = require('./memory-manager.cjs');
+
+        // This should not throw - but may fail validation
+        // Testing that it handles gracefully
+        try {
+          // loadMemoryForContext validates projectRoot, so this may throw
+          // The test verifies it doesn't crash unexpectedly
+          loadMemoryForContext(nonExistentRoot);
+        } catch (err) {
+          // Expected: path validation error
+          assert(
+            err.message.includes('Invalid projectRoot'),
+            `Expected path validation error, got: ${err.message}`
+          );
+        }
+      });
+
+      await it('should create directories when recording gotcha to new path', function () {
+        setupTestDir();
+        try {
+          // Remove the memory directory
+          fs.rmSync(MEMORY_DIR, { recursive: true });
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { recordGotcha } = require('./memory-manager.cjs');
+
+          // Should create directories and record
+          const result = recordGotcha('gotcha creating dirs', TEST_PROJECT_ROOT);
+          assert.strictEqual(result, true, 'Should successfully record gotcha');
+
+          // Verify directory was created
+          assert(fs.existsSync(MEMORY_DIR), 'Memory directory should be created');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+    });
+
+    await describe('Error Path Coverage - Async Functions', async function () {
+      await it('should handle corrupted JSON in recordGotchaAsync', async function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const gotchasFile = path.join(MEMORY_DIR, 'gotchas.json');
+          fs.writeFileSync(gotchasFile, '{ broken json {{');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { recordGotchaAsync } = require('./memory-manager.cjs');
+
+          // Should recover and create new valid file
+          const result = await recordGotchaAsync(
+            'async gotcha after corruption',
+            TEST_PROJECT_ROOT
+          );
+          assert.strictEqual(result, true, 'Should successfully record gotcha');
+
+          // Verify file is now valid
+          const gotchas = JSON.parse(fs.readFileSync(gotchasFile, 'utf8'));
+          assert.strictEqual(gotchas.length, 1, 'Should have one gotcha');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle corrupted JSON in recordPatternAsync', async function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const patternsFile = path.join(MEMORY_DIR, 'patterns.json');
+          fs.writeFileSync(patternsFile, 'invalid {{json');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { recordPatternAsync } = require('./memory-manager.cjs');
+
+          // Should recover and create new valid file
+          const result = await recordPatternAsync(
+            'async pattern after corruption',
+            TEST_PROJECT_ROOT
+          );
+          assert.strictEqual(result, true, 'Should successfully record pattern');
+
+          // Verify file is now valid
+          const patterns = JSON.parse(fs.readFileSync(patternsFile, 'utf8'));
+          assert.strictEqual(patterns.length, 1, 'Should have one pattern');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle corrupted JSON in loadMemoryForContextAsync', async function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON to multiple files
+          fs.writeFileSync(path.join(MEMORY_DIR, 'gotchas.json'), '{ bad');
+          fs.writeFileSync(path.join(MEMORY_DIR, 'patterns.json'), '[ broken');
+          fs.writeFileSync(path.join(MEMORY_DIR, 'codebase_map.json'), 'not json');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { loadMemoryForContextAsync } = require('./memory-manager.cjs');
+
+          // Should not throw, should return empty arrays
+          const memory = await loadMemoryForContextAsync(TEST_PROJECT_ROOT);
+          assert.strictEqual(memory.gotchas.length, 0, 'Should return empty gotchas');
+          assert.strictEqual(memory.patterns.length, 0, 'Should return empty patterns');
+          assert.strictEqual(memory.discoveries.length, 0, 'Should return empty discoveries');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+    });
+
+    await describe('Error Path Coverage - pruneCodebaseMap', async function () {
+      await it('should handle corrupted codebase_map.json in pruneCodebaseMap', function () {
+        setupTestDir();
+        try {
+          // Write corrupted JSON
+          const mapPath = path.join(MEMORY_DIR, 'codebase_map.json');
+          fs.writeFileSync(mapPath, '{ corrupted json content');
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { pruneCodebaseMap } = require('./memory-manager.cjs');
+
+          // Should not throw, should return zero counts
+          const result = pruneCodebaseMap(TEST_PROJECT_ROOT);
+          assert.strictEqual(result.prunedByTTL, 0, 'Should return 0 for corrupted file');
+          assert.strictEqual(result.prunedBySize, 0, 'Should return 0 for corrupted file');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+
+      await it('should handle missing discovered_files in codebase_map.json', function () {
+        setupTestDir();
+        try {
+          // Write valid JSON but missing discovered_files
+          const mapPath = path.join(MEMORY_DIR, 'codebase_map.json');
+          fs.writeFileSync(mapPath, JSON.stringify({ last_updated: new Date().toISOString() }));
+
+          delete require.cache[require.resolve('./memory-manager.cjs')];
+          const { pruneCodebaseMap } = require('./memory-manager.cjs');
+
+          // Should not throw, should return zero counts
+          const result = pruneCodebaseMap(TEST_PROJECT_ROOT);
+          assert.strictEqual(result.totalPruned, 0, 'Should return 0 for missing discovered_files');
+        } finally {
+          cleanupTestDir();
+        }
+      });
+    });
+
     console.log('\n===================================================');
     console.log('Test run complete.');
   })();

@@ -574,7 +574,29 @@ function recordTaskUpdate(taskId, status) {
   const current = getState();
   const currentCount = current.taskUpdatesThisSession || 0;
 
-  // SEC-AUDIT-011 FIX: Use atomic read-modify-write with version checking
+  // SEC-AUDIT-011 Known Limitation: Non-atomic read-modify-write race condition
+  // Lines 574-583 execute a non-atomic sequence:
+  //   1. Read: getState() retrieves currentCount (line 574)
+  //   2. Calculate: increment value (line 575)
+  //   3. Write: saveStateWithRetry() persists incremented count (lines 578-583)
+  //
+  // In rare concurrent scenarios (e.g., rapid TaskUpdate calls across parallel agents),
+  // the taskUpdatesThisSession counter may lose updates if two reads happen before
+  // either write completes. However, this is ACCEPTABLE for these reasons:
+  //
+  // - Purpose: Informational tracking only (metrics, diagnostics)
+  // - Not security-critical: Counter is used for debugging/monitoring, not authorization
+  // - Risk: Eventual count may undercount by 1-2 in rare edge cases
+  // - Impact: Low - affects only audit metrics, not task execution logic
+  // - Trade-off: Full atomicity would require distributed locks or consensus, adding
+  //   complexity and latency to a non-critical tracking function
+  //
+  // Mitigation: saveStateWithRetry() ensures POSIX-atomic file operations where possible,
+  // and provides retry logic for transient failures. On Windows NTFS, atomicity is best-effort.
+  //
+  // To enable debug logging of state updates: MEMORY_DEBUG=true or METRICS_DEBUG=true
+  //
+  // See also: Windows Atomic File Operations Security Pattern in learnings.md
   return saveStateWithRetry({
     lastTaskUpdateCall: Date.now(),
     lastTaskUpdateTaskId: taskId,

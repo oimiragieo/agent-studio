@@ -558,6 +558,181 @@ if (require.main === module) {
     });
   });
 
+  // Test Suite 8: Error Path Coverage (IMP-006)
+  describe('Error Path Coverage - Corrupted JSON', function () {
+    it('should handle corrupted STM session file in readSTMEntry', function () {
+      setupTestDir();
+      try {
+        const { readSTMEntry } = freshRequire('./memory-tiers.cjs');
+
+        // Write corrupted JSON
+        const stmPath = path.join(MEMORY_DIR, 'stm', 'session_current.json');
+        fs.writeFileSync(stmPath, '{ corrupted json');
+
+        // Should return null for corrupted file
+        const result = readSTMEntry(TEST_PROJECT_ROOT);
+        assert.strictEqual(result, null, 'Should return null for corrupted STM file');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle corrupted MTM session files in getMTMSessions', function () {
+      setupTestDir();
+      try {
+        const { getMTMSessions } = freshRequire('./memory-tiers.cjs');
+
+        // Write one valid and one corrupted session
+        const mtmDir = path.join(MEMORY_DIR, 'mtm');
+        fs.writeFileSync(
+          path.join(mtmDir, 'session_001.json'),
+          JSON.stringify({ session_id: 'valid-session', timestamp: new Date().toISOString() })
+        );
+        fs.writeFileSync(path.join(mtmDir, 'session_002.json'), '{ corrupted');
+
+        // Should filter out corrupted file
+        const sessions = getMTMSessions(TEST_PROJECT_ROOT);
+        assert.strictEqual(sessions.length, 1, 'Should have only 1 valid session');
+        assert.strictEqual(sessions[0].session_id, 'valid-session', 'Should keep valid session');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle corrupted STM in consolidateSession', function () {
+      setupTestDir();
+      try {
+        const { consolidateSession } = freshRequire('./memory-tiers.cjs');
+
+        // Write corrupted STM
+        const stmPath = path.join(MEMORY_DIR, 'stm', 'session_current.json');
+        fs.writeFileSync(stmPath, '{ broken json {{');
+
+        // Should return error result
+        const result = consolidateSession('test-session', TEST_PROJECT_ROOT);
+        assert.strictEqual(result.success, false, 'Should fail for corrupted STM');
+        assert(result.error, 'Should have error message');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle missing STM in consolidateSession', function () {
+      setupTestDir();
+      try {
+        const { consolidateSession } = freshRequire('./memory-tiers.cjs');
+
+        // Don't create STM file
+        const result = consolidateSession('nonexistent-session', TEST_PROJECT_ROOT);
+        assert.strictEqual(result.success, false, 'Should fail for missing STM');
+        assert(result.error.includes('No STM session'), 'Should report no STM session');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle session not found in promoteToLTM', function () {
+      setupTestDir();
+      try {
+        const { promoteToLTM } = freshRequire('./memory-tiers.cjs');
+
+        // Don't create any MTM sessions
+        const result = promoteToLTM('nonexistent-session', TEST_PROJECT_ROOT);
+        assert.strictEqual(result.success, false, 'Should fail for nonexistent session');
+        assert(result.error.includes('not found'), 'Should report session not found');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+  });
+
+  describe('Error Path Coverage - Empty/Invalid Data', function () {
+    it('should handle empty sessions array in generateSessionSummary', function () {
+      setupTestDir();
+      try {
+        const { generateSessionSummary } = freshRequire('./memory-tiers.cjs');
+
+        // Should return null for empty array
+        const result = generateSessionSummary([]);
+        assert.strictEqual(result, null, 'Should return null for empty sessions');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle null sessions in generateSessionSummary', function () {
+      setupTestDir();
+      try {
+        const { generateSessionSummary } = freshRequire('./memory-tiers.cjs');
+
+        // Should return null for null input
+        const result = generateSessionSummary(null);
+        assert.strictEqual(result, null, 'Should return null for null sessions');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle unknown tier in getTierPath', function () {
+      setupTestDir();
+      try {
+        const { getTierPath } = freshRequire('./memory-tiers.cjs');
+
+        // Should throw for unknown tier
+        try {
+          getTierPath('UNKNOWN', TEST_PROJECT_ROOT);
+          assert.fail('Should have thrown error for unknown tier');
+        } catch (err) {
+          assert(
+            err.message.includes('Unknown tier'),
+            `Expected 'Unknown tier' error, got: ${err.message}`
+          );
+        }
+      } finally {
+        cleanupTestDir();
+      }
+    });
+  });
+
+  describe('Error Path Coverage - File System Edge Cases', function () {
+    it('should handle clearSTM when file does not exist', function () {
+      setupTestDir();
+      try {
+        const { clearSTM } = freshRequire('./memory-tiers.cjs');
+
+        // Should not throw when file doesn't exist
+        clearSTM(TEST_PROJECT_ROOT);
+        // If we get here without error, test passes
+        assert(true, 'Should not throw for missing STM file');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+
+    it('should handle summarizeOldSessions when under limit', function () {
+      setupTestDir();
+      try {
+        const { summarizeOldSessions } = freshRequire('./memory-tiers.cjs');
+
+        // Create only 3 sessions (under the 10 limit)
+        const mtmDir = path.join(MEMORY_DIR, 'mtm');
+        for (let i = 1; i <= 3; i++) {
+          fs.writeFileSync(
+            path.join(mtmDir, `session_${i}.json`),
+            JSON.stringify({ session_id: `session-${i}`, timestamp: new Date().toISOString() })
+          );
+        }
+
+        // Should return 0 summarized
+        const result = summarizeOldSessions(TEST_PROJECT_ROOT);
+        assert.strictEqual(result.summarized, 0, 'Should not summarize when under limit');
+        assert.strictEqual(result.summaryPath, null, 'Should have null summaryPath');
+      } finally {
+        cleanupTestDir();
+      }
+    });
+  });
+
   // Summary
   console.log('\n================================================');
   console.log(`Tests: ${passCount} passed, ${failCount} failed`);

@@ -567,7 +567,42 @@ function runAllChecks(evolutionState, hookInput) {
 }
 
 /**
- * Main execution function
+ * Main entry point for unified evolution guard hook.
+ *
+ * Enforces evolution constraints during artifact creation by consolidating
+ * 4 separate checks into a single PreToolUse hook.
+ *
+ * Consolidated checks:
+ * 1. evolution-state-guard - State machine transitions (IDLE -> EVALUATING -> ... -> IDLE)
+ * 2. conflict-detector - Naming conflicts (prevents duplicate artifact names)
+ * 3. quality-gate-validator - Quality gates in VERIFY phase (placeholders, missing sections)
+ * 4. research-enforcement - Research requirement before creation (minimum 3 sources)
+ *
+ * Performance: 4 spawns -> 1 spawn (80% reduction in hook overhead)
+ *
+ * State File: .claude/context/evolution-state.json
+ *
+ * @async
+ * @returns {Promise<void>} Exits with:
+ *   - 0 if all evolution checks pass
+ *   - 2 if any check blocks (fail-closed on error)
+ *
+ * @throws {Error} Caught internally; triggers fail-closed behavior.
+ *   When evolution state is unknown, exits with code 2.
+ *
+ * Environment Variables:
+ *   - UNIFIED_EVOLUTION_GUARD: block (default) | warn | off
+ *   - EVOLUTION_STATE_GUARD: off (overrides state check)
+ *   - CONFLICT_DETECTOR: off (overrides conflict check)
+ *   - QUALITY_GATE_ENFORCEMENT: off (overrides quality check)
+ *   - RESEARCH_ENFORCEMENT: off (overrides research check)
+ *   - HOOK_FAIL_OPEN: true (debug override, fail open on error)
+ *
+ * Exit Behavior:
+ *   - Allowed: process.exit(0)
+ *   - Blocked: process.exit(2) + JSON message to stdout
+ *   - Warning: process.exit(0) + JSON message to stdout (warn mode)
+ *   - Error: process.exit(2) + JSON audit log to stderr
  */
 async function main() {
   try {

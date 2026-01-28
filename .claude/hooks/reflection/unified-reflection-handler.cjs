@@ -2,19 +2,21 @@
 /**
  * Hook: unified-reflection-handler.cjs
  * Trigger: PostToolUse (TaskUpdate, Bash, Task) + SessionEnd
- * Purpose: Consolidated handler for reflection and memory extraction
+ * Purpose: Consolidated handler for reflection, memory extraction, and task tracking
  *
- * PERF-003: Consolidates 5 hooks into 1:
+ * PERF-003: Consolidates 6 hooks into 1:
  * - task-completion-reflection.cjs (PostToolUse:TaskUpdate)
  * - error-recovery-reflection.cjs (PostToolUse:Bash)
  * - session-end-reflection.cjs (SessionEnd)
  * - session-memory-extractor.cjs (PostToolUse:Task)
  * - session-end-recorder.cjs (SessionEnd)
+ * - task-update-tracker.cjs (PostToolUse:TaskUpdate) [NEW in PERF-003 #2]
  *
  * Benefits:
- * - 60% reduction in process spawns (5 -> 2)
- * - ~800 lines of code saved through deduplication
+ * - 66% reduction in process spawns (6 -> 2)
+ * - ~900 lines of code saved through deduplication
  * - Single point of maintenance
+ * - TaskUpdate tracking integrated (was separate hook)
  *
  * ENFORCEMENT MODES:
  * - block (default): Process events (no blocking behavior for post-hooks)
@@ -39,7 +41,12 @@ const {
   getToolName,
   getToolInput,
   getToolOutput,
+  auditLog,
+  debugLog,
 } = require('../../lib/utils/hook-input.cjs');
+
+// PERF-003 #2: Import router-state for TaskUpdate tracking (consolidated from task-update-tracker.cjs)
+const routerState = require('../routing/router-state.cjs');
 
 // Configuration
 let QUEUE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'reflection-queue.jsonl');
@@ -78,7 +85,7 @@ function isEnabled() {
  * Routes to appropriate handler based on input content
  *
  * @param {object|null} input - The hook input from Claude Code
- * @returns {string|null} Event type: 'task_completion' | 'error_recovery' | 'session_end' | 'memory_extraction' | null
+ * @returns {string|null} Event type: 'task_completion' | 'task_update' | 'error_recovery' | 'session_end' | 'memory_extraction' | null
  */
 function detectEventType(input) {
   if (!input) return null;
@@ -94,10 +101,16 @@ function detectEventType(input) {
   const toolInput = getToolInput(input);
   const toolResult = getToolOutput(input);
 
-  // Check for TaskUpdate with completed status
+  // Check for TaskUpdate
   if (toolName === 'TaskUpdate') {
+    // PERF-003 #2: Track ALL TaskUpdate calls (was in task-update-tracker.cjs)
+    // Return 'task_completion' for completed status, 'task_update' for others
     if (toolInput && toolInput.status === 'completed') {
       return 'task_completion';
+    }
+    // Track non-completion updates too (in_progress, etc.)
+    if (toolInput && toolInput.taskId && toolInput.status) {
+      return 'task_update';
     }
     return null;
   }
@@ -137,12 +150,24 @@ function detectEventType(input) {
 // ============================================================
 
 /**
- * Handle task completion - create reflection queue entry
+ * Handle task completion - create reflection queue entry and record to router state
+ * PERF-003 #2: Also records TaskUpdate to router-state (consolidated from task-update-tracker.cjs)
  * @param {object} input - The hook input
  * @returns {object} Reflection entry for the queue
  */
 function handleTaskCompletion(input) {
   const toolInput = getToolInput(input);
+
+  // PERF-003 #2: Record TaskUpdate to router-state (was in task-update-tracker.cjs)
+  if (toolInput.taskId && toolInput.status) {
+    routerState.recordTaskUpdate(toolInput.taskId, toolInput.status);
+    if (process.env.DEBUG_HOOKS) {
+      debugLog(
+        'unified-reflection',
+        `TaskUpdate recorded: taskId=${toolInput.taskId}, status=${toolInput.status}`
+      );
+    }
+  }
 
   const entry = {
     taskId: toolInput.taskId,
@@ -157,6 +182,26 @@ function handleTaskCompletion(input) {
   }
 
   return entry;
+}
+
+/**
+ * Handle task update (non-completion) - record to router state
+ * PERF-003 #2: Consolidated from task-update-tracker.cjs
+ * @param {object} input - The hook input
+ */
+function handleTaskUpdate(input) {
+  const toolInput = getToolInput(input);
+
+  if (toolInput.taskId && toolInput.status) {
+    routerState.recordTaskUpdate(toolInput.taskId, toolInput.status);
+    if (process.env.DEBUG_HOOKS) {
+      debugLog(
+        'unified-reflection',
+        `TaskUpdate recorded: taskId=${toolInput.taskId}, status=${toolInput.status}`
+      );
+    }
+  }
+  // No queue entry for non-completion updates - just tracking
 }
 
 /**
@@ -391,13 +436,11 @@ function queueReflection(entry, queueFile = QUEUE_FILE) {
     if (mode === 'warn') {
       const trigger = entry.trigger || 'unknown';
       const id = entry.taskId || entry.sessionId || entry.tool || 'unknown';
-      console.log(`[unified-reflection] Queued ${trigger} for ${id}`);
+      auditLog('unified-reflection', 'queued', { trigger, id });
     }
   } catch (err) {
     // Log error but don't fail the hook
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[unified-reflection] Error queueing reflection:', err.message);
-    }
+    debugLog('unified-reflection', 'Error queueing reflection', err);
   }
 }
 
@@ -447,12 +490,10 @@ function recordSession(sessionData) {
     memoryManager.saveSession(sessionData, PROJECT_ROOT);
 
     if (process.env.DEBUG_HOOKS) {
-      console.error(`[unified-reflection] Session recorded: ${sessionData.session_id}`);
+      debugLog('unified-reflection', `Session recorded: ${sessionData.session_id}`);
     }
   } catch (err) {
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[unified-reflection] Error recording session:', err.message);
-    }
+    debugLog('unified-reflection', 'Error recording session', err);
   }
 }
 
@@ -503,12 +544,10 @@ function recordMemoryItems(extracted) {
     }
 
     if (recorded > 0 && process.env.DEBUG_HOOKS) {
-      console.error(`[unified-reflection] Recorded ${recorded} memory items`);
+      debugLog('unified-reflection', `Recorded ${recorded} memory items`);
     }
   } catch (err) {
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[unified-reflection] Error recording memory items:', err.message);
-    }
+    debugLog('unified-reflection', 'Error recording memory items', err);
   }
 }
 
@@ -548,6 +587,13 @@ async function main() {
         break;
       }
 
+      // PERF-003 #2: Handle non-completion TaskUpdate (was task-update-tracker.cjs)
+      case 'task_update': {
+        handleTaskUpdate(hookInput);
+        // No queue entry for non-completion updates
+        break;
+      }
+
       case 'error_recovery': {
         const entry = handleErrorRecovery(hookInput);
         queueReflection(entry);
@@ -575,9 +621,7 @@ async function main() {
     process.exit(0);
   } catch (err) {
     // Fail open
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[unified-reflection] Error:', err.message);
-    }
+    debugLog('unified-reflection', 'Hook error during processing', err);
     process.exit(0);
   }
 }
@@ -595,6 +639,7 @@ module.exports = {
 
   // Event handlers
   handleTaskCompletion,
+  handleTaskUpdate, // PERF-003 #2: Consolidated from task-update-tracker.cjs
   handleErrorRecovery,
   handleSessionEnd,
   handleMemoryExtraction,

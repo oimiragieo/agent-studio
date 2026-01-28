@@ -3,6 +3,14 @@
 /**
  * task-update-tracker.cjs
  *
+ * @deprecated PERF-003 #2 (2026-01-28): Functionality consolidated into
+ * unified-reflection-handler.cjs. This file is no longer registered in
+ * settings.json. The TaskUpdate tracking is now done via:
+ * - handleTaskCompletion() - for status='completed' events
+ * - handleTaskUpdate() - for status='in_progress' and other events
+ *
+ * Kept for reference/rollback only. Can be deleted after verification.
+ *
  * PostToolUse hook that tracks TaskUpdate calls.
  * Records to router-state.cjs so task-completion-guard can verify
  * agents are properly updating task status.

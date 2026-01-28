@@ -2,7 +2,7 @@
 name: expo-mobile-developer
 version: 1.0.0
 description: Expo and React Native mobile application development expert for iOS and Android. Use for building cross-platform mobile apps, native integrations, and mobile-first user experiences.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

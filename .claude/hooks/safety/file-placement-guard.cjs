@@ -23,10 +23,14 @@ const {
   getToolInput: sharedGetToolInput,
   extractFilePath: sharedExtractFilePath,
   getToolName: sharedGetToolName,
+  auditSecurityOverride,
 } = require('../../lib/utils/hook-input.cjs');
 
 // SEC-SF-001 FIX: Import safe JSON parser
 const { safeParseJSON, SCHEMAS } = require('../../lib/utils/safe-json.cjs');
+
+// PERF-004 FIX: Import state cache for TTL-based caching of evolution-state.json
+const { getCachedState } = require('../../lib/utils/state-cache.cjs');
 
 // Tools that this guard watches
 const WRITE_TOOLS = ['Edit', 'Write', 'NotebookEdit'];
@@ -204,28 +208,16 @@ const CREATION_ALLOWED_STATES = ['lock', 'verify', 'enable'];
 
 /**
  * Find the project root by looking for .claude directory
- * @param {string} [startPath] - Starting path for search
+ * @param {string} [startPath] - Starting path for search (unused, kept for API compatibility)
  * @returns {string|null} Project root path or null
+ * @deprecated HOOK-002 FIX: Use PROJECT_ROOT from shared utility instead.
+ *             This function is kept for backward compatibility with module.exports.
  */
 function findProjectRoot(startPath) {
-  // Try to infer from file path if provided
-  if (startPath) {
-    const normalized = startPath.replace(/\\/g, '/');
-    const claudeIndex = normalized.indexOf('.claude/');
-    if (claudeIndex > 0) {
-      return normalized.substring(0, claudeIndex);
-    }
-  }
-
-  // Fallback to current working directory
-  let current = process.cwd();
-  while (current !== path.parse(current).root) {
-    if (fs.existsSync(path.join(current, '.claude'))) {
-      return current;
-    }
-    current = path.dirname(current);
-  }
-  return null;
+  // HOOK-002 FIX: Simply return the pre-computed PROJECT_ROOT from shared utility
+  // The shared utility already handles finding project root correctly.
+  // startPath parameter is ignored - the shared utility computes root at module load time.
+  return PROJECT_ROOT || null;
 }
 
 /**
@@ -326,35 +318,60 @@ function isPathSafe(filePath, projectRoot) {
 /**
  * Get evolution state from evolution-state.json
  * SEC-SF-001 FIX: Use safe JSON parsing to prevent prototype pollution
+ * PERF-004 FIX: Use state-cache.cjs for TTL-based caching to reduce I/O
  * @param {string} [projectRoot] - Project root path
- * @returns {{state: string, currentEvolution: object|null, spawnDepth: number, circuitBreaker: {timestamps: string[]}}}
+ * @returns {{state: string, currentEvolution: object|null, spawnDepth: number, circuitBreaker: {timestamps: string[]}, evolutions?: Array}}
  */
 function getEvolutionState(projectRoot) {
   const root = projectRoot || findProjectRoot();
+  const defaultState = {
+    state: 'idle',
+    currentEvolution: null,
+    spawnDepth: 0,
+    circuitBreaker: { timestamps: [] },
+    evolutions: [], // Legacy backwards compatibility
+  };
+
   if (!root) {
-    return {
-      state: 'idle',
-      currentEvolution: null,
-      spawnDepth: 0,
-      circuitBreaker: { timestamps: [] },
-    };
+    return defaultState;
   }
 
   const statePath = path.join(root, '.claude', 'context', 'evolution-state.json');
   try {
-    if (fs.existsSync(statePath)) {
-      const content = fs.readFileSync(statePath, 'utf8');
-      // SEC-SF-001 FIX: Use safeParseJSON with evolution-state schema
-      const parsed = safeParseJSON(content, 'evolution-state');
-      // Ensure circuitBreaker has timestamps array (handle legacy format)
-      if (!parsed.circuitBreaker || !Array.isArray(parsed.circuitBreaker.timestamps)) {
-        parsed.circuitBreaker = { timestamps: [] };
+    // PERF-004 FIX: Use cached state with 1s TTL (default)
+    // This reduces redundant file reads across hooks in the same tool operation
+    // Pass null as default so we can detect when cache returns nothing
+    const cached = getCachedState(statePath, null);
+    if (cached !== null && typeof cached === 'object') {
+      // PERF-004: Cache hit - extract only known properties to prevent prototype pollution
+      // This is equivalent to safeParseJSON but without re-serialization overhead
+      const result = { ...defaultState };
+
+      // Only copy known properties (SEC-SF-001 safe extraction)
+      if (typeof cached.state === 'string') {
+        result.state = cached.state;
       }
-      // Ensure spawnDepth exists
-      if (typeof parsed.spawnDepth !== 'number') {
-        parsed.spawnDepth = 0;
+      if (cached.currentEvolution && typeof cached.currentEvolution === 'object') {
+        result.currentEvolution = cached.currentEvolution;
       }
-      return parsed;
+      if (typeof cached.spawnDepth === 'number') {
+        result.spawnDepth = cached.spawnDepth;
+      }
+      if (cached.circuitBreaker && typeof cached.circuitBreaker === 'object') {
+        result.circuitBreaker = {
+          timestamps: Array.isArray(cached.circuitBreaker.timestamps)
+            ? cached.circuitBreaker.timestamps
+            : [],
+        };
+      }
+      // Legacy evolutions array for backwards compatibility with checkCircuitBreaker
+      if (Array.isArray(cached.evolutions)) {
+        result.evolutions = cached.evolutions.filter(
+          e => e && typeof e === 'object' && typeof e.completedAt === 'string'
+        );
+      }
+
+      return result;
     }
   } catch (e) {
     // Ignore errors, default to idle - fail closed
@@ -362,12 +379,7 @@ function getEvolutionState(projectRoot) {
       console.log(`[file-placement-guard] Error reading evolution state: ${e.message}`);
     }
   }
-  return {
-    state: 'idle',
-    currentEvolution: null,
-    spawnDepth: 0,
-    circuitBreaker: { timestamps: [] },
-  };
+  return defaultState;
 }
 
 /**
@@ -779,37 +791,63 @@ function formatEvolveWarningMessage(toolName, filePath, evolveResult) {
 }
 
 /**
- * Main execution
+ * Main entry point for file placement guard hook.
+ *
+ * Validates file placement rules and prevents writes to invalid locations.
+ * Enforces that agents create files only in designated directories.
+ *
+ * Checks (in order):
+ * 1. Path traversal attacks (critical)
+ * 2. Windows reserved device names (high)
+ * 3. Always-allowed framework internal files (low)
+ * 4. EVOLVE enforcement for new artifact creation (low)
+ * 5. General file placement rules (medium)
+ *
+ * State File: None (stateless validation)
+ * Rules File: .claude/docs/FILE_PLACEMENT_RULES.md
+ *
+ * @returns {void} Exits with:
+ *   - 0 if file placement is valid
+ *   - 2 if file placement is invalid or critical error
+ *
+ * @throws {Error} Caught internally; triggers exit(2) on unknown state.
+ *
+ * Environment Variables:
+ *   - FILE_PLACEMENT_GUARD: block (default) | warn | off
+ *   - FILE_PLACEMENT_OVERRIDE: true enables dangerous skip
+ *   - PLACEMENT_DEBUG: true enables debug output
+ *   - EVOLVE_AUTO_START: true (default) enables auto-spawn on block
+ *
+ * Exit Behavior:
+ *   - Valid: process.exit(0)
+ *   - Invalid: process.exit(2) + formatted message to stderr
+ *   - Warning: process.exit(0) + formatted message to stderr (warn mode)
+ *   - Override: process.exit(0) + audit log to stderr
+ *   - Error: process.exit(2) + JSON audit log to stderr
  */
 function main() {
   const enforcementMode = getEnforcementMode();
 
   // Skip if enforcement is off
   if (enforcementMode === 'off') {
-    // SEC-010 FIX: Audit log when security override is used
-    console.error(
-      JSON.stringify({
-        hook: 'file-placement-guard',
-        event: 'security_override_used',
-        override: 'FILE_PLACEMENT_GUARD=off',
-        timestamp: new Date().toISOString(),
-        warning: 'Security enforcement disabled - file placement validation bypassed',
-      })
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'file-placement-guard',
+      'FILE_PLACEMENT_GUARD',
+      'off',
+      'File placement validation bypassed'
     );
     process.exit(0);
   }
 
   // Check for override
   if (process.env.FILE_PLACEMENT_OVERRIDE === 'true') {
-    // SEC-010 FIX: Audit log when security override is used
-    console.error(
-      JSON.stringify({
-        hook: 'file-placement-guard',
-        event: 'security_override_used',
-        override: 'FILE_PLACEMENT_OVERRIDE=true',
-        timestamp: new Date().toISOString(),
-        warning: 'Security enforcement disabled - file placement validation bypassed',
-      })
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'file-placement-guard',
+      'FILE_PLACEMENT_OVERRIDE',
+      'true',
+      'File placement validation bypassed'
     );
     if (process.env.PLACEMENT_DEBUG === 'true') {
       console.log('[file-placement-guard] Override enabled, skipping checks');

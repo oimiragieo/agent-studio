@@ -54,6 +54,11 @@ const ROUTING_TABLE = {
   troubleshoot: 'devops-troubleshooter',
   review: 'code-reviewer',
   pr: 'code-reviewer',
+  simplify: 'code-simplifier',
+  refactor: 'code-simplifier',
+  cleanup: 'code-simplifier',
+  clean: 'code-simplifier',
+  clarity: 'code-simplifier',
   // Domain specialists
   python: 'python-pro',
   rust: 'rust-pro',
@@ -1431,6 +1436,35 @@ const intentKeywords = {
     'ready to merge',
     'review changes',
   ],
+  code_simplifier: [
+    'simplify',
+    'simplify code',
+    'simplify this',
+    'make clearer',
+    'make simpler',
+    'clean up',
+    'clean up code',
+    'clean up this',
+    'cleanup',
+    'improve readability',
+    'reduce complexity',
+    'remove redundancy',
+    'consolidate',
+    'eliminate duplication',
+    'refactor for clarity',
+    'code cleanup',
+    'too complex',
+    'hard to understand',
+    'confusing',
+    'messy code',
+    'overcomplicated',
+    'nested',
+    'unclear naming',
+    'long function',
+    'long method',
+    'code smell',
+    'reduce nesting',
+  ],
   conductor_validator: [
     'conductor',
     'cdd',
@@ -2000,6 +2034,7 @@ const INTENT_TO_AGENT = {
   c4_container: 'c4-container',
   c4_context: 'c4-context',
   code_reviewer: 'code-reviewer',
+  code_simplifier: 'code-simplifier',
   conductor_validator: 'conductor-validator',
   database_architect: 'database-architect',
   devops: 'devops',
@@ -2568,6 +2603,7 @@ function scoreAgents(prompt, agents) {
       'devops-troubleshooter': ['troubleshoot', 'debug', 'logs', 'rca', 'investigate'],
       'database-architect': ['database', 'schema', 'migration', 'query optimization'],
       'code-reviewer': ['code review', 'pr review', 'pull request', 'merge approval'],
+      'code-simplifier': ['simplify', 'clean up', 'refactor for clarity', 'reduce complexity'],
       'technical-writer': [
         'documentation',
         'docs',
@@ -2733,4 +2769,8 @@ function main() {
   process.exit(0);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main };

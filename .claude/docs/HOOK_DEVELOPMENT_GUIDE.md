@@ -326,6 +326,188 @@ async function testWithStdin(hookPath, input) {
 }
 ```
 
+## Error Recovery Standardization (PROC-004)
+
+This section documents the standard error recovery patterns for hooks. Multiple inconsistent patterns existed across the codebase (SEC-008, SEC-AUDIT-001 through SEC-AUDIT-004). This standardization ensures consistent security posture and easier auditing.
+
+### Fail-Closed vs Fail-Open Decision Matrix
+
+| Hook Type               | On Parse Error | On Validation Error | On Unexpected Error | Default     |
+| ----------------------- | -------------- | ------------------- | ------------------- | ----------- |
+| **Security/Validation** | exit(2) BLOCK  | exit(2) BLOCK       | exit(2) BLOCK       | fail-closed |
+| **Routing/Enforcement** | exit(2) BLOCK  | exit(2) BLOCK       | exit(2) BLOCK       | fail-closed |
+| **Recording/Memory**    | exit(0) allow  | N/A                 | exit(0) allow       | fail-open   |
+| **State Management**    | exit(0) allow  | N/A                 | exit(0) allow       | fail-open   |
+
+### Rationale
+
+**Fail-Closed (security hooks):**
+
+- If we cannot validate, we cannot trust. Block the operation.
+- Attackers probe for parsing edge cases. Missing input = potential bypass.
+- Defense in depth: multiple layers catch what one misses.
+
+**Fail-Open (recording hooks):**
+
+- Recording failure should never block user work.
+- State corruption is recoverable; blocked valid operations are not.
+- Memory extraction is best-effort, not security-critical.
+
+### Standard Error Handling Template
+
+```javascript
+#!/usr/bin/env node
+/**
+ * Hook: example-hook.cjs
+ * Type: [SECURITY|ROUTING|RECORDING|STATE]
+ *
+ * Exit codes:
+ *   0: Allow operation to proceed
+ *   2: Block operation (security violation or error in security hook)
+ *
+ * Error Handling:
+ *   - Security hooks: fail-closed (exit 2)
+ *   - Recording hooks: fail-open (exit 0)
+ */
+
+'use strict';
+
+const { parseHookInput, auditLog, debugLog } = require('../../lib/utils/hook-input.cjs');
+
+// STEP 1: Define fail mode based on hook type
+const IS_SECURITY_HOOK = true; // Change to false for recording/state hooks
+const failMode = IS_SECURITY_HOOK ? 2 : 0;
+
+async function main() {
+  try {
+    // STEP 2: Parse input with proper error handling
+    const hookInput = await parseHookInput();
+
+    if (!hookInput) {
+      // No input: fail according to hook type
+      auditLog('example-hook', 'no_input', { failMode: IS_SECURITY_HOOK ? 'closed' : 'open' });
+      process.exit(failMode);
+    }
+
+    // STEP 3: Validate input structure
+    const toolName = hookInput.tool_name || hookInput.tool;
+    if (!toolName) {
+      auditLog('example-hook', 'missing_tool_name', {
+        failMode: IS_SECURITY_HOOK ? 'closed' : 'open',
+      });
+      process.exit(failMode);
+    }
+
+    // STEP 4: Core validation logic
+    const result = validateOperation(hookInput);
+
+    if (!result.valid) {
+      // Validation failed: always block (this IS the hook's purpose)
+      auditLog('example-hook', 'validation_failed', { reason: result.error });
+      console.log(`BLOCKED: ${result.error}`);
+      process.exit(2);
+    }
+
+    // STEP 5: Success path
+    process.exit(0);
+  } catch (err) {
+    // STEP 6: Unexpected error - fail according to hook type
+    debugLog('example-hook', err.message, err);
+    auditLog('example-hook', IS_SECURITY_HOOK ? 'error_fail_closed' : 'error_fail_open', {
+      error: err.message,
+    });
+    process.exit(failMode);
+  }
+}
+
+function validateOperation(hookInput) {
+  // Your validation logic here
+  return { valid: true };
+}
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main, validateOperation };
+```
+
+### Exit Code Quick Reference
+
+| Code | Meaning | When to Use                                 |
+| ---- | ------- | ------------------------------------------- |
+| `0`  | Allow   | Validation passed OR fail-open hook error   |
+| `2`  | Block   | Validation failed OR fail-closed hook error |
+
+**Note:** Exit code `1` is reserved for Node.js runtime errors and should never be used intentionally by hooks.
+
+### Debug Override Pattern
+
+Security hooks should support a debug override for development only:
+
+```javascript
+// Check for fail-open override (ONLY for debugging)
+const FAIL_OPEN_VAR = 'HOOK_NAME_FAIL_OPEN';
+if (process.env[FAIL_OPEN_VAR] === 'true') {
+  // MANDATORY: Log override usage for security audit
+  const { auditSecurityOverride } = require('../../lib/utils/hook-input.cjs');
+  auditSecurityOverride('hook-name', FAIL_OPEN_VAR, 'true', 'Security hook failing open');
+  process.exit(0);
+}
+```
+
+**Critical:** Never document override variables in user-facing error messages (SEC-AUDIT-021). Keep override documentation in code comments and developer guides only.
+
+### Common Error Recovery Patterns
+
+**Pattern 1: Graceful Degradation (Recording Hooks)**
+
+```javascript
+try {
+  extractInsights(hookInput);
+} catch (err) {
+  // Log but don't block user's work
+  debugLog('memory-extractor', `Extraction failed: ${err.message}`);
+  // Continue with partial data or skip
+}
+process.exit(0); // Always allow
+```
+
+**Pattern 2: Fail-Fast Validation (Security Hooks)**
+
+```javascript
+if (!hookInput) {
+  auditLog('validator', 'no_input_fail_closed');
+  process.exit(2); // Block immediately
+}
+
+if (!hookInput.tool_input?.command) {
+  auditLog('validator', 'missing_command_fail_closed');
+  process.exit(2); // Block immediately
+}
+```
+
+**Pattern 3: Retry with Timeout (State Hooks)**
+
+```javascript
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 100;
+
+for (let i = 0; i < MAX_RETRIES; i++) {
+  try {
+    return readState();
+  } catch (err) {
+    if (i < MAX_RETRIES - 1) {
+      await sleep(RETRY_DELAY_MS * Math.pow(2, i)); // Exponential backoff
+    }
+  }
+}
+// After retries exhausted, return default state (fail-open for state)
+return getDefaultState();
+```
+
+---
+
 ## Security Requirements
 
 ### Fail-Closed Principle

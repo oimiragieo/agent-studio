@@ -2,7 +2,7 @@
 name: ios-pro
 version: 1.0.0
 description: iOS/Swift development expert for iPhone, iPad, watchOS, and visionOS apps. Use for building native iOS applications, SwiftUI interfaces, UIKit components, and Apple platform integrations.
-model: claude-sonnet-4-5-20250929
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: high

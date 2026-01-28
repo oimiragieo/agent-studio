@@ -2,7 +2,7 @@
 name: devops
 version: 1.0.0
 description: Infrastructure as Code, CI/CD pipeline design, deployment automation, SRE practices, release management, and observability. Use for containerization, orchestration (Kubernetes), cloud architecture (AWS/GCP/Azure), monitoring setup, SLO/SLI/SLA definition, release coordination, and production deployment strategies.
-model: claude-sonnet-4-5
+model: sonnet
 temperature: 0.4
 context_strategy: lazy_load
 priority: medium

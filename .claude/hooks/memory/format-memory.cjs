@@ -24,6 +24,8 @@ const {
   getToolName,
   getToolInput,
   extractFilePath,
+  auditLog,
+  debugLog,
 } = require('../../lib/utils/hook-input.cjs');
 
 // Memory paths to watch
@@ -101,9 +103,7 @@ function isPathSafe(filePath) {
 function formatFile(filePath) {
   // SEC-009 FIX: Validate file path before use
   if (!isPathSafe(filePath)) {
-    if (process.env.DEBUG_HOOKS) {
-      console.error('[format-memory] Rejected unsafe file path:', filePath);
-    }
+    debugLog('format-memory', 'Rejected unsafe file path', new Error(filePath));
     return false;
   }
 
@@ -174,10 +174,14 @@ function main() {
   const formatted = formatFile(filePath);
   if (formatted) {
     const fileName = path.basename(filePath);
-    console.log(`[MEMORY] Formatted: ${fileName}`);
+    auditLog('format-memory', 'formatted', { file: fileName });
   }
 
   process.exit(0);
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main, parseHookInput };

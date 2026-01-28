@@ -41,6 +41,7 @@ const {
   getEnforcementMode,
   formatResult,
   auditLog,
+  auditSecurityOverride,
 } = require('../../lib/utils/hook-input.cjs');
 const routerState = require('./router-state.cjs');
 
@@ -263,10 +264,13 @@ function checkRouterBash(toolName, toolInput = {}) {
 
   const enforcement = getEnforcementMode('ROUTER_BASH_GUARD', 'block');
   if (enforcement === 'off') {
-    auditLog('routing-guard', 'security_override_used', {
-      check: 'router-bash',
-      override: 'ROUTER_BASH_GUARD=off',
-    });
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'routing-guard',
+      'ROUTER_BASH_GUARD',
+      'off',
+      'Router can use any Bash command'
+    );
     return { pass: true };
   }
 
@@ -410,10 +414,13 @@ function checkPlannerFirst(toolName, toolInput) {
 
   const enforcement = getEnforcementMode('PLANNER_FIRST_ENFORCEMENT', 'block');
   if (enforcement === 'off') {
-    auditLog('routing-guard', 'security_override_used', {
-      check: 'planner-first',
-      override: 'PLANNER_FIRST_ENFORCEMENT=off',
-    });
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'routing-guard',
+      'PLANNER_FIRST_ENFORCEMENT',
+      'off',
+      'Planner-first requirement bypassed'
+    );
     return { pass: true };
   }
 
@@ -459,10 +466,13 @@ function checkTaskCreate(toolName) {
 
   const enforcement = getEnforcementMode('PLANNER_FIRST_ENFORCEMENT', 'block');
   if (enforcement === 'off') {
-    auditLog('routing-guard', 'security_override_used', {
-      check: 'task-create',
-      override: 'PLANNER_FIRST_ENFORCEMENT=off',
-    });
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'routing-guard',
+      'PLANNER_FIRST_ENFORCEMENT',
+      'off',
+      'TaskCreate without planner allowed'
+    );
     return { pass: true };
   }
 
@@ -553,10 +563,13 @@ function checkRouterWrite(toolName, toolInput) {
 
   const enforcement = getEnforcementMode('ROUTER_WRITE_GUARD', 'block');
   if (enforcement === 'off') {
-    auditLog('routing-guard', 'security_override_used', {
-      check: 'router-write',
-      override: 'ROUTER_WRITE_GUARD=off',
-    });
+    // SEC-AUDIT-016 FIX: Use centralized auditSecurityOverride for consistent logging
+    auditSecurityOverride(
+      'routing-guard',
+      'ROUTER_WRITE_GUARD',
+      'off',
+      'Router can write without agent context'
+    );
     return { pass: true };
   }
 
@@ -665,7 +678,25 @@ function runAllChecks(toolName, toolInput) {
 }
 
 /**
- * Main execution function
+ * Main entry point for routing guard hook.
+ *
+ * Validates that Router follows the router-first protocol and enforces
+ * complex task planning and security review requirements. Consolidated
+ * from 5 original guards (router-self-check, planner-first-guard,
+ * task-create-guard, security-review-guard, router-write-guard).
+ *
+ * @async
+ * @returns {Promise<void>} Exits with:
+ *   - 0 if operation is allowed
+ *   - 2 if operation is blocked (fail-closed on error)
+ *
+ * @throws {Error} Caught internally; triggers fail-closed behavior.
+ *   When security state is unknown, exits with code 2 to prevent bypass.
+ *
+ * Exit Behavior:
+ *   - Allowed: process.exit(0)
+ *   - Blocked: process.exit(2) + message to stdout
+ *   - Error: process.exit(2) + JSON audit log to stderr
  */
 async function main() {
   try {
@@ -726,6 +757,33 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
+/**
+ * Module exports for routing-guard hook.
+ *
+ * @typedef {Object} RoutingGuardExports
+ * @property {Function} main - Main entry point for routing guard hook
+ * @property {Function} runAllChecks - Run all routing checks on tool invocation
+ * @property {Function} checkRouterBash - Check Router bash whitelist compliance
+ * @property {Function} checkRouterSelfCheck - Check Router self-check constraints
+ * @property {Function} checkPlannerFirst - Check PLANNER-first enforcement
+ * @property {Function} checkTaskCreate - Check TaskCreate complexity enforcement
+ * @property {Function} checkSecurityReview - Check security review requirements
+ * @property {Function} checkRouterWrite - Check direct write restrictions
+ * @property {Function} isPlannerSpawn - Detect if spawn is a PLANNER agent
+ * @property {Function} isSecuritySpawn - Detect if spawn is security-related
+ * @property {Function} isImplementationAgentSpawn - Detect if spawn is implementation agent
+ * @property {Function} isAlwaysAllowedWrite - Check if write operation is allowed
+ * @property {Function} isWhitelistedBashCommand - Check if bash command is whitelisted
+ * @property {Function} getCachedRouterState - Get cached router state (PERF-001)
+ * @property {Function} invalidateCachedState - Invalidate router state cache
+ * @property {Array<string>} ALL_WATCHED_TOOLS - Tools monitored by this guard
+ * @property {Array<string>} BLACKLISTED_TOOLS - Tools Router cannot use directly
+ * @property {Array<string>} WHITELISTED_TOOLS - Tools only Router can use
+ * @property {Array<string>} WRITE_TOOLS - Edit/Write operations that require agent context
+ * @property {Array<string>} IMPLEMENTATION_AGENTS - Agents that perform implementation
+ * @property {Array<string>} ROUTER_BASH_WHITELIST - Allowed bash commands (git only)
+ */
 
 // Export for testing
 module.exports = {
