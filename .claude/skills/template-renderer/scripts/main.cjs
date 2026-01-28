@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* security-lint-skip-file: CLI tool with diagnostic logging (no sensitive data) */
+
 /**
  * Template Renderer - Main Script
  * Render templates by replacing tokens with actual values, with schema validation and security sanitization
@@ -49,26 +51,62 @@ const SCHEMAS_DIR = path.join(CLAUDE_DIR, 'schemas');
 // Token whitelists (SEC-SPEC-003)
 const TOKEN_WHITELISTS = {
   'specification-template': [
-    'FEATURE_NAME', 'VERSION', 'AUTHOR', 'DATE', 'STATUS',
-    'ACCEPTANCE_CRITERIA_1', 'ACCEPTANCE_CRITERIA_2', 'ACCEPTANCE_CRITERIA_3',
-    'TERM_1', 'TERM_2', 'TERM_3',
-    'HTTP_METHOD', 'ENDPOINT_PATH', 'PROJECT_NAME'
+    'FEATURE_NAME',
+    'VERSION',
+    'AUTHOR',
+    'DATE',
+    'STATUS',
+    'ACCEPTANCE_CRITERIA_1',
+    'ACCEPTANCE_CRITERIA_2',
+    'ACCEPTANCE_CRITERIA_3',
+    'TERM_1',
+    'TERM_2',
+    'TERM_3',
+    'HTTP_METHOD',
+    'ENDPOINT_PATH',
+    'PROJECT_NAME',
   ],
   'plan-template': [
-    'PLAN_TITLE', 'DATE', 'FRAMEWORK_VERSION', 'STATUS',
-    'EXECUTIVE_SUMMARY', 'TOTAL_TASKS', 'FEATURES_COUNT',
-    'ESTIMATED_TIME', 'STRATEGY', 'KEY_DELIVERABLES_LIST',
-    'PHASE_N_NAME', 'PHASE_N_PURPOSE', 'PHASE_N_DURATION',
-    'DEPENDENCIES', 'PARALLEL_OK', 'VERIFICATION_COMMANDS',
-    'HEALTH_THRESHOLD', 'COVERAGE_THRESHOLD', 'NUM_DEVELOPERS',
-    'MVP_FEATURES', 'RESEARCH_OUTPUT_PATH'
+    'PLAN_TITLE',
+    'DATE',
+    'FRAMEWORK_VERSION',
+    'STATUS',
+    'EXECUTIVE_SUMMARY',
+    'TOTAL_TASKS',
+    'FEATURES_COUNT',
+    'ESTIMATED_TIME',
+    'STRATEGY',
+    'KEY_DELIVERABLES_LIST',
+    'PHASE_N_NAME',
+    'PHASE_N_PURPOSE',
+    'PHASE_N_DURATION',
+    'DEPENDENCIES',
+    'PARALLEL_OK',
+    'VERIFICATION_COMMANDS',
+    'HEALTH_THRESHOLD',
+    'COVERAGE_THRESHOLD',
+    'NUM_DEVELOPERS',
+    'MVP_FEATURES',
+    'RESEARCH_OUTPUT_PATH',
   ],
   'tasks-template': [
-    'FEATURE_NAME', 'VERSION', 'AUTHOR', 'DATE', 'STATUS',
-    'PRIORITY', 'ESTIMATED_EFFORT', 'RELATED_SPECS', 'DEPENDENCIES',
-    'FEATURE_DISPLAY_NAME', 'FEATURE_DESCRIPTION', 'BUSINESS_VALUE',
-    'USER_IMPACT', 'EPIC_NAME', 'EPIC_GOAL', 'SUCCESS_CRITERIA'
-  ]
+    'FEATURE_NAME',
+    'VERSION',
+    'AUTHOR',
+    'DATE',
+    'STATUS',
+    'PRIORITY',
+    'ESTIMATED_EFFORT',
+    'RELATED_SPECS',
+    'DEPENDENCIES',
+    'FEATURE_DISPLAY_NAME',
+    'FEATURE_DESCRIPTION',
+    'BUSINESS_VALUE',
+    'USER_IMPACT',
+    'EPIC_NAME',
+    'EPIC_GOAL',
+    'SUCCESS_CRITERIA',
+  ],
 };
 
 // Parse command line arguments
@@ -87,9 +125,9 @@ for (let i = 0; i < args.length; i++) {
  */
 function sanitizeTokenValue(value) {
   return String(value)
-    .replace(/[<>]/g, '')       // Prevent HTML injection
-    .replace(/\$\{/g, '')       // Prevent template literal injection
-    .replace(/\{\{/g, '')       // Prevent nested token injection
+    .replace(/[<>]/g, '') // Prevent HTML injection
+    .replace(/\$\{/g, '') // Prevent template literal injection
+    .replace(/\{\{/g, '') // Prevent nested token injection
     .trim();
 }
 
@@ -159,7 +197,7 @@ function renderTemplate(templateContent, tokenMap, templateName) {
     const whitelist = TOKEN_WHITELISTS[templateName];
     throw new Error(
       `Tokens not in whitelist: ${invalidTokens.join(', ')}\n` +
-      `Allowed tokens: ${whitelist.join(', ')}`
+        `Allowed tokens: ${whitelist.join(', ')}`
     );
   }
 
@@ -211,13 +249,15 @@ function validateSpecification(content) {
     }
 
     // Validate acceptance criteria is array with at least 1 item
-    if (!Array.isArray(frontmatter.acceptance_criteria) || frontmatter.acceptance_criteria.length === 0) {
+    if (
+      !Array.isArray(frontmatter.acceptance_criteria) ||
+      frontmatter.acceptance_criteria.length === 0
+    ) {
       throw new Error('acceptance_criteria must be an array with at least 1 item');
     }
 
     console.log('✅ Schema validation passed');
     return true;
-
   } catch (error) {
     throw new Error(`Schema validation failed: ${error.message}`);
   }
@@ -322,7 +362,6 @@ Examples:
 
     console.log('✅ Template rendering completed successfully');
     console.log(`   Output: ${outputPath} (${rendered.length} bytes)`);
-
   } catch (error) {
     console.error(`❌ Error: ${error.message}`);
     process.exit(1);

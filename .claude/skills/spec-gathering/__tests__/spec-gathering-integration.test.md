@@ -1,6 +1,7 @@
 # Spec Gathering Integration Test
 
 ## Purpose
+
 Test that `spec-gathering` properly invokes `template-renderer` after collecting requirements.
 
 ## Test Case 1: Complete Requirements Gathering → Template Rendering
@@ -8,12 +9,14 @@ Test that `spec-gathering` properly invokes `template-renderer` after collecting
 **Input**: User requests "Add user authentication"
 
 **Expected Workflow**:
+
 1. spec-gathering collects requirements via progressive disclosure
 2. Maps gathered requirements to template tokens
 3. Invokes: `Skill({ skill: "template-renderer", args: {...} })`
 4. Outputs rendered specification to `.claude/context/artifacts/specifications/user-authentication-spec.md`
 
 **Token Mapping**:
+
 ```javascript
 {
   FEATURE_NAME: "User Authentication",
@@ -28,6 +31,7 @@ Test that `spec-gathering` properly invokes `template-renderer` after collecting
 ```
 
 **Verification**:
+
 ```bash
 # Check file exists
 test -f .claude/context/artifacts/specifications/user-authentication-spec.md && echo "✓ Spec file created" || echo "✗ Spec file missing"
@@ -44,12 +48,14 @@ head -50 .claude/context/artifacts/specifications/user-authentication-spec.md | 
 **Input**: Minimal feature request "Add health check endpoint"
 
 **Expected Workflow**:
+
 1. spec-gathering collects minimal requirements
 2. Maps to template tokens (fills required, leaves optional empty)
 3. Invokes template-renderer
 4. Outputs valid spec with all required tokens
 
 **Token Mapping**:
+
 ```javascript
 {
   FEATURE_NAME: "Health Check Endpoint",
@@ -68,11 +74,13 @@ head -50 .claude/context/artifacts/specifications/user-authentication-spec.md | 
 **Input**: Requirements gathered but acceptance criteria missing
 
 **Expected Behavior**:
+
 - spec-gathering detects missing required criteria
 - Prompts user for missing acceptance criteria
 - DOES NOT invoke template-renderer until all required tokens available
 
 **Verification**:
+
 ```bash
 # Should NOT create spec file yet
 test ! -f .claude/context/artifacts/specifications/incomplete-spec.md && echo "✓ Spec not created (missing tokens)" || echo "✗ Spec created prematurely"
@@ -83,12 +91,14 @@ test ! -f .claude/context/artifacts/specifications/incomplete-spec.md && echo "�
 **Input**: Complete requirements for "Payment Processing"
 
 **Expected Workflow**:
+
 1. spec-gathering → requirements collected
 2. template-renderer → spec rendered
 3. Schema validation → YAML frontmatter valid
 4. Output verification → no unresolved tokens
 
 **Verification Commands**:
+
 ```bash
 # Full validation chain
 SPEC_FILE=".claude/context/artifacts/specifications/payment-processing-spec.md"

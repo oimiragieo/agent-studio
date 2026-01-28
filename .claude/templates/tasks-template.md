@@ -1,36 +1,36 @@
 ---
 # [REQUIRED] Feature or Epic name - high-level feature description
-feature: {{FEATURE_NAME}}
+feature: { { FEATURE_NAME } }
 
 # [REQUIRED] Version of the feature being implemented
-version: {{VERSION}}
+version: { { VERSION } }
 
 # [REQUIRED] Author or team responsible for this feature
-author: {{AUTHOR}}
+author: { { AUTHOR } }
 
 # [REQUIRED] Date when tasks were created (YYYY-MM-DD format)
-date: {{DATE}}
+date: { { DATE } }
 
 # [OPTIONAL] Current status of the feature. Default: draft
 # Options: draft, in_progress, complete, on_hold
-status: {{STATUS:draft}}
+status: { { STATUS:draft } }
 
 # [OPTIONAL] Priority level for the feature. Default: medium
 # Options: low, medium, high, critical
-priority: {{PRIORITY:medium}}
+priority: { { PRIORITY:medium } }
 
 # [OPTIONAL] Estimated effort for entire feature (human-readable)
 # Format: "N hours|days|weeks|months"
 # Example: "2 weeks", "40 hours", "3 months"
-estimated_effort: {{ESTIMATED_EFFORT}}
+estimated_effort: { { ESTIMATED_EFFORT } }
 
 # [OPTIONAL] Related specifications or documentation
 # Example: ["spec-authentication.md", "api-design-doc.md"]
-related_specs: {{RELATED_SPECS}}
+related_specs: { { RELATED_SPECS } }
 
 # [OPTIONAL] External or internal dependencies
 # Example: ["OAuth2 provider setup", "Database migration completed"]
-dependencies: {{DEPENDENCIES}}
+dependencies: { { DEPENDENCIES } }
 ---
 
 # {{FEATURE_DISPLAY_NAME}} - Task Breakdown
@@ -178,6 +178,7 @@ These stories are CRITICAL for the minimum viable product. Must complete before 
 **So that** {{BUSINESS_VALUE}}.
 
 **Acceptance Criteria**:
+
 - [ ] {{CRITERION_1}}
 - [ ] {{CRITERION_2}}
 - [ ] {{CRITERION_3}}
@@ -244,6 +245,7 @@ These stories are CRITICAL for the minimum viable product. Must complete before 
 **So that** {{BUSINESS_VALUE}}.
 
 **Acceptance Criteria**:
+
 - [ ] {{CRITERION_1}}
 - [ ] {{CRITERION_2}}
 
@@ -273,6 +275,7 @@ These stories add significant value but are not blocking MVP release.
 **So that** {{BUSINESS_VALUE}}.
 
 **Acceptance Criteria**:
+
 - [ ] {{CRITERION_1}}
 - [ ] {{CRITERION_2}}
 
@@ -327,6 +330,7 @@ These stories refine the user experience and add polish but are not essential.
 **So that** {{BUSINESS_VALUE}}.
 
 **Acceptance Criteria**:
+
 - [ ] {{CRITERION_1}}
 
 **Estimated Effort**: {{STORY_EFFORT}}
@@ -370,13 +374,13 @@ These stories refine the user experience and add polish but are not essential.
 
 ### By Priority
 
-| Priority | User Stories | Tasks | Estimated Effort |
-|----------|-------------|-------|-----------------|
-| Enablers | {{ENABLER_COUNT}} | {{ENABLER_TASK_COUNT}} | {{ENABLER_EFFORT}} |
-| P1 (MVP) | {{P1_STORY_COUNT}} | {{P1_TASK_COUNT}} | {{P1_EFFORT}} |
-| P2 (Nice-to-Have) | {{P2_STORY_COUNT}} | {{P2_TASK_COUNT}} | {{P2_EFFORT}} |
-| P3 (Polish) | {{P3_STORY_COUNT}} | {{P3_TASK_COUNT}} | {{P3_EFFORT}} |
-| **TOTAL** | **{{TOTAL_STORIES}}** | **{{TOTAL_TASKS}}** | **{{TOTAL_EFFORT}}** |
+| Priority          | User Stories          | Tasks                  | Estimated Effort     |
+| ----------------- | --------------------- | ---------------------- | -------------------- |
+| Enablers          | {{ENABLER_COUNT}}     | {{ENABLER_TASK_COUNT}} | {{ENABLER_EFFORT}}   |
+| P1 (MVP)          | {{P1_STORY_COUNT}}    | {{P1_TASK_COUNT}}      | {{P1_EFFORT}}        |
+| P2 (Nice-to-Have) | {{P2_STORY_COUNT}}    | {{P2_TASK_COUNT}}      | {{P2_EFFORT}}        |
+| P3 (Polish)       | {{P3_STORY_COUNT}}    | {{P3_TASK_COUNT}}      | {{P3_EFFORT}}        |
+| **TOTAL**         | **{{TOTAL_STORIES}}** | **{{TOTAL_TASKS}}**    | **{{TOTAL_EFFORT}}** |
 
 ### Dependency Graph
 
@@ -424,8 +428,8 @@ After completing each user story, verify:
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation | Owner |
-|------|-----------|--------|------------|-------|
+| Risk       | Likelihood     | Impact     | Mitigation     | Owner     |
+| ---------- | -------------- | ---------- | -------------- | --------- |
 | {{RISK_1}} | {{LIKELIHOOD}} | {{IMPACT}} | {{MITIGATION}} | {{OWNER}} |
 | {{RISK_2}} | {{LIKELIHOOD}} | {{IMPACT}} | {{MITIGATION}} | {{OWNER}} |
 
@@ -442,34 +446,34 @@ After completing each user story, verify:
 
 This template supports token replacement for easy instantiation. Replace these tokens:
 
-| Token | Description | Example |
-|-------|-------------|---------|
-| `{{FEATURE_NAME}}` | Feature or epic name (lowercase-hyphen) | `user-authentication` |
-| `{{VERSION}}` | Semantic version | `1.0.0` |
-| `{{AUTHOR}}` | Author or team | `Engineering Team` |
-| `{{DATE}}` | Creation date (YYYY-MM-DD) | `2026-01-28` |
-| `{{FEATURE_DISPLAY_NAME}}` | Human-readable feature name | `User Authentication` |
-| `{{FEATURE_DESCRIPTION}}` | Brief feature overview | `Secure authentication system with JWT tokens` |
-| `{{BUSINESS_VALUE}}` | Why this feature matters | `Enables user account management and security` |
-| `{{USER_IMPACT}}` | How users benefit | `Users can securely access personalized features` |
-| `{{EPIC_NAME}}` | High-level epic name | `Authentication & Authorization` |
-| `{{EPIC_GOAL}}` | Epic objective | `Enable secure user access to the platform` |
-| `{{SUCCESS_CRITERIA}}` | Epic-level success criteria | `All P1 stories complete, zero auth vulnerabilities` |
-| `{{ENABLER_X_NAME}}` | Enabler task name | `Authentication Infrastructure` |
-| `{{ENABLER_X_PURPOSE}}` | Why enabler is needed | `Provides shared auth middleware for all features` |
-| `{{ENABLER_X_EFFORT}}` | Estimated effort | `2 days` |
-| `{{STORY_NAME}}` | User story name | `User Login with Email/Password` |
-| `{{USER_ROLE}}` | User persona | `registered user`, `admin`, `visitor` |
-| `{{CAPABILITY}}` | What user wants to do | `log in with my email and password` |
-| `{{BUSINESS_VALUE}}` | Why user wants it | `I can access my account securely` |
-| `{{CRITERION_X}}` | Acceptance criterion | `Login response time < 200ms` |
-| `{{STORY_EFFORT}}` | Story effort estimate | `1 day`, `6 hours` |
-| `{{TASK_DESCRIPTION}}` | Brief task title | `Create login API endpoint` |
-| `{{DETAILED_DESCRIPTION}}` | Full task description | `POST /api/auth/login that validates credentials` |
-| `{{TASK_EFFORT}}` | Individual task effort | `3 hours`, `1 day` |
-| `{{DEPENDENCY_IDS}}` | Task dependencies | `ENABLER-1.1, P1-1.1.1` |
-| `{{OUTPUT_ARTIFACTS}}` | Expected deliverables | `src/routes/auth.ts, tests` |
-| `{{VERIFICATION_COMMANDS}}` | How to verify task complete | `npm test -- auth.test.ts` |
+| Token                       | Description                             | Example                                              |
+| --------------------------- | --------------------------------------- | ---------------------------------------------------- |
+| `{{FEATURE_NAME}}`          | Feature or epic name (lowercase-hyphen) | `user-authentication`                                |
+| `{{VERSION}}`               | Semantic version                        | `1.0.0`                                              |
+| `{{AUTHOR}}`                | Author or team                          | `Engineering Team`                                   |
+| `{{DATE}}`                  | Creation date (YYYY-MM-DD)              | `2026-01-28`                                         |
+| `{{FEATURE_DISPLAY_NAME}}`  | Human-readable feature name             | `User Authentication`                                |
+| `{{FEATURE_DESCRIPTION}}`   | Brief feature overview                  | `Secure authentication system with JWT tokens`       |
+| `{{BUSINESS_VALUE}}`        | Why this feature matters                | `Enables user account management and security`       |
+| `{{USER_IMPACT}}`           | How users benefit                       | `Users can securely access personalized features`    |
+| `{{EPIC_NAME}}`             | High-level epic name                    | `Authentication & Authorization`                     |
+| `{{EPIC_GOAL}}`             | Epic objective                          | `Enable secure user access to the platform`          |
+| `{{SUCCESS_CRITERIA}}`      | Epic-level success criteria             | `All P1 stories complete, zero auth vulnerabilities` |
+| `{{ENABLER_X_NAME}}`        | Enabler task name                       | `Authentication Infrastructure`                      |
+| `{{ENABLER_X_PURPOSE}}`     | Why enabler is needed                   | `Provides shared auth middleware for all features`   |
+| `{{ENABLER_X_EFFORT}}`      | Estimated effort                        | `2 days`                                             |
+| `{{STORY_NAME}}`            | User story name                         | `User Login with Email/Password`                     |
+| `{{USER_ROLE}}`             | User persona                            | `registered user`, `admin`, `visitor`                |
+| `{{CAPABILITY}}`            | What user wants to do                   | `log in with my email and password`                  |
+| `{{BUSINESS_VALUE}}`        | Why user wants it                       | `I can access my account securely`                   |
+| `{{CRITERION_X}}`           | Acceptance criterion                    | `Login response time < 200ms`                        |
+| `{{STORY_EFFORT}}`          | Story effort estimate                   | `1 day`, `6 hours`                                   |
+| `{{TASK_DESCRIPTION}}`      | Brief task title                        | `Create login API endpoint`                          |
+| `{{DETAILED_DESCRIPTION}}`  | Full task description                   | `POST /api/auth/login that validates credentials`    |
+| `{{TASK_EFFORT}}`           | Individual task effort                  | `3 hours`, `1 day`                                   |
+| `{{DEPENDENCY_IDS}}`        | Task dependencies                       | `ENABLER-1.1, P1-1.1.1`                              |
+| `{{OUTPUT_ARTIFACTS}}`      | Expected deliverables                   | `src/routes/auth.ts, tests`                          |
+| `{{VERIFICATION_COMMANDS}}` | How to verify task complete             | `npm test -- auth.test.ts`                           |
 
 ---
 
@@ -479,11 +483,13 @@ This template supports token replacement for easy instantiation. Replace these t
 Read `.claude/context/memory/learnings.md`
 
 **After completing each phase:**
+
 - New pattern discovered → `.claude/context/memory/learnings.md`
 - Issue encountered → `.claude/context/memory/issues.md`
 - Decision made → `.claude/context/memory/decisions.md`
 
 **After completing feature:**
+
 - Update learnings.md with implementation summary
 - Document any architectural decisions in decisions.md
 - Record any unresolved issues in issues.md
@@ -512,6 +518,7 @@ This template aligns with industry standards:
 - **P3 tasks**: `P3-X.Y.Z` (e.g., `P3-3.1.1`)
 
 Where:
+
 - `X` = Story number within priority
 - `Y` = Substory (if nested)
 - `Z` = Task number within story
@@ -526,7 +533,7 @@ TaskCreate({
   subject: 'ENABLER-1.1: Create user database schema',
   description: 'Design and implement users table...',
   activeForm: 'Creating user database schema',
-  metadata: { priority: 'enabler', blocksAll: true }
+  metadata: { priority: 'enabler', blocksAll: true },
 });
 
 // P1 story tasks
@@ -534,7 +541,7 @@ TaskCreate({
   subject: 'P1-1.1.1: Create login API endpoint',
   description: 'POST /api/auth/login endpoint...',
   activeForm: 'Creating login API endpoint',
-  metadata: { priority: 'p1', story: '1.1' }
+  metadata: { priority: 'p1', story: '1.1' },
 });
 ```
 

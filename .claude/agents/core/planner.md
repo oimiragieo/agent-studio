@@ -412,6 +412,68 @@ Constitution Checkpoint Results:
 ✅ All 4 gates pass → Proceed to Phase 1
 ```
 
+## Commit Checkpoint Pattern (NEW - Enhancement #9)
+
+**When to Use**: Multi-file projects (10+ files changed) require commit checkpoints to prevent lost work.
+
+**Pattern**: Add a commit checkpoint subtask in Phase 3 (Integration) when a plan involves modifying 10 or more files.
+
+**Rationale**:
+
+- **Risk**: Implementing 15+ file changes in a single session risks lost work if errors occur late in integration
+- **Benefit**: Commit after foundational work (Phase 1-2) allows rollback to known-good state
+- **Recovery**: If Phase 3 fails, can revert to checkpoint without losing Phase 1-2 progress
+
+**Detection Logic**:
+
+```javascript
+// During plan generation
+const filesModified = countModifiedFiles(plan);
+
+if (filesModified >= 10) {
+  // Add commit checkpoint subtask after Phase 2, before Phase 3
+  addSubtask({
+    phase: 'Phase 3: Integration',
+    position: 'FIRST',
+    task: 'Commit checkpoint: Commit Phase 1-2 changes before integration',
+    rationale: `Multi-file project (${filesModified} files). Commit creates recovery point.`,
+    command: 'git add . && git commit -m "checkpoint: Phase 1-2 foundation complete"',
+  });
+}
+```
+
+**Example**:
+
+**Plan Without Checkpoint** (9 files):
+
+```
+Phase 1: Foundation (3 files)
+Phase 2: Core Logic (4 files)
+Phase 3: Integration (2 files)
+Total: 9 files → No checkpoint needed
+```
+
+**Plan With Checkpoint** (15 files):
+
+```
+Phase 1: Foundation (5 files)
+Phase 2: Core Logic (6 files)
+--- CHECKPOINT: Commit Phase 1-2 changes ---
+Phase 3: Integration (4 files)
+Total: 15 files → Checkpoint REQUIRED
+```
+
+**Integration with plan-generator skill**:
+
+- plan-generator skill automatically inserts checkpoint task when detecting 10+ file projects
+- Checkpoint appears in Phase 3 task list as first subtask
+- Commit message follows format: `checkpoint: Phase 1-2 foundation complete`
+
+**Documentation**:
+
+- Template: See `.claude/templates/plan-template.md` (Phase 3 section)
+- Skill: See `.claude/skills/plan-generator/SKILL.md` (file count detection)
+
 ## Memory Protocol (MANDATORY)
 
 **Before starting any task:**

@@ -1,23 +1,23 @@
 ---
 # [REQUIRED] Clear, concise specification title (10-200 chars)
 # Example: "User Authentication System Specification"
-title: "{{FEATURE_NAME}} Specification"
+title: '{{FEATURE_NAME}} Specification'
 
 # [REQUIRED] Semantic version number (format: MAJOR.MINOR.PATCH)
 # Example: "1.0.0" for initial spec, "1.1.0" for minor updates
-version: "{{VERSION}}"
+version: '{{VERSION}}'
 
 # [REQUIRED] Specification author or team (2-100 chars)
 # Example: "Claude", "Engineering Team", "Product Manager"
-author: "{{AUTHOR}}"
+author: '{{AUTHOR}}'
 
 # [REQUIRED] Current lifecycle status
 # Options: draft, review, approved, deprecated
-status: "draft"
+status: 'draft'
 
 # [REQUIRED] Date of creation or last update (format: YYYY-MM-DD)
 # Example: "2026-01-28"
-date: "{{DATE}}"
+date: '{{DATE}}'
 
 # [OPTIONAL] Categorization tags for organizing specifications
 # Format: lowercase-with-hyphens
@@ -26,12 +26,12 @@ tags: []
 
 # [OPTIONAL] Priority level for implementation planning
 # Options: low, medium, high, critical
-priority: "medium"
+priority: 'medium'
 
 # [OPTIONAL] Estimated effort for implementation (human-readable)
 # Format: "<number> <unit>" where unit is: hour(s), day(s), week(s), month(s)
 # Example: "2 weeks", "4 hours", "3 days"
-estimated_effort: ""
+estimated_effort: ''
 
 # [REQUIRED] List of measurable acceptance criteria (1-50 items, 10-500 chars each)
 # These define when the specification is successfully implemented
@@ -39,13 +39,13 @@ estimated_effort: ""
 #   - "User can log in with email and password"
 #   - "Password must meet complexity requirements (12+ chars, mixed case, numbers, symbols)"
 acceptance_criteria:
-  - "{{ACCEPTANCE_CRITERIA_1}}"
-  - "{{ACCEPTANCE_CRITERIA_2}}"
-  - "{{ACCEPTANCE_CRITERIA_3}}"
+  - '{{ACCEPTANCE_CRITERIA_1}}'
+  - '{{ACCEPTANCE_CRITERIA_2}}'
+  - '{{ACCEPTANCE_CRITERIA_3}}'
 
 # [OPTIONAL] Brief overview of what this specification covers (20-1000 chars)
 # Detailed content goes in the Markdown body below
-description: ""
+description: ''
 
 # [OPTIONAL] List of stakeholders involved in or affected by this specification
 # Example: ["Product Manager", "Engineering Team", "Security Team", "End Users"]
@@ -92,6 +92,7 @@ node -e "const yaml=require('js-yaml'); const fs=require('fs'); const content=fs
 This specification defines the requirements for implementing {{FEATURE_NAME}}.
 
 **Target Audience:**
+
 - Development team responsible for implementation
 - QA team for test planning
 - Product management for requirements validation
@@ -104,11 +105,13 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 <!-- What is explicitly out of scope? -->
 
 **In Scope:**
+
 - [List features/capabilities included]
 - [Add item]
 - [Add item]
 
 **Out of Scope:**
+
 - [List features/capabilities explicitly excluded]
 - [Add item]
 - [Add item]
@@ -133,14 +136,17 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 **Description**: [Clear description of what the system shall do]
 
 **Input**:
+
 - [Input parameter 1: type, format, constraints]
 - [Input parameter 2: type, format, constraints]
 
 **Output**:
+
 - Success: [Expected output on success]
 - Failure: [Expected output/error on failure]
 
 **Validation**:
+
 - [Validation rule 1]
 - [Validation rule 2]
 - [Rate limiting/security constraints]
@@ -150,6 +156,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 **Description**: [Clear description of what the system shall do]
 
 **Requirements**:
+
 - [Requirement detail 1]
 - [Requirement detail 2]
 - [Requirement detail 3]
@@ -159,6 +166,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 **Description**: [Clear description of what the system shall do]
 
 **Details**:
+
 - [Detail 1]
 - [Detail 2]
 - [Detail 3]
@@ -173,6 +181,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 3.1 Security (NFR-001)
 
 <!-- Security requirements: authentication, authorization, data protection, compliance -->
+
 - [Security requirement 1]
 - [Security requirement 2]
 - [Security requirement 3]
@@ -180,6 +189,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 3.2 Performance (NFR-002)
 
 <!-- Performance requirements: latency, throughput, response times -->
+
 - [Performance metric 1: specific measurable target]
 - [Performance metric 2: specific measurable target]
 - [Performance metric 3: specific measurable target]
@@ -187,6 +197,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 3.3 Availability (NFR-003)
 
 <!-- Availability requirements: uptime, failover, disaster recovery -->
+
 - [Availability requirement 1: SLA target]
 - [Availability requirement 2: fault tolerance]
 - [Availability requirement 3: recovery time]
@@ -194,6 +205,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 3.4 Scalability (NFR-004)
 
 <!-- Scalability requirements: horizontal/vertical scaling, load handling -->
+
 - [Scalability requirement 1]
 - [Scalability requirement 2]
 - [Scalability requirement 3]
@@ -201,6 +213,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 3.5 Usability (NFR-005)
 
 <!-- Usability requirements: user experience, accessibility, internationalization -->
+
 - [Usability requirement 1]
 - [Usability requirement 2]
 - [Usability requirement 3]
@@ -237,12 +250,14 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 <!-- Document RESTful/GraphQL/RPC endpoints -->
 
 **{{HTTP_METHOD}} {{ENDPOINT_PATH}}**
+
 - Request: `{ "field": "value" }`
 - Response: `{ "result": "value" }`
 - Authentication: [Required/Optional, method]
 - Rate Limit: [Requests per time period]
 
 **{{HTTP_METHOD}} {{ENDPOINT_PATH}}**
+
 - Request: `{ "field": "value" }`
 - Response: `{ "result": "value" }`
 
@@ -251,6 +266,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 <!-- Document database tables, columns, indexes, relationships -->
 
 **{{table_name}} table**:
+
 - {{column_1}} ({{type}}, {{constraints}})
 - {{column_2}} ({{type}}, {{constraints}})
 - {{column_3}} ({{type}}, {{constraints}})
@@ -270,6 +286,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 <!-- [OPTIONAL] Document message/event formats for async communication -->
 
 **{{Event Name}} Event**:
+
 ```json
 {
   "event_type": "{{event_type}}",
@@ -288,6 +305,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 6.1 Testability
 
 <!-- Testing requirements and coverage targets -->
+
 - [Test type 1: coverage target]
 - [Test type 2: coverage target]
 - [Test type 3: coverage target]
@@ -295,6 +313,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 6.2 Maintainability
 
 <!-- Code quality and documentation requirements -->
+
 - [Maintainability requirement 1]
 - [Maintainability requirement 2]
 - [Maintainability requirement 3]
@@ -302,6 +321,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 6.3 Monitoring
 
 <!-- Observability requirements: metrics, logs, alerts, dashboards -->
+
 - **Metrics**: [List key metrics to track]
 - **Alerts**: [List critical alert conditions]
 - **Dashboards**: [Dashboard requirements]
@@ -313,6 +333,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 7.1 Technical Constraints
 
 <!-- Technology stack, platform, compatibility requirements -->
+
 - [Technical constraint 1]
 - [Technical constraint 2]
 - [Technical constraint 3]
@@ -320,6 +341,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 7.2 Schedule Constraints
 
 <!-- Timeline, milestones, delivery dates -->
+
 - Phase 1: [Duration and deliverables]
 - Phase 2: [Duration and deliverables]
 - Phase 3: [Duration and deliverables]
@@ -328,6 +350,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 7.3 Resource Constraints
 
 <!-- Team size, budget, infrastructure limitations -->
+
 - [Resource constraint 1]
 - [Resource constraint 2]
 - [Resource constraint 3]
@@ -339,6 +362,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 8.1 Assumptions
 
 <!-- Critical assumptions that affect implementation -->
+
 - [ASSUMES: Assumption 1]
 - [ASSUMES: Assumption 2]
 - [ASSUMES: Assumption 3]
@@ -346,6 +370,7 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 ### 8.2 Dependencies
 
 <!-- Prerequisites that must be satisfied before implementation -->
+
 - **{{Dependency Name}}**: [What must be completed/available]
 - **{{Dependency Name}}**: [What must be completed/available]
 - **{{Dependency Name}}**: [What must be completed/available]
@@ -389,17 +414,18 @@ This specification defines the requirements for implementing {{FEATURE_NAME}}.
 
 When instantiating this template, replace the following tokens:
 
-| Token | Description | Example Value |
-|-------|-------------|---------------|
-| `{{PROJECT_NAME}}` | Name of the project | "Agent Studio", "Payment Gateway" |
-| `{{AUTHOR}}` | Specification author | "Claude", "Engineering Team" |
-| `{{DATE}}` | Current date (YYYY-MM-DD) | "2026-01-28" |
-| `{{VERSION}}` | Semantic version | "1.0.0", "2.1.0" |
-| `{{FEATURE_NAME}}` | Name of feature being specified | "User Authentication", "Payment Processing" |
-| `{{ACCEPTANCE_CRITERIA_N}}` | Measurable acceptance criteria | "User can log in with email and password" |
+| Token                       | Description                     | Example Value                               |
+| --------------------------- | ------------------------------- | ------------------------------------------- |
+| `{{PROJECT_NAME}}`          | Name of the project             | "Agent Studio", "Payment Gateway"           |
+| `{{AUTHOR}}`                | Specification author            | "Claude", "Engineering Team"                |
+| `{{DATE}}`                  | Current date (YYYY-MM-DD)       | "2026-01-28"                                |
+| `{{VERSION}}`               | Semantic version                | "1.0.0", "2.1.0"                            |
+| `{{FEATURE_NAME}}`          | Name of feature being specified | "User Authentication", "Payment Processing" |
+| `{{ACCEPTANCE_CRITERIA_N}}` | Measurable acceptance criteria  | "User can log in with email and password"   |
 
 **Validation:**
 After replacing tokens, run:
+
 ```bash
 # Check for unresolved tokens
 grep "{{" specification.md && echo "ERROR: Unresolved tokens!" || echo "✓ All tokens resolved"
@@ -425,6 +451,7 @@ This template follows IEEE 830-1998 recommended practices for software requireme
 - **Section 8 (Assumptions/Dependencies)**: Prerequisites and assumptions
 
 **Key IEEE 830 Principles Applied:**
+
 - ✅ Unambiguous requirements
 - ✅ Complete coverage of all requirements
 - ✅ Verifiable acceptance criteria
@@ -437,18 +464,21 @@ This template follows IEEE 830-1998 recommended practices for software requireme
 This template implements ADR-044 (YAML+MD Hybrid Specification Format):
 
 **YAML Frontmatter (Machine-Readable Metadata)**:
+
 - Structured metadata for tooling integration
 - Schema validation support
 - Token replacement patterns
 - Version control friendly
 
 **Markdown Body (Human-Readable Content)**:
+
 - Rich formatting for readability
 - Code blocks for technical examples
 - Tables for structured data
 - IEEE 830 section structure
 
 **Benefits**:
+
 - Tooling can parse YAML for automation
 - Humans read Markdown for comprehension
 - Git-friendly plain text format
@@ -457,16 +487,19 @@ This template implements ADR-044 (YAML+MD Hybrid Specification Format):
 ## Memory Protocol (MANDATORY)
 
 **Before starting implementation:**
+
 1. Read `.claude/context/memory/learnings.md` for related patterns
 2. Review `.claude/context/memory/decisions.md` for architectural decisions
 3. Check `.claude/context/memory/issues.md` for known blockers
 
 **After completing implementation:**
+
 1. Record implementation patterns → `learnings.md`
 2. Document architectural decisions → `decisions.md`
 3. Log any blockers/workarounds → `issues.md`
 
 **After specification approval:**
+
 1. Archive specification in `.claude/context/artifacts/specifications/`
 2. Create implementation tasks referencing this specification
 3. Update related specifications if dependencies changed
@@ -506,6 +539,7 @@ Task({ subagent_type: 'planner', prompt: 'Break down specification into tasks' }
 ### Storage Location
 
 Store completed specifications in:
+
 - **Active specs**: `.claude/context/artifacts/specifications/active/`
 - **Approved specs**: `.claude/context/artifacts/specifications/approved/`
 - **Deprecated specs**: `.claude/context/artifacts/specifications/deprecated/`
@@ -517,6 +551,7 @@ Store completed specifications in:
 Before marking specification as "approved", verify:
 
 **Completeness**:
+
 - [ ] All required sections completed
 - [ ] All functional requirements documented
 - [ ] All non-functional requirements defined
@@ -524,6 +559,7 @@ Before marking specification as "approved", verify:
 - [ ] External interfaces documented
 
 **Quality**:
+
 - [ ] Requirements are unambiguous
 - [ ] Requirements are testable/verifiable
 - [ ] Consistent terminology throughout
@@ -531,6 +567,7 @@ Before marking specification as "approved", verify:
 - [ ] Realistic constraints and timelines
 
 **Stakeholder Alignment**:
+
 - [ ] Product stakeholder sign-off
 - [ ] Engineering feasibility review
 - [ ] Security review (if applicable)
@@ -538,6 +575,7 @@ Before marking specification as "approved", verify:
 - [ ] Related specifications updated
 
 **Schema Validation**:
+
 - [ ] YAML frontmatter validates against schema
 - [ ] All required fields present
 - [ ] Field types correct (string, array, enum)

@@ -31,15 +31,19 @@ Comprehensive analysis of the spec-kit codebase (archived at `.claude.archive\.t
       description: 'Architect exploring spec-kit codebase',
       allowed_tools: ['Read', 'Glob', 'Grep', 'Bash', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
       prompt: `You are the ARCHITECT agent in exploration mode.
+    ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 2 (created by PLANNER)
 Subject: Deep dive spec-kit codebase
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "2", status: "in_progress" })
 2. Read your agent definition: .claude/agents/core/architect.md
 3. Invoke skill: Skill({ skill: "repo-rag" }) for thorough exploration
@@ -58,16 +62,19 @@ Subject: Deep dive spec-kit codebase
 10. THEN: TaskList()
 
 ## Thoroughness Requirement
+
 User requested "ULTRATHINK" - be very thorough, not superficial. Read actual code, understand patterns, document specifics.
 
 ## Memory Protocol
+
 1. Read: .claude/context/memory/learnings.md first
 2. Record discoveries to memory files
-`
-    })
-    ```
-  - **Verify**: `Test-Path .claude/context/artifacts/exploration/spec-kit-exploration.md`
-  - **Rollback**: N/A (exploration is read-only)
+   `
+   })
+   ```
+
+- **Verify**: `Test-Path .claude/context/artifacts/exploration/spec-kit-exploration.md`
+- **Rollback**: N/A (exploration is read-only)
 
 - [ ] **1.2** Spawn Explore agent for current codebase comparison (~45 min) [⚡ parallel OK]
   - **Command**:
@@ -78,25 +85,29 @@ User requested "ULTRATHINK" - be very thorough, not superficial. Read actual cod
       description: 'Architect exploring current codebase for comparison',
       allowed_tools: ['Read', 'Glob', 'Grep', 'Bash', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
       prompt: `You are the ARCHITECT agent in exploration mode.
+    ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 3 (created by PLANNER)
 Subject: Analyze current agent-studio codebase for comparison
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "3", status: "in_progress" })
 2. Read your agent definition: .claude/agents/core/architect.md
 3. Invoke skill: Skill({ skill: "repo-rag" }) for thorough exploration
 4. Explore current implementation:
    - Features: what capabilities do we have?
-   - Hooks: .claude/hooks/*
-   - Agents: .claude/agents/*
-   - Workflows: .claude/workflows/*
-   - Tools: .claude/tools/*
-   - Skills: .claude/skills/*
+   - Hooks: .claude/hooks/\*
+   - Agents: .claude/agents/\*
+   - Workflows: .claude/workflows/\*
+   - Tools: .claude/tools/\*
+   - Skills: .claude/skills/\*
 5. Document current state in: .claude/context/artifacts/exploration/current-codebase-inventory.md
 6. Create structured inventory matching spec-kit format for easy comparison
 7. Note strengths, gaps, areas for improvement
@@ -104,17 +115,20 @@ Subject: Analyze current agent-studio codebase for comparison
 9. THEN: TaskList()
 
 ## Memory Protocol
+
 1. Read: .claude/context/memory/learnings.md first
 2. Record findings to memory files
-`
-    })
-    ```
-  - **Verify**: `Test-Path .claude/context/artifacts/exploration/current-codebase-inventory.md`
-  - **Rollback**: N/A (exploration is read-only)
+   `
+   })
+   ```
+
+- **Verify**: `Test-Path .claude/context/artifacts/exploration/current-codebase-inventory.md`
+- **Rollback**: N/A (exploration is read-only)
 
 #### Phase 1 Error Handling
 
 If any exploration task fails:
+
 1. Check if archived spec-kit path exists: `Test-Path C:\dev\projects\agent-studio\.claude.archive\.tmp\spec-kit-main`
 2. Document error: `echo "Phase 1 failed: [error]" >> .claude/context/memory/issues.md`
 3. Do NOT proceed to Phase 2 until exploration completes
@@ -208,15 +222,19 @@ Test-Path .claude/context/artifacts/research-reports/spec-kit-integration-analys
         'mcp__Exa__get_code_context_exa'
       ],
       prompt: `You are the RESEARCHER agent.
+    ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 4 (created by PLANNER)
 Subject: Research best practices for top priority spec-kit features
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "4", status: "in_progress" })
 2. Read your agent definition: .claude/agents/specialized/researcher.md
 3. Read analysis: .claude/context/artifacts/research-reports/spec-kit-integration-analysis-2026-01-28.md
@@ -238,16 +256,19 @@ Subject: Research best practices for top priority spec-kit features
 8. THEN: TaskList()
 
 ## Critical
+
 User explicitly requested: "use a research agent and verify we're doing the best solution as found on the internet"
 
 ## Memory Protocol
+
 1. Read: .claude/context/memory/learnings.md first
 2. Record research findings to memory
-`
-    })
-    ```
-  - **Verify**: `Test-Path .claude/context/artifacts/research-reports/spec-kit-features-best-practices-2026-01-28.md`
-  - **Rollback**: N/A (research is read-only)
+   `
+   })
+   ```
+
+- **Verify**: `Test-Path .claude/context/artifacts/research-reports/spec-kit-features-best-practices-2026-01-28.md`
+- **Rollback**: N/A (research is read-only)
 
 #### Phase 3 Verification Gate
 
@@ -294,15 +315,19 @@ Test-Path .claude/context/artifacts/research-reports/spec-kit-features-best-prac
         description: 'Security reviewing implementation plan',
         allowed_tools: ['Read', 'Write', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
         prompt: `You are the SECURITY-ARCHITECT agent.
+      ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 5 (created by PLANNER)
 Subject: Security review implementation plan for spec-kit integration
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "5", status: "in_progress" })
 2. Read your agent definition: .claude/agents/specialized/security-architect.md
 3. Read implementation plan: Check TaskList() for Phase 4.1 tasks
@@ -318,11 +343,11 @@ Subject: Security review implementation plan for spec-kit integration
 9. THEN: TaskList()
 
 ## Memory Protocol
+
 1. Record security considerations to .claude/context/memory/decisions.md
-`
-      })
-      ```
-    - ELSE: Skip this task, mark N/A
+   `
+   })
+   ``` - ELSE: Skip this task, mark N/A
 
 #### Phase 4 Verification Gate
 
@@ -353,6 +378,7 @@ Subject: Security review implementation plan for spec-kit integration
 #### Phase 5 Error Handling
 
 If any implementation task fails:
+
 1. Document error in task metadata
 2. Do NOT proceed with dependent tasks
 3. Spawn debugging agent if needed
@@ -382,15 +408,19 @@ If any implementation task fails:
       description: 'QA testing spec-kit integration',
       allowed_tools: ['Read', 'Bash', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
       prompt: `You are the QA agent.
+    ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 6 (created by PLANNER)
 Subject: Comprehensive QA for spec-kit integration
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "6", status: "in_progress" })
 2. Read your agent definition: .claude/agents/core/qa.md
 3. Invoke skill: Skill({ skill: "qa-workflow" })
@@ -405,12 +435,14 @@ Subject: Comprehensive QA for spec-kit integration
 10. THEN: TaskList()
 
 ## Memory Protocol
+
 1. Record test patterns to .claude/context/memory/learnings.md
-`
-    })
-    ```
-  - **Verify**: `Test-Path .claude/context/reports/qa-spec-kit-integration-2026-01-28.md`
-  - **Rollback**: If QA fails, rollback implementation changes
+   `
+   })
+   ```
+
+- **Verify**: `Test-Path .claude/context/reports/qa-spec-kit-integration-2026-01-28.md`
+- **Rollback**: If QA fails, rollback implementation changes
 
 #### Phase 6 Verification Gate
 
@@ -436,15 +468,19 @@ Subject: Comprehensive QA for spec-kit integration
       description: 'Technical writer documenting spec-kit integration',
       allowed_tools: ['Read', 'Write', 'Edit', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
       prompt: `You are the TECHNICAL-WRITER agent.
+    ```
 
 ## PROJECT CONTEXT
+
 PROJECT_ROOT: C:\\dev\\projects\\agent-studio
 
 ## Your Assigned Task
+
 Task ID: 7 (created by PLANNER)
 Subject: Document spec-kit integration features
 
 ## Instructions
+
 1. FIRST: TaskUpdate({ taskId: "7", status: "in_progress" })
 2. Read your agent definition: .claude/agents/core/technical-writer.md
 3. Read all Phase 1-6 artifacts:
@@ -468,11 +504,13 @@ Subject: Document spec-kit integration features
 8. THEN: TaskList()
 
 ## Memory Protocol
+
 1. Record documentation patterns to .claude/context/memory/learnings.md
-`
-    })
-    ```
-  - **Verify**: `Test-Path .claude/docs/SPEC_KIT_INTEGRATION.md`
+   `
+   })
+   ```
+
+- **Verify**: `Test-Path .claude/docs/SPEC_KIT_INTEGRATION.md`
 
 #### Phase 7 Verification Gate
 
@@ -501,7 +539,16 @@ Task({
   subagent_type: 'general-purpose',
   model: 'sonnet',
   description: 'Reflection agent analyzing spec-kit integration work',
-  allowed_tools: ['Read', 'Write', 'Edit', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'],
+  allowed_tools: [
+    'Read',
+    'Write',
+    'Edit',
+    'TaskUpdate',
+    'TaskList',
+    'TaskCreate',
+    'TaskGet',
+    'Skill',
+  ],
   prompt: `You are REFLECTION-AGENT.
 
 ## PROJECT CONTEXT
@@ -529,8 +576,8 @@ Subject: Session reflection and learning extraction for spec-kit integration
 6. If evolution opportunities found, document in evolution-state.json
 7. LAST: TaskUpdate({ taskId: "8", status: "completed", metadata: { summary: "Reflection complete, learnings extracted", filesModified: [".claude/context/memory/learnings.md", "..."] } })
 8. THEN: TaskList()
-`
-})
+`,
+});
 ```
 
 **Success Criteria**:
@@ -541,29 +588,29 @@ Subject: Session reflection and learning extraction for spec-kit integration
 
 ## Risks
 
-| Risk                                       | Impact | Mitigation                                                       | Rollback                                  |
-| ------------------------------------------ | ------ | ---------------------------------------------------------------- | ----------------------------------------- |
-| Spec-kit archived files corrupted/missing  | HIGH   | Verify path exists in Phase 1, document if missing               | N/A - abort if missing                    |
-| Research validation finds anti-patterns    | MEDIUM | Do NOT implement opportunities marked as anti-patterns           | Skip those opportunities                  |
-| Integration breaks existing functionality  | HIGH   | Comprehensive QA in Phase 6, rollback if critical issues         | Git revert implementation commits         |
-| Security vulnerabilities in new features   | HIGH   | Security review in Phase 4.2 (MANDATORY for sensitive features) | Remove vulnerable features                |
-| Implementation time exceeds estimates      | MEDIUM | Break tasks into smaller chunks, prioritize top opportunities    | Complete high-priority items first        |
-| Spec-kit patterns incompatible with ours   | MEDIUM | Research validates compatibility, PLANNER decides on integration | Document incompatibilities, don't force   |
-| New artifacts not properly registered      | MEDIUM | Follow EVOLVE workflow, use creator skills (Gate 4 enforcement) | Re-run creator workflow with proper steps |
+| Risk                                      | Impact | Mitigation                                                       | Rollback                                  |
+| ----------------------------------------- | ------ | ---------------------------------------------------------------- | ----------------------------------------- |
+| Spec-kit archived files corrupted/missing | HIGH   | Verify path exists in Phase 1, document if missing               | N/A - abort if missing                    |
+| Research validation finds anti-patterns   | MEDIUM | Do NOT implement opportunities marked as anti-patterns           | Skip those opportunities                  |
+| Integration breaks existing functionality | HIGH   | Comprehensive QA in Phase 6, rollback if critical issues         | Git revert implementation commits         |
+| Security vulnerabilities in new features  | HIGH   | Security review in Phase 4.2 (MANDATORY for sensitive features)  | Remove vulnerable features                |
+| Implementation time exceeds estimates     | MEDIUM | Break tasks into smaller chunks, prioritize top opportunities    | Complete high-priority items first        |
+| Spec-kit patterns incompatible with ours  | MEDIUM | Research validates compatibility, PLANNER decides on integration | Document incompatibilities, don't force   |
+| New artifacts not properly registered     | MEDIUM | Follow EVOLVE workflow, use creator skills (Gate 4 enforcement)  | Re-run creator workflow with proper steps |
 
 ## Timeline Summary
 
-| Phase       | Tasks | Est. Time     | Parallel? | Critical Path |
-| ----------- | ----- | ------------- | --------- | ------------- |
-| 1           | 2     | 45 min        | Yes       | Either task   |
-| 2           | 3     | 65 min        | No        | Sequential    |
-| 3           | 1     | 60 min        | Partial   | Research      |
-| 4           | 2     | 65 min        | No        | Sequential    |
-| 5           | 1     | Varies        | Yes       | All tasks     |
-| 6           | 1     | 30 min        | No        | QA            |
-| 7           | 1     | 30 min        | No        | Docs          |
-| Final       | 1     | 20 min        | No        | Reflection    |
-| **Total**   | **12**| **~5-8 hours**| Mixed     | Full chain    |
+| Phase     | Tasks  | Est. Time      | Parallel? | Critical Path |
+| --------- | ------ | -------------- | --------- | ------------- |
+| 1         | 2      | 45 min         | Yes       | Either task   |
+| 2         | 3      | 65 min         | No        | Sequential    |
+| 3         | 1      | 60 min         | Partial   | Research      |
+| 4         | 2      | 65 min         | No        | Sequential    |
+| 5         | 1      | Varies         | Yes       | All tasks     |
+| 6         | 1      | 30 min         | No        | QA            |
+| 7         | 1      | 30 min         | No        | Docs          |
+| Final     | 1      | 20 min         | No        | Reflection    |
+| **Total** | **12** | **~5-8 hours** | Mixed     | Full chain    |
 
 ## Notes
 

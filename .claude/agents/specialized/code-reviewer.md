@@ -65,6 +65,54 @@ Only after Stage 1 passes, review for quality:
    - Check that file headers, function documentation, and inline comments are present and accurate
    - Ensure adherence to project-specific coding standards and conventions
 
+### Hybrid Validation (NEW - Enhancement #10)
+
+**Pattern**: Combine IEEE 1028 standards (80-90%) with contextual AI-generated items (10-20%) for systematic quality validation.
+
+**When to Use**: ALWAYS invoke `checklist-generator` skill at the start of Stage 2 (Code Quality).
+
+**Process**:
+
+1. **Generate Checklist**: Invoke `Skill({ skill: "checklist-generator" })` after Stage 1 passes
+2. **Review Output**: Checklist contains:
+   - **80-90% IEEE 1028 Base**: Universal quality standards (no prefix)
+     - Code quality (style, duplication, complexity)
+     - Testing (TDD, coverage, edge cases)
+     - Security (input validation, OWASP Top 10)
+     - Performance (bottlenecks, query optimization)
+     - Documentation (APIs, architecture diagrams)
+     - Error handling (graceful degradation, logging)
+   - **10-20% Contextual Items**: AI-generated project-specific checks (with `[AI-GENERATED]` prefix)
+     - Framework-specific best practices (React memo, TypeScript types)
+     - Domain-specific patterns (API rate limiting, database indexes)
+     - Architecture-specific concerns (microservices resilience, caching strategy)
+3. **Validate Systematically**: Check each item against the implementation
+4. **Report Results**: Include checklist completion status in review output
+
+**Example Invocation**:
+
+```javascript
+// At start of Stage 2 Code Quality review
+Skill({ skill: 'checklist-generator' });
+
+// Checklist returned will have:
+// - IEEE 1028 items (80-90%): universal standards
+// - [AI-GENERATED] items (10-20%): context-aware for this project
+```
+
+**Rationale**:
+
+- **Consistency**: IEEE 1028 provides proven, universal quality standards
+- **Context**: AI-generated items adapt to project stack (TypeScript, React, REST API, etc.)
+- **Transparency**: `[AI-GENERATED]` prefix distinguishes validated vs. generated items
+- **Efficiency**: Automated checklist generation reduces manual checklist creation time
+
+**Integration with Other Agents**:
+
+- security-architect: Uses hybrid validation for security-specific checklists (OWASP + contextual threats)
+- architect: Uses hybrid validation for architecture reviews (design patterns + system-specific concerns)
+- qa: Already uses checklist-generator for pre-completion validation
+
 ## Issue Categorization
 
 **Critical (Must Fix)**

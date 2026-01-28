@@ -3,9 +3,7 @@
   "title": "template-renderer Output Schema",
   "description": "Output validation schema for template-renderer skill",
   "type": "object",
-  "required": [
-    "success"
-  ],
+  "required": ["success"],
   "properties": {
     "success": {
       "type": "boolean",

@@ -15,7 +15,14 @@
         "router-enforcer.cjs (domainBoosts gamedev-pro keywords)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/gamedev-pro-research.md",
-      "phases": ["E", "V", "O", "L", "V", "E"],
+      "phases": [
+        "E",
+        "V",
+        "O",
+        "L",
+        "V",
+        "E"
+      ],
       "skills": [
         "gamedev-expert",
         "tdd",
@@ -49,7 +56,14 @@
         "router-enforcer.cjs (domainBoosts web3-blockchain-expert)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/web3-blockchain-expert-research.md",
-      "phases": ["E", "V", "O", "L", "V", "E"],
+      "phases": [
+        "E",
+        "V",
+        "O",
+        "L",
+        "V",
+        "E"
+      ],
       "skills": [
         "web3-expert",
         "security-architect",
@@ -82,7 +96,14 @@
         "router-enforcer.cjs (mobile disambiguation rules)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/android-pro-research.md",
-      "phases": ["E", "V", "O", "L", "V", "E"],
+      "phases": [
+        "E",
+        "V",
+        "O",
+        "L",
+        "V",
+        "E"
+      ],
       "skills": [
         "android-expert",
         "testing-expert",
@@ -106,11 +127,32 @@
       "path": ".claude/agents/domain/ai-ml-specialist.md",
       "completedAt": "2026-01-25T19:30:00.000Z",
       "description": "AI/ML specialist for machine learning, deep learning, MLOps, experiment tracking, and model deployment",
-      "registrations": ["CLAUDE.md routing table"],
+      "registrations": [
+        "CLAUDE.md routing table"
+      ],
       "researchReport": ".claude/context/artifacts/research-reports/ai-ml-specialist-research.md",
-      "phases": ["E", "V", "O", "L", "V", "E"],
-      "skills": ["ai-ml-expert", "python-backend-expert", "data-expert", "scientific-skills"],
-      "domains": ["PyTorch", "TensorFlow", "scikit-learn", "Hugging Face", "MLflow", "MLOps"]
+      "phases": [
+        "E",
+        "V",
+        "O",
+        "L",
+        "V",
+        "E"
+      ],
+      "skills": [
+        "ai-ml-expert",
+        "python-backend-expert",
+        "data-expert",
+        "scientific-skills"
+      ],
+      "domains": [
+        "PyTorch",
+        "TensorFlow",
+        "scikit-learn",
+        "Hugging Face",
+        "MLflow",
+        "MLOps"
+      ]
     },
     {
       "type": "agent",
@@ -118,8 +160,17 @@
       "path": ".claude/agents/orchestrators/evolution-orchestrator.md",
       "completedAt": "2026-01-25T14:31:00.000Z",
       "description": "Meta-agent that orchestrates the EVOLVE workflow for creating new artifacts",
-      "registrations": ["CLAUDE.md routing table"],
-      "phases": ["E", "V", "O", "L", "V", "E"]
+      "registrations": [
+        "CLAUDE.md routing table"
+      ],
+      "phases": [
+        "E",
+        "V",
+        "O",
+        "L",
+        "V",
+        "E"
+      ]
     },
     {
       "id": "evolution-scientific-skills-retroactive",
@@ -276,8 +327,8 @@
   ],
   "suggestions": [
     {
-      "id": "sug-1769577132870",
-      "detectedAt": "2026-01-28T05:12:12.870Z",
+      "id": "sug-1769587492398",
+      "detectedAt": "2026-01-28T08:04:52.398Z",
       "triggers": [
         {
           "type": "explicit_creation",
@@ -288,8 +339,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769577132879",
-      "detectedAt": "2026-01-28T05:12:12.879Z",
+      "id": "sug-1769587492407",
+      "detectedAt": "2026-01-28T08:04:52.407Z",
       "triggers": [
         {
           "type": "capability_need",
@@ -300,8 +351,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769577132889",
-      "detectedAt": "2026-01-28T05:12:12.889Z",
+      "id": "sug-1769587492416",
+      "detectedAt": "2026-01-28T08:04:52.416Z",
       "triggers": [
         {
           "type": "gap_detection",
@@ -312,8 +363,8 @@
       "status": "pending"
     },
     {
-      "id": "sug-1769577139253",
-      "detectedAt": "2026-01-28T05:12:19.253Z",
+      "id": "sug-1769587492615",
+      "detectedAt": "2026-01-28T08:04:52.615Z",
       "triggers": [
         {
           "type": "explicit_evolution",
@@ -324,5 +375,5 @@
       "status": "pending"
     }
   ],
-  "lastUpdated": "2026-01-28T05:12:19.253Z"
+  "lastUpdated": "2026-01-28T08:04:52.615Z"
 }

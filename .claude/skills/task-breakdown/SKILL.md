@@ -6,7 +6,7 @@ model: sonnet
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, Skill, TaskCreate, TaskUpdate, TaskList, Grep, Glob]
-args: "<plan-file> [--create-tasks] [--output <path>]"
+args: '<plan-file> [--create-tasks] [--output <path>]'
 best_practices:
   - Always identify Enablers first (shared infrastructure that blocks all stories)
   - Use P1/P2/P3 prioritization (P1 = MVP must-haves)
@@ -55,11 +55,12 @@ Invoke this skill after plan-generator creates an implementation plan and before
 // After plan-generator completes
 Skill({
   skill: 'task-breakdown',
-  args: '.claude/context/plans/my-feature-plan.md --create-tasks --output .claude/context/artifacts/tasks/my-feature-tasks.md'
+  args: '.claude/context/plans/my-feature-plan.md --create-tasks --output .claude/context/artifacts/tasks/my-feature-tasks.md',
 });
 ```
 
 **Use when:**
+
 - Plan-generator has created a multi-phase implementation plan
 - You need to convert plan phases into trackable tasks
 - User stories need to be prioritized (P1/P2/P3)
@@ -67,6 +68,7 @@ Skill({
 - TaskCreate calls are needed for task tracking system
 
 **Skip when:**
+
 - Plan is already in task format (no conversion needed)
 - Single-phase simple task (directly use TaskCreate)
 - Exploratory research (use research-synthesis instead)
@@ -86,6 +88,7 @@ ENABLER-1.1 → ENABLER-1.2 → [ALL ENABLERS DONE] → P1-1.1.1 → P1-1.1.2 �
 ```
 
 **Why**: Enablers provide shared infrastructure (database schema, authentication middleware, shared utilities). Starting user stories before enablers complete causes:
+
 - Duplicate infrastructure work across stories
 - Breaking changes when enabler completes late
 - Integration bugs from inconsistent infrastructure
@@ -111,6 +114,7 @@ const plan = Read('.claude/context/plans/my-feature-plan.md');
 ```
 
 Parse the plan structure:
+
 - Identify all phases (Phase 0: Research, Phase 1: Foundation, Phase 2: Core Features, etc.)
 - Extract tasks from each phase
 - Identify parallelizable work (PARALLEL_OK flags)
@@ -121,6 +125,7 @@ Parse the plan structure:
 **CRITICAL**: Scan phases for infrastructure work that blocks all user stories.
 
 Enabler Indicators:
+
 - Database schema/migrations
 - Authentication/authorization middleware
 - Shared utility libraries
@@ -129,6 +134,7 @@ Enabler Indicators:
 - Deployment infrastructure (Docker, CI/CD)
 
 **Example Enablers**:
+
 ```
 Phase 1: Foundation
 ├── Task 1.1: Create user database schema → ENABLER-1.1
@@ -139,6 +145,7 @@ Reason: All user stories need these for authentication
 ```
 
 **Enabler Extraction Algorithm**:
+
 1. Find tasks in "Foundation" or "Infrastructure" phases
 2. Check if task description includes: schema, middleware, shared, infrastructure, setup, config
 3. Verify task is referenced by multiple user stories
@@ -149,6 +156,7 @@ Reason: All user stories need these for authentication
 Convert plan phases into user stories using the "As a... I want... So that..." format.
 
 **Phase → Story Mapping**:
+
 ```
 Plan Phase 2: Core Features
 ├── Milestone 2.1: User login functionality
@@ -169,6 +177,7 @@ Tasks:
 ```
 
 **Story Extraction Rules**:
+
 1. Each milestone becomes a user story (if user-facing)
 2. Combine related tasks under the same story
 3. Generate user role, capability, business value
@@ -179,22 +188,31 @@ Tasks:
 
 Classify each user story by priority:
 
-| Priority | MoSCoW | Meaning | Criteria |
-|----------|--------|---------|----------|
-| **P1 (MVP)** | Must Have | Critical for minimum viable product | Core functionality, user login, data CRUD, essential workflows |
-| **P2 (Nice-to-Have)** | Should Have | Important but not blocking | Password reset, profile editing, advanced search, email notifications |
-| **P3 (Polish)** | Could Have | Refinement and optimization | Remember me checkbox, avatars, dark mode, performance tweaks |
+| Priority              | MoSCoW      | Meaning                             | Criteria                                                              |
+| --------------------- | ----------- | ----------------------------------- | --------------------------------------------------------------------- |
+| **P1 (MVP)**          | Must Have   | Critical for minimum viable product | Core functionality, user login, data CRUD, essential workflows        |
+| **P2 (Nice-to-Have)** | Should Have | Important but not blocking          | Password reset, profile editing, advanced search, email notifications |
+| **P3 (Polish)**       | Could Have  | Refinement and optimization         | Remember me checkbox, avatars, dark mode, performance tweaks          |
 
 **Prioritization Algorithm**:
+
 ```javascript
 function prioritizeStory(story, plan) {
   // P1 indicators (MVP)
-  if (story.includes('authentication') || story.includes('core data') || story.includes('essential workflow')) {
+  if (
+    story.includes('authentication') ||
+    story.includes('core data') ||
+    story.includes('essential workflow')
+  ) {
     return 'P1';
   }
 
   // P3 indicators (polish)
-  if (story.includes('optimization') || story.includes('polish') || story.includes('nice-to-have')) {
+  if (
+    story.includes('optimization') ||
+    story.includes('polish') ||
+    story.includes('nice-to-have')
+  ) {
     return 'P3';
   }
 
@@ -204,6 +222,7 @@ function prioritizeStory(story, plan) {
 ```
 
 **Priority Assignment Rules**:
+
 - Foundation/infrastructure → Enabler (not P1/P2/P3)
 - Core user flows → P1
 - User account management (beyond login) → P2
@@ -215,6 +234,7 @@ function prioritizeStory(story, plan) {
 For each user story, create testable acceptance criteria:
 
 **Acceptance Criteria Formula**:
+
 ```
 - [ ] {User action} results in {expected outcome}
 - [ ] {Edge case} handled with {specific behavior}
@@ -223,10 +243,12 @@ For each user story, create testable acceptance criteria:
 ```
 
 **Examples**:
+
 ```markdown
 User Story: User Login with Email/Password [P1]
 
 Acceptance Criteria:
+
 - [ ] User can submit email and password via login form
 - [ ] Valid credentials return JWT token and redirect to dashboard
 - [ ] Invalid credentials show error message "Invalid email or password"
@@ -235,6 +257,7 @@ Acceptance Criteria:
 ```
 
 **Extraction from Plan**:
+
 1. Look for plan's "Verification Commands" per task → convert to acceptance criteria
 2. Extract performance requirements from plan overview
 3. Add security criteria for auth/data handling stories
@@ -245,6 +268,7 @@ Acceptance Criteria:
 Use standardized task ID convention:
 
 **Task ID Format**:
+
 - **Enablers**: `ENABLER-X.Y` (e.g., `ENABLER-1.1`, `ENABLER-1.2`)
   - X = Enabler group number
   - Y = Task number within group
@@ -256,12 +280,14 @@ Use standardized task ID convention:
 - **P3 Tasks**: `P3-X.Y.Z` (same structure as P1)
 
 **Dependency Rules**:
+
 1. **All P1 stories** depend on **all Enablers**
 2. **P2 stories** depend on **P1 stories** they extend
 3. **P3 stories** depend on **P1 or P2** they enhance
 4. **Tasks within a story** are sequential by default (each depends on previous)
 
 **Example Dependencies**:
+
 ```javascript
 // Enabler tasks (no dependencies)
 TaskCreate({ subject: 'ENABLER-1.1: Create user database schema', ... });
@@ -331,7 +357,7 @@ const tokens = {
   P3_STORY_COUNT: p3Stories.length,
   TOTAL_STORIES: allStories.length,
   TOTAL_TASKS: allTasks.length,
-  TOTAL_EFFORT: totalEffort
+  TOTAL_EFFORT: totalEffort,
 };
 
 // Invoke template-renderer
@@ -340,8 +366,8 @@ Skill({
   args: {
     templateName: 'tasks-template',
     outputPath: outputPath,
-    tokens: tokens
-  }
+    tokens: tokens,
+  },
 });
 ```
 
@@ -360,8 +386,8 @@ enablers.forEach(enabler => {
       type: 'enabler',
       blocksAll: true,
       estimatedEffort: enabler.effort,
-      outputArtifacts: enabler.outputs
-    }
+      outputArtifacts: enabler.outputs,
+    },
   });
 });
 
@@ -375,21 +401,21 @@ p1Tasks.forEach(task => {
       priority: 'p1',
       story: task.storyId,
       estimatedEffort: task.effort,
-      outputArtifacts: task.outputs
-    }
+      outputArtifacts: task.outputs,
+    },
   });
 
   // Block P1 tasks on all enablers
   TaskUpdate({
     taskId: task.id,
-    addBlockedBy: enablers.map(e => e.id)
+    addBlockedBy: enablers.map(e => e.id),
   });
 
   // Block on previous task in same story
   if (task.previousTaskInStory) {
     TaskUpdate({
       taskId: task.id,
-      addBlockedBy: [task.previousTaskInStory]
+      addBlockedBy: [task.previousTaskInStory],
     });
   }
 });
@@ -403,14 +429,14 @@ p2Tasks.forEach(task => {
     metadata: {
       priority: 'p2',
       story: task.storyId,
-      estimatedEffort: task.effort
-    }
+      estimatedEffort: task.effort,
+    },
   });
 
   // Block P2 on dependencies (usually P1 stories)
   TaskUpdate({
     taskId: task.id,
-    addBlockedBy: task.dependencies
+    addBlockedBy: task.dependencies,
   });
 });
 
@@ -418,6 +444,7 @@ p2Tasks.forEach(task => {
 ```
 
 **TaskCreate Best Practices**:
+
 1. Always include `activeForm` (present continuous for spinner display)
 2. Use metadata for priority, story ID, effort, outputs
 3. Create tasks in dependency order (Enablers → P1 → P2 → P3)
@@ -443,6 +470,7 @@ TaskList() # Check all tasks created successfully
 ```
 
 **Validation Checklist**:
+
 - [ ] All `{{PLACEHOLDER}}` values replaced
 - [ ] All enabler tasks identified and marked `[ENABLER]`
 - [ ] User stories prioritized (P1 = MVP, P2 = Nice-to-Have, P3 = Polish)
@@ -460,7 +488,7 @@ TaskList() # Check all tasks created successfully
 // After plan-generator creates a plan
 Skill({
   skill: 'task-breakdown',
-  args: '.claude/context/plans/auth-feature-plan.md --output .claude/context/artifacts/tasks/auth-tasks.md'
+  args: '.claude/context/plans/auth-feature-plan.md --output .claude/context/artifacts/tasks/auth-tasks.md',
 });
 
 // Result: .claude/context/artifacts/tasks/auth-tasks.md created with:
@@ -477,7 +505,7 @@ Skill({
 // Generate task document AND create tasks in tracking system
 Skill({
   skill: 'task-breakdown',
-  args: '.claude/context/plans/api-feature-plan.md --create-tasks --output .claude/context/artifacts/tasks/api-tasks.md'
+  args: '.claude/context/plans/api-feature-plan.md --create-tasks --output .claude/context/artifacts/tasks/api-tasks.md',
 });
 
 // Result:
@@ -499,13 +527,13 @@ Skill({
 // Step 1: Create implementation plan
 Skill({
   skill: 'plan-generator',
-  args: '--feature "User Authentication" --output .claude/context/plans/auth-plan.md'
+  args: '--feature "User Authentication" --output .claude/context/plans/auth-plan.md',
 });
 
 // Step 2: Break down plan into tasks
 Skill({
   skill: 'task-breakdown',
-  args: '.claude/context/plans/auth-plan.md --create-tasks --output .claude/context/artifacts/tasks/auth-tasks.md'
+  args: '.claude/context/plans/auth-plan.md --create-tasks --output .claude/context/artifacts/tasks/auth-tasks.md',
 });
 
 // Step 3: Verify tasks created
@@ -542,6 +570,7 @@ node .claude/skills/task-breakdown/scripts/main.cjs \
 The task-breakdown skill is designed to be invoked by the planner agent after plan-generator:
 
 **Planner Agent Workflow**:
+
 ```
 1. [PLANNER] Invoke plan-generator → creates .claude/context/plans/feature-plan.md
 2. [PLANNER] Invoke task-breakdown → creates .claude/context/artifacts/tasks/feature-tasks.md
@@ -551,6 +580,7 @@ The task-breakdown skill is designed to be invoked by the planner agent after pl
 ```
 
 **Expected Output**:
+
 ```
 [PLANNER] ✓ Plan created: auth-feature-plan.md (5 phases, 14 tasks)
 [PLANNER] → Invoking task-breakdown...
@@ -578,20 +608,22 @@ The task-breakdown skill is designed to be invoked by the planner agent after pl
 ```
 
 **Metadata to include**:
+
 ```javascript
 TaskCreate({
   subject: 'ENABLER-1.1: Create user database schema',
-  description: 'Design and implement users table with email, password_hash, created_at, last_login columns. Create migration file.',
+  description:
+    'Design and implement users table with email, password_hash, created_at, last_login columns. Create migration file.',
   activeForm: 'Creating user database schema',
   metadata: {
-    type: 'enabler',           // 'enabler' | 'p1' | 'p2' | 'p3'
-    blocksAll: true,            // Only for enablers
-    priority: 'enabler',        // 'enabler' | 'p1' | 'p2' | 'p3'
-    story: null,                // Story ID (e.g., '1.1') or null for enablers
+    type: 'enabler', // 'enabler' | 'p1' | 'p2' | 'p3'
+    blocksAll: true, // Only for enablers
+    priority: 'enabler', // 'enabler' | 'p1' | 'p2' | 'p3'
+    story: null, // Story ID (e.g., '1.1') or null for enablers
     estimatedEffort: '4 hours', // From plan
     outputArtifacts: ['migration file', 'schema documentation'],
-    verificationCommand: 'psql -c "\\d users"'
-  }
+    verificationCommand: 'psql -c "\\d users"',
+  },
 });
 ```
 
@@ -610,12 +642,14 @@ TaskCreate({
 ## Error Handling
 
 **Missing Plan File**:
+
 ```
 ERROR: Plan file not found: .claude/context/plans/missing-plan.md
 Ensure plan-generator has run successfully before invoking task-breakdown.
 ```
 
 **No User Stories Extracted**:
+
 ```
 ERROR: No user stories extracted from plan
 Plan may be too abstract. Ensure plan has concrete phases with tasks.
@@ -623,6 +657,7 @@ Check plan sections: Executive Summary, Implementation Phases, Key Deliverables.
 ```
 
 **Invalid Task ID Format**:
+
 ```
 ERROR: Invalid task ID format: "TASK-1.1"
 Must use: ENABLER-X.Y for enablers, P1-X.Y.Z for P1 tasks
@@ -630,12 +665,14 @@ Example: ENABLER-1.1, P1-1.1.1, P2-2.1.3
 ```
 
 **Circular Dependency Detected**:
+
 ```
 ERROR: Circular dependency detected: P1-1.1.2 → P1-1.1.3 → P1-1.1.2
 Fix: Ensure tasks within a story are sequential, not circular.
 ```
 
 **TaskCreate Failed**:
+
 ```
 ERROR: TaskCreate failed for P1-1.1.1
 Reason: Task with same subject already exists
@@ -645,17 +682,20 @@ Solution: Check TaskList() for existing tasks before creating
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 Check for:
+
 - Previously created task breakdowns
 - Common task ID patterns for this project
 - User preferences for prioritization
 - Known issues with plan-generator output
 
 **After completing:**
+
 - New task breakdown created → Append to `.claude/context/memory/learnings.md`
   ```
   ## Task Breakdown: {feature-name} ({date})

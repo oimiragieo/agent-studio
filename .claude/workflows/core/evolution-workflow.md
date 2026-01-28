@@ -162,6 +162,21 @@ Read('.claude/context/artifacts/skill-catalog.md');
 
 // 4. Analyze the gap using structured thinking
 // (Use mcp__sequential-thinking__sequentialthinking if available)
+
+// 5. SECURITY-FIRST DESIGN CHECKPOINT (MANDATORY)
+// Read security checklist and answer STRIDE questions
+Read('.claude/templates/security-design-checklist.md');
+
+// Answer STRIDE questions for the proposed artifact:
+// - S (Spoofing): Does it handle auth/credentials?
+// - T (Tampering): Does it write files or execute code?
+// - R (Repudiation): Are operations auditable/logged?
+// - I (Information Disclosure): Does it handle sensitive data?
+// - D (Denial of Service): Can it exhaust resources?
+// - E (Elevation of Privilege): Does it change permissions?
+
+// Document security considerations in Phase 0 research report
+// Include: threat analysis, existing controls, new controls needed
 ```
 
 **Exit Conditions** (ALL required):
@@ -170,6 +185,8 @@ Read('.claude/context/artifacts/skill-catalog.md');
 - [ ] No existing artifact meets the need (verified with Glob/Grep)
 - [ ] Request is within ecosystem scope (not external integration)
 - [ ] Evolution state updated to `EVALUATING`
+- [ ] **Security-first checkpoint completed** (STRIDE questions answered)
+- [ ] **Security assessment documented** in research report
 
 **Failure Mode**:
 
@@ -294,6 +311,45 @@ Skill({ skill: 'research-synthesis' });
 // - Analysis of existing codebase patterns
 // - Structured research report output
 ```
+
+**Research Prioritization Matrix** (NEW - Enhancement #7):
+
+When multiple research opportunities exist (e.g., 18 patterns to investigate), use the Impact × Alignment matrix to prioritize research within the 20% budget cap:
+
+**Scoring Algorithm**:
+
+```
+Score = (Impact × 0.6) + (Alignment × 0.4)
+```
+
+**Scoring Criteria**:
+
+- **Impact** (1-3): How much value does this research provide?
+  - HIGH (3): Directly solves the core problem
+  - MEDIUM (2): Provides useful context or patterns
+  - LOW (1): Nice-to-have or edge case research
+
+- **Alignment** (1-3): How well does this fit our framework patterns?
+  - HIGH (3): Matches existing patterns, easy to integrate
+  - MEDIUM (2): Requires some adaptation
+  - LOW (1): Requires significant framework changes
+
+**Prioritization Process**:
+
+1. List all potential research opportunities (patterns, sources, questions)
+2. Score each opportunity using the matrix (Impact × Alignment)
+3. Sort by score (descending)
+4. Research budget = 20% of total project time
+5. Select TOP N opportunities that fit within budget
+6. Document skipped opportunities with rationale: "Scored X.X, below cutoff"
+
+**Example (18 opportunities, 100h project)**:
+
+- Research budget: 20h (20% cap)
+- Time per query: 3h average
+- Max queries: 6 (18h total)
+- Select TOP 6 of 18 opportunities (scores: 3.0, 2.6, 2.6, 2.4, 2.4, 2.2)
+- Skip bottom 12 (scores below 2.2)
 
 **Research Protocol** (from research-synthesis skill):
 

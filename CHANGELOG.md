@@ -7,6 +7,81 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Sprint 2: Template Infrastructure & Security-First Design (Near-Term)
+
+#### Enhancements
+
+- **ADR Template Extension (Enhancement #4)**: Architecture Decision Record template system
+  - New template: `.claude/templates/adr-template.md` with YAML frontmatter
+  - JSON Schema: `.claude/schemas/adr-template.schema.json` for validation
+  - 8 required tokens (ADR_NUMBER, TITLE, DATE, STATUS, CONTEXT, DECISION, CONSEQUENCES, ALTERNATIVES)
+  - Status enum: proposed, accepted, deprecated, superseded
+  - Example ADR: `.claude/templates/examples/example-adr-050.md`
+  - Integration: Append rendered ADRs to `.claude/context/memory/decisions.md`
+  - Test suite: 6 passing tests in `adr-template.test.cjs`
+  - **Impact**: 80% → 100% decision documentation consistency
+
+- **Template Catalog Registry (Enhancement #5)**: Template discovery and usage tracking
+  - Catalog: `.claude/context/artifacts/template-catalog.md` with YAML frontmatter
+  - Lists all 4 templates: specification, plan, tasks, ADR
+  - Usage tracking: `created_count`, `last_used` metadata for each template
+  - Discovery mechanisms: by keyword, category, complexity, usage stats
+  - Integration: template-renderer skill reads catalog for validation and stats
+  - Test suite: 6 passing tests in `template-catalog.test.cjs`
+  - **Impact**: Template discovery and adoption tracking enabled
+
+- **Security-First Design Checklist (Enhancement #6)**: STRIDE threat modeling for EVOLVE workflow
+  - Checklist: `.claude/templates/security-design-checklist.md` with STRIDE framework
+  - Integration: EVOLVE Phase E (Evaluate) now includes security checkpoint
+  - "What could go wrong?" prompts for each STRIDE category:
+    - S (Spoofing): Identity verification, auth handling
+    - T (Tampering): Data integrity, path traversal, injection
+    - R (Repudiation): Audit logging, task tracking
+    - I (Information Disclosure): Data confidentiality, error messages
+    - D (Denial of Service): Resource limits, input validation
+    - E (Elevation of Privilege): Permission enforcement, tool restrictions
+  - OWASP Top 10 reference mapping
+  - Security controls catalog integration (Sprint 3 dependency)
+  - Test suite: 5 passing tests in `security-design-checklist.test.cjs`
+  - **Impact**: Prevents "security as afterthought" antipattern
+
+### Tests
+
+- `adr-template.test.cjs`: 6 passing (schema validation)
+- `template-catalog.test.cjs`: 6 passing (catalog completeness)
+- `security-design-checklist.test.cjs`: 5 passing (STRIDE coverage)
+- **Total**: 17 new passing tests
+
+### Documentation
+
+- Updated `.claude/workflows/core/evolution-workflow.md` Phase E with security checkpoint
+- Added ADR template usage documentation
+- Added template catalog discovery guide
+- Added STRIDE threat modeling reference
+
+---
+
+### Added - Sprint 1: Progressive Disclosure & Quality Validation (Immediate)
+
+#### Enhancements
+
+- **Progressive Disclosure Integration (Enhancement #1)**: spec-gathering Phase 4.5 now invokes progressive-disclosure skill
+  - Reduces clarification fatigue (5+ questions → 3 max)
+  - Documents assumptions with [ASSUMES:] notation
+  - ECLAIR pattern (Examine, Categorize, Limit, Assume, Infer, Record)
+  - Verified in `.claude/skills/spec-gathering/SKILL.md` Phase 4.5
+
+- **Happy-Path E2E Test Suite (Enhancement #2)**: Created template-system-e2e-happy.test.cjs
+  - 21 test scenarios demonstrating success path
+  - Validates spec → plan → tasks template rendering
+  - Complements detection test (template-system-e2e.test.cjs) which validates error handling
+  - Purpose: regression testing and documentation of ideal user flow
+
+- **Task #25b Created (Enhancement #3)**: Formalized progressive disclosure integration
+  - Task tracking for workflow verification and testing
+  - Acceptance criteria: max 3-5 clarifications, [ASSUMES:] markers, integration testing
+  - Created as Task #10 in task management system
+
 ## [2.3.0] - 2026-01-28
 
 ### Added - Spec-Kit Integration: Complete Feature Set for Requirements Management

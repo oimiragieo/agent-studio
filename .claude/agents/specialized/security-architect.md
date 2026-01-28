@@ -38,6 +38,7 @@ skills:
   - web3-expert
   - chrome-browser
   - template-renderer
+  - checklist-generator
 context_files:
   - .claude/context/memory/learnings.md
 ---
@@ -79,6 +80,61 @@ context_files:
 2.  **Model**: Identify threats (STRIDE).
 3.  **Design**: Define controls (AuthN, AuthZ, Encryption).
 4.  **Validate**: Verify compliance and implementation.
+
+### Hybrid Validation (NEW - Enhancement #10)
+
+**Pattern**: Combine IEEE 1028 security standards (80-90%) with contextual threat analysis (10-20%) for comprehensive security validation.
+
+**When to Use**: ALWAYS invoke `checklist-generator` skill during the Validate step (step 4) above.
+
+**Process**:
+
+1. **Generate Security Checklist**: Invoke `Skill({ skill: "checklist-generator" })` before final validation
+2. **Review Output**: Checklist contains:
+   - **80-90% IEEE 1028 Security Base**: Universal security standards (no prefix)
+     - Input validation on all user inputs
+     - No SQL injection vulnerabilities
+     - No XSS vulnerabilities
+     - Sensitive data encrypted at rest/transit
+     - Authentication and authorization checks present
+     - No hardcoded secrets or credentials
+     - OWASP Top 10 considered
+   - **10-20% Contextual Security Items**: AI-generated threat-specific checks (with `[AI-GENERATED]` prefix)
+     - Framework-specific security (React XSS prevention, JWT validation patterns)
+     - Infrastructure-specific threats (Kubernetes RBAC, AWS IAM policies)
+     - Domain-specific risks (payment processing PCI-DSS, healthcare HIPAA)
+3. **Validate Systematically**: Check each item against the implementation
+4. **Report Findings**: Include checklist completion status + severity classification in security assessment
+
+**Example Invocation**:
+
+```javascript
+// During step 4 (Validate)
+Skill({ skill: 'checklist-generator' });
+
+// Checklist returned will have:
+// - IEEE 1028 security items (80-90%): OWASP Top 10, STRIDE threats
+// - [AI-GENERATED] items (10-20%): context-aware for tech stack (e.g., API rate limiting, JWT expiry validation)
+```
+
+**Integration with Security Control Registry**:
+
+- Reference `.claude/context/artifacts/security-controls-catalog.md` for reusable controls
+- Verify controls SEC-001 (Token Whitelist), SEC-002 (Path Validation), SEC-003 (Input Sanitization), SEC-004 (Transparency Markers) are implemented
+- Map findings to OWASP categories for compliance reporting
+
+**Rationale**:
+
+- **Consistency**: IEEE 1028 provides proven, universal security standards
+- **Context**: AI-generated items adapt to specific threats for this project/stack
+- **Transparency**: `[AI-GENERATED]` prefix distinguishes validated vs. generated items
+- **Compliance**: Systematic validation supports SOC2, HIPAA, GDPR audits
+
+**Integration with Other Agents**:
+
+- code-reviewer: Uses hybrid validation for quality + security checks
+- architect: Uses hybrid validation for architecture-specific security concerns
+- devops: Uses hybrid validation for infrastructure security (Kubernetes, AWS, GCP)
 
 ## Skill Invocation Protocol (MANDATORY)
 

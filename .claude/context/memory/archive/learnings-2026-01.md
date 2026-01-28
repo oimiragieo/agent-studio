@@ -1,5 +1,7 @@
 # Project Learnings and Context
 
+<!-- security-lint-skip-file: Historical documentation contains code examples -->
+
 > **NOTICE: Legacy Archive File**
 >
 > This file is now a **read-only archive**. New learnings should be recorded using the session-based memory system:
@@ -8718,6 +8720,7 @@ switch (eventType) {
   ]
 }
 ```
+
 ## Spec-Kit Integration: Project-Level Reflection Learnings (2026-01-28)
 
 **Context**: Completed 5-phase spec-kit integration (Explore → Analyze → Research → Plan → Implement) delivering 5 validated features across 14 atomic tasks. Overall quality score: 0.96/1.0 (Excellent grade). Zero regressions, 100% test coverage, APPROVED FOR PRODUCTION.
@@ -10584,4 +10587,3 @@ function renderTemplate(content, tokens, templateName) {
 **Pattern**: Research-driven planning with mandatory Phase 0 and 4-gate constitution checkpoint before implementation.
 
 **Context**: Updated planner agent for Task #20 to enforce research-first approach per ADR-045. Prevents premature implementation and documents decision rationale.
-

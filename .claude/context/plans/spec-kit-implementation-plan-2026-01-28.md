@@ -98,12 +98,14 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - Blocked by: Tasks #15, #17
 
 **Key Deliverables**:
+
 - 3 templates (spec, plan, tasks)
 - 3 JSON schemas
 - 1 skill (template-renderer)
 - 2 updated skills (spec-gathering, plan-generator)
 
 **Success Criteria**:
+
 - [ ] All templates validate against schemas
 - [ ] Token replacement functional
 - [ ] spec-gathering/plan-generator use templates
@@ -131,11 +133,13 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - Blocked by: Tasks #26, #16
 
 **Key Deliverables**:
+
 - 1 skill (progressive-disclosure)
 - 1 template (reasonable-defaults.md)
 - 1 updated skill (spec-gathering)
 
 **Success Criteria**:
+
 - [ ] Clarification limit enforced (max 3)
 - [ ] Reasonable defaults applied
 - [ ] Assumptions marked with [ASSUMES: X]
@@ -158,11 +162,13 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - Blocked by: Tasks #15, #14
 
 **Key Deliverables**:
+
 - 1 skill (task-breakdown)
 - User story organization logic
 - Checkpoint pattern implementation
 
 **Success Criteria**:
+
 - [ ] Tasks organized by user story priority
 - [ ] Foundational phase first
 - [ ] Checkpoint markers for each story
@@ -190,11 +196,13 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - Blocked by: Task #18
 
 **Key Deliverables**:
+
 - 1 skill (checklist-generator)
 - 1 template (quality-checklist-base.md)
 - 1 updated agent (qa)
 
 **Success Criteria**:
+
 - [ ] IEEE 1028 base checklist included
 - [ ] Context-aware items added
 - [ ] Domain-specific checklists (frontend/backend/mobile/devops)
@@ -216,11 +224,13 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - Blocked by: Task #19
 
 **Key Deliverables**:
+
 - 1 updated agent (planner)
 - Phase 0 workflow integration
 - research.md output format
 
 **Success Criteria**:
+
 - [ ] Phase 0 workflow step added
 - [ ] Unknowns extracted automatically
 - [ ] research-synthesis skill invoked
@@ -250,10 +260,12 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
   - No blockers (documentation only)
 
 **Key Deliverables**:
+
 - 1 integration test file
 - 1 implementation plan document (this document)
 
 **Success Criteria**:
+
 - [ ] Integration test passes end-to-end
 - [ ] All feature interactions validated
 - [ ] Documentation complete
@@ -270,10 +282,12 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
 **Blocks**: 6 other features
 
 **Critical Path**:
+
 1. Task #12 (Schema) → Tasks #13, #17, #14 (Templates) → Task #15 (Renderer)
 2. Task #15 → Tasks #16, #19 (Update skills)
 
 **Success Criteria**:
+
 - [ ] Template system operational
 - [ ] spec-gathering/plan-generator use templates
 - [ ] Token replacement functional
@@ -288,12 +302,14 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
 **Dependencies**: Phase 1 complete
 
 **Parallel Tracks**:
+
 - Track A: Progressive Disclosure (#26 → #25)
 - Track B: User Story Tasks (#21)
 - Track C: Quality Checklists (#18 → #22)
 - Track D: Research Planning (#20)
 
 **Success Criteria**:
+
 - [ ] Progressive disclosure functional
 - [ ] User story organization working
 - [ ] Quality checklists generated
@@ -309,6 +325,7 @@ Implementation plan for integrating TOP 5 validated spec-kit features into agent
 **Dependencies**: Phase 2 complete
 
 **Success Criteria**:
+
 - [ ] End-to-end test passes
 - [ ] All features work together
 - [ ] Documentation complete
@@ -351,15 +368,15 @@ Task #24 (documentation - no blockers)
 
 ## Agent Assignments
 
-| Agent               | Tasks       | Total Effort |
-| ------------------- | ----------- | ------------ |
-| **schema-creator**  | #12         | 4 hours      |
-| **template-creator**| #13, #17, #14 | 8 hours    |
-| **skill-creator**   | #15, #26, #18, #21 | 19 hours |
-| **developer**       | #16, #19, #25 | 9 hours    |
-| **planner**         | #20         | 4 hours      |
-| **qa**              | #22, #23    | 12 hours     |
-| **technical-writer**| #24         | 4 hours      |
+| Agent                | Tasks              | Total Effort |
+| -------------------- | ------------------ | ------------ |
+| **schema-creator**   | #12                | 4 hours      |
+| **template-creator** | #13, #17, #14      | 8 hours      |
+| **skill-creator**    | #15, #26, #18, #21 | 19 hours     |
+| **developer**        | #16, #19, #25      | 9 hours      |
+| **planner**          | #20                | 4 hours      |
+| **qa**               | #22, #23           | 12 hours     |
+| **technical-writer** | #24                | 4 hours      |
 
 **Total**: 60 hours (best case) / 112 hours (worst case) = 10-18 days with 1 developer
 
@@ -367,19 +384,21 @@ Task #24 (documentation - no blockers)
 
 ## Timeline Summary
 
-| Phase                  | Tasks | Duration       | Parallel? | Key Deliverables                  |
-| ---------------------- | ----- | -------------- | --------- | --------------------------------- |
-| **Phase 1: Foundation**| 7     | 22-36 hours    | Partial   | Templates, schemas, renderer      |
-| **Phase 2: Core**      | 7     | 26-42 hours    | Yes       | Progressive, stories, checklists  |
-| **Phase 3: Integration**| 2    | 12-20 hours    | No        | E2E test, documentation           |
-| **TOTAL**              | 14    | **60-98 hours**| **10-16 days** | **5 validated features**   |
+| Phase                    | Tasks | Duration        | Parallel?      | Key Deliverables                 |
+| ------------------------ | ----- | --------------- | -------------- | -------------------------------- |
+| **Phase 1: Foundation**  | 7     | 22-36 hours     | Partial        | Templates, schemas, renderer     |
+| **Phase 2: Core**        | 7     | 26-42 hours     | Yes            | Progressive, stories, checklists |
+| **Phase 3: Integration** | 2     | 12-20 hours     | No             | E2E test, documentation          |
+| **TOTAL**                | 14    | **60-98 hours** | **10-16 days** | **5 validated features**         |
 
 **Realistic Timeline** (with parallel work, 2 developers):
+
 - **Week 1**: Phase 1 (Foundation) - Templates + Renderer
 - **Week 2**: Phase 2 (Core Features) - Progressive Disclosure, User Stories, Checklists, Research (parallel)
 - **Week 3**: Phase 3 (Integration) - E2E test + Documentation
 
 **Aggressive Timeline** (critical path only, 2 developers):
+
 - **Week 1**: Phase 1 complete
 - **Week 2**: Phase 2 (partial - Progressive Disclosure + User Stories only)
 - **Total**: 2 weeks for MVP (templates + 2 core features)
@@ -423,28 +442,28 @@ Task #24 (documentation - no blockers)
 
 ### Technical Risks
 
-| Risk                                        | Impact  | Probability | Mitigation                                  |
-| ------------------------------------------- | ------- | ----------- | ------------------------------------------- |
-| Template system conflicts with workflows    | HIGH    | LOW         | Backward compatibility, feature flags       |
-| Token replacement edge cases                | MEDIUM  | MEDIUM      | Comprehensive testing, clear error messages |
-| User story organization breaks dependencies | MEDIUM  | LOW         | Support both phase-based and story-based    |
-| Progressive disclosure too limiting         | MEDIUM  | MEDIUM      | User override, provide more details upfront |
+| Risk                                        | Impact | Probability | Mitigation                                  |
+| ------------------------------------------- | ------ | ----------- | ------------------------------------------- |
+| Template system conflicts with workflows    | HIGH   | LOW         | Backward compatibility, feature flags       |
+| Token replacement edge cases                | MEDIUM | MEDIUM      | Comprehensive testing, clear error messages |
+| User story organization breaks dependencies | MEDIUM | LOW         | Support both phase-based and story-based    |
+| Progressive disclosure too limiting         | MEDIUM | MEDIUM      | User override, provide more details upfront |
 
 ### Compatibility Risks
 
-| Risk                               | Impact  | Probability | Mitigation                         |
-| ---------------------------------- | ------- | ----------- | ---------------------------------- |
-| Breaking changes to existing skills| HIGH    | LOW         | Backward compatibility guaranteed  |
-| Router-first protocol violations   | CRITICAL| LOW         | All new features use router        |
-| Memory persistence conflicts       | MEDIUM  | LOW         | Separate storage (templates/ vs memory/) |
+| Risk                                | Impact   | Probability | Mitigation                               |
+| ----------------------------------- | -------- | ----------- | ---------------------------------------- |
+| Breaking changes to existing skills | HIGH     | LOW         | Backward compatibility guaranteed        |
+| Router-first protocol violations    | CRITICAL | LOW         | All new features use router              |
+| Memory persistence conflicts        | MEDIUM   | LOW         | Separate storage (templates/ vs memory/) |
 
 ### User Experience Risks
 
-| Risk                                | Impact  | Probability | Mitigation                           |
-| ----------------------------------- | ------- | ----------- | ------------------------------------ |
-| Template system too rigid           | MEDIUM  | LOW         | Templates customizable, free-form fallback |
-| 3-clarification limit frustrating   | MEDIUM  | MEDIUM      | User override, provide more upfront |
-| User story organization confusing   | LOW     | LOW         | Clear documentation, examples       |
+| Risk                              | Impact | Probability | Mitigation                                 |
+| --------------------------------- | ------ | ----------- | ------------------------------------------ |
+| Template system too rigid         | MEDIUM | LOW         | Templates customizable, free-form fallback |
+| 3-clarification limit frustrating | MEDIUM | MEDIUM      | User override, provide more upfront        |
+| User story organization confusing | LOW    | LOW         | Clear documentation, examples              |
 
 ---
 
@@ -453,6 +472,7 @@ Task #24 (documentation - no blockers)
 ### New Files (26 total)
 
 **Templates** (4):
+
 - `.claude/templates/specification-template.md`
 - `.claude/templates/plan-template.md`
 - `.claude/templates/tasks-template.md`
@@ -460,29 +480,35 @@ Task #24 (documentation - no blockers)
 - `.claude/templates/quality-checklist-base.md` (IEEE 1028)
 
 **Schemas** (3):
+
 - `.claude/schemas/specification-template.schema.json`
 - `.claude/schemas/plan-template.schema.json`
 - `.claude/schemas/tasks-template.schema.json`
 
 **Skills** (4):
+
 - `.claude/skills/template-renderer/SKILL.md` (new)
 - `.claude/skills/progressive-disclosure/SKILL.md` (new)
 - `.claude/skills/checklist-generator/SKILL.md` (new)
 - `.claude/skills/task-breakdown/SKILL.md` (new or update)
 
 **Plans** (1):
+
 - `.claude/context/plans/spec-kit-implementation-plan-2026-01-28.md` (this document)
 
 **Tests** (1):
+
 - `.claude/tests/integration/template-system-e2e.test.cjs`
 
 ### Modified Files (4)
 
 **Skills** (2):
+
 - `.claude/skills/spec-gathering/SKILL.md` (template + progressive disclosure integration)
 - `.claude/skills/plan-generator/SKILL.md` (template + Phase 0 integration)
 
 **Agents** (2):
+
 - `.claude/agents/core/planner.md` (Phase 0 workflow)
 - `.claude/agents/core/qa.md` (quality checklist integration)
 
@@ -493,6 +519,7 @@ Task #24 (documentation - no blockers)
 ### User Experience
 
 **Before Integration**:
+
 - Spec creation: ad-hoc, inconsistent structure
 - Planning: no systematic research phase
 - Tasks: phase-based organization only
@@ -500,6 +527,7 @@ Task #24 (documentation - no blockers)
 - Time to first implementation: 4-6 hours
 
 **After Integration**:
+
 - Spec creation: structured templates, 3-clarification limit
 - Planning: Phase 0 research with documented rationale
 - Tasks: user story-driven (Foundational → P1 → P2 → P3)
@@ -509,6 +537,7 @@ Task #24 (documentation - no blockers)
 ### Developer Experience
 
 **Benefits**:
+
 - Clear templates reduce ambiguity
 - User story organization enables incremental delivery
 - Quality checklists provide clear validation criteria
@@ -516,6 +545,7 @@ Task #24 (documentation - no blockers)
 - Progressive disclosure reduces question fatigue
 
 **Metrics**:
+
 - 50% reduction in time to first implementation
 - 25-40% reduction in rework due to better specs/planning
 - 90%+ adoption of user story organization within 3 months
@@ -524,6 +554,7 @@ Task #24 (documentation - no blockers)
 ### Framework Capability
 
 **New Capabilities**:
+
 - Template system for spec/plan/tasks (industry-standard YAML+MD)
 - Progressive disclosure (cognitive load optimization)
 - User story-driven agile workflow (Jira/Azure DevOps pattern)
@@ -531,6 +562,7 @@ Task #24 (documentation - no blockers)
 - Research-driven planning (ADR/RFC pattern)
 
 **Framework Health**:
+
 - Maintains ≥8.5/10 health score
 - Zero regression in existing tests
 - New features: 100% test coverage
@@ -574,6 +606,7 @@ Task #24 (documentation - no blockers)
 - **See Full Report**: `.claude/context/artifacts/security-reviews/spec-kit-integration-security-review-2026-01-28.md`
 
 **Key Security Notes for Implementation**:
+
 1. **Task #12 (JSON Schema)**: Consider adding token whitelist in schema
 2. **Task #15 (template-renderer)**: Use `validatePathWithinProject()` before loading templates
 3. **Task #18 (checklist-generator)**: Mark AI-generated items with `[AI-GENERATED]` prefix

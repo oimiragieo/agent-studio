@@ -40,10 +40,12 @@
   - Blocked by: {{BLOCKING_TASKS}}
 
 **Key Deliverables**:
+
 - {{DELIVERABLE_1}}
 - {{DELIVERABLE_2}}
 
 **Success Criteria**:
+
 - [ ] {{SUCCESS_CRITERION_1}}
 - [ ] {{SUCCESS_CRITERION_2}}
 
@@ -194,7 +196,8 @@ Task({
   model: 'sonnet',
   description: 'Session reflection and learning extraction',
   allowed_tools: ['Read', 'Write', 'Edit', 'Bash', 'TaskUpdate', 'TaskList', 'Skill'],
-  prompt: 'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).'
+  prompt:
+    'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
 });
 ```
 
@@ -213,6 +216,7 @@ Task({
 ```
 
 **Legend**:
+
 - `→` Sequential dependency (blocking)
 - `||` Parallel execution allowed
 - `⚠` Critical path item
@@ -221,10 +225,10 @@ Task({
 
 ## Agent Assignments
 
-| Agent               | Tasks       | Total Effort |
-| ------------------- | ----------- | ------------ |
-| **{{AGENT_1}}**     | #{{TASKS}}  | {{HOURS}}    |
-| **{{AGENT_2}}**     | #{{TASKS}}  | {{HOURS}}    |
+| Agent           | Tasks      | Total Effort |
+| --------------- | ---------- | ------------ |
+| **{{AGENT_1}}** | #{{TASKS}} | {{HOURS}}    |
+| **{{AGENT_2}}** | #{{TASKS}} | {{HOURS}}    |
 
 **Total**: {{TOTAL_HOURS}} hours (best case) / {{WORST_HOURS}} hours (worst case) = {{DAYS}} with {{NUM_DEVELOPERS}} developer(s)
 
@@ -232,20 +236,22 @@ Task({
 
 ## Timeline Summary
 
-| Phase                  | Tasks | Duration       | Parallel? | Key Deliverables                  |
-| ---------------------- | ----- | -------------- | --------- | --------------------------------- |
-| **Phase 0: Research**  | {{N}} | {{HOURS}}      | No        | Research report, ADRs             |
-| **Phase 1: {{NAME}}**  | {{N}} | {{HOURS}}      | {{YES}}   | {{DELIVERABLES}}                  |
-| **Phase {{N}}: {{NAME}}** | {{N}} | {{HOURS}}   | {{YES}}   | {{DELIVERABLES}}                  |
-| **Phase FINAL**        | 1     | 1-2 hours      | No        | Reflection, learnings             |
-| **TOTAL**              | {{N}} | **{{HOURS}}**  | **{{DAYS}}** | **{{FEATURES}} features**   |
+| Phase                     | Tasks | Duration      | Parallel?    | Key Deliverables          |
+| ------------------------- | ----- | ------------- | ------------ | ------------------------- |
+| **Phase 0: Research**     | {{N}} | {{HOURS}}     | No           | Research report, ADRs     |
+| **Phase 1: {{NAME}}**     | {{N}} | {{HOURS}}     | {{YES}}      | {{DELIVERABLES}}          |
+| **Phase {{N}}: {{NAME}}** | {{N}} | {{HOURS}}     | {{YES}}      | {{DELIVERABLES}}          |
+| **Phase FINAL**           | 1     | 1-2 hours     | No           | Reflection, learnings     |
+| **TOTAL**                 | {{N}} | **{{HOURS}}** | **{{DAYS}}** | **{{FEATURES}} features** |
 
 **Realistic Timeline** (with parallel work, {{NUM_DEV}} developers):
+
 - **Week 1**: {{WEEK_1_DESCRIPTION}}
 - **Week 2**: {{WEEK_2_DESCRIPTION}}
 - **Week {{N}}**: {{WEEK_N_DESCRIPTION}}
 
 **Aggressive Timeline** (critical path only, {{NUM_DEV}} developers):
+
 - **Week 1**: {{AGGRESSIVE_WEEK_1}}
 - **Week 2**: {{AGGRESSIVE_WEEK_2}}
 - **Total**: {{AGGRESSIVE_TOTAL}} for MVP ({{MVP_FEATURES}})
@@ -287,31 +293,31 @@ Task({
 
 ### Technical Risks
 
-| Risk                                        | Impact  | Probability | Mitigation                                  |
-| ------------------------------------------- | ------- | ----------- | ------------------------------------------- |
-| {{TECHNICAL_RISK_1}}                        | {{IMP}} | {{PROB}}    | {{MITIGATION}}                              |
-| {{TECHNICAL_RISK_2}}                        | {{IMP}} | {{PROB}}    | {{MITIGATION}}                              |
+| Risk                 | Impact  | Probability | Mitigation     |
+| -------------------- | ------- | ----------- | -------------- |
+| {{TECHNICAL_RISK_1}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
+| {{TECHNICAL_RISK_2}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
 
 ### Compatibility Risks
 
-| Risk                               | Impact  | Probability | Mitigation                         |
-| ---------------------------------- | ------- | ----------- | ---------------------------------- |
-| {{COMPATIBILITY_RISK_1}}           | {{IMP}} | {{PROB}}    | {{MITIGATION}}                     |
-| {{COMPATIBILITY_RISK_2}}           | {{IMP}} | {{PROB}}    | {{MITIGATION}}                     |
+| Risk                     | Impact  | Probability | Mitigation     |
+| ------------------------ | ------- | ----------- | -------------- |
+| {{COMPATIBILITY_RISK_1}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
+| {{COMPATIBILITY_RISK_2}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
 
 ### User Experience Risks
 
-| Risk                                | Impact  | Probability | Mitigation                           |
-| ----------------------------------- | ------- | ----------- | ------------------------------------ |
-| {{UX_RISK_1}}                       | {{IMP}} | {{PROB}}    | {{MITIGATION}}                       |
-| {{UX_RISK_2}}                       | {{IMP}} | {{PROB}}    | {{MITIGATION}}                       |
+| Risk          | Impact  | Probability | Mitigation     |
+| ------------- | ------- | ----------- | -------------- |
+| {{UX_RISK_1}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
+| {{UX_RISK_2}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
 
 ### Security Risks
 
-| Risk                                | Impact     | Probability | Mitigation                           |
-| ----------------------------------- | ---------- | ----------- | ------------------------------------ |
-| {{SECURITY_RISK_1}}                 | {{IMP}}    | {{PROB}}    | {{MITIGATION}}                       |
-| {{SECURITY_RISK_2}}                 | {{IMP}}    | {{PROB}}    | {{MITIGATION}}                       |
+| Risk                | Impact  | Probability | Mitigation     |
+| ------------------- | ------- | ----------- | -------------- |
+| {{SECURITY_RISK_1}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
+| {{SECURITY_RISK_2}} | {{IMP}} | {{PROB}}    | {{MITIGATION}} |
 
 ---
 
@@ -320,16 +326,19 @@ Task({
 ### New Files ({{NEW_FILES_COUNT}} total)
 
 **{{CATEGORY_1}}** ({{COUNT}}):
+
 - `{{FILE_PATH_1}}`
 - `{{FILE_PATH_2}}`
 
 **{{CATEGORY_2}}** ({{COUNT}}):
+
 - `{{FILE_PATH_1}}`
 - `{{FILE_PATH_2}}`
 
 ### Modified Files ({{MODIFIED_FILES_COUNT}})
 
 **{{CATEGORY}}** ({{COUNT}}):
+
 - `{{FILE_PATH}}` ({{MODIFICATION_DESCRIPTION}})
 
 ---
@@ -339,11 +348,13 @@ Task({
 ### User Experience
 
 **Before Implementation**:
+
 - {{BEFORE_METRIC_1}}
 - {{BEFORE_METRIC_2}}
 - Time to {{GOAL}}: {{BEFORE_TIME}}
 
 **After Implementation**:
+
 - {{AFTER_METRIC_1}}
 - {{AFTER_METRIC_2}}
 - Time to {{GOAL}}: {{AFTER_TIME}} ({{IMPROVEMENT_PCT}}% reduction)
@@ -351,11 +362,13 @@ Task({
 ### Developer Experience
 
 **Benefits**:
+
 - {{BENEFIT_1}}
 - {{BENEFIT_2}}
 - {{BENEFIT_3}}
 
 **Metrics**:
+
 - {{METRIC_1}}
 - {{METRIC_2}}
 - {{METRIC_3}}
@@ -363,11 +376,13 @@ Task({
 ### Framework Capability
 
 **New Capabilities**:
+
 - {{CAPABILITY_1}}
 - {{CAPABILITY_2}}
 - {{CAPABILITY_3}}
 
 **Framework Health**:
+
 - Maintains ≥{{HEALTH_SCORE}}/10 health score
 - Zero regression in existing tests
 - New features: {{COVERAGE}}% test coverage
@@ -411,6 +426,7 @@ Task({
 - **See Full Report**: `{{SECURITY_REPORT_PATH}}`
 
 **Key Security Notes for Implementation**:
+
 1. **Task #{{N}}**: {{SECURITY_NOTE_1}}
 2. **Task #{{N+1}}**: {{SECURITY_NOTE_2}}
 
@@ -429,12 +445,12 @@ These can be done immediately for fast progress:
 
 ## Agent Assignment Matrix
 
-| Phase | Primary Agent      | Supporting Agents                 |
-| ----- | ------------------ | --------------------------------- |
-| 0     | {{AGENT}}          | {{SUPPORTING_AGENTS}}             |
-| 1     | {{AGENT}}          | {{SUPPORTING_AGENTS}}             |
-| {{N}} | {{AGENT}}          | {{SUPPORTING_AGENTS}}             |
-| FINAL | REFLECTION-AGENT   | -                                 |
+| Phase | Primary Agent    | Supporting Agents     |
+| ----- | ---------------- | --------------------- |
+| 0     | {{AGENT}}        | {{SUPPORTING_AGENTS}} |
+| 1     | {{AGENT}}        | {{SUPPORTING_AGENTS}} |
+| {{N}} | {{AGENT}}        | {{SUPPORTING_AGENTS}} |
+| FINAL | REFLECTION-AGENT | -                     |
 
 ---
 
@@ -442,31 +458,31 @@ These can be done immediately for fast progress:
 
 This template uses the following tokens for customization:
 
-| Token | Description | Example | Required |
-|-------|-------------|---------|----------|
-| `{{PLAN_TITLE}}` | Title of the implementation plan | "Spec-Kit Integration Plan" | Yes |
-| `{{DATE}}` | Plan creation date (YYYY-MM-DD) | "2026-01-28" | Yes |
-| `{{FRAMEWORK_VERSION}}` | Current framework version | "Agent-Studio v2.2.1" | Yes |
-| `{{STATUS}}` | Plan status | "Phase 0 - Research" | Yes |
-| `{{EXECUTIVE_SUMMARY}}` | Brief overview of the plan | "Implementation plan for..." | Yes |
-| `{{TOTAL_TASKS}}` | Total number of tasks | "14 atomic tasks" | Yes |
-| `{{ESTIMATED_TIME}}` | Estimated total time | "68-112 hours / 2-3 weeks" | Yes |
-| `{{STRATEGY}}` | Implementation strategy | "Foundation-first (templates) → Core features" | Yes |
-| `{{PHASE_N_NAME}}` | Name of phase N | "Foundation", "Core Features" | Yes |
-| `{{PHASE_N_PURPOSE}}` | Purpose of phase N | "Fix security vulnerabilities" | Yes |
-| `{{DEPENDENCIES}}` | Dependencies for phase | "Phase 0 complete" | Yes |
-| `{{PARALLEL_OK}}` | Whether parallel execution allowed | "Yes", "Partial", "No" | Yes |
-| `{{VERIFICATION_COMMANDS}}` | Commands to verify phase completion | "pnpm test -- --grep 'test'" | Yes |
-| `{{HEALTH_THRESHOLD}}` | Minimum framework health score | "8.5" | Yes |
-| `{{COVERAGE_THRESHOLD}}` | Minimum test coverage | "100" | Yes |
+| Token                       | Description                         | Example                                        | Required |
+| --------------------------- | ----------------------------------- | ---------------------------------------------- | -------- |
+| `{{PLAN_TITLE}}`            | Title of the implementation plan    | "Spec-Kit Integration Plan"                    | Yes      |
+| `{{DATE}}`                  | Plan creation date (YYYY-MM-DD)     | "2026-01-28"                                   | Yes      |
+| `{{FRAMEWORK_VERSION}}`     | Current framework version           | "Agent-Studio v2.2.1"                          | Yes      |
+| `{{STATUS}}`                | Plan status                         | "Phase 0 - Research"                           | Yes      |
+| `{{EXECUTIVE_SUMMARY}}`     | Brief overview of the plan          | "Implementation plan for..."                   | Yes      |
+| `{{TOTAL_TASKS}}`           | Total number of tasks               | "14 atomic tasks"                              | Yes      |
+| `{{ESTIMATED_TIME}}`        | Estimated total time                | "68-112 hours / 2-3 weeks"                     | Yes      |
+| `{{STRATEGY}}`              | Implementation strategy             | "Foundation-first (templates) → Core features" | Yes      |
+| `{{PHASE_N_NAME}}`          | Name of phase N                     | "Foundation", "Core Features"                  | Yes      |
+| `{{PHASE_N_PURPOSE}}`       | Purpose of phase N                  | "Fix security vulnerabilities"                 | Yes      |
+| `{{DEPENDENCIES}}`          | Dependencies for phase              | "Phase 0 complete"                             | Yes      |
+| `{{PARALLEL_OK}}`           | Whether parallel execution allowed  | "Yes", "Partial", "No"                         | Yes      |
+| `{{VERIFICATION_COMMANDS}}` | Commands to verify phase completion | "pnpm test -- --grep 'test'"                   | Yes      |
+| `{{HEALTH_THRESHOLD}}`      | Minimum framework health score      | "8.5"                                          | Yes      |
+| `{{COVERAGE_THRESHOLD}}`    | Minimum test coverage               | "100"                                          | Yes      |
 
 ### Optional Tokens
 
-| Token | Default | Description |
-|-------|---------|-------------|
-| `{{NUM_DEVELOPERS}}` | "1" | Number of developers working |
-| `{{MVP_FEATURES}}` | "core features only" | What's included in MVP |
-| `{{RESEARCH_OUTPUT_PATH}}` | ".claude/context/artifacts/research-reports/" | Where research is saved |
+| Token                      | Default                                       | Description                  |
+| -------------------------- | --------------------------------------------- | ---------------------------- |
+| `{{NUM_DEVELOPERS}}`       | "1"                                           | Number of developers working |
+| `{{MVP_FEATURES}}`         | "core features only"                          | What's included in MVP       |
+| `{{RESEARCH_OUTPUT_PATH}}` | ".claude/context/artifacts/research-reports/" | Where research is saved      |
 
 ---
 

@@ -1296,3 +1296,167 @@
   - Spec-Kit Exploration Report (Task #2)
   - Current Codebase Inventory (Task #8)
   - router-decision.md Section 7.3 (Planning Orchestration Matrix)
+
+---
+
+## [ADR-046] Security Assessment for Reflection Enhancement Recommendations
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Phase 0 Gate 3 (Security Review) for the 10 reflection enhancements implementation plan requires formal security assessment before Sprint 1 can proceed.
+- **Decision**: APPROVE implementation with mandatory security controls for enhancements #5 and #8
+
+  **Assessment Summary**:
+  - 10 enhancements reviewed using STRIDE threat modeling
+  - 2 MEDIUM severity risks identified (path traversal, registry integrity)
+  - 3 LOW severity risks identified (existing mitigations sufficient)
+  - 5 enhancements have NO security implications
+  - 2 enhancements IMPROVE security posture (#6, #10)
+
+  **Mandatory Security Controls**:
+
+  **Enhancement #5 (Template Catalog Registry)**:
+  - SEC-CATALOG-001: All paths validated within `.claude/templates/`
+  - SEC-CATALOG-002: Reject path traversal patterns (`..`, `//`, `\\`)
+  - SEC-CATALOG-003: Cross-platform path normalization
+  - SEC-CATALOG-004: Log and alert on traversal attempts
+
+  **Enhancement #8 (Security Control Registry)**:
+  - SEC-REGISTRY-001: Registry file read-only at runtime
+  - SEC-REGISTRY-002: Changes require security-architect review
+  - SEC-REGISTRY-003: Integrity hash for control entries
+  - SEC-REGISTRY-004: Mandatory PR review for registry changes
+
+  **ADR Template Tokens** (Enhancement #4):
+  - Add `ADR_TOKENS` whitelist to template-renderer
+
+- **Rationale**:
+  - Template catalog path traversal is a known risk (CWE-22) requiring explicit mitigation
+  - Security control registry tampering could weaken future implementations (CWE-284)
+  - Enhancement #6 (Security-First Checklist) actively improves security posture
+  - Enhancement #10 (Hybrid Validation) standardizes security review in workflows
+  - Existing SEC-SPEC-002/003/004 controls cover most attack vectors
+
+- **Consequences**:
+  - Sprint 2 must implement SEC-CATALOG-001/002 as blocking requirement
+  - Sprint 3 must implement SEC-REGISTRY-001/002 as blocking requirement
+  - Security assessment report available at `.claude/context/reports/security-assessment-reflection-enhancements-2026-01-28.md`
+  - Gate 3 PASSED - Sprint 1 may proceed
+
+- **Related**:
+  - ADR-045 (Research-Driven Planning) - Gate 3 is constitution checkpoint
+  - Security Assessment Report (Task #9)
+  - reflection-enhancements-plan-2026-01-28.md
+
+---
+
+## [ADR-047] Template Catalog Structure
+
+- **Date**: 2026-01-28
+- **Status**: Proposed
+- **Context**: Need discoverable registry for templates (specification, plan, tasks, ADR) with usage tracking and keyword search. Research showed file-based registries with YAML frontmatter outperform databases for small-scale systems (<100 artifacts). See reflection-enhancements-research-2026-01-28.md for full research.
+- **Decision**: Use file-based Markdown catalog with YAML frontmatter at `.claude/context/artifacts/template-catalog.md`. Structure includes template metadata (name, path, category, description, creation date, usage count, last used). Discovery via `template-discovery` skill (grep-based keyword search). Auto-update via PostToolUse(Write) hook.
+- **Alternatives Considered**:
+  - Database (PostgreSQL): Overkill for <20 templates, adds complexity
+  - JSON file: Less human-readable, no in-document explanations
+- **Consequences**:
+  - ✅ Simple to implement and maintain (no external dependencies)
+  - ✅ Version controlled (track catalog changes over time)
+  - ✅ Human-readable (Markdown table + YAML frontmatter)
+  - ✅ Parseable (YAML frontmatter for programmatic access)
+  - ⚠️ Linear search performance (acceptable for <100 templates)
+  - ❌ No advanced query features (joins, aggregations)
+  - Discovery skill: Simple grep-based search (sufficient for small catalog)
+  - Usage tracking: Increment count on template creation/use
+  - Integration: All template-using skills register usage in catalog
+
+---
+
+## [ADR-048] Security Control Registry Schema
+
+- **Date**: 2026-01-28
+- **Status**: Proposed
+- **Context**: Need reusable security controls catalog for extracting common patterns (token whitelist validation, path traversal prevention, input sanitization, transparency markers). Research showed OWASP ASVS and NIST SP 800-53 provide proven frameworks. JSON format with semantic versioning enables machine-parseability and schema evolution. See reflection-enhancements-research-2026-01-28.md for full research.
+- **Decision**: Use JSON schema with semantic versioning at `.claude/context/artifacts/security-controls-catalog.json`. Structure includes control ID (SEC-001, SEC-002, etc.), category (Input Validation, Access Control, etc.), threat mitigated (OWASP Top 10 mapping), implementation code (reusable function/pattern), test cases, source file, creation/update dates. Discovery via `security-control-discovery` skill.
+- **Alternatives Considered**:
+  - YAML: More human-readable but less standard for security tools
+  - Markdown: Human-friendly but harder to parse programmatically
+- **Schema Structure Example**:
+  - Control: SEC-001 (Token Whitelist for Template Injection mitigation)
+  - Category: Input Validation
+  - Threat: OWASP A03 (Injection)
+  - Implementation: Reusable `validateToken()` function
+  - Test Cases: Malicious input examples
+  - Source: .claude/skills/template-renderer/SKILL.md
+- **Consequences**:
+  - ✅ Machine-parseable (integration with security tools)
+  - ✅ Semantic versioning (schema evolution via Major.Minor.Patch)
+  - ✅ OWASP mapping (threat identification and mitigation tracking)
+  - ✅ Reusable code (copy-paste friendly implementation examples)
+  - ❌ Less human-readable than Markdown (trade-off for parseability)
+  - Initial controls: Extract from template-renderer (SEC-001: Token Whitelist), unified-creator-guard (SEC-002: Path Validation), checklist-generator (SEC-004: Transparency Markers)
+  - New controls: SEC-005 (Template Injection Prevention for ADR template), SEC-006 (Catalog Path Traversal Protection)
+  - Integration: All creator skills reference registry for reusable controls
+
+---
+
+## [ADR-049] Research Prioritization Algorithm
+
+- **Date**: 2026-01-28
+- **Status**: Proposed
+- **Context**: EVOLVE Phase O research can be unbounded. Spec-kit integration reflection identified 18 improvement opportunities. Without prioritization: 18 × 4 hours = 72 hours research (exceeds total project time). Research showed Impact × Alignment matrix with 20% budget cap prevents research paralysis while focusing on high-value work. See reflection-enhancements-research-2026-01-28.md for full research.
+- **Decision**: Use Impact × Alignment scoring matrix with 20% research budget cap. Algorithm: `score = (impact_score × 0.6) + (alignment_score × 0.4)`. Impact score (0-10): effort saved, users affected, risk mitigated. Alignment score (0-10): framework compatibility, team expertise, strategic priority. Select TOP 5 opportunities (sorted by score DESC) for research. Implement as `research-prioritization` skill invoked in EVOLVE Phase O.
+- **Alternatives Considered**:
+  - Equal weights (50/50): Undervalues impact relative to feasibility
+  - Higher budget (30%): Risk of diminishing returns and research paralysis
+  - Fixed count (TOP 3): Misses opportunities in high-opportunity projects
+- **Algorithm Details**:
+  - `score = (impact_score × 0.6) + (alignment_score × 0.4)`
+  - Impact Score (0-10): Effort saved (hours), Users affected (count), Risk mitigated (severity 1-10)
+  - Alignment Score (0-10): Framework compatibility (1-10 fit), Team expertise (1-10 skill match), Strategic priority (1-10 roadmap alignment)
+  - Research Budget: 20% of project time
+  - Selection: Research TOP 5 opportunities (sorted by score DESC)
+- **Consequences**:
+  - ✅ Prevents research waste (18 opportunities → TOP 5 researched = 40-60 hours saved)
+  - ✅ Balances value (60% weight) with feasibility (40% weight)
+  - ✅ Predictable time budget (20% cap prevents runaway research)
+  - ✅ Systematic prioritization (removes subjective bias)
+  - ⚠️ May miss low-scoring high-value opportunities (mitigated by periodic review)
+  - ⚠️ Requires accurate scoring inputs (garbage in = garbage out)
+  - Example: Spec-kit integration had 18 opportunities. TOP 5 scoring: Progressive Disclosure (9.2), Template System Extension (8.8), Security-First Checklist (8.6), Hybrid Validation (8.4), Research Prioritization (8.0)
+  - Integration: EVOLVE Phase O workflow updated to invoke research-prioritization skill before executing queries
+
+---
+
+## [ADR-047] Template Catalog Structure
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Need a standardized way to discover and track template usage across the framework. Templates are created but not easily discoverable. No visibility into which templates are adopted vs. underutilized.
+- **Decision**: Use file-based markdown catalog (`.claude/context/artifacts/template-catalog.md`) with YAML frontmatter for metadata and Markdown body for documentation. Catalog includes: name, path, description, schema, created_count, last_used, keywords, category, complexity, estimated_time for each template.
+- **Consequences**:
+  - **Positive**: Simple, version-controlled, human-readable. No database or deployment dependencies. Easy to update and maintain.
+  - **Negative**: Manual updates required (until hooks automate). No advanced query capabilities like SQL. Catalog can become stale if not maintained.
+  - **Trade-offs**: Accepted manual maintenance burden in exchange for simplicity and zero infrastructure requirements.
+
+## [ADR-048] Security Control Registry Schema
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Security controls are scattered across multiple artifacts (template-renderer, checklist-generator, routing-guard). No centralized registry for reusable security patterns. Duplication of security logic across skills and agents.
+- **Decision**: Create `.claude/context/artifacts/security-controls-catalog.md` with JSON-like structure and semantic versioning. Each control has: control ID (SEC-XXX-YYY), description, threat mitigated (OWASP mapping), implementation code, test cases, location references.
+- **Consequences**:
+  - **Positive**: Reusable security controls (DRY principle). Centralized security knowledge. OWASP mapping enables compliance reporting. Easier to audit security posture.
+  - **Negative**: Requires discipline to update catalog when adding new controls. Schema evolution needs versioning strategy.
+  - **Trade-offs**: Accepted maintenance overhead in exchange for security standardization and reusability.
+
+## [ADR-049] Research Prioritization Algorithm
+
+- **Date**: 2026-01-28
+- **Status**: Accepted (Implemented Sprint 3)
+- **Context**: EVOLVE Phase O (Obtain/Research) can be time-intensive. With 18 research opportunities identified, spending 3-5 hours per item would consume 54-90 hours. Need systematic prioritization to focus research on highest-value items.
+- **Decision**: Implement Impact × Alignment matrix in EVOLVE Phase O. Score each opportunity: `score = (impact_score × 0.6) + (alignment_score × 0.4)`. Research only TOP 5 items (HIGH quadrant). Cap research budget at 20% of project time.
+- **Consequences**:
+  - **Positive**: Saves 40-60 hours per project (research 5 items instead of 18). Focuses effort on HIGH-impact + HIGH-alignment opportunities. Prevents research paralysis.
+  - **Negative**: May miss lower-priority opportunities that could have value. Requires judgment to score impact/alignment accurately.
+  - **Trade-offs**: Accepted risk of missing opportunities in exchange for time efficiency and focus.

@@ -6,7 +6,7 @@ model: sonnet
 invoked_by: both
 user_invocable: true
 tools: [Read, Write, mcp__filesystem__read_text_file, mcp__filesystem__write_file]
-args: "<template-name> <output-path> [--tokens <json-file>]"
+args: '<template-name> <output-path> [--tokens <json-file>]'
 
 best_practices:
   - Sanitize all token values to prevent injection attacks
@@ -44,50 +44,87 @@ Template Renderer Skill - Renders templates by replacing {{TOKEN}} placeholders 
 ### Step 1: Validate Inputs (SECURITY - MANDATORY)
 
 **Template Path Validation** (SEC-SPEC-002):
+
 - Verify template file exists within PROJECT_ROOT
 - Reject any path traversal attempts (../)
 - Only allow templates from `.claude/templates/`
 
 **Token Whitelist Validation** (SEC-SPEC-003):
+
 ```javascript
 // Allowed tokens by template type
 const SPEC_TOKENS = [
-  'FEATURE_NAME', 'VERSION', 'AUTHOR', 'DATE', 'STATUS',
-  'ACCEPTANCE_CRITERIA_1', 'ACCEPTANCE_CRITERIA_2', 'ACCEPTANCE_CRITERIA_3',
-  'TERM_1', 'TERM_2', 'TERM_3',
-  'HTTP_METHOD', 'ENDPOINT_PATH', 'PROJECT_NAME'
+  'FEATURE_NAME',
+  'VERSION',
+  'AUTHOR',
+  'DATE',
+  'STATUS',
+  'ACCEPTANCE_CRITERIA_1',
+  'ACCEPTANCE_CRITERIA_2',
+  'ACCEPTANCE_CRITERIA_3',
+  'TERM_1',
+  'TERM_2',
+  'TERM_3',
+  'HTTP_METHOD',
+  'ENDPOINT_PATH',
+  'PROJECT_NAME',
 ];
 
 const PLAN_TOKENS = [
-  'PLAN_TITLE', 'DATE', 'FRAMEWORK_VERSION', 'STATUS',
-  'EXECUTIVE_SUMMARY', 'TOTAL_TASKS', 'FEATURES_COUNT',
-  'ESTIMATED_TIME', 'STRATEGY', 'KEY_DELIVERABLES_LIST',
-  'PHASE_N_NAME', 'PHASE_N_PURPOSE', 'PHASE_N_DURATION',
-  'DEPENDENCIES', 'PARALLEL_OK', 'VERIFICATION_COMMANDS'
+  'PLAN_TITLE',
+  'DATE',
+  'FRAMEWORK_VERSION',
+  'STATUS',
+  'EXECUTIVE_SUMMARY',
+  'TOTAL_TASKS',
+  'FEATURES_COUNT',
+  'ESTIMATED_TIME',
+  'STRATEGY',
+  'KEY_DELIVERABLES_LIST',
+  'PHASE_N_NAME',
+  'PHASE_N_PURPOSE',
+  'PHASE_N_DURATION',
+  'DEPENDENCIES',
+  'PARALLEL_OK',
+  'VERIFICATION_COMMANDS',
 ];
 
 const TASKS_TOKENS = [
-  'FEATURE_NAME', 'VERSION', 'AUTHOR', 'DATE', 'STATUS',
-  'PRIORITY', 'ESTIMATED_EFFORT', 'RELATED_SPECS', 'DEPENDENCIES',
-  'FEATURE_DISPLAY_NAME', 'FEATURE_DESCRIPTION', 'BUSINESS_VALUE',
-  'USER_IMPACT', 'EPIC_NAME', 'EPIC_GOAL', 'SUCCESS_CRITERIA'
+  'FEATURE_NAME',
+  'VERSION',
+  'AUTHOR',
+  'DATE',
+  'STATUS',
+  'PRIORITY',
+  'ESTIMATED_EFFORT',
+  'RELATED_SPECS',
+  'DEPENDENCIES',
+  'FEATURE_DISPLAY_NAME',
+  'FEATURE_DESCRIPTION',
+  'BUSINESS_VALUE',
+  'USER_IMPACT',
+  'EPIC_NAME',
+  'EPIC_GOAL',
+  'SUCCESS_CRITERIA',
 ];
 ```
 
 **Token Value Sanitization** (SEC-SPEC-004):
+
 ```javascript
 function sanitizeTokenValue(value) {
   return String(value)
-    .replace(/[<>]/g, '')       // Prevent HTML injection
-    .replace(/\$\{/g, '')       // Prevent template literal injection
-    .replace(/\{\{/g, '')       // Prevent nested token injection
+    .replace(/[<>]/g, '') // Prevent HTML injection
+    .replace(/\$\{/g, '') // Prevent template literal injection
+    .replace(/\{\{/g, '') // Prevent nested token injection
     .trim();
 }
 ```
 
 ### Step 2: Read Template
 
-Read the template file using Read or mcp__filesystem__read_text_file:
+Read the template file using Read or mcp**filesystem**read_text_file:
+
 - `.claude/templates/specification-template.md` (46 tokens)
 - `.claude/templates/plan-template.md` (30+ tokens)
 - `.claude/templates/tasks-template.md` (20+ tokens)
@@ -156,7 +193,8 @@ if (!validate(frontmatter)) {
 
 ### Step 5: Write Output
 
-Write the rendered template to the output path using Write or mcp__filesystem__write_file:
+Write the rendered template to the output path using Write or mcp**filesystem**write_file:
+
 - Verify output path is within PROJECT_ROOT
 - Create parent directories if needed
 - Write file with UTF-8 encoding
@@ -194,6 +232,7 @@ head -50 <output-file> | grep -E "^---$" | wc -l  # Should output: 2
 <error_handling>
 
 **Missing Required Tokens**:
+
 ```
 ERROR: Missing required tokens in template:
   - {{FEATURE_NAME}}
@@ -203,12 +242,14 @@ Provide these tokens in the token map.
 ```
 
 **Invalid Token (Not in Whitelist)**:
+
 ```
 ERROR: Token not in whitelist: INVALID_TOKEN
 Allowed tokens for specification-template: FEATURE_NAME, VERSION, AUTHOR, DATE, ...
 ```
 
 **Template Path Traversal**:
+
 ```
 ERROR: Template path outside PROJECT_ROOT
 Path: ../../etc/passwd
@@ -216,6 +257,7 @@ Only templates from .claude/templates/ are allowed.
 ```
 
 **Schema Validation Failure** (Specification Templates):
+
 ```
 ERROR: Schema validation failed:
   - /version: must match pattern "^\d+\.\d+\.\d+$"
@@ -223,6 +265,7 @@ ERROR: Schema validation failed:
 ```
 
 **Unused Tokens Warning**:
+
 ```
 WARNING: Unused tokens provided:
   - EXTRA_TOKEN_1
@@ -253,9 +296,9 @@ Skill({
       STATUS: 'draft',
       ACCEPTANCE_CRITERIA_1: 'User can log in with email and password',
       ACCEPTANCE_CRITERIA_2: 'Password meets complexity requirements',
-      ACCEPTANCE_CRITERIA_3: 'Failed login attempts are logged'
-    }
-  }
+      ACCEPTANCE_CRITERIA_3: 'Failed login attempts are logged',
+    },
+  },
 });
 ```
 
@@ -275,9 +318,9 @@ Skill({
       EXECUTIVE_SUMMARY: 'Implementation plan for JWT-based authentication...',
       TOTAL_TASKS: '14 atomic tasks',
       ESTIMATED_TIME: '2-3 weeks',
-      STRATEGY: 'Foundation-first (schema) → Core features'
-    }
-  }
+      STRATEGY: 'Foundation-first (schema) → Core features',
+    },
+  },
 });
 ```
 
@@ -297,9 +340,9 @@ Skill({
       FEATURE_DISPLAY_NAME: 'User Authentication',
       FEATURE_DESCRIPTION: 'JWT-based authentication system',
       BUSINESS_VALUE: 'Enables user account management',
-      USER_IMPACT: 'Users can securely access personalized features'
-    }
-  }
+      USER_IMPACT: 'Users can securely access personalized features',
+    },
+  },
 });
 ```
 
@@ -341,8 +384,8 @@ Skill({
   args: {
     templateName: 'specification-template',
     outputPath: `.claude/context/artifacts/specifications/${featureName}-spec.md`,
-    tokens: tokens
-  }
+    tokens: tokens,
+  },
 });
 ```
 
@@ -352,11 +395,13 @@ Skill({
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

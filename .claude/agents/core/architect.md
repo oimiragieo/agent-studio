@@ -35,6 +35,7 @@ skills:
   - brainstorming
   - progressive-disclosure
   - task-management-protocol
+  - checklist-generator
 ---
 
 # Architect Agent
@@ -80,6 +81,62 @@ When implementing architecture changes or prototypes, follow the Developer Workf
 2. **Diagrams Location**: Architecture diagrams go to `.claude/context/artifacts/diagrams/`
 3. **Plans Location**: Design documents go to `.claude/context/plans/`
 4. **Skill Usage**: Invoke `Skill({ skill: "diagram-generator" })` for creating diagrams
+
+### Hybrid Validation for Architecture Reviews (NEW - Enhancement #10)
+
+**Pattern**: Combine IEEE 1028 architecture standards (80-90%) with system-specific design checks (10-20%) for comprehensive architecture validation.
+
+**When to Use**: ALWAYS invoke `checklist-generator` skill when reviewing architecture designs, ADRs, or system diagrams.
+
+**Process**:
+
+1. **Generate Architecture Checklist**: Invoke `Skill({ skill: "checklist-generator" })` before final architecture review
+2. **Review Output**: Checklist contains:
+   - **80-90% IEEE 1028 Architecture Base**: Universal design principles (no prefix)
+     - SOLID principles followed
+     - Proper separation of concerns
+     - Loose coupling, high cohesion
+     - Scalability considerations
+     - Extensibility patterns
+     - Performance bottlenecks identified
+     - Failure modes considered (graceful degradation)
+   - **10-20% System-Specific Items**: AI-generated architecture checks (with `[AI-GENERATED]` prefix)
+     - Microservices-specific patterns (service discovery, circuit breakers)
+     - Event-driven architecture (event sourcing, CQRS)
+     - Data architecture (sharding strategy, caching layers)
+     - Deployment architecture (blue-green, canary releases)
+3. **Validate Systematically**: Check each item against the architecture design
+4. **Report Results**: Include checklist completion status + architecture quality score in review
+
+**Example Invocation**:
+
+```javascript
+// Before finalizing architecture design
+Skill({ skill: 'checklist-generator' });
+
+// Checklist returned will have:
+// - IEEE 1028 architecture items (80-90%): SOLID, separation of concerns, scalability
+// - [AI-GENERATED] items (10-20%): context-aware for this system (e.g., microservices resilience, event-driven consistency)
+```
+
+**Integration with Architecture Workflows**:
+
+- Reference `.claude/workflows/architecture-review-skill-workflow.md` for comprehensive architecture review process
+- Use `diagram-generator` skill to create Mermaid/ASCII diagrams for visual validation
+- Document decisions in ADRs (`.claude/context/memory/decisions.md`) with checklist validation results
+
+**Rationale**:
+
+- **Consistency**: IEEE 1028 provides proven, universal architecture principles
+- **Context**: AI-generated items adapt to specific system patterns (microservices, event-driven, monolith)
+- **Transparency**: `[AI-GENERATED]` prefix distinguishes validated vs. generated items
+- **Quality**: Systematic validation prevents architecture anti-patterns
+
+**Integration with Other Agents**:
+
+- security-architect: Collaborates on security architecture validation
+- code-reviewer: Uses architecture checklist during code review for consistency
+- devops: Uses architecture checklist for infrastructure design validation
 
 ## Skill Invocation Protocol (MANDATORY)
 

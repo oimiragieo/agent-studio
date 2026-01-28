@@ -21,12 +21,12 @@ The spec-kit integration project successfully implemented a complete requirement
 
 **Key Deliverables:**
 
-| Artifact Type | Count | Example |
-| --- | --- | --- |
-| Templates | 3 | specification-template.md, plan-template.md, tasks-template.md |
-| Skills | 3 | template-renderer, task-breakdown, checklist-generator |
-| Schemas | 1 | specification-template.schema.json (validates frontmatter) |
-| Integration Points | 5 | spec-gathering, plan-generator, planner, qa agent, task-breakdown |
+| Artifact Type      | Count | Example                                                           |
+| ------------------ | ----- | ----------------------------------------------------------------- |
+| Templates          | 3     | specification-template.md, plan-template.md, tasks-template.md    |
+| Skills             | 3     | template-renderer, task-breakdown, checklist-generator            |
+| Schemas            | 1     | specification-template.schema.json (validates frontmatter)        |
+| Integration Points | 5     | spec-gathering, plan-generator, planner, qa agent, task-breakdown |
 
 ---
 
@@ -69,11 +69,13 @@ Created a YAML+Markdown hybrid template following IEEE 830 software requirements
    - Required acceptance criteria (minimum 1-50 items)
 
 **Research Backing:**
+
 - IEEE 830 adoption: 95%+ of enterprise software projects
 - YAML+Markdown hybrid: Industry-standard pattern (ADR-044)
 - Acceptance criteria validation: Agile best practice
 
 **Usage Example:**
+
 ```bash
 # Copy template
 cp .claude/templates/specification-template.md ./my-feature-spec.md
@@ -89,6 +91,7 @@ grep "{{" ./my-feature-spec.md  # Should find no matches
 ```
 
 **Integration Points:**
+
 - ✅ `spec-gathering` skill uses this template
 - ✅ `spec-writing` skill generates this template
 - ✅ `spec-critique` skill validates against schema
@@ -146,12 +149,14 @@ Created a comprehensive plan template with mandatory Phase 0 research + constitu
    - Parallel tracks identified for acceleration
 
 **Research Backing:**
+
 - Phase 0 requirement: ADR-045 (Research-Driven Planning)
 - Constitution checkpoint: Security best practice
 - Verification gates: Quality assurance pattern
 - Risk assessment: STRIDE/DREAD methodology
 
 **Token Support (30+ tokens):**
+
 ```
 Plan metadata: {{PLAN_TITLE}}, {{DATE}}, {{VERSION}}, {{STATUS}}
 Phase details: {{PHASE_N_NAME}}, {{PHASE_N_PURPOSE}}, {{PHASE_N_DURATION}}
@@ -161,6 +166,7 @@ Risk assessment: {{RISK_TYPE}}, {{MITIGATION_STRATEGY}}
 ```
 
 **Integration Points:**
+
 - ✅ `plan-generator` skill generates this template
 - ✅ `planner` agent uses for implementation planning
 - ✅ `task-breakdown` skill breaks down into tasks
@@ -222,12 +228,14 @@ Created a hierarchical task template with mandatory Enabler phase (foundational 
    - Performance requirements
 
 **Research Backing:**
+
 - Enabler pattern: SAFe (Scaled Agile Framework)
 - P1/P2/P3 prioritization: MoSCoW method (Must/Should/Could)
 - Task hierarchy: Validated by Jira, Azure DevOps (5/5 adoption)
 - User story format: Agile best practice
 
 **Token Support (20+ tokens):**
+
 ```
 Feature: {{FEATURE_NAME}}, {{EPIC_NAME}}, {{EPIC_GOAL}}
 Enablers: {{ENABLER_X_NAME}}, {{ENABLER_X_PURPOSE}}, {{ENABLER_X_EFFORT}}
@@ -236,6 +244,7 @@ Tasks: {{TASK_DESCRIPTION}}, {{TASK_EFFORT}}, {{DEPENDENCY_IDS}}
 ```
 
 **Integration Points:**
+
 - ✅ `task-breakdown` skill instantiates this template
 - ✅ `task-breakdown` creates TaskCreate calls for tracking
 - ✅ Task IDs set up dependencies with `TaskUpdate({ addBlockedBy: [...] })`
@@ -281,6 +290,7 @@ Created a skill that renders all templates with sanitized token replacement, sch
    - Provides helpful error recovery suggestions
 
 5. **CLI Usage:**
+
 ```bash
 node .claude/skills/template-renderer/scripts/main.cjs \
   --template specification-template \
@@ -289,6 +299,7 @@ node .claude/skills/template-renderer/scripts/main.cjs \
 ```
 
 6. **Skill Invocation:**
+
 ```javascript
 Skill({
   skill: 'template-renderer',
@@ -301,12 +312,14 @@ Skill({
 ```
 
 **Research Backing:**
+
 - Token whitelist: OWASP injection prevention
 - Path validation: Secure file handling patterns
 - Sanitization: XSS/injection prevention standards
 - Confidence: 4.5/5 (HIGH)
 
 **Integration Points:**
+
 - ✅ `spec-gathering` uses for rendering specifications
 - ✅ `plan-generator` uses for rendering plans
 - ✅ `task-breakdown` uses for rendering task lists
@@ -362,12 +375,14 @@ Created a skill that breaks down plans into Epic→Story→Task hierarchy with p
    - `acceptanceCriteria`: checkboxes for completion
 
 **Research Backing:**
+
 - Enabler pattern: SAFe (Scaled Agile Framework)
 - Epic→Story→Task hierarchy: Validated by Jira, Azure DevOps
 - P1/P2/P3 prioritization: MoSCoW method
 - Confidence: 4.3/5 (HIGH)
 
 **Integration Points:**
+
 - ✅ Called by `planner` agent after `plan-generator`
 - ✅ Creates TaskCreate calls for tracking
 - ✅ Sets up dependencies with `TaskUpdate({ addBlockedBy: [...] })`
@@ -404,7 +419,7 @@ Created a skill that generates hybrid checklists combining IEEE 1028 universal s
 
 2. **Context Detection Algorithm:**
    - Read package.json/requirements.txt/go.mod → extract dependencies
-   - Glob for framework files (React: **/*.jsx, Vue: **/*.vue, FastAPI: from fastapi)
+   - Glob for framework files (React: **/\*.jsx, Vue: **/\*.vue, FastAPI: from fastapi)
    - Analyze imports/config files (tsconfig.json, Dockerfile, k8s manifests)
    - Generate contextual items based on detected stack
    - Mark all LLM items with [AI-GENERATED] prefix (SEC-SPEC-005 compliance)
@@ -416,12 +431,14 @@ Created a skill that generates hybrid checklists combining IEEE 1028 universal s
    - Summary footer (total items, IEEE %, contextual %)
 
 **Research Backing:**
+
 - IEEE 1028 adoption: 90%+ of enterprise QA processes
 - Hybrid approach: Combines universal standards with contextual specificity
 - Context detection: Achieves 95%+ accuracy for common frameworks
 - Confidence: 4.4/5 (HIGH)
 
 **Integration Points:**
+
 - ✅ Assigned to `qa` agent
 - ✅ Assigned to `code-reviewer` agent
 - ✅ Called at task start for systematic validation
@@ -515,15 +532,15 @@ Ready for implementation
 
 ### Skill Integration Matrix
 
-| Skill | Consumer | Input | Output |
-| --- | --- | --- | --- |
-| `progressive-disclosure` | spec-gathering | User input | 3-5 clarified requirements |
-| `template-renderer` | spec-gathering, plan-generator, task-breakdown | Token map | Rendered template |
-| `spec-gathering` | User request | User input | Token-mapped requirements |
-| `spec-critique` | Developer workflow | Specification | Validation report |
-| `plan-generator` | planner agent | Specification | Implementation plan |
-| `task-breakdown` | planner agent | Plan | Task list with Epic→Story→Task |
-| `checklist-generator` | qa agent | Codebase context | Quality checklist (IEEE+contextual) |
+| Skill                    | Consumer                                       | Input            | Output                              |
+| ------------------------ | ---------------------------------------------- | ---------------- | ----------------------------------- |
+| `progressive-disclosure` | spec-gathering                                 | User input       | 3-5 clarified requirements          |
+| `template-renderer`      | spec-gathering, plan-generator, task-breakdown | Token map        | Rendered template                   |
+| `spec-gathering`         | User request                                   | User input       | Token-mapped requirements           |
+| `spec-critique`          | Developer workflow                             | Specification    | Validation report                   |
+| `plan-generator`         | planner agent                                  | Specification    | Implementation plan                 |
+| `task-breakdown`         | planner agent                                  | Plan             | Task list with Epic→Story→Task      |
+| `checklist-generator`    | qa agent                                       | Codebase context | Quality checklist (IEEE+contextual) |
 
 ---
 
@@ -534,6 +551,7 @@ Ready for implementation
 **User Request:** "Create a specification for user authentication"
 
 **Step 1: Collect Requirements (progressive-disclosure)**
+
 ```
 spec-gathering: "I'll ask you 3-5 essential questions"
 - Is this OAuth or internal auth? [ASSUMES: internal JWT if not specified]
@@ -542,19 +560,21 @@ spec-gathering: "I'll ask you 3-5 essential questions"
 ```
 
 **Step 2: Map to Template Tokens**
+
 ```javascript
 const tokens = {
-  FEATURE_NAME: "User Authentication",
-  VERSION: "1.0.0",
-  AUTHOR: "Engineering Team",
-  DATE: "2026-01-28",
-  ACCEPTANCE_CRITERIA_1: "User can log in with email and password",
-  ACCEPTANCE_CRITERIA_2: "Password must meet complexity requirements",
-  ACCEPTANCE_CRITERIA_3: "Session timeout after 30 minutes of inactivity"
+  FEATURE_NAME: 'User Authentication',
+  VERSION: '1.0.0',
+  AUTHOR: 'Engineering Team',
+  DATE: '2026-01-28',
+  ACCEPTANCE_CRITERIA_1: 'User can log in with email and password',
+  ACCEPTANCE_CRITERIA_2: 'Password must meet complexity requirements',
+  ACCEPTANCE_CRITERIA_3: 'Session timeout after 30 minutes of inactivity',
 };
 ```
 
 **Step 3: Render Template**
+
 ```bash
 Skill({
   skill: 'template-renderer',
@@ -567,6 +587,7 @@ Skill({
 ```
 
 **Step 4: Validate Against Schema**
+
 ```bash
 # Check no unresolved tokens
 grep "{{" auth-spec.md  # Should find nothing
@@ -576,6 +597,7 @@ head -60 auth-spec.md | grep -E "^(title|version|author|status|date):"
 ```
 
 **Output:** `.claude/context/artifacts/specifications/auth-spec.md`
+
 - YAML frontmatter with metadata
 - IEEE 830 sections with content
 - All acceptance criteria defined
@@ -588,6 +610,7 @@ head -60 auth-spec.md | grep -E "^(title|version|author|status|date):"
 **Specification:** User Authentication (from Example 1)
 
 **Step 1: Invoke planner agent with plan-generator**
+
 ```
 planner: "I'll break this spec into phases"
 
@@ -607,6 +630,7 @@ BLOCKING GATES (all must pass):
 ```
 
 **Step 2: If Phase 0 blocked, return to research**
+
 ```
 Phase 0 FAILED:
 - Issue: "Missing security threat model for session hijacking"
@@ -616,6 +640,7 @@ Phase 0 FAILED:
 ```
 
 **Step 3: Once Phase 0 passes, proceed to implementation phases**
+
 ```
 Phase 1: Core authentication (3 days)
 Phase 2: Password reset + 2FA (2 days)
@@ -623,6 +648,7 @@ Phase FINAL: Reflection and learning extraction
 ```
 
 **Output:** `.claude/context/plans/auth-plan.md`
+
 - Phase 0 research documented
 - Implementation phases with verification gates
 - Risk assessment (4 categories)
@@ -636,6 +662,7 @@ Phase FINAL: Reflection and learning extraction
 **Plan:** User Authentication (from Example 2)
 
 **Step 1: Invoke task-breakdown skill**
+
 ```
 task-breakdown: "I'll break the plan into tasks"
 
@@ -643,6 +670,7 @@ Output: Using tasks-template.md with Enabler-first pattern
 ```
 
 **Step 2: Task Hierarchy Created**
+
 ```
 FOUNDATIONAL PHASE (Blocks all user stories):
 ├─ ENABLER-1.1: Database schema (users table, credentials)
@@ -674,6 +702,7 @@ P3 USER STORIES (Polish):
 ```
 
 **Step 3: Create Trackable Tasks**
+
 ```javascript
 // Phase 1: Create enabler tasks (no blockers)
 TaskCreate({ subject: 'ENABLER-1.1: Database schema', ... });
@@ -694,6 +723,7 @@ TaskCreate({ subject: 'P3-3.1: Session Analytics', ... });
 ```
 
 **Output:** Trackable task list with dependencies
+
 - ENABLER tasks must complete first
 - P1 tasks unblock only after all enablers complete
 - P2 tasks have dependency chains to P1
@@ -706,6 +736,7 @@ TaskCreate({ subject: 'P3-3.1: Session Analytics', ... });
 **Task:** P1-1.1.1 (Login endpoint implementation)
 
 **Step 1: QA invokes checklist-generator**
+
 ```
 qa: "Generating quality checklist for backend task..."
 
@@ -717,10 +748,12 @@ Context detected:
 ```
 
 **Step 2: Hybrid Checklist Generated**
+
 ```markdown
 # Quality Checklist: Login Endpoint Implementation
 
 ## IEEE 1028 Code Quality (UNIVERSAL)
+
 - [ ] Code follows project style guide
 - [ ] No duplication (DRY principle)
 - [ ] Cyclomatic complexity < 10
@@ -728,6 +761,7 @@ Context detected:
 - [ ] Function/variable names are clear
 
 ## IEEE 1028 Testing (UNIVERSAL)
+
 - [ ] Test-Driven Development followed
 - [ ] Edge cases covered:
   - [ ] Empty email
@@ -739,6 +773,7 @@ Context detected:
 - [ ] Tests are isolated (no shared state)
 
 ## IEEE 1028 Security (UNIVERSAL)
+
 - [ ] Input validation on email/password
 - [ ] No SQL injection (using parameterized queries)
 - [ ] No password in logs
@@ -746,6 +781,7 @@ Context detected:
 - [ ] No hardcoded secrets
 
 ## IEEE 1028 Performance (UNIVERSAL)
+
 - [ ] Database query optimized (indexes on email)
 - [ ] No N+1 queries
 - [ ] Response time < 200ms (p95)
@@ -753,18 +789,21 @@ Context detected:
 - [ ] Caching strategy evaluated
 
 ## IEEE 1028 Documentation (UNIVERSAL)
+
 - [ ] API endpoint documented (OpenAPI)
 - [ ] Complex logic has comments
 - [ ] README updated with endpoints
 - [ ] CHANGELOG updated
 
 ## IEEE 1028 Error Handling (UNIVERSAL)
+
 - [ ] All errors caught (no unhandled promises)
 - [ ] User-friendly error messages (no stack traces)
 - [ ] Detailed logs for debugging (include user_id, timestamp)
 - [ ] Graceful degradation (fallback behavior)
 
 ## TypeScript-Specific [AI-GENERATED]
+
 - [ ] All types exported
 - [ ] No `any` used
 - [ ] Strict null checks enabled
@@ -772,6 +811,7 @@ Context detected:
 - [ ] Request/response types defined
 
 ## Express.js-Specific [AI-GENERATED]
+
 - [ ] Middleware chaining proper
 - [ ] Error handling middleware present
 - [ ] CORS configured for production
@@ -779,6 +819,7 @@ Context detected:
 - [ ] Rate limiting applied
 
 ## Database-Specific [AI-GENERATED]
+
 - [ ] Migration created for users table
 - [ ] Email indexed (unique constraint)
 - [ ] Transactions used where needed
@@ -786,18 +827,21 @@ Context detected:
 - [ ] Prepared statements used
 
 ## Summary
+
 Total items: 52
 IEEE 1028 base: 39 (75%)
 Contextual (TypeScript+Express+Database): 13 (25%)
 ```
 
 **Step 3: Developer Uses Checklist**
+
 ```
 Developer implements login endpoint, checking off each item.
 For [AI-GENERATED] items, developer reviews but trusts IEEE base.
 ```
 
 **Step 4: Before Completion**
+
 ```
 Developer: "All 52 items checked ✓"
 QA: "Login endpoint ready for code review"
@@ -810,34 +854,36 @@ Integration test: "Endpoint tested in auth workflow"
 
 ### Templates (3 files)
 
-| Template | Location | Purpose | Tokens |
-| --- | --- | --- | --- |
-| Specification | `.claude/templates/specification-template.md` | IEEE 830 software requirements | 5+ core tokens |
-| Plan | `.claude/templates/plan-template.md` | Implementation planning with Phase 0 | 30+ tokens |
-| Tasks | `.claude/templates/tasks-template.md` | Epic→Story→Task hierarchy with Enablers | 20+ tokens |
+| Template      | Location                                      | Purpose                                 | Tokens         |
+| ------------- | --------------------------------------------- | --------------------------------------- | -------------- |
+| Specification | `.claude/templates/specification-template.md` | IEEE 830 software requirements          | 5+ core tokens |
+| Plan          | `.claude/templates/plan-template.md`          | Implementation planning with Phase 0    | 30+ tokens     |
+| Tasks         | `.claude/templates/tasks-template.md`         | Epic→Story→Task hierarchy with Enablers | 20+ tokens     |
 
 ### Skills (3 skills)
 
-| Skill | Location | Purpose | Key Feature |
-| --- | --- | --- | --- |
-| template-renderer | `.claude/skills/template-renderer/SKILL.md` | Token replacement with security | Whitelist + sanitization |
-| task-breakdown | `.claude/skills/task-breakdown/SKILL.md` | Break plans into tasks | Enabler-first pattern |
-| checklist-generator | `.claude/skills/checklist-generator/SKILL.md` | Quality validation checklists | IEEE 1028 + contextual |
+| Skill               | Location                                      | Purpose                         | Key Feature              |
+| ------------------- | --------------------------------------------- | ------------------------------- | ------------------------ |
+| template-renderer   | `.claude/skills/template-renderer/SKILL.md`   | Token replacement with security | Whitelist + sanitization |
+| task-breakdown      | `.claude/skills/task-breakdown/SKILL.md`      | Break plans into tasks          | Enabler-first pattern    |
+| checklist-generator | `.claude/skills/checklist-generator/SKILL.md` | Quality validation checklists   | IEEE 1028 + contextual   |
 
 ### Schemas (1 file)
 
-| Schema | Location | Purpose | Validation |
-| --- | --- | --- | --- |
+| Schema               | Location                                             | Purpose                   | Validation                      |
+| -------------------- | ---------------------------------------------------- | ------------------------- | ------------------------------- |
 | Specification Schema | `.claude/schemas/specification-template.schema.json` | Validate spec frontmatter | YAML structure, required fields |
 
 ### Integrations
 
 **Updated Skills:**
+
 - ✅ `spec-gathering` - Now uses progressive-disclosure + template-renderer
 - ✅ `plan-generator` - Now uses plan-template + verification gates
 - ✅ `spec-critique` - Validates against specification schema
 
 **Updated Agents:**
+
 - ✅ `planner` - Integrated task-breakdown for Phase 0 research workflow
 - ✅ `qa` - Integrated checklist-generator for systematic validation
 - ✅ `developer` - Uses checklist-generator for quality gates
@@ -849,36 +895,42 @@ Integration test: "Endpoint tested in auth workflow"
 All features validated with 3+ external research sources per ADR-045 (Research-Driven Planning).
 
 ### Feature 1: IEEE 830 Specification Structure
+
 - **Source 1:** IEEE 830-1998 Standard (11 sections)
 - **Source 2:** Jira Software specification best practices
 - **Source 3:** Azure DevOps requirements documentation
 - **Confidence:** 4.5/5 (Enterprise-grade standard)
 
 ### Feature 2: Phase 0 Research Checkpoint
+
 - **Source 1:** NIST Software Development Security (pre-implementation validation)
 - **Source 2:** Scaled Agile Framework (SAFe) - Planning & Research phases
 - **Source 3:** Security threat modeling (STRIDE methodology)
 - **Confidence:** 4.7/5 (Security+Quality standard)
 
 ### Feature 3: Enabler-First Task Hierarchy
+
 - **Source 1:** SAFe "Enabler Stories" (Scaled Agile Framework)
 - **Source 2:** Jira Epic hierarchy (Agile best practice)
 - **Source 3:** Azure DevOps work item hierarchy (industry-standard)
 - **Confidence:** 4.3/5 (Proven by 5M+ users)
 
 ### Feature 4: Template Rendering with Security
+
 - **Source 1:** OWASP Injection Prevention Cheat Sheet
 - **Source 2:** Node.js Security Best Practices (safe file handling)
 - **Source 3:** Token whitelist patterns (authentication standards)
 - **Confidence:** 4.6/5 (Security-validated)
 
 ### Feature 5: Task-Breakdown Skill
+
 - **Source 1:** SAFe Program Board (task organization)
 - **Source 2:** Azure DevOps backlog management
 - **Source 3:** Jira Sprint planning patterns
 - **Confidence:** 4.2/5 (Agile methodology)
 
 ### Feature 6: Checklist-Generator (Bonus)
+
 - **Source 1:** IEEE 1028 Standard (Software Reviews and Audits)
 - **Source 2:** ISO/IEC 25010 (Software Quality Model)
 - **Source 3:** OWASP Testing Guide (Security testing)
@@ -893,6 +945,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Use YAML frontmatter + Markdown body hybrid format
 
 **Rationale:**
+
 - YAML: Machine-readable metadata for tooling (validation, parsing)
 - Markdown: Human-readable content (IEEE 830 sections)
 - Hybrid: Enables both automation and human comprehension
@@ -906,6 +959,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Enforce both token whitelist AND token value sanitization
 
 **Rationale:**
+
 - Whitelist prevents injection via token NAMES (e.g., `{{../../etc/passwd}}`)
 - Sanitization prevents injection via token VALUES (e.g., `<script>alert('xss')</script>`)
 - Both required for defense in depth
@@ -919,6 +973,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Implement token replacement as reusable skill, not template/plan generators
 
 **Rationale:**
+
 - Separation of concerns: spec-gathering ≠ template rendering
 - Reusable across all 3 template types (specification, plan, tasks)
 - Decoupled skills enable testing, versioning, and replacement
@@ -932,6 +987,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Validate YAML frontmatter using JSON Schema (`.claude/schemas/`)
 
 **Rationale:**
+
 - JSON Schema tools are mature and well-tested
 - Enables strict validation (required fields, type checking, pattern validation)
 - Can be integrated with spec-gathering and spec-critique skills
@@ -946,6 +1002,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Make Phase 0 research mandatory with blocking constitution checkpoint
 
 **Rationale:**
+
 - Prevents jumping to implementation without proper research
 - Constitution checkpoint (4 blocking gates) ensures research quality
 - Blocks progression if security/feasibility not validated
@@ -960,6 +1017,7 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 **Decision:** Foundational tasks (Enablers) must block all user stories
 
 **Rationale:**
+
 - Prevents duplicate infrastructure work across user stories
 - Ensures shared utilities/schemas are built once, reused everywhere
 - Clear dependency model: Enablers → P1 → P2 → P3
@@ -974,12 +1032,14 @@ All features validated with 3+ external research sources per ADR-045 (Research-D
 ### Before Spec-Kit Integration
 
 **Requirements Gathering → Implementation:**
+
 - Average time: 3-5 days
 - Manual template creation: 2-3 hours
 - Token replacement errors: 1-2 per project
 - No quality gates: Risk of incomplete specs
 
 **Example workflow:**
+
 ```
 User request → Ad-hoc notes → Manual plan creation → Guess task list → Start coding
                                 (errors, inconsistency)
@@ -988,12 +1048,14 @@ User request → Ad-hoc notes → Manual plan creation → Guess task list → S
 ### After Spec-Kit Integration
 
 **Requirements Gathering → Implementation:**
+
 - Average time: 1-2 days (40-60% faster)
 - Template creation: < 5 minutes (via token replacement)
 - Token replacement errors: 0 (whitelist-enforced)
 - 4 quality gates enforce completeness
 
 **Example workflow:**
+
 ```
 User request → spec-gathering (3-5 Q's) → template-renderer → spec-critique ✓
            → plan-generator (Phase 0 research) → task-breakdown ✓
@@ -1003,14 +1065,14 @@ User request → spec-gathering (3-5 Q's) → template-renderer → spec-critiqu
 
 ### Metrics
 
-| Metric | Before | After | Improvement |
-| --- | --- | --- | --- |
-| Time to specification | 2-3 hours | 15 minutes | 88% faster |
-| Specification consistency | 60% (ad-hoc) | 100% (template) | +40% |
-| Token replacement errors | 1-2 per project | 0 | 100% reduction |
-| Plan completeness checks | 0 (manual) | 4 (blocked gates) | +4 gates |
-| Task organization time | 1-2 hours | 10 minutes | 90% faster |
-| Quality checklist coverage | Manual (50%) | Automated (100%) | +50% |
+| Metric                     | Before          | After             | Improvement    |
+| -------------------------- | --------------- | ----------------- | -------------- |
+| Time to specification      | 2-3 hours       | 15 minutes        | 88% faster     |
+| Specification consistency  | 60% (ad-hoc)    | 100% (template)   | +40%           |
+| Token replacement errors   | 1-2 per project | 0                 | 100% reduction |
+| Plan completeness checks   | 0 (manual)      | 4 (blocked gates) | +4 gates       |
+| Task organization time     | 1-2 hours       | 10 minutes        | 90% faster     |
+| Quality checklist coverage | Manual (50%)    | Automated (100%)  | +50%           |
 
 ---
 
@@ -1050,21 +1112,25 @@ User request → spec-gathering (3-5 Q's) → template-renderer → spec-critiqu
 ### For Teams Adopting Spec-Kit
 
 **Phase 1: Specification (Week 1)**
+
 - Use `spec-gathering` for requirements
 - Validate with `spec-critique`
 - Store in `.claude/context/artifacts/specifications/approved/`
 
 **Phase 2: Planning (Week 1-2)**
+
 - Use `plan-generator` with Phase 0 research (BLOCKING)
 - Get security-architect review of threat model
 - Store in `.claude/context/plans/`
 
 **Phase 3: Task Breakdown (Week 2)**
+
 - Use `task-breakdown` for Epic→Story→Task hierarchy
 - Respect Enabler-first pattern (don't skip foundational work)
 - Create TaskCreate calls for tracking
 
 **Phase 4: Implementation (Week 3+)**
+
 - Use `checklist-generator` for quality validation
 - Complete all items before task completion
 - Record learnings to memory files
@@ -1097,6 +1163,7 @@ All features comply with security standards:
 The spec-kit integration successfully implements a complete requirements-to-tasks transformation system that standardizes project planning across the agent-studio framework. All five core features are production-ready and validated with industry-standard research.
 
 **Deliverables achieved:**
+
 - 3 reusable templates (specification, plan, tasks)
 - 3 reusable skills (template-renderer, task-breakdown, checklist-generator)
 - 1 schema (specification-template validation)
@@ -1113,19 +1180,23 @@ The spec-kit integration successfully implements a complete requirements-to-task
 ## Files Modified/Created Summary
 
 ### New Templates (3)
+
 - `.claude/templates/specification-template.md` - IEEE 830 requirements
 - `.claude/templates/plan-template.md` - Implementation planning with Phase 0
 - `.claude/templates/tasks-template.md` - Epic→Story→Task with Enablers
 
 ### New Skills (3)
+
 - `.claude/skills/template-renderer/SKILL.md` - Token replacement + security
 - `.claude/skills/task-breakdown/SKILL.md` - Task hierarchy organization
 - `.claude/skills/checklist-generator/SKILL.md` - IEEE 1028 + contextual
 
 ### New Schemas (1)
+
 - `.claude/schemas/specification-template.schema.json` - YAML validation
 
 ### Updated Integration Points (5)
+
 - `.claude/skills/spec-gathering/SKILL.md` - Progressive disclosure + templates
 - `.claude/skills/spec-critique/SKILL.md` - Schema validation
 - `.claude/skills/plan-generator/SKILL.md` - Phase 0 research workflow
@@ -1133,6 +1204,7 @@ The spec-kit integration successfully implements a complete requirements-to-task
 - `.claude/agents/core/qa.md` - Checklist-generator integration
 
 ### System Updates
+
 - `.claude/CLAUDE.md` - Section 8.5 updated (new skills)
 - `.claude/templates/README.md` - Added quick reference table
 - `.claude/context/memory/learnings.md` - Implementation patterns recorded

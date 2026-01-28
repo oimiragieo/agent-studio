@@ -50,6 +50,7 @@ Generate comprehensive, context-aware quality checklists combining IEEE 1028 sta
 The following categories are included in every checklist (80-90% of items):
 
 ### Code Quality
+
 - Code follows project style guide
 - No code duplication (DRY principle)
 - Cyclomatic complexity < 10 per function
@@ -59,6 +60,7 @@ The following categories are included in every checklist (80-90% of items):
 - Dead code removed
 
 ### Testing
+
 - Tests written first (TDD followed)
 - All new code has corresponding tests
 - Tests cover edge cases and error conditions
@@ -67,6 +69,7 @@ The following categories are included in every checklist (80-90% of items):
 - Tests are isolated and don't depend on order
 
 ### Security
+
 - Input validation on all user inputs
 - No SQL injection vulnerabilities
 - No XSS vulnerabilities
@@ -76,6 +79,7 @@ The following categories are included in every checklist (80-90% of items):
 - OWASP Top 10 considered
 
 ### Performance
+
 - No obvious performance bottlenecks
 - Database queries optimized (no N+1 queries)
 - Appropriate caching used
@@ -84,6 +88,7 @@ The following categories are included in every checklist (80-90% of items):
 - Large data operations paginated
 
 ### Documentation
+
 - Public APIs documented
 - Complex logic has explanatory comments
 - README updated if needed
@@ -92,6 +97,7 @@ The following categories are included in every checklist (80-90% of items):
 - Architecture diagrams updated if structure changed
 
 ### Error Handling
+
 - All error conditions handled
 - User-friendly error messages (4xx for user errors)
 - Detailed logs for debugging (5xx for system errors)
@@ -114,40 +120,47 @@ The skill analyzes the current project context to add 10-20% contextual items:
 2. **Generate contextual items** based on findings:
 
 **TypeScript Projects:**
+
 - [ ] [AI-GENERATED] TypeScript types exported properly
 - [ ] [AI-GENERATED] No `any` types unless justified with comment
 - [ ] [AI-GENERATED] Strict null checks satisfied
 
 **React Projects:**
+
 - [ ] [AI-GENERATED] Components use proper memo/useCallback
 - [ ] [AI-GENERATED] No unnecessary re-renders (React DevTools checked)
 - [ ] [AI-GENERATED] Hooks follow Rules of Hooks
 - [ ] [AI-GENERATED] Accessibility attributes (aria-\*) on interactive elements
 
 **API Projects:**
+
 - [ ] [AI-GENERATED] Rate limiting implemented
 - [ ] [AI-GENERATED] API versioning strategy followed
 - [ ] [AI-GENERATED] OpenAPI/Swagger docs updated
 - [ ] [AI-GENERATED] Request/response validation with schemas
 
 **Database Projects:**
+
 - [ ] [AI-GENERATED] Migration scripts reversible
 - [ ] [AI-GENERATED] Indexes added for query performance
 - [ ] [AI-GENERATED] Database transactions used appropriately
 - [ ] [AI-GENERATED] Connection pooling configured
 
 **Python Projects:**
+
 - [ ] [AI-GENERATED] Type hints on all public functions
 - [ ] [AI-GENERATED] Docstrings follow Google/NumPy style
 - [ ] [AI-GENERATED] Virtual environment requirements.txt updated
 
 **Mobile Projects:**
+
 - [ ] [AI-GENERATED] Offline mode handled gracefully
 - [ ] [AI-GENERATED] Battery usage optimized (no constant polling)
 - [ ] [AI-GENERATED] Data usage minimized (compression, caching)
 - [ ] [AI-GENERATED] Platform-specific features tested
 
 **DevOps/Infrastructure:**
+
 - [ ] [AI-GENERATED] Infrastructure as code (Terraform, CloudFormation)
 - [ ] [AI-GENERATED] Monitoring and alerting configured
 - [ ] [AI-GENERATED] Backup and disaster recovery tested
@@ -164,36 +177,43 @@ Generated: {timestamp}
 Context: {detected frameworks/languages}
 
 ## Code Quality (IEEE 1028)
+
 - [ ] Code follows project style guide
 - [ ] No code duplication
 - [ ] Cyclomatic complexity < 10
 
 ## Testing (IEEE 1028)
+
 - [ ] Tests written first (TDD followed)
 - [ ] Test coverage ≥ 80%
 - [ ] Tests cover edge cases
 
 ## Security (IEEE 1028)
+
 - [ ] Input validation on all user inputs
 - [ ] No hardcoded secrets
 - [ ] OWASP Top 10 considered
 
 ## Performance (IEEE 1028)
+
 - [ ] No obvious performance bottlenecks
 - [ ] Database queries optimized
 - [ ] Appropriate caching used
 
 ## Documentation (IEEE 1028)
+
 - [ ] Public APIs documented
 - [ ] README updated if needed
 - [ ] CHANGELOG updated
 
 ## Error Handling (IEEE 1028)
+
 - [ ] All error conditions handled
 - [ ] User-friendly error messages
 - [ ] Detailed logs for debugging
 
 ## Context-Specific Items (AI-Generated)
+
 {Detected: TypeScript + React + REST API}
 
 - [ ] [AI-GENERATED] TypeScript types exported properly
@@ -202,6 +222,7 @@ Context: {detected frameworks/languages}
 - [ ] [AI-GENERATED] OpenAPI docs updated
 
 ---
+
 **Total Items**: {count}
 **IEEE Base**: {ieee_count} ({percentage}%)
 **Contextual**: {contextual_count} ({percentage}%)
@@ -216,6 +237,7 @@ Skill({ skill: 'checklist-generator' });
 ```
 
 This will:
+
 1. Analyze current project context
 2. Load IEEE 1028 base checklist
 3. Generate contextual items (10-20%)
@@ -227,7 +249,7 @@ This will:
 // Provide explicit context
 Skill({
   skill: 'checklist-generator',
-  args: 'typescript react api'
+  args: 'typescript react api',
 });
 ```
 
@@ -243,19 +265,25 @@ Skill({ skill: 'qa-workflow' });
 ## Integration Points
 
 ### QA Agent
+
 The `qa` agent uses this skill for validation:
+
 1. Generate checklist at task start
 2. Validate each item systematically
 3. Report checklist completion status
 
 ### Verification-Before-Completion
+
 Used as pre-completion gate:
+
 1. Generate checklist before marking task complete
 2. Ensure all items verified
 3. Block completion if critical items fail
 
 ### Code-Reviewer Agent
+
 Used during code review:
+
 1. Generate checklist for PR
 2. Check each item against changes
 3. Comment on missing items
@@ -286,6 +314,7 @@ Used during code review:
 ## Example: TypeScript + React + API Project
 
 **Input Context:**
+
 - `package.json` contains: "react": "^18.0.0", "typescript": "^5.0.0"
 - Files include: `src/components/*.tsx`, `src/api/*.ts`
 
@@ -298,6 +327,7 @@ Generated: 2026-01-28 10:30:00
 Context: TypeScript, React, REST API
 
 ## Code Quality (IEEE 1028)
+
 - [ ] Code follows project style guide
 - [ ] No code duplication
 - [ ] Cyclomatic complexity < 10
@@ -307,6 +337,7 @@ Context: TypeScript, React, REST API
 - [ ] Dead code removed
 
 ## Testing (IEEE 1028)
+
 - [ ] Tests written first (TDD)
 - [ ] All new code has tests
 - [ ] Tests cover edge cases
@@ -315,6 +346,7 @@ Context: TypeScript, React, REST API
 - [ ] Tests isolated (no order dependency)
 
 ## Security (IEEE 1028)
+
 - [ ] Input validation on all inputs
 - [ ] No SQL injection risks
 - [ ] No XSS vulnerabilities
@@ -324,6 +356,7 @@ Context: TypeScript, React, REST API
 - [ ] OWASP Top 10 reviewed
 
 ## Performance (IEEE 1028)
+
 - [ ] No performance bottlenecks
 - [ ] Database queries optimized
 - [ ] Caching used appropriately
@@ -332,6 +365,7 @@ Context: TypeScript, React, REST API
 - [ ] Large data paginated
 
 ## Documentation (IEEE 1028)
+
 - [ ] Public APIs documented
 - [ ] Complex logic has comments
 - [ ] README updated
@@ -339,6 +373,7 @@ Context: TypeScript, React, REST API
 - [ ] Breaking changes documented
 
 ## Error Handling (IEEE 1028)
+
 - [ ] All errors handled
 - [ ] User-friendly error messages
 - [ ] Detailed logs for debugging
@@ -347,24 +382,28 @@ Context: TypeScript, React, REST API
 - [ ] Rollback procedures
 
 ## TypeScript (AI-Generated)
+
 - [ ] [AI-GENERATED] Types exported from modules
 - [ ] [AI-GENERATED] No `any` types (justified if used)
 - [ ] [AI-GENERATED] Strict null checks satisfied
 - [ ] [AI-GENERATED] Interfaces prefer over types
 
 ## React (AI-GENERATED)
+
 - [ ] [AI-GENERATED] Components use React.memo appropriately
 - [ ] [AI-GENERATED] Hooks follow Rules of Hooks
 - [ ] [AI-GENERATED] No unnecessary re-renders
 - [ ] [AI-GENERATED] Keys on list items
 
 ## REST API (AI-GENERATED)
+
 - [ ] [AI-GENERATED] Rate limiting implemented
 - [ ] [AI-GENERATED] API versioning in URLs
 - [ ] [AI-GENERATED] Request/response validation
 - [ ] [AI-GENERATED] OpenAPI/Swagger updated
 
 ---
+
 **Total Items**: 38
 **IEEE Base**: 30 (79%)
 **Contextual**: 8 (21%)
@@ -373,6 +412,7 @@ Context: TypeScript, React, REST API
 ## Best Practices
 
 ### DO
+
 - Start with IEEE 1028 base (universal quality)
 - Analyze project context before generating
 - Mark all LLM items with [AI-GENERATED]
@@ -380,6 +420,7 @@ Context: TypeScript, React, REST API
 - Return actionable checklist (not generic advice)
 
 ### DON'T
+
 - Generate checklist without context analysis
 - Exceed 20% contextual items (dilutes IEEE base)
 - Forget [AI-GENERATED] prefix
@@ -404,6 +445,7 @@ Use `verification-before-completion` skill to enforce this.
 ## Assigned Agents
 
 This skill is used by:
+
 - `qa` - Quality assurance validation
 - `developer` - Pre-completion checks
 - `code-reviewer` - Code review criteria
@@ -414,6 +456,7 @@ This skill is used by:
 Read `.claude/context/memory/learnings.md`
 
 Check for:
+
 - Previously generated checklists
 - Project-specific quality patterns
 - Common quality issues in this codebase

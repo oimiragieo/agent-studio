@@ -63,7 +63,9 @@
       "description": "Brief overview of what this specification covers (optional, detailed content goes in Markdown body)",
       "minLength": 20,
       "maxLength": 1000,
-      "examples": ["Specification for implementing user authentication system with JWT tokens and OAuth2 integration"]
+      "examples": [
+        "Specification for implementing user authentication system with JWT tokens and OAuth2 integration"
+      ]
     },
     "tags": {
       "type": "array",
@@ -75,7 +77,10 @@
         "maxLength": 50
       },
       "uniqueItems": true,
-      "examples": [["authentication", "security", "api"], ["frontend", "mobile", "ui"]]
+      "examples": [
+        ["authentication", "security", "api"],
+        ["frontend", "mobile", "ui"]
+      ]
     },
     "priority": {
       "type": "string",
@@ -107,7 +112,9 @@
         "minLength": 5,
         "maxLength": 200
       },
-      "examples": [["OAuth2 provider configuration", "User database schema", "Email service integration"]]
+      "examples": [
+        ["OAuth2 provider configuration", "User database schema", "Email service integration"]
+      ]
     },
     "related_specifications": {
       "type": "array",

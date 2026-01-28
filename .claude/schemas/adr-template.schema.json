@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "security-lint-skip: $schema URL is required by JSON Schema spec",
+  "$id": "https://agent-studio.dev/schemas/adr-template.schema.json",
+  "title": "ADR Template Schema",
+  "description": "JSON Schema for Architecture Decision Record (ADR) template frontmatter validation",
+  "type": "object",
+  "required": [
+    "adr_number",
+    "title",
+    "date",
+    "status",
+    "context",
+    "decision",
+    "consequences"
+  ],
+  "properties": {
+    "adr_number": {
+      "type": "string",
+      "description": "ADR identifier in format ADR-XXX where XXX is a number",
+      "pattern": "^ADR-[0-9]{1,4}$",
+      "examples": ["ADR-001", "ADR-042", "ADR-999"]
+    },
+    "title": {
+      "type": "string",
+      "description": "Clear, concise decision title",
+      "minLength": 5,
+      "maxLength": 200,
+      "examples": [
+        "Use Redis for Distributed Caching",
+        "Adopt Microservices Architecture",
+        "Switch from REST to GraphQL"
+      ]
+    },
+    "date": {
+      "type": "string",
+      "description": "Decision date in YYYY-MM-DD format",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "examples": ["2026-01-28", "2025-12-31"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current decision lifecycle status",
+      "enum": ["proposed", "accepted", "deprecated", "superseded"],
+      "examples": ["proposed", "accepted"]
+    },
+    "context": {
+      "type": "string",
+      "description": "Background and problem statement - why this decision was needed",
+      "minLength": 10,
+      "maxLength": 5000,
+      "examples": [
+        "We need distributed caching to reduce database load across multiple application servers."
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "description": "The decision made and its rationale",
+      "minLength": 10,
+      "maxLength": 5000,
+      "examples": [
+        "We will use Redis for distributed caching with consistent hashing for key distribution."
+      ]
+    },
+    "consequences": {
+      "type": "string",
+      "description": "Trade-offs and implications of this decision (positive and negative)",
+      "minLength": 10,
+      "maxLength": 5000,
+      "examples": [
+        "Positive: Improved performance and reduced database load. Negative: Added operational complexity and Redis infrastructure cost."
+      ]
+    },
+    "alternatives": {
+      "type": "string",
+      "description": "Other options considered and why they were not chosen (optional)",
+      "minLength": 10,
+      "maxLength": 5000,
+      "examples": [
+        "Memcached was considered but rejected due to lack of data persistence and limited data structure support."
+      ]
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "ADR number that this decision supersedes (optional)",
+      "pattern": "^ADR-[0-9]{1,4}$",
+      "examples": ["ADR-015"]
+    },
+    "superseded_by": {
+      "type": "string",
+      "description": "ADR number that supersedes this decision (optional)",
+      "pattern": "^ADR-[0-9]{1,4}$",
+      "examples": ["ADR-050"]
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "List of stakeholders involved in or affected by this decision (optional)",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "examples": [["Engineering Team", "Product Manager", "DevOps"]]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Categorization tags for organizing ADRs (optional)",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9-]+$",
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "examples": [["caching", "performance", "infrastructure"]]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,29 +1,29 @@
 ---
-title: "User Authentication System Specification"
-version: "1.0.0"
-author: "Claude"
-status: "draft"
-date: "2026-01-28"
-tags: ["authentication", "security", "backend"]
-priority: "high"
-estimated_effort: "2 weeks"
+title: 'User Authentication System Specification'
+version: '1.0.0'
+author: 'Claude'
+status: 'draft'
+date: '2026-01-28'
+tags: ['authentication', 'security', 'backend']
+priority: 'high'
+estimated_effort: '2 weeks'
 acceptance_criteria:
-  - "User can log in with email and password"
-  - "Password must meet complexity requirements (12+ chars, mixed case, numbers, symbols)"
-  - "Failed login attempts are logged for security audit"
-  - "Session timeout after 30 minutes of inactivity"
-  - "JWT tokens expire after 1 hour with refresh capability"
-description: "Specification for implementing secure user authentication system with JWT tokens and session management"
+  - 'User can log in with email and password'
+  - 'Password must meet complexity requirements (12+ chars, mixed case, numbers, symbols)'
+  - 'Failed login attempts are logged for security audit'
+  - 'Session timeout after 30 minutes of inactivity'
+  - 'JWT tokens expire after 1 hour with refresh capability'
+description: 'Specification for implementing secure user authentication system with JWT tokens and session management'
 stakeholders:
-  - "Product Manager"
-  - "Engineering Team"
-  - "Security Team"
+  - 'Product Manager'
+  - 'Engineering Team'
+  - 'Security Team'
 dependencies:
-  - "User database schema must be created"
-  - "Email service for password reset functionality"
+  - 'User database schema must be created'
+  - 'Email service for password reset functionality'
 related_specifications:
-  - "security-requirements-spec.md"
-  - "user-management-spec.md"
+  - 'security-requirements-spec.md'
+  - 'user-management-spec.md'
 ---
 
 # User Authentication System Specification
@@ -37,6 +37,7 @@ This specification defines the requirements for implementing a secure user authe
 ### 1.2 Scope
 
 The authentication system will support:
+
 - Email/password based login
 - JWT token generation and validation
 - Refresh token mechanism
@@ -57,14 +58,17 @@ The authentication system will support:
 **Description**: Users shall be able to log in using their registered email address and password.
 
 **Input**:
+
 - Email address (valid email format)
 - Password (string, 12-512 characters)
 
 **Output**:
+
 - Success: JWT access token + refresh token
 - Failure: Error message with reason (invalid credentials, account locked, etc.)
 
 **Validation**:
+
 - Email format validation
 - Password complexity check
 - Rate limiting: max 5 failed attempts per 15 minutes per IP
@@ -79,7 +83,7 @@ The authentication system will support:
 - At least one uppercase letter (A-Z)
 - At least one lowercase letter (a-z)
 - At least one digit (0-9)
-- At least one special character (!@#$%^&*()_+-=[]{}|;:,.<>?)
+- At least one special character (!@#$%^&\*()\_+-=[]{}|;:,.<>?)
 - Cannot contain common patterns (123456, password, qwerty, etc.)
 - Cannot reuse last 5 passwords
 
@@ -88,11 +92,13 @@ The authentication system will support:
 **Description**: System shall generate secure JWT tokens upon successful authentication.
 
 **Access Token**:
+
 - Validity: 1 hour
 - Payload: user_id, email, roles, issued_at, expires_at
 - Signing algorithm: RS256 (RSA signature with SHA-256)
 
 **Refresh Token**:
+
 - Validity: 7 days
 - Stored securely with rotation capability
 - One-time use (invalidated after refresh)
@@ -102,6 +108,7 @@ The authentication system will support:
 **Description**: System shall manage user sessions with automatic timeout.
 
 **Requirements**:
+
 - Session timeout: 30 minutes of inactivity
 - Activity tracking: API calls extend session
 - Concurrent session limit: 5 sessions per user
@@ -112,6 +119,7 @@ The authentication system will support:
 **Description**: All authentication events shall be logged for security audit.
 
 **Logged Events**:
+
 - Successful login (timestamp, user_id, IP, user agent)
 - Failed login attempts (timestamp, email, IP, reason)
 - Token refresh events
@@ -195,20 +203,24 @@ The authentication system will support:
 ### 5.1 API Endpoints
 
 **POST /api/v1/auth/login**
+
 - Request: `{ "email": "user@example.com", "password": "SecurePass123!" }`
 - Response: `{ "access_token": "...", "refresh_token": "...", "expires_in": 3600 }`
 
 **POST /api/v1/auth/refresh**
+
 - Request: `{ "refresh_token": "..." }`
 - Response: `{ "access_token": "...", "refresh_token": "...", "expires_in": 3600 }`
 
 **POST /api/v1/auth/logout**
+
 - Request: `Authorization: Bearer <access_token>`
 - Response: `{ "message": "Logged out successfully" }`
 
 ### 5.2 Database Schema
 
 **users table**:
+
 - id (UUID, primary key)
 - email (string, unique, indexed)
 - password_hash (string, bcrypt)
@@ -219,6 +231,7 @@ The authentication system will support:
 - updated_at (timestamp)
 
 **sessions table**:
+
 - id (UUID, primary key)
 - user_id (UUID, foreign key → users.id)
 - access_token_jti (string, JWT ID claim)
@@ -230,6 +243,7 @@ The authentication system will support:
 - created_at (timestamp)
 
 **audit_logs table**:
+
 - id (UUID, primary key)
 - event_type (string: login_success, login_failed, logout, etc.)
 - user_id (UUID, nullable, foreign key → users.id)

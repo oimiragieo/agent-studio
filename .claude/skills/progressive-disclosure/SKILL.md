@@ -28,6 +28,7 @@ Gather requirements with minimal user interruption using the ECLAIR pattern. Lim
 **Core Principle:** Start with smart defaults. Ask only what's critical. Document all assumptions.
 
 **Research Backing:**
+
 - Cognitive load research shows 3-item limit optimal (Miller's Law: 7±2 items)
 - HCI studies show 98% form completion at 3 questions vs 47% at 5+ questions
 - Industry tools (GitHub Copilot, Claude Code) use 3-5 clarification limits
@@ -35,12 +36,14 @@ Gather requirements with minimal user interruption using the ECLAIR pattern. Lim
 ## When to Use
 
 **Always:**
+
 - During spec-gathering phase
 - When user provides incomplete requirements
 - Before jumping to implementation
 - When planning complex features
 
 **Integration Points:**
+
 - Used by spec-gathering skill
 - Invoked before plan-generator
 - Part of feature-development workflow
@@ -53,37 +56,47 @@ Examine → Categorize → Limit → Assume → Infer → Record
 ```
 
 ### E: Examine
+
 Analyze user input for ambiguities and missing information.
 
 ### C: Categorize
+
 Group ambiguities by priority:
+
 - **CRITICAL** (always ask): Security, data loss, breaking changes
 - **HIGH** (ask if budget remains): User experience, architecture
 - **MEDIUM** (assume with [ASSUMES]): Implementation details
 - **LOW** (skip): Cosmetic, can change later
 
 ### L: Limit
+
 Apply 3-5 clarification cap. Once limit reached, assume defaults for remaining items.
 
 ### A: Assume
+
 Fill gaps with smart defaults based on:
+
 - Industry best practices
 - Existing project patterns
 - Common use cases
 
 ### I: Infer
+
 Use project context to make intelligent assumptions:
+
 - Read existing code patterns
 - Check technology stack
 - Analyze similar features
 - Review project documentation
 
 ### R: Record
+
 Document all assumptions explicitly using `[ASSUMES: X]` notation.
 
 ## Smart Defaults by Domain
 
 ### Authentication
+
 ```
 [ASSUMES: JWT tokens with 1-hour expiry]
 [ASSUMES: bcrypt for password hashing, cost factor 12]
@@ -92,6 +105,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### Database
+
 ```
 [ASSUMES: PostgreSQL if project uses it, otherwise SQLite for development]
 [ASSUMES: Migrations via existing migration tool]
@@ -99,6 +113,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### API Design
+
 ```
 [ASSUMES: REST API unless GraphQL detected in project]
 [ASSUMES: JSON request/response format]
@@ -107,6 +122,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### Testing
+
 ```
 [ASSUMES: Same testing framework as existing project]
 [ASSUMES: Unit test coverage target: 80%+]
@@ -115,6 +131,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### Performance
+
 ```
 [ASSUMES: Web response time < 3s]
 [ASSUMES: Mobile response time < 2s]
@@ -123,6 +140,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### Error Handling
+
 ```
 [ASSUMES: User-friendly error messages for 4xx errors]
 [ASSUMES: Detailed logging for 5xx errors]
@@ -131,6 +149,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### Data Retention
+
 ```
 [ASSUMES: GDPR compliance - 30-day deletion for user requests]
 [ASSUMES: CCPA compliance - 12-month minimum retention]
@@ -140,6 +159,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ## Clarification Prioritization
 
 ### CRITICAL Priority (Always Ask)
+
 - Security vulnerabilities or risks
 - Data loss or corruption scenarios
 - Breaking changes to existing systems
@@ -147,6 +167,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 - User authentication/authorization scope
 
 **Example Questions:**
+
 ```
 1. Should users be able to reset passwords via email? (Security-critical)
 2. Do we need role-based access control (RBAC)? (Authorization scope)
@@ -154,24 +175,28 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### HIGH Priority (Ask if Budget Remains)
+
 - User experience decisions affecting workflows
 - Architecture choices with long-term impact
 - Integration requirements with external systems
 - Scalability targets (users, requests/sec)
 
 **Example Questions:**
+
 ```
 4. Should the system support offline mode? (UX + architecture)
 5. What's the expected user load (concurrent users)? (Scalability)
 ```
 
 ### MEDIUM Priority (Assume with [ASSUMES])
+
 - Implementation details
 - Technology choices within domain
 - Naming conventions
 - Code organization patterns
 
 **Skip asking, use [ASSUMES] instead:**
+
 ```
 [ASSUMES: Dependency injection for testability]
 [ASSUMES: Service layer pattern for business logic]
@@ -179,6 +204,7 @@ Document all assumptions explicitly using `[ASSUMES: X]` notation.
 ```
 
 ### LOW Priority (Skip, Can Change Later)
+
 - UI styling details
 - Exact wording of messages
 - Color schemes
@@ -200,7 +226,7 @@ const categorized = {
   critical: filterByPriority(ambiguities, 'CRITICAL'),
   high: filterByPriority(ambiguities, 'HIGH'),
   medium: filterByPriority(ambiguities, 'MEDIUM'),
-  low: filterByPriority(ambiguities, 'LOW')
+  low: filterByPriority(ambiguities, 'LOW'),
 };
 ```
 
@@ -213,7 +239,7 @@ const projectContext = {
   existing_patterns: await analyzeCodePatterns(), // Grep for common patterns
   testing_framework: await detectTestingFramework(),
   auth_system: await detectAuthSystem(),
-  database: await detectDatabase()
+  database: await detectDatabase(),
 };
 ```
 
@@ -268,28 +294,30 @@ for (const question of [...categorized.medium, ...categorized.low]) {
 ## Specification
 
 ### User Authentication System
+
 [ASSUMES: JWT tokens with 1-hour expiry unless specified otherwise]
 [ASSUMES: bcrypt for password hashing, cost factor 12]
 [ASSUMES: Refresh tokens stored in secure httpOnly cookies]
 
 **Clarified Requirements:**
+
 1. ✅ Password reset via email (user confirmed: YES)
 2. ✅ Role-based access control (user confirmed: YES - Admin, User, Guest)
 3. ✅ Single sign-on (user confirmed: NO - not required for MVP)
 
 ### Database Design
+
 [ASSUMES: PostgreSQL based on existing project stack]
 [ASSUMES: Connection pooling (min: 2, max: 10 connections)]
 [ASSUMES: Migrations via existing Alembic setup]
 
 ### API Design
+
 [ASSUMES: REST API following existing /api/v1/ pattern]
 [ASSUMES: JSON request/response format]
 [ASSUMES: Standard error responses with `{error, message, details}` structure]
 
-**Clarified Requirements:**
-4. ✅ Offline mode support (user confirmed: NO - web-only for MVP)
-5. ✅ Expected user load (user confirmed: ~1000 concurrent users)
+**Clarified Requirements:** 4. ✅ Offline mode support (user confirmed: NO - web-only for MVP) 5. ✅ Expected user load (user confirmed: ~1000 concurrent users)
 ```
 
 ### Step 5: Record in Memory
@@ -331,40 +359,49 @@ EOF
 # [Feature Name] Specification
 
 ## Overview
+
 [Brief description based on user input]
 
 ## Clarified Requirements
 
 ### Critical Questions (MUST ASK)
+
 1. ✅ [Question] → [Answer from user]
 2. ✅ [Question] → [Answer from user]
 3. ✅ [Question] → [Answer from user]
 
 ### High Priority (Asked if budget)
+
 4. ✅ [Question] → [Answer from user]
 5. ✅ [Question] → [Answer from user]
 
 ## Smart Defaults Applied
 
 ### Authentication
+
 [ASSUMES: JWT tokens with 1-hour expiry]
 [ASSUMES: bcrypt for password hashing, cost factor 12]
 
 ### Database
+
 [ASSUMES: PostgreSQL based on existing project stack]
 
 ### API Design
+
 [ASSUMES: REST API following existing /api/v1/ pattern]
 
 ### Testing
+
 [ASSUMES: pytest based on existing test suite]
 [ASSUMES: 80%+ unit test coverage target]
 
 ### Performance
+
 [ASSUMES: < 200ms API response time (p95)]
 [ASSUMES: < 3s page load time]
 
 ### Error Handling
+
 [ASSUMES: User-friendly 4xx messages, detailed 5xx logging]
 
 ## Implementation Notes
@@ -388,8 +425,8 @@ await Skill({
   skill: 'progressive-disclosure',
   context: {
     requirements,
-    projectRoot: process.env.PROJECT_ROOT
-  }
+    projectRoot: process.env.PROJECT_ROOT,
+  },
 });
 
 // Step 3: Progressive disclosure returns specification with assumptions
@@ -403,17 +440,17 @@ Skill supports configuration via environment or inline args:
 ```javascript
 // Default configuration
 const config = {
-  clarificationLimit: 5,        // Max questions to ask
-  defaultMode: 'infer',         // 'infer' or 'ask'
+  clarificationLimit: 5, // Max questions to ask
+  defaultMode: 'infer', // 'infer' or 'ask'
   assumeNotation: '[ASSUMES: X]', // How to mark assumptions
-  groupQuestions: true,         // Batch related questions
-  inferFromProject: true        // Use project context for defaults
+  groupQuestions: true, // Batch related questions
+  inferFromProject: true, // Use project context for defaults
 };
 
 // Override for stricter clarification
 Skill({
   skill: 'progressive-disclosure',
-  args: '--limit 3 --mode ask'
+  args: '--limit 3 --mode ask',
 });
 ```
 
@@ -422,6 +459,7 @@ Skill({
 ### Example 1: Authentication Feature
 
 **User Input:**
+
 ```
 Add user authentication to the app
 ```
@@ -445,21 +483,25 @@ Add user authentication to the app
 ## Smart Defaults Applied
 
 ### Authentication Strategy
+
 [ASSUMES: JWT tokens with 1-hour expiry]
 [ASSUMES: Refresh tokens with 7-day expiry, stored in httpOnly cookies]
 [ASSUMES: bcrypt for password hashing, cost factor 12]
 
 ### Session Management
+
 [ASSUMES: Stateless JWT-based sessions]
 [ASSUMES: Refresh token rotation on use]
 [ASSUMES: Automatic logout after 7 days of inactivity]
 
 ### Password Requirements
+
 [ASSUMES: Minimum 8 characters]
 [ASSUMES: At least 1 uppercase, 1 lowercase, 1 number]
 [ASSUMES: Maximum 128 characters]
 
 ### Security
+
 [ASSUMES: Rate limiting: 5 failed login attempts = 15-minute lockout]
 [ASSUMES: HTTPS required for all authentication endpoints]
 [ASSUMES: CORS configured for trusted domains only]
@@ -474,6 +516,7 @@ All assumptions can be overridden during implementation if needed.
 ### Example 2: API Endpoint Design
 
 **User Input:**
+
 ```
 Create an API endpoint to fetch user profile data
 ```
@@ -494,25 +537,30 @@ Create an API endpoint to fetch user profile data
 ## Smart Defaults Applied
 
 ### Endpoint Design
+
 [ASSUMES: GET /api/v1/users/{id}/profile following existing pattern]
 [ASSUMES: JSON response format]
 [ASSUMES: HTTP 200 for success, 404 for not found, 401 for unauthorized]
 
 ### Response Format
+
 [ASSUMES: Standard response envelope: {data, meta, error}]
 [ASSUMES: Timestamps in ISO 8601 format]
 
 ### Performance
+
 [ASSUMES: Response time < 200ms (p95)]
 [ASSUMES: Cache profile data for 5 minutes]
 [ASSUMES: Database query optimization with indexed fields]
 
 ### Error Handling
+
 [ASSUMES: 401 if token invalid/expired with {error: "Unauthorized", message: "Token expired"}]
 [ASSUMES: 404 if user not found with {error: "NotFound", message: "User not found"}]
 [ASSUMES: 500 for server errors with generic message (detailed logs only)]
 
 ### Testing
+
 [ASSUMES: Unit tests for profile service]
 [ASSUMES: Integration test for API endpoint]
 [ASSUMES: Test coverage for auth scenarios (valid token, invalid token, missing token)]
@@ -527,6 +575,7 @@ Budget remaining: 3 questions
 ## Best Practices
 
 ### DO:
+
 1. ✅ Always start with project context inference
 2. ✅ Group related questions together
 3. ✅ Document ALL assumptions with [ASSUMES]
@@ -535,6 +584,7 @@ Budget remaining: 3 questions
 6. ✅ Allow user to override any assumption
 
 ### DON'T:
+
 1. ❌ Don't ask cosmetic questions (colors, icons)
 2. ❌ Don't ask questions answerable from project context
 3. ❌ Don't exceed clarification limit without reason
@@ -545,11 +595,13 @@ Budget remaining: 3 questions
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`
