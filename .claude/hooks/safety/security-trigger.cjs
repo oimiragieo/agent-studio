@@ -128,19 +128,41 @@ const SECURITY_DIRECTORIES = [
 ];
 
 /**
- * Content patterns that indicate security operations (for future use)
- * Currently not used but documented for reference
+ * Content patterns that indicate security operations
+ * PROC-003: Now actively used in detectSecuritySensitivityWithContent
  */
 const SECURITY_CONTENT_PATTERNS = [
+  // Environment variables
   /process\.env\./,
+
+  // Cryptography
   /crypto\./,
   /bcrypt\./,
+  /createCipher/i,
+  /createHash/i,
+  /randomBytes/i,
+  /pbkdf2/i,
+
+  // JWT operations
   /jwt\.sign/,
   /jwt\.verify/,
-  /createCipher/,
-  /createHash/,
-  /randomBytes/,
-  /pbkdf2/,
+
+  // AWS credentials
+  /AWS_ACCESS_KEY/i,
+  /AWS_SECRET/i,
+
+  // Payment providers
+  /STRIPE_SECRET/i,
+  /STRIPE_KEY/i,
+
+  // AI providers
+  /OPENAI_API_KEY/i,
+  /ANTHROPIC_API_KEY/i,
+
+  // Webhook/callback endpoints (security-sensitive integration points)
+  /\/webhook\//i,
+  /\/callback\//i,
+  /\/notify\//i,
 ];
 
 // =============================================================================
@@ -191,6 +213,31 @@ function detectSecuritySensitivity(filePath) {
     isSensitive: reasons.length > 0,
     reasons,
   };
+}
+
+/**
+ * Check if file path or content matches security-sensitive patterns
+ * PROC-003: Enables content pattern detection
+ *
+ * @param {string} filePath - File path to check
+ * @param {string} content - File content to check (optional)
+ * @returns {Object} Detection result with matched patterns
+ */
+function detectSecuritySensitivityWithContent(filePath, content) {
+  // First check file path patterns
+  const result = detectSecuritySensitivity(filePath);
+
+  // Then check content patterns if content is provided
+  if (content && typeof content === 'string') {
+    for (const pattern of SECURITY_CONTENT_PATTERNS) {
+      if (pattern.test(content)) {
+        result.reasons.push(`Security content pattern detected: ${pattern}`);
+        result.isSensitive = true;
+      }
+    }
+  }
+
+  return result;
 }
 
 /**
@@ -251,8 +298,12 @@ function main() {
       process.exit(0);
     }
 
-    // Detect security sensitivity
-    const detection = detectSecuritySensitivity(filePath);
+    // Get content for content pattern detection
+    // PROC-003: Enable content pattern checking
+    const content = toolInput.content || toolInput.new_string || null;
+
+    // Detect security sensitivity (file path + content patterns)
+    const detection = detectSecuritySensitivityWithContent(filePath, content);
 
     if (detection.isSensitive) {
       // Flag for security review
@@ -291,7 +342,9 @@ main();
 // Export for testing
 module.exports = {
   detectSecuritySensitivity,
+  detectSecuritySensitivityWithContent,
   SECURITY_FILE_PATTERNS,
   SENSITIVE_EXTENSIONS,
   SECURITY_DIRECTORIES,
+  SECURITY_CONTENT_PATTERNS,
 };

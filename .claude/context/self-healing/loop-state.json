@@ -1,30 +1,4 @@
 {
-  "sessionId": "session-1769407178326",
-  "evolutionCount": 0,
-  "lastEvolutions": {},
-  "spawnDepth": 5,
-  "actionHistory": [
-    {
-      "action": "spawn:planner",
-      "count": 1,
-      "lastAt": "2026-01-26T05:59:38.335Z"
-    },
-    {
-      "action": "spawn:architect",
-      "count": 2,
-      "lastAt": "2026-01-26T06:19:37.162Z"
-    },
-    {
-      "action": "spawn:code-reviewer",
-      "count": 2,
-      "lastAt": "2026-01-26T06:12:17.176Z"
-    },
-    {
-      "action": "spawn:developer",
-      "count": 1,
-      "lastAt": "2026-01-26T06:19:37.172Z"
-    }
-  ],
-  "createdAt": "2026-01-26T05:59:38.326Z",
-  "updatedAt": "2026-01-26T06:19:37.173Z"
+  "spawnDepth": 10,
+  "actionHistory": []
 }

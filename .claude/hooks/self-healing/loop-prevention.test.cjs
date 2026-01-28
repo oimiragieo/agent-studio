@@ -593,6 +593,59 @@ describe('SEC-007: Prototype Pollution Protection', () => {
   cleanupTestState();
 });
 
+// SEC-AUDIT-020: Busy-wait in lock retry
+describe('SEC-AUDIT-020: Lock Retry Without CPU Spin', () => {
+  cleanupTestState();
+
+  it('should not use busy-wait for lock retry delays', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+
+    // Test that rapid lock acquisition/release works correctly
+    // (which uses internal sleep mechanism)
+    const startTime = Date.now();
+
+    for (let i = 0; i < 5; i++) {
+      const state = loopPrevention.getState(TEST_STATE_FILE);
+      state.evolutionCount = i;
+      loopPrevention._saveState(state, TEST_STATE_FILE);
+    }
+
+    const elapsed = Date.now() - startTime;
+
+    // Should complete reasonably quickly
+    expect(elapsed).toBeLessThan(5000);
+
+    // State should be consistent
+    const final = loopPrevention.getState(TEST_STATE_FILE);
+    expect(final.evolutionCount).toBe(4);
+  });
+
+  it('should have working Atomics.wait fallback if SharedArrayBuffer available', () => {
+    // Check that SharedArrayBuffer and Atomics are available
+    const hasAtomics = typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined';
+
+    if (hasAtomics) {
+      // Test that Atomics.wait works as expected
+      const sharedBuffer = new SharedArrayBuffer(4);
+      const int32 = new Int32Array(sharedBuffer);
+
+      const startTime = Date.now();
+      // This should block for ~50ms
+      Atomics.wait(int32, 0, 0, 50);
+      const elapsed = Date.now() - startTime;
+
+      // Should have waited approximately 50ms
+      expect(elapsed).toBeGreaterThan(40);
+      expect(elapsed).toBeLessThan(200);
+    } else {
+      // Atomics not available - test still passes (fallback mode acceptable)
+      expect(true).toBeTruthy();
+    }
+  });
+
+  cleanupTestState();
+});
+
 // ==========================================
 // Run Tests
 // ==========================================

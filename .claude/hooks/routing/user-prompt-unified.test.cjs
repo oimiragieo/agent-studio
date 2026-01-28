@@ -458,6 +458,172 @@ describe('backward compatibility', () => {
 });
 
 // =============================================================================
+// Test: ROUTING-003 FIX - Session Boundary Detection
+// =============================================================================
+
+describe('ROUTING-003: Session Boundary Detection', () => {
+  it('should reset state when session ID changes (stale state from previous session)', () => {
+    const unified = require('./user-prompt-unified.cjs');
+    const routerState = require('./router-state.cjs');
+
+    // Step 1: Simulate state from PREVIOUS session
+    // This mimics what happens when state file persists between sessions
+    routerState.enterAgentMode('Task from previous session');
+    routerState.invalidateStateCache();
+
+    // Manually set a different session ID in the state file
+    const stateFile = routerState.STATE_FILE;
+    const state = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+    state.sessionId = 'old-session-12345';
+    fs.writeFileSync(stateFile, JSON.stringify(state, null, 2));
+    routerState.invalidateStateCache();
+
+    // Step 2: Simulate NEW session with different session ID
+    const originalSessionId = process.env.CLAUDE_SESSION_ID;
+    process.env.CLAUDE_SESSION_ID = 'new-session-67890';
+
+    try {
+      // Step 3: New user prompt arrives
+      const hookInput = { prompt: 'Use Glob to list all TypeScript files' };
+      const result = unified.checkRouterModeReset(hookInput);
+
+      // ROUTING-003 FIX: Should detect session boundary and reset
+      assert.strictEqual(
+        result.stateReset,
+        true,
+        'ROUTING-003: Should reset state when session ID changes'
+      );
+      assert.strictEqual(
+        result.sessionBoundaryDetected,
+        true,
+        'ROUTING-003: Should detect session boundary'
+      );
+
+      // Verify state is reset to router mode
+      routerState.invalidateStateCache();
+      const newState = routerState.getState();
+      assert.strictEqual(
+        newState.mode,
+        'router',
+        'ROUTING-003: Mode should be router after session boundary reset'
+      );
+      assert.strictEqual(
+        newState.taskSpawned,
+        false,
+        'ROUTING-003: taskSpawned should be false after session boundary reset'
+      );
+      assert.strictEqual(
+        newState.sessionId,
+        'new-session-67890',
+        'ROUTING-003: sessionId should be updated to new session'
+      );
+    } finally {
+      // Restore original session ID
+      if (originalSessionId !== undefined) {
+        process.env.CLAUDE_SESSION_ID = originalSessionId;
+      } else {
+        delete process.env.CLAUDE_SESSION_ID;
+      }
+    }
+  });
+
+  it('should reset state when previous sessionId is null and current is set', () => {
+    const unified = require('./user-prompt-unified.cjs');
+    const routerState = require('./router-state.cjs');
+
+    // Step 1: Simulate state with null sessionId (common case)
+    routerState.enterAgentMode('Task with null sessionId');
+    routerState.invalidateStateCache();
+
+    // Set sessionId to null explicitly
+    const stateFile = routerState.STATE_FILE;
+    const state = JSON.parse(fs.readFileSync(stateFile, 'utf-8'));
+    state.sessionId = null;
+    fs.writeFileSync(stateFile, JSON.stringify(state, null, 2));
+    routerState.invalidateStateCache();
+
+    // Step 2: New session with actual session ID
+    const originalSessionId = process.env.CLAUDE_SESSION_ID;
+    process.env.CLAUDE_SESSION_ID = 'new-session-with-id';
+
+    try {
+      // Step 3: New user prompt arrives
+      const hookInput = { prompt: 'Fix the login bug' };
+      const result = unified.checkRouterModeReset(hookInput);
+
+      // Should detect session boundary (null -> defined)
+      assert.strictEqual(
+        result.stateReset,
+        true,
+        'ROUTING-003: Should reset when sessionId changes from null to defined'
+      );
+
+      // Verify new sessionId is saved
+      routerState.invalidateStateCache();
+      const newState = routerState.getState();
+      assert.strictEqual(
+        newState.sessionId,
+        'new-session-with-id',
+        'ROUTING-003: sessionId should be updated'
+      );
+    } finally {
+      if (originalSessionId !== undefined) {
+        process.env.CLAUDE_SESSION_ID = originalSessionId;
+      } else {
+        delete process.env.CLAUDE_SESSION_ID;
+      }
+    }
+  });
+
+  it('should NOT flag session boundary when sessionId matches', () => {
+    const unified = require('./user-prompt-unified.cjs');
+    const routerState = require('./router-state.cjs');
+
+    // Set up state with matching session ID
+    const sessionId = 'same-session-12345';
+    const originalSessionId = process.env.CLAUDE_SESSION_ID;
+    process.env.CLAUDE_SESSION_ID = sessionId;
+
+    try {
+      // Reset to router mode which sets the current session ID
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+
+      // Enter agent mode (within same session)
+      routerState.enterAgentMode('Active task in current session');
+      routerState.invalidateStateCache();
+
+      // New prompt in SAME session
+      const hookInput = { prompt: 'Continue working on the task' };
+      const result = unified.checkRouterModeReset(hookInput);
+
+      // Should still reset to router mode (ROUTING-002 behavior)
+      // but should NOT detect session boundary
+      assert.strictEqual(
+        result.stateReset,
+        true,
+        'Should still reset to router mode per ROUTING-002'
+      );
+
+      // Session boundary should NOT be detected when sessions match
+      // (sessionBoundaryDetected might not exist or should be false)
+      const sessionBoundaryDetected = result.sessionBoundaryDetected || false;
+      assert.strictEqual(
+        sessionBoundaryDetected,
+        false,
+        'Should NOT detect session boundary when session ID matches'
+      );
+    } finally {
+      if (originalSessionId !== undefined) {
+        process.env.CLAUDE_SESSION_ID = originalSessionId;
+      } else {
+        delete process.env.CLAUDE_SESSION_ID;
+      }
+    }
+  });
+});
+
+// =============================================================================
 // Test: Performance - Shared state caching
 // =============================================================================
 

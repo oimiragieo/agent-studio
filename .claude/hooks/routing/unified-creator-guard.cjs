@@ -39,6 +39,8 @@ const {
   formatResult,
   auditLog,
 } = require('../../lib/utils/hook-input.cjs');
+// MED-001 FIX: Use shared PROJECT_ROOT utility instead of duplicating
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
 // =============================================================================
 // CONFIGURATION
@@ -115,27 +117,6 @@ const DEFAULT_TTL_MS = 10 * 60 * 1000;
  * Tools that this hook monitors
  */
 const WATCHED_TOOLS = ['Edit', 'Write'];
-
-// =============================================================================
-// PROJECT ROOT DETECTION
-// =============================================================================
-
-/**
- * Find project root by looking for .claude/CLAUDE.md
- * @returns {string} Project root path
- */
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
 
 // =============================================================================
 // CORE FUNCTIONS

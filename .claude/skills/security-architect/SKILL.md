@@ -213,6 +213,25 @@ Review the authentication flow in src/auth/ for security issues
 
 - [`auth-security-expert`](../auth-security-expert/SKILL.md) - OAuth 2.1, JWT, and authentication-specific security patterns
 
+## Related Workflow
+
+For comprehensive security audits requiring multi-phase threat analysis, vulnerability scanning, and remediation planning, see the corresponding workflow:
+
+- **Workflow File**: `.claude/workflows/security-architect-skill-workflow.md`
+- **When to Use**: For structured security audits requiring OWASP Top 10 analysis, dependency CVE checks, penetration testing, and remediation planning
+- **Phases**: 5 phases (Threat Modeling, Security Code Review, Dependency Audit, Penetration Testing, Remediation Planning)
+- **Coverage**: Full OWASP Top 10, STRIDE threat modeling, CVE database checks, automated and manual penetration testing
+
+**Key Features:**
+
+- Multi-agent orchestration (security-architect, code-reviewer, developer, devops)
+- Security gates for pre-release blocking
+- Severity classification (CRITICAL/HIGH/MEDIUM/LOW)
+- Automated ticket generation
+- Compliance-ready reporting (SOC2, GDPR, HIPAA)
+
+See also: [Feature Development Workflow](../../workflows/enterprise/feature-development-workflow.md) for integrating security reviews into the development lifecycle.
+
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**

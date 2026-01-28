@@ -530,6 +530,24 @@ This skill is automatically assigned to:
 - **devops-troubleshooter** - Production debugging, monitoring
 - **researcher** - Web scraping, data extraction
 
+## Related Workflow
+
+For guidance on using this skill effectively, see the corresponding workflow:
+
+- **Workflow File**: `.claude/workflows/chrome-browser-skill-workflow.md`
+- **When to Use**: When you need browser automation for testing, debugging, authenticated workflows, or demo recording
+- **Integration Methods**:
+  - Slash command invocation (`/chrome-browser`)
+  - Agent skill assignment (via frontmatter)
+  - Direct script execution
+
+**Two Integration Options:**
+
+- **Chrome DevTools MCP** (always available) - For public site testing, performance analysis, debugging
+- **Claude-in-Chrome** (requires `--chrome` flag) - For authenticated app workflows, GIF recording
+
+The workflow provides examples for invocation methods, agent assignment, and memory integration patterns.
+
 ## Troubleshooting
 
 ### Claude-in-Chrome "Browser extension is not connected"

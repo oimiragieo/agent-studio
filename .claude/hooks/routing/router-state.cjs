@@ -240,12 +240,30 @@ function loadStateFromFile() {
 
 /**
  * Synchronous sleep for exponential backoff
+ *
+ * SEC-AUDIT-020 FIX: Uses Atomics.wait() when available to properly block
+ * the thread without CPU spin. Falls back to busy-wait on older Node.js.
+ *
  * @param {number} ms - Milliseconds to sleep
  */
 function syncSleep(ms) {
+  // Use Atomics.wait for proper blocking (Node.js v16+)
+  if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+    try {
+      // Create a shared buffer that will never be signaled (timeout-only)
+      const sharedBuffer = new SharedArrayBuffer(4);
+      const int32 = new Int32Array(sharedBuffer);
+      // Atomics.wait blocks the thread without CPU spin
+      Atomics.wait(int32, 0, 0, ms);
+      return;
+    } catch (e) {
+      // Fall through to busy-wait if Atomics.wait fails
+    }
+  }
+  // Fallback to busy-wait for older Node.js versions
   const start = Date.now();
   while (Date.now() - start < ms) {
-    // Busy wait - required for synchronous operation
+    // Busy wait - only used when Atomics.wait unavailable
   }
 }
 

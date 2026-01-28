@@ -324,6 +324,41 @@ function shouldScanFile(filePath) {
 }
 
 /**
+ * Check if file should be skipped (test fixtures)
+ * @param {string} filePath - File path
+ * @param {string} content - File content
+ * @returns {boolean} Whether to skip scanning
+ */
+function shouldSkipScanning(filePath, content) {
+  // Skip if file has security-lint-ignore directive
+  if (
+    content.startsWith('// security-lint-ignore') ||
+    content.startsWith('/* security-lint-ignore') ||
+    content.startsWith('# security-lint-ignore')
+  ) {
+    return true;
+  }
+
+  const fileName = path.basename(filePath);
+
+  // Skip security-lint.cjs itself (contains security patterns as rule definitions)
+  if (fileName === 'security-lint.cjs' && content.includes('SECURITY_RULES')) {
+    return true;
+  }
+
+  // Skip test files that are testing security patterns
+  // These files intentionally contain security issues as test data
+  if (
+    fileName.includes('.test.') &&
+    (content.includes('security-lint') || content.includes('SECURITY_RULES'))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Scan a single file for security issues
  * @param {string} filePath - File path
  * @returns {Object[]} Array of findings
@@ -336,6 +371,11 @@ function scanFile(filePath) {
   try {
     content = fs.readFileSync(filePath, 'utf8');
   } catch (err) {
+    return findings;
+  }
+
+  // Check if file should be skipped
+  if (shouldSkipScanning(filePath, content)) {
     return findings;
   }
 
@@ -510,13 +550,16 @@ Examples:
   process.exit(hasCriticalOrHigh ? 1 : 0);
 }
 
-// Run main
-main();
-
 // Export for testing
 module.exports = {
   SECURITY_RULES,
   scanFile,
   shouldScanFile,
+  shouldSkipScanning,
   CONFIG,
 };
+
+// Run main only if executed directly (not when required as module)
+if (require.main === module) {
+  main();
+}

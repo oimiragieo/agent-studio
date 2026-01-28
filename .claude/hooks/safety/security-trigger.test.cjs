@@ -818,6 +818,174 @@ test('SECURITY_DIRECTORIES includes hooks directory', () => {
 });
 
 // ============================================================
+// PROC-003: Content Pattern Detection Tests
+// ============================================================
+
+console.log('\n--- PROC-003: Content Pattern Detection ---');
+
+// Note: detectSecuritySensitivity currently only checks file paths.
+// These tests verify content pattern detection once enabled.
+
+test('exports SECURITY_CONTENT_PATTERNS array', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  assertTrue(Array.isArray(SECURITY_CONTENT_PATTERNS), 'Should export array');
+  assertGreaterThan(SECURITY_CONTENT_PATTERNS.length, 0, 'Should have patterns');
+});
+
+// Tests for content pattern checking (requires detectSecuritySensitivityWithContent function)
+// These tests will FAIL until content pattern checking is implemented
+
+test('detects AWS_ACCESS_KEY in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  if (!detectSecuritySensitivityWithContent) {
+    throw new Error('detectSecuritySensitivityWithContent not exported');
+  }
+  const result = detectSecuritySensitivityWithContent('config.js', 'const key = AWS_ACCESS_KEY_ID');
+  assertTrue(result.isSensitive, 'Should detect AWS_ACCESS_KEY');
+});
+
+test('detects AWS_SECRET in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'config.js',
+    'const secret = AWS_SECRET_ACCESS_KEY'
+  );
+  assertTrue(result.isSensitive, 'Should detect AWS_SECRET');
+});
+
+test('detects STRIPE_SECRET in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'payment.js',
+    'const stripe = STRIPE_SECRET_KEY'
+  );
+  assertTrue(result.isSensitive, 'Should detect STRIPE_SECRET');
+});
+
+test('detects OPENAI_API_KEY in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('ai.js', 'process.env.OPENAI_API_KEY');
+  assertTrue(result.isSensitive, 'Should detect OPENAI_API_KEY');
+});
+
+test('detects ANTHROPIC_API_KEY in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('claude.js', 'ANTHROPIC_API_KEY = "sk-"');
+  assertTrue(result.isSensitive, 'Should detect ANTHROPIC_API_KEY');
+});
+
+test('detects /webhook/ endpoint in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('routes.js', 'app.post("/webhook/stripe")');
+  assertTrue(result.isSensitive, 'Should detect /webhook/ endpoint');
+});
+
+test('detects /callback/ endpoint in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('auth.js', 'router.get("/callback/oauth")');
+  assertTrue(result.isSensitive, 'Should detect /callback/ endpoint');
+});
+
+test('detects /notify/ endpoint in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('api.js', 'fetch("/notify/user")');
+  assertTrue(result.isSensitive, 'Should detect /notify/ endpoint');
+});
+
+test('detects process.env. in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'config.js',
+    'const dbUrl = process.env.DATABASE_URL'
+  );
+  assertTrue(result.isSensitive, 'Should detect process.env.');
+});
+
+test('detects jwt.sign in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'auth.js',
+    'const token = jwt.sign(payload, secret)'
+  );
+  assertTrue(result.isSensitive, 'Should detect jwt.sign');
+});
+
+test('detects jwt.verify in content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'middleware.js',
+    'const decoded = jwt.verify(token, secret)'
+  );
+  assertTrue(result.isSensitive, 'Should detect jwt.verify');
+});
+
+test('does not detect safe content', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent(
+    'util.js',
+    'function formatDate(date) { return date.toISOString(); }'
+  );
+  assertFalse(result.isSensitive, 'Should not detect safe content');
+});
+
+test('content check combines with file path check', () => {
+  const { detectSecuritySensitivityWithContent } = require('./security-trigger.cjs');
+  const result = detectSecuritySensitivityWithContent('auth.js', 'const key = AWS_ACCESS_KEY_ID');
+  assertTrue(result.isSensitive, 'Should detect both file and content');
+  assertGreaterThan(result.reasons.length, 1, 'Should have multiple reasons');
+});
+
+// ============================================================
+// PROC-003: New Pattern Coverage Tests
+// ============================================================
+
+console.log('\n--- PROC-003: New Pattern Coverage ---');
+
+test('SECURITY_CONTENT_PATTERNS includes AWS patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasAWS = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('AWS'));
+  assertTrue(hasAWS, 'Should have AWS patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes STRIPE patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasStripe = SECURITY_CONTENT_PATTERNS.some(p =>
+    p.toString().toLowerCase().includes('stripe')
+  );
+  assertTrue(hasStripe, 'Should have STRIPE patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes OPENAI patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasOpenAI = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('OPENAI'));
+  assertTrue(hasOpenAI, 'Should have OPENAI patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes ANTHROPIC patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasAnthropic = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('ANTHROPIC'));
+  assertTrue(hasAnthropic, 'Should have ANTHROPIC patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes webhook patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasWebhook = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('webhook'));
+  assertTrue(hasWebhook, 'Should have webhook patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes callback patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasCallback = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('callback'));
+  assertTrue(hasCallback, 'Should have callback patterns');
+});
+
+test('SECURITY_CONTENT_PATTERNS includes notify patterns', () => {
+  const { SECURITY_CONTENT_PATTERNS } = require('./security-trigger.cjs');
+  const hasNotify = SECURITY_CONTENT_PATTERNS.some(p => p.toString().includes('notify'));
+  assertTrue(hasNotify, 'Should have notify patterns');
+});
+
+// ============================================================
 // Print Test Summary
 // ============================================================
 

@@ -6268,3 +6268,1403 @@ When testing MCP tools:
 ## [2026-01-27] MCP Auto-Registration Pattern Established
 
 ### Issue: MCP Skills Created Without Server Registration
+
+## [2026-01-28] PROC-009: Pre-Commit Security Hooks Implemented
+
+### Summary
+
+Created a pre-commit git hook that runs security-lint.cjs on staged files to prevent security issues from being committed.
+
+### Implementation
+
+1. **Pre-commit hook** (`.git/hooks/pre-commit`):
+   - Runs security-lint.cjs with `--staged` flag
+   - Blocks commit if critical/high severity issues found
+   - Can be bypassed with `git commit --no-verify`
+
+2. **Enhanced security-lint.cjs**:
+   - Fixed `require.main === module` pattern to prevent execution when required as module
+   - Added `shouldSkipScanning()` to skip:
+     - Files with `// security-lint-ignore` directive at top
+     - Test files that test security-lint itself
+     - security-lint.cjs itself (contains patterns as rule definitions)
+   - Exported `shouldSkipScanning` for testing
+
+3. **Tests added**:
+   - `security-lint.test.cjs`: 20 tests for security rules and skip functionality
+   - `pre-commit-security.test.cjs`: 7 tests for hook integration
+
+### Key Patterns
+
+**Skip security linting for test fixtures:**
+
+```javascript
+function shouldSkipScanning(filePath, content) {
+  // Skip with directive
+  if (content.startsWith('// security-lint-ignore')) return true;
+
+  // Skip security-lint test files
+  const fileName = path.basename(filePath);
+  if (fileName.includes('.test.') && content.includes('SECURITY_RULES')) return true;
+
+  return false;
+}
+```
+
+**Module-safe execution:**
+
+```javascript
+// Only run when executed directly
+if (require.main === module) {
+  main();
+}
+```
+
+### Files Created/Modified
+
+- `.git/hooks/pre-commit` (new)
+- `.claude/tools/cli/security-lint.cjs` (modified)
+- `.claude/tools/cli/security-lint.test.cjs` (new)
+- `.claude/tools/cli/pre-commit-security.test.cjs` (new)
+
+### Security Rules Coverage
+
+The security-lint.cjs now includes 16 rules across categories:
+
+- SEC-001 to SEC-005: Secrets & Credentials
+- SEC-010 to SEC-013: Injection Vulnerabilities
+- SEC-020 to SEC-023: Insecure Patterns
+- SEC-030 to SEC-031: Debug/Development Code
+- SEC-040: File System
+- SEC-050: Prototype Pollution
+
+---
+
+## [2026-01-28] SEC-AUDIT-020 Fixed: Replaced Busy-Wait Loops with Atomics.wait
+
+### Summary
+
+Fixed CPU-consuming busy-wait loops in two hook files by replacing them with `Atomics.wait()` which properly blocks the thread without spinning the CPU.
+
+### Root Cause
+
+Two files had synchronous busy-wait loops that consumed CPU:
+
+1. **router-state.cjs** (line 247): `syncSleep()` function used a `while` loop for exponential backoff delays
+2. **loop-prevention.cjs** (lines 219-222): Lock retry mechanism used a `while` loop while waiting for lock
+
+### Solution
+
+Replaced busy-wait with `Atomics.wait()` pattern:
+
+```javascript
+function syncSleep(ms) {
+  // Use Atomics.wait for proper blocking (Node.js v16+)
+  if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+    try {
+      const sharedBuffer = new SharedArrayBuffer(4);
+      const int32 = new Int32Array(sharedBuffer);
+      Atomics.wait(int32, 0, 0, ms);
+      return;
+    } catch (e) {
+      // Fall through to busy-wait if Atomics.wait fails
+    }
+  }
+  // Fallback to busy-wait for older Node.js versions
+  const start = Date.now();
+  while (Date.now() - start < ms) {}
+}
+```
+
+### Why This Works
+
+- `Atomics.wait()` is a true synchronous blocking primitive in Node.js
+- Creates a SharedArrayBuffer that will never be signaled (timeout-only)
+- Thread blocks without consuming CPU cycles
+- Falls back to busy-wait only on Node.js < 16 where Atomics may not be available
+
+### Tests Added
+
+- router-state.test.cjs: Tests 19-20 for syncSleep functionality
+- loop-prevention.test.cjs: SEC-AUDIT-020 test section (2 tests)
+
+### Files Modified
+
+1. `C:\dev\projects\agent-studio\.claude\hooks\routing\router-state.cjs` - Updated syncSleep function
+2. `C:\dev\projects\agent-studio\.claude\hooks\self-healing\loop-prevention.cjs` - Added syncSleepInternal helper, updated lock retry
+
+### Test Results
+
+- router-state.test.cjs: 87 tests pass
+- loop-prevention.test.cjs: 41 tests pass
+
+### Key Learning
+
+The comment "Node.js doesn't have sleep" was incorrect. While there's no built-in `sleep()` function:
+
+- `setTimeout` exists but requires async
+- `Atomics.wait()` provides true synchronous blocking since Node.js v9.4.0
+- SharedArrayBuffer + Atomics.wait is the correct pattern for sync sleep without CPU spin
+
+---
+
+## [2026-01-28] MED-001 Fixed: Use Shared PROJECT_ROOT Utility
+
+### Summary
+
+Fixed code deduplication issue MED-001 where `unified-creator-guard.cjs` implemented its own `findProjectRoot()` function instead of using the shared utility at `.claude/lib/utils/project-root.cjs`.
+
+### Changes
+
+**File**: `.claude/hooks/routing/unified-creator-guard.cjs`
+
+1. Added import for shared utility:
+
+   ```javascript
+   const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+   ```
+
+2. Removed duplicated function (lines 127-136):
+
+   ```javascript
+   // REMOVED:
+   function findProjectRoot() { ... }
+   const PROJECT_ROOT = findProjectRoot();
+   ```
+
+3. Added 2 new tests to verify shared utility usage.
+
+### Impact
+
+- Lines of code removed: 14 (function + assignment)
+- Lines of code added: 1 (import statement)
+- Net reduction: 13 lines
+- Benefits: Single source of truth for project root detection
+
+### TDD Verification
+
+All 38 unified-creator-guard tests pass.
+
+---
+
+## [2026-01-28] PROC-003 Fixed: Security Content Patterns Enabled in security-trigger.cjs
+
+### Summary
+
+Enabled security content pattern detection in `security-trigger.cjs` hook. The `SECURITY_CONTENT_PATTERNS` array was defined but NOT used - now actively checks file content for security-sensitive patterns.
+
+### Changes Made
+
+1. **Added new patterns to SECURITY_CONTENT_PATTERNS**:
+   - AWS credentials: `AWS_ACCESS_KEY`, `AWS_SECRET`
+   - Payment providers: `STRIPE_SECRET`, `STRIPE_KEY`
+   - AI providers: `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+   - Webhook endpoints: `/webhook/`, `/callback/`, `/notify/`
+
+2. **Created `detectSecuritySensitivityWithContent` function**:
+   - Combines file path detection with content pattern detection
+   - Returns unified result with reasons from both sources
+
+3. **Updated main hook to use content detection**:
+   - Extracts content from `toolInput.content` or `toolInput.new_string`
+   - Calls `detectSecuritySensitivityWithContent` instead of `detectSecuritySensitivity`
+
+4. **Exported new function and patterns**:
+   - `detectSecuritySensitivityWithContent`
+   - `SECURITY_CONTENT_PATTERNS`
+
+### Tests Added
+
+21 new tests for content pattern detection:
+
+- AWS_ACCESS_KEY, AWS_SECRET detection
+- STRIPE_SECRET detection
+- OPENAI_API_KEY, ANTHROPIC_API_KEY detection
+- /webhook/, /callback/, /notify/ endpoint detection
+- process.env., jwt.sign, jwt.verify detection
+- Combined file path + content detection
+- Pattern coverage verification
+
+### Files Modified
+
+- `C:\dev\projects\agent-studio\.claude\hooks\safety\security-trigger.cjs`
+- `C:\dev\projects\agent-studio\.claude\hooks\safety\security-trigger.test.cjs`
+
+### Test Results
+
+141 tests pass (120 existing + 21 new)
+
+---
+
+## [2026-01-28] ROUTING-003 Fixed: Session Boundary Detection Implemented
+
+### Summary
+
+Implemented ROUTING-003 fix to detect session boundaries and prevent stale state from previous sessions from leaking into new sessions. The fix adds session ID comparison to the `checkRouterModeReset()` function in `user-prompt-unified.cjs`.
+
+### Root Cause
+
+The `router-state.json` file persists across sessions with `sessionId` captured but never compared:
+
+```javascript
+// Current: sessionId captured but unused
+sessionId: process.env.CLAUDE_SESSION_ID || null;
+```
+
+When a new session starts:
+
+1. Previous session's state file exists with `mode: "agent", taskSpawned: true`
+2. New session loads this stale state
+3. No comparison detects the session boundary
+4. Stale agent state affects routing decisions
+
+### Fix Applied
+
+Added session boundary detection in `checkRouterModeReset()`:
+
+```javascript
+// ROUTING-003 FIX: Detect session boundary before any state checks
+const currentSessionId = process.env.CLAUDE_SESSION_ID || null;
+const currentState = routerState.getState();
+
+// Check if session has changed
+const stateSessionId = currentState.sessionId;
+const sessionChanged =
+  (stateSessionId !== null && stateSessionId !== currentSessionId) ||
+  (stateSessionId === null && currentSessionId !== null);
+
+if (sessionChanged) {
+  result.sessionBoundaryDetected = true;
+}
+
+// After reset, update sessionId in state
+if (currentSessionId !== null) {
+  routerState.saveStateWithRetry({ sessionId: currentSessionId });
+}
+```
+
+### Tests Added (TDD)
+
+3 new tests in `user-prompt-unified.test.cjs`:
+
+1. `should reset state when session ID changes (stale state from previous session)`
+2. `should reset state when previous sessionId is null and current is set`
+3. `should NOT flag session boundary when sessionId matches`
+
+### Test Results
+
+- `user-prompt-unified.test.cjs`: 28 tests pass (3 new)
+- `router-state.test.cjs`: 87 tests pass
+- `routing-guard.test.cjs`: 76 tests pass
+
+### Key Lesson
+
+**Session boundaries require explicit detection.** File-based state persistence across sessions needs:
+
+- Session ID comparison (not just capture)
+- Explicit session ID update after reset
+- Return value indicating session boundary was detected
+
+### Files Modified
+
+1. `.claude/hooks/routing/user-prompt-unified.cjs` - Added session boundary detection
+2. `.claude/hooks/routing/user-prompt-unified.test.cjs` - Added 3 ROUTING-003 tests
+
+### Related Issues
+
+- ROUTING-002: State reset on new user prompts (already fixed)
+- ROUTING-003: Session boundary detection (this fix)
+
+---
+
+## [2026-01-28] DOC-001 Fixed: Workflow Cross-References Added to Skills
+
+### Summary
+
+Completed DOC-001 fix by adding "Related Workflow" sections to skills that have corresponding workflow files. This improves discoverability and ensures bidirectional cross-references between skills and workflows.
+
+### Files Modified
+
+1. `.claude/skills/security-architect/SKILL.md` - Added comprehensive workflow reference
+2. `.claude/skills/chrome-browser/SKILL.md` - Added workflow reference with integration methods
+3. `.claude/workflows/security-architect-skill-workflow.md` - Added bidirectional skill reference
+
+### Changes Detail
+
+**security-architect/SKILL.md:**
+
+- Added "Related Workflow" section after "Related Skills"
+- Referenced `.claude/workflows/security-architect-skill-workflow.md`
+- Documented 5-phase workflow structure (Threat Modeling → Code Review → Dependency Audit → Penetration Testing → Remediation Planning)
+- Listed key features: multi-agent orchestration, security gates, severity classification, automated ticketing, compliance reporting
+- Cross-referenced Feature Development Workflow for integration patterns
+
+**chrome-browser/SKILL.md:**
+
+- Added "Related Workflow" section after "Agent Integration"
+- Referenced `.claude/workflows/chrome-browser-skill-workflow.md`
+- Documented integration methods (slash command, agent assignment, direct script execution)
+- Highlighted two integration options (Chrome DevTools MCP vs Claude-in-Chrome)
+
+**security-architect-skill-workflow.md:**
+
+- Added bidirectional skill reference in Overview section
+- Created symmetrical link back to `.claude/skills/security-architect/SKILL.md`
+
+### Bidirectional Cross-Reference Pattern
+
+**Best Practice Established:**
+
+```markdown
+# In SKILL.md:
+
+## Related Workflow
+
+- **Workflow File**: path/to/workflow.md
+- **When to Use**: Triggering conditions
+- **Phases**: Key phases if applicable
+
+# In workflow.md (Overview section):
+
+**Related Skill**: path/to/SKILL.md - Brief description
+```
+
+This pattern ensures:
+
+1. Users discovering skills can find comprehensive workflows
+2. Users reading workflows can find the core skill documentation
+3. Bidirectional links prevent orphaned documentation
+4. Clear "When to Use" guidance for both artifacts
+
+### Verification
+
+- [x] security-architect: Skill → Workflow link added
+- [x] security-architect: Workflow → Skill link added (bidirectional)
+- [x] chrome-browser: Skill → Workflow link added
+- [x] chrome-browser: Workflow → Skill link verified (already existed)
+- [x] Template pattern documented for future cross-references
+
+### Key Learnings
+
+1. **Bidirectional links matter** - Users may discover from either direction (skill or workflow), so both must reference each other
+2. **Context in cross-references** - Don't just link; explain WHEN and WHY to use the referenced artifact
+3. **Structural consistency** - "Related Workflow" section should appear in same location across skills (after "Related Skills", before "Memory Protocol")
+4. **Workflow discoverability** - Many users find skills first, so workflow references must be prominent
+
+### Related Issues
+
+- DOC-001: RESOLVED - Workflow cross-references added
+- Pattern can be applied to remaining skill-workflow pairs if discovered
+
+---
+
+## [2026-01-28] Process & Workflow Enhancement Analysis Complete
+
+### Summary
+
+Completed comprehensive analysis of process improvements for the .claude multi-agent framework (Task #4). Full plan generated at `.claude/context/artifacts/plans/process-workflow-enhancement-plan.md`.
+
+### Key Findings
+
+#### 1. Hook Consolidation (PROC-001)
+
+- **Status**: Workflow EXISTS at `.claude/workflows/operations/hook-consolidation.md`
+- **Quality**: EXCELLENT - 5 phases, checklists, code templates
+- **Gap**: No automation script to identify consolidation candidates
+- **Action**: Create `identify-consolidation-candidates.cjs` (P2, 4 hours)
+
+#### 2. Code Deduplication (PROC-002)
+
+- **Status**: PARTIAL - Issues documented (HOOK-001, HOOK-002, NEW-MED-001) but no formal process
+- **Gap**: ~2200 lines duplicated across 60+ hooks
+- **Solution EXISTS**: `.claude/lib/utils/` has shared utilities but they're underutilized
+- **Action**: Create CODE_DEDUPLICATION_PROCESS.md + migrate hooks (P1, 10 hours)
+
+#### 3. Security Trigger (PROC-003)
+
+- **Status**: EXISTS at `.claude/hooks/safety/security-trigger.cjs` with gaps
+- **Coverage**: 46 file patterns, 10 extensions, 9 directories
+- **Gaps Found**:
+  - SECURITY_CONTENT_PATTERNS defined but NOT used
+  - Router state not updated (only logs)
+  - Missing API key patterns (AWS*\*, STRIPE*_, OPENAI\__)
+  - Missing webhook/callback patterns
+- **Action**: Enable content detection, add patterns (P1, 4 hours)
+
+#### 4. Pre-Commit Hooks (PROC-009)
+
+- **Status**: DOES NOT EXIST
+- **Current**: Only .sample files in `.git/hooks/`, no `.husky/`
+- **Risk**: Security fixes have no regression prevention
+- **Action**: Create security-lint.cjs + pre-commit hook (P1, 6 hours)
+
+#### 5. Workflow Gaps
+
+- **Current**: 17 workflows exist
+- **Missing**:
+  - code-review-workflow.md (P1)
+  - testing-workflow.md (P1)
+  - debugging-workflow.md (P2)
+  - onboarding-workflow.md (P2)
+  - deployment-workflow.md (P2)
+- **Action**: Create 5 missing workflows (P1-P2, 15 hours total)
+
+#### 6. Documentation Deficiencies
+
+- **Current**: 19 docs in `.claude/docs/`
+- **Missing**:
+  - TESTING_GUIDE.md (P1)
+  - TROUBLESHOOTING.md (P1)
+  - PERFORMANCE_TUNING.md (P2)
+  - CONTRIBUTING.md (P2)
+- **CLAUDE.md outdated**: Missing chrome-browser workflow, \_legacy hooks note
+
+#### 7. Creator Workflows
+
+- **skill-creator**: 1144 lines, EXCELLENT quality, 11 Iron Laws
+- **agent-creator**: 979 lines, EXCELLENT quality, 10 Iron Laws
+- **Minor gap**: No rollback mechanism for failed mid-process creation
+
+### Priority Summary
+
+| Priority | Effort   | Items                                                         |
+| -------- | -------- | ------------------------------------------------------------- |
+| P1       | 35 hours | Code dedup, security trigger, pre-commit, 2 workflows, 2 docs |
+| P2       | 16 hours | 3 workflows, 2 docs, automation script                        |
+| P3       | 8 hours  | Creator rollback mechanism                                    |
+
+### Files Created
+
+- `.claude/context/artifacts/plans/process-workflow-enhancement-plan.md` (comprehensive plan)
+
+---
+
+## [2026-01-28] ROUTING-003 Root Cause: Session Boundary Detection Failure
+
+### Summary
+
+**ROOT CAUSE IDENTIFIED** for why fresh `claude -p "Use Glob..."` sessions bypass router-self-check: `router-mode-reset.cjs` fails to detect session boundaries and preserves stale agent state from previous sessions.
+
+### The Bug
+
+**File**: `.claude/hooks/routing/router-mode-reset.cjs` (lines 38-55)
+
+The hook has a "bug fix" that skips state reset when it detects "active agent context":
+
+```javascript
+// Bug fix: Check if we're in an active agent context before resetting
+const currentState = routerState.getState();
+if (currentState.mode === 'agent' && currentState.taskSpawned) {
+  const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
+  if (isRecentTask) {
+    // Skip reset - we're in an active agent context
+    process.exit(0);
+  }
+}
+```
+
+**Intended purpose**: Prevent resetting state when a subagent triggers UserPromptSubmit.
+
+**Actual behavior**: Cannot distinguish between:
+
+1. Active agent in **current session** (should skip reset) ✅
+2. **Stale state from previous session** (should reset) ❌
+
+### Why This Breaks
+
+1. **Previous session** spawns agent → `mode: "agent", taskSpawned: true, taskSpawnedAt: "2026-01-28T00:08:24Z"`
+2. Session ends, state file persists
+3. **NEW session** starts with `claude -p "Use Glob..."`
+4. UserPromptSubmit fires → router-mode-reset.cjs runs
+5. Reads state file: `mode: "agent", taskSpawned: true`
+6. Checks timestamp: now - taskSpawnedAt < 30 minutes (TRUE)
+7. **SKIPS reset** (thinks we're in active agent context)
+8. State remains: `mode: "agent", taskSpawned: true`
+9. Router receives prompt, decides to use Glob directly
+10. PreToolUse(Glob) → routing-guard.cjs runs
+11. Sees `taskSpawned: true` → **ALLOWS Glob** (early exit)
+12. ❌ Router used blacklisted tool directly
+
+### Why sessionId Doesn't Help
+
+```javascript
+sessionId: process.env.CLAUDE_SESSION_ID || null;
+```
+
+- `CLAUDE_SESSION_ID` env var is **not set** in practice
+- sessionId is always `null` in state file
+- Cannot use sessionId to detect stale state
+
+### The Fix
+
+**Option 1: Add Session ID Validation** (Preferred)
+
+```javascript
+const currentState = routerState.getState();
+const currentSessionId = process.env.CLAUDE_SESSION_ID || null;
+
+// Reset if session has changed (stale state from previous session)
+if (currentState.sessionId !== currentSessionId) {
+  routerState.resetToRouterMode();
+  process.exit(0);
+}
+
+// Only skip reset if SAME session AND recent task
+if (currentState.mode === 'agent' && currentState.taskSpawned) {
+  const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000;
+  if (isRecentTask) {
+    // Skip reset - active agent in CURRENT session
+    process.exit(0);
+  }
+}
+
+// Default: reset to router mode
+routerState.resetToRouterMode();
+```
+
+**Option 2: Process-Based Agent Tracking**
+
+Instead of file-based state, track whether there's an actual active Task subprocess running.
+
+**Option 3: Reduce 30-Minute Window**
+
+Change to 5 minutes (reduces window but doesn't fix root cause).
+
+### Lesson Learned
+
+**File-based state persistence across sessions requires session boundary detection.**
+
+When implementing "skip reset if active agent" logic:
+
+- ✅ Use session ID to detect session changes
+- ✅ OR track actual process state (not file state)
+- ❌ Don't rely on timestamps alone
+- ❌ Don't assume file state represents current session
+
+### Related Issues
+
+- **ROUTING-002**: Symptom (Router using Glob in fresh sessions)
+- **ENFORCEMENT-003**: Blocking cannot work if state is wrong
+- **router-self-check logic**: Correct behavior, wrong state input
+
+### Diagnostic Report
+
+`.claude/context/artifacts/reports/routing-debug-diagnostic-2026-01-27.md`
+
+---
+
+## [2026-01-28] ROUTING-002 Fix Verified - Complete Implementation
+
+### Summary
+
+**VERIFIED FIX** for why Router used blacklisted tools when user explicitly requested them. The root cause was NOT in `routing-guard.cjs` blocking logic but in lifecycle state management across two hooks.
+
+### Root Cause (Confirmed)
+
+Two-part issue in state management:
+
+1. **user-prompt-unified.cjs**: Had a 30-minute "active agent context" window that preserved `state.taskSpawned=true` across user prompts
+2. **post-task-unified.cjs**: Called `enterAgentMode()` AFTER task completion instead of `exitAgentMode()`, keeping agent mode active
+
+This caused `routing-guard.cjs` to see `mode='agent'` or `taskSpawned=true` and allow blacklisted tools on NEW user prompts.
+
+### Fix Applied (Two-Part Implementation)
+
+**Part 1: user-prompt-unified.cjs** (2026-01-27)
+
+- Removed 30-minute window check that skipped state reset
+- Every new user prompt now ALWAYS resets to router mode
+- Rationale: Each new user prompt is a NEW routing decision; agent mode is for SUBAGENTS only
+
+**Part 2: post-task-unified.cjs** (2026-01-27)
+
+- Added `exitAgentMode()` to `router-state.cjs`
+- Changed `post-task-unified.cjs` to call `exitAgentMode()` after task completion
+- Preserves planner/security spawn tracking while resetting mode and taskSpawned
+- Router re-engages after agent completes work
+
+### Why This Works
+
+- **State lifecycle correct**: PreToolUse Task → `enterAgentMode()`, PostToolUse Task → `exitAgentMode()`
+- **Spawn tracking preserved**: `plannerSpawned`, `securitySpawned` persist across task completions
+- **Router-First re-engagement**: After task completes, Router back in control and blocked from blacklisted tools
+
+### Tests Added (TDD)
+
+- 7 tests for ROUTING-002 fix
+- `routing-guard.test.cjs`: 5 tests for Glob/Grep/WebSearch blocking
+- `user-prompt-unified.test.cjs`: 2 end-to-end tests for state reset
+- `router-state.test.cjs`: Test 18 for exitAgentMode() preserving spawn tracking
+- **Total: 83 tests pass** (added 8 new tests)
+
+### Headless Verification
+
+**Test Command**: `claude -p "Use Glob..."`
+
+**Before Fix**: Router used Glob directly (violation)
+
+**After Fix**: Router spawns DEVELOPER agent (correct behavior)
+
+**Verification Date**: 2026-01-28
+
+### Files Modified
+
+1. `.claude/hooks/routing/user-prompt-unified.cjs` - Removed active_agent_context check
+2. `.claude/hooks/routing/post-task-unified.cjs` - Changed enterAgentMode() → exitAgentMode()
+3. `.claude/hooks/routing/router-state.cjs` - Added exitAgentMode() function and export
+4. `.claude/hooks/routing/user-prompt-unified.test.cjs` - Added ROUTING-002 tests
+5. `.claude/hooks/routing/routing-guard.test.cjs` - Added ROUTING-002 tests
+6. `.claude/hooks/routing/router-state.test.cjs` - Added Test 18
+
+### Key Lesson
+
+**State transitions must match lifecycle events:**
+
+- **PreToolUse Task**: Enter agent mode (about to spawn agent)
+- **PostToolUse Task**: EXIT agent mode (agent finished, Router resumes control)
+
+Don't confuse "task spawned" (past event) with "agent is active" (current state). PostToolUse means the action completed - the agent is DONE.
+
+**When investigating blocking hook failures, trace the FULL chain:**
+
+1. PreToolUse hook (routing-guard.cjs) - was correct
+2. State source (router-state.cjs) - was correct
+3. State setters (user-prompt-unified.cjs, post-task-unified.cjs) - **were the problem**
+
+The hook logic was correct, but it was receiving stale state from improper lifecycle management.
+
+---
+
+## [2026-01-28] ROUTING-003 Investigation: State Mode Confusion
+
+### Summary
+
+Investigated why `routing-guard.cjs` was not blocking Glob tool usage. Root cause: User's test premise was incorrect. The state file showed `mode='agent', taskSpawned=true` (CORRECT for a spawned agent context), not `mode='router', taskSpawned=false` as assumed.
+
+### Investigation Process
+
+1. **Added debug logging** to `checkRouterSelfCheck()` function:
+   - Log enforcement mode
+   - Log early exit reasons (whitelisted, not blacklisted, always-allowed file)
+   - Log state values (`mode`, `taskSpawned`)
+   - Log final blocking decision
+
+2. **Checked router-state.json** actual contents:
+
+   ```json
+   {
+     "mode": "agent",
+     "taskSpawned": true,
+     "taskDescription": "Developer debugging routing-guard blocking"
+   }
+   ```
+
+3. **Confirmed state lifecycle**:
+   - `pre-task-unified.cjs` (PreToolUse Task) → `enterAgentMode()` → sets `mode='agent', taskSpawned=true`
+   - Agent executes (this is where we are now)
+   - `post-task-unified.cjs` (PostToolUse Task) → `exitAgentMode()` → resets to `mode='router', taskSpawned=false`
+
+### Finding
+
+**There is NO bug.** The routing guard is working correctly:
+
+```javascript
+// In checkRouterSelfCheck():
+const state = getCachedRouterState();
+if (state.mode === 'agent' || state.taskSpawned) {
+  return { pass: true }; // <-- CORRECT: Spawned agents CAN use Glob
+}
+```
+
+When a DEVELOPER agent is spawned (like the current execution), the state is correctly `mode='agent'`, so the agent is allowed to use blacklisted tools (Glob, Grep, Edit, Write) to perform its work.
+
+### Lesson Learned
+
+Always verify actual state file contents before debugging state-based logic. The user's premise "state shows router mode" was contradicted by actual file contents showing agent mode.
+
+### Debug Logging Added
+
+Added comprehensive debug logging to `checkRouterSelfCheck()` that can be enabled with `ROUTER_DEBUG=true`. This will help future investigations by showing:
+
+- Which enforcement mode is active
+- Which early exit path is taken
+- What state values are being checked
+- Final blocking/allowing decision
+
+## [2026-01-27] ROUTING-002 Fix Part 2: Post-Task State Exit
+
+### Summary
+
+Fixed the second part of ROUTING-002: `post-task-unified.cjs` was calling `enterAgentMode()` AFTER a task completed, which kept the system in agent mode and allowed Router to bypass blacklisted tool restrictions.
+
+### Root Cause
+
+In `post-task-unified.cjs` line 125, the hook called `enterAgentMode()` after a Task tool completed:
+
+```javascript
+// WRONG - This keeps agent mode active after task completes
+function runAgentContextTracker(toolInput) {
+  const description = extractTaskDescription(toolInput);
+  const state = routerState.enterAgentMode(description); // <-- BUG
+  // ... detect planner/security spawns ...
+}
+```
+
+This was BACKWARDS. PostToolUse Task should EXIT agent mode (task completed), not ENTER it.
+
+### Fix Applied
+
+**Added `exitAgentMode()` to `router-state.cjs`:**
+
+```javascript
+/**
+ * Exit agent mode (called on PostToolUse Task)
+ * Resets mode and taskSpawned but PRESERVES planner/security spawn tracking.
+ */
+function exitAgentMode() {
+  return saveStateWithRetry({
+    mode: 'router',
+    taskSpawned: false,
+    taskSpawnedAt: null,
+    taskDescription: null,
+  });
+}
+```
+
+**Updated `post-task-unified.cjs` to call `exitAgentMode()`:**
+
+```javascript
+function runAgentContextTracker(toolInput) {
+  const description = extractTaskDescription(toolInput);
+  // ROUTING-002 FIX: Exit agent mode after task completes
+  const state = routerState.exitAgentMode(); // <-- CORRECT
+  // ... detect planner/security spawns (still works) ...
+}
+```
+
+### Why This Works
+
+- **Preserves spawn tracking**: `exitAgentMode()` only resets `mode`, `taskSpawned`, `taskSpawnedAt`, `taskDescription`
+- **Does NOT reset**: `plannerSpawned`, `securitySpawned` (these persist across task completions)
+- **Allows Router-First re-engagement**: After task completes, Router is back in control and blocked from using blacklisted tools
+
+### Tests Added
+
+Added Test 18 to `router-state.test.cjs`:
+
+```javascript
+function testExitAgentModePreservesSpawnTracking() {
+  mod.resetToRouterMode();
+  mod.enterAgentMode('test task');
+  mod.markPlannerSpawned();
+  mod.markSecuritySpawned();
+
+  // Exit agent mode
+  mod.exitAgentMode();
+
+  const state = mod.getState();
+  assert(state.mode === 'router', 'Should be in router mode');
+  assert(state.taskSpawned === false, 'taskSpawned should be false');
+  assert(state.plannerSpawned === true, 'Should preserve plannerSpawned');
+  assert(state.securitySpawned === true, 'Should preserve securitySpawned');
+}
+```
+
+Test count: **83 tests pass** (added 1 new test).
+
+### Files Modified
+
+1. `.claude/hooks/routing/router-state.cjs` - Added `exitAgentMode()` function and export
+2. `.claude/hooks/routing/post-task-unified.cjs` - Changed `enterAgentMode()` → `exitAgentMode()`
+3. `.claude/hooks/routing/router-state.test.cjs` - Added Test 18 and export check
+
+### Key Lesson
+
+**State transitions must match lifecycle events:**
+
+- **PreToolUse Task**: Enter agent mode (about to spawn agent)
+- **PostToolUse Task**: EXIT agent mode (agent finished, Router resumes control)
+
+Don't confuse "task spawned" (past event) with "agent is active" (current state). PostToolUse means the action completed - the agent is DONE.
+
+---
+
+## [2026-01-27] ROUTING-002 Fix Part 1: State Reset on New User Prompts
+
+### Summary
+
+Fixed ROUTING-002 issue where Router used blacklisted tools (Glob, Grep) when user explicitly requested them. The root cause was NOT in `routing-guard.cjs` but in `user-prompt-unified.cjs`.
+
+### Root Cause
+
+The `user-prompt-unified.cjs` hook had a 30-minute "active agent context" window that preserved `state.taskSpawned=true` across user prompts:
+
+```javascript
+// BAD: This check preserved agent mode for 30 minutes
+if (currentState.mode === 'agent' && currentState.taskSpawned) {
+  const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
+  if (isRecentTask) {
+    result.skipped = true; // State NOT reset!
+    return result;
+  }
+}
+```
+
+This caused `routing-guard.cjs` to see agent mode and allow blacklisted tools on NEW user prompts.
+
+### Fix Applied
+
+Every new user prompt now ALWAYS resets to router mode. The 30-minute window was removed because:
+
+1. Each new user prompt is a NEW routing decision
+2. Router must evaluate whether to spawn agents
+3. Agent mode is for SUBAGENTS, not for Router handling new prompts
+4. Subagent context is tracked by subagent_id in hook input, not state file
+
+### Tests Added (TDD)
+
+Added 7 tests for ROUTING-002:
+
+- `routing-guard.test.cjs`: 5 tests for Glob/Grep/WebSearch blocking
+- `user-prompt-unified.test.cjs`: 2 end-to-end tests for state reset
+
+### Files Modified
+
+- `user-prompt-unified.cjs` - Removed active_agent_context check
+- `user-prompt-unified.test.cjs` - Added ROUTING-002 tests
+- `routing-guard.test.cjs` - Added ROUTING-002 tests
+- `issues.md` - Marked ROUTING-002 as RESOLVED
+
+### Key Lesson
+
+**When investigating blocking hook failures, trace the FULL chain:**
+
+1. PreToolUse hook (routing-guard.cjs) - was correct
+2. State source (router-state.cjs) - was correct
+3. State setter (user-prompt-unified.cjs) - **was the problem**
+
+The hook logic was correct, but it was receiving stale state from a previous session.
+
+---
+
+## [2026-01-27] Router-First Enforcement Implementation Complete
+
+### Summary
+
+Verified and completed the Router-First enforcement implementation. The routing-guard.cjs hook **already had correct blocking behavior** (exit code 2 for violations). The diagnosis report incorrectly stated hooks were advisory-only.
+
+### Key Findings
+
+1. **routing-guard.cjs IS blocking** - Line 691 returns `process.exit(result.result === 'block' ? 2 : 0)`. This correctly blocks violations.
+
+2. **Router context detection works** - The hook checks `state.mode === 'agent' || state.taskSpawned` to determine if writes are allowed.
+
+3. **Memory files are always allowed** - The `isAlwaysAllowedWrite()` function allows writes to `.claude/context/memory/` and `.claude/context/runtime/` even in router mode.
+
+### Implementation Changes
+
+**Added `claude` to SAFE_COMMANDS_ALLOWLIST** (`.claude/hooks/safety/validators/registry.cjs`):
+
+- Claude CLI is now allowed for headless framework testing (`claude -p "test"`)
+- Without this, SEC-AUDIT-017 would block headless test commands
+
+### Tests Added
+
+- `ALLOWS claude command for headless testing` - Verifies `claude -p "test routing"` is allowed
+- `ALLOWS claude with various flags` - Verifies `claude --version`, `claude --help`, `claude chat` are allowed
+
+### Files Modified
+
+1. `.claude/hooks/safety/validators/registry.cjs` - Added `claude` to SAFE_COMMANDS_ALLOWLIST
+2. `.claude/hooks/safety/validators/registry.test.cjs` - Added tests for claude command
+
+### Verification
+
+- 107 tests pass (71 routing-guard + 36 registry)
+- Exit code 2 confirmed for blocked operations
+- Exit code 0 confirmed for allowed operations
+
+---
+
+## [2026-01-27] LLM Routing Enforcement: Three Critical Patterns from Research
+
+### Research Summary
+
+Conducted comprehensive research on AI agent routing enforcement (7 queries, 70+ sources, 10+ academic papers). Identified three critical failure modes and validated solutions.
+
+### Three Critical Failure Modes
+
+1. **Instruction Hierarchy Confusion**
+   - LLMs treat system prompts and user instructions as equal priority
+   - Without explicit hierarchy, user phrasing can override routing protocol
+   - OpenAI research: 63% improvement with hierarchical instruction training
+
+2. **Lack of Explicit Verification**
+   - LLMs skip checkpoints when they seem "obvious" or repetitive
+   - Pattern drift from repeated similar tasks causes shortcutting
+   - Academic finding: Models notice conflicts but lack stable resolution rules
+
+3. **Visual Formatting Matters More Than Content**
+   - Tokenization + attention mechanisms: formatted text receives stronger attention
+   - Boxes, ALL CAPS, numbered lists create distinct token clusters
+   - Plain prose protocols fail even with perfect logical structure
+
+### Validated Solutions (High Confidence)
+
+#### 1. Visual Formatting for Critical Instructions
+
+```
++======================================================================+
+|  SYSTEM-LEVEL PROTOCOL (CANNOT BE OVERRIDDEN)                       |
++======================================================================+
+|  Router NEVER: Execute directly, use blacklisted tools              |
+|  Router ALWAYS: Spawn via Task tool, check TaskList first           |
++======================================================================+
+```
+
+**Why It Works:** ASCII borders create visual boundaries in token stream. Models attend more strongly to formatted regions.
+
+**Sources:**
+
+- [Prompt Engineering Guide 2025](https://www.promptingguide.ai/)
+- [Claude Fast CLAUDE.md Mastery](https://claudefa.st/blog/guide/mechanics/claude-md-mastery)
+- Multiple production implementations
+
+#### 2. Pre-Execution Self-Check Gates (Sequential Decision Trees)
+
+```
+Before EVERY response, Router MUST pass:
+
+Gate 1: Complexity Check
+1. Is this multi-step? (YES/NO)
+2. Requires code changes? (YES/NO)
+IF ANY YES → STOP. Spawn PLANNER.
+
+Gate 2: Tool Check
+1. About to use Edit/Write/Bash? (YES/NO)
+2. About to use Glob/Grep? (YES/NO)
+IF ANY YES → STOP. Spawn agent instead.
+```
+
+**Why It Works:**
+
+- Forces serial evaluation (yes/no per question)
+- LLMs perform better on sequential conditionals than parallel conditions
+- Creates explicit reasoning trace
+
+**Sources:**
+
+- [Patronus AI Routing Tutorial](https://www.patronus.ai/ai-agent-development/ai-agent-routing)
+- [OpenAI Instruction Hierarchy](https://openai.com/index/the-instruction-hierarchy/)
+- [ALAS: Transactional Multi-Agent Planning](https://arxiv.org/html/2511.03094v1)
+
+#### 3. Contrastive Examples (Show Violations)
+
+```
+❌ WRONG:
+User: "List TypeScript files"
+Router: Glob({ pattern: "**/*.ts" })
+[Router using blacklisted tool - VIOLATION]
+
+✅ CORRECT:
+User: "List TypeScript files"
+Router: Task({ prompt: "You are DEVELOPER. List TS files..." })
+[Router spawning agent via Task tool]
+```
+
+**Why It Works:**
+
+- Contrastive learning: showing boundaries helps models generalize
+- Reduces false positives (models see what to avoid)
+- Explicit labeling (❌ ✅) creates additional signal
+
+**Sources:**
+
+- [V7 Labs Prompt Engineering](https://www.v7labs.com/blog/prompt-engineering-guide)
+- [Agentic Patterns](https://agentic-patterns.com/patterns/sub-agent-spawning/)
+- Standard prompting technique (established practice)
+
+### Academic Validation
+
+**Paper:** "The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions" (OpenAI, 2024)
+
+**Key Finding:** Models trained with hierarchical instruction awareness demonstrate **up to 63% better resistance** to instruction override attacks.
+
+**Methodology:**
+
+- Automated data generation with conflicting instructions at different privilege levels
+- Fine-tuning to teach selective ignoring of lower-privileged instructions
+- Zero-shot transfer to unseen attack types
+
+**Relevance:** Routing protocol is "privileged instruction" (system-level). Must be marked as higher authority than user requests.
+
+**Source:** [arXiv 2404.13208](https://arxiv.org/abs/2404.13208)
+
+---
+
+**Paper:** "Who is In Charge? Dissecting Role Conflicts in LLM Instruction Following" (2025)
+
+**Key Finding:** "Models often ignore system–user priority while obeying social cues such as authority, expertise, or consensus. The model notices these conflicts but lacks a stable rule to prefer the system."
+
+**Implication:** User phrasing like "Just do it quickly" or "Skip the planning phase" can override system-level routing rules if not explicitly guarded.
+
+**Source:** [OpenReview](https://openreview.net/forum?id=RBfRfCXzkA)
+
+### Implementation Priorities
+
+1. **Immediate:** Add visual formatting (boxes, ALL CAPS) around routing protocol
+2. **High Priority:** Implement self-check gates with numbered yes/no questions
+3. **High Priority:** Add contrastive violation examples to CLAUDE.md
+4. **Production:** Add enforcement hooks with blocking exit codes (already exists: `routing-guard.cjs`)
+
+### Files Updated
+
+- `.claude/context/artifacts/research-reports/router-enforcement-research-2026-01-27.md` - Full research report (39KB)
+
+### Related Learnings
+
+- See [2026-01-27] Claude Code Hook Enforcement (exit codes)
+- See [2026-01-27] MCP-to-Skill Conversion Pattern (reliability)
+
+---
+
+## [2026-01-27] Claude Code Hook Enforcement Requires Non-Zero Exit Codes (CRITICAL)
+
+### Key Insight
+
+Claude Code hooks can only ENFORCE behavior by returning non-zero exit codes. Hooks that exit with code 0 are ADVISORY ONLY - they can print warnings and recommendations, but Claude is free to ignore them.
+
+### Hook Exit Code Semantics
+
+| Exit Code | Behavior                   | Use Case                                  |
+| --------- | -------------------------- | ----------------------------------------- |
+| 0         | ALLOW - action proceeds    | Advisory recommendations, logging         |
+| 1         | SYNTAX ERROR - hook failed | Invalid input, parsing errors             |
+| 2         | BLOCK - action rejected    | Security violations, protocol enforcement |
+
+### Anti-Pattern: Advisory Enforcement
+
+```javascript
+// WRONG - This does NOT enforce anything
+function main() {
+  if (isViolation()) {
+    console.error('WARNING: Protocol violation detected');
+    console.log('Please follow the correct workflow');
+  }
+  process.exit(0); // <-- Action proceeds regardless
+}
+```
+
+### Correct Pattern: Blocking Enforcement
+
+```javascript
+// CORRECT - This actually blocks the action
+function main() {
+  if (isViolation()) {
+    console.error(
+      JSON.stringify({
+        action: 'block',
+        error: 'BLOCKING: Protocol violation - must spawn agent first',
+      })
+    );
+    process.exit(2); // <-- Action is blocked
+  }
+  process.exit(0); // Only allow when no violation
+}
+```
+
+### Implications
+
+- **LLM instruction compliance is unreliable** - Claude may "optimize" by ignoring instructions
+- **Documentation-only conventions do not work** - Must be backed by blocking hooks
+- **All "enforcement" hooks must be audited** for actual blocking behavior
+- **Advisory hooks are useful for logging/metrics** but not for critical workflows
+
+### Files Affected
+
+- `.claude/hooks/routing/routing-guard.cjs` - Enforces Router-First protocol
+- `.claude/hooks/routing/unified-creator-guard.cjs` - Enforces creator workflow
+- All hooks in `.claude/hooks/safety/` - Security guardrails
+
+### Why This Matters
+
+The Router-First protocol regression happened because:
+
+1. CLAUDE.md instructions were ignored (LLM optimization)
+2. Hooks existed but used exit code 0 (advisory only)
+3. No blocking enforcement at execution layer
+
+**Lesson:** Critical workflows need BOTH clear instructions AND blocking hooks.
+
+---
+
+## [2026-01-27] MCP-to-Skill Conversion Pattern (No Server Required)
+
+### Key Insight
+
+Many MCP servers are just **API wrappers**. Instead of requiring external MCP server installation (uvx, npm, pip), skills can use **existing tools** (WebFetch, Exa) to access the same APIs directly.
+
+### Benefits
+
+| MCP Server Approach                  | Skill with Existing Tools |
+| ------------------------------------ | ------------------------- |
+| ❌ Requires uvx/npm/pip installation | ✅ Works immediately      |
+| ❌ Requires session restart          | ✅ No restart needed      |
+| ❌ External dependency failures      | ✅ Self-contained         |
+| ❌ Platform-specific issues          | ✅ Cross-platform         |
+
+### Example: arXiv MCP → arXiv Skill
+
+**Before (MCP server required):**
+
+```json
+"mcpServers": {
+  "arxiv": { "command": "uvx", "args": ["mcp-arxiv"] }
+}
+```
+
+- Requires `uvx` (uv package manager)
+- Requires session restart
+- Fails if uvx not installed
+
+**After (existing tools):**
+
+```javascript
+// WebFetch for arXiv API
+WebFetch({
+  url: 'http://export.arxiv.org/api/query?search_query=ti:transformer&max_results=10',
+  prompt: 'Extract paper titles, authors, abstracts',
+});
+
+// Exa for semantic search
+mcp__Exa__web_search_exa({
+  query: 'site:arxiv.org transformer attention mechanism',
+  numResults: 10,
+});
+```
+
+- Works immediately
+- No installation required
+- More reliable
+
+### When to Convert MCP → Skill
+
+Convert when the MCP server:
+
+1. Wraps a public REST API (arXiv, GitHub, etc.)
+2. Doesn't require authentication
+3. Has simple request/response patterns
+
+Keep MCP server when:
+
+1. Complex state management required
+2. Streaming/websocket connections
+3. Local file system access needed
+4. Authentication flows required
+
+### Files Updated
+
+- `.claude/skills/arxiv-mcp/SKILL.md` (v1.1 → v2.0.0)
+- `.claude/settings.json` - Removed unused arxiv MCP server
+
+---
+
+## [2026-01-27] Claude-in-Chrome Native Messaging Host Conflict (Known Bug)
+
+### Issue
+
+When both **Claude.app (desktop)** and **Claude Code (CLI)** are installed, the Claude-in-Chrome extension fails to connect. Error: "Browser extension is not connected".
+
+### Root Cause
+
+Both applications register **competing native messaging hosts** at the same path:
+
+- Windows: `%APPDATA%\Claude\ChromeNativeHost\com.anthropic.claude_browser_extension.json`
+- macOS: `~/Library/Application Support/Claude/ChromeNativeHost/`
+
+The Chrome extension connects to whichever application registered last, causing connection failures.
+
+### GitHub Issues
+
+- [#15336](https://github.com/anthropics/claude-code/issues/15336) - Windows Native Messaging Host not installing
+- [#14894](https://github.com/anthropics/claude-code/issues/14894) - Reconnect extension fails on macOS
+- [#20790](https://github.com/anthropics/claude-code/issues/20790) - Extension connects to Claude.app instead of Claude Code
+
+### Workaround (macOS)
+
+```bash
+cd ~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/
+mv com.anthropic.claude_browser_extension.json com.anthropic.claude_browser_extension.json.disabled
+# Restart Chrome completely, then start Claude Code with --chrome
+```
+
+### Workaround (Windows)
+
+```powershell
+cd $env:APPDATA\Claude\ChromeNativeHost
+ren com.anthropic.claude_browser_extension.json com.anthropic.claude_browser_extension.json.disabled
+# Restart Chrome and try again
+```
+
+### Recommendation
+
+**Use Chrome DevTools MCP instead** - it's always available, requires no extension, and provides similar functionality for most use cases. Only use Claude-in-Chrome when authenticated sessions are truly required.
+
+### Files Updated
+
+- `.claude/skills/chrome-browser/SKILL.md` - Added Troubleshooting section
+- `.claude/context/memory/issues.md` - Added CHROME-001
+
+---
+
+## [2026-01-27] Chrome Browser Skill Updated to v2.0.0
+
+### Two Chrome Integrations Documented
+
+Updated the chrome-browser skill to document BOTH available browser automation integrations:
+
+| Integration         | Tools Prefix               | Status                 | Best For                        |
+| ------------------- | -------------------------- | ---------------------- | ------------------------------- |
+| Chrome DevTools MCP | `mcp__chrome-devtools__*`  | ✅ Always available    | Testing, debugging, performance |
+| Claude-in-Chrome    | `mcp__claude-in-chrome__*` | ⚠️ Requires `--chrome` | Auth sessions, GIF recording    |
+
+### Key Differences
+
+- **Chrome DevTools MCP**: Built-in, no setup, 26 tools, performance tracing, device emulation
+- **Claude-in-Chrome**: Requires extension + flag, 19 tools, uses your logins, GIF recording
+
+### Decision Guide Added
+
+```
+Public site testing?      → Chrome DevTools MCP
+Performance analysis?     → Chrome DevTools MCP
+Authenticated apps?       → Claude-in-Chrome (--chrome)
+Record demo GIF?          → Claude-in-Chrome (--chrome)
+Device/network emulation? → Chrome DevTools MCP
+```
+
+### Files Modified
+
+- `.claude/skills/chrome-browser/SKILL.md` (v1.1 → v2.0.0)
+
+---
+
+## [2026-01-27] MCP Auto-Registration Pattern Established
+
+### Issue
+
+When creating skills that use MCP tools (`mcp__<server>__*`), the skill definition was created but the underlying MCP server was not registered in `settings.json`. This causes:
+
+- Skill file exists with documented MCP tools
+- But tools don't exist at runtime
+- Skill invocation fails silently
+
+### Solution: Skill-Creator Auto-Registration
+
+Updated skill-creator workflow (SKILL.md) with:
+
+1. **New Iron Law #11**: "NO MCP SKILL WITHOUT SERVER REGISTRATION"
+2. **Step 10 (BLOCKING for MCP skills)**: Auto-register MCP server in settings.json
+3. **Known MCP Server Configurations table**: Pre-defined configs for common servers
+4. **Auto-registration flag**: `--no-register` to skip if needed
+
+### Implementation Applied
+
+Added arXiv MCP to `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "arxiv": {
+      "command": "uvx",
+      "args": ["mcp-arxiv"]
+    }
+  }
+}
+```
+
+### Pattern: MCP Server Registration by Source
+
+| Source | Command Template                                            |
+| ------ | ----------------------------------------------------------- |
+| npm    | `{ "command": "npx", "args": ["-y", "<package>"] }`         |
+| PyPI   | `{ "command": "uvx", "args": ["<package>"] }`               |
+| Docker | `{ "command": "docker", "args": ["run", "-i", "<image>"] }` |
+
+### Files Modified
+
+- `.claude/settings.json` - Added arXiv MCP server
+- `.claude/skills/skill-creator/SKILL.md` - Added Iron Law #11, Step 10, MCP configs
+- `.claude/skills/arxiv-mcp/SKILL.md` - Updated to reflect configured status
+- `.claude/context/artifacts/reports/research-tools-test-2026-01-27.md` - Updated status
+
+### Key Learning
+
+**Skills should "just work"** - users shouldn't need manual configuration. When creating skills that depend on external services (MCP servers), the skill-creator must:
+
+1. Register the service automatically
+2. Document the registration in the skill
+3. Verify the service is available before marking complete
+
+---
+
+## [2026-01-27] Performance Optimization Analysis (Task #5)
+
+### Summary
+
+Comprehensive performance analysis of the hook system identified optimization status and remaining opportunities.
+
+### Already Implemented Optimizations
+
+| Optimization | Implementation                                                | Impact                                     |
+| ------------ | ------------------------------------------------------------- | ------------------------------------------ |
+| **PERF-002** | `routing-guard.cjs` consolidates 5 routing checks             | 80% spawn reduction for routing hooks      |
+| **PERF-002** | `unified-evolution-guard.cjs` consolidates 4 evolution checks | 75% spawn reduction for evolution hooks    |
+| **PERF-006** | `hook-input.cjs` centralizes parseHookInput()                 | Eliminated ~40 lines per hook              |
+| **PERF-007** | `project-root.cjs` centralizes PROJECT_ROOT detection         | Single implementation, consistent behavior |
+
+### State Cache Usage Analysis
+
+State cache (`state-cache.cjs`) is used by **12 hooks**:
+
+- `routing-guard.cjs` - caches router-state.json
+- `router-state.cjs` - caches state reads
+- `unified-evolution-guard.cjs` - caches evolution-state.json
+- 6 evolution hooks - use getCachedState for evolution-state.json
+- 3 routing hooks - use cached router state
+
+**Gap**: Not all hooks use state-cache.cjs. Found **79 fs.readFileSync/JSON.parse** calls across 33 hook files. Many could benefit from caching.
+
+### Hook Registration Analysis (settings.json)
+
+| Event                           | Hook Count | Notes                                                         |
+| ------------------------------- | ---------- | ------------------------------------------------------------- |
+| UserPromptSubmit                | 1          | user-prompt-unified.cjs                                       |
+| PreToolUse(Bash)                | 3          | windows-null-sanitizer, routing-guard, bash-command-validator |
+| PreToolUse(Glob/Grep/WebSearch) | 1          | routing-guard                                                 |
+| PreToolUse(Edit/Write)          | 6          | Most hooks - candidate for consolidation                      |
+| PostToolUse (all)               | 1          | anomaly-detector                                              |
+| PostToolUse(Task)               | 2          | auto-rerouter, post-task-unified                              |
+| PostToolUse(Edit/Write)         | 2          | format-memory, enforce-claude-md-update                       |
+
+**Observation**: Edit/Write trigger 6 PreToolUse hooks. Already consolidated into routing-guard and unified-evolution-guard.
+
+### Busy-Wait Pattern (SEC-AUDIT-020)
+
+Found **busy-wait loops** that spin CPU instead of using async:
+
+1. **loop-prevention.cjs** lines 198-229:
+
+   ```javascript
+   while (Date.now() - startTime < MAX_LOCK_WAIT_MS) {
+     // ... acquires lock
+     while (Date.now() - waitStart < LOCK_RETRY_MS) {
+       // Busy wait (Node.js doesn't have sleep)
+     }
+   }
+   ```
+
+2. **router-state.cjs** line 247:
+   ```javascript
+   function syncSleep(ms) {
+   ```

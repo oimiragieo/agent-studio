@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2026-01-28
+
+### Fixed
+
+- **ROUTING-003**: Session boundary detection in router-mode-reset
+  - **Root Cause**: `router-mode-reset.cjs` failed to detect session boundaries, preserving agent state from previous sessions
+  - **Fix**: Added session ID comparison in `checkRouterModeReset()` function to detect stale state
+  - **Behavior**: Fresh sessions now correctly reset to router mode instead of inheriting agent mode
+  - **Tests Added**: 3 new tests for session boundary detection
+  - **Files Modified**: `.claude/hooks/routing/user-prompt-unified.cjs`
+
+- **PROC-003**: Automated security review trigger (security-trigger.cjs)
+  - **Issue**: SECURITY_CONTENT_PATTERNS was disabled, preventing automated security review triggers
+  - **Fix**: Enabled patterns and added new patterns for hooks, authentication, credentials, validators
+  - **Behavior**: Hook now detects security-sensitive file changes and triggers security reviews automatically
+  - **Files Modified**: `.claude/hooks/safety/security-trigger.cjs`
+
+- **PROC-009**: Pre-commit security hooks
+  - **Created**: `.git/hooks/pre-commit` that runs `security-lint.cjs --staged` before commit
+  - **Blocks**: Commits with critical/high severity security issues
+  - **Bypass**: Use `git commit --no-verify` if needed
+  - **Enhanced security-lint.cjs**:
+    - Fixed `require.main === module` pattern
+    - Added `shouldSkipScanning()` for test files and self-references
+    - Exported functions for testing
+  - **Tests Added**: 20 tests in security-lint.test.cjs, 7 tests in pre-commit-security.test.cjs
+
+- **MED-001**: Duplicated PROJECT_ROOT in unified-creator-guard.cjs
+  - **Issue**: Hook contained duplicated `findProjectRoot()` function
+  - **Fix**: Replaced with shared `PROJECT_ROOT` constant from `.claude/lib/utils/project-root.cjs`
+  - **Files Modified**: `.claude/hooks/safety/unified-creator-guard.cjs`
+
+- **SEC-AUDIT-020**: Busy-wait CPU exhaustion
+  - **Issue**: Busy-wait loops for synchronous sleep consumed CPU
+  - **Fix**: Replaced with `Atomics.wait()` for proper synchronous blocking
+  - **Files Modified**: `.claude/hooks/self-healing/loop-prevention.cjs`, `.claude/hooks/routing/router-state.cjs`
+
+- **DOC-001**: Missing skill-to-workflow cross-references
+  - **Issue**: Skills and workflows didn't reference each other, breaking discoverability
+  - **Fix**: Added "Workflow Integration" sections to security-architect and chrome-browser skills
+  - **Pattern Established**: Bidirectional discoverability for skills with workflows
+
+### Documentation
+
+- **Memory Updates**:
+  - Marked 6 issues as RESOLVED in `.claude/context/memory/issues.md`
+  - Updated issue summary counts (50→44 open, 60→66 resolved)
+  - Added resolution details with dates for all fixed issues
+
 ## [2.1.1] - 2026-01-28
 
 ### Fixed

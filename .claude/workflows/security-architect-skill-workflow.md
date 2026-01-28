@@ -21,6 +21,8 @@ Orchestrate comprehensive security audits using multi-phase threat analysis, vul
 
 This workflow provides a systematic approach to security assessment that covers the full lifecycle from threat identification to remediation. It integrates multiple specialized agents and follows industry-standard frameworks (OWASP, STRIDE, CWE) to ensure thorough security coverage.
 
+**Related Skill**: `.claude/skills/security-architect/SKILL.md` - Core security architecture skill with OWASP Top 10 analysis, threat modeling (STRIDE), and vulnerability assessment capabilities.
+
 **Extended Thinking**: Security is not a one-time activity but a continuous process. This workflow ensures that security considerations are embedded throughout the development lifecycle. Each phase builds on the previous, creating a comprehensive security posture that addresses both immediate vulnerabilities and systemic weaknesses.
 
 ## When to Use

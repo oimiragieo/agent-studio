@@ -508,6 +508,34 @@ describe('module exports', () => {
 });
 
 // =============================================================================
+// TEST: MED-001 - Shared PROJECT_ROOT Usage
+// =============================================================================
+
+describe('MED-001: PROJECT_ROOT from shared utility', () => {
+  it('exports PROJECT_ROOT that matches shared utility', () => {
+    const { PROJECT_ROOT } = require('./unified-creator-guard.cjs');
+    const { PROJECT_ROOT: SHARED_PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+
+    assert.ok(PROJECT_ROOT, 'Should export PROJECT_ROOT');
+    assert.strictEqual(
+      PROJECT_ROOT,
+      SHARED_PROJECT_ROOT,
+      'PROJECT_ROOT should match shared utility value'
+    );
+  });
+
+  it('PROJECT_ROOT should be an absolute path containing .claude', () => {
+    const { PROJECT_ROOT } = require('./unified-creator-guard.cjs');
+
+    assert.ok(path.isAbsolute(PROJECT_ROOT), 'PROJECT_ROOT should be absolute path');
+    assert.ok(
+      fs.existsSync(path.join(PROJECT_ROOT, '.claude', 'CLAUDE.md')),
+      'PROJECT_ROOT should contain .claude/CLAUDE.md'
+    );
+  });
+});
+
+// =============================================================================
 // TEST: EDGE CASES
 // =============================================================================
 

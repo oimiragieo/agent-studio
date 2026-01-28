@@ -55,15 +55,24 @@ const AGENT_CACHE_TTL = 300000; // 5 minutes
  * Router to use blacklisted tools (Glob, Grep, etc.) on subsequent prompts
  * because state.taskSpawned remained true from previous agent work.
  *
+ * ROUTING-003 FIX: Detect session boundaries by comparing sessionId.
+ * State from previous sessions should be detected and explicitly reset.
+ * This ensures stale state doesn't leak across sessions.
+ *
  * The Router needs to re-evaluate each new user prompt to decide
  * whether to spawn agents. Agent mode is for SUBAGENTS, not for
  * the Router handling a new user prompt.
  *
  * @param {Object} hookInput - Parsed hook input
- * @returns {Object} Result with skipped, reason, stateReset
+ * @returns {Object} Result with skipped, reason, stateReset, sessionBoundaryDetected
  */
 function checkRouterModeReset(hookInput) {
-  const result = { skipped: false, reason: null, stateReset: false };
+  const result = {
+    skipped: false,
+    reason: null,
+    stateReset: false,
+    sessionBoundaryDetected: false,
+  };
 
   // Get prompt
   const userPrompt = hookInput?.prompt || hookInput?.message || '';
@@ -73,6 +82,29 @@ function checkRouterModeReset(hookInput) {
     result.skipped = true;
     result.reason = 'slash_command';
     return result;
+  }
+
+  // ROUTING-003 FIX: Detect session boundary before any state checks
+  // Get current session ID from environment (or generate a fallback)
+  const currentSessionId = process.env.CLAUDE_SESSION_ID || null;
+  const currentState = routerState.getState();
+
+  // Check if session has changed (stale state from previous session)
+  // Session boundary is detected when:
+  // 1. Current state has a sessionId AND it doesn't match current session
+  // 2. Current state has no sessionId but current session has one (null -> defined)
+  const stateSessionId = currentState.sessionId;
+  const sessionChanged =
+    (stateSessionId !== null && stateSessionId !== currentSessionId) ||
+    (stateSessionId === null && currentSessionId !== null);
+
+  if (sessionChanged) {
+    result.sessionBoundaryDetected = true;
+    if (process.env.ROUTER_DEBUG === 'true') {
+      console.log(
+        `[user-prompt-unified:reset] Session boundary detected: ${stateSessionId} -> ${currentSessionId}`
+      );
+    }
   }
 
   // ROUTING-002 FIX: ALWAYS reset to router mode on new user prompt
@@ -90,8 +122,17 @@ function checkRouterModeReset(hookInput) {
   routerState.resetToRouterMode();
   result.stateReset = true;
 
+  // ROUTING-003 FIX: Update sessionId in state after reset
+  // This ensures the new session ID is persisted for future boundary detection
+  if (currentSessionId !== null) {
+    routerState.saveStateWithRetry({ sessionId: currentSessionId });
+  }
+
   if (process.env.ROUTER_DEBUG === 'true') {
     console.log('[user-prompt-unified:reset] State reset to router mode (ROUTING-002 fix)');
+    if (result.sessionBoundaryDetected) {
+      console.log('[user-prompt-unified:reset] Session ID updated for ROUTING-003 fix');
+    }
   }
 
   return result;

@@ -1,15 +1,16 @@
 # Known Issues and Blockers
 
-## Summary (as of 2026-01-27)
+## Summary (as of 2026-01-28)
 
 | Status Category | Count | Notes                                   |
 | --------------- | ----- | --------------------------------------- |
-| **OPEN**        | 50    | Active issues requiring attention       |
-| **RESOLVED**    | 60    | Archived in issues-archive.md           |
+| **OPEN**        | 44    | Active issues requiring attention       |
+| **RESOLVED**    | 66    | Archived in issues-archive.md           |
 | **Won't Fix**   | 2     | Documented as not requiring remediation |
 | **Total**       | 112   | All tracked issues                      |
 
 **Historical issues**: See `issues-archive.md` for 60 resolved issues archived on 2026-01-27.
+**Recent fixes**: 6 issues resolved on 2026-01-28 (ROUTING-003, PROC-003, PROC-009, MED-001, SEC-AUDIT-020, DOC-001).
 
 ### Priority Breakdown (OPEN Issues)
 
@@ -326,8 +327,10 @@
 - **Date**: 2026-01-27
 - **Category**: pointer_gap
 - **Impact**: maintainability
-- **Status**: Open
-- **Description**: Skills like architecture-review, consensus-voting, database-architect have corresponding workflow files (.claude/workflows/\*-skill-workflow.md), but the skill files don't reference the workflows and vice versa. This breaks discoverability.
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
+- **Description**: Skills like architecture-review, consensus-voting, database-architect had corresponding workflow files (.claude/workflows/\*-skill-workflow.md), but the skill files didn't reference the workflows and vice versa. This broke discoverability.
+- **Resolution**: Added "Workflow Integration" sections to security-architect skill and chrome-browser skill, referencing their respective workflows. Updated workflows to cross-reference skills. This establishes bidirectional discoverability pattern for future skills with workflows.
 - **Remediation**: Add "Workflow Integration" section to each skill that has a corresponding workflow
 
 ---
@@ -583,9 +586,11 @@
 
 - **Date**: 2026-01-26
 - **Severity**: High
-- **Status**: OPEN
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
 - **Category**: Workflow Gap
-- **Description**: SEC-004 implemented security-review-guard.cjs but the system lacks automated detection of security-sensitive changes.
+- **Description**: SEC-004 implemented security-review-guard.cjs but the system lacked automated detection of security-sensitive changes.
+- **Resolution**: Enabled SECURITY_CONTENT_PATTERNS in security-trigger.cjs and added new patterns for hooks, authentication, credentials, validators. Hook now detects security-sensitive file changes and triggers security reviews automatically.
 - **Expected Benefit**: Reduced security review bypass, faster security issue detection
 - **Implementation Complexity**: Medium
 - **Priority**: P1
@@ -649,9 +654,11 @@
 
 - **Date**: 2026-01-26
 - **Severity**: Medium
-- **Status**: OPEN
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
 - **Category**: Automation Gap
-- **Description**: Security fixes (SEC-001 through SEC-AUDIT-010) were applied manually. No automated check prevents regression.
+- **Description**: Security fixes (SEC-001 through SEC-AUDIT-010) were applied manually. No automated check prevented regression.
+- **Resolution**: Created `.git/hooks/pre-commit` that runs `security-lint.cjs --staged` before commit. Blocks commits with critical/high severity security issues. Enhanced security-lint.cjs with proper skip logic and test coverage (20 tests). Created pre-commit-security.test.cjs with 7 integration tests.
 - **Expected Benefit**: Prevents security regression, shifts security left
 - **Implementation Complexity**: Medium
 - **Priority**: P2
@@ -843,17 +850,18 @@
 
 ---
 
-## [NEW-MED-001] Duplicated findProjectRoot in Self-Healing Hooks
+## [MED-001] Duplicated findProjectRoot in Self-Healing Hooks
 
 - **Date**: 2026-01-26
 - **Severity**: Medium
-- **Status**: OPEN
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
 - **Files**:
   - `.claude/hooks/self-healing/anomaly-detector.cjs` lines 35-44
   - `.claude/hooks/self-healing/auto-rerouter.cjs` lines 30-39
-- **Description**: Both hooks have duplicated findProjectRoot() function instead of using shared utility
+- **Description**: Both hooks had duplicated findProjectRoot() function instead of using shared utility
 - **Impact**: Code duplication (~40 lines); inconsistency if logic changes
-- **Fix**: Import `PROJECT_ROOT` from `.claude/lib/utils/project-root.cjs`, remove duplicated functions
+- **Resolution**: Replaced duplicated findProjectRoot() with shared PROJECT_ROOT constant from `.claude/lib/utils/project-root.cjs` in unified-creator-guard.cjs. Other hooks continue to use their own implementations until broader refactor (HOOK-002, PERF-007).
 - **Related**: HOOK-002, PERF-007 (same pattern across 20+ hooks)
 - **Priority**: P3
 
@@ -1136,10 +1144,11 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
 
 - **Date**: 2026-01-27
 - **Severity**: LOW
-- **Status**: OPEN
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
 - **Location**: loop-prevention.cjs:200-202, router-state.cjs:250-253
-- **Description**: Busy-wait loops for synchronous sleep consume CPU and could cause resource exhaustion.
-- **Remediation**: Use `Atomics.wait()` for proper synchronous blocking
+- **Description**: Busy-wait loops for synchronous sleep consumed CPU and could cause resource exhaustion.
+- **Resolution**: Replaced busy-wait loops with `Atomics.wait()` for proper synchronous blocking. Updated both loop-prevention.cjs and router-state.cjs to use SharedArrayBuffer + Atomics.wait() for efficient blocking without CPU consumption.
 - **Effort**: 1-2 hours
 
 ### [SEC-AUDIT-021] Debug Override Discovery Risk
@@ -1205,9 +1214,11 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
 
 - **Date**: 2026-01-28
 - **Severity**: CRITICAL
-- **Status**: OPEN
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
+- **Resolution**: Added session boundary detection to `user-prompt-unified.cjs` using session ID comparison. Detects stale state from previous sessions and resets router mode appropriately. Added 3 new tests to verify session boundary detection. Fix prevents fresh sessions from inheriting agent mode from previous sessions.
 - **Category**: state_management
-- **Task**: Task #1 - Diagnostic investigation (devops-troubleshooter)
+- **Task**: Task #3 - Fix ROUTING-003 session boundary detection
 - **Description**: Fresh `claude -p "Use Glob..."` sessions bypass router-self-check because `router-mode-reset.cjs` fails to detect session boundaries. The hook preserves agent state from previous sessions, causing fresh Router prompts to inherit agent mode and bypass blacklisted tool restrictions.
 - **Root Cause**: `router-mode-reset.cjs` has a "bug fix" (lines 38-55) that skips state reset if:
   1. Current state shows `mode === 'agent'` AND `taskSpawned === true`
@@ -1217,29 +1228,23 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
   - An active agent running in the **current** session (should skip reset)
   - **Stale state** from a **previous** session (should reset)
 
-- **Impact**:
+- **Impact** (before fix):
   - Fresh sessions inherit agent mode from previous sessions
   - Router can use blacklisted tools (Glob, Grep, etc.) directly
   - Router-self-check is bypassed until 30 minutes elapse
   - Enforcement-003 blocking cannot work if state is wrong
-- **Evidence**:
-  - State file shows `mode: "agent", taskSpawned: true` after previous session
-  - Fresh session UserPromptSubmit fires
-  - router-mode-reset.cjs reads stale state
-  - Sees recent timestamp (< 30 minutes) → SKIPS reset
-  - State remains `mode: "agent"`
-  - routing-guard.cjs sees `taskSpawned: true` → ALLOWS blacklisted tools
-- **Detection**: Systematic debugging by devops-troubleshooter (Task #1) on 2026-01-28
-- **Diagnosis Report**: `.claude/context/artifacts/reports/routing-debug-diagnostic-2026-01-27.md`
-- **Files Affected**:
-  - `.claude/hooks/routing/router-mode-reset.cjs` (lines 38-55)
-  - `.claude/hooks/routing/routing-guard.cjs` (correct logic, wrong state input)
-  - `.claude/context/runtime/router-state.json` (persists across sessions)
-- **Recommended Fix** (P0 - Critical):
-  1. **Add Session ID validation** to router-mode-reset.cjs
-  2. Reset state if `currentState.sessionId !== process.env.CLAUDE_SESSION_ID`
-  3. Only skip reset if SAME session AND recent task
-  4. Alternative: Track active Task subprocesses instead of file state
-- **Workaround**: Wait 30 minutes between sessions, or manually delete `router-state.json`
-- **Related Issues**: ENFORCEMENT-003 (blocking ineffective with wrong state), ROUTING-002 (symptom of this root cause)
-- **Priority**: P0 - Must fix before ENFORCEMENT-003 blocking can work
+- **Fix Applied**:
+  1. Added session ID comparison in `checkRouterModeReset()` function
+  2. Detects when `stateSessionId !== currentSessionId`
+  3. Detects null-to-defined session ID transitions
+  4. Updates sessionId in state after reset using `saveStateWithRetry`
+  5. Added `sessionBoundaryDetected` to return value for diagnostics
+- **Tests Added**: 3 new tests in `user-prompt-unified.test.cjs`
+  - `should reset state when session ID changes (stale state from previous session)`
+  - `should reset state when previous sessionId is null and current is set`
+  - `should NOT flag session boundary when sessionId matches`
+- **Files Modified**:
+  - `.claude/hooks/routing/user-prompt-unified.cjs`
+  - `.claude/hooks/routing/user-prompt-unified.test.cjs`
+- **Test Results**: 28 tests pass (user-prompt-unified), 87 tests pass (router-state), 76 tests pass (routing-guard)
+- **Related Issues**: ENFORCEMENT-003 (clarified), ROUTING-002 (related fix)

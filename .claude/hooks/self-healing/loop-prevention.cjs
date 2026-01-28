@@ -169,6 +169,35 @@ const MAX_LOCK_WAIT_MS = 2000;
 const LOCK_RETRY_MS = 50;
 
 /**
+ * SEC-AUDIT-020 FIX: Synchronous sleep without CPU spin
+ *
+ * Uses Atomics.wait() when available to properly block the thread.
+ * Falls back to busy-wait on older Node.js versions.
+ *
+ * @param {number} ms - Milliseconds to sleep
+ */
+function syncSleepInternal(ms) {
+  // Use Atomics.wait for proper blocking (Node.js v16+)
+  if (typeof SharedArrayBuffer !== 'undefined' && typeof Atomics !== 'undefined') {
+    try {
+      // Create a shared buffer that will never be signaled (timeout-only)
+      const sharedBuffer = new SharedArrayBuffer(4);
+      const int32 = new Int32Array(sharedBuffer);
+      // Atomics.wait blocks the thread without CPU spin
+      Atomics.wait(int32, 0, 0, ms);
+      return;
+    } catch (e) {
+      // Fall through to busy-wait if Atomics.wait fails
+    }
+  }
+  // Fallback to busy-wait for older Node.js versions
+  const start = Date.now();
+  while (Date.now() - start < ms) {
+    // Busy wait - only used when Atomics.wait unavailable
+  }
+}
+
+/**
  * SEC-AUDIT-014 FIX: Check if a process is alive
  * @param {number} pid - Process ID to check
  * @returns {boolean} True if process exists
@@ -216,10 +245,8 @@ function acquireLock(filePath) {
           // Could not read lock file, wait and retry
         }
         // Process is alive, wait and retry
-        const waitStart = Date.now();
-        while (Date.now() - waitStart < LOCK_RETRY_MS) {
-          // Busy wait (Node.js doesn't have sleep)
-        }
+        // SEC-AUDIT-020 FIX: Use Atomics.wait instead of busy-wait
+        syncSleepInternal(LOCK_RETRY_MS);
       } else {
         // Other error, give up
         return false;
