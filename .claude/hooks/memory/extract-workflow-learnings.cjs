@@ -12,19 +12,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// PROC-002: Use shared utility instead of duplicated findProjectRoot
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 const LEARNINGS_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'memory', 'learnings.md');
 
 // Workflow completion markers

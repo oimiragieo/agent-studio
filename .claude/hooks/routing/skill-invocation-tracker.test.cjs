@@ -166,8 +166,9 @@ describe('skill-invocation-tracker.cjs', () => {
   });
 
   describe('DEFAULT_TTL_MS constant', () => {
-    it('should be 10 minutes in milliseconds', () => {
-      assert.strictEqual(tracker.DEFAULT_TTL_MS, 10 * 60 * 1000);
+    it('should be 3 minutes in milliseconds (SEC-REMEDIATION-001)', () => {
+      // SEC-REMEDIATION-001: Reduced from 10 to 3 minutes for security hardening
+      assert.strictEqual(tracker.DEFAULT_TTL_MS, 3 * 60 * 1000);
     });
   });
 });

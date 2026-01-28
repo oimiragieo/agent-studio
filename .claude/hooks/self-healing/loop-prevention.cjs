@@ -214,9 +214,71 @@ function isProcessAlive(pid) {
 }
 
 /**
+ * SEC-AUDIT-014 TOCTOU FIX: Atomically try to claim a stale lock
+ *
+ * Uses atomic rename to avoid TOCTOU race condition.
+ * Instead of check-then-delete (TOCTOU vulnerable), we:
+ * 1. Attempt atomic rename of lock file to a unique claiming file
+ * 2. If rename succeeds, we "own" the lock and can safely check/delete it
+ * 3. If rename fails (ENOENT), another process already claimed/deleted it
+ *
+ * @param {string} lockFile - Path to the lock file
+ * @returns {boolean} True if stale lock was claimed and removed
+ */
+function tryClaimStaleLock(lockFile) {
+  // Generate unique claiming file name with pid and timestamp
+  const claimingFile = `${lockFile}.claiming.${process.pid}.${Date.now()}`;
+
+  try {
+    // Step 1: Atomically rename lock file to claiming file
+    // This is atomic on both POSIX and Windows
+    // If two processes race, only one rename will succeed
+    fs.renameSync(lockFile, claimingFile);
+
+    // Step 2: We now "own" the claiming file - read and check if process is dead
+    try {
+      const lockData = JSON.parse(fs.readFileSync(claimingFile, 'utf8'));
+
+      if (lockData.pid && !isProcessAlive(lockData.pid)) {
+        // Process is dead - stale lock successfully claimed, delete it
+        fs.unlinkSync(claimingFile);
+        return true;
+      } else {
+        // Process is still alive! Restore the lock file
+        // This shouldn't happen in practice (why would a live process's lock be renamed?)
+        // but we handle it for safety
+        try {
+          fs.renameSync(claimingFile, lockFile);
+        } catch (restoreErr) {
+          // If restore fails, delete claiming file to avoid orphans
+          try {
+            fs.unlinkSync(claimingFile);
+          } catch {
+            // Best effort cleanup
+          }
+        }
+        return false;
+      }
+    } catch (readErr) {
+      // Couldn't read/parse claiming file - delete it and claim success
+      try {
+        fs.unlinkSync(claimingFile);
+      } catch {
+        // Best effort cleanup
+      }
+      return true;
+    }
+  } catch (renameErr) {
+    // Rename failed - either lock doesn't exist (ENOENT) or another process claimed it
+    // Either way, we didn't claim it
+    return false;
+  }
+}
+
+/**
  * SEC-AUDIT-014 FIX: Acquire a lock file for atomic operations
  * Uses exclusive file creation (O_EXCL equivalent via wx flag)
- * Fixed TOCTOU by checking process liveness instead of time
+ * Fixed TOCTOU by using atomic rename for stale lock cleanup
  * @param {string} filePath - Path to the file to lock
  * @returns {boolean} True if lock acquired, false otherwise
  */
@@ -233,18 +295,14 @@ function acquireLock(filePath) {
       return true;
     } catch (e) {
       if (e.code === 'EEXIST') {
-        // Lock exists, check if the process that created it is still alive
-        try {
-          const lockData = JSON.parse(fs.readFileSync(lockFile, 'utf8'));
-          if (lockData.pid && !isProcessAlive(lockData.pid)) {
-            // Process is dead, safe to remove lock
-            fs.unlinkSync(lockFile);
-            continue;
-          }
-        } catch (readErr) {
-          // Could not read lock file, wait and retry
+        // Lock exists - try to atomically claim it if stale
+        // SEC-AUDIT-014 TOCTOU FIX: Use atomic rename instead of check-then-delete
+        if (tryClaimStaleLock(lockFile)) {
+          // Successfully claimed and removed stale lock, retry acquire
+          continue;
         }
-        // Process is alive, wait and retry
+
+        // Lock is held by a live process, wait and retry
         // SEC-AUDIT-020 FIX: Use Atomics.wait instead of busy-wait
         syncSleepInternal(LOCK_RETRY_MS);
       } else {
@@ -831,6 +889,10 @@ module.exports = {
   detectEvolutionType,
   isEvolutionTrigger,
   extractAgentType,
+
+  // Lock utilities (SEC-AUDIT-014 TOCTOU fix)
+  tryClaimStaleLock,
+  isProcessAlive,
 
   // Constants
   DEFAULT_EVOLUTION_BUDGET,

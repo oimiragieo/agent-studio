@@ -6,6 +6,7 @@ const assert = require('node:assert');
 const {
   SHELL_INTERPRETERS,
   DANGEROUS_PATTERNS,
+  DANGEROUS_BUILTINS,
   checkDangerousPatterns,
   extractCArgument,
   extractCArgumentLegacy,
@@ -62,6 +63,57 @@ describe('shell-validators', () => {
       const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Brace expansion with commands');
       assert.ok(pattern, 'Brace expansion pattern should exist');
       assert.ok(pattern.pattern.test('{a,b,c}'), 'Pattern should match {a,b,c}');
+    });
+
+    test('includes here-string pattern', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Here-string');
+      assert.ok(pattern, 'Here-string pattern should exist');
+      assert.ok(pattern.pattern.test('cat <<<EOF'), 'Pattern should match <<<');
+      assert.ok(pattern.pattern.test('bash<<<"input"'), 'Pattern should match <<< without space');
+    });
+
+    test('command substitution pattern does not match arithmetic expansion', () => {
+      const pattern = DANGEROUS_PATTERNS.find(p => p.name === 'Command substitution');
+      assert.ok(pattern, 'Command substitution pattern should exist');
+      assert.ok(pattern.pattern.test('$(whoami)'), 'Pattern should match $(...)');
+      assert.strictEqual(
+        pattern.pattern.test('$((1+2))'),
+        false,
+        'Pattern should NOT match $((...))'
+      );
+    });
+  });
+
+  describe('DANGEROUS_BUILTINS', () => {
+    test('includes eval builtin pattern', () => {
+      const pattern = DANGEROUS_BUILTINS.find(p => p.name === 'eval builtin');
+      assert.ok(pattern, 'eval builtin pattern should exist');
+      assert.ok(pattern.pattern.test('eval cmd'), 'Pattern should match eval at start');
+      assert.ok(pattern.pattern.test('echo test; eval cmd'), 'Pattern should match eval after ;');
+    });
+
+    test('includes source builtin pattern', () => {
+      const pattern = DANGEROUS_BUILTINS.find(p => p.name === 'source builtin');
+      assert.ok(pattern, 'source builtin pattern should exist');
+      assert.ok(pattern.pattern.test('source file.sh'), 'Pattern should match source at start');
+      assert.ok(
+        pattern.pattern.test('test && source file'),
+        'Pattern should match source after &&'
+      );
+    });
+
+    test('includes dot builtin pattern', () => {
+      const pattern = DANGEROUS_BUILTINS.find(p => p.name === 'dot (.) builtin');
+      assert.ok(pattern, 'dot builtin pattern should exist');
+      assert.ok(pattern.pattern.test('. /etc/profile'), 'Pattern should match dot at start');
+      assert.ok(pattern.pattern.test('test || . script.sh'), 'Pattern should match dot after ||');
+    });
+
+    test('dot builtin pattern does not match relative paths', () => {
+      const pattern = DANGEROUS_BUILTINS.find(p => p.name === 'dot (.) builtin');
+      assert.ok(pattern, 'dot builtin pattern should exist');
+      assert.strictEqual(pattern.pattern.test('./script.sh'), false, 'Should NOT match ./');
+      assert.strictEqual(pattern.pattern.test('../script.sh'), false, 'Should NOT match ../');
     });
   });
 
@@ -130,6 +182,102 @@ describe('shell-validators', () => {
 
     test('handles non-string input', () => {
       const result = checkDangerousPatterns(123);
+      assert.strictEqual(result.valid, true);
+    });
+
+    // SEC-AUDIT-012: Here-string blocking
+    test('blocks here-strings', () => {
+      const result = checkDangerousPatterns('cat <<<input');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('Here-string'));
+    });
+
+    test('blocks here-strings without space', () => {
+      const result = checkDangerousPatterns('bash<<<"rm -rf /"');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('Here-string'));
+    });
+
+    // SEC-AUDIT-012: Dangerous builtins
+    test('blocks eval command at start', () => {
+      const result = checkDangerousPatterns('eval "$COMMAND"');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('eval'));
+    });
+
+    test('blocks eval command after semicolon', () => {
+      const result = checkDangerousPatterns('echo test; eval bad');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('eval'));
+    });
+
+    test('blocks eval command after pipe', () => {
+      const result = checkDangerousPatterns('cmd | eval dangerous');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('eval'));
+    });
+
+    test('allows evaluate (word containing eval)', () => {
+      const result = checkDangerousPatterns('evaluate this');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('blocks source command', () => {
+      const result = checkDangerousPatterns('source ~/.bashrc');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('source'));
+    });
+
+    test('blocks source after &&', () => {
+      const result = checkDangerousPatterns('echo test && source evil.sh');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('source'));
+    });
+
+    test('allows source in quoted string', () => {
+      const result = checkDangerousPatterns('echo "source is a word"');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('blocks dot command at start', () => {
+      const result = checkDangerousPatterns('. /etc/profile');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('SEC-AUDIT-012'));
+      assert.ok(result.error.includes('dot'));
+    });
+
+    test('blocks dot command after ||', () => {
+      const result = checkDangerousPatterns('false || . script.sh');
+      assert.strictEqual(result.valid, false);
+      assert.ok(result.error.includes('dot'));
+    });
+
+    test('allows relative path ./script.sh', () => {
+      const result = checkDangerousPatterns('./script.sh');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('allows parent path ../script.sh', () => {
+      const result = checkDangerousPatterns('../script.sh');
+      assert.strictEqual(result.valid, true);
+    });
+
+    // SEC-AUDIT-012: Arithmetic expansion (should be allowed)
+    test('allows arithmetic expansion $((...))', () => {
+      const result = checkDangerousPatterns('echo $((1+2))');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('allows arithmetic expansion with variables', () => {
+      const result = checkDangerousPatterns('echo $(($a + $b))');
+      assert.strictEqual(result.valid, true);
+    });
+
+    test('allows complex arithmetic expansion', () => {
+      const result = checkDangerousPatterns('total=$((count * price))');
       assert.strictEqual(result.valid, true);
     });
   });
@@ -384,6 +532,79 @@ describe('shell-validators', () => {
         const result = validateShellCommand("sh -c $'echo\\x00evil'");
         assert.strictEqual(result.valid, false);
         assert.ok(result.error.includes('SEC-AUDIT-012'));
+      });
+    });
+
+    describe('SEC-AUDIT-012: Here-string blocking', () => {
+      test('blocks here-string with dangerous input', () => {
+        const result = validateShellCommand('bash <<<"rm -rf /"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('Here-string'));
+      });
+
+      test('blocks here-string without space', () => {
+        const result = validateShellCommand('mysql<<<"DROP TABLE users"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('Here-string'));
+      });
+    });
+
+    describe('SEC-AUDIT-012: Dangerous builtin blocking', () => {
+      test('blocks eval command', () => {
+        const result = validateShellCommand('eval "$MALICIOUS"');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('eval'));
+      });
+
+      test('blocks source command', () => {
+        const result = validateShellCommand('source /tmp/evil.sh');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('source'));
+      });
+
+      test('blocks dot command', () => {
+        const result = validateShellCommand('. /tmp/evil.sh');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('SEC-AUDIT-012'));
+        assert.ok(result.error.includes('dot'));
+      });
+
+      test('allows legitimate relative paths', () => {
+        const result = validateShellCommand('./my-script.sh');
+        assert.strictEqual(result.valid, true);
+      });
+
+      test('allows parent directory paths', () => {
+        const result = validateShellCommand('../scripts/build.sh');
+        assert.strictEqual(result.valid, true);
+      });
+    });
+
+    describe('SEC-AUDIT-012: Arithmetic expansion (false positive fix)', () => {
+      test('allows simple arithmetic expansion', () => {
+        const result = validateShellCommand('echo $((1+2))');
+        assert.strictEqual(result.valid, true);
+      });
+
+      test('allows arithmetic expansion with variables', () => {
+        const result = validateShellCommand('result=$((count * 10))');
+        assert.strictEqual(result.valid, true);
+      });
+
+      test('allows nested arithmetic expansion', () => {
+        // $(($(($a)) + 1)) is valid shell arithmetic (nested arithmetic expansions)
+        // The inner $(($a)) is arithmetic, not command substitution
+        const result = validateShellCommand('echo $(($(($a)) + 1))');
+        assert.strictEqual(result.valid, true);
+      });
+
+      test('still blocks command substitution', () => {
+        const result = validateShellCommand('echo $(whoami)');
+        assert.strictEqual(result.valid, false);
+        assert.ok(result.error.includes('Command substitution'));
       });
     });
   });

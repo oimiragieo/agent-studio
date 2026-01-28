@@ -47,6 +47,26 @@ describe('platform.cjs', () => {
       const result = platform.bashPath('C:\\a\\b\\c\\d\\e\\f\\g.txt');
       assert.strictEqual(result, 'C:/a/b/c/d/e/f/g.txt');
     });
+
+    // SEC-REMEDIATION-002: Null byte sanitization tests
+    it('should remove null bytes from path (SEC-REMEDIATION-002)', () => {
+      const result = platform.bashPath('C:\\Users\0\\evil.txt');
+      assert.strictEqual(result, 'C:/Users/evil.txt');
+      assert.ok(!result.includes('\0'), 'null byte should be removed');
+    });
+
+    it('should remove multiple null bytes', () => {
+      const result = platform.bashPath('C:\\Users\0\0\\path\0\\file.txt');
+      assert.strictEqual(result, 'C:/Users/path/file.txt');
+    });
+
+    it('should handle non-string input gracefully', () => {
+      // Numbers should pass through unchanged
+      assert.strictEqual(platform.bashPath(123), 123);
+      // Objects should pass through unchanged
+      const obj = { path: 'test' };
+      assert.strictEqual(platform.bashPath(obj), obj);
+    });
   });
 
   describe('shellQuote()', () => {

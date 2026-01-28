@@ -266,6 +266,100 @@ async function runTests() {
     });
   });
 
+  // SEC-AUDIT-015: evolution-state schema completeness tests
+  await describe('evolution-state schema (SEC-AUDIT-015)', async () => {
+    await test('should have evolution-state schema', () => {
+      assert(
+        safeJson.SCHEMAS['evolution-state'] !== undefined,
+        'evolution-state schema should be defined'
+      );
+      assert(
+        safeJson.SCHEMAS['evolution-state'].defaults !== undefined,
+        'evolution-state defaults should be defined'
+      );
+    });
+
+    await test('should include version field (matching evolution-state-sync.cjs DEFAULT_STATE)', () => {
+      const defaults = safeJson.SCHEMAS['evolution-state'].defaults;
+      assert(
+        Object.prototype.hasOwnProperty.call(defaults, 'version'),
+        'evolution-state schema should have version field'
+      );
+      assertEqual(defaults.version, '1.0.0', 'version should default to "1.0.0"');
+    });
+
+    await test('should include locks field (matching evolution-state-sync.cjs DEFAULT_STATE)', () => {
+      const defaults = safeJson.SCHEMAS['evolution-state'].defaults;
+      assert(
+        Object.prototype.hasOwnProperty.call(defaults, 'locks'),
+        'evolution-state schema should have locks field'
+      );
+      assertDeepEqual(defaults.locks, {}, 'locks should default to empty object');
+    });
+
+    await test('should NOT include spawnDepth field (belongs to loop-state, not evolution-state)', () => {
+      const defaults = safeJson.SCHEMAS['evolution-state'].defaults;
+      assert(
+        !Object.prototype.hasOwnProperty.call(defaults, 'spawnDepth'),
+        'evolution-state schema should NOT have spawnDepth field (it belongs to loop-state)'
+      );
+    });
+
+    await test('should NOT include circuitBreaker field (not in evolution-state-sync.cjs DEFAULT_STATE)', () => {
+      const defaults = safeJson.SCHEMAS['evolution-state'].defaults;
+      assert(
+        !Object.prototype.hasOwnProperty.call(defaults, 'circuitBreaker'),
+        'evolution-state schema should NOT have circuitBreaker field'
+      );
+    });
+
+    await test('should parse valid evolution-state JSON with all fields', () => {
+      const content = JSON.stringify({
+        version: '2.0.0',
+        state: 'validating',
+        currentEvolution: { type: 'agent', name: 'test' },
+        evolutions: [{ type: 'skill', name: 'test-skill' }],
+        patterns: [{ name: 'test-pattern' }],
+        suggestions: [{ name: 'test-suggestion' }],
+        lastUpdated: '2026-01-28T00:00:00.000Z',
+        locks: { 'workflow-123': '2026-01-28T00:00:00.000Z' },
+      });
+      const result = safeJson.safeParseJSON(content, 'evolution-state');
+
+      assertEqual(result.version, '2.0.0', 'version should be parsed');
+      assertEqual(result.state, 'validating', 'state should be parsed');
+      assertDeepEqual(
+        result.locks,
+        { 'workflow-123': '2026-01-28T00:00:00.000Z' },
+        'locks should be parsed'
+      );
+    });
+
+    await test('should return defaults for invalid evolution-state JSON', () => {
+      const content = 'invalid json';
+      const result = safeJson.safeParseJSON(content, 'evolution-state');
+
+      assertEqual(result.version, '1.0.0', 'version should default to 1.0.0');
+      assertEqual(result.state, 'idle', 'state should default to idle');
+      assertDeepEqual(result.locks, {}, 'locks should default to empty object');
+    });
+
+    await test('should strip unknown properties from evolution-state', () => {
+      const content = JSON.stringify({
+        state: 'idle',
+        malicious: 'payload',
+        spawnDepth: 5, // This should be stripped (wrong schema)
+        circuitBreaker: {}, // This should be stripped (wrong schema)
+      });
+      const result = safeJson.safeParseJSON(content, 'evolution-state');
+
+      assertEqual(result.state, 'idle', 'state should be parsed');
+      assertEqual(result.malicious, undefined, 'malicious should be stripped');
+      assertEqual(result.spawnDepth, undefined, 'spawnDepth should be stripped');
+      assertEqual(result.circuitBreaker, undefined, 'circuitBreaker should be stripped');
+    });
+  });
+
   // Summary
   console.log('\n=========================');
   console.log(`Results: ${passCount} passed, ${failCount} failed`);

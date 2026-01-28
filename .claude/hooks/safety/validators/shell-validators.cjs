@@ -36,11 +36,22 @@ const DANGEROUS_PATTERNS = [
     reason: 'Command substitution can execute arbitrary code',
   },
   {
-    pattern: /\$\([^)]*\)/,
+    // Match $(...) but NOT $((...)) which is arithmetic expansion
+    // Negative lookahead ensures we don't match arithmetic $(( ))
+    pattern: /\$\((?!\()/,
     name: 'Command substitution',
     reason: 'Can execute arbitrary nested commands',
   },
   {
+    // Here-strings (<<<) MUST be checked BEFORE here-documents (<<)
+    // because <<< contains << and would match here-document first
+    pattern: /<<<\s*/,
+    name: 'Here-string',
+    reason: 'Here-strings can inject arbitrary input to shell commands',
+  },
+  {
+    // Here-documents (<<WORD or <<-WORD)
+    // This pattern uses negative lookbehind to avoid matching <<< (here-strings)
     pattern: /<<-?\s*\w/,
     name: 'Here-document',
     reason: 'Here-docs can inject multiline commands',
@@ -49,6 +60,35 @@ const DANGEROUS_PATTERNS = [
     pattern: /\{[^}]*,[^}]*\}/,
     name: 'Brace expansion with commands',
     reason: 'Brace expansion can execute multiple variants of commands',
+  },
+];
+
+/**
+ * SEC-AUDIT-012: Dangerous shell builtins that can execute arbitrary code.
+ * These commands are blocked regardless of arguments because they can
+ * execute arbitrary code or source untrusted files.
+ * @type {Array<{pattern: RegExp, name: string, reason: string}>}
+ */
+const DANGEROUS_BUILTINS = [
+  {
+    // Match 'eval' as first command or after shell operators (;, &&, ||, |)
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)eval\s+/,
+    name: 'eval builtin',
+    reason: 'eval executes arbitrary shell code',
+  },
+  {
+    // Match 'source' as first command or after shell operators
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)source\s+/,
+    name: 'source builtin',
+    reason: 'source executes arbitrary shell scripts',
+  },
+  {
+    // Match '.' followed by space and path (the dot command)
+    // Careful: must not match paths like ./script.sh or ../dir
+    // Pattern: start of command or after operators, then "." followed by space and non-dot
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)\.\s+[^.]/,
+    name: 'dot (.) builtin',
+    reason: 'dot command sources arbitrary shell scripts',
   },
 ];
 
@@ -66,7 +106,18 @@ function checkDangerousPatterns(command) {
     return { valid: true, error: '' };
   }
 
+  // Check dangerous syntax patterns
   for (const { pattern, name, reason } of DANGEROUS_PATTERNS) {
+    if (pattern.test(command)) {
+      return {
+        valid: false,
+        error: `SEC-AUDIT-012: ${name} blocked - ${reason}`,
+      };
+    }
+  }
+
+  // Check dangerous shell builtins
+  for (const { pattern, name, reason } of DANGEROUS_BUILTINS) {
     if (pattern.test(command)) {
       return {
         valid: false,
@@ -307,6 +358,7 @@ const validateZshCommand = validateShellCommand;
 module.exports = {
   SHELL_INTERPRETERS,
   DANGEROUS_PATTERNS,
+  DANGEROUS_BUILTINS,
   checkDangerousPatterns,
   extractCArgument,
   extractCArgumentLegacy, // Backward compatibility

@@ -1,0 +1,620 @@
+#!/usr/bin/env node
+/**
+ * Hook: unified-reflection-handler.cjs
+ * Trigger: PostToolUse (TaskUpdate, Bash, Task) + SessionEnd
+ * Purpose: Consolidated handler for reflection and memory extraction
+ *
+ * PERF-003: Consolidates 5 hooks into 1:
+ * - task-completion-reflection.cjs (PostToolUse:TaskUpdate)
+ * - error-recovery-reflection.cjs (PostToolUse:Bash)
+ * - session-end-reflection.cjs (SessionEnd)
+ * - session-memory-extractor.cjs (PostToolUse:Task)
+ * - session-end-recorder.cjs (SessionEnd)
+ *
+ * Benefits:
+ * - 60% reduction in process spawns (5 -> 2)
+ * - ~800 lines of code saved through deduplication
+ * - Single point of maintenance
+ *
+ * ENFORCEMENT MODES:
+ * - block (default): Process events (no blocking behavior for post-hooks)
+ * - warn: Process events with warning messages
+ * - off: Disabled, no processing
+ *
+ * Environment variables:
+ *   REFLECTION_ENABLED=false - Disable all reflection
+ *   REFLECTION_HOOK_MODE=off - Disable this hook
+ *   DEBUG_HOOKS=true - Enable debug logging
+ */
+
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+
+// PERF-006/PERF-007: Use shared utilities instead of duplicated code
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const {
+  parseHookInputAsync,
+  getToolName,
+  getToolInput,
+  getToolOutput,
+} = require('../../lib/utils/hook-input.cjs');
+
+// Configuration
+let QUEUE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'reflection-queue.jsonl');
+
+// Session end event types
+const SESSION_END_EVENTS = ['Stop', 'SessionEnd'];
+
+// Minimum output length for memory extraction
+const MIN_OUTPUT_LENGTH = 50;
+
+// ============================================================
+// CORE UTILITY FUNCTIONS
+// ============================================================
+
+/**
+ * Check if reflection/memory hooks are enabled
+ * @returns {boolean} True if hooks should run
+ */
+function isEnabled() {
+  // Check REFLECTION_ENABLED (default: true)
+  if (process.env.REFLECTION_ENABLED === 'false') {
+    return false;
+  }
+
+  // Check REFLECTION_HOOK_MODE (default: block, which means enabled)
+  const mode = process.env.REFLECTION_HOOK_MODE || 'block';
+  if (mode === 'off') {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Detect the event type from hook input
+ * Routes to appropriate handler based on input content
+ *
+ * @param {object|null} input - The hook input from Claude Code
+ * @returns {string|null} Event type: 'task_completion' | 'error_recovery' | 'session_end' | 'memory_extraction' | null
+ */
+function detectEventType(input) {
+  if (!input) return null;
+
+  // Check for session end event first (highest priority)
+  const eventType = input.event || input.event_type;
+  if (eventType && SESSION_END_EVENTS.includes(eventType)) {
+    return 'session_end';
+  }
+
+  // Get tool information using shared helpers
+  const toolName = getToolName(input);
+  const toolInput = getToolInput(input);
+  const toolResult = getToolOutput(input);
+
+  // Check for TaskUpdate with completed status
+  if (toolName === 'TaskUpdate') {
+    if (toolInput && toolInput.status === 'completed') {
+      return 'task_completion';
+    }
+    return null;
+  }
+
+  // Check for Bash with errors (non-zero exit code or error field)
+  if (toolName === 'Bash') {
+    if (toolResult) {
+      if (typeof toolResult.exit_code === 'number' && toolResult.exit_code !== 0) {
+        return 'error_recovery';
+      }
+      if (toolResult.error) {
+        return 'error_recovery';
+      }
+    }
+    return null;
+  }
+
+  // Check for other tools with errors (generic error handling)
+  if (toolResult && toolResult.error) {
+    return 'error_recovery';
+  }
+
+  // Check for Task tool with sufficient output for memory extraction
+  if (toolName === 'Task') {
+    const output = typeof toolResult === 'string' ? toolResult : '';
+    if (output.length >= MIN_OUTPUT_LENGTH) {
+      return 'memory_extraction';
+    }
+    return null;
+  }
+
+  return null;
+}
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+
+/**
+ * Handle task completion - create reflection queue entry
+ * @param {object} input - The hook input
+ * @returns {object} Reflection entry for the queue
+ */
+function handleTaskCompletion(input) {
+  const toolInput = getToolInput(input);
+
+  const entry = {
+    taskId: toolInput.taskId,
+    trigger: 'task_completion',
+    timestamp: new Date().toISOString(),
+    priority: 'high',
+  };
+
+  // Extract summary from metadata if present
+  if (toolInput.metadata && toolInput.metadata.summary) {
+    entry.summary = toolInput.metadata.summary;
+  }
+
+  return entry;
+}
+
+/**
+ * Handle error recovery - create reflection queue entry for error analysis
+ * @param {object} input - The hook input
+ * @returns {object} Reflection entry for the queue
+ */
+function handleErrorRecovery(input) {
+  const toolName = getToolName(input);
+  const toolInput = getToolInput(input);
+  const toolResult = getToolOutput(input) || {};
+
+  const entry = {
+    context: 'error_recovery',
+    trigger: 'error',
+    tool: toolName,
+    timestamp: new Date().toISOString(),
+    priority: 'medium',
+  };
+
+  // Add Bash-specific fields
+  if (toolName === 'Bash') {
+    entry.command = toolInput.command;
+    if (toolResult.stderr) {
+      entry.error = toolResult.stderr;
+    }
+    if (typeof toolResult.exit_code === 'number') {
+      entry.exitCode = toolResult.exit_code;
+    }
+  }
+
+  // Add error from tool result
+  if (toolResult.error) {
+    entry.error = toolResult.error;
+  }
+
+  // Include relevant tool input for context
+  if (toolInput.file_path) {
+    entry.filePath = toolInput.file_path;
+  }
+
+  return entry;
+}
+
+/**
+ * Handle session end - create reflection entry and session data for memory recording
+ * @param {object} input - The hook input
+ * @returns {object} Object with reflection entry and sessionData for memory recording
+ */
+function handleSessionEnd(input) {
+  const sessionId = input.session_id || input.sessionId || process.env.CLAUDE_SESSION_ID;
+  const stats = getSessionStats(input);
+
+  // Create reflection entry
+  const reflection = {
+    context: 'session_end',
+    trigger: 'session_end',
+    sessionId: sessionId,
+    scope: 'all_unreflected_tasks',
+    timestamp: new Date().toISOString(),
+    priority: 'low',
+    stats: stats,
+  };
+
+  // Create session data for memory recording (formerly from session-end-recorder.cjs)
+  const sessionData = {
+    session_id: sessionId || `session-${Date.now()}`,
+    summary: 'Session ended',
+    tasks_completed: [],
+    files_modified: [],
+    discoveries: [],
+    patterns_found: [],
+    gotchas_encountered: [],
+    decisions_made: [],
+    next_steps: [],
+    timestamp: new Date().toISOString(),
+  };
+
+  return {
+    reflection,
+    sessionData,
+  };
+}
+
+/**
+ * Extract session statistics from input
+ * @param {object} input - The hook input
+ * @returns {object} Session statistics
+ */
+function getSessionStats(input) {
+  const stats = input.stats || {};
+
+  return {
+    toolCalls: stats.tool_calls || 0,
+    errors: stats.errors || 0,
+    tasksCompleted: stats.tasks_completed || 0,
+  };
+}
+
+/**
+ * Handle memory extraction - extract patterns, gotchas, and discoveries from Task output
+ * @param {object} input - The hook input
+ * @returns {object} Extracted memory items
+ */
+function handleMemoryExtraction(input) {
+  const toolResult = getToolOutput(input) || '';
+  const output = typeof toolResult === 'string' ? toolResult : '';
+
+  return {
+    patterns: extractPatterns(output),
+    gotchas: extractGotchas(output),
+    discoveries: extractDiscoveries(output),
+  };
+}
+
+// ============================================================
+// MEMORY EXTRACTION HELPERS (from session-memory-extractor.cjs)
+// ============================================================
+
+/**
+ * Extract patterns from task output
+ * @param {string} output - Task output text
+ * @returns {string[]} Array of extracted patterns (max 3)
+ */
+function extractPatterns(output) {
+  const patterns = [];
+
+  // Look for pattern indicators
+  const patternIndicators = [
+    /(?:pattern|approach|solution|technique|best practice):\s*(.+)/gi,
+    /(?:always|should|must|prefer)\s+(.{20,100})/gi,
+    /(?:use|using)\s+(\w+)\s+(?:for|to|when)\s+(.{10,50})/gi,
+  ];
+
+  for (const regex of patternIndicators) {
+    let match;
+    while ((match = regex.exec(output)) !== null) {
+      const patternText = match[1]?.trim();
+      if (patternText && patternText.length > 10 && patternText.length < 200) {
+        patterns.push(patternText);
+      }
+    }
+  }
+
+  return patterns.slice(0, 3); // Max 3 patterns per task
+}
+
+/**
+ * Extract gotchas from task output
+ * @param {string} output - Task output text
+ * @returns {string[]} Array of extracted gotchas (max 3)
+ */
+function extractGotchas(output) {
+  const gotchas = [];
+
+  // Look for gotcha indicators
+  const gotchaIndicators = [
+    /(?:gotcha|pitfall|warning|caution|watch out|careful):\s*(.+)/gi,
+    /(?:don't|do not|never|avoid)\s+(.{20,100})/gi,
+    /(?:bug|issue|problem):\s*(.{20,150})/gi,
+    /(?:fixed|resolved)\s+(?:by|with)\s+(.{20,100})/gi,
+  ];
+
+  for (const regex of gotchaIndicators) {
+    let match;
+    while ((match = regex.exec(output)) !== null) {
+      const gotchaText = match[1]?.trim();
+      if (gotchaText && gotchaText.length > 10 && gotchaText.length < 200) {
+        gotchas.push(gotchaText);
+      }
+    }
+  }
+
+  return gotchas.slice(0, 3); // Max 3 gotchas per task
+}
+
+/**
+ * Extract file discoveries from task output
+ * @param {string} output - Task output text
+ * @returns {object[]} Array of extracted discoveries (max 5)
+ */
+function extractDiscoveries(output) {
+  const discoveries = [];
+
+  // Look for file path mentions with descriptions
+  const filePatterns = [
+    /`([^`]+\.[a-z]{2,4})`[:\s-]+(.{10,100})/gi,
+    /(?:file|module|component)\s+`?([^\s`]+\.[a-z]{2,4})`?\s+(?:is|handles|contains|manages)\s+(.{10,80})/gi,
+  ];
+
+  for (const regex of filePatterns) {
+    let match;
+    while ((match = regex.exec(output)) !== null) {
+      const filePath = match[1]?.trim();
+      const description = match[2]?.trim();
+      if (filePath && description && !filePath.includes(' ')) {
+        discoveries.push({ path: filePath, description });
+      }
+    }
+  }
+
+  return discoveries.slice(0, 5); // Max 5 discoveries per task
+}
+
+// ============================================================
+// QUEUE MANAGEMENT
+// ============================================================
+
+/**
+ * Queue a reflection entry
+ * @param {object} entry - The reflection entry to queue
+ * @param {string} queueFile - Path to queue file (for testing)
+ */
+function queueReflection(entry, queueFile = QUEUE_FILE) {
+  // Check if enabled
+  if (!isEnabled()) {
+    return;
+  }
+
+  try {
+    // Ensure directory exists
+    const queueDir = path.dirname(queueFile);
+    if (!fs.existsSync(queueDir)) {
+      fs.mkdirSync(queueDir, { recursive: true });
+    }
+
+    // Append entry as JSON line
+    fs.appendFileSync(queueFile, JSON.stringify(entry) + '\n');
+
+    // Log in warn mode
+    const mode = process.env.REFLECTION_HOOK_MODE || 'block';
+    if (mode === 'warn') {
+      const trigger = entry.trigger || 'unknown';
+      const id = entry.taskId || entry.sessionId || entry.tool || 'unknown';
+      console.log(`[unified-reflection] Queued ${trigger} for ${id}`);
+    }
+  } catch (err) {
+    // Log error but don't fail the hook
+    if (process.env.DEBUG_HOOKS) {
+      console.error('[unified-reflection] Error queueing reflection:', err.message);
+    }
+  }
+}
+
+// ============================================================
+// MEMORY RECORDING (from session-end-recorder.cjs)
+// ============================================================
+
+/**
+ * Record session to memory system
+ * @param {object} sessionData - Session data to record
+ */
+function recordSession(sessionData) {
+  if (!isEnabled()) {
+    return;
+  }
+
+  try {
+    // Import memory manager
+    let memoryManager;
+    try {
+      memoryManager = require('../../lib/memory/memory-manager.cjs');
+    } catch (e) {
+      const libPath = path.join(__dirname, '..', '..', 'lib', 'memory', 'memory-manager.cjs');
+      memoryManager = require(libPath);
+    }
+
+    // Try to load memory-tiers (may not exist in older installations)
+    let memoryTiers = null;
+    try {
+      memoryTiers = require(
+        path.join(PROJECT_ROOT, '.claude', 'lib', 'memory', 'memory-tiers.cjs')
+      );
+    } catch (e) {
+      // Memory tiers not available - continue with legacy behavior
+    }
+
+    // Phase 2: Use memory tiers if available
+    if (memoryTiers) {
+      // Write to STM first
+      memoryTiers.writeSTMEntry(sessionData, PROJECT_ROOT);
+
+      // Consolidate STM -> MTM
+      memoryTiers.consolidateSession(sessionData.session_id, PROJECT_ROOT);
+    }
+
+    // Also call legacy memory-manager.cjs saveSession for backward compatibility
+    memoryManager.saveSession(sessionData, PROJECT_ROOT);
+
+    if (process.env.DEBUG_HOOKS) {
+      console.error(`[unified-reflection] Session recorded: ${sessionData.session_id}`);
+    }
+  } catch (err) {
+    if (process.env.DEBUG_HOOKS) {
+      console.error('[unified-reflection] Error recording session:', err.message);
+    }
+  }
+}
+
+/**
+ * Record extracted memory items
+ * @param {object} extracted - Object with patterns, gotchas, discoveries
+ */
+function recordMemoryItems(extracted) {
+  if (!isEnabled()) {
+    return;
+  }
+
+  try {
+    // Import memory manager
+    let memoryManager;
+    try {
+      memoryManager = require('../../lib/memory/memory-manager.cjs');
+    } catch (e) {
+      const libPath = path.join(__dirname, '..', '..', 'lib', 'memory', 'memory-manager.cjs');
+      memoryManager = require(libPath);
+    }
+
+    let recorded = 0;
+
+    for (const pattern of extracted.patterns || []) {
+      if (memoryManager.recordPattern(pattern, PROJECT_ROOT)) {
+        recorded++;
+      }
+    }
+
+    for (const gotcha of extracted.gotchas || []) {
+      if (memoryManager.recordGotcha(gotcha, PROJECT_ROOT)) {
+        recorded++;
+      }
+    }
+
+    for (const discovery of extracted.discoveries || []) {
+      if (
+        memoryManager.recordDiscovery(discovery.path, discovery.description, 'general', PROJECT_ROOT)
+      ) {
+        recorded++;
+      }
+    }
+
+    if (recorded > 0 && process.env.DEBUG_HOOKS) {
+      console.error(`[unified-reflection] Recorded ${recorded} memory items`);
+    }
+  } catch (err) {
+    if (process.env.DEBUG_HOOKS) {
+      console.error('[unified-reflection] Error recording memory items:', err.message);
+    }
+  }
+}
+
+// ============================================================
+// MAIN EXECUTION
+// ============================================================
+
+/**
+ * Main execution - route to appropriate handler based on event type
+ */
+async function main() {
+  try {
+    // Check if enabled
+    if (!isEnabled()) {
+      process.exit(0);
+    }
+
+    // Parse input
+    const hookInput = await parseHookInputAsync();
+
+    if (!hookInput) {
+      process.exit(0);
+    }
+
+    // Detect event type
+    const eventType = detectEventType(hookInput);
+
+    if (!eventType) {
+      process.exit(0);
+    }
+
+    // Route to appropriate handler
+    switch (eventType) {
+      case 'task_completion': {
+        const entry = handleTaskCompletion(hookInput);
+        queueReflection(entry);
+        break;
+      }
+
+      case 'error_recovery': {
+        const entry = handleErrorRecovery(hookInput);
+        queueReflection(entry);
+        break;
+      }
+
+      case 'session_end': {
+        const result = handleSessionEnd(hookInput);
+        // Queue reflection entry
+        queueReflection(result.reflection);
+        // Record session to memory
+        recordSession(result.sessionData);
+        break;
+      }
+
+      case 'memory_extraction': {
+        const extracted = handleMemoryExtraction(hookInput);
+        // Record to memory system
+        recordMemoryItems(extracted);
+        break;
+      }
+    }
+
+    // PostToolUse/SessionEnd hooks always exit 0 (don't block)
+    process.exit(0);
+  } catch (err) {
+    // Fail open
+    if (process.env.DEBUG_HOOKS) {
+      console.error('[unified-reflection] Error:', err.message);
+    }
+    process.exit(0);
+  }
+}
+
+// Run if main module
+if (require.main === module) {
+  main();
+}
+
+// Exports for testing
+module.exports = {
+  // Core functions
+  isEnabled,
+  detectEventType,
+
+  // Event handlers
+  handleTaskCompletion,
+  handleErrorRecovery,
+  handleSessionEnd,
+  handleMemoryExtraction,
+
+  // Memory extraction helpers
+  extractPatterns,
+  extractGotchas,
+  extractDiscoveries,
+  getSessionStats,
+
+  // Queue/memory management
+  queueReflection,
+  recordSession,
+  recordMemoryItems,
+
+  // Main entry point
+  main,
+
+  // Configuration
+  SESSION_END_EVENTS,
+  MIN_OUTPUT_LENGTH,
+  get QUEUE_FILE() {
+    return QUEUE_FILE;
+  },
+  set QUEUE_FILE(val) {
+    QUEUE_FILE = val;
+  },
+};

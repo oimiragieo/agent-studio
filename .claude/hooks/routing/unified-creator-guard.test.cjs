@@ -339,6 +339,22 @@ describe('TTL expiration', () => {
 });
 
 // =============================================================================
+// TEST: SEC-REMEDIATION-001 TTL Reduction
+// =============================================================================
+
+describe('SEC-REMEDIATION-001: TTL reduced from 10 to 3 minutes', () => {
+  it('DEFAULT_TTL_MS should be 3 minutes (180000ms)', () => {
+    // SEC-REMEDIATION-001: Reduce TTL from 10 minutes to 3 minutes
+    // Reason: Smaller window reduces state tampering risk
+    assert.strictEqual(
+      DEFAULT_TTL_MS,
+      3 * 60 * 1000,
+      'DEFAULT_TTL_MS should be 3 minutes for security hardening'
+    );
+  });
+});
+
+// =============================================================================
 // TEST: VALIDATION LOGIC
 // =============================================================================
 
@@ -532,6 +548,80 @@ describe('MED-001: PROJECT_ROOT from shared utility', () => {
       fs.existsSync(path.join(PROJECT_ROOT, '.claude', 'CLAUDE.md')),
       'PROJECT_ROOT should contain .claude/CLAUDE.md'
     );
+  });
+});
+
+// =============================================================================
+// TEST: EDGE CASES
+// =============================================================================
+
+// =============================================================================
+// TEST: ENFORCEMENT-002 - Integration between tracker and guard
+// =============================================================================
+
+describe('ENFORCEMENT-002: Integration between skill-invocation-tracker and unified-creator-guard', () => {
+  const tracker = require('./skill-invocation-tracker.cjs');
+
+  it('tracker markCreatorActive enables guard isCreatorActive', () => {
+    // Use tracker to mark skill-creator active
+    const marked = tracker.markCreatorActive('skill-creator');
+    assert.strictEqual(marked, true, 'tracker should mark creator active');
+
+    // Guard should recognize the creator as active
+    const state = isCreatorActive('skill-creator');
+    assert.strictEqual(state.active, true, 'guard should see creator as active');
+  });
+
+  it('tracker and guard share the same state file path', () => {
+    // Both modules should use the same state file
+    assert.strictEqual(
+      tracker.ACTIVE_CREATORS_STATE_FILE,
+      STATE_FILE,
+      'tracker and guard should use the same state file path'
+    );
+  });
+
+  it('tracker and guard share the same TTL constant (3 minutes)', () => {
+    // SEC-REMEDIATION-001: Both should use 3-minute TTL
+    assert.strictEqual(
+      tracker.DEFAULT_TTL_MS,
+      DEFAULT_TTL_MS,
+      'tracker and guard should use the same TTL'
+    );
+    assert.strictEqual(
+      DEFAULT_TTL_MS,
+      3 * 60 * 1000,
+      'TTL should be 3 minutes (SEC-REMEDIATION-001)'
+    );
+  });
+
+  it('full workflow: tracker marks active -> guard allows write -> guard blocks after clear', () => {
+    // Step 1: Without marking, guard should block
+    const blockedResult = validateCreatorWorkflow('Write', {
+      file_path: '.claude/skills/integration-test/SKILL.md',
+      content: 'test',
+    });
+    assert.strictEqual(blockedResult.pass, false, 'Should block before marking active');
+
+    // Step 2: Mark creator active via tracker
+    tracker.markCreatorActive('skill-creator');
+
+    // Step 3: Guard should now allow
+    const allowedResult = validateCreatorWorkflow('Write', {
+      file_path: '.claude/skills/integration-test/SKILL.md',
+      content: 'test',
+    });
+    assert.strictEqual(allowedResult.pass, true, 'Should allow after marking active');
+
+    // Step 4: Clear the creator state
+    clearCreatorActive('skill-creator');
+
+    // Step 5: Guard should block again
+    const blockedAgainResult = validateCreatorWorkflow('Write', {
+      file_path: '.claude/skills/integration-test/SKILL.md',
+      content: 'test',
+    });
+    assert.strictEqual(blockedAgainResult.pass, false, 'Should block after clearing');
   });
 });
 

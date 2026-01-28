@@ -914,3 +914,36 @@
   - **Future**: Consider skill-based tool inheritance (if skill requires tool, spawn inherits it)
 - **Analysis Report**: `.claude/context/artifacts/reports/mcp-tool-permissions-analysis-2026-01-27.md`
 - **Related**: research-synthesis skill, evolution-orchestrator agent, Task tool spawn behavior
+
+## [ADR-038] Issue Remediation Plan - Prioritized 44-Issue Approach
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Framework has 44 open issues (5 CRITICAL, 8 HIGH, 20 MEDIUM, 11 LOW). Need structured remediation approach that addresses security-critical issues first while enabling parallel execution where possible.
+- **Decision**: Created 6-phase remediation plan with task dependencies:
+  1. **Phase 1 (P0)**: Critical security and enforcement fixes (5 issues, 24-37h)
+     - ENFORCEMENT-003: Router-First Protocol blocking
+     - SEC-AUDIT-012: Regex command validation bypass
+     - SEC-AUDIT-014: Lock file TOCTOU
+     - SEC-AUDIT-017: Deny-by-default commands
+     - ENFORCEMENT-002: skill-creation-guard state tracking
+  2. **Phase 2 (P1)**: High-priority functional fixes (7 issues, 17-28h)
+  3. **Phase 3 (P2)**: Documentation and test coverage (8 issues, 17-23h)
+  4. **Phase 4 (P2-P3)**: Performance and cleanup (7 issues, 16-19h)
+  5. **Phase 5 (P2)**: Medium-priority issues (6 issues, 26-37h)
+  6. **Phase 6 (P3)**: Low-priority backlog (5 issues, 18h)
+- **Key Design Choices**:
+  - **Security-first**: All CRITICAL issues in Phase 1, no exceptions
+  - **Quick wins identified**: 7 issues under 1 hour each (~2.5h total) for fast progress
+  - **Dependency ordering**: ENFORCEMENT-002 blocked by ENFORCEMENT-003 (routing guard must work first)
+  - **Parallel execution**: Phases 2-6 have parallelizable tasks
+  - **Agent assignments**: SECURITY-ARCHITECT for P0, DEVELOPER for most, QA for testing
+- **Tasks Created**: 10 tasks covering Phases 1-2 and early Phase 3
+- **Consequences**:
+  - **Positive**: Clear prioritization prevents scope creep
+  - **Positive**: Dependencies prevent premature work
+  - **Positive**: Quick wins provide immediate value
+  - **Positive**: Security issues addressed before functional issues
+  - **Effort**: 119-164 hours total
+  - **Maintenance**: Plan at `.claude/context/plans/issue-remediation-plan-2026-01-28.md`
+- **Related**: ADR-033 (Deep Dive v2), ADR-035 (Production Certification)

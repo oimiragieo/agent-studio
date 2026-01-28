@@ -108,10 +108,11 @@ const CREATOR_CONFIGS = [
 const STATE_FILE = '.claude/context/runtime/active-creators.json';
 
 /**
- * Default time-to-live for active creator state (10 minutes)
- * Allows for research + creation workflow without manual deactivation
+ * Default time-to-live for active creator state (3 minutes)
+ * SEC-REMEDIATION-001: Reduced from 10 to 3 minutes to minimize
+ * state tampering window while still allowing creator workflow completion.
  */
-const DEFAULT_TTL_MS = 10 * 60 * 1000;
+const DEFAULT_TTL_MS = 3 * 60 * 1000;
 
 /**
  * Tools that this hook monitors

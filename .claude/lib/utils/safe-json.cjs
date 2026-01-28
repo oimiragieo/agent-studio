@@ -72,19 +72,18 @@ const SCHEMAS = {
     },
   },
   // SEC-SF-001 FIX: Add evolution-state schema for safe parsing
+  // SEC-AUDIT-015 FIX: Complete evolution-state schema (aligned with evolution-state-sync.cjs DEFAULT_STATE)
   'evolution-state': {
     required: [],
     defaults: {
+      version: '1.0.0',
       state: 'idle',
       currentEvolution: null,
       evolutions: [],
       patterns: [],
       suggestions: [],
       lastUpdated: null,
-      spawnDepth: 0, // SEC-AS-004: Track spawn depth
-      circuitBreaker: {
-        timestamps: [], // SEC-AS-001: Use timestamps not counters
-      },
+      locks: {},
     },
   },
   // BUG-NEW-001 FIX: Add settings-json schema for system-registration-handler.cjs

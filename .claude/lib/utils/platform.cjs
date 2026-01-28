@@ -58,8 +58,26 @@ const isLinux = process.platform === 'linux';
  */
 function bashPath(windowsPath) {
   if (!windowsPath) return windowsPath;
+  // Input validation
+  if (typeof windowsPath !== 'string') {
+    return windowsPath;
+  }
+  // SEC-REMEDIATION-002: Sanitize null bytes (command injection prevention)
+  // Null bytes can truncate paths or bypass validation
+  let sanitized = windowsPath.replace(/\0/g, '');
+  // Warn on shell metacharacters that could be dangerous
+  const shellMetachars = /[$`!]/;
+  if (shellMetachars.test(sanitized) && process.env.PLATFORM_DEBUG === 'true') {
+    console.error(
+      JSON.stringify({
+        type: 'security_warning',
+        message: 'Path contains shell metacharacters',
+        path: sanitized.substring(0, 100), // Truncate for logging
+      })
+    );
+  }
   // Convert all backslashes to forward slashes
-  return windowsPath.replace(/\\/g, '/');
+  return sanitized.replace(/\\/g, '/');
 }
 
 /**

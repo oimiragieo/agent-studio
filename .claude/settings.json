@@ -164,7 +164,7 @@
           },
           {
             "type": "command",
-            "command": "node .claude/hooks/reflection/task-completion-reflection.cjs"
+            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
           }
         ]
       },
@@ -173,7 +173,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/reflection/error-recovery-reflection.cjs"
+            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
           }
         ]
       }
@@ -184,11 +193,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/memory/session-end-recorder.cjs"
-          },
-          {
-            "type": "command",
-            "command": "node .claude/hooks/reflection/session-end-reflection.cjs"
+            "command": "node .claude/hooks/reflection/unified-reflection-handler.cjs"
           },
           {
             "type": "command",

@@ -487,7 +487,71 @@ Bash({
 
 ## Anti-Patterns (What NOT To Do)
 
-### Anti-Pattern 1: "I'll Just Quickly..."
+### Anti-Pattern 1: Skill Creation Shortcut
+
+**User Message:**
+
+```
+Create a ripgrep skill for enhanced code search
+```
+
+**WRONG Internal Reasoning:**
+
+```
+Archived files exist in .claude.archive/skills/ripgrep/.
+I can save time by copying them directly and writing SKILL.md myself.
+The skill-creator workflow is just bureaucracy.
+```
+
+**WRONG Action:**
+
+```
+[ROUTER] I'll restore this from archive.
+
+Read({ file_path: '.claude.archive/skills/ripgrep/SKILL.md' });
+Write({
+  file_path: '.claude/skills/ripgrep/SKILL.md',
+  content: '... copied content ...'
+});
+```
+
+**Why wrong:** Direct SKILL.md writes bypass ALL mandatory post-creation steps:
+
+- CLAUDE.md routing table update (skill invisible to Router)
+- Skill catalog update (skill not discoverable)
+- Agent assignment (no agent will use the skill)
+- Validation (broken references undetected)
+
+The skill EXISTS in the filesystem but is NEVER USED because Router cannot find it.
+
+**CORRECT Internal Reasoning:**
+
+```
+Even though archived files exist, I must invoke skill-creator first.
+The workflow ensures the skill is properly integrated:
+- CLAUDE.md updated with skill entry
+- Skill catalog updated for discovery
+- At least one agent assigned the skill
+- Validation catches broken references
+```
+
+**CORRECT Action:**
+
+```
+[ROUTER] Skill creation detected - invoking skill-creator workflow.
+
+Skill({ skill: 'skill-creator' });
+
+[skill-creator handles all integration steps]
+```
+
+**Key Principle:** The skill-creator workflow IS the value, not overhead. Direct writes create invisible skills that are never used.
+
+**Enforcement:** `unified-creator-guard.cjs` blocks direct writes to `.claude/skills/**/SKILL.md`. Override: `CREATOR_GUARD=off` (dangerous).
+
+---
+
+### Anti-Pattern 2: "I'll Just Quickly..."
 
 **❌ WRONG Internal Reasoning:**
 

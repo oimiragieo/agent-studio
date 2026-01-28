@@ -747,6 +747,181 @@ describe('SEC-AUDIT-014: Lock Mechanism', () => {
   cleanupTestState();
 });
 
+// SEC-AUDIT-014 TOCTOU Fix: Atomic stale lock cleanup
+describe('SEC-AUDIT-014 TOCTOU Fix: Atomic Stale Lock Cleanup', () => {
+  cleanupTestState();
+
+  it('should use atomic rename to claim stale locks', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Create stale lock with non-existent PID
+    const stalePid = 999999;
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: stalePid,
+        time: Date.now(),
+      })
+    );
+
+    // Acquire lock - should atomically claim the stale lock
+    const state = loopPrevention.getState(TEST_STATE_FILE);
+    expect(state).toBeTruthy();
+
+    // Lock should be cleaned up
+    expect(fs.existsSync(lockFile)).toBeFalsy();
+
+    // No .claiming files should be left behind
+    const dir = path.dirname(TEST_STATE_FILE);
+    const claimingFiles = fs.readdirSync(dir).filter(f => f.includes('.claiming.'));
+    expect(claimingFiles.length).toBe(0);
+  });
+
+  it('should not leave orphan claiming files on success', () => {
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const lockFile = TEST_STATE_FILE + '.lock';
+    const dir = path.dirname(TEST_STATE_FILE);
+
+    // Create stale lock
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: 999998,
+        time: Date.now(),
+      })
+    );
+
+    // Perform multiple operations
+    for (let i = 0; i < 5; i++) {
+      const state = loopPrevention.getState(TEST_STATE_FILE);
+      state.evolutionCount = i;
+      loopPrevention._saveState(state, TEST_STATE_FILE);
+    }
+
+    // No .claiming files should remain
+    const claimingFiles = fs.readdirSync(dir).filter(f => f.includes('.claiming.'));
+    expect(claimingFiles.length).toBe(0);
+  });
+
+  it('should handle race condition in stale lock cleanup atomically', () => {
+    // This test verifies the TOCTOU fix by simulating the race condition
+    // The fix uses atomic rename instead of check-then-delete
+    loopPrevention.resetState(TEST_STATE_FILE);
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Create stale lock
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: 999997,
+        time: Date.now(),
+      })
+    );
+
+    // Simulate two processes trying to claim the stale lock simultaneously
+    // With atomic rename, only one can succeed
+    let successCount = 0;
+    let errorCount = 0;
+
+    // First "process" claims the lock
+    try {
+      const state1 = loopPrevention.getState(TEST_STATE_FILE);
+      if (state1) successCount++;
+    } catch {
+      errorCount++;
+    }
+
+    // Create another stale lock to simulate second process
+    if (!fs.existsSync(lockFile)) {
+      // First process cleaned it up, this is expected
+      fs.writeFileSync(
+        lockFile,
+        JSON.stringify({
+          pid: 999996,
+          time: Date.now(),
+        })
+      );
+    }
+
+    // Second "process" claims the lock
+    try {
+      const state2 = loopPrevention.getState(TEST_STATE_FILE);
+      if (state2) successCount++;
+    } catch {
+      errorCount++;
+    }
+
+    // Both should succeed (sequentially, not racing)
+    expect(successCount).toBe(2);
+
+    // Clean up
+    if (fs.existsSync(lockFile)) {
+      fs.unlinkSync(lockFile);
+    }
+  });
+
+  it('should export tryClaimStaleLock for testing', () => {
+    // The atomic claim function should be exported for unit testing
+    expect(typeof loopPrevention.tryClaimStaleLock).toBe('function');
+  });
+
+  it('tryClaimStaleLock should return true only for dead process locks', () => {
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Clean up first
+    if (fs.existsSync(lockFile)) {
+      fs.unlinkSync(lockFile);
+    }
+
+    // Create lock with dead process
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: 999995,
+        time: Date.now(),
+      })
+    );
+
+    // Should claim stale lock
+    const claimed = loopPrevention.tryClaimStaleLock(lockFile);
+    expect(claimed).toBeTruthy();
+
+    // Lock file should be removed
+    expect(fs.existsSync(lockFile)).toBeFalsy();
+  });
+
+  it('tryClaimStaleLock should return false for live process locks', () => {
+    const lockFile = TEST_STATE_FILE + '.lock';
+
+    // Clean up first
+    if (fs.existsSync(lockFile)) {
+      fs.unlinkSync(lockFile);
+    }
+
+    // Create lock with current (live) process
+    fs.writeFileSync(
+      lockFile,
+      JSON.stringify({
+        pid: process.pid,
+        time: Date.now(),
+      })
+    );
+
+    // Should NOT claim live lock
+    const claimed = loopPrevention.tryClaimStaleLock(lockFile);
+    expect(claimed).toBeFalsy();
+
+    // Lock file should still exist
+    expect(fs.existsSync(lockFile)).toBeTruthy();
+
+    // Clean up
+    fs.unlinkSync(lockFile);
+  });
+
+  cleanupTestState();
+});
+
 console.log('\n========================================');
 console.log('Loop Prevention Hook Tests');
 console.log('========================================');

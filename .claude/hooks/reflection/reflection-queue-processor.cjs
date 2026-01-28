@@ -36,20 +36,8 @@ const fs = require('fs');
 const path = require('path');
 // ATOMIC-001 FIX: Use atomic write utility to prevent data corruption
 const { atomicWriteSync } = require('../../lib/utils/atomic-write.cjs');
-
-// Find project root
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
+// PROC-002: Use shared utility instead of duplicated findProjectRoot
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
 // Configuration
 let QUEUE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'reflection-queue.jsonl');

@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 /**
+ * @deprecated PERF-003: Use unified-reflection-handler.cjs instead
+ * This hook has been consolidated into unified-reflection-handler.cjs
+ * which handles task-completion, error-recovery, session-end reflection,
+ * and memory extraction in a single process.
+ *
  * Hook: session-end-reflection.cjs
  * Trigger: SessionEnd event (Stop, SessionEnd)
  * Purpose: Run reflection summary for the session

@@ -28,6 +28,8 @@ const {
   getToolInput,
   auditLog,
 } = require('../../lib/utils/hook-input.cjs');
+// PROC-002: Use shared utility instead of duplicated findProjectRoot
+const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
 // =============================================================================
 // CONSTANTS
@@ -40,9 +42,11 @@ const {
 const ACTIVE_CREATORS_STATE_FILE = '.claude/context/runtime/active-creators.json';
 
 /**
- * Default TTL for creator active state (10 minutes)
+ * Default TTL for creator active state (3 minutes)
+ * SEC-REMEDIATION-001: Reduced from 10 to 3 minutes to minimize
+ * state tampering window while still allowing creator workflow completion.
  */
-const DEFAULT_TTL_MS = 10 * 60 * 1000;
+const DEFAULT_TTL_MS = 3 * 60 * 1000;
 
 /**
  * Creator skills that require state tracking
@@ -56,30 +60,6 @@ const TRACKED_CREATOR_SKILLS = [
   'template-creator',
   'schema-creator',
 ];
-
-// =============================================================================
-// HELPER FUNCTIONS
-// =============================================================================
-
-/**
- * Find project root by looking for .claude/CLAUDE.md
- * This is more reliable than just looking for .claude directory
- * because there may be nested .claude directories created by tests.
- * @returns {string} Project root path
- */
-function findProjectRoot() {
-  let dir = __dirname;
-  while (dir !== path.parse(dir).root) {
-    // Check for CLAUDE.md which is unique to project root
-    if (fs.existsSync(path.join(dir, '.claude', 'CLAUDE.md'))) {
-      return dir;
-    }
-    dir = path.dirname(dir);
-  }
-  return process.cwd();
-}
-
-const PROJECT_ROOT = findProjectRoot();
 
 /**
  * Mark a creator skill as active by updating unified state file.
