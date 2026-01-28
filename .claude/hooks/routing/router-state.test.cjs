@@ -92,6 +92,7 @@ function testExistingModuleExports() {
   assert(typeof mod.getState === 'function', 'Should export getState function');
   assert(typeof mod.resetToRouterMode === 'function', 'Should export resetToRouterMode function');
   assert(typeof mod.enterAgentMode === 'function', 'Should export enterAgentMode function');
+  assert(typeof mod.exitAgentMode === 'function', 'Should export exitAgentMode function');
   assert(typeof mod.isInAgentContext === 'function', 'Should export isInAgentContext function');
   assert(typeof mod.checkWriteAllowed === 'function', 'Should export checkWriteAllowed function');
   assert(typeof mod.getEnforcementMode === 'function', 'Should export getEnforcementMode function');
@@ -596,6 +597,49 @@ function testExponentialBackoff() {
   assert(results[2] > results[1], 'Version should continue increasing');
 }
 
+/**
+ * Test 18: exitAgentMode preserves spawn tracking (ROUTING-002 fix)
+ */
+function testExitAgentModePreservesSpawnTracking() {
+  console.log('\nTest 18: exitAgentMode preserves planner/security spawn tracking');
+
+  delete require.cache[require.resolve(STATE_MODULE_PATH)];
+  cleanupState();
+
+  const mod = require(STATE_MODULE_PATH);
+  mod.resetToRouterMode();
+
+  // Enter agent mode
+  mod.enterAgentMode('test task');
+
+  // Mark special agents spawned
+  mod.markPlannerSpawned();
+  mod.markSecuritySpawned();
+
+  // Exit agent mode
+  mod.exitAgentMode();
+
+  const state = mod.getState();
+
+  // Should be back in router mode
+  assert(state.mode === 'router', 'Should be in router mode after exitAgentMode');
+  assert(state.taskSpawned === false, 'taskSpawned should be false after exitAgentMode');
+  assert(state.taskSpawnedAt === null, 'taskSpawnedAt should be null after exitAgentMode');
+  assert(state.taskDescription === null, 'taskDescription should be null after exitAgentMode');
+
+  // But preserve spawn tracking
+  assert(
+    state.plannerSpawned === true,
+    'Should preserve plannerSpawned after exitAgentMode'
+  );
+  assert(
+    state.securitySpawned === true,
+    'Should preserve securitySpawned after exitAgentMode'
+  );
+
+  console.log('PASS: exitAgentMode preserves spawn tracking');
+}
+
 // Run all tests
 function runAllTests() {
   console.log('Router State Module - Test Suite');
@@ -622,6 +666,8 @@ function runAllTests() {
     testVersionValidation();
     testMaxRetries();
     testExponentialBackoff();
+    // ROUTING-002 fix test (Test 18)
+    testExitAgentModePreservesSpawnTracking();
   } catch (error) {
     console.error(`\nTest execution failed: ${error.message}`);
     console.error(error.stack);

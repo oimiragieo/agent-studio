@@ -102,22 +102,6 @@ describe('checkRouterModeReset', () => {
     assert.strictEqual(result.reason, 'slash_command', 'Reason should be slash_command');
   });
 
-  it('should skip reset if in active agent context (recent task)', () => {
-    const unified = require('./user-prompt-unified.cjs');
-    const routerState = require('./router-state.cjs');
-
-    // Set up an active agent context (task spawned less than 30 min ago)
-    const recentTime = new Date(Date.now() - 5 * 60 * 1000).toISOString(); // 5 minutes ago
-    routerState.enterAgentMode('test task');
-
-    const hookInput = { prompt: 'continue with the task' };
-    const result = unified.checkRouterModeReset(hookInput);
-
-    // Should either reset or skip depending on state
-    // The actual logic checks if taskSpawned and taskSpawnedAt is recent
-    assert.ok(result !== undefined, 'Should return a result');
-  });
-
   it('should reset state for normal prompts', () => {
     const unified = require('./user-prompt-unified.cjs');
     const routerState = require('./router-state.cjs');
@@ -130,6 +114,84 @@ describe('checkRouterModeReset', () => {
 
     assert.strictEqual(result.skipped, false, 'Should not skip for normal prompts');
     assert.strictEqual(result.stateReset, true, 'Should reset state');
+  });
+
+  // ===========================================================================
+  // ROUTING-002 FIX: Always reset to router mode on new user prompt
+  // ===========================================================================
+  it('should ALWAYS reset to router mode on new user prompt, even after recent task (ROUTING-002 fix)', () => {
+    const unified = require('./user-prompt-unified.cjs');
+    const routerState = require('./router-state.cjs');
+
+    // Simulate: Task was spawned 5 minutes ago (within the old 30-minute window)
+    routerState.enterAgentMode('Previous task from user');
+    routerState.invalidateStateCache();
+
+    // Verify we're in agent mode
+    let state = routerState.getState();
+    assert.strictEqual(state.mode, 'agent', 'Should be in agent mode after enterAgentMode');
+    assert.strictEqual(state.taskSpawned, true, 'taskSpawned should be true');
+
+    // Now a NEW user prompt comes in
+    const hookInput = { prompt: 'List all TypeScript files in the project' };
+    const result = unified.checkRouterModeReset(hookInput);
+
+    // ROUTING-002 FIX: Should ALWAYS reset to router mode
+    assert.strictEqual(
+      result.stateReset,
+      true,
+      'ROUTING-002: New user prompt should ALWAYS reset to router mode'
+    );
+    assert.strictEqual(
+      result.skipped,
+      false,
+      'ROUTING-002: Should NOT skip reset for new user prompts'
+    );
+
+    // Verify state is now in router mode
+    state = routerState.getState();
+    assert.strictEqual(
+      state.mode,
+      'router',
+      'ROUTING-002: Mode should be router after new user prompt'
+    );
+    assert.strictEqual(
+      state.taskSpawned,
+      false,
+      'ROUTING-002: taskSpawned should be false after new user prompt'
+    );
+  });
+
+  it('should allow Glob to be blocked after state reset (end-to-end ROUTING-002)', () => {
+    const unified = require('./user-prompt-unified.cjs');
+    const routerState = require('./router-state.cjs');
+    const routingGuard = require('./routing-guard.cjs');
+
+    // Step 1: Simulate previous session's agent mode
+    routerState.enterAgentMode('Previous task');
+    routerState.invalidateStateCache();
+    routingGuard.invalidateCachedState();
+
+    // Step 2: New user prompt arrives - should reset state
+    const hookInput = { prompt: 'List TypeScript files using Glob' };
+    const resetResult = unified.checkRouterModeReset(hookInput);
+
+    // Step 3: Verify state is reset
+    assert.strictEqual(resetResult.stateReset, true, 'State should be reset');
+
+    // Step 4: Now check if Glob would be blocked
+    routerState.invalidateStateCache();
+    routingGuard.invalidateCachedState();
+    process.env.ROUTER_SELF_CHECK = 'block';
+
+    const globCheck = routingGuard.checkRouterSelfCheck('Glob', {});
+
+    // ROUTING-002 FIX: Glob should be BLOCKED because we're in router mode
+    assert.strictEqual(
+      globCheck.pass,
+      false,
+      'ROUTING-002 End-to-End: Glob should be BLOCKED after state reset'
+    );
   });
 });
 

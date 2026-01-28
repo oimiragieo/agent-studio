@@ -740,4 +740,139 @@ describe('routing-guard', () => {
       assert.ok(Array.isArray(routingGuard.ROUTER_BASH_WHITELIST));
     });
   });
+
+  // ============================================================================
+  // ROUTING-002 FIX: Router should NOT use Glob/Grep directly
+  // ============================================================================
+  describe('ROUTING-002: Router Glob/Grep blocking', () => {
+    it('should BLOCK Glob tool in router mode (ROUTING-002 fix)', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Explicitly reset to router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+      routingGuard.invalidateCachedState();
+
+      // Verify state is in router mode
+      const state = routerState.getState();
+      assert.strictEqual(state.mode, 'router', 'Should be in router mode');
+      assert.strictEqual(state.taskSpawned, false, 'Task should not be spawned');
+
+      // Enable enforcement
+      process.env.ROUTER_SELF_CHECK = 'block';
+
+      // Test: Glob should be BLOCKED in router mode
+      const result = routingGuard.checkRouterSelfCheck('Glob', {});
+      assert.strictEqual(
+        result.pass,
+        false,
+        'Glob should be BLOCKED in router mode - Router must spawn agent instead'
+      );
+      assert.strictEqual(result.result, 'block', 'Result should be block');
+    });
+
+    it('should BLOCK Grep tool in router mode (ROUTING-002 fix)', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Explicitly reset to router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+      routingGuard.invalidateCachedState();
+
+      // Enable enforcement
+      process.env.ROUTER_SELF_CHECK = 'block';
+
+      // Test: Grep should be BLOCKED in router mode
+      const result = routingGuard.checkRouterSelfCheck('Grep', {});
+      assert.strictEqual(
+        result.pass,
+        false,
+        'Grep should be BLOCKED in router mode - Router must spawn agent instead'
+      );
+      assert.strictEqual(result.result, 'block', 'Result should be block');
+    });
+
+    it('should BLOCK WebSearch tool in router mode (ROUTING-002 fix)', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Explicitly reset to router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+      routingGuard.invalidateCachedState();
+
+      // Enable enforcement
+      process.env.ROUTER_SELF_CHECK = 'block';
+
+      // Test: WebSearch should be BLOCKED in router mode
+      const result = routingGuard.checkRouterSelfCheck('WebSearch', {});
+      assert.strictEqual(
+        result.pass,
+        false,
+        'WebSearch should be BLOCKED in router mode - Router must spawn agent instead'
+      );
+      assert.strictEqual(result.result, 'block', 'Result should be block');
+    });
+
+    it('should ALLOW Glob tool in agent mode (after Task spawned)', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // Reset to router mode first, then enter agent mode
+      routerState.resetToRouterMode();
+      routerState.enterAgentMode('Testing agent context');
+      routerState.invalidateStateCache();
+      routingGuard.invalidateCachedState();
+
+      // Verify state is in agent mode
+      const state = routerState.getState();
+      assert.strictEqual(state.mode, 'agent', 'Should be in agent mode');
+      assert.strictEqual(state.taskSpawned, true, 'Task should be spawned');
+
+      // Enable enforcement
+      process.env.ROUTER_SELF_CHECK = 'block';
+
+      // Test: Glob should be ALLOWED in agent mode
+      const result = routingGuard.checkRouterSelfCheck('Glob', {});
+      assert.strictEqual(
+        result.pass,
+        true,
+        'Glob should be ALLOWED in agent mode (Task spawned)'
+      );
+    });
+
+    it('should block Glob even when user explicitly requests it (ROUTING-002 root cause)', () => {
+      assert.ok(routingGuard, 'Module should be loadable');
+      assert.ok(routerState, 'Router state module should be loadable');
+
+      // This test simulates the exact scenario from ROUTING-002:
+      // User says "List TypeScript files using Glob"
+      // Router should BLOCK despite user explicitly mentioning the tool
+
+      // Reset to clean router mode
+      routerState.resetToRouterMode();
+      routerState.invalidateStateCache();
+      routingGuard.invalidateCachedState();
+
+      process.env.ROUTER_SELF_CHECK = 'block';
+
+      // Test runAllChecks which is called by the hook
+      const result = routingGuard.runAllChecks('Glob', {
+        pattern: '**/*.ts',
+      });
+
+      assert.strictEqual(
+        result.pass,
+        false,
+        'Glob should be BLOCKED via runAllChecks in router mode'
+      );
+      assert.strictEqual(result.result, 'block', 'Result should be block');
+      assert.ok(
+        result.message.includes('blacklisted'),
+        'Message should mention blacklisted tool'
+      );
+    });
+  });
 });

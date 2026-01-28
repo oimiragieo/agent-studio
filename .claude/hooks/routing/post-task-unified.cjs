@@ -121,8 +121,10 @@ function isSecuritySpawn(toolInput) {
 function runAgentContextTracker(toolInput) {
   const description = extractTaskDescription(toolInput);
 
-  // Enter agent mode
-  const state = routerState.enterAgentMode(description);
+  // ROUTING-002 FIX: Exit agent mode after task completes
+  // This allows Router-First Protocol enforcement to re-engage
+  // while preserving plannerSpawned/securitySpawned tracking
+  const state = routerState.exitAgentMode();
 
   // Detect and mark special agent spawns
   if (isPlannerSpawn(toolInput)) {
@@ -140,9 +142,8 @@ function runAgentContextTracker(toolInput) {
   }
 
   if (process.env.ROUTER_DEBUG === 'true') {
-    console.error('[post-task-unified] Entered agent mode');
-    console.error(`[post-task-unified] Task: ${description}`);
-    console.error(`[post-task-unified] Spawned at: ${state.taskSpawnedAt}`);
+    console.error('[post-task-unified] Exited agent mode (back to router)');
+    console.error(`[post-task-unified] Task description was: ${description}`);
   }
 }
 

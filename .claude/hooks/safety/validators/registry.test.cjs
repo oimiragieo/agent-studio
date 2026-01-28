@@ -167,6 +167,23 @@ describe('registry', () => {
     });
   });
 
+  describe('Framework Self-Testing Commands', () => {
+    test('ALLOWS claude command for headless testing', () => {
+      // Claude CLI is needed for headless framework testing (claude -p "test")
+      const result = validateCommand('claude -p "test routing"');
+      assert.strictEqual(result.valid, true);
+      assert.strictEqual(result.hasValidator, false);
+      assert.strictEqual(result.reason, 'allowlisted');
+    });
+
+    test('ALLOWS claude with various flags', () => {
+      // Various claude CLI invocations
+      assert.strictEqual(validateCommand('claude --version').valid, true);
+      assert.strictEqual(validateCommand('claude --help').valid, true);
+      assert.strictEqual(validateCommand('claude chat').valid, true);
+    });
+  });
+
   describe('SEC-AUDIT-017: Deny-by-Default for Unregistered Commands', () => {
     test('BLOCKS unregistered command: perl -e', () => {
       const result = validateCommand('perl -e "print 1"');

@@ -48,7 +48,16 @@ const AGENT_CACHE_TTL = 300000; // 5 minutes
 
 /**
  * Reset router state on new user prompt.
- * Skips for slash commands and active agent contexts.
+ * Skips ONLY for slash commands.
+ *
+ * ROUTING-002 FIX: Every new user prompt MUST reset to router mode.
+ * The previous "active agent context" check (30-minute window) allowed
+ * Router to use blacklisted tools (Glob, Grep, etc.) on subsequent prompts
+ * because state.taskSpawned remained true from previous agent work.
+ *
+ * The Router needs to re-evaluate each new user prompt to decide
+ * whether to spawn agents. Agent mode is for SUBAGENTS, not for
+ * the Router handling a new user prompt.
  *
  * @param {Object} hookInput - Parsed hook input
  * @returns {Object} Result with skipped, reason, stateReset
@@ -59,36 +68,30 @@ function checkRouterModeReset(hookInput) {
   // Get prompt
   const userPrompt = hookInput?.prompt || hookInput?.message || '';
 
-  // Skip for slash commands
+  // Skip for slash commands (they are handled separately)
   if (userPrompt && userPrompt.trim().startsWith('/')) {
     result.skipped = true;
     result.reason = 'slash_command';
     return result;
   }
 
-  // Check if in active agent context (recent task spawn)
-  const currentState = routerState.getState();
-  if (currentState.mode === 'agent' && currentState.taskSpawned) {
-    const taskSpawnedAt = currentState.taskSpawnedAt
-      ? new Date(currentState.taskSpawnedAt).getTime()
-      : 0;
-    const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
-    if (isRecentTask) {
-      result.skipped = true;
-      result.reason = 'active_agent_context';
-      if (process.env.ROUTER_DEBUG === 'true') {
-        console.log('[user-prompt-unified:reset] Skipping reset - active agent context');
-      }
-      return result;
-    }
-  }
+  // ROUTING-002 FIX: ALWAYS reset to router mode on new user prompt
+  // Removed the "active agent context" check that preserved agent mode
+  // for 30 minutes. This was causing Router to use blacklisted tools
+  // because state.taskSpawned remained true from previous prompts.
+  //
+  // Design rationale:
+  // - Each new user prompt is a NEW routing decision
+  // - Router must evaluate whether to spawn agents
+  // - Agent mode is for SUBAGENTS, not for Router handling new prompts
+  // - Subagent context is tracked by subagent_id in hook input, not state file
 
   // Reset to router mode
   routerState.resetToRouterMode();
   result.stateReset = true;
 
   if (process.env.ROUTER_DEBUG === 'true') {
-    console.log('[user-prompt-unified:reset] State reset to router mode');
+    console.log('[user-prompt-unified:reset] State reset to router mode (ROUTING-002 fix)');
   }
 
   return result;

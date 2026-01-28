@@ -4,16 +4,16 @@
 
 | Status Category | Count | Notes                                   |
 | --------------- | ----- | --------------------------------------- |
-| **OPEN**        | 49    | Active issues requiring attention       |
+| **OPEN**        | 50    | Active issues requiring attention       |
 | **RESOLVED**    | 60    | Archived in issues-archive.md           |
 | **Won't Fix**   | 2     | Documented as not requiring remediation |
-| **Total**       | 111   | All tracked issues                      |
+| **Total**       | 112   | All tracked issues                      |
 
 **Historical issues**: See `issues-archive.md` for 60 resolved issues archived on 2026-01-27.
 
 ### Priority Breakdown (OPEN Issues)
 
-- **CRITICAL**: 4 (SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014, ENFORCEMENT-002)
+- **CRITICAL**: 5 (SEC-AUDIT-012, SEC-AUDIT-017, SEC-AUDIT-014, ENFORCEMENT-002, ENFORCEMENT-003)
 - **HIGH**: 8 (security audits, structural issues)
 - **MEDIUM**: 20 (documentation gaps, pointer gaps, process improvements)
 - **LOW**: 17 (future enhancements, recommendations)
@@ -33,6 +33,62 @@
 ---
 
 <!-- OPEN ISSUES BELOW THIS LINE -->
+
+## [ENFORCEMENT-003] Router-First Protocol Is Advisory-Only, Not Blocking (CRITICAL)
+
+- **Date**: 2026-01-27
+- **Severity**: CRITICAL
+- **Status**: Open
+- **Category**: enforcement_gap
+- **Description**: All routing hooks (user-prompt-unified.cjs, routing-guard.cjs, skill-creation-guard.cjs) exit with code 0 (allow) in ALL cases. This means the Router-First Protocol is a DOCUMENTATION-ONLY CONVENTION, not a technically enforced constraint. Claude can bypass the protocol at will because no hook actually blocks tool usage without prior Task spawn.
+- **Root Cause**: Hooks were designed as advisory recommendations, not blocking constraints. The `process.exit(0)` at the end of each routing hook allows all actions regardless of protocol violations.
+- **Detection**: Reflection-Agent diagnosis (Task #1) 2026-01-27
+- **Impact**:
+  - Router can execute directly without spawning agents
+  - Protocol compliance depends entirely on LLM instruction following
+  - CLAUDE.md instructions are unenforceable
+  - All prior "enforcement" work (ENFORCEMENT-001, ENFORCEMENT-002) is ineffective without blocking exit codes
+- **Evidence**:
+  - `user-prompt-unified.cjs` line 838: `process.exit(0)` unconditionally
+  - `routing-guard.cjs`: Sets state and logs warnings but exits 0
+  - No PreToolUse hook returns non-zero for Router blacklist violations
+  - **HEADLESS TEST PROOF (2026-01-27)**: QA Agent ran `claude -p "List all TypeScript files using Glob tool"` and Router successfully executed Glob search, proving blocking is not implemented
+- **Remediation** (P0 - Urgent):
+  1. Modify routing-guard.cjs to exit 2 (block) when Router uses blacklisted tools without Task spawn
+  2. Add proper mode checking: if (mode === 'router' && !taskSpawned && isBlacklistedTool) exit(2)
+  3. Register blocking hook for PreToolUse(Edit|Write|Bash) matchers
+  4. Add integration tests verifying blocking behavior
+- **Workaround**: None - protocol cannot be enforced until hooks are modified to block
+- **Related Issues**: ENFORCEMENT-001, ENFORCEMENT-002, WORKFLOW-VIOLATION-001, ROUTING-002 (claimed fix but only addressed state reset)
+- **Diagnosis Report**: `.claude/context/artifacts/reports/router-diagnosis-2026-01-27.md`
+- **Verification Test Report**: `.claude/context/artifacts/reports/routing-fix-verification-2026-01-27.md` (2026-01-27)
+
+---
+
+## [TESTING-003] Claude Command Blocked by bash-command-validator
+
+- **Date**: 2026-01-27
+- **Severity**: High
+- **Status**: Open
+- **Category**: testing_blocker
+- **Task**: Task #2 - Router tests
+- **Description**: The bash-command-validator.cjs hook blocks the `claude` command itself, preventing headless testing of the framework. Attempting to run `claude --version` or `claude -p "prompt"` returns SEC-AUDIT-017 error: "Unregistered command 'claude'".
+- **Root Cause**: SEC-AUDIT-017 security hardening implemented deny-by-default for unregistered commands. The `claude` CLI was never added to the validator's COMMAND_VALIDATORS registry.
+- **Impact**: Cannot execute any of the 5 planned headless Router-First Protocol tests:
+  1. Memory loading test - BLOCKED
+  2. Router behavior test - BLOCKED
+  3. Agent spawning test - BLOCKED
+  4. Self-check gate test - BLOCKED
+  5. Hook execution test - BLOCKED
+- **Remediation** (P1 - High Priority):
+  1. Add `claude` command to `.claude/hooks/safety/validators/registry.cjs`
+  2. Create validator that allows all `claude` arguments (framework self-testing)
+  3. Re-run router tests after fix
+- **Workaround**: Use `BASH_VALIDATOR_OVERRIDE=warn` to bypass validator for manual testing (defeats security purpose)
+- **Report**: `.claude/context/artifacts/reports/router-tests-2026-01-27.md`
+- **Related Issues**: SEC-AUDIT-017 (validator deny-by-default implementation)
+
+---
 
 ## Reflection Agent Findings - Skill Creation Workflow (2026-01-27)
 
@@ -1110,3 +1166,77 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
 | P2       | SEC-AUDIT-019 (Manifest Signing)     | 4-6h   |
 
 **Total Estimated Effort**: 29-50 hours
+
+---
+
+## [ROUTING-002] Router Uses Blacklisted Tools When User Explicitly Requests Them
+
+- **Date**: 2026-01-27
+- **Severity**: High
+- **Status**: PARTIALLY RESOLVED (State Reset Only - Blocking Not Implemented)
+- **Resolution Date**: 2026-01-27 (Partial)
+- **Category**: routing_violation
+- **Task**: Task #1 - Post-fix Router-First Protocol verification
+- **Description**: Headless test revealed Router using Glob tool directly when user prompt explicitly mentioned "using Glob". Command: `claude -p "List all TypeScript files in the project using Glob"`. Router executed Glob instead of spawning DEVELOPER agent or refusing blacklisted tool.
+- **Root Cause Found**: The issue was in `user-prompt-unified.cjs`, NOT `routing-guard.cjs`. The hook had a 30-minute "active agent context" window that preserved `state.taskSpawned=true` across user prompts. This caused `routing-guard.cjs` to see agent mode and allow blacklisted tools.
+- **Resolution Applied** (PARTIAL - State Reset Only):
+  1. **Modified `user-prompt-unified.cjs`**: Removed the 30-minute window check that skipped state reset ✅
+  2. **Design Change**: Every new user prompt now ALWAYS resets to router mode ✅
+  3. **Rationale**: Router needs to re-evaluate each new prompt. Agent mode is for SUBAGENTS, not for Router handling new prompts.
+  4. **Tests Added**: 5 new tests for ROUTING-002 fix (TDD approach) ✅
+  5. **NOT IMPLEMENTED**: Hook blocking with exit code 2 ❌
+- **Files Modified**:
+  - `C:\dev\projects\agent-studio\.claude\hooks\routing\user-prompt-unified.cjs` (removed active_agent_context check)
+  - `C:\dev\projects\agent-studio\.claude\hooks\routing\user-prompt-unified.test.cjs` (added ROUTING-002 tests)
+  - `C:\dev\projects\agent-studio\.claude\hooks\routing\routing-guard.test.cjs` (added ROUTING-002 tests)
+- **Test Results After Fix**: 101/101 tests pass (unit tests only - did NOT verify end-to-end blocking)
+- **HEADLESS TEST RESULT (2026-01-27)**: QA Agent verified that Router STILL uses Glob when user requests it. State reset works, but routing-guard.cjs does NOT block the action.
+- **Report**: `.claude/context/artifacts/reports/post-fix-router-tests-2026-01-27.md`
+- **Verification Test Report**: `.claude/context/artifacts/reports/routing-fix-verification-2026-01-27.md` (2026-01-27 - FAILED)
+- **Related Issues**: ENFORCEMENT-003 (hooks advisory-only - ROOT CAUSE), TESTING-003 (claude command blocked), ROUTING-003 (router-mode-reset session boundary detection)
+- **Remaining Work**: Implement blocking exit codes in routing-guard.cjs (see ENFORCEMENT-003)
+
+---
+
+## [ROUTING-003] router-mode-reset Fails to Detect Session Boundaries (CRITICAL)
+
+- **Date**: 2026-01-28
+- **Severity**: CRITICAL
+- **Status**: OPEN
+- **Category**: state_management
+- **Task**: Task #1 - Diagnostic investigation (devops-troubleshooter)
+- **Description**: Fresh `claude -p "Use Glob..."` sessions bypass router-self-check because `router-mode-reset.cjs` fails to detect session boundaries. The hook preserves agent state from previous sessions, causing fresh Router prompts to inherit agent mode and bypass blacklisted tool restrictions.
+- **Root Cause**: `router-mode-reset.cjs` has a "bug fix" (lines 38-55) that skips state reset if:
+  1. Current state shows `mode === 'agent'` AND `taskSpawned === true`
+  2. The task was spawned within the last 30 minutes
+
+  **The bug**: This check uses file-based state which **persists across sessions**. The hook cannot distinguish between:
+  - An active agent running in the **current** session (should skip reset)
+  - **Stale state** from a **previous** session (should reset)
+
+- **Impact**:
+  - Fresh sessions inherit agent mode from previous sessions
+  - Router can use blacklisted tools (Glob, Grep, etc.) directly
+  - Router-self-check is bypassed until 30 minutes elapse
+  - Enforcement-003 blocking cannot work if state is wrong
+- **Evidence**:
+  - State file shows `mode: "agent", taskSpawned: true` after previous session
+  - Fresh session UserPromptSubmit fires
+  - router-mode-reset.cjs reads stale state
+  - Sees recent timestamp (< 30 minutes) → SKIPS reset
+  - State remains `mode: "agent"`
+  - routing-guard.cjs sees `taskSpawned: true` → ALLOWS blacklisted tools
+- **Detection**: Systematic debugging by devops-troubleshooter (Task #1) on 2026-01-28
+- **Diagnosis Report**: `.claude/context/artifacts/reports/routing-debug-diagnostic-2026-01-27.md`
+- **Files Affected**:
+  - `.claude/hooks/routing/router-mode-reset.cjs` (lines 38-55)
+  - `.claude/hooks/routing/routing-guard.cjs` (correct logic, wrong state input)
+  - `.claude/context/runtime/router-state.json` (persists across sessions)
+- **Recommended Fix** (P0 - Critical):
+  1. **Add Session ID validation** to router-mode-reset.cjs
+  2. Reset state if `currentState.sessionId !== process.env.CLAUDE_SESSION_ID`
+  3. Only skip reset if SAME session AND recent task
+  4. Alternative: Track active Task subprocesses instead of file state
+- **Workaround**: Wait 30 minutes between sessions, or manually delete `router-state.json`
+- **Related Issues**: ENFORCEMENT-003 (blocking ineffective with wrong state), ROUTING-002 (symptom of this root cause)
+- **Priority**: P0 - Must fix before ENFORCEMENT-003 blocking can work

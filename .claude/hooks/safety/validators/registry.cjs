@@ -155,6 +155,9 @@ const SAFE_COMMANDS_ALLOWLIST = [
   'nano',
   'emacs',
 
+  // Framework self-testing (Claude CLI for headless tests)
+  'claude',
+
   // Build and test tools
   'make',
   'cmake',

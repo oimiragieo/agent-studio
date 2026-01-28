@@ -371,6 +371,20 @@ function enterAgentMode(taskDescription = null) {
 }
 
 /**
+ * Exit agent mode (called on PostToolUse Task)
+ * Resets mode and taskSpawned but PRESERVES planner/security spawn tracking.
+ * This allows Router-First Protocol to re-engage while remembering what agents were spawned.
+ */
+function exitAgentMode() {
+  return saveStateWithRetry({
+    mode: 'router',
+    taskSpawned: false,
+    taskSpawnedAt: null,
+    taskDescription: null,
+  });
+}
+
+/**
  * Check if we're in agent context (Task has been spawned)
  * @returns {boolean} True if a Task has been spawned in the current prompt cycle
  */
@@ -604,6 +618,7 @@ module.exports = {
   getState,
   resetToRouterMode,
   enterAgentMode,
+  exitAgentMode,
   isInAgentContext,
   checkWriteAllowed,
   getEnforcementMode,

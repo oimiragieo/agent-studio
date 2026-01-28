@@ -328,25 +328,37 @@ function checkRouterBash(toolName, toolInput = {}) {
  * is in the always-allowed list (memory files, runtime files) before blocking.
  * This allows spawned agents to write to memory even if state shows router mode.
  *
+ * DEBUG: Set ROUTER_DEBUG=true to enable verbose logging for troubleshooting.
+ *
  * @param {string} toolName - Tool being used
  * @param {Object} [toolInput] - Tool input (required for write tools to check file path)
  * @returns {{ pass: boolean, result?: string, message?: string }}
  */
 function checkRouterSelfCheck(toolName, toolInput = {}) {
+  const DEBUG = process.env.ROUTER_DEBUG === 'true';
+  if (DEBUG) console.error(`[DEBUG] checkRouterSelfCheck called: tool=${toolName}`);
+
   const enforcement = getEnforcementMode('ROUTER_SELF_CHECK', 'block');
+  if (DEBUG) console.error(`[DEBUG] enforcement mode: ${enforcement}`);
+
   if (enforcement === 'off') {
+    if (DEBUG) console.error('[DEBUG] EARLY EXIT: enforcement=off');
     return { pass: true };
   }
 
   // Always allow whitelisted tools
   if (WHITELISTED_TOOLS.includes(toolName)) {
+    if (DEBUG) console.error(`[DEBUG] EARLY EXIT: ${toolName} is whitelisted`);
     return { pass: true };
   }
 
   // If not a blacklisted tool, allow
   if (!BLACKLISTED_TOOLS.includes(toolName)) {
+    if (DEBUG) console.error(`[DEBUG] EARLY EXIT: ${toolName} not in blacklist`);
     return { pass: true };
   }
+
+  if (DEBUG) console.error(`[DEBUG] ${toolName} IS in blacklist, checking further...`);
 
   // FIX: For write tools, check if file is always-allowed (memory, runtime)
   // This allows spawned agents to write to memory files even if state
@@ -354,24 +366,32 @@ function checkRouterSelfCheck(toolName, toolInput = {}) {
   if (WRITE_TOOLS.includes(toolName)) {
     const filePath = extractFilePath(toolInput);
     if (isAlwaysAllowedWrite(filePath)) {
+      if (DEBUG)
+        console.error(`[DEBUG] EARLY EXIT: ${toolName} targeting always-allowed file: ${filePath}`);
       return { pass: true };
     }
   }
 
   // PERF-001: Use cached state instead of fresh read
   const state = getCachedRouterState();
+  if (DEBUG) console.error(`[DEBUG] State: mode=${state.mode}, taskSpawned=${state.taskSpawned}`);
+
   if (state.mode === 'agent' || state.taskSpawned) {
+    if (DEBUG) console.error('[DEBUG] EARLY EXIT: in agent mode or task spawned');
     return { pass: true };
   }
 
   // Router is using blacklisted tool directly - violation
+  if (DEBUG) console.error('[DEBUG] BLOCKING - all checks passed, should block now');
   const message = `[ROUTER SELF-CHECK VIOLATION] Router attempted to use blacklisted tool: ${toolName}
 Spawn an agent via Task() tool to perform this operation.
 Override: ROUTER_SELF_CHECK=warn or ROUTER_SELF_CHECK=off`;
 
   if (enforcement === 'block') {
+    if (DEBUG) console.error('[DEBUG] Returning BLOCK');
     return { pass: false, result: 'block', message };
   } else {
+    if (DEBUG) console.error('[DEBUG] Returning WARN');
     return { pass: true, result: 'warn', message };
   }
 }
