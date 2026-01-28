@@ -71,6 +71,9 @@ User requested "ULTRATHINK" - be very thorough, not superficial. Read actual cod
 2. Record discoveries to memory files
    `
    })
+
+   ```
+
    ```
 
 - **Verify**: `Test-Path .claude/context/artifacts/exploration/spec-kit-exploration.md`
@@ -120,6 +123,9 @@ Subject: Analyze current agent-studio codebase for comparison
 2. Record findings to memory files
    `
    })
+
+   ```
+
    ```
 
 - **Verify**: `Test-Path .claude/context/artifacts/exploration/current-codebase-inventory.md`
@@ -265,6 +271,9 @@ User explicitly requested: "use a research agent and verify we're doing the best
 2. Record research findings to memory
    `
    })
+
+   ```
+
    ```
 
 - **Verify**: `Test-Path .claude/context/artifacts/research-reports/spec-kit-features-best-practices-2026-01-28.md`
@@ -347,7 +356,10 @@ Subject: Security review implementation plan for spec-kit integration
 1. Record security considerations to .claude/context/memory/decisions.md
    `
    })
-   ``` - ELSE: Skip this task, mark N/A
+
+   ```- ELSE: Skip this task, mark N/A
+
+   ```
 
 #### Phase 4 Verification Gate
 
@@ -439,6 +451,9 @@ Subject: Comprehensive QA for spec-kit integration
 1. Record test patterns to .claude/context/memory/learnings.md
    `
    })
+
+   ```
+
    ```
 
 - **Verify**: `Test-Path .claude/context/reports/qa-spec-kit-integration-2026-01-28.md`
@@ -508,6 +523,9 @@ Subject: Document spec-kit integration features
 1. Record documentation patterns to .claude/context/memory/learnings.md
    `
    })
+
+   ```
+
    ```
 
 - **Verify**: `Test-Path .claude/docs/SPEC_KIT_INTEGRATION.md`

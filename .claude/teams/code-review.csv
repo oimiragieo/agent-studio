@@ -1,0 +1,3 @@
+agent_type,role,priority,tools,model
+developer,implementer,1,"Read,Write,Edit,Bash,TaskUpdate,TaskList,TaskCreate,TaskGet,Skill",sonnet
+code-reviewer,reviewer,2,"Read,Grep,Glob,TaskUpdate,TaskList,TaskCreate,TaskGet,Skill",sonnet

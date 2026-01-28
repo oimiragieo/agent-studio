@@ -126,7 +126,7 @@ Router must NOT use TaskCreate for:
 - implementation tasks (spawn DEVELOPER)
 - security-sensitive tasks (spawn SECURITY-ARCHITECT)
 
-**Automated Enforcement:** `.claude/hooks/routing/routing-guard.cjs` (legacy: `.claude/hooks/routing/_legacy/task-create-guard.cjs`)
+**Automated Enforcement:** `.claude/hooks/routing/routing-guard.cjs`
 
 - blocks TaskCreate for HIGH/EPIC unless PLANNER spawned first
 - Override: `PLANNER_FIRST_ENFORCEMENT=warn`
@@ -269,7 +269,8 @@ Task({
     'Read','Write','Edit','Bash',
     'TaskUpdate','TaskList','TaskCreate','TaskGet',
     'Skill',
-    'mcp__sequential-thinking__sequentialthinking',
+    // NOTE: For sequential thinking, use Skill({ skill: 'sequential-thinking' })
+    // MCP tools require server configuration in settings.json
   ],
   prompt: `You are the <ROLE> agent.
 
@@ -348,7 +349,8 @@ Task({
     'TaskCreate',
     'TaskGet',
     'Skill',
-    'mcp__sequential-thinking__sequentialthinking',
+    // NOTE: For sequential thinking, use Skill({ skill: 'sequential-thinking' })
+    // MCP tools require server configuration in settings.json
     'mcp__Exa__web_search_exa',
     'mcp__Exa__get_code_context_exa', // For research
   ],
@@ -422,6 +424,15 @@ Task({
 });
 ```
 
+### Tool Selection Notes
+
+**MCP Tools**: Require server configuration in `.claude/settings.json`. If MCP server is not configured:
+
+- Use `Skill()` tool as fallback: `Skill({ skill: 'sequential-thinking' })`
+- Check available skills: `.claude/skills/*/SKILL.md`
+
+**Core Tools**: Always available - Read, Write, Edit, Bash, Grep, Glob, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill
+
 ### Golden-Path Example: High Complexity + Security
 
 For a request like "Add user authentication to the app":
@@ -484,57 +495,58 @@ Read: .claude/agents/specialized/security-architect.md`,
 
 ## 3) AGENT ROUTING TABLE
 
-| Request Type                     | Agent                        | File                                                     |
-| -------------------------------- | ---------------------------- | -------------------------------------------------------- |
-| Bug fixes, coding                | `developer`                  | `.claude/agents/core/developer.md`                       |
-| New features, planning           | `planner`                    | `.claude/agents/core/planner.md`                         |
-| System design                    | `architect`                  | `.claude/agents/core/architect.md`                       |
-| Testing, QA                      | `qa`                         | `.claude/agents/core/qa.md`                              |
-| Documentation, docs              | `technical-writer`           | `.claude/agents/core/technical-writer.md`                |
-| Code review, PR review           | `code-reviewer`              | `.claude/agents/specialized/code-reviewer.md`            |
-| Code simplification, refactoring | `code-simplifier`            | `.claude/agents/specialized/code-simplifier.md`          |
-| Security review                  | `security-architect`         | `.claude/agents/specialized/security-architect.md`       |
-| Infrastructure                   | `devops`                     | `.claude/agents/specialized/devops.md`                   |
-| Debugging                        | `devops-troubleshooter`      | `.claude/agents/specialized/devops-troubleshooter.md`    |
-| Incidents                        | `incident-responder`         | `.claude/agents/specialized/incident-responder.md`       |
-| C4 System Context                | `c4-context`                 | `.claude/agents/specialized/c4-context.md`               |
-| C4 Containers                    | `c4-container`               | `.claude/agents/specialized/c4-container.md`             |
-| C4 Components                    | `c4-component`               | `.claude/agents/specialized/c4-component.md`             |
-| C4 Code level                    | `c4-code`                    | `.claude/agents/specialized/c4-code.md`                  |
-| Context-driven dev               | `conductor-validator`        | `.claude/agents/specialized/conductor-validator.md`      |
-| Reverse engineering              | `reverse-engineer`           | `.claude/agents/specialized/reverse-engineer.md`         |
-| Research, fact-finding           | `researcher`                 | `.claude/agents/specialized/researcher.md`               |
-| Python expert                    | `python-pro`                 | `.claude/agents/domain/python-pro.md`                    |
-| Rust expert                      | `rust-pro`                   | `.claude/agents/domain/rust-pro.md`                      |
-| Go expert                        | `golang-pro`                 | `.claude/agents/domain/golang-pro.md`                    |
-| TypeScript expert                | `typescript-pro`             | `.claude/agents/domain/typescript-pro.md`                |
-| FastAPI expert                   | `fastapi-pro`                | `.claude/agents/domain/fastapi-pro.md`                   |
-| Product management               | `pm`                         | `.claude/agents/core/pm.md`                              |
-| Quality reflection               | `reflection-agent`           | `.claude/agents/core/reflection-agent.md`                |
-| Frontend/React/Vue               | `frontend-pro`               | `.claude/agents/domain/frontend-pro.md`                  |
-| Node.js/Express/NestJS           | `nodejs-pro`                 | `.claude/agents/domain/nodejs-pro.md`                    |
-| iOS/Swift development            | `ios-pro`                    | `.claude/agents/domain/ios-pro.md`                       |
-| Android/Kotlin                   | `android-pro`                | `.claude/agents/domain/android-pro.md`                   |
-| Java/Spring Boot                 | `java-pro`                   | `.claude/agents/domain/java-pro.md`                      |
-| Next.js App Router               | `nextjs-pro`                 | `.claude/agents/domain/nextjs-pro.md`                    |
-| PHP/Laravel                      | `php-pro`                    | `.claude/agents/domain/php-pro.md`                       |
-| SvelteKit/Svelte 5               | `sveltekit-expert`           | `.claude/agents/domain/sveltekit-expert.md`              |
-| Tauri desktop apps               | `tauri-desktop-developer`    | `.claude/agents/domain/tauri-desktop-developer.md`       |
-| Expo/React Native                | `expo-mobile-developer`      | `.claude/agents/domain/expo-mobile-developer.md`         |
-| Data engineering/ETL             | `data-engineer`              | `.claude/agents/domain/data-engineer.md`                 |
-| Database design                  | `database-architect`         | `.claude/agents/specialized/database-architect.md`       |
-| GraphQL APIs                     | `graphql-pro`                | `.claude/agents/domain/graphql-pro.md`                   |
-| Mobile UX review                 | `mobile-ux-reviewer`         | `.claude/agents/domain/mobile-ux-reviewer.md`            |
-| Scientific research              | `scientific-research-expert` | `.claude/agents/domain/scientific-research-expert.md`    |
-| Session analysis                 | `reflection-agent`           | `.claude/agents/core/reflection-agent.md`                |
-| AI/ML/Deep Learning              | `ai-ml-specialist`           | `.claude/agents/domain/ai-ml-specialist.md`              |
-| Web3/Blockchain/DeFi             | `web3-blockchain-expert`     | `.claude/agents/domain/web3-blockchain-expert.md`        |
-| Game development                 | `gamedev-pro`                | `.claude/agents/domain/gamedev-pro.md`                   |
-| Project orchestration            | `master-orchestrator`        | `.claude/agents/orchestrators/master-orchestrator.md`    |
-| Swarm coordination               | `swarm-coordinator`          | `.claude/agents/orchestrators/swarm-coordinator.md`      |
-| Self-evolution                   | `evolution-orchestrator`     | `.claude/agents/orchestrators/evolution-orchestrator.md` |
-| Context compression              | `context-compressor`         | `.claude/agents/core/context-compressor.md`              |
-| System routing                   | `router`                     | `.claude/agents/core/router.md` (Meta)                   |
+| Request Type                                                               | Agent                        | File                                                     |
+| -------------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------- |
+| Bug fixes, coding                                                          | `developer`                  | `.claude/agents/core/developer.md`                       |
+| New features, planning                                                     | `planner`                    | `.claude/agents/core/planner.md`                         |
+| System design                                                              | `architect`                  | `.claude/agents/core/architect.md`                       |
+| Testing, QA                                                                | `qa`                         | `.claude/agents/core/qa.md`                              |
+| Documentation, docs                                                        | `technical-writer`           | `.claude/agents/core/technical-writer.md`                |
+| Code review, PR review                                                     | `code-reviewer`              | `.claude/agents/specialized/code-reviewer.md`            |
+| Code simplification, refactoring                                           | `code-simplifier`            | `.claude/agents/specialized/code-simplifier.md`          |
+| Security review                                                            | `security-architect`         | `.claude/agents/specialized/security-architect.md`       |
+| Infrastructure                                                             | `devops`                     | `.claude/agents/specialized/devops.md`                   |
+| Debugging                                                                  | `devops-troubleshooter`      | `.claude/agents/specialized/devops-troubleshooter.md`    |
+| Incidents                                                                  | `incident-responder`         | `.claude/agents/specialized/incident-responder.md`       |
+| C4 System Context                                                          | `c4-context`                 | `.claude/agents/specialized/c4-context.md`               |
+| C4 Containers                                                              | `c4-container`               | `.claude/agents/specialized/c4-container.md`             |
+| C4 Components                                                              | `c4-component`               | `.claude/agents/specialized/c4-component.md`             |
+| C4 Code level                                                              | `c4-code`                    | `.claude/agents/specialized/c4-code.md`                  |
+| Context-driven dev                                                         | `conductor-validator`        | `.claude/agents/specialized/conductor-validator.md`      |
+| Reverse engineering                                                        | `reverse-engineer`           | `.claude/agents/specialized/reverse-engineer.md`         |
+| Research, fact-finding                                                     | `researcher`                 | `.claude/agents/specialized/researcher.md`               |
+| Python expert                                                              | `python-pro`                 | `.claude/agents/domain/python-pro.md`                    |
+| Rust expert                                                                | `rust-pro`                   | `.claude/agents/domain/rust-pro.md`                      |
+| Go expert                                                                  | `golang-pro`                 | `.claude/agents/domain/golang-pro.md`                    |
+| TypeScript expert                                                          | `typescript-pro`             | `.claude/agents/domain/typescript-pro.md`                |
+| FastAPI expert                                                             | `fastapi-pro`                | `.claude/agents/domain/fastapi-pro.md`                   |
+| Product management                                                         | `pm`                         | `.claude/agents/core/pm.md`                              |
+| Quality reflection                                                         | `reflection-agent`           | `.claude/agents/core/reflection-agent.md`                |
+| Frontend/React/Vue                                                         | `frontend-pro`               | `.claude/agents/domain/frontend-pro.md`                  |
+| Node.js/Express/NestJS                                                     | `nodejs-pro`                 | `.claude/agents/domain/nodejs-pro.md`                    |
+| iOS/Swift development                                                      | `ios-pro`                    | `.claude/agents/domain/ios-pro.md`                       |
+| Android/Kotlin                                                             | `android-pro`                | `.claude/agents/domain/android-pro.md`                   |
+| Java/Spring Boot                                                           | `java-pro`                   | `.claude/agents/domain/java-pro.md`                      |
+| Next.js App Router                                                         | `nextjs-pro`                 | `.claude/agents/domain/nextjs-pro.md`                    |
+| PHP/Laravel                                                                | `php-pro`                    | `.claude/agents/domain/php-pro.md`                       |
+| SvelteKit/Svelte 5                                                         | `sveltekit-expert`           | `.claude/agents/domain/sveltekit-expert.md`              |
+| Tauri desktop apps                                                         | `tauri-desktop-developer`    | `.claude/agents/domain/tauri-desktop-developer.md`       |
+| Expo/React Native                                                          | `expo-mobile-developer`      | `.claude/agents/domain/expo-mobile-developer.md`         |
+| Data engineering/ETL                                                       | `data-engineer`              | `.claude/agents/domain/data-engineer.md`                 |
+| Database design                                                            | `database-architect`         | `.claude/agents/specialized/database-architect.md`       |
+| GraphQL APIs                                                               | `graphql-pro`                | `.claude/agents/domain/graphql-pro.md`                   |
+| Mobile UX review                                                           | `mobile-ux-reviewer`         | `.claude/agents/domain/mobile-ux-reviewer.md`            |
+| Scientific research                                                        | `scientific-research-expert` | `.claude/agents/domain/scientific-research-expert.md`    |
+| Session analysis                                                           | `reflection-agent`           | `.claude/agents/core/reflection-agent.md`                |
+| AI/ML/Deep Learning                                                        | `ai-ml-specialist`           | `.claude/agents/domain/ai-ml-specialist.md`              |
+| Web3/Blockchain/DeFi                                                       | `web3-blockchain-expert`     | `.claude/agents/domain/web3-blockchain-expert.md`        |
+| Game development                                                           | `gamedev-pro`                | `.claude/agents/domain/gamedev-pro.md`                   |
+| Project orchestration                                                      | `master-orchestrator`        | `.claude/agents/orchestrators/master-orchestrator.md`    |
+| Swarm coordination                                                         | `swarm-coordinator`          | `.claude/agents/orchestrators/swarm-coordinator.md`      |
+| Self-evolution                                                             | `evolution-orchestrator`     | `.claude/agents/orchestrators/evolution-orchestrator.md` |
+| Multi-agent collaboration (party mode, consensus, debate, team discussion) | `party-orchestrator`         | `.claude/agents/orchestrators/party-orchestrator.md`     |
+| Context compression                                                        | `context-compressor`         | `.claude/agents/core/context-compressor.md`              |
+| System routing                                                             | `router`                     | `.claude/agents/core/router.md` (Meta)                   |
 
 **Domain Agents:** `.claude/agents/domain/`
 **Multi-Agent Workflows:** `.claude/workflows/enterprise/`
@@ -790,6 +802,7 @@ All spawned agents:
 | Database Design      | `.claude/workflows/database-architect-skill-workflow.md`            | schema workflows        |
 | Context Compression  | `.claude/workflows/context-compressor-skill-workflow.md`            | summarization           |
 | Hook Consolidation   | `.claude/workflows/operations/hook-consolidation.md`                | hook consolidation      |
+| Post-Creation Valid. | `.claude/workflows/core/post-creation-validation.md`                | artifact integration    |
 
 ---
 
@@ -888,6 +901,11 @@ tools/
 ├── cli/
 │   ├── doctor.js
 │   ├── validate-agents.js
+│   ├── validate-integration.cjs
+│   ├── kb-search.cjs
+│   ├── cost-report.js
+│   ├── monitoring-dashboard.cjs
+│   ├── init-staging.cjs
 │   └── ...
 ├── integrations/
 │   ├── aws/

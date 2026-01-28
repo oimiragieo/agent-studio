@@ -384,6 +384,37 @@ After creating a hook:
 
 **BLOCKING**: If ANY item above is missing, hook creation is INCOMPLETE.
 
+### Step 8: Integration Verification (BLOCKING - DO NOT SKIP)
+
+**This step verifies the artifact is properly integrated into the ecosystem.**
+
+Before calling `TaskUpdate({ status: "completed" })`, you MUST run the Post-Creation Validation workflow:
+
+1. **Run the 10-item integration checklist:**
+
+   ```bash
+   node .claude/tools/cli/validate-integration.cjs .claude/hooks/<category>/<hook-name>.cjs
+   ```
+
+2. **Verify exit code is 0** (all checks passed)
+
+3. **If exit code is 1** (one or more checks failed):
+   - Read the error output for specific failures
+   - Fix each failure:
+     - Missing documentation -> Add to hooks/README.md
+     - Missing settings.json entry -> Register hook
+     - Missing memory update -> Update learnings.md
+     - Missing test file -> Create .test.cjs file
+   - Re-run validation until exit code is 0
+
+4. **Only proceed when validation passes**
+
+**This step is BLOCKING.** Do NOT mark task complete until validation passes.
+
+**Why this matters:** The Party Mode incident showed that fully-implemented artifacts can be invisible to the Router if integration steps are missed. This validation ensures no "invisible artifact" pattern.
+
+**Reference:** `.claude/workflows/core/post-creation-validation.md`
+
 ---
 
 ## CLI Reference

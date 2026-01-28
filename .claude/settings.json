@@ -11,7 +11,15 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node .claude/hooks/session/state-reset.cjs"
+          },
+          {
+            "type": "command",
             "command": "node .claude/hooks/routing/user-prompt-unified.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/session/post-creation-reminder.cjs"
           }
         ]
       }
@@ -49,6 +57,10 @@
           {
             "type": "command",
             "command": "node .claude/hooks/safety/file-placement-guard.cjs"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/safety/write-size-validator.cjs"
           },
           {
             "type": "command",
@@ -95,7 +107,20 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node .claude/hooks/routing/tool-availability-validator.cjs"
+          },
+          {
+            "type": "command",
             "command": "node .claude/hooks/routing/pre-task-unified.cjs"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/validation/pre-completion-validation.cjs"
           }
         ]
       },

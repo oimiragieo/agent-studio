@@ -98,19 +98,20 @@ TaskList();
 
 ### 2.1 Intent Classification
 
-| Intent                | Indicators                                        | Example                  |
-| --------------------- | ------------------------------------------------- | ------------------------ |
-| **Bug fix**           | "fix", "bug", "error", "broken", "not working"    | "Fix the login bug"      |
-| **New feature**       | "add", "create", "implement", "new feature"       | "Add payment processing" |
-| **Refactor**          | "refactor", "restructure", "clean up", "improve"  | "Refactor auth module"   |
-| **Investigation**     | "why", "how", "investigate", "debug", "analyze"   | "Why is the API slow?"   |
-| **Documentation**     | "document", "docs", "explain", "README"           | "Document the API"       |
-| **Testing**           | "test", "QA", "validate", "verify"                | "Test the checkout flow" |
-| **Deployment**        | "deploy", "ship", "release", "production"         | "Deploy to production"   |
-| **Architecture**      | "design", "architecture", "structure", "plan"     | "Design the new service" |
-| **Security**          | "security", "auth", "vulnerability", "CVE"        | "Review security of API" |
-| **Code review**       | "review", "PR", "pull request", "feedback"        | "Review this PR"         |
-| **Artifact creation** | "create agent", "create skill", "create workflow" | "Create mobile UX agent" |
+| Intent                | Indicators                                                                            | Example                          |
+| --------------------- | ------------------------------------------------------------------------------------- | -------------------------------- |
+| **Bug fix**           | "fix", "bug", "error", "broken", "not working"                                        | "Fix the login bug"              |
+| **New feature**       | "add", "create", "implement", "new feature"                                           | "Add payment processing"         |
+| **Refactor**          | "refactor", "restructure", "clean up", "improve"                                      | "Refactor auth module"           |
+| **Investigation**     | "why", "how", "investigate", "debug", "analyze"                                       | "Why is the API slow?"           |
+| **Documentation**     | "document", "docs", "explain", "README"                                               | "Document the API"               |
+| **Testing**           | "test", "QA", "validate", "verify"                                                    | "Test the checkout flow"         |
+| **Deployment**        | "deploy", "ship", "release", "production"                                             | "Deploy to production"           |
+| **Architecture**      | "design", "architecture", "structure", "plan"                                         | "Design the new service"         |
+| **Security**          | "security", "auth", "vulnerability", "CVE"                                            | "Review security of API"         |
+| **Code review**       | "review", "PR", "pull request", "feedback"                                            | "Review this PR"                 |
+| **Party Mode**        | "party mode", "multi-agent collaboration", "discuss with team", "debate", "consensus" | "Party Mode: review this design" |
+| **Artifact creation** | "create agent", "create skill", "create workflow"                                     | "Create mobile UX agent"         |
 
 ### 2.2 Complexity Classification
 
@@ -401,10 +402,79 @@ Without these, the skill was NEVER invoked because Router couldn't find it.
 
 ### Orchestrator Agents
 
-| Request Type          | Agent                 | File                                                  |
-| --------------------- | --------------------- | ----------------------------------------------------- |
-| Project orchestration | `master-orchestrator` | `.claude/agents/orchestrators/master-orchestrator.md` |
-| Swarm coordination    | `swarm-coordinator`   | `.claude/agents/orchestrators/swarm-coordinator.md`   |
+| Request Type                            | Agent                 | File                                                  |
+| --------------------------------------- | --------------------- | ----------------------------------------------------- |
+| Project orchestration                   | `master-orchestrator` | `.claude/agents/orchestrators/master-orchestrator.md` |
+| Swarm coordination                      | `swarm-coordinator`   | `.claude/agents/orchestrators/swarm-coordinator.md`   |
+| **Party Mode (Multi-agent discussion)** | `party-orchestrator`  | `.claude/agents/orchestrators/party-orchestrator.md`  |
+
+**Keywords for Party Mode**: "party mode", "multi-agent collaboration", "discuss with team", "debate", "consensus", "team perspective"
+
+**Party Mode Spawn Example**:
+
+```javascript
+Task({
+  subagent_type: 'general-purpose',
+  model: 'opus',
+  description: 'Party orchestrator coordinating team discussion',
+  allowed_tools: [
+    'Read',
+    'Write',
+    'Edit',
+    'Task',
+    'TaskUpdate',
+    'TaskList',
+    'TaskCreate',
+    'TaskGet',
+    'Skill',
+  ],
+  prompt: `You are the PARTY-ORCHESTRATOR agent.
+
++======================================================================+
+|  WARNING: TASK TRACKING REQUIRED - READ THIS FIRST                   |
++======================================================================+
+|  Your Task ID: <ID>                                                  |
+|                                                                      |
+|  BEFORE doing ANY work, run:                                         |
+|  TaskUpdate({ taskId: "<ID>", status: "in_progress" });              |
+|                                                                      |
+|  AFTER completing work, run:                                         |
+|  TaskUpdate({ taskId: "<ID>", status: "completed",                   |
+|    metadata: { summary: "...", filesModified: [...] }                |
+|  });                                                                 |
+|                                                                      |
+|  THEN check for more work:                                           |
+|  TaskList();                                                         |
+|                                                                      |
+|  FAILURE TO UPDATE TASK STATUS BREAKS THE ENTIRE SYSTEM              |
+|  YOU WILL BE EVALUATED ON: Task status updates, not just output      |
++======================================================================+
+
+## PROJECT CONTEXT (CRITICAL)
+PROJECT_ROOT: C:\\dev\\projects\\agent-studio
+All file operations MUST be relative to PROJECT_ROOT.
+
+## Your Assigned Task
+Task ID: <ID>
+User Request: <USER_REQUEST>
+
+## Instructions
+1) FIRST: TaskUpdate({ taskId: "<ID>", status: "in_progress" })
+2) Read your agent definition: .claude/agents/orchestrators/party-orchestrator.md
+3) Follow Party Mode orchestration protocol:
+   - Load team (default: .claude/teams/default.csv)
+   - Coordinate multi-agent discussion
+   - Aggregate perspectives
+4) Use Task() tool to spawn team members
+5) LAST: TaskUpdate({ taskId: "<ID>", status: "completed", metadata: { summary: "...", teamMembers: [...], rounds: N } })
+6) THEN: TaskList()
+
+## Memory Protocol
+1) Read: .claude/context/memory/learnings.md (before starting)
+2) Write: decisions/issues/learnings to appropriate memory files
+`,
+});
+```
 
 ### Creator Agents (Self-Evolution)
 

@@ -812,6 +812,37 @@ tail -20 .claude/context/memory/learnings.md | grep "{skill-name}"
 
 **BLOCKING**: All checkboxes must pass. If any fail, skill creation is INCOMPLETE.
 
+### Step 10: Integration Verification (BLOCKING - DO NOT SKIP)
+
+**This step verifies the artifact is properly integrated into the ecosystem.**
+
+Before calling `TaskUpdate({ status: "completed" })`, you MUST run the Post-Creation Validation workflow:
+
+1. **Run the 10-item integration checklist:**
+
+   ```bash
+   node .claude/tools/cli/validate-integration.cjs .claude/skills/<skill-name>/SKILL.md
+   ```
+
+2. **Verify exit code is 0** (all checks passed)
+
+3. **If exit code is 1** (one or more checks failed):
+   - Read the error output for specific failures
+   - Fix each failure:
+     - Missing CLAUDE.md entry -> Add to Section 8.5
+     - Missing skill catalog entry -> Add to skill-catalog.md
+     - Missing agent assignment -> Assign to relevant agents
+     - Missing memory update -> Update learnings.md
+   - Re-run validation until exit code is 0
+
+4. **Only proceed when validation passes**
+
+**This step is BLOCKING.** Do NOT mark task complete until validation passes.
+
+**Why this matters:** The Party Mode incident showed that fully-implemented artifacts can be invisible to the Router if integration steps are missed. This validation ensures no "invisible artifact" pattern.
+
+**Reference:** `.claude/workflows/core/post-creation-validation.md`
+
 ---
 
 ## Workflow Integration

@@ -4,6 +4,34 @@
   "currentEvolution": null,
   "evolutions": [
     {
+      "id": "workflow-post-creation-validation-2026-01-28",
+      "type": "workflow",
+      "name": "post-creation-validation",
+      "path": ".claude/workflows/core/post-creation-validation.md",
+      "completedAt": "2026-01-28T12:00:00.000Z",
+      "description": "10-item checklist workflow ensuring artifacts are properly integrated (CLAUDE.md, catalogs, agent assignment) after creation. Addresses the 'Invisible Artifact' pattern from Party Mode incident.",
+      "registrations": [
+        "CLAUDE.md Section 8.6 (Enterprise Workflows)",
+        "settings.json (UserPromptSubmit hook)",
+        "learnings.md (EVOL-029 pattern)"
+      ],
+      "researchReport": ".claude/context/artifacts/research-reports/artifact-integration-best-practices-20260128.md",
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "artifacts": [
+        { "type": "workflow", "path": ".claude/workflows/core/post-creation-validation.md" },
+        { "type": "hook", "path": ".claude/hooks/session/post-creation-reminder.cjs" },
+        { "type": "tool", "path": ".claude/tools/cli/validate-integration.cjs" }
+      ],
+      "creatorSkillsUpdated": [
+        ".claude/skills/agent-creator/SKILL.md",
+        ".claude/skills/skill-creator/SKILL.md",
+        ".claude/skills/workflow-creator/SKILL.md",
+        ".claude/skills/hook-creator/SKILL.md"
+      ],
+      "outcome": "success",
+      "notes": "Addresses Party Mode integration gap where fully-implemented feature was invisible to Router due to missing CLAUDE.md routing entry. Research phase consulted 10+ external sources on CI/CD deployment checklists, post-deployment verification, and AI agent orchestration patterns."
+    },
+    {
       "type": "agent",
       "name": "gamedev-pro",
       "path": ".claude/agents/domain/gamedev-pro.md",
@@ -15,14 +43,7 @@
         "router-enforcer.cjs (domainBoosts gamedev-pro keywords)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/gamedev-pro-research.md",
-      "phases": [
-        "E",
-        "V",
-        "O",
-        "L",
-        "V",
-        "E"
-      ],
+      "phases": ["E", "V", "O", "L", "V", "E"],
       "skills": [
         "gamedev-expert",
         "tdd",
@@ -56,14 +77,7 @@
         "router-enforcer.cjs (domainBoosts web3-blockchain-expert)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/web3-blockchain-expert-research.md",
-      "phases": [
-        "E",
-        "V",
-        "O",
-        "L",
-        "V",
-        "E"
-      ],
+      "phases": ["E", "V", "O", "L", "V", "E"],
       "skills": [
         "web3-expert",
         "security-architect",
@@ -96,14 +110,7 @@
         "router-enforcer.cjs (mobile disambiguation rules)"
       ],
       "researchReport": ".claude/context/artifacts/research-reports/android-pro-research.md",
-      "phases": [
-        "E",
-        "V",
-        "O",
-        "L",
-        "V",
-        "E"
-      ],
+      "phases": ["E", "V", "O", "L", "V", "E"],
       "skills": [
         "android-expert",
         "testing-expert",
@@ -127,32 +134,11 @@
       "path": ".claude/agents/domain/ai-ml-specialist.md",
       "completedAt": "2026-01-25T19:30:00.000Z",
       "description": "AI/ML specialist for machine learning, deep learning, MLOps, experiment tracking, and model deployment",
-      "registrations": [
-        "CLAUDE.md routing table"
-      ],
+      "registrations": ["CLAUDE.md routing table"],
       "researchReport": ".claude/context/artifacts/research-reports/ai-ml-specialist-research.md",
-      "phases": [
-        "E",
-        "V",
-        "O",
-        "L",
-        "V",
-        "E"
-      ],
-      "skills": [
-        "ai-ml-expert",
-        "python-backend-expert",
-        "data-expert",
-        "scientific-skills"
-      ],
-      "domains": [
-        "PyTorch",
-        "TensorFlow",
-        "scikit-learn",
-        "Hugging Face",
-        "MLflow",
-        "MLOps"
-      ]
+      "phases": ["E", "V", "O", "L", "V", "E"],
+      "skills": ["ai-ml-expert", "python-backend-expert", "data-expert", "scientific-skills"],
+      "domains": ["PyTorch", "TensorFlow", "scikit-learn", "Hugging Face", "MLflow", "MLOps"]
     },
     {
       "type": "agent",
@@ -160,17 +146,8 @@
       "path": ".claude/agents/orchestrators/evolution-orchestrator.md",
       "completedAt": "2026-01-25T14:31:00.000Z",
       "description": "Meta-agent that orchestrates the EVOLVE workflow for creating new artifacts",
-      "registrations": [
-        "CLAUDE.md routing table"
-      ],
-      "phases": [
-        "E",
-        "V",
-        "O",
-        "L",
-        "V",
-        "E"
-      ]
+      "registrations": ["CLAUDE.md routing table"],
+      "phases": ["E", "V", "O", "L", "V", "E"]
     },
     {
       "id": "evolution-scientific-skills-retroactive",
@@ -323,6 +300,11 @@
       "name": "Reflection-driven remediation",
       "description": "When reflection analysis identifies workflow violations, create enforcement hooks to prevent recurrence. Pattern: (1) Identify root cause from reflection, (2) Create blocking hook with state tracking, (3) Update Self-Check Protocol with new gate, (4) Add Iron Law documentation",
       "source": "skill-creation-guard P0 remediation 2026-01-27"
+    },
+    {
+      "name": "Post-creation validation",
+      "description": "Pre-creation gates ensure the RIGHT PROCESS is followed. Post-creation validation ensures the RIGHT OUTCOME occurred. Both are needed. After creating ANY artifact, run validate-integration.cjs to verify all 10 integration points (CLAUDE.md routing, catalog entries, agent assignments, memory updates, etc.)",
+      "source": "post-creation-validation workflow 2026-01-28"
     }
   ],
   "suggestions": [

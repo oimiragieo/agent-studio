@@ -912,6 +912,36 @@ grep "<agent-name>" .claude/hooks/routing/router-enforcer.cjs || echo "ERROR: Ag
 
 **BLOCKING**: If ANY item fails, agent creation is INCOMPLETE. Fix all issues before proceeding.
 
+### Step 10: Integration Verification (BLOCKING - DO NOT SKIP)
+
+**This step verifies the artifact is properly integrated into the ecosystem.**
+
+Before calling `TaskUpdate({ status: "completed" })`, you MUST run the Post-Creation Validation workflow:
+
+1. **Run the 10-item integration checklist:**
+
+   ```bash
+   node .claude/tools/cli/validate-integration.cjs .claude/agents/<category>/<agent-name>.md
+   ```
+
+2. **Verify exit code is 0** (all checks passed)
+
+3. **If exit code is 1** (one or more checks failed):
+   - Read the error output for specific failures
+   - Fix each failure:
+     - Missing CLAUDE.md entry -> Add routing table entry
+     - Missing router-enforcer keywords -> Add intent keywords
+     - Missing memory update -> Update learnings.md
+   - Re-run validation until exit code is 0
+
+4. **Only proceed when validation passes**
+
+**This step is BLOCKING.** Do NOT mark task complete until validation passes.
+
+**Why this matters:** The Party Mode incident showed that fully-implemented artifacts can be invisible to the Router if integration steps are missed. This validation ensures no "invisible artifact" pattern.
+
+**Reference:** `.claude/workflows/core/post-creation-validation.md`
+
 ---
 
 ## Workflow Integration

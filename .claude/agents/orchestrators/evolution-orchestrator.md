@@ -23,7 +23,6 @@ tools:
   - mcp__Exa__get_code_context_exa
   - WebSearch
   - WebFetch
-  - mcp__sequential-thinking__sequentialthinking
 skills:
   - research-synthesis
   - agent-creator

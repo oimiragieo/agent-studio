@@ -1,0 +1,4 @@
+agent_type,role,priority,tools,model
+developer,implementer,1,"Read,Write,Edit,Bash,TaskUpdate,TaskList,TaskCreate,TaskGet,Skill",sonnet
+security-architect,reviewer,2,"Read,Grep,Glob,TaskUpdate,TaskList,TaskCreate,TaskGet,Skill",opus
+qa,validator,3,"Read,Bash,TaskUpdate,TaskList,TaskCreate,TaskGet,Skill",haiku

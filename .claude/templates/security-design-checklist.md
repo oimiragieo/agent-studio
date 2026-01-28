@@ -17,6 +17,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone impersonate a user, agent, or system component?
 
 **Questions**:
+
 1. Does this artifact handle authentication credentials or tokens?
 2. Could an attacker fake their identity to gain unauthorized access?
 3. Are agent identities verified before spawning or delegation?
@@ -24,6 +25,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Are API keys, tokens, or secrets properly managed (not hardcoded)?
 
 **Mitigations**:
+
 - Validate authentication tokens before processing
 - Use environment variables for secrets (never hardcode)
 - Implement agent identity verification in spawn prompts
@@ -38,6 +40,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone modify data or code without authorization?
 
 **Questions**:
+
 1. Does this artifact write to files? Can path traversal attacks occur?
 2. Are file paths validated against whitelists?
 3. Could template injection or code injection happen?
@@ -45,6 +48,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Can configuration files or schemas be tampered with?
 
 **Mitigations**:
+
 - Validate all file paths within allowed directories (e.g., `.claude/templates/`)
 - Reject path traversal patterns (`..`, `//`, `\\`)
 - Sanitize inputs before template rendering or command execution
@@ -60,6 +64,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone deny performing an action?
 
 **Questions**:
+
 1. Are sensitive operations logged for audit trails?
 2. Is it clear which agent/user performed an action?
 3. Are task status updates properly tracked (TaskUpdate protocol)?
@@ -67,6 +72,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Are security events (failures, access denials) logged?
 
 **Mitigations**:
+
 - Log all artifact creation events to evolution-state.json
 - Use TaskUpdate with metadata for action attribution
 - Record ADRs for significant decisions (decisions.md)
@@ -82,6 +88,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone access information they shouldn't see?
 
 **Questions**:
+
 1. Does this artifact handle sensitive data (credentials, PII, secrets)?
 2. Are error messages verbose enough to leak implementation details?
 3. Could logs or debug output expose sensitive information?
@@ -89,6 +96,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Does this artifact expose internal file paths or system details?
 
 **Mitigations**:
+
 - Never log sensitive data (passwords, tokens, API keys)
 - Use generic error messages for user-facing errors
 - Sanitize file paths in logs (use relative paths from PROJECT_ROOT)
@@ -105,6 +113,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone make the system unavailable or unresponsive?
 
 **Questions**:
+
 1. Can this artifact be exploited for resource exhaustion (infinite loops, memory leaks)?
 2. Are there limits on input size (file uploads, token counts)?
 3. Can malicious input cause crashes or hangs?
@@ -112,6 +121,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Are there safeguards against recursive or circular dependencies?
 
 **Mitigations**:
+
 - Implement input size limits (max tokens, max file size)
 - Add timeouts for long-running operations
 - Use circuit breakers for external API calls
@@ -127,6 +137,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 **Threat**: Can someone gain unauthorized permissions or capabilities?
 
 **Questions**:
+
 1. Does this artifact enforce least privilege (minimal permissions)?
 2. Can an agent escalate privileges by spawning other agents?
 3. Are tool permissions properly restricted (allowed_tools whitelist)?
@@ -134,6 +145,7 @@ STRIDE is a threat modeling framework that helps identify security risks systema
 5. Can environment variables or configuration be manipulated to gain elevated access?
 
 **Mitigations**:
+
 - Define minimal `allowed_tools` for each agent spawn
 - Enforce routing-guard.cjs for tool restrictions
 - Validate agent permissions before delegation
@@ -150,17 +162,17 @@ After answering STRIDE questions, check if existing security controls apply:
 
 ### Existing Controls
 
-| Control ID          | Description                                     | Location                                      |
-| ------------------- | ----------------------------------------------- | --------------------------------------------- |
-| **SEC-SPEC-002**    | Path validation (whitelist `.claude/` paths)   | template-renderer skill                       |
-| **SEC-SPEC-003**    | Token whitelist validation                      | template-renderer skill                       |
-| **SEC-SPEC-004**    | Input sanitization (XSS protection)             | template-renderer skill                       |
-| **SEC-CATALOG-001** | File path validation for catalogs               | Template catalog, security registry           |
-| **SEC-CATALOG-002** | Path traversal rejection (`..`, `//`, `\\`)     | Template catalog, security registry           |
-| **ROUTING-001**     | Tool whitelist enforcement                      | routing-guard.cjs                             |
-| **ROUTING-002**     | Security review enforcement                     | routing-guard.cjs                             |
-| **CREATOR-001**     | Artifact output path validation                 | unified-creator-guard.cjs                     |
-| **PLANNER-001**     | Complexity-based task creation guard            | routing-guard.cjs (planner-first enforcement) |
+| Control ID          | Description                                  | Location                                      |
+| ------------------- | -------------------------------------------- | --------------------------------------------- |
+| **SEC-SPEC-002**    | Path validation (whitelist `.claude/` paths) | template-renderer skill                       |
+| **SEC-SPEC-003**    | Token whitelist validation                   | template-renderer skill                       |
+| **SEC-SPEC-004**    | Input sanitization (XSS protection)          | template-renderer skill                       |
+| **SEC-CATALOG-001** | File path validation for catalogs            | Template catalog, security registry           |
+| **SEC-CATALOG-002** | Path traversal rejection (`..`, `//`, `\\`)  | Template catalog, security registry           |
+| **ROUTING-001**     | Tool whitelist enforcement                   | routing-guard.cjs                             |
+| **ROUTING-002**     | Security review enforcement                  | routing-guard.cjs                             |
+| **CREATOR-001**     | Artifact output path validation              | unified-creator-guard.cjs                     |
+| **PLANNER-001**     | Complexity-based task creation guard         | routing-guard.cjs (planner-first enforcement) |
 
 **Reference**: `.claude/context/artifacts/security-controls-catalog.md` (created in Sprint 3, Enhancement #8)
 
@@ -189,6 +201,7 @@ If STRIDE analysis reveals gaps, create new security controls:
 5. **Create** new controls if gaps found
 
 **Output**: Security assessment section in research report with:
+
 - STRIDE threat analysis (which categories apply)
 - Existing controls that will be used
 - New controls to be implemented (if any)
@@ -202,25 +215,31 @@ If STRIDE analysis reveals gaps, create new security controls:
 **Artifact**: template-renderer skill
 
 ### S - Spoofing
+
 - N/A (no authentication handled)
 
 ### T - Tampering
+
 - **Threat**: Template injection attacks
 - **Mitigation**: SEC-SPEC-003 (token whitelist), SEC-SPEC-004 (input sanitization)
 
 ### R - Repudiation
+
 - **Threat**: No audit trail for template usage
 - **Mitigation**: NEW CONTROL (SEC-TEMPLATE-001) - Log template rendering events
 
 ### I - Information Disclosure
+
 - **Threat**: Sensitive data in template examples
 - **Mitigation**: Review all template examples, redact secrets
 
 ### D - Denial of Service
+
 - **Threat**: Large template files causing memory exhaustion
 - **Mitigation**: Add file size limit (1MB max)
 
 ### E - Elevation of Privilege
+
 - **Threat**: Template paths escaping allowed directories
 - **Mitigation**: SEC-SPEC-002 (path whitelist validation)
 

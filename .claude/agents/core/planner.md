@@ -9,7 +9,6 @@ tools:
   - Grep
   - Bash
   - Search
-  - mcp__sequential-thinking__*
   - mcp__memory__*
   - TaskUpdate
   - TaskList

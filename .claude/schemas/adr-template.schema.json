@@ -5,15 +5,7 @@
   "title": "ADR Template Schema",
   "description": "JSON Schema for Architecture Decision Record (ADR) template frontmatter validation",
   "type": "object",
-  "required": [
-    "adr_number",
-    "title",
-    "date",
-    "status",
-    "context",
-    "decision",
-    "consequences"
-  ],
+  "required": ["adr_number", "title", "date", "status", "context", "decision", "consequences"],
   "properties": {
     "adr_number": {
       "type": "string",

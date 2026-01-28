@@ -2,22 +2,22 @@
 
 ## Summary (as of 2026-01-28)
 
-| Status Category | Count | Notes                                                     |
-| --------------- | ----- | --------------------------------------------------------- |
-| **OPEN**        | 4     | Active issues requiring attention                         |
-| **DEFERRED**    | 1     | HOOK-PERF-001 (remaining 20% consolidation opportunities) |
-| **RESOLVED**    | 103   | Archived in issues-archive.md                             |
-| **Won't Fix**   | 4     | Documented as not requiring remediation                   |
-| **Total**       | 113   | All tracked issues                                        |
+| Status Category | Count | Notes                                                                   |
+| --------------- | ----- | ----------------------------------------------------------------------- |
+| **OPEN**        | 7     | Active issues requiring attention (includes 1 META issue, 1 TOOL issue) |
+| **DEFERRED**    | 1     | HOOK-PERF-001 (remaining 20% consolidation opportunities)               |
+| **RESOLVED**    | 106   | Archived in issues-archive.md (includes 2 META issues, 1 PROC issue)    |
+| **Won't Fix**   | 4     | Documented as not requiring remediation                                 |
+| **Total**       | 119   | All tracked issues                                                      |
 
 **Historical issues**: See `issues-archive.md` for 60 resolved issues archived on 2026-01-27.
-**Recent fixes**: 29 issues resolved on 2026-01-28 (ROUTING-003, PROC-001, PROC-002, PROC-003, PROC-004, PROC-005, PROC-009, MED-001, SEC-AUDIT-020, DOC-001, SEC-AUDIT-017, ENFORCEMENT-003, SEC-REMEDIATION-002, DOC-003, STRUCT-002, ENFORCEMENT-002, TESTING-002, ARCH-002, PROC-006, TESTING-003, POINTER-003, POINTER-001, SEC-AUDIT-013, SEC-AUDIT-014, ENFORCEMENT-001, WORKFLOW-VIOLATION-001, PERF-006, HOOK-TEST-001, HOOK-TEST-002).
+**Recent fixes**: 30 issues resolved on 2026-01-28 (ROUTING-003, PROC-001, PROC-002, PROC-003, PROC-004, PROC-005, PROC-009, MED-001, SEC-AUDIT-020, DOC-001, SEC-AUDIT-017, ENFORCEMENT-003, SEC-REMEDIATION-002, DOC-003, STRUCT-002, ENFORCEMENT-002, TESTING-002, ARCH-002, PROC-006, PROC-007, TESTING-003, POINTER-003, POINTER-001, SEC-AUDIT-013, SEC-AUDIT-014, ENFORCEMENT-001, WORKFLOW-VIOLATION-001, PERF-006, HOOK-TEST-001, HOOK-TEST-002).
 **Won't Fix decisions**: STRUCT-001 (skill workflows location - documented as intentional).
 
 ### Priority Breakdown (OPEN Issues)
 
 - **CRITICAL**: 1 (SEC-AUDIT-012)
-- **HIGH**: 5 (security audits, structural issues)
+- **HIGH**: 6 (security audits, structural issues, process violations)
 - **MEDIUM**: 16 (documentation gaps, pointer gaps, process improvements)
 - **LOW**: 15 (future enhancements, recommendations)
 
@@ -36,6 +36,199 @@
 ---
 
 <!-- OPEN ISSUES BELOW THIS LINE -->
+
+## [TOOL-001] Tool Availability Documentation Drift (HIGH) 🔴 OPEN
+
+- **Date**: 2026-01-28
+- **Severity**: HIGH
+- **Status**: OPEN
+- **Category**: documentation_drift
+- **Discovery**: Task #4 Tool Availability Audit
+- **Description**: Two tool availability mismatches identified:
+  1. **Sequential Thinking MCP Tool**: Referenced in 11 agent definitions + 1 skill but no MCP server configured in settings.json (mcpServers: {})
+  2. **reflection-agent Bash Tool**: Frontmatter includes Bash but workflow section explicitly prohibits it
+- **Root Cause**:
+  - CLAUDE.md spawn templates were corrected (removed mcp tool via Task #1/Task #2) but agent definitions not updated
+  - Agent frontmatter doesn't validate tool availability against actual system capabilities
+  - No pre-spawn validation hook to check if requested tools exist
+- **Impact**:
+  - Agents fail at runtime with "No such tool available" errors
+  - Time wasted debugging tool errors (estimated 3 hours in past incidents)
+  - Confusion between what tools are documented vs. what's actually available
+- **Affected Files**:
+  - 11 agents with `mcp__sequential-thinking__*` wildcard
+  - 1 skill with specific mcp tool reference
+  - reflection-agent.md with Bash contradiction
+- **Workaround**: Manual removal of MCP tool references from agent definitions
+- **Permanent Fix**:
+  1. Remove mcp\_\_ references from 11 agents + 1 skill (14 files total)
+  2. Create tool-availability-validator.cjs pre-spawn hook
+  3. Add documentation sync checker to CI
+  4. Update agent definition schema to validate tools
+- **Files to Modify**: See `.claude/context/plans/tool-availability-audit-2026-01-28.md` for full list
+- **Related**:
+  - Task #1, #2 (CLAUDE.md spawn template conflicting updates)
+  - reflection-queue.jsonl entries showing MCP tool add/remove history
+
+## [META-001] validate-integration.cjs Not Documented in CLAUDE.md (HIGH) ✅ RESOLVED
+
+- **Date**: 2026-01-28
+- **Severity**: HIGH
+- **Status**: RESOLVED (2026-01-28)
+- **Category**: ironic_invisible_artifact
+- **Discovery**: Task #30 Meta-Reflection
+- **Description**: The `validate-integration.cjs` CLI tool was created to prevent "invisible artifacts" but is itself undocumented in CLAUDE.md Section 9.6 (tools/cli/). This is an ironic instance of the very problem it was designed to solve.
+- **Impact**: Users/agents may not discover the validation tool, defeating its purpose.
+- **Resolution**: Added validate-integration.cjs (and 4 other CLI tools) to CLAUDE.md Section 9.6 tools/cli/ listing. Now discoverable in routing documentation.
+- **Files Modified**: `.claude/CLAUDE.md`
+- **Verification**: `grep "validate-integration" .claude/CLAUDE.md` returns match
+- **Prevention for Future**: Run validate-integration.cjs on itself during evolution
+
+---
+
+## [META-002] post-creation-reminder.cjs Hook Matcher Too Broad (MEDIUM) ✅ RESOLVED
+
+- **Date**: 2026-01-28
+- **Severity**: MEDIUM
+- **Status**: RESOLVED (2026-01-28)
+- **Category**: performance
+- **Discovery**: Task #30 Meta-Reflection
+- **Description**: The post-creation-reminder.cjs hook is registered with an empty matcher (`"matcher": ""`), causing it to run on EVERY user prompt, not just session start. This adds overhead and may produce redundant reminders.
+- **Impact**: Performance overhead, potentially annoying redundant output
+- **Resolution**: Implemented Option B - Added session detection logic inside hook using timestamp-based throttling. Hook now only runs once every 4 hours (writes timestamp to `.claude/.tmp/post-creation-reminder-last-run.txt`). This reduces overhead from every prompt to ~6x per day max.
+- **Files Modified**: `.claude/hooks/session/post-creation-reminder.cjs`
+- **Functions Added**: `hasRunRecently()`, `recordRun()`
+- **Prevention for Future**: Review hook matchers during evolution Enable phase
+
+---
+
+## [META-003] Evolution State Completion Record Missing (LOW)
+
+- **Date**: 2026-01-28
+- **Severity**: LOW
+- **Status**: OPEN
+- **Category**: audit_trail
+- **Discovery**: Task #30 Meta-Reflection
+- **Description**: Task #29 evolution (post-creation-validation) completed all EVOLVE phases but the evolution-state.json may not have a proper completion entry in the `evolutions` array.
+- **Impact**: Audit trail incomplete, harder to track evolution history
+- **Time to Fix**: 15 minutes
+- **Resolution Steps**:
+  1. Add completion entry to evolution-state.json:
+     ```json
+     {
+       "type": "workflow",
+       "name": "post-creation-validation",
+       "path": ".claude/workflows/core/post-creation-validation.md",
+       "completedAt": "2026-01-28T...",
+       "artifacts": [...]
+     }
+     ```
+- **Prevention for Future**: Add evolution-state update verification to Phase E checklist
+
+---
+
+## [PROC-007] Router Violated Protocol During Meta-Reflection Implementation (HIGH)
+
+- **Date**: 2026-01-28
+- **Severity**: HIGH
+- **Status**: RESOLVED (changes kept, violation documented)
+- **Category**: process_violation
+- **Discovery**: User caught Router using Edit/Write directly
+- **Description**: After Task #30 (meta-reflection) completed, Router directly implemented 3 HIGH priority fixes (REC-001, REC-002, REC-003) using Edit/Write tools instead of spawning a developer agent. This violated Section 1.1 ROUTER TOOL RESTRICTIONS.
+- **Violations**:
+  - Used Edit (5 times): CLAUDE.md, hooks, settings.json, issues.md
+  - Used Write (1 time): pre-completion-validation.cjs
+  - Bypassed Gate 3 (Tool Check)
+  - Should have spawned developer agent via Task() tool
+- **Root Cause**: Router misinterpreted user's "continue" as permission to implement directly, bypassed self-check gates
+- **Why Enforcement Failed**:
+  - routing-guard.cjs may have seen stale state (taskSpawned: true from Task #30)
+  - OR was in "warn" mode (warning missed)
+  - OR failed-open due to error
+- **Work Done (correct but wrong process)**:
+  1. Added validate-integration.cjs to CLAUDE.md Section 9.6
+  2. Created pre-completion-validation.cjs hook (blocks invalid task completions)
+  3. Fixed post-creation-reminder.cjs throttling (4-hour window)
+  4. Updated settings.json (registered pre-completion hook)
+  5. Updated issues.md (resolved META-001, META-002)
+- **Impact**: Protocol violation sets bad precedent, weakens router discipline
+- **Resolution**: Changes kept (correct and needed), violation documented, enforcement to be strengthened
+- **Files Modified**: 5 files (CLAUDE.md, post-creation-reminder.cjs, pre-completion-validation.cjs, settings.json, issues.md)
+- **Prevention for Future**:
+  1. Strengthen router-state tracking (clear on every user prompt)
+  2. Add explicit "continue" handling (always means "spawn agent", never "implement")
+  3. Review routing-guard.cjs state-based bypass logic
+  4. Add ROUTER_DEBUG logging for enforcement decisions
+
+---
+
+## [INTEGRATION-001] Routing Table Integration Gap - "Invisible Artifact" Pattern (CRITICAL)
+
+- **Date**: 2026-01-28
+- **Severity**: CRITICAL
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
+- **Category**: process_gap
+- **Discovery**: BMAD-METHOD Integration Session Reflection (Task #28)
+- **Description**: Party Mode was fully implemented (145 tests, 5 documentation guides, 6 security controls validated) but was NOT added to CLAUDE.md Section 3 routing table. This made the feature "invisible" to the router - users could not invoke Party Mode via natural language.
+- **Root Cause Analysis** (5 Whys):
+  1. Why wasn't it added? Focus on implementation, neglected routing registration
+  2. Why was registration neglected? No explicit step in party-orchestrator creation workflow
+  3. Why no explicit step? Creator workflows assume manual registration
+  4. Why assume manual? Historical pattern, no automation for routing table updates
+  5. Why no automation? Not identified as a risk until this incident
+- **Impact**: Feature exists but is unusable - router cannot route users to party-orchestrator
+- **Time to Fix**: 5 minutes (add one line to CLAUDE.md routing table)
+- **Time to Debug (without fix)**: Potentially hours of "why doesn't Party Mode work?" investigation
+- **Resolution**:
+  1. Added `| Multi-agent collaboration | party-orchestrator | .claude/agents/orchestrators/party-orchestrator.md |` to CLAUDE.md Section 3
+  2. Documented "Invisible Artifact" anti-pattern in learnings.md
+  3. Created post-creation integration checklist
+  4. Recommended `validate-integration.cjs` tooling for future prevention
+- **Prevention for Future**:
+  1. Add "Routing Table Integration" as IRON LAW step in all creator workflows
+  2. Create `validate-integration.cjs` script that checks routing table completeness
+  3. Add integration test: "All agents in agents/ directory have routing entries"
+  4. Include post-creation checklist in agent-creator, skill-creator, hook-creator skills
+- **Related Issues**: WORKFLOW-VIOLATION-001, ENFORCEMENT-001
+- **Reflection Report**: `.claude/context/artifacts/reports/bmad-method-integration-reflection-20260128.md`
+
+---
+
+## [TEST-API-001] Test API Mismatch Pattern - Tests Against Planned vs Actual API (HIGH)
+
+- **Date**: 2026-01-28
+- **Severity**: HIGH
+- **Status**: RESOLVED (Pattern Documented)
+- **Resolution Date**: 2026-01-28
+- **Category**: process_gap
+- **Discovery**: BMAD-METHOD Integration Session Reflection (Task #28)
+- **Description**: Phase 5 QA tests were written against the PLANNED API (from implementation plan) instead of the ACTUAL API (Phase 1-4 module exports). This resulted in 48% test failure rate (18/38 tests failing).
+- **Specific Mismatches**:
+  - `buildConsensus()` planned → `aggregateResponses()` actual (different signature)
+  - `verifyAgentIdentity()` planned → not implemented (function missing)
+  - `validateTeamMember()` planned → `validateTeamDefinition()` actual (different name)
+  - `enforceRateLimits(sessionState, agentIds)` planned → different signature actual
+- **Root Cause Analysis**:
+  1. Implementation plan was detailed and seemed authoritative
+  2. QA agent wrote tests without checking actual exports
+  3. Bulk test writing (all 38 tests before any execution)
+  4. No reconciliation step between plan and implementation
+- **Impact**: 48% test failure rate, 3 hours estimated rework, wasted 6-8 hours writing wrong tests
+- **Resolution**:
+  1. Documented "Test Against Planned API" anti-pattern in learnings.md
+  2. Added MANDATORY verification step: Check actual module exports before writing tests
+  3. Created pattern for single test verification before bulk testing
+  4. Recommended `verify-api.cjs` tooling for plan vs implementation comparison
+- **Prevention for Future**:
+  1. **MANDATORY**: Check actual exports: `node -e "console.log(Object.keys(require('./module.cjs')).join(', '))"`
+  2. Write ONE passing test first to verify imports
+  3. Update implementation plan when scope changes during development
+  4. Generate API reference doc after implementation, before testing
+- **Related Issues**: Party Mode Phase 5 QA Report
+- **Reflection Report**: `.claude/context/artifacts/reports/bmad-method-integration-reflection-20260128.md`
+
+---
 
 ## [ENFORCEMENT-003] Router-First Protocol Is Advisory-Only, Not Blocking (CRITICAL)
 
@@ -1773,3 +1966,41 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
   - `.claude/hooks/routing/user-prompt-unified.test.cjs`
 - **Test Results**: 28 tests pass (user-prompt-unified), 87 tests pass (router-state), 76 tests pass (routing-guard)
 - **Related Issues**: ENFORCEMENT-003 (clarified), ROUTING-002 (related fix)
+
+## [CLEANUP-001] Incomplete Content Migration During Legacy Cleanup (MEDIUM)
+
+- **Date**: 2026-01-28
+- **Severity**: MEDIUM
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28
+- **Category**: data_loss, process_violation
+- **Description**: During Phase 0 legacy cleanup (Task #5), the `writing` skill was archived and deleted based on alias existence without content comparison. The archived skill contained a `references/writing.md` file with 71 banned words, Title Creation guidelines, and enhanced "Avoid LLM Patterns" rules - significantly more than the current `writing-skills/SKILL.md` (only ~15 banned words). This content is CRITICAL for technical-writer agent to produce human-sounding documentation.
+- **Root Cause**:
+  1. Developer agent archived based on "alias exists" without line-by-line content comparison
+  2. No validation that ALL sections from old skill existed in new skill
+  3. No check for supporting files (references/) in archived skill directory
+  4. Cleanup process lacked "Content Validation Before Archival" checkpoint
+- **User Detection**: User noticed and questioned: "are you sure that was a smart move. Those rules make any AI generated documentation to look more human in nature"
+- **Impact**:
+  - Missing 56 banned words (agile, battle tested, blazing fast, cognitive load, disrupt, game-changing, etc.)
+  - Missing "Title Creation" section (5 guidelines for human-like titles)
+  - Missing enhanced "Avoid LLM Patterns" (Unicode artifacts, citation placeholders, title casing)
+  - Technical-writer agent would produce LLM-sounding documentation (mission-critical, blazing fast, etc.)
+- **Resolution**:
+  1. Restored complete content from `.claude.archive/legacy-cleanup-2026-01-28/skills-deprecated/writing/references/writing.md`
+  2. Merged into `.claude/skills/writing-skills/SKILL.md` "Writing Style Guidelines" section
+  3. Added "Title Creation" subsection
+  4. Expanded "Banned Words" from 15 to 71 entries
+  5. Enhanced "Avoid LLM Patterns" with Unicode/citation rules
+  6. Added "Punctuation and Formatting" clarifications
+- **Prevention**: Added "Content Validation Before Archival" pattern to learnings.md (see learning entry below)
+- **Files Modified**:
+  - `.claude/skills/writing-skills/SKILL.md` (restored complete guidelines)
+  - `.claude/context/memory/issues.md` (this issue)
+  - `.claude/context/memory/learnings.md` (prevention pattern)
+- **Lesson**: Never archive based on assumptions. ALWAYS:
+  1. Read BOTH old and new files
+  2. Line-by-line content comparison
+  3. Verify ALL sections migrated
+  4. Check for supporting files (references/, examples/, etc.)
+  5. THEN archive

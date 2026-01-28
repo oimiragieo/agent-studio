@@ -1,29 +1,29 @@
 ---
 # [REQUIRED] ADR identifier in format ADR-XXX where XXX is a number
 # Example: "ADR-042"
-adr_number: "{{ADR_NUMBER}}"
+adr_number: '{{ADR_NUMBER}}'
 
 # [REQUIRED] Clear, concise decision title (5-200 chars)
 # Example: "Use Redis for Distributed Caching"
-title: "{{TITLE}}"
+title: '{{TITLE}}'
 
 # [REQUIRED] Decision date in YYYY-MM-DD format
 # Example: "2026-01-28"
-date: "{{DATE}}"
+date: '{{DATE}}'
 
 # [REQUIRED] Current decision lifecycle status
 # Options: proposed, accepted, deprecated, superseded
-status: "{{STATUS}}"
+status: '{{STATUS}}'
 
 # [OPTIONAL] ADR number that this decision supersedes
 # Format: ADR-XXX
 # Example: "ADR-015"
-supersedes: ""
+supersedes: ''
 
 # [OPTIONAL] ADR number that supersedes this decision
 # Format: ADR-XXX
 # Example: "ADR-050"
-superseded_by: ""
+superseded_by: ''
 
 # [OPTIONAL] List of stakeholders involved in or affected by this decision
 # Example: ["Engineering Team", "Product Manager", "DevOps"]
@@ -89,12 +89,16 @@ Skill({
       TITLE: 'Template Catalog Structure',
       DATE: '2026-01-28',
       STATUS: 'accepted',
-      CONTEXT: 'We need a standardized way to discover and track template usage across the framework.',
-      DECISION: 'Use file-based markdown catalog with YAML frontmatter for metadata and discovery mechanisms.',
-      CONSEQUENCES: 'Positive: Simple, version-controlled, human-readable. Negative: Manual updates required until hooks automate.',
-      ALTERNATIVES: 'Database-backed catalog was considered but rejected due to added complexity and deployment requirements.'
-    }
-  })
+      CONTEXT:
+        'We need a standardized way to discover and track template usage across the framework.',
+      DECISION:
+        'Use file-based markdown catalog with YAML frontmatter for metadata and discovery mechanisms.',
+      CONSEQUENCES:
+        'Positive: Simple, version-controlled, human-readable. Negative: Manual updates required until hooks automate.',
+      ALTERNATIVES:
+        'Database-backed catalog was considered but rejected due to added complexity and deployment requirements.',
+    },
+  }),
 });
 ```
 

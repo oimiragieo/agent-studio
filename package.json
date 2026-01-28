@@ -52,6 +52,8 @@
     "test:codex-integration": "node .claude/tools/test-codex-skills-integration.mjs",
     "test:codex-integration:mock": "node .claude/tools/test-codex-skills-integration.mjs --mock",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:staging:smoke": "node --test tests/staging-smoke.test.mjs",
+    "test:staging": "cross-env AGENT_STUDIO_ENV=staging node --test --test-concurrency=1 tests/*.test.mjs",
     "test:hooks": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",
     "test:hooks:memory": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",
     "test:hooks:stress": "echo 'Hook tests archived - see .claude.archive/.claude.old/tests/'",

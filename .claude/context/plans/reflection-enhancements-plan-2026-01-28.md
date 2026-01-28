@@ -13,12 +13,14 @@
 Implement 10 high-value enhancements identified from the spec-kit integration reflection, organized across 3 sprints (Immediate, Near-Term, Long-Term). Total effort: ~120 hours over 90 days. Focus areas: template system extension, progressive disclosure UX, security infrastructure, and validation patterns.
 
 **Strategic Impact**:
+
 - **UX Improvement**: Progressive disclosure reduces clarifications from 5+ to 3 max (60% reduction)
 - **Consistency Boost**: Template system extension to ADRs (80% → 100% decision documentation consistency)
 - **Security Hardening**: Security-first design checklist prevents "afterthought" antipattern
 - **Quality Standardization**: Hybrid validation extended to all review workflows (code-reviewer, security-architect, architect)
 
 **Success Metrics**:
+
 - All 10 enhancements delivered across 3 sprints
 - Zero regressions to existing framework functionality
 - 100% test coverage for new features
@@ -503,10 +505,11 @@ echo "✓ Phase 3 complete"
    - **Command**:
      ```javascript
      Task({
-       subagent_type: "reflection-agent",
-       description: "Session reflection and learning extraction for 10-enhancement implementation",
-       prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan (10 reflection enhancements implementation), extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created)."
-     })
+       subagent_type: 'reflection-agent',
+       description: 'Session reflection and learning extraction for 10-enhancement implementation',
+       prompt:
+         'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan (10 reflection enhancements implementation), extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
+     });
      ```
 
 2. **Extract learnings and update memory files**
@@ -523,9 +526,9 @@ echo "✓ Phase 3 complete"
 
 ```javascript
 Task({
-  subagent_type: "reflection-agent",
-  model: "opus",
-  description: "Reflection on 10-enhancement implementation (3 sprints)",
+  subagent_type: 'reflection-agent',
+  model: 'opus',
+  description: 'Reflection on 10-enhancement implementation (3 sprints)',
   allowed_tools: ['Read', 'Write', 'Edit', 'Bash', 'TaskUpdate', 'TaskList', 'Skill'],
   prompt: `You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md.
 
@@ -539,7 +542,7 @@ Extract learnings to memory files:
 2. What unexpected challenges arose?
 3. What evolution opportunities exist? (new agents/skills needed)
 
-Output: Reflection report to .claude/context/artifacts/reflections/10-enhancements-reflection-2026-01-28.md`
+Output: Reflection report to .claude/context/artifacts/reflections/10-enhancements-reflection-2026-01-28.md`,
 });
 ```
 
@@ -554,35 +557,37 @@ Output: Reflection report to .claude/context/artifacts/reflections/10-enhancemen
 
 ## Risks
 
-| Risk | Impact | Mitigation | Rollback |
-|------|--------|------------|----------|
-| **Progressive disclosure integration breaks spec-gathering** | HIGH | Test with comprehensive E2E suite before merging | `git checkout -- .claude/skills/spec-gathering/SKILL.md` |
-| **Template catalog discovery adds significant complexity** | MEDIUM | Start with file-based approach (no database), defer advanced features | Remove catalog, revert to direct file access |
-| **Security control registry schema becomes outdated** | MEDIUM | Use semantic versioning, document schema evolution process | Lock to v1.0.0 schema, migrate on major versions only |
-| **Hybrid validation extension conflicts with existing agent workflows** | HIGH | Test each agent integration independently, use feature flags | Disable checklist-generator invocation, revert agent files |
-| **Research prioritization algorithm biases toward high-impact only** | LOW | Include alignment score (0.4 weight) to balance feasibility, document rationale | Adjust weights: impact (0.5), alignment (0.5) |
-| **Sprint 3 overruns 90-day timeline** | MEDIUM | Defer low-priority enhancements (#9 commit checkpoints) to Sprint 4 if needed | De-scope Sprint 3 to only HIGH priority (#7, #8, #10) |
-| **Memory files become too large (>10MB)** | LOW | Implement memory archiving pattern (move old learnings to archive/) | Split learnings.md by year/quarter |
+| Risk                                                                    | Impact | Mitigation                                                                      | Rollback                                                   |
+| ----------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Progressive disclosure integration breaks spec-gathering**            | HIGH   | Test with comprehensive E2E suite before merging                                | `git checkout -- .claude/skills/spec-gathering/SKILL.md`   |
+| **Template catalog discovery adds significant complexity**              | MEDIUM | Start with file-based approach (no database), defer advanced features           | Remove catalog, revert to direct file access               |
+| **Security control registry schema becomes outdated**                   | MEDIUM | Use semantic versioning, document schema evolution process                      | Lock to v1.0.0 schema, migrate on major versions only      |
+| **Hybrid validation extension conflicts with existing agent workflows** | HIGH   | Test each agent integration independently, use feature flags                    | Disable checklist-generator invocation, revert agent files |
+| **Research prioritization algorithm biases toward high-impact only**    | LOW    | Include alignment score (0.4 weight) to balance feasibility, document rationale | Adjust weights: impact (0.5), alignment (0.5)              |
+| **Sprint 3 overruns 90-day timeline**                                   | MEDIUM | Defer low-priority enhancements (#9 commit checkpoints) to Sprint 4 if needed   | De-scope Sprint 3 to only HIGH priority (#7, #8, #10)      |
+| **Memory files become too large (>10MB)**                               | LOW    | Implement memory archiving pattern (move old learnings to archive/)             | Split learnings.md by year/quarter                         |
 
 ---
 
 ## Timeline Summary
 
-| Phase | Tasks | Est. Time | Parallel? | Sprint |
-|-------|-------|-----------|-----------|--------|
-| **0 (Research)** | 6 | 8-12 hours | No (blocking) | Pre-Sprint |
-| **1 (Immediate)** | 6 | 18 hours | Partial | Sprint 1 (Week 1-2) |
-| **2 (Near-Term)** | 6 | 40 hours | Partial | Sprint 2 (Week 3-6) |
-| **3 (Long-Term)** | 7 | 62 hours | Partial | Sprint 3 (Week 7-12) |
-| **FINAL (Reflection)** | 3 | 4 hours | No | Post-Sprint |
-| **TOTAL** | **28** | **~132 hours** | | **90 days** |
+| Phase                  | Tasks  | Est. Time      | Parallel?     | Sprint               |
+| ---------------------- | ------ | -------------- | ------------- | -------------------- |
+| **0 (Research)**       | 6      | 8-12 hours     | No (blocking) | Pre-Sprint           |
+| **1 (Immediate)**      | 6      | 18 hours       | Partial       | Sprint 1 (Week 1-2)  |
+| **2 (Near-Term)**      | 6      | 40 hours       | Partial       | Sprint 2 (Week 3-6)  |
+| **3 (Long-Term)**      | 7      | 62 hours       | Partial       | Sprint 3 (Week 7-12) |
+| **FINAL (Reflection)** | 3      | 4 hours        | No            | Post-Sprint          |
+| **TOTAL**              | **28** | **~132 hours** |               | **90 days**          |
 
 **Sprint Breakdown**:
+
 - **Sprint 1** (Week 1-2): 18 hours → ~9 hours/week (sustainable pace)
 - **Sprint 2** (Week 3-6): 40 hours → ~10 hours/week (sustainable pace)
 - **Sprint 3** (Week 7-12): 62 hours → ~10 hours/week (sustainable pace)
 
 **Parallelization Opportunities**:
+
 - Sprint 1: Enhancements #1 and #2 can run in parallel (save 4 hours)
 - Sprint 2: Enhancements #4, #5, #6 can run in parallel (save ~20 hours)
 - Sprint 3: Enhancements #7, #8, #10 can run in parallel (save ~32 hours)
@@ -636,16 +641,19 @@ Phase 0 → Enhancement #1 → Enhancement #3 → Sprint 1 Complete
 ### Sprint-Level Success
 
 **Sprint 1 (Immediate)**:
+
 - [ ] Progressive disclosure reduces clarifications to max 3 (90th percentile)
 - [ ] Happy-path E2E test suite passing (21/21 tests)
 - [ ] Task #25b created and visible in task tracking
 
 **Sprint 2 (Near-Term)**:
+
 - [ ] ADR template operational (80% → 100% decision consistency)
 - [ ] Template catalog lists all 4 templates with usage tracking
 - [ ] Security-first checklist integrated into EVOLVE Phase E
 
 **Sprint 3 (Long-Term)**:
+
 - [ ] Research prioritization saves 40-60 hours per project (TOP 5 of 18 pattern)
 - [ ] Security control registry has 4+ reusable controls
 - [ ] Hybrid validation extended to 3 agents (code-reviewer, security-architect, architect)
@@ -656,16 +664,19 @@ Phase 0 → Enhancement #1 → Enhancement #3 → Sprint 1 Complete
 ## Key Deliverables
 
 ### Sprint 1 (Week 1-2)
+
 1. **Progressive Disclosure Integration**: spec-gathering Phase 3.5 with 3-question limit
 2. **Happy-Path E2E Test**: 21/21 passing test demonstrating ideal UX
 3. **Task #25b**: Created and tracked for workflow integration
 
 ### Sprint 2 (Week 3-6)
+
 4. **ADR Template**: `.claude/templates/adr-template.md` + schema + renderer support
 5. **Template Catalog**: `.claude/context/artifacts/template-catalog.md` with discovery skill
 6. **Security-First Checklist**: EVOLVE Phase E with STRIDE threat modeling
 
 ### Sprint 3 (Week 7-12)
+
 7. **Research Prioritization Matrix**: EVOLVE Phase O with Impact × Alignment algorithm
 8. **Security Control Registry**: `.claude/context/artifacts/security-controls-catalog.md` with 4+ controls
 9. **Commit Checkpoint Pattern**: plan-generator auto-insertion for multi-file projects

@@ -1,0 +1,2 @@
+{"timestamp":"2026-01-28T17:55:23.679Z","hook":"unknown","event":"PostToolUse","tool":"Task","executionTimeMs":5,"status":"success","metadata":{"paramsSize":13,"resultSize":16}}
+{"timestamp":"2026-01-28T17:55:23.689Z","hook":"unknown","event":"PostToolUse","tool":"Task","executionTimeMs":10,"status":"failure","error":"Test error","metadata":{"paramsSize":2,"resultSize":12}}

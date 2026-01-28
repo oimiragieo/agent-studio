@@ -31,7 +31,8 @@ try {
   const content = fs.readFileSync(plannerPath, 'utf-8');
 
   assert.ok(
-    content.toLowerCase().includes('commit checkpoint') || content.toLowerCase().includes('commit-checkpoint'),
+    content.toLowerCase().includes('commit checkpoint') ||
+      content.toLowerCase().includes('commit-checkpoint'),
     'Should document commit checkpoint pattern'
   );
 
@@ -81,9 +82,9 @@ try {
 
   assert.ok(
     content.toLowerCase().includes('lost work') ||
-    content.toLowerCase().includes('rollback') ||
-    content.toLowerCase().includes('recovery') ||
-    content.toLowerCase().includes('prevent'),
+      content.toLowerCase().includes('rollback') ||
+      content.toLowerCase().includes('recovery') ||
+      content.toLowerCase().includes('prevent'),
     'Should document rationale (prevent lost work / enable rollback)'
   );
 

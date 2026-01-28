@@ -7,7 +7,7 @@ if (require.main === module) {
     'should include STRIDE threat model categories',
     'should have "What could go wrong?" prompts',
     'should reference OWASP resources',
-    'should have concrete security questions'
+    'should have concrete security questions',
   ];
 
   console.log('Running Security Design Checklist Tests...\n');
@@ -32,12 +32,13 @@ if (require.main === module) {
       const content = fs.readFileSync(checklistPath, 'utf8');
 
       // Test 2: STRIDE categories
-      const hasStride = content.includes('Spoofing') &&
-                       content.includes('Tampering') &&
-                       content.includes('Repudiation') &&
-                       content.includes('Information Disclosure') &&
-                       content.includes('Denial of Service') &&
-                       content.includes('Elevation of Privilege');
+      const hasStride =
+        content.includes('Spoofing') &&
+        content.includes('Tampering') &&
+        content.includes('Repudiation') &&
+        content.includes('Information Disclosure') &&
+        content.includes('Denial of Service') &&
+        content.includes('Elevation of Privilege');
 
       if (hasStride) {
         console.log(`✓ ${tests[1]}`);
@@ -83,7 +84,6 @@ if (require.main === module) {
         console.log(`  Error: Only ${questionCount} questions found, need at least 10`);
         failed++;
       }
-
     } catch (error) {
       console.error('Error reading checklist:', error.message);
       // Mark remaining tests as failed

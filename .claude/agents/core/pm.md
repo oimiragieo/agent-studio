@@ -14,7 +14,6 @@ tools:
   - Glob
   - Grep
   - Search
-  - mcp__sequential-thinking__*
   - mcp__memory__*
   - TaskUpdate
   - TaskList

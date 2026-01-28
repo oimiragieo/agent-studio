@@ -40,6 +40,43 @@ evolution:
   rate_limit: 3 # Max evolutions per hour
   rate_limit_window_ms: 3600000 # 1 hour in milliseconds
 
+# --- Monitoring Settings ---
+monitoring:
+  enabled: true
+  thresholds:
+    hookExecutionTimeMs: 10 # Alert if hook takes longer than 10ms
+    hookFailureRate: 5 # Alert if failure rate exceeds 5%
+    agentFailureRate: 3 # Alert if agent failure rate exceeds 3%
+    errorRatePerHour: 10 # Alert if more than 10 errors per hour
+    tokenBudgetPerDay: 100000 # Daily token budget
+  retention:
+    metricsdays: 30 # Keep metrics for 30 days
+    errorsDays: 90 # Keep error logs for 90 days
+  dashboard:
+    refreshIntervalMs: 5000 # Refresh every 5 seconds in live mode
+
+# --- Feature Flags (Gradual Rollout System) ---
+# Controls for safe, gradual rollout of new features
+# Priority: Environment Variables > Config File > Runtime API
+# Override via: PARTY_MODE_ENABLED=true, ELICITATION_ENABLED=true
+features:
+  partyMode:
+    enabled: true # Multi-agent collaboration (PRODUCTION READY)
+    maxAgents: 4 # Maximum agents per round (SEC-PM-005)
+    maxRounds: 10 # Maximum rounds per session (SEC-PM-005)
+    contextWarning: 100000 # Token warning threshold
+    contextLimit: 150000 # Token hard limit
+    costLimit: 50.0 # Cost limit per session (USD)
+  advancedElicitation:
+    enabled: false # Advanced meta-cognitive reasoning (default: off)
+    methods: # Available reasoning methods
+      - first-principles
+      - pre-mortem
+      - socratic
+      - red-team-blue-team
+    costBudget: 10.0 # Budget for elicitation queries (USD)
+    minConfidence: 0.7 # Skip if confidence below threshold
+
 # --- Core Agents Definition (Pointers) ---
 agents:
   planner:

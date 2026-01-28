@@ -1,0 +1,123 @@
+# Staging Environment Configuration
+# This configuration is used when AGENT_STUDIO_ENV=staging
+
+version: "2.2.1"
+environment: staging
+
+# --- Router Configuration (The Gatekeeper) ---
+agent_routing:
+  router:
+    model: claude-haiku-4-5
+    complexity: low
+    priority: highest
+    context_strategy: minimal
+    description: 'Lightweight router to classify intent and assign optimal agent/workflow.'
+
+# --- Agent Defaults (Token Optimization) ---
+defaults:
+  context_strategy: lazy_load
+  token_optimization:
+    enabled: true
+    pruning_threshold_lines: 100
+    auto_summary: true
+
+# --- Integration Settings ---
+integrations:
+  superpowers:
+    tdd_enforcement: true
+    plan_execution: batch
+  claude_flow:
+    swarm_topology: hierarchical
+    consensus: byzantine
+
+# --- Token Monitoring ---
+token_monitoring:
+  enabled: true
+  max_session_tokens: 60000
+  hard_limit: 100000
+
+# --- Evolution Settings ---
+evolution:
+  auto_start: true
+  rate_limit: 3
+  rate_limit_window_ms: 3600000
+
+# --- Monitoring Settings (Staging-Specific: Verbose + Relaxed Thresholds) ---
+monitoring:
+  enabled: true
+  verboseLogging: true # More logging in staging
+  dashboardRefreshMs: 5000 # 5s refresh rate
+  thresholds:
+    # Staging thresholds are 2x more lenient than production
+    hookExecutionTimeMs: 20 # Production: 10ms
+    hookFailureRate: 10 # Production: 5%
+    agentFailureRate: 6 # Production: 3%
+    errorRatePerHour: 20 # Production: 10
+    tokenBudgetPerDay: 100000
+  retention:
+    metricsdays: 30
+    errorsDays: 90
+  dashboard:
+    refreshIntervalMs: 5000
+
+# --- Feature Flags (All Enabled in Staging for Testing) ---
+features:
+  partyMode:
+    enabled: true # Enable for staging testing
+    maxAgents: 5
+    turnLimit: 20
+    costLimit: 50.0
+  advancedElicitation:
+    enabled: true # Enable for staging testing
+    methods:
+      - first-principles
+      - pre-mortem
+      - socratic
+      - red-team-blue-team
+    costBudget: 10.0
+    minConfidence: 0.7
+  knowledgeBase:
+    enabled: true
+  costTracking:
+    enabled: true
+  sidecarMemory:
+    enabled: true # Enable for staging testing
+
+# --- Staging-Specific Paths ---
+# All staging data stored in .claude/staging/ to isolate from development/production
+paths:
+  knowledge: ".claude/staging/knowledge"
+  metrics: ".claude/staging/metrics"
+  memory: ".claude/staging/memory"
+  agents: ".claude/staging/agents"
+  sessions: ".claude/staging/sessions"
+  context: ".claude/staging/context"
+
+# --- Storage Configuration ---
+storage:
+  costLog: ".claude/staging/metrics/llm-usage.log"
+  sessionLog: ".claude/staging/sessions/session-log.jsonl"
+  evolutionState: ".claude/staging/context/evolution-state.json"
+  metricsDir: ".claude/staging/metrics"
+
+# --- Test Data Configuration ---
+testData:
+  enabled: true # Enable test data seeding
+  seedData: true # Auto-populate with test data on init
+  artifactsCount: 1133 # Copy all artifacts to staging KB
+
+# --- Core Agents Definition (Same as Production) ---
+agents:
+  planner:
+    path: agents/core/planner.md
+    model: claude-opus-4-5-20251101
+    extended_thinking: true
+  developer:
+    path: agents/core/developer.md
+    model: claude-sonnet-4-5
+  qa:
+    path: agents/core/qa.md
+    model: claude-opus-4-5-20251101
+  architect:
+    path: agents/core/architect.md
+    model: claude-opus-4-5-20251101

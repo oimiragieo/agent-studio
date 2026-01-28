@@ -1,452 +1,344 @@
-## Gate 3 Security Review Pattern (2026-01-28)
+### Memory File Rotation Implementation (2026-01-28)
 
-**Context**: Phase 0 Gate 3 (Security Review) for 10 reflection enhancements
+**Pattern:** Automatic Archival for Memory Files Approaching Size Limits
 
-**Pattern**: STRIDE-based enhancement security assessment
+**Implementation:** Created `.claude/lib/memory/memory-rotator.cjs` utility for automatic rotation of decisions.md and issues.md when they approach token limits.
 
-**Security Review Checklist for Enhancements**:
+**Key Features:**
 
-1. **Apply STRIDE to each enhancement**:
-   - Spoofing - Identity verification impacts
-   - Tampering - Data modification risks
-   - Repudiation - Audit logging requirements
-   - Information Disclosure - Data exposure risks
-   - Denial of Service - Resource exhaustion
-   - Elevation of Privilege - Access control impacts
+1. **Smart Rotation Policies:**
+   - `decisions.md`: Archives ADRs older than 60 days when file > 1500 lines
+   - `issues.md`: Archives RESOLVED issues older than 7 days when file > 1500 lines
+   - Target: Keep active files under 1500 lines (80% of 2000 line soft limit)
 
-2. **Check existing security controls**:
-   - template-renderer: SEC-SPEC-002/003/004 (path validation, token whitelist, sanitization)
-   - checklist-generator: [AI-GENERATED] prefix (transparency)
-   - routing-guard: Security review enforcement
+2. **Archive Format:**
+   - Location: `.claude/context/memory/archive/YYYY-MM/`
+   - Files: `decisions-YYYY-MM.md`, `issues-YYYY-MM.md`
+   - Preserves full content with metadata headers
 
-3. **Identify new controls needed**:
-   - Path traversal mitigations for file catalogs (SEC-CATALOG-001/002)
-   - Integrity verification for security registries (SEC-REGISTRY-001/002/003)
+3. **CLI Commands:**
 
-4. **Document with CWE references**:
-   - CWE-22: Path Traversal
-   - CWE-20: Improper Input Validation
-   - CWE-94: Template Injection
-   - CWE-284: Improper Access Control
-   - CWE-200: Information Exposure
+   ```bash
+   # Check status
+   node .claude/lib/memory/memory-rotator.cjs check
 
-**Key Insight**: Security controls are POSITIVE when they standardize security practices (e.g., Enhancement #6 Security-First Checklist, Enhancement #10 Hybrid Validation)
+   # Preview rotation
+   node .claude/lib/memory/memory-rotator.cjs rotate --dry-run
 
-**Output**: Security assessment report to `.claude/context/reports/`
+   # Execute rotation
+   node .claude/lib/memory/memory-rotator.cjs rotate
+   ```
 
-**ADR Reference**: ADR-046 (Security Assessment for Reflection Enhancements)
+4. **Test Coverage:** 15 unit tests covering parsing, selection, rotation operations (all passing)
 
----
+**Date Parsing Fix:** Prioritize Resolved date over Date field for issues - use resolved date for age calculation.
 
-**Key Implementation Details**:
+**Security:** Validates PROJECT_ROOT with path traversal prevention, allows test directories for unit testing.
 
-1. **Phase 0: Research & Planning (MANDATORY)**:
-   - Cannot be skipped - enforced by planner workflow
-   - Minimum 3 Exa/WebSearch queries required
-   - Minimum 3 external sources with citations
-   - Research report saved to `.claude/context/artifacts/research-reports/`
-   - ADRs created for major decisions
+**Documentation:** Added to `.claude/docs/MONITORING.md` under Memory File Rotation section.
 
-2. **Constitution Checkpoint (4 Blocking Gates)**:
-   - **Gate 1: Research Completeness** - 3+ sources, all unknowns resolved, ADRs documented
-   - **Gate 2: Technical Feasibility** - Approach validated, dependencies available, no blockers
-   - **Gate 3: Security Review** - Implications assessed, threat model if needed, mitigations identified
-   - **Gate 4: Specification Quality** - Criteria measurable, success criteria testable, edge cases considered
-   - **BLOCKING**: If ANY gate fails, return to research phase
+**Files Created:**
 
-3. **Research-Synthesis Skill Integration**:
-   - Phase 0 invokes `research-synthesis` skill for systematic research
-   - Consistent with EVOLVE workflow pattern (minimum 3 queries, 3 sources)
-   - Research output follows standard format for traceability
+- `.claude/lib/memory/memory-rotator.cjs` - Rotation utility (680 lines)
+- `.claude/lib/memory/memory-rotator.test.cjs` - Test suite (530 lines, 15 tests)
 
-4. **Documentation Updates**:
-   - Added "Phase 0: Research & Planning" section to Workflow
-   - Updated Plan Template Structure to show Phase 0 as first mandatory phase
-   - Added "Phase 0: Research Integration (ADR-045)" section explaining rationale
-   - Provided 2 examples: complete plan with Phase 0, constitution checkpoint failure scenario
-
-5. **Why This Matters**:
-   - **Prevents Premature Implementation**: Research validates approach before coding
-   - **Documents Decision Rationale**: ADRs explain WHY, not just WHAT
-   - **Identifies Security Early**: Security review before implementation, not after
-   - **Validates Feasibility**: Technical unknowns resolved through research
-   - **Industry Standard**: ADRs, RFCs, Google Design Docs all use research-first
-
-**Integration Points**:
-
-- Works with `research-synthesis` skill for conducting research
-- Works with `security-architect` agent for Gate 3 (Security Review)
-- Works with `plan-generator` skill for creating plans
-- Works with `task-breakdown` skill for implementation tasks
-
-**File Modified**: `.claude/agents/core/planner.md`
-
-**ADR Reference**: ADR-045 (Research-Driven Planning)
-
-**Impact**: All plans generated by planner agent will now include Phase 0 research as the mandatory first phase, with constitution checkpoint blocking implementation until all 4 gates pass.
+**Integration:** Can be invoked manually or integrated into memory-scheduler.cjs for automated monthly rotation.
 
 ---
 
-## Sprint 1 Enhancements - Progressive Disclosure & Happy-Path Testing (2026-01-28)
+### Write Size Validation Pattern (PREVENTION)
 
-**Context**: Developer agent (Task #6) implemented Sprint 1 enhancements from 10-enhancement plan.
+**Date**: 2026-01-28
+**Source**: Agent Error Fixes Plan Phase 3
 
-**Completed**:
+**Problem**: Agents can generate content exceeding Write tool token limits (25,000 tokens), causing runtime failures AFTER content generation (wasted compute).
 
-1. **Enhancement #1 (Progressive Disclosure)**: Already integrated in spec-gathering Phase 4.5 - invokes progressive-disclosure skill with ECLAIR pattern (3-5 clarification limit, smart defaults, [ASSUMES:] notation)
-2. **Enhancement #3 (Task #25b)**: Created task for progressive disclosure workflow integration verification
-3. **Enhancement #2 (Happy-Path Test)**: Created template-system-e2e-happy.test.cjs demonstrating success path (21 test scenarios)
+**Solution Pattern**: Pre-Write validation hook
 
-**Key Learning**: Happy-path tests require templates to handle optional tokens gracefully. The test created demonstrates the INTENT (21/21 success scenarios) but template token resolution needs addressing separately.
+**Implementation**:
 
-**Pattern**: Progressive disclosure integration reduces clarification fatigue from 5+ to 3 max questions (60% reduction), with [ASSUMES:] markers for gaps.
+1. **Hook**: `.claude/hooks/safety/write-size-validator.cjs`
+2. **Triggers**: PreToolUse(Write|Edit|NotebookEdit)
+3. **Token Estimation**: `Math.ceil(content.length / 4)` (~4 chars/token)
+4. **Thresholds**:
+   - WARNING_THRESHOLD: 20,000 tokens (warns but allows)
+   - MAX_TOKENS: 25,000 tokens (blocks if `estimatedTokens > MAX_TOKENS`)
+5. **Exit Codes**:
+   - 0 = Allow (small content, warnings, or fail-open on error)
+   - 2 = Block (content > 25K tokens)
 
-**Impact**: UX improvement - users receive max 3 clarifications, remaining gaps filled with documented assumptions.
+**Key Design Decisions**:
 
-**Files Modified**:
+- **Fail Open**: On error, exit 0 (allow) per SEC-008 security guideline
+- **Early Warning**: Warns at 80% threshold (20K) to give agents time to adjust approach
+- **Actionable Messages**: Suggests "Split content into multiple smaller files"
+- **Tool Coverage**: Validates Write, Edit (checks `new_string`), NotebookEdit
 
-- `.claude/tests/integration/template-system-e2e-happy.test.cjs` (new - happy path test)
-- Task #25b created (Task #10 in system)
+**Test Coverage**: 13 unit tests covering:
 
-**Next Steps**: Sprint 2 enhancements (ADR template, template catalog, security checklist).
+- Small content (< 20K) → allow
+- Large content (20K-25K) → warn + allow
+- Oversized (> 25K) → block
+- Edge cases (exactly 20K warns, exactly 25K warns+allows, 25K+1 blocks)
+- Empty/undefined content → allow
+- Non-write tools → skip validation
+- Malformed input → fail open
+
+**Prevention vs. Detection**: This hook prevents failures (blocks before write), whereas error logs only detect failures after they occur.
+
+**Cost**: Minimal - string length check on every write operation.
+
+**Files Created**:
+
+- `.claude/hooks/safety/write-size-validator.cjs` - Main hook (220 lines)
+- `.claude/hooks/safety/write-size-validator.test.cjs` - Test suite (315 lines, 13 tests)
 
 ---
 
-## 10-Enhancement Implementation Plan (2026-01-28)
+### Agent Error Pattern Investigation (2026-01-28)
 
-**Context**: Planner agent (Task #2) created comprehensive implementation plan for 10 reflection enhancements identified from spec-kit integration reflection report.
+**Pattern:** Tool Availability Mismatch Between Spawn Template and Runtime
 
-**Pattern**: Multi-sprint enhancement planning (Immediate → Near-Term → Long-Term)
+**Context**: Agents receive "No such tool available" errors when spawn templates reference tools that aren't actually available (MCP tools not configured, tools not in agent's allowed_tools).
 
-**Plan Structure**:
+**Root Causes Identified:**
 
-- **3 Sprints**: Sprint 1 (Week 1-2), Sprint 2 (Week 3-6), Sprint 3 (Week 7-12)
-- **Total Duration**: 90 days (132 hours sequential, 76 hours with parallelization)
-- **Parallelization**: 42% time savings (56 hours saved) by running independent enhancements in parallel
-- **5 Phases**: Phase 0 (Research 8-12h), Phase 1 (Immediate 18h), Phase 2 (Near-Term 40h), Phase 3 (Long-Term 62h), Phase FINAL (Reflection 4h)
-- **28 Atomic Tasks**: All with executable commands, verification gates, rollback procedures
+1. **MCP Server Not Configured**: `settings.json` has `"mcpServers": {}` but spawn templates reference `mcp__sequential-thinking__*`
+2. **Agent Tool Limits Intentional**: reflection-agent lacks Bash BY DESIGN (security boundary)
+3. **Token Limits Are Safeguards**: 25000 token file limit correctly blocks oversized writes
 
-**10 Enhancements by Priority**:
+**Prevention (IMPLEMENTED 2026-01-28):**
 
-**HIGH Priority** (7 enhancements):
+1. **Phase 1 (Remediation)**: Removed unavailable tool references from 11 agent definitions + 1 skill
+2. **Phase 2 (Prevention)**: Created `tool-availability-validator.cjs` hook that validates tools before spawning
+   - Blocks spawn if required tools (core tools) unavailable
+   - Warns but allows spawn if optional tools (MCP tools) missing
+   - Provides actionable suggestions (use Skill() instead, or configure MCP)
+3. **Phase 3 (Registration)**: Registered hook in settings.json PreToolUse(Task) hooks (runs before pre-task-unified.cjs)
+4. **Before using MCP tools**: Verify server is configured in settings.json
+5. **Use Skill() as fallback**: `Skill({ skill: 'sequential-thinking' })` works without MCP config
+6. **Route by capability**: Don't send Bash-requiring tasks to agents without Bash
+7. **Check agent definitions**: The `.md` file is authoritative for tool access, not spawn template
 
-1. **Progressive Disclosure Integration** (Sprint 1): Activate in spec-gathering Phase 3.5, reduce clarifications from 5+ to 3 max
-2. **Create Task #25b** (Sprint 1): Formalize progressive disclosure workflow integration as trackable task
-3. **ADR Template Extension** (Sprint 2): Extend template system to ADRs (80% → 100% decision consistency)
-4. **Security-First Design Checklist** (Sprint 2): Add to EVOLVE Phase E to prevent "afterthought" antipattern
-5. **Security Control Registry** (Sprint 3): Build reusable control catalog with OWASP mappings (4+ controls)
-6. **Hybrid Validation Extension** (Sprint 3): Extend to 3 agents (code-reviewer, security-architect, architect)
+**Key Files:**
 
-**MEDIUM Priority** (3 enhancements): 7. **Happy-Path E2E Test Suite** (Sprint 1): Add 21/21 passing test demonstrating ideal UX (vs 12/21 detection test) 8. **Template Catalog Registry** (Sprint 2): Build discovery mechanism with usage tracking 9. **Research Prioritization Matrix** (Sprint 3): Add Impact × Alignment algorithm to EVOLVE Phase O (save 40-60h per project)
+- Agent tools defined in: `.claude/agents/<category>/<agent>.md` (tools: line)
+- MCP config: `.claude/settings.json` (mcpServers section)
+- Spawn templates: `.claude/CLAUDE.md` Section 2
+- **Validation hook**: `.claude/hooks/routing/tool-availability-validator.cjs` (NEW - Phase 2)
 
-**LOW Priority** (1 enhancement): 10. **Commit Checkpoint Pattern** (Sprint 3): Formalize for multi-file projects (>10 files)
+**Hook Implementation Details:**
 
-**Key Innovation - Parallelization Strategy**:
+- Validates `allowed_tools` in Task spawn requests
+- Core tools list: Read, Write, Edit, Bash, Grep, Glob, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill, AskUserQuestion, NotebookEdit, WebSearch, WebFetch
+- MCP tool detection: Parses `mcp__<server>__<tool>` format, checks settings.json for server config
+- Exit codes: 0 (allow), 2 (block)
+- Test coverage: 14 unit tests (all passing)
+- **Registered**: settings.json PreToolUse(Task) - runs before pre-task-unified.cjs (2026-01-28)
 
-- Sprint 1: Enhancements #1 and #2 parallel (save 4 hours)
-- Sprint 2: Enhancements #4, #5, #6 parallel (save ~20 hours)
-- Sprint 3: Enhancements #7, #8, #10 parallel (save ~32 hours)
-- **Total**: 56 hours saved (42% reduction)
+**Hook Registration Pattern:**
 
-**Critical Path** (68 hours):
-
-```
-Phase 0 (8h) → Enhancement #1 (6h) → Enhancement #3 (2h) → Sprint 1 ✓
-            → Enhancement #4 (12h) → Enhancement #5 (16h) → Sprint 2 ✓
-            → Enhancement #8 (24h) → Sprint 3 ✓
+```json
+{
+  "matcher": "Task",
+  "hooks": [
+    {
+      "type": "command",
+      "command": "node .claude/hooks/routing/tool-availability-validator.cjs"
+    },
+    {
+      "type": "command",
+      "command": "node .claude/hooks/routing/pre-task-unified.cjs"
+    }
+  ]
+}
 ```
 
-**Quality Gates**:
+**Order matters**: tool-availability-validator runs FIRST to catch tool mismatches before unified pre-task processing.
 
-- Phase 0: Constitution checkpoint (4 gates: Research, Feasibility, Security, Specification)
-- Phase 1: Progressive disclosure verification (max 3 clarifications), happy-path tests (21/21 passing)
-- Phase 2: ADR template operational, catalog functional, security checklist integrated
-- Phase 3: Prioritization algorithm working, registry complete, validation extended
-
-**Key Deliverables by Sprint**:
-
-**Sprint 1 (Immediate - Week 1-2)**:
-
-- Progressive disclosure: spec-gathering Phase 3.5 with 3-question limit
-- Happy-path E2E: 21/21 passing test (demonstrates ideal UX)
-- Task #25b: Created and tracked for workflow integration
-
-**Sprint 2 (Near-Term - Week 3-6)**:
-
-- ADR template: `.claude/templates/adr-template.md` + schema + renderer
-- Template catalog: `.claude/context/artifacts/template-catalog.md` + discovery skill
-- Security checklist: EVOLVE Phase E with STRIDE threat modeling
-
-**Sprint 3 (Long-Term - Week 7-12)**:
-
-- Research prioritization: EVOLVE Phase O with Impact × Alignment matrix
-- Security registry: `.claude/context/artifacts/security-controls-catalog.md` (4+ controls)
-- Hybrid validation: Extended to code-reviewer + security-architect + architect agents
-- Commit checkpoints: plan-generator auto-insertion for multi-file projects
-
-**Risk Management**:
-
-- Highest risk: Progressive disclosure breaks spec-gathering (HIGH impact) → Mitigation: Comprehensive E2E test suite
-- Medium risk: Template catalog adds complexity → Mitigation: File-based approach (no database)
-- Lowest risk: Memory files grow large → Mitigation: Archiving pattern (move to archive/)
-
-**Success Criteria**:
-
-- All 10 enhancements delivered (100%)
-- Zero regressions (all existing tests passing)
-- 100% test coverage for new features
-- Documentation updated (README, CHANGELOG, guides)
-- Memory files updated (learnings, decisions, issues)
-
-**Impact on Framework**:
-
-- **UX**: 60% reduction in clarifications (5+ → 3 max)
-- **Consistency**: 100% decision documentation (vs 80% ad-hoc)
-- **Security**: Prevention over remediation (security-first design)
-- **Quality**: Standardized validation (3 agents use hybrid checklist)
-- **Efficiency**: 40-60 hours saved per project (research prioritization)
-
-**Files Modified**: `.claude/context/plans/reflection-enhancements-plan-2026-01-28.md`
-
-**Plan Status**: Ready for Phase 0 (Research) execution
-
-**Next Steps**: Spawn researcher agent to conduct Phase 0 research (12 queries across 4 categories: UX patterns, template catalogs, security registries, hybrid validation)
+**Cost of Violation**: Task fails, agent outputs error, requires rerouting or spawn template fix. **Now prevented by hook (Phase 2) and enforced at spawn time (Phase 3).**
 
 ---
 
----
+**Context**: Phase 5 QA tests had 48% failure rate because tests were written against implementation PLAN, not actual module exports.
 
-## Sprint 3 Enhancements - Research Prioritization, Security Registry, Validation (2026-01-28)
+**What It Is**: Writing tests based on planning documents rather than actual implementation.
 
-**Context**: Developer agent (Task #4) implemented Sprint 3 enhancements from 10-enhancement plan following TDD methodology (RED → GREEN → REFACTOR).
+**Signs You're Doing It**:
 
-**Completed Enhancements**:
+- Referencing implementation plan instead of actual code
+- Writing all tests before running any
+- Import errors when executing tests
+- Function signatures don't match actual exports
 
-### Enhancement #7: Research Prioritization Matrix
+**Why It's Dangerous**:
 
-**Pattern**: Use Impact × Alignment scoring to prioritize research within 20% budget cap. Score = (Impact × 0.6) + (Alignment × 0.4).
+- High test failure rate (48% in Party Mode Phase 5)
+- Wasted effort (6-8 hours writing wrong tests)
+- Tests don't validate actual code
+- False confidence in planning documents
 
-**Impact**: Saves 40-60 hours per project by researching TOP 5 of 18 opportunities instead of all 18.
+**Prevention**:
 
-**Key Learning**: Research prioritization prevents waste. Example: 100h project, 18 opportunities, 3h per research = 54h total (exceeds 20h budget). Matrix selects TOP 5 (15h < 20h budget).
+1. **MANDATORY**: Check actual module exports before writing tests
+   ```bash
+   node -e "console.log(Object.keys(require('./module.cjs')).join(', '))"
+   ```
+2. Write ONE passing test first to verify imports work
+3. Update implementation plan when scope changes during development
+4. Generate API reference doc after implementation, before testing
 
-**Implementation**: EVOLVE Phase O workflow updated with prioritization matrix, scoring algorithm, and budget enforcement.
+**Example**: `buildConsensus()` in plan, `aggregateResponses()` actually implemented.
 
-**Files Modified**:
-
-- `.claude/workflows/core/evolution-workflow.md` (Phase O updated)
-- `.claude/context/memory/decisions.md` (ADR-049 status: Accepted)
-- `.claude/workflows/core/evolution-workflow.test.cjs` (6 tests, all passing)
-
----
-
-### Enhancement #8: Security Control Registry
-
-**Pattern**: Centralized catalog of reusable security controls with OWASP mappings, implementation code, test cases.
-
-**Impact**: Enables security control reuse (DRY principle), standardizes security patterns, supports compliance auditing.
-
-**Key Learning**: Security controls are REUSABLE. SEC-001 (Token Whitelist), SEC-002 (Path Validation), SEC-003 (Input Sanitization), SEC-004 (Transparency Markers) extracted from existing skills (template-renderer, checklist-generator).
-
-**Security Controls Implemented**:
-
-- **SEC-REGISTRY-001**: Registry read-only at runtime (prevents tampering)
-- **SEC-REGISTRY-002**: Changes require security-architect review (prevents unauthorized modifications)
-
-**OWASP Mappings**:
-
-- SEC-001/SEC-003: OWASP A03 (Injection prevention)
-- SEC-002: OWASP A01 (Broken Access Control / path traversal prevention)
-- SEC-004: OWASP A04 (Insecure Design / transparency for AI-generated content)
-
-**Implementation**: Created security-controls-catalog.md with 4+ controls, OWASP mappings, implementation examples, test cases, location references.
-
-**Files Modified**:
-
-- `.claude/context/artifacts/security-controls-catalog.md` (new - 4 controls + 2 meta-controls)
-- `.claude/context/artifacts/security-controls-catalog.test.cjs` (8 tests, all passing)
+**Cost of Violation**: 3+ hours rework, 50% test failure rate, delayed QA.
 
 ---
 
-### Enhancement #9: Commit Checkpoint Pattern
+### Post-Creation Integration Checklist (MANDATORY)
 
-**Pattern**: Add commit checkpoint subtask in Phase 3 (Integration) for multi-file projects (10+ files).
+After creating ANY artifact (agent, skill, hook, workflow):
 
-**Impact**: Prevents lost work by creating recovery points after foundational work (Phase 1-2).
+- [ ] **CLAUDE.md Updated**: Routing table entry added (Section 3)
+- [ ] **Catalog Updated**: Skill-catalog.md or equivalent registry
+- [ ] **Settings Registered**: Hook registered in settings.json (if applicable)
+- [ ] **Agent Assignment**: At least one agent has skill/hook assigned
+- [ ] **Validation Passed**: Schema/structure validation
+- [ ] **Router Test**: Verify router routes to artifact via natural language
+- [ ] **Memory Updated**: Learnings/decisions recorded
+- [ ] **Documentation**: User-facing docs created/updated
 
-**Key Learning**: Multi-file projects (10+ files) benefit from incremental commits. Checkpoint after Phase 1-2 allows rollback if Phase 3 (Integration) fails.
-
-**Detection Logic**: plan-generator skill counts modified files. If count >= 10, auto-insert checkpoint task.
-
-**Implementation**: planner agent documentation updated with commit checkpoint pattern, 10+ files threshold, Phase 3 insertion point, rollback rationale.
-
-**Files Modified**:
-
-- `.claude/agents/core/planner.md` (Commit Checkpoint Pattern section added)
-- `.claude/agents/core/planner.test.cjs` (5 tests, all passing)
+**Rule**: If you skip any step, the artifact is "invisible" and the creation is incomplete.
 
 ---
 
-### Enhancement #10: Hybrid Validation Extension
+### Recursive Improvement Stopping Criteria (META-PATTERN)
 
-**Pattern**: Extend IEEE 1028 + contextual validation (80/20 split) to 3 agents: code-reviewer, security-architect, architect.
+**Date**: 2026-01-28
+**Source**: Task #30 Meta-Reflection
 
-**Impact**: Standardizes quality validation across all review workflows. Universal standards (IEEE 1028) + project-specific context (AI-generated).
+**Problem**: Recursive improvement (reflecting on reflection) can lead to infinite loops with diminishing returns.
 
-**Key Learning**: Hybrid validation balances consistency (IEEE 1028 base) with context awareness (AI-generated items for specific tech stacks/domains).
+**Stopping Criteria** (apply in order):
 
-**80/20 Split**:
+1. **Severity Threshold**: STOP when no HIGH/CRITICAL issues remain
+2. **Diminishing Returns**: STOP when improvement potential < 0.5 (on 10-point scale)
+3. **Time Budget**: Max 10% of original work time allocated to reflection
+4. **Recursion Depth**: Max 2 levels without human approval
 
-- 80-90%: IEEE 1028 universal standards (code quality, testing, security, performance)
-- 10-20%: Contextual AI-generated items (framework-specific, domain-specific, architecture-specific)
-- **Transparency**: All AI-generated items prefixed with `[AI-GENERATED]`
+**Decision Tree**:
 
-**Integration**:
+```
+Is there a HIGH/CRITICAL issue?
+├── YES → Continue reflection/evolution
+└── NO → Is improvement potential > 0.5?
+    ├── YES → Continue if within time budget
+    └── NO → STOP
+```
 
-- code-reviewer: Invokes checklist-generator at Stage 2 (Code Quality)
-- security-architect: Invokes checklist-generator at step 4 (Validate)
-- architect: Invokes checklist-generator before finalizing architecture design
-
-**Implementation**: Updated 3 agent files with hybrid validation sections, skill invocations, process descriptions, rationale.
-
-**Files Modified**:
-
-- `.claude/agents/specialized/code-reviewer.md` (Hybrid Validation section added, skill already in frontmatter)
-- `.claude/agents/specialized/security-architect.md` (Hybrid Validation section + skill added to frontmatter)
-- `.claude/agents/core/architect.md` (Hybrid Validation section + skill added to frontmatter)
-- `.claude/agents/hybrid-validation.test.cjs` (5 tests, all passing)
+**Example**: 58-hour BMAD session = max 5.8 hours total reflection time
 
 ---
 
-## Sprint 3 Summary
+### Parallel Agent Spawning for Time Reduction (50% PATTERN)
 
-**Total Implementation Time**: ~8 hours (TDD approach: RED → GREEN → REFACTOR for each enhancement)
-**Tests Created**: 24 new passing tests (6 + 8 + 5 + 5)
-**Files Modified**: 10 files (workflows, agents, tests, catalog)
-**Files Created**: 6 files (catalog, tests)
+**Date**: 2026-01-28
+**Source**: BMAD-METHOD Integration Session
 
-**TDD Adherence**: 100% (all features implemented RED → GREEN → REFACTOR)
+**When to Use**: Multiple independent tasks without shared outputs.
 
-**Quality Metrics**:
+**Pattern**:
 
-- 0 regressions (all existing tests passing)
-- 100% test coverage for new features
-- Documentation updated (CHANGELOG, README)
-- Memory updated (learnings, decisions)
+```javascript
+TaskList();
+Task({ subagent_type: 'developer', prompt: 'Task A' });
+Task({ subagent_type: 'architect', prompt: 'Task B' });
+// Both execute simultaneously
+```
 
-**Strategic Impact**:
+**Impact**: 50% time reduction (58h actual vs 116h sequential estimate)
 
-- **Efficiency**: Research prioritization saves 40-60 hours per project
-- **Security**: Control registry enables reuse + compliance (OWASP mapping)
-- **Reliability**: Commit checkpoints prevent lost work (10+ file projects)
-- **Quality**: Hybrid validation standardizes reviews (3 agents use IEEE 1028 + contextual)
+**Requirements**:
 
-**Next Steps**: Final formatting, verification, and commit (Task #7).
+- Tasks must be independent (no shared state)
+- Tasks must have different output files
+- Review agents can run parallel with implementation agents
 
----
-
-## Sprint 2 Enhancements - Template Infrastructure & Security-First Design (2026-01-28)
-
-**Context**: Developer agent (Task #5) implemented Sprint 2 enhancements from 10-enhancement plan following TDD methodology.
-
-**Completed Enhancements**:
-
-### Enhancement #4: ADR Template Extension
-
-**Pattern**: Extend template system to Architecture Decision Records for 100% decision documentation consistency.
-
-**Implementation**:
-
-- Created `.claude/templates/adr-template.md` with 8 required tokens
-- Created `.claude/schemas/adr-template.schema.json` with strict validation
-- ADR number format: `ADR-XXX` (pattern validated)
-- Status enum: proposed, accepted, deprecated, superseded
-- Date format: YYYY-MM-DD (ISO 8601)
-- Integration: Rendered ADRs append to `.claude/context/memory/decisions.md`
-
-**Impact**: 80% → 100% decision documentation consistency (all architectural decisions now use standardized format)
-
-**Test Results**: 6/6 passing (schema validation, required fields, enum validation, date format, ADR number pattern)
-
-**Key Learning**: ADR templates with schema validation prevent inconsistent decision documentation. Frontmatter + Markdown body provides both machine-readable metadata and human-readable content.
+**Example**: BMAD Phase 1B spawned developer + security-architect + architect simultaneously for different aspects of the same feature.
 
 ---
 
-### Enhancement #5: Template Catalog Registry
+### The Ironic Invisible Artifact Pattern (META-ANTI-PATTERN)
 
-**Pattern**: Build discovery mechanism with usage tracking for template adoption metrics.
+**Date**: 2026-01-28
+**Source**: evolution-workflow.md refinements
 
-**Implementation**:
+**What It Is**: Creating the "unified-creator-guard.cjs" hook to prevent invisible artifacts, but doing so WITHOUT using the hook-creator skill (making it invisible).
 
-- Created `.claude/context/artifacts/template-catalog.md` with YAML frontmatter
-- Metadata for each template: name, path, description, schema, created_count, last_used, keywords, category, complexity, estimated_time
-- Discovery mechanisms: by keyword, category, complexity, usage stats
-- 4 templates cataloged: specification-template, plan-template, tasks-template, adr-template
+**Irony**: Creating an anti-pattern guard while committing the anti-pattern.
 
-**Impact**: Template discovery enabled, usage patterns tracked, adoption metrics available
+**Root Cause**: Missing enforcement at workflow/skill level.
 
-**Test Results**: 6/6 passing (catalog existence, 4 templates listed, valid YAML frontmatter, usage tracking metadata, keywords, date format)
+**Fix Applied**:
 
-**Key Learning**: Template catalogs enable discovery patterns similar to npm/pip package registries. Usage tracking provides adoption metrics for identifying underutilized templates or patterns.
+- Added CRITICAL reminder to workflow-creator.md
+- Added blocking assertion to workflow execution
+- Added audit trail in evolution-state.json
 
-**Integration Points**:
-
-- template-renderer skill reads catalog for path validation and stats updates
-- creator skills reference catalog for consistency checks
-- router agent uses catalog for template suggestions
+**Prevention**: Workflows MUST enforce their own rules at invocation time.
 
 ---
 
-### Enhancement #6: Security-First Design Checklist
+### Phase 1 Tool Availability Fix (2026-01-28)
 
-**Pattern**: STRIDE threat modeling in EVOLVE Phase E (Evaluate) prevents "security as afterthought" antipattern.
+**Context**: Documentation drift where 12 agent/skill definitions referenced non-existent MCP tool `mcp__sequential-thinking__*`.
 
-**Implementation**:
+**Root Cause**: Tool added speculatively before MCP server configured, then removed from spawn templates but NOT from agent definitions.
 
-- Created `.claude/templates/security-design-checklist.md` with STRIDE framework
-- Integrated into `.claude/workflows/core/evolution-workflow.md` Phase E
-- Added 2 new exit conditions: security checkpoint completed, security assessment documented
-- "What could go wrong?" prompts for each STRIDE category
-- OWASP Top 10 reference mapping
-- Existing security controls catalog integration
+**Files Fixed (14 total)**:
 
-**STRIDE Categories**:
+- 11 agents: planner, pm, database-architect, sveltekit-expert, php-pro, nodejs-pro, nextjs-pro, java-pro, ios-pro, frontend-pro, evolution-orchestrator
+- 1 skill: advanced-elicitation
+- 1 test: staging-smoke.test.mjs (added environment check)
 
-- **S (Spoofing)**: Auth/credentials handling, identity verification
-- **T (Tampering)**: File writes, path traversal, injection attacks
-- **R (Repudiation)**: Audit logging, task tracking, action attribution
-- **I (Information Disclosure)**: Sensitive data handling, error messages
-- **D (Denial of Service)**: Resource limits, input validation, timeouts
-- **E (Elevation of Privilege)**: Permission enforcement, tool restrictions
+**Pattern Learned**:
 
-**Impact**: Prevents security being considered after implementation (prevention > remediation)
+- Agent definitions are authoritative for tool access (not spawn templates)
+- MCP tools should only be listed when MCP server is configured in settings.json
+- Test failures in wrong environment should exit gracefully with explanation
 
-**Test Results**: 5/5 passing (checklist existence, STRIDE categories, "What could go wrong?" prompts, OWASP references, 10+ security questions)
+**Prevention**:
 
-**Key Learning**: Security-first design is cheaper than post-implementation security fixes. STRIDE provides systematic threat modeling that's repeatable and comprehensive. Integrating security checkpoints into creation workflows (EVOLVE Phase E) ensures security is never an afterthought.
+- Check `settings.json` mcpServers before adding MCP tools to agents
+- Use `Skill()` invocation as fallback (doesn't require MCP server)
+- Add environment checks to deployment-specific test suites
+
+**Impact**: Eliminated 12 "No such tool available" errors, prevented false test failures in development.
 
 ---
 
-## Sprint 2 Summary
+### Phase 2 Spawn Template Updates (2026-01-28)
 
-**Total Implementation Time**: ~8 hours (parallel execution of enhancements #4, #5, #6)
-**Tests Created**: 17 new passing tests (6 ADR + 6 catalog + 5 security)
-**Files Modified**: 6 files (3 templates, 3 schemas/tests)
-**Files Created**: 8 files (templates, schemas, tests, catalog, checklist, example)
+**Context**: After Phase 1 removed MCP tool from agent definitions, spawn templates in CLAUDE.md still referenced the tool, creating inconsistency between templates and reality.
 
-**TDD Adherence**: 100% (all features implemented RED → GREEN → REFACTOR)
+**Changes Applied**:
 
-**Quality Metrics**:
+1. **Universal Spawn Template** (Section 2): Removed `mcp__sequential-thinking__sequentialthinking`, added comment directing to Skill() fallback
+2. **Orchestrator Spawn Template** (Section 2): Removed `mcp__sequential-thinking__sequentialthinking`, added comment directing to Skill() fallback
+3. **Tool Selection Notes** (Section 2): New section explaining MCP vs core tool distinction
 
-- 0 regressions (all existing tests passing)
-- 100% test coverage for new features
-- Documentation updated (CHANGELOG, evolution workflow)
-- Memory updated (learnings, decisions)
+**Pattern Learned**:
 
-**Strategic Impact**:
+- Spawn templates are documentation, not enforcement - agents can't use tools not in their definition
+- Comments in templates guide spawning agents to correct tool usage
+- Centralized Tool Selection Notes reduces duplication of guidance
+- MCP tool fallback pattern: Use `Skill({ skill: 'sequential-thinking' })` when MCP not configured
 
-- **Consistency**: ADR template standardizes decision documentation (80% → 100%)
-- **Discovery**: Template catalog enables pattern reuse and adoption tracking
-- **Security**: STRIDE checklist prevents "security as afterthought" antipattern
+**Prevention**:
 
-**Next Steps**: Sprint 3 enhancements (research prioritization matrix, security control registry, hybrid validation extension, commit checkpoints)
+- When removing tools from agent definitions, search and update all spawn templates
+- Add guidance comments explaining WHY tools were removed and WHAT to use instead
+- Document MCP tool requirements in centralized location (Tool Selection Notes)
+
+**Impact**: Spawn templates now consistent with agent definitions, Router has clear guidance for MCP vs core tool selection.
+
+---

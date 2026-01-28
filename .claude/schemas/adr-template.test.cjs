@@ -10,7 +10,7 @@ if (require.main === module) {
     'should reject ADR with invalid status enum',
     'should reject ADR with invalid date format',
     'should accept ADR with optional alternatives field',
-    'should validate ADR number format'
+    'should validate ADR number format',
   ];
 
   console.log('Running ADR Template Schema Tests...\n');
@@ -41,7 +41,7 @@ if (require.main === module) {
         context: 'We need to decide how to handle distributed caching.',
         decision: 'Use Redis for distributed caching with consistent hashing.',
         consequences: 'Improved performance but adds operational complexity.',
-        alternatives: 'Memcached was considered but lacks persistence.'
+        alternatives: 'Memcached was considered but lacks persistence.',
       };
 
       const validate = ajv.compile(schema);
@@ -61,7 +61,7 @@ if (require.main === module) {
     {
       const invalidADR = {
         adr_number: 'ADR-051',
-        title: 'Incomplete ADR'
+        title: 'Incomplete ADR',
       };
 
       const validate = ajv.compile(schema);
@@ -85,7 +85,7 @@ if (require.main === module) {
         status: 'invalid-status',
         context: 'Context here',
         decision: 'Decision here',
-        consequences: 'Consequences here'
+        consequences: 'Consequences here',
       };
 
       const validate = ajv.compile(schema);
@@ -109,7 +109,7 @@ if (require.main === module) {
         status: 'proposed',
         context: 'Context here',
         decision: 'Decision here',
-        consequences: 'Consequences here'
+        consequences: 'Consequences here',
       };
 
       const validate = ajv.compile(schema);
@@ -134,7 +134,7 @@ if (require.main === module) {
         context: 'Context here',
         decision: 'Decision here',
         consequences: 'Consequences here',
-        alternatives: 'Alternative options considered'
+        alternatives: 'Alternative options considered',
       };
 
       const validate = ajv.compile(schema);
@@ -159,7 +159,7 @@ if (require.main === module) {
         status: 'proposed',
         context: 'Context here',
         decision: 'Decision here',
-        consequences: 'Consequences here'
+        consequences: 'Consequences here',
       };
 
       const validate = ajv.compile(schema);
@@ -176,7 +176,6 @@ if (require.main === module) {
 
     console.log(`\n${passed} passing, ${failed} failing`);
     process.exit(failed > 0 ? 1 : 0);
-
   } catch (error) {
     console.error('Test execution error:', error.message);
     console.log('\n0 passing, 6 failing');
@@ -184,4 +183,6 @@ if (require.main === module) {
   }
 }
 
-module.exports = { /* test helpers if needed */ };
+module.exports = {
+  /* test helpers if needed */
+};

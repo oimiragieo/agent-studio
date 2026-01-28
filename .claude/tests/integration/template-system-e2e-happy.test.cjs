@@ -42,7 +42,7 @@ const TEST_SPEC_TOKENS = {
   TERM_3: 'Session',
   HTTP_METHOD: 'POST',
   ENDPOINT_PATH: '/api/auth/login',
-  PROJECT_NAME: 'Agent Studio'
+  PROJECT_NAME: 'Agent Studio',
 };
 
 const TEST_PLAN_TOKENS = {
@@ -61,7 +61,7 @@ const TEST_PLAN_TOKENS = {
   PHASE_1_DURATION: '18 minutes',
   DEPENDENCIES: 'None',
   PARALLEL_OK: 'Partial',
-  VERIFICATION_COMMANDS: 'git branch --show-current | grep feature/auth && ls src/auth'
+  VERIFICATION_COMMANDS: 'git branch --show-current | grep feature/auth && ls src/auth',
 };
 
 const TEST_TASKS_TOKENS = {
@@ -80,7 +80,7 @@ const TEST_TASKS_TOKENS = {
   USER_IMPACT: 'Users can securely access personalized features',
   EPIC_NAME: 'Authentication System',
   EPIC_GOAL: 'Enable secure user login and session management',
-  SUCCESS_CRITERIA: 'Login response < 200ms, 99.9% uptime'
+  SUCCESS_CRITERIA: 'Login response < 200ms, 99.9% uptime',
 };
 
 /**
@@ -217,7 +217,7 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
         '## 2. Functional Requirements',
         '## 3. Non-Functional Requirements',
         '## 4. System Features',
-        '## 10. Acceptance Criteria'
+        '## 10. Acceptance Criteria',
       ];
       const missing = validateTemplateSections(specContent, expectedSections);
       assert.strictEqual(missing.length, 0, `Missing sections: ${missing.join(', ')}`);
@@ -228,7 +228,7 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
         '## Executive Summary',
         '## Phases',
         '## Implementation Sequence',
-        '## Risk Assessment'
+        '## Risk Assessment',
       ];
       const missing = validateTemplateSections(planContent, expectedSections);
       assert.strictEqual(missing.length, 0, `Missing sections: ${missing.join(', ')}`);
@@ -239,7 +239,7 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
         '## Epic:',
         '## Foundational Phase (Enablers)',
         '## User Stories',
-        '## Task Summary'
+        '## Task Summary',
       ];
       const missing = validateTemplateSections(tasksContent, expectedSections);
       assert.strictEqual(missing.length, 0, `Missing sections: ${missing.join(', ')}`);
@@ -261,8 +261,14 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
       const outputPath = path.join(OUTPUT_DIR, 'test-spec.md');
       const content = fs.readFileSync(outputPath, 'utf8');
 
-      assert.ok(content.includes('User can log in with email and password'), 'Should include criteria 1');
-      assert.ok(content.includes('Invalid credentials show error message'), 'Should include criteria 2');
+      assert.ok(
+        content.includes('User can log in with email and password'),
+        'Should include criteria 1'
+      );
+      assert.ok(
+        content.includes('Invalid credentials show error message'),
+        'Should include criteria 2'
+      );
       assert.ok(content.includes('Login response time < 200ms p95'), 'Should include criteria 3');
     });
 
@@ -289,7 +295,10 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
       const outputPath = path.join(OUTPUT_DIR, 'test-plan.md');
       const content = fs.readFileSync(outputPath, 'utf8');
 
-      assert.ok(content.includes('User Authentication Implementation Plan'), 'Should include plan title');
+      assert.ok(
+        content.includes('User Authentication Implementation Plan'),
+        'Should include plan title'
+      );
       assert.ok(content.includes('Agent-Studio v2.2.1'), 'Should include framework version');
       assert.ok(content.includes('Phase 0 - Research'), 'Should include status');
     });
@@ -333,7 +342,10 @@ describe('Template System Happy-Path E2E Integration (21/21 Tests)', () => {
       const outputPath = path.join(OUTPUT_DIR, 'test-tasks.md');
       const content = fs.readFileSync(outputPath, 'utf8');
 
-      assert.ok(content.includes('Enables user account management'), 'Should include business value');
+      assert.ok(
+        content.includes('Enables user account management'),
+        'Should include business value'
+      );
       assert.ok(content.includes('Users can securely access'), 'Should include user impact');
     });
   });

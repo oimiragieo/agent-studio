@@ -38,7 +38,8 @@ try {
   agents.forEach(agent => {
     const content = fs.readFileSync(agent.path, 'utf-8');
     assert.ok(
-      content.includes('checklist-generator') || content.includes('Skill({ skill: "checklist-generator" })'),
+      content.includes('checklist-generator') ||
+        content.includes('Skill({ skill: "checklist-generator" })'),
       `${agent.name} should invoke checklist-generator skill`
     );
   });
@@ -55,8 +56,8 @@ try {
     const content = fs.readFileSync(agent.path, 'utf-8');
     assert.ok(
       (content.includes('80') && content.includes('20')) ||
-      content.includes('80-90%') ||
-      content.includes('10-20%'),
+        content.includes('80-90%') ||
+        content.includes('10-20%'),
       `${agent.name} should document 80/20 split`
     );
   });

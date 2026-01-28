@@ -15,7 +15,6 @@ tools:
   - Grep
   - Search
   - Bash
-  - mcp__sequential-thinking__*
   - mcp__memory__*
   - mcp__chrome-devtools__*
   - TaskUpdate
