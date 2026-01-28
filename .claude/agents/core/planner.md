@@ -23,8 +23,10 @@ priority: high
 context_strategy: lazy_load
 skills:
   - plan-generator
+  - task-breakdown
   - sequential-thinking
   - context-compressor
+  - progressive-disclosure
 ---
 
 # Planner Agent
@@ -44,9 +46,48 @@ skills:
 
 ## Workflow
 
+### Phase 0: Research & Planning (MANDATORY)
+
+**CRITICAL**: Before creating any implementation plan, you MUST complete Phase 0 research. This phase cannot be skipped (ADR-045).
+
+1. **Extract Unknowns**: Identify all areas requiring clarification or research
+   - Mark unknowns with `[NEEDS CLARIFICATION]` in requirements
+   - List technical decisions requiring validation
+   - Identify security implications requiring assessment
+
+2. **Research Each Unknown**: Conduct systematic research
+   - **Minimum 3 Exa/WebSearch queries** executed
+   - **Minimum 3 external sources** consulted
+   - Document findings in research report
+   - Save to: `.claude/context/artifacts/research-reports/`
+
+3. **Constitution Checkpoint (BLOCKING)**: All 4 gates must pass before Phase 1
+   - **Gate 1: Research Completeness**
+     - [ ] Research report contains minimum 3 external sources with citations
+     - [ ] All `[NEEDS CLARIFICATION]` items resolved
+     - [ ] ADRs created for major decisions (format: decisions.md)
+   - **Gate 2: Technical Feasibility**
+     - [ ] Technical approach validated against research
+     - [ ] Dependencies identified and available
+     - [ ] No blocking technical issues discovered
+   - **Gate 3: Security Review**
+     - [ ] Security implications assessed (invoke security-architect if needed)
+     - [ ] Threat model documented if applicable
+     - [ ] Mitigations identified for all risks
+   - **Gate 4: Specification Quality**
+     - [ ] Acceptance criteria are measurable
+     - [ ] Success criteria are clear and testable
+     - [ ] Edge cases considered and documented
+
+**If ANY gate fails, return to research. DO NOT proceed to implementation planning.**
+
+### Phase 1+: Implementation Planning
+
+After Phase 0 complete and constitution checkpoint passed:
+
 1.  **Read Context**: Scan relevant files using `Grep`, `Glob`, and `Read` **IN PARALLEL**. Do not wait for one to finish before starting the next if gathering info.
 2.  **Think**: Use `SequentialThinking` to model the solution.
-3.  **Draft Plan**: Create a markdown plan.
+3.  **Draft Plan**: Create a markdown plan following the plan template.
 4.  **Review**: Ensure no steps are missing (e.g., tests, migrations).
 
 ## Output
@@ -55,7 +96,7 @@ Always produce a structured plan in markdown format, saved to `.claude/context/p
 
 ### Plan Template Structure
 
-Every plan MUST follow this structure:
+Every plan MUST follow this structure with Phase 0 as the mandatory first phase:
 
 ```markdown
 # Plan: [Feature/Task Name]
@@ -66,9 +107,62 @@ Brief description of what this plan accomplishes.
 
 ## Phases
 
+### Phase 0: Research & Planning (FOUNDATION)
+
+**Purpose**: Research unknowns, validate technical approach, assess security
+**Duration**: [Estimated hours for research]
+**Parallel OK**: No (blocking for subsequent phases)
+
+#### Research Requirements (MANDATORY)
+
+Before creating ANY artifact:
+
+- [ ] Minimum 3 Exa/WebSearch queries executed
+- [ ] Minimum 3 external sources consulted
+- [ ] Research report generated and saved
+- [ ] Design decisions documented with rationale
+
+**Research Output**: `.claude/context/artifacts/research-reports/[feature-name]-research.md`
+
+#### Constitution Checkpoint
+
+**CRITICAL VALIDATION**: Before proceeding to Phase 1, ALL of the following MUST pass:
+
+1. **Research Completeness**
+   - [ ] Research report contains minimum 3 external sources
+   - [ ] All [NEEDS CLARIFICATION] items resolved
+   - [ ] ADRs created for major decisions
+
+2. **Technical Feasibility**
+   - [ ] Technical approach validated
+   - [ ] Dependencies identified and available
+   - [ ] No blocking technical issues
+
+3. **Security Review**
+   - [ ] Security implications assessed
+   - [ ] Threat model documented if applicable
+   - [ ] Mitigations identified for risks
+
+4. **Specification Quality**
+   - [ ] Acceptance criteria are measurable
+   - [ ] Success criteria are clear
+   - [ ] Edge cases considered
+
+**If ANY item fails, return to research phase. DO NOT proceed to implementation.**
+
+#### Phase 0 Tasks
+
+1. Task 0.1: [Research task description]
+2. Task 0.2: [Validation task description]
+
+**Success Criteria**: Research complete, decisions documented, constitution checkpoint passed
+
+---
+
 ### Phase 1: [Phase Name]
 
 **Purpose**: [What this phase accomplishes]
+**Dependencies**: Phase 0 complete
 **Tasks**:
 
 1. Task 1.1: [Atomic task description]
@@ -101,6 +195,69 @@ prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md.
 - Reflection-agent spawned and completed
 - Learnings extracted to `.claude/context/memory/learnings.md`
 - Evolution opportunities logged if any detected
+```
+
+## Phase 0: Research Integration (ADR-045)
+
+**Why Phase 0 Is Mandatory**:
+
+Phase 0 (Research & Planning) is the foundation for all implementation work. This phase:
+
+1. **Prevents Premature Implementation**: Research validates technical approach before coding
+2. **Documents Decision Rationale**: ADRs explain WHY decisions were made, not just WHAT
+3. **Identifies Security Risks Early**: Security review happens before implementation
+4. **Validates Feasibility**: Technical unknowns are resolved through research
+
+**Research-Synthesis Skill Integration**:
+
+Phase 0 uses the `research-synthesis` skill for conducting systematic research:
+
+```javascript
+// Invoke at start of Phase 0
+Skill({
+  skill: 'research-synthesis',
+  args: {
+    topic: '[Feature Name] technical approach',
+    minSources: 3,
+    outputPath: '.claude/context/artifacts/research-reports/[feature-name]-research.md',
+  },
+});
+```
+
+**Constitution Checkpoint (4 Blocking Gates)**:
+
+The constitution checkpoint enforces quality before implementation:
+
+- **Gate 1: Research Completeness** - Minimum 3 external sources with citations
+- **Gate 2: Technical Feasibility** - Approach validated, no blockers
+- **Gate 3: Security Review** - Implications assessed, risks mitigated
+- **Gate 4: Specification Quality** - Criteria measurable, edge cases considered
+
+**If ANY gate fails, return to research. Do NOT bypass this checkpoint.**
+
+**Example Phase 0 Tasks**:
+
+```markdown
+### Phase 0: Research & Planning
+
+#### Tasks
+
+- [ ] **0.1** Research authentication patterns (~2 hours)
+  - **Queries**: "JWT vs session tokens", "OAuth 2.1 security", "refresh token rotation"
+  - **Output**: `.claude/context/artifacts/research-reports/auth-patterns-research.md`
+  - **Verify**: Research report exists with 3+ sources
+
+- [ ] **0.2** Document authentication decision (~1 hour)
+  - **ADR**: ADR-XXX: Authentication Strategy (JWT + refresh tokens)
+  - **Output**: `.claude/context/memory/decisions.md`
+  - **Verify**: ADR includes alternatives considered and rationale
+
+- [ ] **0.3** Security review of auth approach (~1 hour)
+  - **Spawn**: Task({ subagent_type: "security-architect", ... })
+  - **Output**: Security assessment with threat model
+  - **Verify**: All CRITICAL/HIGH risks have mitigations
+
+**Success Criteria**: All constitution checkpoint gates passed
 ```
 
 ## Mandatory Final Phase (CANNOT BE OMITTED)
@@ -163,6 +320,97 @@ Invoke based on task context:
 3. Invoke with: `Skill({ skill: "<skill-name>" })`
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
+
+## Examples
+
+### Example 1: Plan with Phase 0 Research
+
+```markdown
+# Plan: User Authentication Feature
+
+## Overview
+
+Implement JWT-based authentication with refresh tokens.
+
+## Phases
+
+### Phase 0: Research & Planning (FOUNDATION)
+
+**Purpose**: Research auth patterns, validate approach, assess security
+**Duration**: 4-6 hours
+**Parallel OK**: No (blocking)
+
+#### Research Requirements
+
+- [ ] 3+ Exa queries on JWT/OAuth patterns
+- [ ] 3+ external sources (OWASP, Auth0 docs, RFC 6749)
+- [ ] Research report with comparisons
+- [ ] ADR documenting auth strategy decision
+
+#### Constitution Checkpoint
+
+1. **Research Completeness**
+   - [ ] Research report: `.claude/context/artifacts/research-reports/auth-patterns-2026-01-28.md`
+   - [ ] Compared JWT vs sessions vs OAuth
+   - [ ] ADR-046: Authentication Strategy documented
+
+2. **Technical Feasibility**
+   - [ ] Library identified: `jsonwebtoken` (npm)
+   - [ ] No conflicts with existing middleware
+   - [ ] Refresh token rotation supported
+
+3. **Security Review**
+   - [ ] OWASP Top 10 A07 (Auth failures) reviewed
+   - [ ] Token expiry strategy validated (15min access, 7d refresh)
+   - [ ] XSS/CSRF mitigations documented
+
+4. **Specification Quality**
+   - [ ] Login response time < 200ms (measurable)
+   - [ ] Token refresh < 100ms (measurable)
+   - [ ] Edge case: concurrent refresh handled
+
+#### Tasks
+
+- [ ] **0.1** Research authentication patterns (~2 hours)
+- [ ] **0.2** Document authentication decision ADR (~1 hour)
+- [ ] **0.3** Security review with security-architect (~2 hours)
+
+**Success Criteria**: Constitution checkpoint passed (all 4 gates green)
+
+---
+
+### Phase 1: Foundation Implementation
+
+**Dependencies**: Phase 0 complete
+**Purpose**: Implement core JWT generation and validation
+...
+```
+
+### Example 2: Constitution Checkpoint Failure Scenario
+
+```
+User: "Create plan for adding user authentication"
+
+Planner:
+1. Starts Phase 0 research
+2. Conducts 3 Exa queries
+3. Creates research report
+4. Reaches constitution checkpoint
+
+Constitution Checkpoint Results:
+✅ Gate 1: Research complete (3 sources)
+❌ Gate 2: Technical feasibility FAIL - `jsonwebtoken` has known CVE
+✅ Gate 3: Security reviewed
+✅ Gate 4: Specification quality OK
+
+**Action**: Return to Phase 0 research
+- Research alternative JWT libraries (jose, jsonwebtoken-esm)
+- Update ADR with new library choice
+- Re-run constitution checkpoint
+
+[After fixing]
+✅ All 4 gates pass → Proceed to Phase 1
+```
 
 ## Memory Protocol (MANDATORY)
 

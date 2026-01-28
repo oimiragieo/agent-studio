@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://claude.ai/schemas/specification-template",
+  "title": "Specification Template Schema",
+  "description": "JSON Schema for validating specification templates with YAML frontmatter + Markdown body structure. Follows IEEE 830 standards and supports token replacement patterns for project initialization.",
+  "type": "object",
+  "required": ["title", "version", "author", "status", "date", "acceptance_criteria"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "The specification title - clear, concise description of what is being specified",
+      "minLength": 10,
+      "maxLength": 200,
+      "examples": ["User Authentication System", "Payment Processing API", "Mobile Dashboard UI"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version number following semver format (MAJOR.MINOR.PATCH)",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "examples": ["1.0.0", "2.1.3", "0.5.0"]
+    },
+    "author": {
+      "type": "string",
+      "description": "Name of the specification author or team",
+      "minLength": 2,
+      "maxLength": 100,
+      "examples": ["Claude", "Engineering Team", "Product Manager"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current status of the specification in its lifecycle",
+      "enum": ["draft", "review", "approved", "deprecated"],
+      "examples": ["draft", "approved"]
+    },
+    "date": {
+      "type": "string",
+      "description": "Date of specification creation or last update in ISO 8601 format (YYYY-MM-DD)",
+      "format": "date",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "examples": ["2026-01-28", "2025-12-15"]
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "description": "List of measurable acceptance criteria that define when the specification is successfully implemented",
+      "items": {
+        "type": "string",
+        "minLength": 10,
+        "maxLength": 500
+      },
+      "minItems": 1,
+      "maxItems": 50,
+      "examples": [
+        [
+          "User can log in with email and password",
+          "Password must meet complexity requirements (12+ chars, mixed case, numbers, symbols)",
+          "Failed login attempts are logged for security audit",
+          "Session timeout after 30 minutes of inactivity"
+        ]
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief overview of what this specification covers (optional, detailed content goes in Markdown body)",
+      "minLength": 20,
+      "maxLength": 1000,
+      "examples": ["Specification for implementing user authentication system with JWT tokens and OAuth2 integration"]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Categorization tags for organizing and searching specifications",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$",
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "uniqueItems": true,
+      "examples": [["authentication", "security", "api"], ["frontend", "mobile", "ui"]]
+    },
+    "priority": {
+      "type": "string",
+      "description": "Priority level for implementation planning",
+      "enum": ["low", "medium", "high", "critical"],
+      "examples": ["high", "critical"]
+    },
+    "estimated_effort": {
+      "type": "string",
+      "description": "Estimated effort required for implementation (human-readable format)",
+      "pattern": "^\\d+\\s+(hour|hours|day|days|week|weeks|month|months)$",
+      "examples": ["4 hours", "2 days", "3 weeks", "1 month"]
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "List of stakeholders involved in or affected by this specification",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 100
+      },
+      "examples": [["Product Manager", "Engineering Team", "Security Team", "End Users"]]
+    },
+    "dependencies": {
+      "type": "array",
+      "description": "External or internal dependencies required for implementation",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "examples": [["OAuth2 provider configuration", "User database schema", "Email service integration"]]
+    },
+    "related_specifications": {
+      "type": "array",
+      "description": "References to related or dependent specifications",
+      "items": {
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      "examples": [["user-management-spec.md", "security-requirements-spec.md"]]
+    },
+    "tokens": {
+      "type": "object",
+      "description": "Token replacement values for template instantiation. Only whitelisted tokens are allowed for security (SEC-SPEC-001).",
+      "properties": {
+        "PROJECT_NAME": {
+          "type": "string",
+          "description": "Name of the project"
+        },
+        "AUTHOR": {
+          "type": "string",
+          "description": "Author name"
+        },
+        "DATE": {
+          "type": "string",
+          "description": "Current date",
+          "format": "date"
+        },
+        "VERSION": {
+          "type": "string",
+          "description": "Version number",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "FEATURE_NAME": {
+          "type": "string",
+          "description": "Name of the feature being specified"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "title": "User Authentication System Specification",
+      "version": "1.0.0",
+      "author": "Claude",
+      "status": "draft",
+      "date": "2026-01-28",
+      "tags": ["authentication", "security", "backend"],
+      "priority": "high",
+      "estimated_effort": "2 weeks",
+      "acceptance_criteria": [
+        "User can log in with email and password",
+        "Password must meet complexity requirements (12+ chars, mixed case, numbers, symbols)",
+        "Failed login attempts are logged for security audit",
+        "Session timeout after 30 minutes of inactivity",
+        "JWT tokens expire after 1 hour with refresh capability"
+      ],
+      "description": "Specification for implementing secure user authentication system with JWT tokens and session management",
+      "stakeholders": ["Product Manager", "Engineering Team", "Security Team"],
+      "dependencies": ["User database schema", "Email service for password reset"],
+      "related_specifications": ["security-requirements-spec.md"]
+    },
+    {
+      "title": "Payment Processing API Specification",
+      "version": "2.1.0",
+      "author": "Engineering Team",
+      "status": "approved",
+      "date": "2026-01-15",
+      "tags": ["payment", "api", "financial"],
+      "priority": "critical",
+      "estimated_effort": "4 weeks",
+      "acceptance_criteria": [
+        "Support major credit cards (Visa, Mastercard, Amex)",
+        "PCI DSS compliance verified",
+        "Webhook notifications for payment events",
+        "Refund API endpoint functional",
+        "Transaction logging with audit trail"
+      ],
+      "description": "RESTful API specification for secure payment processing with third-party gateway integration"
+    }
+  ]
+}

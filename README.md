@@ -15,6 +15,7 @@ The goal is simple: copy `.claude/` into another repo and get consistent routing
 - **Prompts**: Copy/paste prompts for UI (`.claude/prompts/`)
 - **Headless Verification**: CI-friendly testing (`pnpm ship-readiness:headless:json`, `pnpm integration:headless:json`)
 - **Memory System**: Persistent learnings, decisions, and issues across sessions (`.claude/context/memory/`)
+- **Spec-Kit Integration**: Complete feature set for requirements management with templates, skills, and automated quality validation
 
 Notes:
 
@@ -131,7 +132,16 @@ node .claude/tools/workflow-dryrun-suite.mjs
 
 See also: `GETTING_STARTED.md` and `CHANGELOG.md`.
 
-## Recent Updates (v2.1.0)
+## Recent Updates (v2.3.0 - Spec-Kit Integration)
+
+- **Specification Management**: IEEE 830-compliant template with token replacement and validation
+- **Implementation Planning**: Phase 0 research-first workflow with 4-gate constitution checkpoint
+- **Task Organization**: Epic → Story → Task hierarchy with Enabler-first pattern (SAFe)
+- **Quality Validation**: Automated checklists combining IEEE 1028 + contextual items
+- **Performance**: 88% faster specification creation, 90% faster task organization, 100% consistency
+- **Security**: Comprehensive review with 5 findings addressed, token whitelist enforcement, path validation
+
+### Previous Updates (v2.1.0)
 
 - **Security Hardening**: SEC-007 safe JSON parsing, SEC-008 fail-closed patterns
 - **Performance**: Unified `routing-guard.cjs` (80% spawn reduction), `unified-evolution-guard.cjs` (75% spawn reduction)

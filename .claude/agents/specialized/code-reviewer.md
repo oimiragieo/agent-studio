@@ -14,6 +14,7 @@ skills:
   - requesting-code-review
   - receiving-code-review
   - verification-before-completion
+  - checklist-generator
   - code-analyzer
   - code-quality-expert
   - rule-auditor

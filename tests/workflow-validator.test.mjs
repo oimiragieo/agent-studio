@@ -7,7 +7,7 @@ import { WorkflowValidator } from '../.claude/lib/workflow/workflow-validator.cj
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const validator = new WorkflowValidator();
 
-test('workflow-validator - step schema validation', async (t) => {
+test('workflow-validator - step schema validation', async t => {
   await t.test('validateStep: detects missing step id', () => {
     const workflow = {
       name: 'test-workflow',

@@ -98,10 +98,12 @@ describe('atomicWriteAsync (SEC-AUDIT-013, SEC-AUDIT-014 fix)', () => {
       const writes = [];
       for (let i = 0; i < numWrites; i++) {
         // Small stagger to make test more realistic (still concurrent but not all at exact same ms)
-        writes.push((async () => {
-          if (i > 0) await new Promise(resolve => setTimeout(resolve, i * 2));
-          return atomicWrite.atomicWriteAsync(filePath, `content-${i}`);
-        })());
+        writes.push(
+          (async () => {
+            if (i > 0) await new Promise(resolve => setTimeout(resolve, i * 2));
+            return atomicWrite.atomicWriteAsync(filePath, `content-${i}`);
+          })()
+        );
       }
 
       // Wait for all writes to complete
@@ -142,7 +144,7 @@ describe('atomicWriteAsync (SEC-AUDIT-013, SEC-AUDIT-014 fix)', () => {
       // Manually create a lock that will become stale
       const release = await lockfile.lock(filePath, {
         stale: 100, // Very short stale time for testing
-        retries: 0  // Don't retry on first attempt
+        retries: 0, // Don't retry on first attempt
       });
 
       // Immediately release it to simulate stale lock detection
@@ -222,12 +224,9 @@ describe('atomicWriteAsync (SEC-AUDIT-013, SEC-AUDIT-014 fix)', () => {
       // Try to write to an invalid path
       const invalidPath = path.join(testDir, 'invalid\x00path.txt');
 
-      await assert.rejects(
-        async () => {
-          await atomicWrite.atomicWriteAsync(invalidPath, 'content');
-        },
-        /invalid|null/i
-      );
+      await assert.rejects(async () => {
+        await atomicWrite.atomicWriteAsync(invalidPath, 'content');
+      }, /invalid|null/i);
 
       // Verify no temp files are left
       const allFiles = await fs.readdir(testDir);
@@ -265,7 +264,7 @@ describe('atomicWriteAsync (SEC-AUDIT-013, SEC-AUDIT-014 fix)', () => {
       // Hold lock indefinitely
       const release = await lockfile.lock(filePath, {
         stale: 10000, // 10 second stale time
-        retries: 0    // No retries
+        retries: 0, // No retries
       });
 
       try {
@@ -277,9 +276,9 @@ describe('atomicWriteAsync (SEC-AUDIT-013, SEC-AUDIT-014 fix)', () => {
                 retries: {
                   retries: 2,
                   minTimeout: 10,
-                  maxTimeout: 50
-                }
-              }
+                  maxTimeout: 50,
+                },
+              },
             });
           },
           /lock|timeout|ELOCKED/i,

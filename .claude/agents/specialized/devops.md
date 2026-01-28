@@ -30,6 +30,7 @@ skills:
   - containerization-rules
   - ci-cd-implementation-rule
   - sentry-monitoring
+  - template-renderer
   - gcloud-cli
 ---
 

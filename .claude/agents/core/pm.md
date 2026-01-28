@@ -30,6 +30,7 @@ skills:
   - sequential-thinking
   - verification-before-completion
   - task-management-protocol
+  - progressive-disclosure
 ---
 
 # Product Manager Agent

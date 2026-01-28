@@ -31,6 +31,7 @@ skills:
   - context-compressor
   - github-mcp
   - verification-before-completion
+  - checklist-generator
   - code-analyzer
   - code-quality-expert
   - code-style-validator

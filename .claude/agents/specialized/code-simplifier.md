@@ -5,20 +5,7 @@ model: opus
 temperature: 0.3
 context_strategy: lazy_load
 priority: medium
-tools:
-  [
-    Read,
-    Write,
-    Edit,
-    Bash,
-    Grep,
-    Glob,
-    TaskUpdate,
-    TaskList,
-    TaskCreate,
-    TaskGet,
-    Skill,
-  ]
+tools: [Read, Write, Edit, Bash, Grep, Glob, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
   - task-management-protocol
   - best-practices-guidelines
@@ -183,16 +170,16 @@ When executing tasks, follow this 8-step approach:
 
 ## Example Interactions
 
-| User Request                                               | Agent Action                                                                                       |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| "Simplify this authentication function"                    | Analyzes function, reduces nesting, clarifies variable names, consolidates logic, preserves exact behavior |
-| "Clean up the code I just wrote"                          | Identifies recently modified files, applies project standards, eliminates redundancy, improves readability |
-| "Make this API handler clearer"                            | Extracts validation logic, renames unclear variables, simplifies error handling, maintains all responses |
-| "Refactor for readability without changing behavior"       | Applies best practices, reduces complexity, improves naming, ensures tests pass                    |
-| "This nested ternary is confusing"                         | Converts to switch statement or if/else chain for clarity                                          |
-| "Remove unnecessary complexity from recent changes"        | Scans git diff, identifies over-engineering, simplifies while preserving functionality            |
-| "Apply project standards to this component"                | Enforces ES modules, function keyword, explicit types, React patterns                              |
-| "Consolidate this duplicate logic"                         | Applies DRY principle, extracts shared code, maintains separation of concerns                      |
+| User Request                                         | Agent Action                                                                                               |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| "Simplify this authentication function"              | Analyzes function, reduces nesting, clarifies variable names, consolidates logic, preserves exact behavior |
+| "Clean up the code I just wrote"                     | Identifies recently modified files, applies project standards, eliminates redundancy, improves readability |
+| "Make this API handler clearer"                      | Extracts validation logic, renames unclear variables, simplifies error handling, maintains all responses   |
+| "Refactor for readability without changing behavior" | Applies best practices, reduces complexity, improves naming, ensures tests pass                            |
+| "This nested ternary is confusing"                   | Converts to switch statement or if/else chain for clarity                                                  |
+| "Remove unnecessary complexity from recent changes"  | Scans git diff, identifies over-engineering, simplifies while preserving functionality                     |
+| "Apply project standards to this component"          | Enforces ES modules, function keyword, explicit types, React patterns                                      |
+| "Consolidate this duplicate logic"                   | Applies DRY principle, extracts shared code, maintains separation of concerns                              |
 
 ## Skill Invocation Protocol
 
@@ -200,20 +187,20 @@ When executing tasks, follow this 8-step approach:
 
 These skills are automatically loaded when the agent is spawned:
 
-| Skill                          | Purpose                                      |
-| ------------------------------ | -------------------------------------------- |
-| `task-management-protocol`     | Track progress and coordinate with Router    |
-| `best-practices-guidelines`    | Apply established coding best practices      |
-| `code-analyzer`                | Analyze code structure and complexity        |
-| `code-style-validator`         | Validate and enforce code style standards    |
-| `dry-principle`                | Apply Don't Repeat Yourself refactoring      |
+| Skill                       | Purpose                                   |
+| --------------------------- | ----------------------------------------- |
+| `task-management-protocol`  | Track progress and coordinate with Router |
+| `best-practices-guidelines` | Apply established coding best practices   |
+| `code-analyzer`             | Analyze code structure and complexity     |
+| `code-style-validator`      | Validate and enforce code style standards |
+| `dry-principle`             | Apply Don't Repeat Yourself refactoring   |
 
 ### Contextual Skills (Invoke When Needed)
 
 Invoke these skills based on specific task requirements:
 
-| Skill       | When to Use                                      | Invocation                      |
-| ----------- | ------------------------------------------------ | ------------------------------- |
+| Skill       | When to Use                                     | Invocation                      |
+| ----------- | ----------------------------------------------- | ------------------------------- |
 | `debugging` | When simplified code needs debugging validation | `Skill({ skill: 'debugging' })` |
 
 ## Output Locations

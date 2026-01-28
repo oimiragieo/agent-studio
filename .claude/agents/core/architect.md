@@ -33,6 +33,7 @@ skills:
   - diagram-generator
   - project-analyzer
   - brainstorming
+  - progressive-disclosure
   - task-management-protocol
 ---
 

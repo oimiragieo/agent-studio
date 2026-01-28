@@ -269,6 +269,7 @@ Task({
     'Read','Write','Edit','Bash',
     'TaskUpdate','TaskList','TaskCreate','TaskGet',
     'Skill',
+    'mcp__sequential-thinking__sequentialthinking',
   ],
   prompt: `You are the <ROLE> agent.
 
@@ -347,6 +348,7 @@ Task({
     'TaskCreate',
     'TaskGet',
     'Skill',
+    'mcp__sequential-thinking__sequentialthinking',
     'mcp__Exa__web_search_exa',
     'mcp__Exa__get_code_context_exa', // For research
   ],
@@ -739,30 +741,34 @@ All spawned agents:
 
 ### 8.5 WORKFLOW ENHANCEMENT SKILLS
 
-| Skill                                | When to Use                             |
-| ------------------------------------ | --------------------------------------- |
-| `project-onboarding`                 | unfamiliar codebase                     |
-| `thinking-tools`                     | self-reflection at critical phases      |
-| `operational-modes`                  | regulate tool usage                     |
-| `summarize-changes`                  | after non-trivial coding                |
-| `session-handoff`                    | before ending long sessions             |
-| `interactive-requirements-gathering` | structured user input                   |
-| `smart-revert`                       | revert logical work units               |
-| `codebase-integration`               | integrating external codebases          |
-| `artifact-lifecycle`                 | manage artifact updates/deprecation     |
-| `workflow-creator`                   | create multi-agent workflows            |
-| `template-creator`                   | create templates                        |
-| `schema-creator`                     | create JSON schemas                     |
-| `hook-creator`                       | create safety/validation hooks          |
-| `spec-gathering`                     | start new features                      |
-| `spec-writing`                       | formal specs                            |
-| `spec-critique`                      | validate specs                          |
-| `complexity-assessment`              | analyze complexity                      |
-| `insight-extraction`                 | capture learnings                       |
-| `qa-workflow`                        | systematic test/fix loops               |
-| `ripgrep`                            | enhanced search for .mjs/.cjs/.mts/.cts |
-| `chrome-browser`                     | browser automation/testing              |
-| `arxiv-mcp`                          | arXiv search/retrieve                   |
+| Skill                                | When to Use                              |
+| ------------------------------------ | ---------------------------------------- |
+| `project-onboarding`                 | unfamiliar codebase                      |
+| `thinking-tools`                     | self-reflection at critical phases       |
+| `operational-modes`                  | regulate tool usage                      |
+| `summarize-changes`                  | after non-trivial coding                 |
+| `session-handoff`                    | before ending long sessions              |
+| `interactive-requirements-gathering` | structured user input                    |
+| `smart-revert`                       | revert logical work units                |
+| `codebase-integration`               | integrating external codebases           |
+| `artifact-lifecycle`                 | manage artifact updates/deprecation      |
+| `workflow-creator`                   | create multi-agent workflows             |
+| `template-creator`                   | create templates                         |
+| `schema-creator`                     | create JSON schemas                      |
+| `hook-creator`                       | create safety/validation hooks           |
+| `spec-gathering`                     | start new features                       |
+| `spec-writing`                       | formal specs                             |
+| `spec-critique`                      | validate specs                           |
+| `complexity-assessment`              | analyze complexity                       |
+| `insight-extraction`                 | capture learnings                        |
+| `qa-workflow`                        | systematic test/fix loops                |
+| `ripgrep`                            | enhanced search for .mjs/.cjs/.mts/.cts  |
+| `chrome-browser`                     | browser automation/testing               |
+| `arxiv-mcp`                          | arXiv search/retrieve                    |
+| `checklist-generator`                | quality checklists (IEEE + contextual)   |
+| `progressive-disclosure`             | gather requirements (3-5 clarifications) |
+| `template-renderer`                  | render templates with token replacement  |
+| `task-breakdown`                     | break plans into Epic→Story→Task lists   |
 
 ### 8.6 ENTERPRISE WORKFLOWS
 

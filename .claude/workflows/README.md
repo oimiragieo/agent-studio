@@ -58,6 +58,7 @@ Skill-specific workflows tied to individual creator skills or domain agents:
 4. **Root level** - Single skill or single-domain workflows
 
 **Naming Convention**:
+
 - `/core/` workflows: Foundational, hyphenated (e.g., `router-decision.md`)
 - `/enterprise/` workflows: Domain-specific, clear focus (e.g., `feature-development-workflow.md`)
 - `/operations/` workflows: Operational, incident/maintenance focused
@@ -94,21 +95,27 @@ Users can reference workflows to understand:
 ## Key Workflows by Scenario
 
 ### Implementing a New Feature
+
 → `enterprise/feature-development-workflow.md`
 
 ### Creating a New Agent
+
 → `core/evolution-workflow.md` + `core/router-decision.md`
 
 ### Architecture Discussion
+
 → `enterprise/c4-architecture-workflow.md`
 
 ### Production Incident
+
 → `operations/incident-response.md`
 
 ### Security Review
+
 → `security-architect-skill-workflow.md`
 
 ### Database Design
+
 → `database-architect-skill-workflow.md`
 
 ## Maintenance Guidelines
@@ -136,4 +143,4 @@ All workflows should include:
 
 ---
 
-*Last updated: 2026-01-28*
+_Last updated: 2026-01-28_

@@ -107,6 +107,172 @@ JSON/YAML schema templates for validation.
 2. Use `template-creator` skill to generate schema templates
 3. Copy to `.claude/schemas/` for validation
 
+### Plan Template
+
+Use when creating implementation plans that bridge specifications to tasks.
+
+**File:** `plan-template.md`
+
+**Usage:**
+
+1. Copy template to `.claude/context/plans/<plan-name>.md`
+2. Replace all `{{PLACEHOLDER}}` values following the Token Replacement Guide
+3. Ensure Phase 0 (Research & Planning) is completed with constitution checkpoint
+4. Update learnings.md with plan summary
+
+**Template Features:**
+
+- **Phase 0 (Research)**: Mandatory research phase with constitution checkpoint (BLOCKING)
+- **Phase Structure**: Foundation → Core Features → Integration → Reflection
+- **Task Breakdown**: Organized by feature/capability with time estimates
+- **Dependency Graph**: ASCII visualization of task dependencies and critical path
+- **Verification Gates**: Blocking checkpoints between phases (cannot proceed if fail)
+- **Risk Assessment**: Technical, compatibility, UX, and security risks with mitigations
+- **Agent Assignments**: Clear ownership matrix for each task
+- **Success Criteria**: Measurable acceptance criteria per phase and overall
+- **Timeline Summary**: Realistic and aggressive timeline options with parallel tracks
+- **Security Review**: Integrated security assessment section
+- **Quick Wins**: Fast progress items (< 1 hour each) for immediate momentum
+- **Error Handling**: Rollback procedures for failed tasks
+
+**Constitution Checkpoint (Phase 0 - CRITICAL):**
+
+Before proceeding to Phase 1, ALL must pass:
+
+1. **Research completeness** - Minimum 3 external sources with citations
+2. **Technical feasibility** - Approach validated, dependencies identified
+3. **Security implications** - Assessed with threat model if applicable
+4. **Specification quality** - Measurable criteria, clear success metrics
+
+**If ANY item fails, MUST return to research phase. DO NOT proceed to implementation.**
+
+**Token Replacement:**
+
+See "Token Replacement Guide" section in template for complete list of 30+ required and optional tokens including:
+
+- Plan metadata (title, date, version, status)
+- Phase details (name, purpose, duration, dependencies)
+- Task details (ID, title, hours, files, verification)
+- Success criteria and metrics
+- Risk assessments
+- Agent assignments
+
+**Critical Sections:**
+
+- **Phase 0**: Research & Planning (FOUNDATION) - Cannot be skipped per ADR-045
+- **Verification Gates**: Blocking checkpoints with bash commands for validation
+- **Error Handling**: Rollback commands and failure documentation procedures
+- **Phase FINAL**: Reflection and learning extraction (MANDATORY)
+
+**Integration with Framework:**
+
+- Works with `plan-generator` skill (generate plans from specs)
+- Works with `planner` agent (break down features into phases)
+- Works with `task-breakdown` skill (organize tasks by user stories)
+- Works with `reflection-agent` (Phase FINAL learning extraction)
+
+**Storage Location:**
+
+- Active plans: `.claude/context/plans/`
+
+### Specification Template
+
+Use when creating software requirements specifications following IEEE 830 standards.
+
+**File:** `specification-template.md`
+
+**Usage:**
+
+1. Copy template to project specifications directory or `.claude/context/artifacts/specifications/`
+2. Replace all `{{PLACEHOLDER}}` tokens with actual values
+3. Complete all sections marked [REQUIRED]
+4. Validate against schema: `.claude/schemas/specification-template.schema.json`
+5. Get stakeholder sign-off
+
+**Features:**
+
+- **YAML Frontmatter**: Machine-readable metadata (title, version, author, status, date, acceptance criteria)
+- **Markdown Body**: Human-readable IEEE 830 structure (11 main sections)
+- **Token Replacement**: `{{PROJECT_NAME}}`, `{{AUTHOR}}`, `{{DATE}}`, `{{VERSION}}`, `{{FEATURE_NAME}}`
+- **Schema Validation**: Validates against JSON Schema for consistency
+- **Acceptance Criteria**: Measurable checkboxes for implementation tracking
+- **ADR-044 Compliance**: YAML+MD hybrid format for tooling integration
+
+**IEEE 830 Sections:**
+
+1. Introduction (Purpose, Scope, Definitions)
+2. Functional Requirements (FR-XXX)
+3. Non-Functional Requirements (NFR-XXX)
+4. System Features (Workflows)
+5. External Interface Requirements (APIs, Database, Dependencies)
+6. Quality Attributes (Testability, Maintainability, Monitoring)
+7. Constraints (Technical, Schedule, Resource)
+8. Assumptions and Dependencies
+9. Future Enhancements
+10. Acceptance Criteria (Summary)
+11. Glossary
+
+**Integration with Framework:**
+
+- Works with `spec-gathering` skill (collect requirements)
+- Works with `spec-writing` skill (generate initial draft)
+- Works with `spec-critique` skill (review and validate)
+- Works with `planner` agent (break down into implementation tasks)
+
+**Storage Locations:**
+
+- Active specs: `.claude/context/artifacts/specifications/active/`
+- Approved specs: `.claude/context/artifacts/specifications/approved/`
+- Deprecated specs: `.claude/context/artifacts/specifications/deprecated/`
+
+### Task Breakdown Template
+
+Use when breaking down features into implementable tasks with user story organization.
+
+**File:** `tasks-template.md`
+
+**Usage:**
+
+1. Copy template to `.claude/context/artifacts/plans/tasks-<feature-name>.md`
+2. Replace all `{{PLACEHOLDER}}` values with concrete values
+3. Follow Epic → User Story → Task hierarchy
+4. Organize by priority: Enablers (foundational), P1 (MVP), P2 (Nice-to-Have), P3 (Polish)
+5. Define acceptance criteria for each user story
+6. Track dependencies between tasks
+7. Create TaskCreate calls for tracking
+
+**Key Features:**
+
+- **Enabler Support**: Foundational tasks that block all user stories (SAFe pattern)
+- **User Story Organization**: P1/P2/P3 prioritization (MoSCoW method: Must/Should/Could have)
+- **Task ID Convention**: `ENABLER-X.Y`, `P1-X.Y.Z`, `P2-X.Y.Z`, `P3-X.Y.Z`
+- **SAFe/Azure DevOps Alignment**: Industry-standard Epic → Story → Task hierarchy
+- **Acceptance Criteria**: Testable criteria for each user story (Agile best practice)
+- **Dependency Tracking**: Clear blockedBy relationships
+- **Token Replacement**: 20+ tokens for easy instantiation
+- **Quality Checklist**: Built-in quality gates for each story
+- **Risk Assessment**: Structured risk tracking table
+
+**Priority Levels (ADR-045):**
+
+- **Enablers**: Shared infrastructure (completes before user stories)
+- **P1 (MVP)**: Must-have features 🎯 - minimum viable product
+- **P2 (Nice-to-Have)**: Should-have features - important but not blocking
+- **P3 (Polish)**: Could-have features - refinement and optimization
+
+**Integration with Agent-Studio:**
+
+After creating task breakdown:
+
+1. Use `TaskCreate` to create trackable tasks from the breakdown
+2. Set up dependencies with `TaskUpdate({ addBlockedBy: [...] })`
+3. Track progress with `TaskUpdate({ status: "in_progress|completed" })`
+4. Link to specification with `related_specs` frontmatter field
+
+**Storage Location:**
+
+- Task breakdowns: `.claude/context/artifacts/plans/`
+
 ## Template Creator Skill
 
 Use the `template-creator` skill to create new templates:
@@ -166,14 +332,17 @@ This ensures agents automatically load institutional memory.
 
 ## Quick Reference
 
-| Creating     | Template                         | CLAUDE.md Section         | Output Path                      |
-| ------------ | -------------------------------- | ------------------------- | -------------------------------- |
-| Agent        | `agents/agent-template.md`       | Section 3 (Routing Table) | `.claude/agents/<category>/`     |
-| Skill        | `skills/skill-template.md`       | Section 8.5 (Skills)      | `.claude/skills/<name>/SKILL.md` |
-| Workflow     | `workflows/workflow-template.md` | Section 3 (Workflows)     | `.claude/workflows/<category>/`  |
-| Hook         | `hooks/<hook-type>.md`           | N/A                       | `.claude/hooks/<category>/`      |
-| Code Pattern | `code/<language>-<pattern>.md`   | N/A                       | Project source                   |
-| Schema       | `schemas/<schema-type>.md`       | N/A                       | `.claude/schemas/`               |
+| Creating      | Template                         | CLAUDE.md Section         | Output Path                                 |
+| ------------- | -------------------------------- | ------------------------- | ------------------------------------------- |
+| Agent         | `agents/agent-template.md`       | Section 3 (Routing Table) | `.claude/agents/<category>/`                |
+| Skill         | `skills/skill-template.md`       | Section 8.5 (Skills)      | `.claude/skills/<name>/SKILL.md`            |
+| Workflow      | `workflows/workflow-template.md` | Section 3 (Workflows)     | `.claude/workflows/<category>/`             |
+| Specification | `specification-template.md`      | N/A                       | `.claude/context/artifacts/specifications/` |
+| Plan          | `plan-template.md`               | N/A                       | `.claude/context/plans/`                    |
+| Tasks         | `tasks-template.md`              | N/A                       | `.claude/context/artifacts/plans/`          |
+| Hook          | `hooks/<hook-type>.md`           | N/A                       | `.claude/hooks/<category>/`                 |
+| Code Pattern  | `code/<language>-<pattern>.md`   | N/A                       | Project source                              |
+| Schema        | `schemas/<schema-type>.md`       | N/A                       | `.claude/schemas/`                          |
 
 ## Creator Skills
 

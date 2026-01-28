@@ -1,19 +1,21 @@
 ---
 name: plan-generator
-description: Creates structured plans from requirements. Generates comprehensive plans with steps, dependencies, risks, and success criteria. Coordinates with specialist agents for planning input and validates plan completeness.
-version: 1.0
+description: Creates structured plans from requirements. Generates comprehensive plans with steps, dependencies, risks, and success criteria. Coordinates with specialist agents for planning input and validates plan completeness. Uses template-renderer for formatted output.
+version: 1.1
 model: opus
 invoked_by: both
 user_invocable: true
-tools: [Read, Write, Edit, Bash, Glob, Grep]
+tools: [Read, Write, Edit, Bash, Glob, Grep, Skill]
 best_practices:
   - Coordinate with Analyst, PM, Architect for planning input
   - Break down requirements into actionable steps (<=7 per section)
   - Identify dependencies and sequencing
   - Assess risks with mitigation strategies
   - Validate plan completeness and feasibility
+  - Use template-renderer for formatted plan output
 error_handling: graceful
 streaming: supported
+related_skills: [template-renderer, writing-plans]
 ---
 
 # Plan Generator Skill
@@ -158,11 +160,51 @@ Validate plan completeness:
 
 ### Step 6: Generate Artifacts
 
-Create plan artifacts:
+Create plan artifacts using the template-renderer skill:
 
-- Plan markdown: `.claude/context/artifacts/plan-<id>.md`
-- Plan JSON: `.claude/context/artifacts/plan-<id>.json`
-- Plan summary
+**Using Template-Renderer**:
+After creating plan data structure, invoke template-renderer to generate formatted output:
+
+```javascript
+// Map plan data to template tokens
+const planTokens = {
+  PLAN_TITLE: plan.title,
+  DATE: new Date().toISOString().split('T')[0],
+  FRAMEWORK_VERSION: 'Agent-Studio v2.2.1',
+  STATUS: plan.status || 'Phase 0 - Research',
+  EXECUTIVE_SUMMARY: plan.executiveSummary,
+  TOTAL_TASKS: `${plan.totalTasks} atomic tasks`,
+  FEATURES_COUNT: plan.features.length,
+  ESTIMATED_TIME: plan.estimatedTime,
+  STRATEGY: plan.strategy,
+  KEY_DELIVERABLES_LIST: plan.keyDeliverables.map(d => `- ${d}`).join('\n'),
+  // Phase-specific tokens
+  PHASE_0_PURPOSE: plan.phases[0].purpose,
+  PHASE_0_DURATION: plan.phases[0].duration,
+  PHASE_1_NAME: plan.phases[1].name,
+  PHASE_1_PURPOSE: plan.phases[1].purpose,
+  PHASE_1_DURATION: plan.phases[1].duration,
+  DEPENDENCIES: plan.phases[1].dependencies,
+  PARALLEL_OK: plan.phases[1].parallelOk ? 'Yes' : 'No',
+  VERIFICATION_COMMANDS: plan.phases[1].verificationCommands,
+  // Add more phase tokens as needed
+};
+
+// Invoke template-renderer skill
+Skill({
+  skill: 'template-renderer',
+  args: {
+    templateName: 'plan-template',
+    outputPath: `.claude/context/plans/${planId}.md`,
+    tokens: planTokens
+  }
+});
+```
+
+**Output Locations**:
+- Plan markdown (from template): `.claude/context/plans/<plan-id>.md`
+- Plan JSON (structured data): `.claude/context/plans/<plan-id>.json`
+- Plan summary (for quick reference)
 </execution_process>
 
 <plan_types>
@@ -318,7 +360,41 @@ npm test -- --grep "auth" && echo "All auth tests passing"
 | 3         | 2     | 25 min      | Yes       |
 | **Total** | **8** | **~78 min** |           |
 
-```
+````
+
+**After plan generation**, invoke template-renderer:
+
+```javascript
+// Map plan data to tokens
+const tokens = {
+  PLAN_TITLE: 'User Authentication Feature',
+  DATE: '2026-01-28',
+  FRAMEWORK_VERSION: 'Agent-Studio v2.2.1',
+  STATUS: 'Phase 0 - Research',
+  EXECUTIVE_SUMMARY: 'Add JWT-based authentication with login/logout endpoints...',
+  TOTAL_TASKS: '8 atomic tasks',
+  FEATURES_COUNT: '1',
+  ESTIMATED_TIME: '~78 minutes',
+  STRATEGY: 'Foundation-first → Core features → Security review',
+  KEY_DELIVERABLES_LIST: '- Authentication module\n- Login/logout endpoints\n- Security audit',
+  PHASE_1_NAME: 'Setup & Design',
+  PHASE_1_PURPOSE: 'Create feature branch and design architecture',
+  PHASE_1_DURATION: '18 minutes',
+  DEPENDENCIES: 'None',
+  PARALLEL_OK: 'Partial',
+  VERIFICATION_COMMANDS: 'git branch --show-current | grep feature/auth && ls src/auth',
+};
+
+// Render plan using template
+Skill({
+  skill: 'template-renderer',
+  args: {
+    templateName: 'plan-template',
+    outputPath: '.claude/context/plans/user-auth-plan.md',
+    tokens: tokens
+  }
+});
+````
 
 </formatting_example>
 </examples>
@@ -326,46 +402,73 @@ npm test -- --grep "auth" && echo "All auth tests passing"
 ## Rules
 
 ### The Iron Law of Planning
+
 ```
 
 EVERY TASK MUST HAVE AN EXECUTABLE COMMAND
 
-````
+```
 
 A task without a command is not a task - it's a wish.
 
 ### Mandatory Elements
+
 - **Every task** must have: checkbox, ID, time estimate, command, verify
 - **Every phase** must have: verification gate, error handling
 - **Every risk** must have: rollback command
 
 ### Anti-Patterns (DO NOT)
-| Anti-Pattern | Problem | Fix |
-|--------------|---------|-----|
-| "Install X" without command | Not executable | Add: `cp -r source dest` |
-| "Verify Y works" | Vague | Add: `npm test \| grep PASS` |
-| "Update Z" | What file? What change? | Add exact `Edit` or `sed` command |
-| No time estimates | Can't track progress | Add `(~X min)` to every task |
-| No rollback | Can't recover from failure | Add rollback command |
+
+| Anti-Pattern                | Problem                    | Fix                               |
+| --------------------------- | -------------------------- | --------------------------------- |
+| "Install X" without command | Not executable             | Add: `cp -r source dest`          |
+| "Verify Y works"            | Vague                      | Add: `npm test \| grep PASS`      |
+| "Update Z"                  | What file? What change?    | Add exact `Edit` or `sed` command |
+| No time estimates           | Can't track progress       | Add `(~X min)` to every task      |
+| No rollback                 | Can't recover from failure | Add rollback command              |
 
 ### Quality Checklist
+
 Before finalizing any plan, verify:
+
 - [ ] Can I copy-paste every command and run it?
 - [ ] Does every verify command have a clear pass/fail output?
 - [ ] Is there a rollback for every destructive operation?
 - [ ] Are time estimates realistic and granular?
 - [ ] Are parallel tasks marked with ⚡?
 
+## Template Integration
+
+This skill uses the `template-renderer` skill to generate formatted plans:
+
+**Integration Flow**:
+
+1. plan-generator creates structured plan data (JSON)
+2. Maps plan data to template tokens (see Step 6)
+3. Invokes template-renderer with plan-template
+4. Outputs rendered plan to `.claude/context/plans/`
+
+**Required Tokens** (for plan-template):
+
+- Core: `PLAN_TITLE`, `DATE`, `FRAMEWORK_VERSION`, `STATUS`
+- Summary: `EXECUTIVE_SUMMARY`, `TOTAL_TASKS`, `ESTIMATED_TIME`, `STRATEGY`
+- Phases: `PHASE_N_NAME`, `PHASE_N_PURPOSE`, `DEPENDENCIES`, `PARALLEL_OK`
+- Verification: `VERIFICATION_COMMANDS`
+
+See `.claude/templates/plan-template.md` for complete token list.
+
 ## Related Skills
 
+- [`template-renderer`](../template-renderer/SKILL.md) - Renders plan-template with token replacement
 - [`writing-plans`](../writing-plans/SKILL.md) - Bite-sized task plans with complete code for implementation
 
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
-````
+```
 
 **After completing:**
 

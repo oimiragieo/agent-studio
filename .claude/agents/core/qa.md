@@ -27,6 +27,7 @@ skills:
   - test-generator
   - rule-auditor
   - verification-before-completion
+  - checklist-generator
   - tdd
   - ripgrep
   - code-analyzer
@@ -51,10 +52,11 @@ skills:
 
 ## Workflow
 
-1.  **Analyze**: Review the implementation plan.
-2.  **Strategy**: Define test cases (Unit, Integration, E2E).
-3.  **Implement**: Write test code using project's framework.
-4.  **Verify**: Run tests and report failures.
+1.  **Checklist**: Invoke `Skill({ skill: "checklist-generator" })` to generate IEEE 1028 + contextual quality checklist.
+2.  **Analyze**: Review the implementation plan and apply checklist items.
+3.  **Strategy**: Define test cases (Unit, Integration, E2E) based on checklist requirements.
+4.  **Implement**: Write test code using project's framework, validating against checklist.
+5.  **Verify**: Run tests and report failures; cross-check against checklist completion.
 
 ## Tools
 
@@ -103,14 +105,15 @@ Before starting any task, invoke these skills:
 
 Invoke based on task context:
 
-| Condition                  | Skill                                    | Purpose                   |
-| -------------------------- | ---------------------------------------- | ------------------------- |
-| Python testing             | `comprehensive-unit-testing-with-pytest` | Pytest best practices     |
-| Code quality analysis      | `code-analyzer`                          | Static analysis           |
-| Rule validation            | `rule-auditor`                           | Validate against rules    |
-| QA workflow needed         | `qa-workflow`                            | Systematic QA process     |
-| Security testing           | `security-architect`                     | Security testing patterns |
-| Before claiming completion | `verification-before-completion`         | Evidence-based completion |
+| Condition                  | Skill                                    | Purpose                           |
+| -------------------------- | ---------------------------------------- | --------------------------------- |
+| At task start              | `checklist-generator`                    | Generate IEEE 1028 + contextual   |
+| Python testing             | `comprehensive-unit-testing-with-pytest` | Pytest best practices             |
+| Code quality analysis      | `code-analyzer`                          | Static analysis                   |
+| Rule validation            | `rule-auditor`                           | Validate against rules            |
+| QA workflow needed         | `qa-workflow`                            | Systematic QA process             |
+| Security testing           | `security-architect`                     | Security testing patterns         |
+| Before claiming completion | `verification-before-completion`         | Evidence-based completion + gates |
 
 ### Skill Discovery
 

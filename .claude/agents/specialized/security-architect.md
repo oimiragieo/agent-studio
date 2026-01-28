@@ -37,6 +37,7 @@ skills:
   - authentication-flow-rules
   - web3-expert
   - chrome-browser
+  - template-renderer
 context_files:
   - .claude/context/memory/learnings.md
 ---

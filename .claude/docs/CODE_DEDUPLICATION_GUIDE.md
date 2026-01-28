@@ -5,6 +5,7 @@ Step-by-step process for identifying and resolving code duplication across the f
 ## Overview
 
 Code duplication leads to:
+
 - Maintenance burden (fix in N places instead of 1)
 - Inconsistent behavior when fixes are applied to some but not all copies
 - Increased codebase size and cognitive load
@@ -15,17 +16,20 @@ This guide provides a systematic approach to identifying duplication and consoli
 ## When to Deduplicate
 
 **High Priority**:
+
 - Same function copy-pasted across 5+ files
 - Utility logic duplicated across hooks (parseHookInput, findProjectRoot)
 - State file access patterns repeated in multiple hooks
 - Error handling patterns duplicated
 
 **Medium Priority**:
+
 - Similar but not identical implementations across 3-4 files
 - Configuration patterns duplicated across modules
 - Test helper code duplicated across test files
 
 **Lower Priority**:
+
 - Simple one-liner utilities (may not be worth abstracting)
 - Code that varies slightly by context (may need parameterization)
 
@@ -73,6 +77,7 @@ Track duplication issues:
 
 ```markdown
 ## [HOOK-001] parseHookInput() Duplication
+
 - **Files**: 40+ hooks
 - **Lines Duplicated**: ~2000 lines total
 - **Fix**: Use shared .claude/lib/utils/hook-input.cjs
@@ -198,6 +203,7 @@ Update memory:
 
 ```markdown
 ## [Date] Consolidated <utility-name>
+
 - **Pattern**: Duplicated <function-name>() across <N> files
 - **Resolution**: Created shared utility at .claude/lib/utils/<utility-name>.cjs
 - **Files Modified**: <list>
@@ -212,6 +218,7 @@ Update memory:
 **Problem**: ~2000 lines duplicated across 40+ hook files
 
 **Pattern Before**:
+
 ```javascript
 // Each hook had this ~50 lines:
 function parseHookInput() {
@@ -225,6 +232,7 @@ function parseHookInput() {
 **Solution Created**: `.claude/lib/utils/hook-input.cjs`
 
 **Features**:
+
 - `parseHookInputSync()` - Synchronous parsing
 - `parseHookInputAsync()` - Async with timeout
 - `getToolName(input)` - Extract tool name from various input formats
@@ -236,12 +244,9 @@ function parseHookInput() {
 - `auditSecurityOverride(hook, envVar, value, impact)` - Security override audit
 
 **Usage**:
+
 ```javascript
-const {
-  parseHookInputAsync,
-  getToolName,
-  auditLog,
-} = require('../../lib/utils/hook-input.cjs');
+const { parseHookInputAsync, getToolName, auditLog } = require('../../lib/utils/hook-input.cjs');
 
 async function main() {
   const input = await parseHookInputAsync();
@@ -257,6 +262,7 @@ async function main() {
 **Problem**: ~200 lines duplicated across 20+ files
 
 **Pattern Before**:
+
 ```javascript
 // Each file had this ~12 lines:
 function findProjectRoot() {
@@ -275,12 +281,14 @@ const PROJECT_ROOT = findProjectRoot();
 **Solution Created**: `.claude/lib/utils/project-root.cjs`
 
 **Features**:
+
 - `PROJECT_ROOT` - Pre-computed project root (use this for efficiency)
 - `findProjectRoot(startDir)` - Dynamic lookup from any starting point
 - `validatePathWithinProject(path)` - Path traversal prevention (CRITICAL-001)
 - `sanitizePath(path)` - Safe path resolution with validation
 
 **Usage**:
+
 ```javascript
 // Most common usage (pre-computed, efficient):
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
@@ -301,6 +309,7 @@ const safePath = sanitizePath(userProvidedPath);
 **Problem**: Inconsistent logging formats across hooks
 
 **Pattern Before**:
+
 ```javascript
 // Some hooks:
 console.error(JSON.stringify({ event: 'blocked', reason: 'x' }));
@@ -315,11 +324,13 @@ console.warn('Hook blocked: x');
 **Solution**: Added to `hook-input.cjs`
 
 **Features**:
+
 - `auditLog(hookName, event, extra)` - JSON to stderr with timestamp
 - `debugLog(hookName, message, error)` - Conditional on DEBUG_HOOKS
 - `auditSecurityOverride(hookName, envVar, value, impact)` - Security audit trail
 
 **Format**:
+
 ```json
 {
   "hook": "routing-guard",
@@ -334,14 +345,14 @@ console.warn('Hook blocked: x');
 
 ## Shared Utilities Reference
 
-| Utility | Location | Exports | Purpose |
-|---------|----------|---------|---------|
-| hook-input | `.claude/lib/utils/hook-input.cjs` | parseHookInputSync, parseHookInputAsync, getToolName, auditLog, etc. | Hook input parsing and logging |
+| Utility      | Location                             | Exports                                                                | Purpose                                    |
+| ------------ | ------------------------------------ | ---------------------------------------------------------------------- | ------------------------------------------ |
+| hook-input   | `.claude/lib/utils/hook-input.cjs`   | parseHookInputSync, parseHookInputAsync, getToolName, auditLog, etc.   | Hook input parsing and logging             |
 | project-root | `.claude/lib/utils/project-root.cjs` | PROJECT_ROOT, findProjectRoot, validatePathWithinProject, sanitizePath | Project root discovery and path validation |
-| safe-json | `.claude/lib/utils/safe-json.cjs` | safeParseState, safeStringifyState, STATE_SCHEMAS | State file parsing with schema validation |
-| atomic-write | `.claude/lib/utils/atomic-write.cjs` | atomicWriteSync, atomicWriteAsync | Atomic file operations with locking |
-| state-cache | `.claude/lib/utils/state-cache.cjs` | getCachedState, setCachedState, invalidateCache | State file caching to reduce I/O |
-| platform | `.claude/lib/utils/platform.cjs` | isWindows, bashPath, normalizePathForPlatform | Cross-platform utilities |
+| safe-json    | `.claude/lib/utils/safe-json.cjs`    | safeParseState, safeStringifyState, STATE_SCHEMAS                      | State file parsing with schema validation  |
+| atomic-write | `.claude/lib/utils/atomic-write.cjs` | atomicWriteSync, atomicWriteAsync                                      | Atomic file operations with locking        |
+| state-cache  | `.claude/lib/utils/state-cache.cjs`  | getCachedState, setCachedState, invalidateCache                        | State file caching to reduce I/O           |
+| platform     | `.claude/lib/utils/platform.cjs`     | isWindows, bashPath, normalizePathForPlatform                          | Cross-platform utilities                   |
 
 ## Import Path Convention
 
