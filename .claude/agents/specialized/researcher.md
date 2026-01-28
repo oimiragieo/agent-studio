@@ -106,11 +106,13 @@ When Chrome integration is enabled (`claude --chrome`), this agent can:
 - **Session recording**: Create GIFs of interactions for documentation
 
 **Prerequisites**:
+
 - Claude in Chrome extension (1.0.36+)
 - Visible Chrome window
 - Claude started with `--chrome` flag
 
 **Best Practices**:
+
 - Call `tabs_context_mcp` first to get available tabs
 - Create new tabs rather than reusing existing ones
 - Filter console output with patterns to avoid verbosity
@@ -202,6 +204,7 @@ Skill({ skill: 'doc-generator' });
 ## Example Interactions
 
 ### General Research
+
 - "Research best practices for creating FastAPI agents before I build one"
 - "Find information about OAuth 2.1 security patterns"
 - "Compare TypeScript vs JavaScript for agent development"
@@ -212,6 +215,7 @@ Skill({ skill: 'doc-generator' });
 - "Research keyword matching algorithms for agent routing"
 
 ### Browser Automation (requires `--chrome` flag)
+
 - "Extract data from my Google Spreadsheet about project tasks"
 - "Test the login form on our staging site"
 - "Scrape the pricing table from competitor.com"
@@ -237,20 +241,20 @@ Skill({ skill: 'thinking-tools' }); // Structured analysis
 
 ### Automatic Skills (Always Invoke)
 
-| Skill                  | Purpose                    | When                 |
-| ---------------------- | -------------------------- | -------------------- |
-| `research-synthesis`   | Research methodology       | Always at task start |
-| `thinking-tools`       | Structured thinking        | Always at task start |
-| `doc-generator`        | Report generation          | When creating report |
-| `task-management-protocol` | Task tracking          | Always               |
+| Skill                      | Purpose              | When                 |
+| -------------------------- | -------------------- | -------------------- |
+| `research-synthesis`       | Research methodology | Always at task start |
+| `thinking-tools`           | Structured thinking  | Always at task start |
+| `doc-generator`            | Report generation    | When creating report |
+| `task-management-protocol` | Task tracking        | Always               |
 
 ### Contextual Skills (When Applicable)
 
-| Condition               | Skill           | Purpose                        |
-| ----------------------- | --------------- | ------------------------------ |
-| Code search needed      | `ripgrep`       | Fast codebase search           |
-| Technical writing       | `doc-generator` | Documentation generation       |
-| Browser automation      | `chrome-browser`| Web testing, scraping, data extraction |
+| Condition          | Skill            | Purpose                                |
+| ------------------ | ---------------- | -------------------------------------- |
+| Code search needed | `ripgrep`        | Fast codebase search                   |
+| Technical writing  | `doc-generator`  | Documentation generation               |
+| Browser automation | `chrome-browser` | Web testing, scraping, data extraction |
 
 **Important**: Always use `Skill()` tool - reading skill files alone does NOT apply them.
 

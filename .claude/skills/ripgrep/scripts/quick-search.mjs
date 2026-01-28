@@ -134,11 +134,11 @@ const rg = spawn(RG_BINARY, rgArgs, {
   shell: false, // SECURITY: Prevent shell interpretation
 });
 
-rg.on('error', (error) => {
+rg.on('error', error => {
   console.error(`❌ Failed to execute ripgrep: ${error.message}`);
   process.exit(1);
 });
 
-rg.on('close', (code) => {
+rg.on('close', code => {
   process.exit(code);
 });

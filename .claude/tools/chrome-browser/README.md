@@ -24,22 +24,22 @@ node chrome-browser.cjs help
 
 ## Commands
 
-| Command    | Description |
-|------------|-------------|
-| `run`      | Execute the skill (default) |
+| Command    | Description                      |
+| ---------- | -------------------------------- |
+| `run`      | Execute the skill (default)      |
 | `validate` | Validate inputs before execution |
-| `help`     | Show help message |
+| `help`     | Show help message                |
 
 ## Options
 
-| Option | Description |
-|--------|-------------|
-| `--input <file>` | Input file path |
-| `--output <file>` | Output file path |
+| Option            | Description               |
+| ----------------- | ------------------------- |
+| `--input <file>`  | Input file path           |
+| `--output <file>` | Output file path          |
 | `--config <file>` | Configuration file (JSON) |
-| `--json` | Output results as JSON |
-| `--verbose` | Verbose output |
-| `--help` | Show help message |
+| `--json`          | Output results as JSON    |
+| `--verbose`       | Verbose output            |
+| `--help`          | Show help message         |
 
 ## Integration
 
@@ -49,10 +49,14 @@ node chrome-browser.cjs help
 const { spawnSync } = require('child_process');
 
 // Run the tool (SEC-009: Use spawnSync with shell:false for security)
-const result = spawnSync('node', ['.claude/tools/chrome-browser/chrome-browser.cjs', 'run', '--json'], {
-  encoding: 'utf-8',
-  shell: false
-});
+const result = spawnSync(
+  'node',
+  ['.claude/tools/chrome-browser/chrome-browser.cjs', 'run', '--json'],
+  {
+    encoding: 'utf-8',
+    shell: false,
+  }
+);
 const data = JSON.parse(result.stdout);
 ```
 

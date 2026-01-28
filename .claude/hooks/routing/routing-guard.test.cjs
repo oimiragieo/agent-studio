@@ -836,11 +836,7 @@ describe('routing-guard', () => {
 
       // Test: Glob should be ALLOWED in agent mode
       const result = routingGuard.checkRouterSelfCheck('Glob', {});
-      assert.strictEqual(
-        result.pass,
-        true,
-        'Glob should be ALLOWED in agent mode (Task spawned)'
-      );
+      assert.strictEqual(result.pass, true, 'Glob should be ALLOWED in agent mode (Task spawned)');
     });
 
     it('should block Glob even when user explicitly requests it (ROUTING-002 root cause)', () => {
@@ -869,10 +865,7 @@ describe('routing-guard', () => {
         'Glob should be BLOCKED via runAllChecks in router mode'
       );
       assert.strictEqual(result.result, 'block', 'Result should be block');
-      assert.ok(
-        result.message.includes('blacklisted'),
-        'Message should mention blacklisted tool'
-      );
+      assert.ok(result.message.includes('blacklisted'), 'Message should mention blacklisted tool');
     });
   });
 });

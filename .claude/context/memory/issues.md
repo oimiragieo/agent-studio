@@ -1173,28 +1173,31 @@ These agents exist but are NOT documented in CLAUDE.md Section 3. See full list 
 
 - **Date**: 2026-01-27
 - **Severity**: High
-- **Status**: PARTIALLY RESOLVED (State Reset Only - Blocking Not Implemented)
-- **Resolution Date**: 2026-01-27 (Partial)
+- **Status**: RESOLVED
+- **Resolution Date**: 2026-01-28 (Complete Fix Verified)
 - **Category**: routing_violation
 - **Task**: Task #1 - Post-fix Router-First Protocol verification
 - **Description**: Headless test revealed Router using Glob tool directly when user prompt explicitly mentioned "using Glob". Command: `claude -p "List all TypeScript files in the project using Glob"`. Router executed Glob instead of spawning DEVELOPER agent or refusing blacklisted tool.
-- **Root Cause Found**: The issue was in `user-prompt-unified.cjs`, NOT `routing-guard.cjs`. The hook had a 30-minute "active agent context" window that preserved `state.taskSpawned=true` across user prompts. This caused `routing-guard.cjs` to see agent mode and allow blacklisted tools.
-- **Resolution Applied** (PARTIAL - State Reset Only):
-  1. **Modified `user-prompt-unified.cjs`**: Removed the 30-minute window check that skipped state reset ✅
-  2. **Design Change**: Every new user prompt now ALWAYS resets to router mode ✅
-  3. **Rationale**: Router needs to re-evaluate each new prompt. Agent mode is for SUBAGENTS, not for Router handling new prompts.
-  4. **Tests Added**: 5 new tests for ROUTING-002 fix (TDD approach) ✅
-  5. **NOT IMPLEMENTED**: Hook blocking with exit code 2 ❌
+- **Root Cause Found**: Two-part issue in state lifecycle management:
+  1. **user-prompt-unified.cjs**: 30-minute "active agent context" window preserved `state.taskSpawned=true` across user prompts
+  2. **post-task-unified.cjs**: Called `enterAgentMode()` AFTER task completion instead of `exitAgentMode()`, keeping agent mode active
+- **Resolution Applied** (COMPLETE - Two-Part Fix):
+  1. **Modified `user-prompt-unified.cjs`**: Removed 30-minute window check that skipped state reset ✅
+  2. **Added `exitAgentMode()` to `router-state.cjs`**: Resets mode to 'router' while preserving planner/security spawn tracking ✅
+  3. **Modified `post-task-unified.cjs`**: Changed `enterAgentMode()` → `exitAgentMode()` after task completion ✅
+  4. **Tests Added**: 8 new tests for ROUTING-002 fix (7 unit + 1 integration, all passing) ✅
+  5. **Debug Logging**: Added `ROUTER_DEBUG=true` for troubleshooting ✅
 - **Files Modified**:
-  - `C:\dev\projects\agent-studio\.claude\hooks\routing\user-prompt-unified.cjs` (removed active_agent_context check)
-  - `C:\dev\projects\agent-studio\.claude\hooks\routing\user-prompt-unified.test.cjs` (added ROUTING-002 tests)
-  - `C:\dev\projects\agent-studio\.claude\hooks\routing\routing-guard.test.cjs` (added ROUTING-002 tests)
-- **Test Results After Fix**: 101/101 tests pass (unit tests only - did NOT verify end-to-end blocking)
-- **HEADLESS TEST RESULT (2026-01-27)**: QA Agent verified that Router STILL uses Glob when user requests it. State reset works, but routing-guard.cjs does NOT block the action.
-- **Report**: `.claude/context/artifacts/reports/post-fix-router-tests-2026-01-27.md`
-- **Verification Test Report**: `.claude/context/artifacts/reports/routing-fix-verification-2026-01-27.md` (2026-01-27 - FAILED)
-- **Related Issues**: ENFORCEMENT-003 (hooks advisory-only - ROOT CAUSE), TESTING-003 (claude command blocked), ROUTING-003 (router-mode-reset session boundary detection)
-- **Remaining Work**: Implement blocking exit codes in routing-guard.cjs (see ENFORCEMENT-003)
+  - `.claude/hooks/routing/user-prompt-unified.cjs` (removed active_agent_context check)
+  - `.claude/hooks/routing/post-task-unified.cjs` (changed enterAgentMode() → exitAgentMode())
+  - `.claude/hooks/routing/router-state.cjs` (added exitAgentMode() function and export)
+  - `.claude/hooks/routing/user-prompt-unified.test.cjs` (added ROUTING-002 tests)
+  - `.claude/hooks/routing/routing-guard.test.cjs` (added ROUTING-002 tests)
+  - `.claude/hooks/routing/router-state.test.cjs` (added Test 18 - exitAgentMode preserves spawn tracking)
+- **Test Results After Fix**: 83/83 tests pass (added 8 new tests)
+- **HEADLESS TEST RESULT (2026-01-28)**: Router correctly spawns DEVELOPER agent instead of using Glob directly ✅
+- **Verification**: Fix complete and verified via headless test
+- **Related Issues**: ENFORCEMENT-003 (clarified - hooks were correct, state was wrong), ROUTING-003 (separate session boundary issue)
 
 ---
 

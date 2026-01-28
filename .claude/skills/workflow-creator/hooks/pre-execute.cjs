@@ -99,7 +99,9 @@ function validateInput(input) {
 const stateCreated = markCreatorActive();
 
 if (!stateCreated) {
-  console.warn(`[${CREATOR_NAME.toUpperCase()}] Warning: Could not create state file. unified-creator-guard may block workflow writes.`);
+  console.warn(
+    `[${CREATOR_NAME.toUpperCase()}] Warning: Could not create state file. unified-creator-guard may block workflow writes.`
+  );
 }
 
 // Run validation
@@ -111,5 +113,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`[${CREATOR_NAME.toUpperCase()}] Pre-execute complete. Workflow-creator workflow is now active.`);
+console.log(
+  `[${CREATOR_NAME.toUpperCase()}] Pre-execute complete. Workflow-creator workflow is now active.`
+);
 process.exit(0);

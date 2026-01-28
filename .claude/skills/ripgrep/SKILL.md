@@ -21,6 +21,7 @@ Enhanced code search with custom ripgrep binary supporting ES module extensions 
 This skill provides access to a custom ripgrep (rg) binary with enhanced file type support for modern JavaScript/TypeScript projects. The binary location and configuration are managed by this project.
 
 **Binary Location**: `C:\dev\projects\agent-studio\bin\`
+
 - Windows: `rg.exe`
 - Mac/Linux: `rg`
 
@@ -28,14 +29,14 @@ This skill provides access to a custom ripgrep (rg) binary with enhanced file ty
 
 ## Why Use This Over Built-in Grep Tool?
 
-| Feature                | Ripgrep Skill              | Built-in Grep Tool        |
-| ---------------------- | -------------------------- | ------------------------- |
+| Feature                | Ripgrep Skill             | Built-in Grep Tool         |
+| ---------------------- | ------------------------- | -------------------------- |
 | ES Module Support      | ✅ .mjs, .cjs, .mts, .cts | ❌ Limited                 |
-| Performance            | ✅ 10-100x faster          | ⚠️ Slower on large repos  |
-| Gitignore Respect      | ✅ Automatic               | ⚠️ Manual filtering needed |
-| Binary File Detection  | ✅ Automatic               | ❌ None                    |
-| PCRE2 Advanced Regexes | ✅ With `-P` flag          | ❌ Limited                 |
-| Custom Config          | ✅ .ripgreprc support      | ❌ None                    |
+| Performance            | ✅ 10-100x faster         | ⚠️ Slower on large repos   |
+| Gitignore Respect      | ✅ Automatic              | ⚠️ Manual filtering needed |
+| Binary File Detection  | ✅ Automatic              | ❌ None                    |
+| PCRE2 Advanced Regexes | ✅ With `-P` flag         | ❌ Limited                 |
+| Custom Config          | ✅ .ripgreprc support     | ❌ None                    |
 
 ## Quick Start Commands
 
@@ -238,13 +239,14 @@ rg "old" -l | xargs sed -i 's/old/new/g'
 
 1. **Use file type filters**: `-tjs` is faster than searching all files
 2. **Exclude large directories**: `-g "!node_modules/**"`
-3. **Use literal strings when possible**: `-F "literal"`  (disables regex)
+3. **Use literal strings when possible**: `-F "literal"` (disables regex)
 4. **Enable parallel search**: Ripgrep uses all cores by default
 5. **Use .gitignore**: Ripgrep respects .gitignore automatically
 
 ### Benchmarks
 
 Ripgrep is typically:
+
 - **10-100x faster** than grep
 - **5-10x faster** than ag (The Silver Searcher)
 - **3-5x faster** than git grep
@@ -308,6 +310,7 @@ rg "BLOCKING|CRITICAL" -C 2
 </execution_process>
 
 <best_practices>
+
 1. **Use file type filters** (`-tjs`, `-tts`) for faster searches
 2. **Respect .gitignore** patterns (automatic by default)
 3. **Use smart-case** for case-insensitive search (default in config)
@@ -316,8 +319,8 @@ rg "BLOCKING|CRITICAL" -C 2
 6. **Use literal search** (`-F`) when pattern has no regex
 7. **Check binary location** before searching (C:\dev\projects\agent-studio\bin\)
 8. **Use quick-search presets** for common .claude directory searches
-</best_practices>
-</instructions>
+   </best_practices>
+   </instructions>
 
 <examples>
 <usage_example>
@@ -338,6 +341,7 @@ node .claude/skills/ripgrep/scripts/quick-search.mjs hooks "security|SECURITY" -
 ```bash
 node .claude/skills/ripgrep/scripts/search.mjs -P "^function\s+\w+\(" -tjs
 ```
+
 </usage_example>
 </examples>
 
@@ -345,11 +349,11 @@ node .claude/skills/ripgrep/scripts/search.mjs -P "^function\s+\w+\(" -tjs
 
 The search scripts automatically detect the operating system and architecture to select the correct ripgrep binary:
 
-| Platform    | Architecture | Binary         |
-| ----------- | ------------ | -------------- |
-| Windows     | x64          | bin/rg.exe     |
-| macOS       | x64/arm64    | bin/rg         |
-| Linux       | x64          | bin/rg         |
+| Platform | Architecture | Binary     |
+| -------- | ------------ | ---------- |
+| Windows  | x64          | bin/rg.exe |
+| macOS    | x64/arm64    | bin/rg     |
+| Linux    | x64          | bin/rg     |
 
 ## Related Skills
 

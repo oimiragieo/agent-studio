@@ -628,14 +628,8 @@ function testExitAgentModePreservesSpawnTracking() {
   assert(state.taskDescription === null, 'taskDescription should be null after exitAgentMode');
 
   // But preserve spawn tracking
-  assert(
-    state.plannerSpawned === true,
-    'Should preserve plannerSpawned after exitAgentMode'
-  );
-  assert(
-    state.securitySpawned === true,
-    'Should preserve securitySpawned after exitAgentMode'
-  );
+  assert(state.plannerSpawned === true, 'Should preserve plannerSpawned after exitAgentMode');
+  assert(state.securitySpawned === true, 'Should preserve securitySpawned after exitAgentMode');
 
   console.log('PASS: exitAgentMode preserves spawn tracking');
 }

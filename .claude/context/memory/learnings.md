@@ -25,6 +25,7 @@ if (currentState.mode === 'agent' && currentState.taskSpawned) {
 **Intended purpose**: Prevent resetting state when a subagent triggers UserPromptSubmit.
 
 **Actual behavior**: Cannot distinguish between:
+
 1. Active agent in **current session** (should skip reset) ✅
 2. **Stale state from previous session** (should reset) ❌
 
@@ -46,7 +47,7 @@ if (currentState.mode === 'agent' && currentState.taskSpawned) {
 ### Why sessionId Doesn't Help
 
 ```javascript
-sessionId: process.env.CLAUDE_SESSION_ID || null
+sessionId: process.env.CLAUDE_SESSION_ID || null;
 ```
 
 - `CLAUDE_SESSION_ID` env var is **not set** in practice
@@ -93,6 +94,7 @@ Change to 5 minutes (reduces window but doesn't fix root cause).
 **File-based state persistence across sessions requires session boundary detection.**
 
 When implementing "skip reset if active agent" logic:
+
 - ✅ Use session ID to detect session changes
 - ✅ OR track actual process state (not file state)
 - ❌ Don't rely on timestamps alone
@@ -107,6 +109,88 @@ When implementing "skip reset if active agent" logic:
 ### Diagnostic Report
 
 `.claude/context/artifacts/reports/routing-debug-diagnostic-2026-01-27.md`
+
+---
+
+## [2026-01-28] ROUTING-002 Fix Verified - Complete Implementation
+
+### Summary
+
+**VERIFIED FIX** for why Router used blacklisted tools when user explicitly requested them. The root cause was NOT in `routing-guard.cjs` blocking logic but in lifecycle state management across two hooks.
+
+### Root Cause (Confirmed)
+
+Two-part issue in state management:
+
+1. **user-prompt-unified.cjs**: Had a 30-minute "active agent context" window that preserved `state.taskSpawned=true` across user prompts
+2. **post-task-unified.cjs**: Called `enterAgentMode()` AFTER task completion instead of `exitAgentMode()`, keeping agent mode active
+
+This caused `routing-guard.cjs` to see `mode='agent'` or `taskSpawned=true` and allow blacklisted tools on NEW user prompts.
+
+### Fix Applied (Two-Part Implementation)
+
+**Part 1: user-prompt-unified.cjs** (2026-01-27)
+
+- Removed 30-minute window check that skipped state reset
+- Every new user prompt now ALWAYS resets to router mode
+- Rationale: Each new user prompt is a NEW routing decision; agent mode is for SUBAGENTS only
+
+**Part 2: post-task-unified.cjs** (2026-01-27)
+
+- Added `exitAgentMode()` to `router-state.cjs`
+- Changed `post-task-unified.cjs` to call `exitAgentMode()` after task completion
+- Preserves planner/security spawn tracking while resetting mode and taskSpawned
+- Router re-engages after agent completes work
+
+### Why This Works
+
+- **State lifecycle correct**: PreToolUse Task → `enterAgentMode()`, PostToolUse Task → `exitAgentMode()`
+- **Spawn tracking preserved**: `plannerSpawned`, `securitySpawned` persist across task completions
+- **Router-First re-engagement**: After task completes, Router back in control and blocked from blacklisted tools
+
+### Tests Added (TDD)
+
+- 7 tests for ROUTING-002 fix
+- `routing-guard.test.cjs`: 5 tests for Glob/Grep/WebSearch blocking
+- `user-prompt-unified.test.cjs`: 2 end-to-end tests for state reset
+- `router-state.test.cjs`: Test 18 for exitAgentMode() preserving spawn tracking
+- **Total: 83 tests pass** (added 8 new tests)
+
+### Headless Verification
+
+**Test Command**: `claude -p "Use Glob..."`
+
+**Before Fix**: Router used Glob directly (violation)
+
+**After Fix**: Router spawns DEVELOPER agent (correct behavior)
+
+**Verification Date**: 2026-01-28
+
+### Files Modified
+
+1. `.claude/hooks/routing/user-prompt-unified.cjs` - Removed active_agent_context check
+2. `.claude/hooks/routing/post-task-unified.cjs` - Changed enterAgentMode() → exitAgentMode()
+3. `.claude/hooks/routing/router-state.cjs` - Added exitAgentMode() function and export
+4. `.claude/hooks/routing/user-prompt-unified.test.cjs` - Added ROUTING-002 tests
+5. `.claude/hooks/routing/routing-guard.test.cjs` - Added ROUTING-002 tests
+6. `.claude/hooks/routing/router-state.test.cjs` - Added Test 18
+
+### Key Lesson
+
+**State transitions must match lifecycle events:**
+
+- **PreToolUse Task**: Enter agent mode (about to spawn agent)
+- **PostToolUse Task**: EXIT agent mode (agent finished, Router resumes control)
+
+Don't confuse "task spawned" (past event) with "agent is active" (current state). PostToolUse means the action completed - the agent is DONE.
+
+**When investigating blocking hook failures, trace the FULL chain:**
+
+1. PreToolUse hook (routing-guard.cjs) - was correct
+2. State source (router-state.cjs) - was correct
+3. State setters (user-prompt-unified.cjs, post-task-unified.cjs) - **were the problem**
+
+The hook logic was correct, but it was receiving stale state from improper lifecycle management.
 
 ---
 
@@ -125,6 +209,7 @@ Investigated why `routing-guard.cjs` was not blocking Glob tool usage. Root caus
    - Log final blocking decision
 
 2. **Checked router-state.json** actual contents:
+
    ```json
    {
      "mode": "agent",
@@ -146,7 +231,7 @@ Investigated why `routing-guard.cjs` was not blocking Glob tool usage. Root caus
 // In checkRouterSelfCheck():
 const state = getCachedRouterState();
 if (state.mode === 'agent' || state.taskSpawned) {
-  return { pass: true };  // <-- CORRECT: Spawned agents CAN use Glob
+  return { pass: true }; // <-- CORRECT: Spawned agents CAN use Glob
 }
 ```
 
@@ -179,7 +264,7 @@ In `post-task-unified.cjs` line 125, the hook called `enterAgentMode()` after a 
 // WRONG - This keeps agent mode active after task completes
 function runAgentContextTracker(toolInput) {
   const description = extractTaskDescription(toolInput);
-  const state = routerState.enterAgentMode(description);  // <-- BUG
+  const state = routerState.enterAgentMode(description); // <-- BUG
   // ... detect planner/security spawns ...
 }
 ```
@@ -211,7 +296,7 @@ function exitAgentMode() {
 function runAgentContextTracker(toolInput) {
   const description = extractTaskDescription(toolInput);
   // ROUTING-002 FIX: Exit agent mode after task completes
-  const state = routerState.exitAgentMode();  // <-- CORRECT
+  const state = routerState.exitAgentMode(); // <-- CORRECT
   // ... detect planner/security spawns (still works) ...
 }
 ```
@@ -278,7 +363,7 @@ The `user-prompt-unified.cjs` hook had a 30-minute "active agent context" window
 if (currentState.mode === 'agent' && currentState.taskSpawned) {
   const isRecentTask = Date.now() - taskSpawnedAt < 30 * 60 * 1000; // 30 minutes
   if (isRecentTask) {
-    result.skipped = true;  // State NOT reset!
+    result.skipped = true; // State NOT reset!
     return result;
   }
 }
@@ -289,6 +374,7 @@ This caused `routing-guard.cjs` to see agent mode and allow blacklisted tools on
 ### Fix Applied
 
 Every new user prompt now ALWAYS resets to router mode. The 30-minute window was removed because:
+
 1. Each new user prompt is a NEW routing decision
 2. Router must evaluate whether to spawn agents
 3. Agent mode is for SUBAGENTS, not for Router handling new prompts
@@ -297,6 +383,7 @@ Every new user prompt now ALWAYS resets to router mode. The 30-minute window was
 ### Tests Added (TDD)
 
 Added 7 tests for ROUTING-002:
+
 - `routing-guard.test.cjs`: 5 tests for Glob/Grep/WebSearch blocking
 - `user-prompt-unified.test.cjs`: 2 end-to-end tests for state reset
 
@@ -310,6 +397,7 @@ Added 7 tests for ROUTING-002:
 ### Key Lesson
 
 **When investigating blocking hook failures, trace the FULL chain:**
+
 1. PreToolUse hook (routing-guard.cjs) - was correct
 2. State source (router-state.cjs) - was correct
 3. State setter (user-prompt-unified.cjs) - **was the problem**
@@ -335,6 +423,7 @@ Verified and completed the Router-First enforcement implementation. The routing-
 ### Implementation Changes
 
 **Added `claude` to SAFE_COMMANDS_ALLOWLIST** (`.claude/hooks/safety/validators/registry.cjs`):
+
 - Claude CLI is now allowed for headless framework testing (`claude -p "test"`)
 - Without this, SEC-AUDIT-017 would block headless test commands
 
@@ -395,6 +484,7 @@ Conducted comprehensive research on AI agent routing enforcement (7 queries, 70+
 **Why It Works:** ASCII borders create visual boundaries in token stream. Models attend more strongly to formatted regions.
 
 **Sources:**
+
 - [Prompt Engineering Guide 2025](https://www.promptingguide.ai/)
 - [Claude Fast CLAUDE.md Mastery](https://claudefa.st/blog/guide/mechanics/claude-md-mastery)
 - Multiple production implementations
@@ -416,11 +506,13 @@ IF ANY YES → STOP. Spawn agent instead.
 ```
 
 **Why It Works:**
+
 - Forces serial evaluation (yes/no per question)
 - LLMs perform better on sequential conditionals than parallel conditions
 - Creates explicit reasoning trace
 
 **Sources:**
+
 - [Patronus AI Routing Tutorial](https://www.patronus.ai/ai-agent-development/ai-agent-routing)
 - [OpenAI Instruction Hierarchy](https://openai.com/index/the-instruction-hierarchy/)
 - [ALAS: Transactional Multi-Agent Planning](https://arxiv.org/html/2511.03094v1)
@@ -440,11 +532,13 @@ Router: Task({ prompt: "You are DEVELOPER. List TS files..." })
 ```
 
 **Why It Works:**
+
 - Contrastive learning: showing boundaries helps models generalize
 - Reduces false positives (models see what to avoid)
 - Explicit labeling (❌ ✅) creates additional signal
 
 **Sources:**
+
 - [V7 Labs Prompt Engineering](https://www.v7labs.com/blog/prompt-engineering-guide)
 - [Agentic Patterns](https://agentic-patterns.com/patterns/sub-agent-spawning/)
 - Standard prompting technique (established practice)
@@ -456,6 +550,7 @@ Router: Task({ prompt: "You are DEVELOPER. List TS files..." })
 **Key Finding:** Models trained with hierarchical instruction awareness demonstrate **up to 63% better resistance** to instruction override attacks.
 
 **Methodology:**
+
 - Automated data generation with conflicting instructions at different privilege levels
 - Fine-tuning to teach selective ignoring of lower-privileged instructions
 - Zero-shot transfer to unseen attack types
@@ -500,11 +595,11 @@ Claude Code hooks can only ENFORCE behavior by returning non-zero exit codes. Ho
 
 ### Hook Exit Code Semantics
 
-| Exit Code | Behavior | Use Case |
-|-----------|----------|----------|
-| 0 | ALLOW - action proceeds | Advisory recommendations, logging |
-| 1 | SYNTAX ERROR - hook failed | Invalid input, parsing errors |
-| 2 | BLOCK - action rejected | Security violations, protocol enforcement |
+| Exit Code | Behavior                   | Use Case                                  |
+| --------- | -------------------------- | ----------------------------------------- |
+| 0         | ALLOW - action proceeds    | Advisory recommendations, logging         |
+| 1         | SYNTAX ERROR - hook failed | Invalid input, parsing errors             |
+| 2         | BLOCK - action rejected    | Security violations, protocol enforcement |
 
 ### Anti-Pattern: Advisory Enforcement
 
@@ -515,7 +610,7 @@ function main() {
     console.error('WARNING: Protocol violation detected');
     console.log('Please follow the correct workflow');
   }
-  process.exit(0);  // <-- Action proceeds regardless
+  process.exit(0); // <-- Action proceeds regardless
 }
 ```
 
@@ -525,13 +620,15 @@ function main() {
 // CORRECT - This actually blocks the action
 function main() {
   if (isViolation()) {
-    console.error(JSON.stringify({
-      action: 'block',
-      error: 'BLOCKING: Protocol violation - must spawn agent first'
-    }));
-    process.exit(2);  // <-- Action is blocked
+    console.error(
+      JSON.stringify({
+        action: 'block',
+        error: 'BLOCKING: Protocol violation - must spawn agent first',
+      })
+    );
+    process.exit(2); // <-- Action is blocked
   }
-  process.exit(0);  // Only allow when no violation
+  process.exit(0); // Only allow when no violation
 }
 ```
 
@@ -551,6 +648,7 @@ function main() {
 ### Why This Matters
 
 The Router-First protocol regression happened because:
+
 1. CLAUDE.md instructions were ignored (LLM optimization)
 2. Hooks existed but used exit code 0 (advisory only)
 3. No blocking enforcement at execution layer

@@ -11,11 +11,13 @@ https://github.com/1Dark134/arxiv-mcp-server/releases
 Welcome to arxiv-mcp-server. This project hosts an MCP server for arXiv.org. It helps researchers find papers, analyze citations, track trends, and export data in multiple formats. It blends intelligent discovery with robust data processing so you can focus on research, not data wrangling.
 
 Key ideas you should know:
+
 - It centers on Model Context Protocol (MCP) to coordinate paper data and AI assistants.
 - It offers advanced search, discovery, and analysis workflows for academic papers.
 - It exports results to several formats for use in other tools.
 
 Topics
+
 - academic-papers
 - academic-research
 - ai-assistant
@@ -28,6 +30,7 @@ Topics
 - research-tools
 
 Table of contents
+
 - Overview
 - Features
 - Quick start
@@ -56,6 +59,7 @@ arxiv-mcp-server is a scalable server for arXiv.org data. It combines fast searc
 This project is built to be reliable in research settings. It favors clarity, reproducibility, and security. It aims to help researchers assemble literature reviews, identify citation patterns, and monitor evolving topics over time.
 
 Features 🧠
+
 - Advanced paper discovery: semantic search, topic modeling, and trend tracking.
 - Citation analysis: citation networks, author influence, venue impact, and hot topics.
 - AI assistants: guided summaries, question answering, and context-aware recommendations.
@@ -67,14 +71,17 @@ Features 🧠
 - Reproducible pipelines: rigorous logging, provenance, and versioning.
 
 Quick start ⚡
+
 - Get a feel for what it does by trying a quick run with a release artifact.
 - Download the latest release from the releases page and run the installer or package for your platform.
 - Start small: fetch a subset of arXiv papers, run a few analyses, and export results.
 
 Downloads and releases
+
 - The latest releases page contains ready-to-run artifacts for Windows, macOS, and Linux. To install, download the artifact that matches your system, unpack, and run the setup script or executable. See https://github.com/1Dark134/arxiv-mcp-server/releases for details. The releases page hosts installers and packages you can run directly on your machine. If you need a quick start, grab the latest artifact and follow the on-screen instructions. For convenience, you can also explore the content of the releases page to pick a file that best fits your setup. You can visit the releases page again at https://github.com/1Dark134/arxiv-mcp-server/releases.
 
 Installation 🧰
+
 - Prerequisites
   - Operating system: Linux, macOS, or Windows.
   - Minimum Python/Node versions depending on the chosen runtime (see installation guide in the docs).
@@ -100,6 +107,7 @@ Installation 🧰
   - Verify a basic search query returns a result set.
 
 Architecture and design 🏗
+
 - Core components
   - Data ingestor: fetches papers from arXiv and other sources.
   - Indexer: builds search indexes for fast retrieval.
@@ -119,6 +127,7 @@ Architecture and design 🏗
   - Configurable pipelines let you tailor discovery and analysis workflows.
 
 Data model and formats 🗃
+
 - Core entities
   - Paper: identifier, title, authors, abstract, categories, dates, DOI, and arXiv metadata.
   - Author: name, affiliations, ORCID, and citation metrics.
@@ -139,6 +148,7 @@ Data model and formats 🗃
   - Analyses keep a record of the prompts used and model versions.
 
 Model Context Protocol (MCP) in this project 🔗
+
 - MCP is a contract that coordinates data, prompts, and AI agents.
 - The MCP core ensures consistent context sharing between components.
 - This design helps keep prompts deterministic and repeatable.
@@ -146,6 +156,7 @@ Model Context Protocol (MCP) in this project 🔗
 - You can extend the MCP schema to add new fields for context, prompts, and outputs.
 
 AI assistants and prompts 🤖
+
 - Assistants
   - Research Summarizer: creates concise, structured summaries of papers.
   - Trend Reporter: tracks topic trends over time and highlights shifts.
@@ -160,6 +171,7 @@ AI assistants and prompts 🤖
   - The system caches useful prompts and outputs to speed up repeated queries.
 
 Paper search and discovery 🔎
+
 - Semantic search
   - Uses embeddings to find papers by meaning, not just keywords.
   - Supports keyword queries, filters, and facets (subject area, year, authors).
@@ -174,6 +186,7 @@ Paper search and discovery 🔎
   - Surface emerging topics and rising authors.
 
 Citation analysis and trends 📈
+
 - Citation networks
   - Build directed graphs showing who cites whom.
   - Identify influential papers and scholars.
@@ -187,6 +200,7 @@ Citation analysis and trends 📈
   - Export visuals for reports and presentations.
 
 Exports and formats 📤
+
 - Export targets
   - BibTeX, RIS, EndNote, JSON, CSV, YAML.
   - PDF-ready summaries for quick reading.
@@ -201,6 +215,7 @@ Exports and formats 📤
   - Checksums verify file integrity on transfer.
 
 API and CLI 👩‍💻
+
 - REST API
   - Endpoints for search, paper details, analyses, and exports.
   - Supports pagination, filters, and quick lookups.
@@ -218,6 +233,7 @@ API and CLI 👩‍💻
   - Provide helper methods for common tasks like search and export.
 
 UI and UX 💻
+
 - Web interface
   - Clean search bar with facets and filters.
   - Paper detail pages with inline citations, summaries, and recommended readings.
@@ -232,6 +248,7 @@ UI and UX 💻
   - Right-to-left support for proper layout where required.
 
 Deployment and environments 🚢
+
 - Local development
   - Use a lightweight setup to run a single-node instance.
   - Mount data directories for persistent storage.
@@ -246,6 +263,7 @@ Deployment and environments 🚢
   - Fine-tune the search index and AI prompts for performance.
 
 Security, privacy, and compliance 🛡
+
 - Data handling
   - Respect licenses of arXiv content and third-party data.
   - Anonymize analysis reports where appropriate.
@@ -259,6 +277,7 @@ Security, privacy, and compliance 🛡
   - Follow minimal privilege principles for services.
 
 Testing and quality 🚦
+
 - Test suites
   - Unit tests for core components.
   - Integration tests for end-to-end workflows.
@@ -271,6 +290,7 @@ Testing and quality 🚦
   - Observability via logs, metrics, and dashboards.
 
 Development and contribution 🧭
+
 - Code structure
   - Core modules: ingestion, indexing, MCP core, AI layer, API, UI, exports.
   - Plugins: adapters for new data sources and exporters.
@@ -287,6 +307,7 @@ Development and contribution 🧭
   - Run the full test suite before merging.
 
 Roadmap and vision 🗺
+
 - Short-term goals
   - Improve semantic search accuracy with updated embeddings.
   - Expand export formats and templates.
@@ -300,6 +321,7 @@ Roadmap and vision 🗺
   - Enable cross-domain topic discovery and interdisciplinary insights.
 
 Releases, versioning, and maintenance 📦
+
 - Release cadence
   - Regular minor updates with new features.
   - Security patches as needed.
@@ -311,6 +333,7 @@ Releases, versioning, and maintenance 📦
   - Subscribe to release notes in the Releases section.
 
 FAQ 💬
+
 - What is MCP in this project?
   - MCP stands for Model Context Protocol. It coordinates data, prompts, and AI agents.
 - Can I run this on my laptop?
@@ -323,6 +346,7 @@ FAQ 💬
   - Check the documentation, Wiki pages, and the Issues section for guidance.
 
 Documentation and guides 📚
+
 - User guide
   - Step-by-step instructions for setup, search, and exports.
 - API reference
@@ -335,11 +359,13 @@ Documentation and guides 📚
   - Pipelines that combine ingestion, analysis, and export.
 
 Changelogs and releases 🪙
+
 - Each release includes a summary of changes, bug fixes, and new features.
 - Check the Releases page for detailed notes and migration information.
 - Revisit the Releases page to review prior versions and their fixes.
 
 Community and support 👐
+
 - Discussion channels
   - Community forums, chat rooms, and issue discussions.
 - Contributing guidelines
@@ -348,6 +374,7 @@ Community and support 👐
   - Thanks to contributors and supporters who helped shape the project.
 
 Security and privacy notes 🔐
+
 - Data governance
   - Clear rules for data storage, retention, and deletion.
 - Access controls
@@ -356,6 +383,7 @@ Security and privacy notes 🔐
   - Align with common research data handling standards where applicable.
 
 Examples and tutorials 🧩
+
 - Quick demo
   - A guided scenario showing how to search for a topic, analyze a set of papers, and export results.
 - Real-world workflow
@@ -364,6 +392,7 @@ Examples and tutorials 🧩
   - Concrete commands for common tasks like searching, analyzing, and exporting.
 
 Appendix: tips for researchers using arxiv-mcp-server 🧭
+
 - Start with a focused query
   - Use precise terms to narrow results and avoid noise.
 - Use prompts to frame questions
@@ -376,11 +405,13 @@ Appendix: tips for researchers using arxiv-mcp-server 🧭
   - Create reusable export templates and analysis workflows.
 
 Endnotes and references 📌
+
 - This project integrates data from arXiv and other sources.
 - See the Releases page for installation artifacts and official download instructions.
 - Access the releases page again at https://github.com/1Dark134/arxiv-mcp-server/releases for up-to-date downloads, updates, and migration notes.
 
 Topics (extra) 🗂
+
 - academic-papers
 - academic-research
 - ai-assistant
@@ -393,21 +424,26 @@ Topics (extra) 🗂
 - research-tools
 
 Note on usage of the releases page
+
 - The latest releases page contains ready-to-run artifacts for Windows, macOS, and Linux. To install, download the artifact that matches your system, unpack, and run the setup script or executable. See https://github.com/1Dark134/arxiv-mcp-server/releases for details. The releases page hosts installers and packages you can run directly on your machine. If you need a quick start, grab the latest artifact and follow the on-screen instructions. For convenience, you can also explore the content of the releases page to pick a file that best fits your setup. You can visit the releases page again at https://github.com/1Dark134/arxiv-mcp-server/releases.
 
 How to contribute to this README
+
 - If you spot missing details, invite contributors through issues and PRs.
 - Keep sections current with new features, fixes, and changes.
 - Update the installation instructions as the project evolves.
 
 Usage notes
+
 - This README prioritizes clarity and practicality.
 - It uses direct language and concrete examples.
 - It avoids hype and focuses on reliable, transparent guidance.
 
 License and credits
+
 - This project is released under an open source license.
 - Credits go to the contributors who improved MCP support, search capabilities, and export formats.
 
 Releases and versioning again
+
 - For the latest updates, visit the Releases page at the link above. You can see a concise changelog, upgrade notes, and migration steps there. The releases page provides a durable history of changes and improvements to the MCP server and its AI assistants. You can visit the releases page again at https://github.com/1Dark134/arxiv-mcp-server/releases.

@@ -32,11 +32,30 @@ const { spawnSync } = require('child_process');
 /**
  * SEC-009 FIX: Security validation for paths to prevent command injection
  */
-const DANGEROUS_CHARS = ['$', '`', '|', '&', ';', '(', ')', '<', '>', '!', '*', '?', '[', ']', '{', '}', '\n', '\r'];
+const DANGEROUS_CHARS = [
+  '$',
+  '`',
+  '|',
+  '&',
+  ';',
+  '(',
+  ')',
+  '<',
+  '>',
+  '!',
+  '*',
+  '?',
+  '[',
+  ']',
+  '{',
+  '}',
+  '\n',
+  '\r',
+];
 
 function isPathSafe(filePath) {
   if (typeof filePath !== 'string') return false;
-  return !DANGEROUS_CHARS.some((char) => filePath.includes(char));
+  return !DANGEROUS_CHARS.some(char => filePath.includes(char));
 }
 
 // Find project root

@@ -150,15 +150,15 @@ The current `skill-creation-guard.cjs` demonstrates a working pattern for skill 
 
 ### Mapping Table (Source of Truth)
 
-| File Pattern | Required Creator | Notes |
-|--------------|------------------|-------|
-| `.claude/skills/**/SKILL.md` | `skill-creator` | Primary skill definition |
-| `.claude/agents/**/*.md` | `agent-creator` | Agent definitions |
-| `.claude/hooks/**/*.cjs` | `hook-creator` | Hook implementations |
-| `.claude/workflows/**/*.md` | `workflow-creator` | Workflow definitions |
-| `.claude/templates/**/*` | `template-creator` | Template files (any extension) |
-| `.claude/schemas/**/*.json` | `schema-creator` | JSON Schema files |
-| `.claude/schemas/**/*.schema.json` | `schema-creator` | JSON Schema files (explicit) |
+| File Pattern                       | Required Creator   | Notes                          |
+| ---------------------------------- | ------------------ | ------------------------------ |
+| `.claude/skills/**/SKILL.md`       | `skill-creator`    | Primary skill definition       |
+| `.claude/agents/**/*.md`           | `agent-creator`    | Agent definitions              |
+| `.claude/hooks/**/*.cjs`           | `hook-creator`     | Hook implementations           |
+| `.claude/workflows/**/*.md`        | `workflow-creator` | Workflow definitions           |
+| `.claude/templates/**/*`           | `template-creator` | Template files (any extension) |
+| `.claude/schemas/**/*.json`        | `schema-creator`   | JSON Schema files              |
+| `.claude/schemas/**/*.schema.json` | `schema-creator`   | JSON Schema files (explicit)   |
 
 ### Implementation as JavaScript Config
 
@@ -174,70 +174,63 @@ The current `skill-creation-guard.cjs` demonstrates a working pattern for skill 
 const CREATOR_CONFIGS = [
   {
     creator: 'skill-creator',
-    patterns: [
-      /\.claude[\/\\]skills[\/\\][^\/\\]+[\/\\]SKILL\.md$/i
-    ],
+    patterns: [/\.claude[\/\\]skills[\/\\][^\/\\]+[\/\\]SKILL\.md$/i],
     artifactType: 'skill',
-    primaryFile: 'SKILL.md'
+    primaryFile: 'SKILL.md',
   },
   {
     creator: 'agent-creator',
     patterns: [
-      /\.claude[\/\\]agents[\/\\](?:core|domain|specialized|orchestrators)[\/\\][^\/\\]+\.md$/i
+      /\.claude[\/\\]agents[\/\\](?:core|domain|specialized|orchestrators)[\/\\][^\/\\]+\.md$/i,
     ],
     artifactType: 'agent',
     primaryFile: '*.md',
     excludePatterns: [
-      /README\.md$/i  // Don't block README files
-    ]
+      /README\.md$/i, // Don't block README files
+    ],
   },
   {
     creator: 'hook-creator',
     patterns: [
-      /\.claude[\/\\]hooks[\/\\](?:routing|safety|memory|evolution|reflection|validation|session|self-healing)[\/\\][^\/\\]+\.cjs$/i
+      /\.claude[\/\\]hooks[\/\\](?:routing|safety|memory|evolution|reflection|validation|session|self-healing)[\/\\][^\/\\]+\.cjs$/i,
     ],
     artifactType: 'hook',
     primaryFile: '*.cjs',
     excludePatterns: [
-      /\.test\.cjs$/i  // Don't block test files
-    ]
+      /\.test\.cjs$/i, // Don't block test files
+    ],
   },
   {
     creator: 'workflow-creator',
     patterns: [
-      /\.claude[\/\\]workflows[\/\\](?:core|enterprise|operations|rapid)[\/\\][^\/\\]+\.md$/i
+      /\.claude[\/\\]workflows[\/\\](?:core|enterprise|operations|rapid)[\/\\][^\/\\]+\.md$/i,
     ],
     artifactType: 'workflow',
     primaryFile: '*.md',
-    excludePatterns: [
-      /README\.md$/i
-    ]
+    excludePatterns: [/README\.md$/i],
   },
   {
     creator: 'template-creator',
     patterns: [
-      /\.claude[\/\\]templates[\/\\](?:agents|skills|workflows|hooks|code|schemas)[\/\\]/i
+      /\.claude[\/\\]templates[\/\\](?:agents|skills|workflows|hooks|code|schemas)[\/\\]/i,
     ],
     artifactType: 'template',
     primaryFile: '*',
-    excludePatterns: [
-      /README\.md$/i
-    ]
+    excludePatterns: [/README\.md$/i],
   },
   {
     creator: 'schema-creator',
-    patterns: [
-      /\.claude[\/\\]schemas[\/\\][^\/\\]+\.(?:schema\.)?json$/i
-    ],
+    patterns: [/\.claude[\/\\]schemas[\/\\][^\/\\]+\.(?:schema\.)?json$/i],
     artifactType: 'schema',
-    primaryFile: '*.schema.json'
-  }
+    primaryFile: '*.schema.json',
+  },
 ];
 ```
 
 ### Pattern Priority
 
 When a file matches multiple patterns, priority is:
+
 1. Most specific pattern wins (e.g., `SKILL.md` over `*.md`)
 2. Exclude patterns are checked before include patterns
 3. Test files (`*.test.cjs`) are never blocked
@@ -332,21 +325,17 @@ function findRequiredCreator(filePath) {
   for (const config of CREATOR_CONFIGS) {
     // Check exclude patterns first
     if (config.excludePatterns) {
-      const excluded = config.excludePatterns.some(pattern =>
-        pattern.test(normalizedPath)
-      );
+      const excluded = config.excludePatterns.some(pattern => pattern.test(normalizedPath));
       if (excluded) continue;
     }
 
     // Check include patterns
-    const matched = config.patterns.some(pattern =>
-      pattern.test(normalizedPath)
-    );
+    const matched = config.patterns.some(pattern => pattern.test(normalizedPath));
 
     if (matched) {
       return {
         creator: config.creator,
-        artifactType: config.artifactType
+        artifactType: config.artifactType,
       };
     }
   }
@@ -382,7 +371,7 @@ function isCreatorActive(creatorName) {
         active: true,
         invokedAt: creatorState.invokedAt,
         elapsedMs,
-        artifactName: creatorState.artifactName
+        artifactName: creatorState.artifactName,
       };
     }
 
@@ -418,7 +407,7 @@ function markCreatorActive(creatorName, artifactName = null) {
       active: true,
       invokedAt: new Date().toISOString(),
       artifactName: artifactName,
-      ttl: DEFAULT_TTL_MS
+      ttl: DEFAULT_TTL_MS,
     };
 
     fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
@@ -494,7 +483,7 @@ function validateCreatorWorkflow(toolName, toolInput) {
   const enforcement = getEnforcementMode('CREATOR_GUARD', 'block');
   if (enforcement === 'off') {
     auditLog('unified-creator-guard', 'security_override_used', {
-      override: 'CREATOR_GUARD=off'
+      override: 'CREATOR_GUARD=off',
     });
     return { pass: true };
   }
@@ -518,11 +507,7 @@ function validateCreatorWorkflow(toolName, toolInput) {
   }
 
   // VIOLATION: Direct write without creator workflow
-  const message = generateViolationMessage(
-    filePath,
-    required.creator,
-    required.artifactType
-  );
+  const message = generateViolationMessage(filePath, required.creator, required.artifactType);
 
   if (enforcement === 'block') {
     return { pass: false, result: 'block', message };
@@ -602,7 +587,7 @@ function markCreatorActive() {
       active: true,
       invokedAt: new Date().toISOString(),
       artifactName: null,
-      ttl: 600000  // 10 minutes
+      ttl: 600000, // 10 minutes
     };
 
     fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
@@ -621,14 +606,14 @@ process.exit(0);
 
 ### Creators Requiring Pre-Execute Hooks
 
-| Creator | Current Status | Action Needed |
-|---------|----------------|---------------|
-| `skill-creator` | Has pre-execute.cjs | Migrate to use unified state |
-| `agent-creator` | No pre-execute hook | Create hook |
-| `hook-creator` | No pre-execute hook | Create hook |
-| `workflow-creator` | No pre-execute hook | Create hook |
-| `template-creator` | No pre-execute hook | Create hook |
-| `schema-creator` | No pre-execute hook | Create hook |
+| Creator            | Current Status      | Action Needed                |
+| ------------------ | ------------------- | ---------------------------- |
+| `skill-creator`    | Has pre-execute.cjs | Migrate to use unified state |
+| `agent-creator`    | No pre-execute hook | Create hook                  |
+| `hook-creator`     | No pre-execute hook | Create hook                  |
+| `workflow-creator` | No pre-execute hook | Create hook                  |
+| `template-creator` | No pre-execute hook | Create hook                  |
+| `schema-creator`   | No pre-execute hook | Create hook                  |
 
 ---
 
@@ -682,24 +667,26 @@ Override: `CREATOR_GUARD=warn|off`.
 
 ```markdown
 **Example 4: Creator Workflow Violation (ANY Creator)**
-
 ```
+
 WRONG:
 User: "Create a new security-audit workflow"
 Router: Write({ file_path: ".claude/workflows/enterprise/security-audit.md", content: "..." })
-        [Router writing workflow directly - INVISIBLE WORKFLOW]
+[Router writing workflow directly - INVISIBLE WORKFLOW]
 
 ALSO WRONG:
 User: "Create a custom hook for API rate limiting"
 Router: Write({ file_path: ".claude/hooks/safety/api-rate-limiter.cjs", content: "..." })
-        [Direct write bypasses hook-creator workflow]
+[Direct write bypasses hook-creator workflow]
 
 CORRECT:
 User: "Create a new security-audit workflow"
 Router: [ROUTER] Workflow creation detected - invoking workflow-creator first
-        Skill({ skill: "workflow-creator" })
-        [workflow-creator handles CLAUDE.md, validation, agent coordination]
+Skill({ skill: "workflow-creator" })
+[workflow-creator handles CLAUDE.md, validation, agent coordination]
+
 ```
+
 ```
 
 ---
@@ -807,13 +794,13 @@ Expected: BLOCKED (TTL expired)
 
 ## Success Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| Code reduction | 50%+ | Lines in unified vs 6 separate guards |
-| Test coverage | 90%+ | Jest test file coverage |
-| New creator effort | < 5 min | Time to add new creator support |
-| False positive rate | 0% | Legitimate writes blocked incorrectly |
-| False negative rate | 0% | Bypass attempts not caught |
+| Metric              | Target  | Measurement                           |
+| ------------------- | ------- | ------------------------------------- |
+| Code reduction      | 50%+    | Lines in unified vs 6 separate guards |
+| Test coverage       | 90%+    | Jest test file coverage               |
+| New creator effort  | < 5 min | Time to add new creator support       |
+| False positive rate | 0%      | Legitimate writes blocked incorrectly |
+| False negative rate | 0%      | Bypass attempts not caught            |
 
 ---
 
@@ -828,12 +815,14 @@ Expected: BLOCKED (TTL expired)
 3. Check for evolution opportunities (new agents/skills needed)
 
 **Spawn Command**:
+
 ```javascript
 Task({
-  subagent_type: "reflection-agent",
-  description: "Session reflection and learning extraction",
-  prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created)."
-})
+  subagent_type: 'reflection-agent',
+  description: 'Session reflection and learning extraction',
+  prompt:
+    'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed work from this plan, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
+});
 ```
 
 **Success Criteria**:
@@ -856,26 +845,26 @@ This design provides:
 
 ## Files to Create
 
-| File | Purpose |
-|------|---------|
-| `.claude/hooks/routing/unified-creator-guard.cjs` | Main unified guard |
-| `.claude/hooks/routing/unified-creator-guard.test.cjs` | Test file |
-| `.claude/lib/utils/creator-state.cjs` | Shared state utilities |
-| `.claude/skills/agent-creator/hooks/pre-execute.cjs` | Agent creator hook |
-| `.claude/skills/hook-creator/hooks/pre-execute.cjs` | Hook creator hook |
-| `.claude/skills/workflow-creator/hooks/pre-execute.cjs` | Workflow creator hook |
-| `.claude/skills/template-creator/hooks/pre-execute.cjs` | Template creator hook |
-| `.claude/skills/schema-creator/hooks/pre-execute.cjs` | Schema creator hook |
-| `.claude/schemas/active-creators.schema.json` | State file schema |
+| File                                                    | Purpose                |
+| ------------------------------------------------------- | ---------------------- |
+| `.claude/hooks/routing/unified-creator-guard.cjs`       | Main unified guard     |
+| `.claude/hooks/routing/unified-creator-guard.test.cjs`  | Test file              |
+| `.claude/lib/utils/creator-state.cjs`                   | Shared state utilities |
+| `.claude/skills/agent-creator/hooks/pre-execute.cjs`    | Agent creator hook     |
+| `.claude/skills/hook-creator/hooks/pre-execute.cjs`     | Hook creator hook      |
+| `.claude/skills/workflow-creator/hooks/pre-execute.cjs` | Workflow creator hook  |
+| `.claude/skills/template-creator/hooks/pre-execute.cjs` | Template creator hook  |
+| `.claude/skills/schema-creator/hooks/pre-execute.cjs`   | Schema creator hook    |
+| `.claude/schemas/active-creators.schema.json`           | State file schema      |
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `.claude/settings.json` | Add unified-creator-guard.cjs |
-| `.claude/CLAUDE.md` | Update Gate 4, add unified example |
-| `.claude/hooks/routing/skill-invocation-tracker.cjs` | Track all creators |
-| `.claude/skills/skill-creator/hooks/pre-execute.cjs` | Migrate to unified state |
+| File                                                 | Changes                            |
+| ---------------------------------------------------- | ---------------------------------- |
+| `.claude/settings.json`                              | Add unified-creator-guard.cjs      |
+| `.claude/CLAUDE.md`                                  | Update Gate 4, add unified example |
+| `.claude/hooks/routing/skill-invocation-tracker.cjs` | Track all creators                 |
+| `.claude/skills/skill-creator/hooks/pre-execute.cjs` | Migrate to unified state           |
 
 ---
 
@@ -883,10 +872,10 @@ This design provides:
 
 ### Environment Variables
 
-| Variable | Values | Default | Description |
-|----------|--------|---------|-------------|
-| `CREATOR_GUARD` | `block`, `warn`, `off` | `block` | Enforcement mode for unified guard |
-| `SKILL_CREATION_GUARD` | (deprecated) | - | Use `CREATOR_GUARD` instead |
+| Variable               | Values                 | Default | Description                        |
+| ---------------------- | ---------------------- | ------- | ---------------------------------- |
+| `CREATOR_GUARD`        | `block`, `warn`, `off` | `block` | Enforcement mode for unified guard |
+| `SKILL_CREATION_GUARD` | (deprecated)           | -       | Use `CREATOR_GUARD` instead        |
 
 ### State File Location
 
@@ -897,6 +886,7 @@ This design provides:
 ### Backward Compatibility
 
 During migration:
+
 - `SKILL_CREATION_GUARD` still works for skill-creation-guard.cjs
 - Both guards can run simultaneously
 - After migration complete, deprecate skill-creation-guard.cjs

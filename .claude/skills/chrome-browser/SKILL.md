@@ -71,17 +71,17 @@ Chrome Browser Skill - Unified browser automation using TWO integrations: Chrome
 
 ## Two Integrations - When to Use Each
 
-| Feature | Chrome DevTools MCP | Claude-in-Chrome |
-|---------|---------------------|------------------|
-| **Status** | ✅ Always available | ⚠️ Requires `--chrome` flag |
-| **Activation** | Automatic (built-in) | `claude --chrome` + extension |
-| **Auth sessions** | ❌ Fresh browser | ✅ Uses your logins |
-| **Performance tracing** | ✅ Full Core Web Vitals | ❌ Not available |
-| **Network inspection** | ✅ Detailed with body access | ✅ Basic |
-| **Device emulation** | ✅ Mobile, geolocation, CPU | ❌ Limited |
-| **GIF recording** | ❌ No | ✅ Yes |
-| **Page text extraction** | Via snapshot | ✅ Dedicated tool |
-| **Best for** | Testing, debugging, performance | Authenticated workflows, demos |
+| Feature                  | Chrome DevTools MCP             | Claude-in-Chrome               |
+| ------------------------ | ------------------------------- | ------------------------------ |
+| **Status**               | ✅ Always available             | ⚠️ Requires `--chrome` flag    |
+| **Activation**           | Automatic (built-in)            | `claude --chrome` + extension  |
+| **Auth sessions**        | ❌ Fresh browser                | ✅ Uses your logins            |
+| **Performance tracing**  | ✅ Full Core Web Vitals         | ❌ Not available               |
+| **Network inspection**   | ✅ Detailed with body access    | ✅ Basic                       |
+| **Device emulation**     | ✅ Mobile, geolocation, CPU     | ❌ Limited                     |
+| **GIF recording**        | ❌ No                           | ✅ Yes                         |
+| **Page text extraction** | Via snapshot                    | ✅ Dedicated tool              |
+| **Best for**             | Testing, debugging, performance | Authenticated workflows, demos |
 
 ### Decision Guide
 
@@ -107,13 +107,14 @@ Need device/network emulation?        → Chrome DevTools MCP
 - Dialog handling (alert, confirm, prompt)
 
 **Claude-in-Chrome:**
+
 - Authenticated web app interaction (Google Docs, Gmail, Notion)
 - Session recording as GIF
 - Natural language element finding
 - Form automation with your saved data
 - Page text extraction
 - Shortcut/workflow execution
-</capabilities>
+  </capabilities>
 
 <instructions>
 <execution_process>
@@ -126,100 +127,105 @@ No setup required - these tools work immediately.
 
 ```javascript
 // List all open pages
-mcp__chrome-devtools__list_pages()
+mcp__chrome - devtools__list_pages();
 
 // Select a page to work with
-mcp__chrome-devtools__select_page({ pageId: 1 })
+mcp__chrome - devtools__select_page({ pageId: 1 });
 
 // Create a new page
-mcp__chrome-devtools__new_page({ url: "https://example.com" })
+mcp__chrome - devtools__new_page({ url: 'https://example.com' });
 ```
 
 ### Step 2: Navigate and Interact
 
 ```javascript
 // Navigate to URL
-mcp__chrome-devtools__navigate_page({ url: "https://example.com" })
+mcp__chrome - devtools__navigate_page({ url: 'https://example.com' });
 
 // Take accessibility snapshot (get element UIDs)
-mcp__chrome-devtools__take_snapshot()
+mcp__chrome - devtools__take_snapshot();
 
 // Click element by UID from snapshot
-mcp__chrome-devtools__click({ uid: "ref_123" })
+mcp__chrome - devtools__click({ uid: 'ref_123' });
 
 // Fill form field
-mcp__chrome-devtools__fill({ uid: "ref_456", value: "test@example.com" })
+mcp__chrome - devtools__fill({ uid: 'ref_456', value: 'test@example.com' });
 
 // Fill entire form
-mcp__chrome-devtools__fill_form({
-  elements: [
-    { uid: "ref_456", value: "test@example.com" },
-    { uid: "ref_789", value: "password123" }
-  ]
-})
+mcp__chrome -
+  devtools__fill_form({
+    elements: [
+      { uid: 'ref_456', value: 'test@example.com' },
+      { uid: 'ref_789', value: 'password123' },
+    ],
+  });
 ```
 
 ### Step 3: Debug and Inspect
 
 ```javascript
 // Read console messages
-mcp__chrome-devtools__list_console_messages({ types: ["error", "warn"] })
+mcp__chrome - devtools__list_console_messages({ types: ['error', 'warn'] });
 
 // Get specific console message details
-mcp__chrome-devtools__get_console_message({ msgid: 1 })
+mcp__chrome - devtools__get_console_message({ msgid: 1 });
 
 // List network requests
-mcp__chrome-devtools__list_network_requests({ resourceTypes: ["xhr", "fetch"] })
+mcp__chrome - devtools__list_network_requests({ resourceTypes: ['xhr', 'fetch'] });
 
 // Get request/response details
-mcp__chrome-devtools__get_network_request({ reqid: 1 })
+mcp__chrome - devtools__get_network_request({ reqid: 1 });
 
 // Execute JavaScript
-mcp__chrome-devtools__evaluate_script({
-  function: "() => document.title"
-})
+mcp__chrome -
+  devtools__evaluate_script({
+    function: '() => document.title',
+  });
 ```
 
 ### Step 4: Performance Analysis
 
 ```javascript
 // Start performance trace (with page reload)
-mcp__chrome-devtools__performance_start_trace({ reload: true, autoStop: true })
+mcp__chrome - devtools__performance_start_trace({ reload: true, autoStop: true });
 
 // Or manual stop
-mcp__chrome-devtools__performance_start_trace({ reload: true, autoStop: false })
+mcp__chrome - devtools__performance_start_trace({ reload: true, autoStop: false });
 // ... interact with page ...
-mcp__chrome-devtools__performance_stop_trace()
+mcp__chrome - devtools__performance_stop_trace();
 
 // Analyze specific insight
-mcp__chrome-devtools__performance_analyze_insight({
-  insightSetId: "navigation-1",
-  insightName: "LCPBreakdown"
-})
+mcp__chrome -
+  devtools__performance_analyze_insight({
+    insightSetId: 'navigation-1',
+    insightName: 'LCPBreakdown',
+  });
 ```
 
 ### Step 5: Device Emulation
 
 ```javascript
 // Emulate mobile device
-mcp__chrome-devtools__emulate({
-  viewport: {
-    width: 375,
-    height: 667,
-    deviceScaleFactor: 2,
-    isMobile: true,
-    hasTouch: true
-  },
-  userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)..."
-})
+mcp__chrome -
+  devtools__emulate({
+    viewport: {
+      width: 375,
+      height: 667,
+      deviceScaleFactor: 2,
+      isMobile: true,
+      hasTouch: true,
+    },
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)...',
+  });
 
 // Emulate slow network
-mcp__chrome-devtools__emulate({ networkConditions: "Slow 3G" })
+mcp__chrome - devtools__emulate({ networkConditions: 'Slow 3G' });
 
 // Emulate geolocation
-mcp__chrome-devtools__emulate({
-  geolocation: { latitude: 37.7749, longitude: -122.4194 }
-})
+mcp__chrome -
+  devtools__emulate({
+    geolocation: { latitude: 37.7749, longitude: -122.4194 },
+  });
 ```
 
 ---
@@ -317,12 +323,14 @@ mcp__claude-in-chrome__gif_creator({
 <best_practices>
 
 ### Chrome DevTools MCP
+
 1. **Always take snapshot first** to get element UIDs before clicking/filling
 2. **Use includeSnapshot: true** on actions to get updated state
 3. **Filter network requests** by resourceTypes to avoid noise
 4. **Save traces to file** with filePath parameter for later analysis
 
 ### Claude-in-Chrome
+
 1. **Call tabs_context_mcp first** to get valid tab IDs
 2. **Create new tabs** rather than reusing existing ones
 3. **Use read_page before find** to understand page structure
@@ -330,6 +338,7 @@ mcp__claude-in-chrome__gif_creator({
 5. **Dismiss modal dialogs manually** - they block all events
 
 ### General
+
 1. **Prefer Chrome DevTools MCP** for public sites (always available)
 2. **Use Claude-in-Chrome** only when authentication is required
 3. **Don't trigger alert/confirm/prompt** - they block browser events
@@ -343,25 +352,27 @@ mcp__claude-in-chrome__gif_creator({
 
 ```javascript
 // Create page and navigate
-mcp__chrome-devtools__new_page({ url: "https://example.com/login" })
+mcp__chrome - devtools__new_page({ url: 'https://example.com/login' });
 
 // Take snapshot to get element UIDs
-mcp__chrome-devtools__take_snapshot()
+mcp__chrome - devtools__take_snapshot();
 
 // Fill login form
-mcp__chrome-devtools__fill_form({
-  elements: [
-    { uid: "email_field", value: "test@example.com" },
-    { uid: "password_field", value: "testpass123" }
-  ]
-})
+mcp__chrome -
+  devtools__fill_form({
+    elements: [
+      { uid: 'email_field', value: 'test@example.com' },
+      { uid: 'password_field', value: 'testpass123' },
+    ],
+  });
 
 // Click submit
-mcp__chrome-devtools__click({ uid: "submit_button" })
+mcp__chrome - devtools__click({ uid: 'submit_button' });
 
 // Check for errors
-mcp__chrome-devtools__list_console_messages({ types: ["error"] })
+mcp__chrome - devtools__list_console_messages({ types: ['error'] });
 ```
+
 </usage_example>
 
 <usage_example>
@@ -369,21 +380,24 @@ mcp__chrome-devtools__list_console_messages({ types: ["error"] })
 
 ```javascript
 // Navigate to page
-mcp__chrome-devtools__navigate_page({ url: "https://example.com" })
+mcp__chrome - devtools__navigate_page({ url: 'https://example.com' });
 
 // Run performance trace with reload
-mcp__chrome-devtools__performance_start_trace({
-  reload: true,
-  autoStop: true,
-  filePath: "trace.json.gz"
-})
+mcp__chrome -
+  devtools__performance_start_trace({
+    reload: true,
+    autoStop: true,
+    filePath: 'trace.json.gz',
+  });
 
 // Analyze LCP breakdown
-mcp__chrome-devtools__performance_analyze_insight({
-  insightSetId: "navigation-1",
-  insightName: "LCPBreakdown"
-})
+mcp__chrome -
+  devtools__performance_analyze_insight({
+    insightSetId: 'navigation-1',
+    insightName: 'LCPBreakdown',
+  });
 ```
+
 </usage_example>
 
 <usage_example>
@@ -415,6 +429,7 @@ mcp__claude-in-chrome__computer({
   tabId: 123
 })
 ```
+
 </usage_example>
 
 <usage_example>
@@ -445,6 +460,7 @@ mcp__claude-in-chrome__gif_creator({
   tabId: 123
 })
 ```
+
 </usage_example>
 </examples>
 
@@ -452,57 +468,57 @@ mcp__claude-in-chrome__gif_creator({
 
 ### Chrome DevTools MCP (Always Available)
 
-| Tool | Description |
-|------|-------------|
-| `mcp__chrome-devtools__list_pages` | List all browser pages |
-| `mcp__chrome-devtools__select_page` | Select page for operations |
-| `mcp__chrome-devtools__new_page` | Create new page with URL |
-| `mcp__chrome-devtools__close_page` | Close a page |
-| `mcp__chrome-devtools__navigate_page` | Navigate, reload, back/forward |
-| `mcp__chrome-devtools__take_snapshot` | Get accessibility tree with UIDs |
-| `mcp__chrome-devtools__take_screenshot` | Capture page/element screenshot |
-| `mcp__chrome-devtools__click` | Click element by UID |
-| `mcp__chrome-devtools__fill` | Fill input/select by UID |
-| `mcp__chrome-devtools__fill_form` | Fill multiple form elements |
-| `mcp__chrome-devtools__hover` | Hover over element |
-| `mcp__chrome-devtools__drag` | Drag element to another |
-| `mcp__chrome-devtools__press_key` | Press key or combination |
-| `mcp__chrome-devtools__evaluate_script` | Execute JavaScript |
-| `mcp__chrome-devtools__handle_dialog` | Accept/dismiss dialogs |
-| `mcp__chrome-devtools__upload_file` | Upload file via input |
-| `mcp__chrome-devtools__wait_for` | Wait for text to appear |
-| `mcp__chrome-devtools__resize_page` | Resize browser window |
-| `mcp__chrome-devtools__emulate` | Device/network/geo emulation |
-| `mcp__chrome-devtools__list_console_messages` | List console output |
-| `mcp__chrome-devtools__get_console_message` | Get message details |
-| `mcp__chrome-devtools__list_network_requests` | List network requests |
-| `mcp__chrome-devtools__get_network_request` | Get request/response details |
-| `mcp__chrome-devtools__performance_start_trace` | Start performance recording |
-| `mcp__chrome-devtools__performance_stop_trace` | Stop performance recording |
-| `mcp__chrome-devtools__performance_analyze_insight` | Analyze performance insight |
+| Tool                                                | Description                      |
+| --------------------------------------------------- | -------------------------------- |
+| `mcp__chrome-devtools__list_pages`                  | List all browser pages           |
+| `mcp__chrome-devtools__select_page`                 | Select page for operations       |
+| `mcp__chrome-devtools__new_page`                    | Create new page with URL         |
+| `mcp__chrome-devtools__close_page`                  | Close a page                     |
+| `mcp__chrome-devtools__navigate_page`               | Navigate, reload, back/forward   |
+| `mcp__chrome-devtools__take_snapshot`               | Get accessibility tree with UIDs |
+| `mcp__chrome-devtools__take_screenshot`             | Capture page/element screenshot  |
+| `mcp__chrome-devtools__click`                       | Click element by UID             |
+| `mcp__chrome-devtools__fill`                        | Fill input/select by UID         |
+| `mcp__chrome-devtools__fill_form`                   | Fill multiple form elements      |
+| `mcp__chrome-devtools__hover`                       | Hover over element               |
+| `mcp__chrome-devtools__drag`                        | Drag element to another          |
+| `mcp__chrome-devtools__press_key`                   | Press key or combination         |
+| `mcp__chrome-devtools__evaluate_script`             | Execute JavaScript               |
+| `mcp__chrome-devtools__handle_dialog`               | Accept/dismiss dialogs           |
+| `mcp__chrome-devtools__upload_file`                 | Upload file via input            |
+| `mcp__chrome-devtools__wait_for`                    | Wait for text to appear          |
+| `mcp__chrome-devtools__resize_page`                 | Resize browser window            |
+| `mcp__chrome-devtools__emulate`                     | Device/network/geo emulation     |
+| `mcp__chrome-devtools__list_console_messages`       | List console output              |
+| `mcp__chrome-devtools__get_console_message`         | Get message details              |
+| `mcp__chrome-devtools__list_network_requests`       | List network requests            |
+| `mcp__chrome-devtools__get_network_request`         | Get request/response details     |
+| `mcp__chrome-devtools__performance_start_trace`     | Start performance recording      |
+| `mcp__chrome-devtools__performance_stop_trace`      | Stop performance recording       |
+| `mcp__chrome-devtools__performance_analyze_insight` | Analyze performance insight      |
 
 ### Claude-in-Chrome (Requires `--chrome` flag)
 
-| Tool | Description |
-|------|-------------|
-| `mcp__claude-in-chrome__tabs_context_mcp` | Get tab context (call first!) |
-| `mcp__claude-in-chrome__tabs_create_mcp` | Create new tab |
-| `mcp__claude-in-chrome__navigate` | Navigate to URL |
-| `mcp__claude-in-chrome__read_page` | Get accessibility tree |
-| `mcp__claude-in-chrome__find` | Find elements by description |
-| `mcp__claude-in-chrome__get_page_text` | Extract page text |
-| `mcp__claude-in-chrome__computer` | Click, type, screenshot, scroll |
-| `mcp__claude-in-chrome__form_input` | Fill form field |
-| `mcp__claude-in-chrome__fill_form` | Fill multiple fields |
-| `mcp__claude-in-chrome__javascript_tool` | Execute JavaScript |
-| `mcp__claude-in-chrome__read_console_messages` | Read console logs |
-| `mcp__claude-in-chrome__read_network_requests` | Read network requests |
-| `mcp__claude-in-chrome__resize_window` | Resize browser window |
-| `mcp__claude-in-chrome__upload_image` | Upload image to element |
-| `mcp__claude-in-chrome__gif_creator` | Record/export GIF |
-| `mcp__claude-in-chrome__shortcuts_list` | List available shortcuts |
-| `mcp__claude-in-chrome__shortcuts_execute` | Execute shortcut |
-| `mcp__claude-in-chrome__update_plan` | Present plan for approval |
+| Tool                                           | Description                     |
+| ---------------------------------------------- | ------------------------------- |
+| `mcp__claude-in-chrome__tabs_context_mcp`      | Get tab context (call first!)   |
+| `mcp__claude-in-chrome__tabs_create_mcp`       | Create new tab                  |
+| `mcp__claude-in-chrome__navigate`              | Navigate to URL                 |
+| `mcp__claude-in-chrome__read_page`             | Get accessibility tree          |
+| `mcp__claude-in-chrome__find`                  | Find elements by description    |
+| `mcp__claude-in-chrome__get_page_text`         | Extract page text               |
+| `mcp__claude-in-chrome__computer`              | Click, type, screenshot, scroll |
+| `mcp__claude-in-chrome__form_input`            | Fill form field                 |
+| `mcp__claude-in-chrome__fill_form`             | Fill multiple fields            |
+| `mcp__claude-in-chrome__javascript_tool`       | Execute JavaScript              |
+| `mcp__claude-in-chrome__read_console_messages` | Read console logs               |
+| `mcp__claude-in-chrome__read_network_requests` | Read network requests           |
+| `mcp__claude-in-chrome__resize_window`         | Resize browser window           |
+| `mcp__claude-in-chrome__upload_image`          | Upload image to element         |
+| `mcp__claude-in-chrome__gif_creator`           | Record/export GIF               |
+| `mcp__claude-in-chrome__shortcuts_list`        | List available shortcuts        |
+| `mcp__claude-in-chrome__shortcuts_execute`     | Execute shortcut                |
+| `mcp__claude-in-chrome__update_plan`           | Present plan for approval       |
 
 ## Agent Integration
 
@@ -523,16 +539,19 @@ This skill is automatically assigned to:
 **Root Cause**: Claude.app (desktop) and Claude Code register **competing native messaging hosts**. When both are installed, the Chrome extension connects to whichever registered last, causing connection failures.
 
 **Diagnosis**:
+
 1. Check if both Claude.app and Claude Code are installed
 2. On Windows: Check `%APPDATA%\Claude\ChromeNativeHost\com.anthropic.claude_browser_extension.json`
 3. On macOS: Check `~/Library/Application Support/Claude/ChromeNativeHost/`
 
 **Known Bug**: This is documented in GitHub issues:
+
 - [#15336](https://github.com/anthropics/claude-code/issues/15336) - Windows Native Messaging Host not installing
 - [#14894](https://github.com/anthropics/claude-code/issues/14894) - Reconnect extension fails on macOS
 - [#20790](https://github.com/anthropics/claude-code/issues/20790) - Extension connects to Claude.app instead of Claude Code
 
 **Workaround (macOS)**:
+
 ```bash
 # Disable Claude.app's native host (keep file for restoration)
 cd ~/Library/Application\ Support/Google/Chrome/NativeMessagingHosts/
@@ -543,6 +562,7 @@ mv com.anthropic.claude_browser_extension.json com.anthropic.claude_browser_exte
 ```
 
 **Workaround (Windows)**: Not fully documented. Potential approach:
+
 ```powershell
 # Rename the config to disable Claude.app's registration
 cd $env:APPDATA\Claude\ChromeNativeHost
@@ -564,11 +584,13 @@ ren com.anthropic.claude_browser_extension.json com.anthropic.claude_browser_ext
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

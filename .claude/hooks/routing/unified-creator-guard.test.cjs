@@ -471,22 +471,14 @@ describe('environment variable override', () => {
 
 describe('generateViolationMessage', () => {
   it('generates message with file path and creator name', () => {
-    const msg = generateViolationMessage(
-      '.claude/skills/test/SKILL.md',
-      'skill-creator',
-      'skill'
-    );
+    const msg = generateViolationMessage('.claude/skills/test/SKILL.md', 'skill-creator', 'skill');
     assert.ok(msg.includes('skill-creator'));
     assert.ok(msg.includes('skill'));
     assert.ok(msg.includes('SKILL.md') || msg.includes('test'));
   });
 
   it('includes correct override instructions', () => {
-    const msg = generateViolationMessage(
-      '.claude/agents/core/test.md',
-      'agent-creator',
-      'agent'
-    );
+    const msg = generateViolationMessage('.claude/agents/core/test.md', 'agent-creator', 'agent');
     assert.ok(msg.includes('CREATOR_GUARD'));
     assert.ok(msg.includes('agent-creator'));
   });

@@ -29,6 +29,7 @@ arXiv Search Skill - Search and retrieve academic papers from arXiv.org using ex
 ## ✅ No Installation Required
 
 This skill uses **existing tools** to access arXiv:
+
 - **WebFetch** - Direct access to arXiv API
 - **Exa** - Semantic search with arXiv filtering
 
@@ -54,8 +55,8 @@ The arXiv API is publicly accessible at `http://export.arxiv.org/api/query`.
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=all:transformer+attention&max_results=10&sortBy=relevance",
-  prompt: "Extract paper titles, authors, abstracts, arXiv IDs, and PDF links from these results"
+  url: 'http://export.arxiv.org/api/query?search_query=all:transformer+attention&max_results=10&sortBy=relevance',
+  prompt: 'Extract paper titles, authors, abstracts, arXiv IDs, and PDF links from these results',
 });
 ```
 
@@ -63,8 +64,8 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=au:LeCun&max_results=10&sortBy=submittedDate",
-  prompt: "Extract paper titles, authors, abstracts, and arXiv IDs"
+  url: 'http://export.arxiv.org/api/query?search_query=au:LeCun&max_results=10&sortBy=submittedDate',
+  prompt: 'Extract paper titles, authors, abstracts, and arXiv IDs',
 });
 ```
 
@@ -72,8 +73,8 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=15&sortBy=submittedDate",
-  prompt: "Extract paper titles, authors, abstracts, categories, and arXiv IDs"
+  url: 'http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=15&sortBy=submittedDate',
+  prompt: 'Extract paper titles, authors, abstracts, categories, and arXiv IDs',
 });
 ```
 
@@ -81,36 +82,38 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?id_list=2301.07041",
-  prompt: "Extract full details: title, all authors, abstract, categories, published date, PDF link"
+  url: 'http://export.arxiv.org/api/query?id_list=2301.07041',
+  prompt:
+    'Extract full details: title, all authors, abstract, categories, published date, PDF link',
 });
 ```
 
 ### API Query Parameters
 
-| Parameter | Description | Example |
-|-----------|-------------|---------|
-| `search_query` | Search terms with field prefixes | `all:transformer`, `au:LeCun`, `ti:attention` |
-| `id_list` | Comma-separated arXiv IDs | `2301.07041,2302.13971` |
-| `max_results` | Number of results (default 10, max 100) | `max_results=20` |
-| `start` | Offset for pagination | `start=10` |
-| `sortBy` | Sort order: `relevance`, `lastUpdatedDate`, `submittedDate` | `sortBy=submittedDate` |
-| `sortOrder` | `ascending` or `descending` | `sortOrder=descending` |
+| Parameter      | Description                                                 | Example                                       |
+| -------------- | ----------------------------------------------------------- | --------------------------------------------- |
+| `search_query` | Search terms with field prefixes                            | `all:transformer`, `au:LeCun`, `ti:attention` |
+| `id_list`      | Comma-separated arXiv IDs                                   | `2301.07041,2302.13971`                       |
+| `max_results`  | Number of results (default 10, max 100)                     | `max_results=20`                              |
+| `start`        | Offset for pagination                                       | `start=10`                                    |
+| `sortBy`       | Sort order: `relevance`, `lastUpdatedDate`, `submittedDate` | `sortBy=submittedDate`                        |
+| `sortOrder`    | `ascending` or `descending`                                 | `sortOrder=descending`                        |
 
 ### Field Prefixes for search_query
 
-| Prefix | Field | Example |
-|--------|-------|---------|
-| `all:` | All fields | `all:machine+learning` |
-| `ti:` | Title | `ti:transformer` |
-| `au:` | Author | `au:Vaswani` |
-| `abs:` | Abstract | `abs:attention+mechanism` |
-| `cat:` | Category | `cat:cs.LG` |
-| `co:` | Comment | `co:accepted` |
+| Prefix | Field      | Example                   |
+| ------ | ---------- | ------------------------- |
+| `all:` | All fields | `all:machine+learning`    |
+| `ti:`  | Title      | `ti:transformer`          |
+| `au:`  | Author     | `au:Vaswani`              |
+| `abs:` | Abstract   | `abs:attention+mechanism` |
+| `cat:` | Category   | `cat:cs.LG`               |
+| `co:`  | Comment    | `co:accepted`             |
 
 ### Boolean Operators
 
 Combine terms with `AND`, `OR`, `ANDNOT`:
+
 ```
 search_query=ti:transformer+AND+abs:attention
 search_query=au:LeCun+OR+au:Bengio
@@ -127,8 +130,8 @@ Use Exa for more natural language queries with arXiv filtering:
 
 ```javascript
 mcp__Exa__web_search_exa({
-  query: "site:arxiv.org transformer architecture attention mechanism deep learning",
-  numResults: 10
+  query: 'site:arxiv.org transformer architecture attention mechanism deep learning',
+  numResults: 10,
 });
 ```
 
@@ -136,8 +139,8 @@ mcp__Exa__web_search_exa({
 
 ```javascript
 mcp__Exa__web_search_exa({
-  query: "site:arxiv.org large language model scaling laws 2024",
-  numResults: 15
+  query: 'site:arxiv.org large language model scaling laws 2024',
+  numResults: 15,
 });
 ```
 
@@ -145,8 +148,8 @@ mcp__Exa__web_search_exa({
 
 ```javascript
 mcp__Exa__web_search_exa({
-  query: "site:arxiv.org author:\"Yann LeCun\" deep learning",
-  numResults: 10
+  query: 'site:arxiv.org author:"Yann LeCun" deep learning',
+  numResults: 10,
 });
 ```
 
@@ -154,57 +157,61 @@ mcp__Exa__web_search_exa({
 
 ## Common arXiv Categories
 
-| Category | Field |
-|----------|-------|
-| cs.AI | Artificial Intelligence |
-| cs.LG | Machine Learning |
-| cs.CL | Computation and Language (NLP) |
-| cs.CV | Computer Vision |
-| cs.SE | Software Engineering |
-| cs.CR | Cryptography and Security |
-| stat.ML | Machine Learning (Statistics) |
-| math.* | Mathematics (all subcategories) |
-| physics.* | Physics (all subcategories) |
-| q-bio.* | Quantitative Biology |
-| econ.* | Economics |
+| Category   | Field                           |
+| ---------- | ------------------------------- |
+| cs.AI      | Artificial Intelligence         |
+| cs.LG      | Machine Learning                |
+| cs.CL      | Computation and Language (NLP)  |
+| cs.CV      | Computer Vision                 |
+| cs.SE      | Software Engineering            |
+| cs.CR      | Cryptography and Security       |
+| stat.ML    | Machine Learning (Statistics)   |
+| math.\*    | Mathematics (all subcategories) |
+| physics.\* | Physics (all subcategories)     |
+| q-bio.\*   | Quantitative Biology            |
+| econ.\*    | Economics                       |
 
 ---
 
 ## Workflow: Complete Research Process
 
 ### Step 1: Initial Search
+
 ```javascript
 // Start with broad Exa search for semantic matching
 mcp__Exa__web_search_exa({
-  query: "site:arxiv.org transformer attention mechanism neural networks",
-  numResults: 10
+  query: 'site:arxiv.org transformer attention mechanism neural networks',
+  numResults: 10,
 });
 ```
 
 ### Step 2: Get Specific Papers
+
 ```javascript
 // Get details for interesting papers by ID
 WebFetch({
-  url: "http://export.arxiv.org/api/query?id_list=2301.07041,2302.13971",
-  prompt: "Extract full metadata for each paper: title, authors, abstract, categories, PDF URL"
+  url: 'http://export.arxiv.org/api/query?id_list=2301.07041,2302.13971',
+  prompt: 'Extract full metadata for each paper: title, authors, abstract, categories, PDF URL',
 });
 ```
 
 ### Step 3: Find Related Work
+
 ```javascript
 // Search by category of interesting paper
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=cat:cs.LG+AND+ti:attention&max_results=10&sortBy=submittedDate",
-  prompt: "Find related papers, extract titles and abstracts"
+  url: 'http://export.arxiv.org/api/query?search_query=cat:cs.LG+AND+ti:attention&max_results=10&sortBy=submittedDate',
+  prompt: 'Find related papers, extract titles and abstracts',
 });
 ```
 
 ### Step 4: Get Recent Papers
+
 ```javascript
 // Latest papers in the field
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=20&sortBy=submittedDate&sortOrder=descending",
-  prompt: "Extract the 20 most recent machine learning papers"
+  url: 'http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=20&sortBy=submittedDate&sortOrder=descending',
+  prompt: 'Extract the 20 most recent machine learning papers',
 });
 ```
 
@@ -228,8 +235,8 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=ti:transformer+AND+abs:attention&max_results=10&sortBy=relevance",
-  prompt: "Extract paper titles, authors, abstracts, and arXiv IDs"
+  url: 'http://export.arxiv.org/api/query?search_query=ti:transformer+AND+abs:attention&max_results=10&sortBy=relevance',
+  prompt: 'Extract paper titles, authors, abstracts, and arXiv IDs',
 });
 ```
 
@@ -237,8 +244,8 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=au:Vaswani&max_results=15",
-  prompt: "List all papers by this author with titles and dates"
+  url: 'http://export.arxiv.org/api/query?search_query=au:Vaswani&max_results=15',
+  prompt: 'List all papers by this author with titles and dates',
 });
 ```
 
@@ -246,8 +253,8 @@ WebFetch({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=20&sortBy=submittedDate&sortOrder=descending",
-  prompt: "Extract the 20 most recent machine learning papers with titles and abstracts"
+  url: 'http://export.arxiv.org/api/query?search_query=cat:cs.LG&max_results=20&sortBy=submittedDate&sortOrder=descending',
+  prompt: 'Extract the 20 most recent machine learning papers with titles and abstracts',
 });
 ```
 
@@ -255,8 +262,8 @@ WebFetch({
 
 ```javascript
 mcp__Exa__web_search_exa({
-  query: "site:arxiv.org multimodal large language models vision 2024",
-  numResults: 10
+  query: 'site:arxiv.org multimodal large language models vision 2024',
+  numResults: 10,
 });
 ```
 
@@ -264,8 +271,8 @@ mcp__Exa__web_search_exa({
 
 ```javascript
 WebFetch({
-  url: "http://export.arxiv.org/api/query?id_list=1706.03762",
-  prompt: "Extract complete details for the 'Attention Is All You Need' paper"
+  url: 'http://export.arxiv.org/api/query?id_list=1706.03762',
+  prompt: "Extract complete details for the 'Attention Is All You Need' paper",
 });
 ```
 
@@ -283,11 +290,13 @@ This skill is automatically assigned to:
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern -> `.claude/context/memory/learnings.md`
 - Issue found -> `.claude/context/memory/issues.md`
 - Decision made -> `.claude/context/memory/decisions.md`

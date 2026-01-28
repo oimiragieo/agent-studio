@@ -79,18 +79,14 @@ const CREATOR_CONFIGS = [
   },
   {
     creator: 'workflow-creator',
-    patterns: [
-      /\.claude[/\\]workflows[/\\](?:core|enterprise|operations|rapid)[/\\][^/\\]+\.md$/i,
-    ],
+    patterns: [/\.claude[/\\]workflows[/\\](?:core|enterprise|operations|rapid)[/\\][^/\\]+\.md$/i],
     artifactType: 'workflow',
     primaryFile: '*.md',
     excludePatterns: [/README\.md$/i],
   },
   {
     creator: 'template-creator',
-    patterns: [
-      /\.claude[/\\]templates[/\\](?:agents|skills|workflows|hooks|code|schemas)[/\\]/i,
-    ],
+    patterns: [/\.claude[/\\]templates[/\\](?:agents|skills|workflows|hooks|code|schemas)[/\\]/i],
     artifactType: 'template',
     primaryFile: '*',
     excludePatterns: [/README\.md$/i],

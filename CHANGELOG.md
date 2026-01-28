@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-01-28
+
+### Fixed
+
+- **ROUTING-002 Complete Fix Verified**: Router no longer uses blacklisted tools when user explicitly requests them
+  - **Root Cause**: Two-part lifecycle state management issue
+    1. `user-prompt-unified.cjs` had 30-minute window that preserved agent state across new user prompts
+    2. `post-task-unified.cjs` called `enterAgentMode()` after task completion instead of `exitAgentMode()`
+  - **Fix Part 1** (user-prompt-unified.cjs): Removed 30-minute active agent window, always reset to router mode on new prompts
+  - **Fix Part 2** (post-task-unified.cjs): Added `exitAgentMode()` to router-state.cjs, changed hook to call it after task completion
+  - **Behavior**: Router correctly resets to router mode after agent completes, blocking blacklisted tools on next user prompt
+  - **Spawn Tracking Preserved**: `plannerSpawned` and `securitySpawned` state persists across task completions
+  - **Headless Verification**: `claude -p "Use Glob..."` now correctly spawns DEVELOPER agent instead of using Glob directly
+  - **Tests Added**: 8 new tests (7 unit + 1 integration), 83/83 tests passing
+  - **Debug Support**: Added `ROUTER_DEBUG=true` environment variable for troubleshooting
+  - **Files Modified**:
+    - `.claude/hooks/routing/user-prompt-unified.cjs` (removed window check)
+    - `.claude/hooks/routing/post-task-unified.cjs` (exitAgentMode call)
+    - `.claude/hooks/routing/router-state.cjs` (added exitAgentMode function)
+    - 3 test files with new coverage
+
+### Documentation
+
+- **Memory Update**: Added ROUTING-002 verification details to `.claude/context/memory/learnings.md`
+- **Issues Resolved**: Marked ROUTING-002 as RESOLVED in `.claude/context/memory/issues.md`
+- **Changelog**: Updated with complete fix verification
+
 ## [2.1.0] - 2026-01-27
 
 ### Added
