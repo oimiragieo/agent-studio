@@ -7,7 +7,7 @@
 
 'use strict';
 
-const assert = require('assert');
+const _assert = require('assert');
 const routerState = require('./router-state.cjs');
 
 // Test utilities
@@ -44,7 +44,7 @@ function assertTrue(value, message = '') {
   }
 }
 
-function assertFalse(value, message = '') {
+function _assertFalse(value, message = '') {
   if (value) {
     throw new Error(`${message} Expected falsy value, got ${JSON.stringify(value)}`);
   }

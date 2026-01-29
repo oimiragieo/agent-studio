@@ -393,7 +393,10 @@ function testRotateIssues() {
 
   // Verify active file contains OPEN issues
   const activeContent = fs.readFileSync(issuesPath, 'utf8');
-  assert.ok(activeContent.includes('Memory Leak in Worker Process'), 'Active file should contain OPEN issue');
+  assert.ok(
+    activeContent.includes('Memory Leak in Worker Process'),
+    'Active file should contain OPEN issue'
+  );
   assert.ok(activeContent.includes('Circular Dependency'), 'Active file should contain OPEN issue');
 
   // If archive was created, verify it contains only RESOLVED issues

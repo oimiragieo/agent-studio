@@ -158,7 +158,7 @@ function getEvolutionState() {
     const cached = getCachedState(EVOLUTION_STATE_PATH, null);
     if (cached !== null) return cached;
     return safeReadJSON(EVOLUTION_STATE_PATH, 'evolution-state');
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -272,7 +272,7 @@ function collectArtifactNames(dir, names) {
         }
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore errors
   }
 }

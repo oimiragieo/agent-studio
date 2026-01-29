@@ -63,7 +63,7 @@ function readTestQueue() {
 let hook;
 try {
   hook = require('./session-end-reflection.cjs');
-} catch (e) {
+} catch (_e) {
   console.log('WARNING: Module not implemented yet. Tests will fail.\n');
   hook = {
     isEnabled: () => false,

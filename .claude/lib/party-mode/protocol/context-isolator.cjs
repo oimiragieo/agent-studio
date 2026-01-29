@@ -48,7 +48,7 @@ function isolateContext(originalContext, agentId, agentType) {
       icon: response.icon,
       content: response.content,
       hash: response.hash,
-      timestamp: response.timestamp
+      timestamp: response.timestamp,
       // EXPLICITLY EXCLUDED:
       // - rawThinking (internal reasoning)
       // - toolCalls (tool usage patterns)
@@ -128,7 +128,7 @@ function validateContextBoundary(context, agentId) {
 
   return {
     valid: violations.length === 0,
-    violations
+    violations,
   };
 }
 
@@ -150,7 +150,7 @@ function mergeAgentContributions(sharedContext, agentContribution) {
     icon: agentContribution.icon,
     content: agentContribution.content,
     hash: agentContribution.hash,
-    timestamp: agentContribution.timestamp
+    timestamp: agentContribution.timestamp,
     // EXPLICITLY EXCLUDED:
     // - rawThinking
     // - toolCalls
@@ -171,5 +171,5 @@ module.exports = {
   isolateContext,
   sanitizeSharedContext,
   validateContextBoundary,
-  mergeAgentContributions
+  mergeAgentContributions,
 };

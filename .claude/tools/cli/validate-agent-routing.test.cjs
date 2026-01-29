@@ -26,7 +26,7 @@ const MOCK_CLAUDE_MD_WITH_TABLE = `# CLAUDE.md
 | Security | \`security-architect\` | \`.claude/agents/specialized/security-architect.md\` |
 `;
 
-const MOCK_CLAUDE_MD_WITH_MISSING_AGENT = `# CLAUDE.md
+const _MOCK_CLAUDE_MD_WITH_MISSING_AGENT = `# CLAUDE.md
 
 ## 3. AGENT ROUTING TABLE
 

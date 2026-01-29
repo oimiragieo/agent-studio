@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 // PERF-005 FIX: Import state cache utilities for test cleanup
-const { invalidateCache, clearAllCache } = require('../../lib/utils/state-cache.cjs');
+const { invalidateCache, _clearAllCache } = require('../../lib/utils/state-cache.cjs');
 
 // Test state tracking
 let testsRun = 0;
@@ -833,14 +833,13 @@ describe('SEC-AUDIT-014 TOCTOU Fix: Atomic Stale Lock Cleanup', () => {
     // Simulate two processes trying to claim the stale lock simultaneously
     // With atomic rename, only one can succeed
     let successCount = 0;
-    let errorCount = 0;
 
     // First "process" claims the lock
     try {
       const state1 = loopPrevention.getState(TEST_STATE_FILE);
       if (state1) successCount++;
     } catch {
-      errorCount++;
+      // Error expected in some scenarios - we don't need to track the count
     }
 
     // Create another stale lock to simulate second process
@@ -860,7 +859,7 @@ describe('SEC-AUDIT-014 TOCTOU Fix: Atomic Stale Lock Cleanup', () => {
       const state2 = loopPrevention.getState(TEST_STATE_FILE);
       if (state2) successCount++;
     } catch {
-      errorCount++;
+      // errorCount++; // Not used but keeps catch block from being empty
     }
 
     // Both should succeed (sequentially, not racing)

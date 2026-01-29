@@ -199,7 +199,7 @@ const ROUTING_TABLE = {
  * Get preferred agent for a detected intent
  * Returns agent name from ROUTING_TABLE or null if no match
  */
-function getPreferredAgent(intent) {
+function _getPreferredAgent(intent) {
   return ROUTING_TABLE[intent] || null;
 }
 
@@ -240,7 +240,7 @@ function loadAgents() {
               path: path.relative(PROJECT_ROOT, fullPath),
             });
           }
-        } catch (e) {
+        } catch (_e) {
           // Skip invalid files
         }
       }
@@ -2334,7 +2334,7 @@ function scoreAgents(prompt, agents) {
   for (const agent of agents) {
     let score = 0;
     const agentDesc = (agent.description + ' ' + agent.name).toLowerCase();
-    const agentName = agent.name.toLowerCase();
+    const _agentName = agent.name.toLowerCase();
 
     // Match by description keywords
     const promptWords = promptLower.split(/\s+/);

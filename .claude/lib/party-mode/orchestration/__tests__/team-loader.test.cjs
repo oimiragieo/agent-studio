@@ -11,7 +11,9 @@ const assert = require('node:assert');
 const fs = require('fs/promises');
 const path = require('path');
 
-const PROJECT_ROOT = path.dirname(path.dirname(path.dirname(path.dirname(path.dirname(__dirname)))));
+const PROJECT_ROOT = path.dirname(
+  path.dirname(path.dirname(path.dirname(path.dirname(__dirname))))
+);
 const TEAMS_DIR = path.join(PROJECT_ROOT, '.claude', 'teams');
 const TEST_TEAM_PATH = path.join(TEAMS_DIR, 'test-team-loader.csv');
 
@@ -37,7 +39,7 @@ qa,validator,3,"Bash",haiku`;
   after(async () => {
     try {
       await fs.unlink(TEST_TEAM_PATH);
-    } catch (err) {
+    } catch (_err) {
       // Ignore if file doesn't exist
     }
   });
@@ -82,9 +84,9 @@ qa,validator,3,"Bash",haiku`;
             role: 'implementer',
             priority: 1,
             tools: ['Read', 'Write'],
-            model: 'sonnet'
-          }
-        ]
+            model: 'sonnet',
+          },
+        ],
       };
 
       const result = validateTeamDefinition(validTeam);
@@ -97,54 +99,93 @@ qa,validator,3,"Bash",haiku`;
       const oversizedTeam = {
         teamName: 'oversized-team',
         agents: [
-          { agent_type: 'developer', role: 'implementer', priority: 1, tools: ['Read'], model: 'sonnet' },
-          { agent_type: 'architect', role: 'designer', priority: 2, tools: ['Read'], model: 'sonnet' },
+          {
+            agent_type: 'developer',
+            role: 'implementer',
+            priority: 1,
+            tools: ['Read'],
+            model: 'sonnet',
+          },
+          {
+            agent_type: 'architect',
+            role: 'designer',
+            priority: 2,
+            tools: ['Read'],
+            model: 'sonnet',
+          },
           { agent_type: 'qa', role: 'validator', priority: 3, tools: ['Bash'], model: 'haiku' },
-          { agent_type: 'security-architect', role: 'reviewer', priority: 4, tools: ['Read'], model: 'opus' },
-          { agent_type: 'pm', role: 'coordinator', priority: 5, tools: ['Read'], model: 'sonnet' }
-        ]
+          {
+            agent_type: 'security-architect',
+            role: 'reviewer',
+            priority: 4,
+            tools: ['Read'],
+            model: 'opus',
+          },
+          { agent_type: 'pm', role: 'coordinator', priority: 5, tools: ['Read'], model: 'sonnet' },
+        ],
       };
 
       const result = validateTeamDefinition(oversizedTeam);
 
       assert.strictEqual(result.valid, false, 'Oversized team should fail validation');
-      assert.ok(result.errors.some(e => e.includes('4 agents')), 'Error should mention 4 agent limit');
+      assert.ok(
+        result.errors.some(e => e.includes('4 agents')),
+        'Error should mention 4 agent limit'
+      );
     });
 
     it('should reject agent with invalid role', () => {
       const invalidRoleTeam = {
         teamName: 'invalid-role-team',
         agents: [
-          { agent_type: 'developer', role: 'invalid-role', priority: 1, tools: ['Read'], model: 'sonnet' }
-        ]
+          {
+            agent_type: 'developer',
+            role: 'invalid-role',
+            priority: 1,
+            tools: ['Read'],
+            model: 'sonnet',
+          },
+        ],
       };
 
       const result = validateTeamDefinition(invalidRoleTeam);
 
       assert.strictEqual(result.valid, false, 'Invalid role should fail validation');
-      assert.ok(result.errors.some(e => e.includes('role')), 'Error should mention invalid role');
+      assert.ok(
+        result.errors.some(e => e.includes('role')),
+        'Error should mention invalid role'
+      );
     });
 
     it('should reject agent with invalid model', () => {
       const invalidModelTeam = {
         teamName: 'invalid-model-team',
         agents: [
-          { agent_type: 'developer', role: 'implementer', priority: 1, tools: ['Read'], model: 'invalid-model' }
-        ]
+          {
+            agent_type: 'developer',
+            role: 'implementer',
+            priority: 1,
+            tools: ['Read'],
+            model: 'invalid-model',
+          },
+        ],
       };
 
       const result = validateTeamDefinition(invalidModelTeam);
 
       assert.strictEqual(result.valid, false, 'Invalid model should fail validation');
-      assert.ok(result.errors.some(e => e.includes('model')), 'Error should mention invalid model');
+      assert.ok(
+        result.errors.some(e => e.includes('model')),
+        'Error should mention invalid model'
+      );
     });
 
     it('should reject agent with missing required fields', () => {
       const missingFieldsTeam = {
         teamName: 'missing-fields-team',
         agents: [
-          { agent_type: 'developer', role: 'implementer' } // Missing priority, tools, model
-        ]
+          { agent_type: 'developer', role: 'implementer' }, // Missing priority, tools, model
+        ],
       };
 
       const result = validateTeamDefinition(missingFieldsTeam);

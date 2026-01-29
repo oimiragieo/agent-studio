@@ -126,7 +126,7 @@ class EvolutionStateSync {
       this._cacheTime = Date.now();
 
       return { ...state };
-    } catch (e) {
+    } catch (_e) {
       // Return default state on error
       const defaultState = { ...DEFAULT_STATE, lastUpdated: new Date().toISOString() };
       return defaultState;

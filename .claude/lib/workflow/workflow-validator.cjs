@@ -44,7 +44,7 @@ const VALID_ROLLBACK_STRATEGIES = ['saga', 'checkpoint', 'manual'];
 /**
  * Required gate fields by type
  */
-const GATE_REQUIRED_FIELDS = {
+const _GATE_REQUIRED_FIELDS = {
   assertion: ['condition', 'message'],
   research: ['minQueries', 'minSources'],
   file_exists: ['path'],

@@ -462,7 +462,7 @@ function recordSession(sessionData) {
     let memoryManager;
     try {
       memoryManager = require('../../lib/memory/memory-manager.cjs');
-    } catch (e) {
+    } catch (_e) {
       const libPath = path.join(__dirname, '..', '..', 'lib', 'memory', 'memory-manager.cjs');
       memoryManager = require(libPath);
     }
@@ -473,7 +473,7 @@ function recordSession(sessionData) {
       memoryTiers = require(
         path.join(PROJECT_ROOT, '.claude', 'lib', 'memory', 'memory-tiers.cjs')
       );
-    } catch (e) {
+    } catch (_e) {
       // Memory tiers not available - continue with legacy behavior
     }
 
@@ -511,7 +511,7 @@ function recordMemoryItems(extracted) {
     let memoryManager;
     try {
       memoryManager = require('../../lib/memory/memory-manager.cjs');
-    } catch (e) {
+    } catch (_e) {
       const libPath = path.join(__dirname, '..', '..', 'lib', 'memory', 'memory-manager.cjs');
       memoryManager = require(libPath);
     }

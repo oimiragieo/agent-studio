@@ -13,7 +13,7 @@ import { fileURLToPath } from 'url';
 let yaml;
 try {
   yaml = (await import('js-yaml')).default;
-} catch (error) {
+} catch (_error) {
   yaml = null;
   console.warn('⚠️  js-yaml not available, using simple YAML parsing');
 }
@@ -74,7 +74,7 @@ function extractFrontmatter(content) {
       );
 
       return yaml.load(frontmatterText) || {};
-    } catch (error) {
+    } catch (_error) {
       // Fall through to simple parsing
     }
   }

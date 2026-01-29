@@ -299,7 +299,7 @@ function pruneCodebaseMap(projectRoot = PROJECT_ROOT) {
   let codebaseMap;
   try {
     codebaseMap = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
-  } catch (e) {
+  } catch (_e) {
     return result;
   }
 
@@ -312,7 +312,7 @@ function pruneCodebaseMap(projectRoot = PROJECT_ROOT) {
   const maxEntries = CONFIG.CODEBASE_MAP_MAX_ENTRIES;
 
   // First, add last_accessed to any entries missing it (migration)
-  for (const [key, value] of Object.entries(codebaseMap.discovered_files)) {
+  for (const [_key, value] of Object.entries(codebaseMap.discovered_files)) {
     if (!value.last_accessed) {
       // Use discovered_at as fallback, or current time
       value.last_accessed = value.discovered_at || now.toISOString();
@@ -351,7 +351,7 @@ function pruneCodebaseMap(projectRoot = PROJECT_ROOT) {
   // Rebuild discovered_files object
   const newDiscoveredFiles = {};
   for (const entry of entries) {
-    const { path: entryPath, accessDate, ...info } = entry;
+    const { path: entryPath, _accessDate, ...info } = entry;
     newDiscoveredFiles[entryPath] = info;
   }
 
@@ -399,7 +399,7 @@ function recordGotcha(gotcha, projectRoot = PROJECT_ROOT) {
   if (fs.existsSync(gotchasFile)) {
     try {
       gotchas = JSON.parse(fs.readFileSync(gotchasFile, 'utf8'));
-    } catch (e) {
+    } catch (_e) {
       gotchas = [];
     }
   }
@@ -453,7 +453,7 @@ function recordPattern(pattern, projectRoot = PROJECT_ROOT) {
   if (fs.existsSync(patternsFile)) {
     try {
       patterns = JSON.parse(fs.readFileSync(patternsFile, 'utf8'));
-    } catch (e) {
+    } catch (_e) {
       patterns = [];
     }
   }
@@ -507,7 +507,7 @@ function recordDiscovery(filePath, description, category = 'general', projectRoo
   if (fs.existsSync(mapFile)) {
     try {
       codebaseMap = JSON.parse(fs.readFileSync(mapFile, 'utf8'));
-    } catch (e) {
+    } catch (_e) {
       codebaseMap = { discovered_files: {}, last_updated: null };
     }
   }
@@ -754,7 +754,7 @@ async function recordGotchaAsync(gotcha, projectRoot = PROJECT_ROOT) {
   if (content) {
     try {
       gotchas = JSON.parse(content);
-    } catch (e) {
+    } catch (_e) {
       gotchas = [];
     }
   }
@@ -798,7 +798,7 @@ async function recordPatternAsync(pattern, projectRoot = PROJECT_ROOT) {
   if (content) {
     try {
       patterns = JSON.parse(content);
-    } catch (e) {
+    } catch (_e) {
       patterns = [];
     }
   }
@@ -921,7 +921,7 @@ async function loadMemoryForContextAsync(projectRoot = PROJECT_ROOT) {
         }
       }
     }
-  } catch (e) {
+  } catch (_e) {
     /* ignore - sessions dir may not exist */
   }
 

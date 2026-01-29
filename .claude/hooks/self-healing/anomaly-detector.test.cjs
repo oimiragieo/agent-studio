@@ -67,7 +67,7 @@ const TEST_ANOMALY_LOG = path.join(TEST_DIR, 'anomaly-log.jsonl');
 let detector;
 try {
   detector = require('./anomaly-detector.cjs');
-} catch (e) {
+} catch (_e) {
   console.log('Module not found - this is expected for TDD RED phase');
   console.log('Create anomaly-detector.cjs to proceed');
   process.exit(1);

@@ -25,18 +25,18 @@ const HOOK_PATH = path.join(__dirname, 'write-size-validator.cjs');
  * Execute hook with JSON input via stdin and return parsed result
  */
 function runHook(input) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const proc = spawn('node', [HOOK_PATH], {
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
 
     let stderr = '';
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       stderr += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       const exitCode = code || 0;
 
       // Try to parse stderr for structured output
@@ -96,8 +96,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -111,8 +111,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -129,8 +129,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -147,8 +147,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: ''
-      }
+        content: '',
+      },
     };
 
     const result = await runHook(input);
@@ -160,8 +160,8 @@ async function runTests() {
     const input = {
       tool_name: 'Write',
       tool_input: {
-        file_path: '/path/to/file.js'
-      }
+        file_path: '/path/to/file.js',
+      },
     };
 
     const result = await runHook(input);
@@ -173,8 +173,8 @@ async function runTests() {
     const input = {
       tool_name: 'Read',
       tool_input: {
-        file_path: '/path/to/file.js'
-      }
+        file_path: '/path/to/file.js',
+      },
     };
 
     const result = await runHook(input);
@@ -188,8 +188,8 @@ async function runTests() {
       tool_name: 'Edit',
       tool_input: {
         file_path: '/path/to/file.js',
-        new_string: content
-      }
+        new_string: content,
+      },
     };
 
     const result = await runHook(input);
@@ -205,8 +205,8 @@ async function runTests() {
       tool_name: 'Edit',
       tool_input: {
         file_path: '/path/to/file.js',
-        new_string: content
-      }
+        new_string: content,
+      },
     };
 
     const result = await runHook(input);
@@ -221,8 +221,8 @@ async function runTests() {
       tool_name: 'NotebookEdit',
       tool_input: {
         notebook_path: '/path/to/notebook.ipynb',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -232,7 +232,7 @@ async function runTests() {
   // Test 10: Malformed input → fail open
   await test('Malformed input should fail open (allow)', async () => {
     const input = {
-      tool_name: 'Write'
+      tool_name: 'Write',
       // Missing tool_input
     };
 
@@ -247,8 +247,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -266,8 +266,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/path/to/file.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -285,8 +285,8 @@ async function runTests() {
       tool_name: 'Write',
       tool_input: {
         file_path: '/test/specific/path.js',
-        content: content
-      }
+        content: content,
+      },
     };
 
     const result = await runHook(input);
@@ -311,7 +311,7 @@ async function runTests() {
 }
 
 // Run tests
-runTests().catch((error) => {
+runTests().catch(error => {
   console.error('Test suite error:', error);
   process.exit(1);
 });

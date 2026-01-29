@@ -15,19 +15,19 @@
 'use strict';
 
 const assert = require('node:assert');
-const { describe, it, beforeEach, afterEach, mock } = require('node:test');
+const { describe, it, beforeEach, afterEach, _mock } = require('node:test');
 const path = require('path');
 const fs = require('fs');
 
 // Test file paths
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..', '..');
 const TEST_RUNTIME_DIR = path.join(PROJECT_ROOT, '.claude', 'context', 'runtime');
-const TEST_ROUTER_STATE = path.join(TEST_RUNTIME_DIR, 'router-state.json');
-const TEST_EVOLUTION_STATE = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
+const _TEST_ROUTER_STATE = path.join(TEST_RUNTIME_DIR, 'router-state.json');
+const _TEST_EVOLUTION_STATE = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
 
 // Prevent process.exit during tests
 const originalExit = process.exit;
-let lastExitCode = null;
+let lastExitCode = null; // eslint-disable-line no-unused-vars
 
 beforeEach(() => {
   lastExitCode = null;

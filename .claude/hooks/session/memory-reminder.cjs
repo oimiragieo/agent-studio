@@ -71,7 +71,7 @@ function getMemoryFiles() {
         lines: lineCount,
         modified: lastModified,
       });
-    } catch (error) {
+    } catch (_error) {
       files.push({
         ...file,
         exists: false,

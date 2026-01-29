@@ -639,7 +639,7 @@ test('validateCommand handles whitespace-only command', () => {
   const result = validateCommand('   ');
   // After trim, this might be treated as empty or safe depending on implementation
   // The registry should handle this gracefully
-  assertTrue(result.hasOwnProperty('valid'), 'Should return a valid result object');
+  assertTrue(Object.hasOwn(result, 'valid'), 'Should return a valid result object');
 });
 
 test('validateCommand handles commands with paths', () => {
@@ -650,7 +650,7 @@ test('validateCommand handles commands with paths', () => {
 test('validateCommand handles Windows-style paths', () => {
   const result = validateCommand('C:\\Windows\\System32\\cmd.exe /c dir');
   // This depends on whether cmd.exe has a validator
-  assertTrue(result.hasOwnProperty('valid'), 'Should return a valid result object');
+  assertTrue(Object.hasOwn(result, 'valid'), 'Should return a valid result object');
 });
 
 test('validateCommand extracts base command from full path', () => {

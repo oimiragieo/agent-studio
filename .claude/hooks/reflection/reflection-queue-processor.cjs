@@ -117,7 +117,7 @@ function getPendingEntries(entries) {
  * @returns {string} Spawn instruction text
  */
 function generateSpawnInstruction(entry) {
-  const trigger = entry.trigger || 'unknown';
+  const _trigger = entry.trigger || 'unknown';
   const reason = buildReason(entry);
   const taskPrompt = buildTaskPrompt(entry);
 
@@ -228,7 +228,7 @@ function markEntriesProcessed(processedEntries, queueFile) {
         }
 
         updatedLines.push(JSON.stringify(entry));
-      } catch (parseErr) {
+      } catch (_parseErr) {
         // Keep malformed lines as-is
         updatedLines.push(line);
       }

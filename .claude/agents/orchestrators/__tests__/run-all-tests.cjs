@@ -24,7 +24,7 @@ console.log('╚═════════════════════�
 let totalTests = 0;
 let totalPassed = 0;
 let totalFailed = 0;
-let currentFile = 0;
+let currentFile = 0; // eslint-disable-line no-unused-vars
 
 function runTest(testFile) {
   return new Promise((resolve, reject) => {
@@ -38,15 +38,15 @@ function runTest(testFile) {
     let output = '';
     let errorOutput = '';
 
-    proc.stdout.on('data', (data) => {
+    proc.stdout.on('data', data => {
       output += data.toString();
     });
 
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', data => {
       errorOutput += data.toString();
     });
 
-    proc.on('close', (code) => {
+    proc.on('close', code => {
       // Parse TAP output to get test counts
       const testMatch = output.match(/# tests (\d+)/);
       const passMatch = output.match(/# pass (\d+)/);
@@ -73,7 +73,7 @@ function runTest(testFile) {
       resolve(code === 0);
     });
 
-    proc.on('error', (err) => {
+    proc.on('error', err => {
       console.error(`✗ ERROR running test: ${err.message}`);
       reject(err);
     });
@@ -114,7 +114,7 @@ async function runAllTests() {
   }
 }
 
-runAllTests().catch((err) => {
+runAllTests().catch(err => {
   console.error('Fatal error:', err);
   process.exit(1);
 });

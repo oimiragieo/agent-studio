@@ -475,7 +475,7 @@ export function ecosystemHealthCheck() {
       try {
         const files = readdirSync(dirPath).filter(f => f.endsWith('.md'));
         stats.agents += files.length;
-      } catch (e) {
+      } catch (_e) {
         // Skip
       }
     }
@@ -490,7 +490,7 @@ export function ecosystemHealthCheck() {
           stats.skills++;
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Skip
     }
   }
@@ -504,7 +504,7 @@ export function ecosystemHealthCheck() {
           stats.hooks += entry.hooks?.length || 0;
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Skip
     }
   }
@@ -520,11 +520,11 @@ export function ecosystemHealthCheck() {
             f => f.endsWith('.yaml') || f.endsWith('.yml') || f.endsWith('.md')
           );
           stats.workflows += files.length;
-        } catch (e) {
+        } catch (_e) {
           // Skip non-directories
         }
       }
-    } catch (e) {
+    } catch (_e) {
       // Skip
     }
   }

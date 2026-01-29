@@ -290,7 +290,7 @@ describe('CheckpointManager.save', () => {
     const manager = new CheckpointManager({ checkpointDir });
     const state = { phase: 'lock', stepIndex: 0 };
 
-    const checkpointId = await manager.save('wf-1', state);
+    const _checkpointId = await manager.save('wf-1', state);
 
     // Check file exists
     const files = fs.readdirSync(checkpointDir);
@@ -527,7 +527,7 @@ describe('CheckpointManager memory storage', () => {
     const manager = new CheckpointManager({ storage: 'memory' });
 
     const id1 = await manager.save('wf-mem', { phase: 'evaluate' });
-    const id2 = await manager.save('wf-mem', { phase: 'validate' });
+    const _id2 = await manager.save('wf-mem', { phase: 'validate' });
 
     const checkpoints = await manager.list('wf-mem');
     expect(checkpoints.length).toBe(2);

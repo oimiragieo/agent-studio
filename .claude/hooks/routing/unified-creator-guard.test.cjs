@@ -49,7 +49,7 @@ beforeEach(() => {
     if (fs.existsSync(STATE_PATH)) {
       fs.unlinkSync(STATE_PATH);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore
   }
 });
@@ -66,7 +66,7 @@ afterEach(() => {
     } else if (fs.existsSync(STATE_PATH)) {
       fs.unlinkSync(STATE_PATH);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore
   }
   // Clean up env vars

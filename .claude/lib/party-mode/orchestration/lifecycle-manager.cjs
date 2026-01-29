@@ -64,16 +64,14 @@ async function spawnAgent(sessionId, agentType, role, sharedContext) {
     spawnedAt: spawnTime,
     updatedAt: spawnTime,
     sidecarPath,
-    statusHistory: [
-      { status: 'spawned', timestamp: spawnTime }
-    ]
+    statusHistory: [{ status: 'spawned', timestamp: spawnTime }],
   });
 
   return {
     agentId,
     status: 'spawned',
     timestamp: spawnTime,
-    isolatedContext
+    isolatedContext,
   };
 }
 
@@ -101,7 +99,7 @@ async function updateAgentStatus(agentId, newStatus) {
   if (!agent) {
     return {
       updated: false,
-      error: `Agent ${agentId} not found in lifecycle state`
+      error: `Agent ${agentId} not found in lifecycle state`,
     };
   }
 
@@ -119,7 +117,7 @@ async function updateAgentStatus(agentId, newStatus) {
     updated: true,
     agentId,
     previousStatus,
-    newStatus
+    newStatus,
   };
 }
 
@@ -148,7 +146,7 @@ async function getAgentStatus(agentId) {
     role: agent.role,
     status: agent.status,
     spawnedAt: agent.spawnedAt,
-    updatedAt: agent.updatedAt
+    updatedAt: agent.updatedAt,
   };
 }
 
@@ -171,7 +169,7 @@ async function terminateAgent(agentId, reason) {
   if (!agent) {
     return {
       terminated: false,
-      error: `Agent ${agentId} not found`
+      error: `Agent ${agentId} not found`,
     };
   }
 
@@ -188,7 +186,7 @@ async function terminateAgent(agentId, reason) {
 
   return {
     terminated: true,
-    agentId
+    agentId,
   };
 }
 
@@ -206,14 +204,14 @@ async function terminateAgent(agentId, reason) {
 async function getAllAgents(sessionId) {
   const agents = [];
 
-  for (const [agentId, agent] of lifecycleState.entries()) {
+  for (const [_agentId, agent] of lifecycleState.entries()) {
     if (agent.sessionId === sessionId) {
       agents.push({
         agentId: agent.agentId,
         agentType: agent.agentType,
         role: agent.role,
         status: agent.status,
-        timestamp: agent.spawnedAt
+        timestamp: agent.spawnedAt,
       });
     }
   }
@@ -226,5 +224,5 @@ module.exports = {
   updateAgentStatus,
   getAgentStatus,
   terminateAgent,
-  getAllAgents
+  getAllAgents,
 };

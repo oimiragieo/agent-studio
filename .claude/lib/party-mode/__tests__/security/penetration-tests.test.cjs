@@ -55,7 +55,10 @@ describe('Party Mode Penetration Tests', () => {
       }
 
       // Should detect forgery
-      assert.ok(error || forgedId !== legitimateId, 'Forged ID should be different from legitimate');
+      assert.ok(
+        error || forgedId !== legitimateId,
+        'Forged ID should be different from legitimate'
+      );
 
       // Verify legitimate ID format
       assert.ok(legitimateId.startsWith('agent_'), 'Legitimate ID should have correct prefix');
@@ -79,7 +82,7 @@ describe('Party Mode Penetration Tests', () => {
     });
 
     it('should reject agent ID with missing metadata', () => {
-      const agentId = generateAgentId('developer', Date.now(), sessionId);
+      const _agentId = generateAgentId('developer', Date.now(), sessionId);
 
       // Attacker tries to use ID without proper spawn registration
       // (In real system, metadata is stored during spawn)
@@ -137,7 +140,11 @@ describe('Party Mode Penetration Tests', () => {
 
       // Verify deletion detected
       const verification = verifyChain(chain);
-      assert.strictEqual(verification.valid, false, 'Chain with deleted response should be INVALID');
+      assert.strictEqual(
+        verification.valid,
+        false,
+        'Chain with deleted response should be INVALID'
+      );
     });
 
     it('should DETECT timestamp manipulation', () => {
@@ -157,7 +164,11 @@ describe('Party Mode Penetration Tests', () => {
 
       // Verify timestamp tampering detected
       const verification = verifyChain(chain);
-      assert.strictEqual(verification.valid, false, 'Chain with modified timestamp should be INVALID');
+      assert.strictEqual(
+        verification.valid,
+        false,
+        'Chain with modified timestamp should be INVALID'
+      );
     });
   });
 
@@ -293,7 +304,10 @@ nonexistent-agent,Fake Agent,sonnet`;
 
       // Should reject malicious CSV
       assert.ok(error, 'Should throw error for malicious CSV');
-      assert.ok(error.message.includes('Invalid') || error.message.includes('path'), 'Error should mention invalid path');
+      assert.ok(
+        error.message.includes('Invalid') || error.message.includes('path'),
+        'Error should mention invalid path'
+      );
     });
 
     it('should REJECT CSV with path traversal attack', async () => {
@@ -343,7 +357,7 @@ architect,Architect,sonnet`;
       let team = null;
       try {
         team = await loadTeam(duplicateCSV);
-      } catch (e) {
+      } catch (_e) {
         // May throw or may load with warning
       }
 
@@ -385,7 +399,10 @@ architect,Architect,sonnet`;
       // Verify reordering detected
       verification = verifyChain(chain);
       assert.strictEqual(verification.valid, false, 'Reordered chain should be INVALID');
-      assert.ok(verification.error.includes('hash mismatch'), 'Should detect hash mismatch from reordering');
+      assert.ok(
+        verification.error.includes('hash mismatch'),
+        'Should detect hash mismatch from reordering'
+      );
     });
 
     it('should DETECT response insertion in middle of chain', () => {
@@ -413,7 +430,11 @@ architect,Architect,sonnet`;
 
       // Verify insertion detected
       const verification = verifyChain(chain);
-      assert.strictEqual(verification.valid, false, 'Chain with inserted response should be INVALID');
+      assert.strictEqual(
+        verification.valid,
+        false,
+        'Chain with inserted response should be INVALID'
+      );
     });
 
     it('should DETECT reversed response order', () => {

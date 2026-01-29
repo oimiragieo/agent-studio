@@ -38,7 +38,7 @@ async function readMetrics(file, options = {}) {
   const fileStream = fs.createReadStream(file);
   const rl = readline.createInterface({
     input: fileStream,
-    crlfDelay: Infinity
+    crlfDelay: Infinity,
   });
 
   for await (const line of rl) {
@@ -66,14 +66,14 @@ function calculateHookStats(metrics) {
   // Group by hook
   const byHook = {};
 
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     if (!byHook[metric.hook]) {
       byHook[metric.hook] = {
         count: 0,
         totalTime: 0,
         times: [],
         successes: 0,
-        failures: 0
+        failures: 0,
       };
     }
 
@@ -105,7 +105,7 @@ function calculateHookStats(metrics) {
       p95: data.times[p95Index] || 0,
       p99: data.times[p99Index] || 0,
       successRate: (data.successes / data.count) * 100,
-      failures: data.failures
+      failures: data.failures,
     };
   }
 
@@ -121,7 +121,7 @@ function calculateErrorStats(metrics) {
   const bySeverity = {};
   const bySource = {};
 
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     // By type
     byType[metric.errorType] = (byType[metric.errorType] || 0) + 1;
 
@@ -149,7 +149,7 @@ function calculateErrorStats(metrics) {
     bySeverity,
     bySource,
     topErrors,
-    topSources
+    topSources,
   };
 }
 
@@ -165,7 +165,7 @@ async function getMetricsSummary(options = {}) {
 
   const [hookMetrics, errorMetrics] = await Promise.all([
     readMetrics(hookMetricsFile, { hours }),
-    readMetrics(errorMetricsFile, { hours })
+    readMetrics(errorMetricsFile, { hours }),
   ]);
 
   // Calculate stats
@@ -177,7 +177,7 @@ async function getMetricsSummary(options = {}) {
   const avgHookTime =
     hookMetrics.reduce((sum, m) => sum + m.executionTimeMs, 0) / totalHookCalls || 0;
   const hookFailureRate =
-    (hookMetrics.filter((m) => m.status === 'failure').length / totalHookCalls) * 100 || 0;
+    (hookMetrics.filter(m => m.status === 'failure').length / totalHookCalls) * 100 || 0;
 
   return {
     period: { hours, from: new Date(Date.now() - hours * 60 * 60 * 1000).toISOString() },
@@ -185,9 +185,9 @@ async function getMetricsSummary(options = {}) {
       total: totalHookCalls,
       avgTime: avgHookTime,
       failureRate: hookFailureRate,
-      byHook: hookStats
+      byHook: hookStats,
     },
-    errors: errorStats
+    errors: errorStats,
   };
 }
 
@@ -203,7 +203,7 @@ function findSlowHooks(stats, threshold = 10) {
         hook,
         avgTime: data.avgTime,
         p95: data.p95,
-        count: data.count
+        count: data.count,
       });
     }
   }
@@ -221,7 +221,7 @@ function detectAlerts(summary, thresholds = {}) {
   const defaults = {
     hookExecutionTimeMs: 10,
     hookFailureRate: 5,
-    errorRatePerHour: 10
+    errorRatePerHour: 10,
   };
 
   const config = { ...defaults, ...thresholds };
@@ -232,7 +232,7 @@ function detectAlerts(summary, thresholds = {}) {
       alerts.push({
         severity: 'MEDIUM',
         type: 'SlowHook',
-        message: `Hook ${hook} avg execution time ${stats.avgTime.toFixed(2)}ms exceeds threshold ${config.hookExecutionTimeMs}ms`
+        message: `Hook ${hook} avg execution time ${stats.avgTime.toFixed(2)}ms exceeds threshold ${config.hookExecutionTimeMs}ms`,
       });
     }
   }
@@ -242,7 +242,7 @@ function detectAlerts(summary, thresholds = {}) {
     alerts.push({
       severity: 'HIGH',
       type: 'HookFailureRate',
-      message: `Hook failure rate ${summary.hooks.failureRate.toFixed(2)}% exceeds threshold ${config.hookFailureRate}%`
+      message: `Hook failure rate ${summary.hooks.failureRate.toFixed(2)}% exceeds threshold ${config.hookFailureRate}%`,
     });
   }
 
@@ -252,7 +252,7 @@ function detectAlerts(summary, thresholds = {}) {
     alerts.push({
       severity: 'HIGH',
       type: 'ErrorRate',
-      message: `Error rate ${errorRate.toFixed(2)}/hour exceeds threshold ${config.errorRatePerHour}/hour`
+      message: `Error rate ${errorRate.toFixed(2)}/hour exceeds threshold ${config.errorRatePerHour}/hour`,
     });
   }
 
@@ -261,7 +261,7 @@ function detectAlerts(summary, thresholds = {}) {
     alerts.push({
       severity: 'CRITICAL',
       type: 'SecurityViolation',
-      message: `${summary.errors.bySeverity.CRITICAL} security violation(s) detected`
+      message: `${summary.errors.bySeverity.CRITICAL} security violation(s) detected`,
     });
   }
 
@@ -274,5 +274,5 @@ module.exports = {
   calculateErrorStats,
   getMetricsSummary,
   findSlowHooks,
-  detectAlerts
+  detectAlerts,
 };

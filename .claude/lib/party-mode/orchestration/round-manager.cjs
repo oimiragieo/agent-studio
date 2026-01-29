@@ -46,7 +46,7 @@ async function initializeSession(sessionId, teamName) {
     round: 0,
     maxRounds: MAX_ROUNDS_PER_SESSION,
     startedAt: timestamp,
-    rounds: [] // History of all rounds
+    rounds: [], // History of all rounds
   };
 
   sessionState.set(sessionId, state);
@@ -56,7 +56,7 @@ async function initializeSession(sessionId, teamName) {
     teamName: state.teamName,
     round: state.round,
     maxRounds: state.maxRounds,
-    startedAt: state.startedAt
+    startedAt: state.startedAt,
   };
 }
 
@@ -81,7 +81,9 @@ async function startRound(sessionId) {
 
   // Check round limit (SEC-PM-005)
   if (session.round >= MAX_ROUNDS_PER_SESSION) {
-    throw new Error(`Round limit of ${MAX_ROUNDS_PER_SESSION} rounds exceeded for session ${sessionId}`);
+    throw new Error(
+      `Round limit of ${MAX_ROUNDS_PER_SESSION} rounds exceeded for session ${sessionId}`
+    );
   }
 
   // Increment round counter
@@ -92,7 +94,7 @@ async function startRound(sessionId) {
     roundNumber: session.round,
     startedAt: Date.now(),
     agentsActive: 0,
-    completed: false
+    completed: false,
   };
 
   session.rounds.push(roundState);
@@ -101,7 +103,7 @@ async function startRound(sessionId) {
   return {
     sessionId,
     round: session.round,
-    agentsActive: roundState.agentsActive
+    agentsActive: roundState.agentsActive,
   };
 }
 
@@ -142,7 +144,7 @@ async function completeRound(sessionId) {
     sessionId,
     round: session.round,
     completed: true,
-    completedAt: roundState.completedAt
+    completedAt: roundState.completedAt,
   };
 }
 
@@ -170,7 +172,7 @@ async function getRoundStatus(sessionId) {
       sessionId,
       round: 0,
       agentsActive: 0,
-      completed: false
+      completed: false,
     };
   }
 
@@ -182,7 +184,7 @@ async function getRoundStatus(sessionId) {
     sessionId,
     round: session.round,
     agentsActive: roundState.agentsActive,
-    completed: roundState.completed
+    completed: roundState.completed,
   };
 }
 
@@ -207,7 +209,7 @@ async function enforceRateLimits(sessionId, agentCount) {
   if (!session) {
     return {
       allowed: false,
-      reason: `Session ${sessionId} not found`
+      reason: `Session ${sessionId} not found`,
     };
   }
 
@@ -215,7 +217,7 @@ async function enforceRateLimits(sessionId, agentCount) {
   if (agentCount > MAX_AGENTS_PER_ROUND) {
     return {
       allowed: false,
-      reason: `Agent limit of ${MAX_AGENTS_PER_ROUND} agents per round exceeded (requested: ${agentCount})`
+      reason: `Agent limit of ${MAX_AGENTS_PER_ROUND} agents per round exceeded (requested: ${agentCount})`,
     };
   }
 
@@ -223,13 +225,13 @@ async function enforceRateLimits(sessionId, agentCount) {
   if (session.round >= MAX_ROUNDS_PER_SESSION) {
     return {
       allowed: false,
-      reason: `Round limit of ${MAX_ROUNDS_PER_SESSION} rounds per session exceeded (current: ${session.round})`
+      reason: `Round limit of ${MAX_ROUNDS_PER_SESSION} rounds per session exceeded (current: ${session.round})`,
     };
   }
 
   // All checks passed
   return {
-    allowed: true
+    allowed: true,
   };
 }
 
@@ -238,5 +240,5 @@ module.exports = {
   startRound,
   completeRound,
   getRoundStatus,
-  enforceRateLimits
+  enforceRateLimits,
 };

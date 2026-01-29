@@ -47,7 +47,7 @@ function generateAgentId(agentType, spawnTime, sessionId) {
   agentMetadataStore.set(agentId, {
     type: agentType,
     spawnedAt: spawnTime,
-    sessionId: sessionId
+    sessionId: sessionId,
   });
 
   return agentId;
@@ -67,7 +67,7 @@ function generateAgentId(agentType, spawnTime, sessionId) {
  * @returns {number} result.timestamp - Extracted spawn timestamp
  * @returns {string} [result.error] - Error message if invalid
  */
-function verifyAgentIdentity(agentId, agentType, sessionId) {
+function verifyAgentIdentity(agentId, agentType, _sessionId) {
   // Validate format: agent_<8-hex>_<timestamp>
   const format = /^agent_[a-f0-9]{8}_(\d+)$/;
   const match = agentId.match(format);
@@ -75,7 +75,7 @@ function verifyAgentIdentity(agentId, agentType, sessionId) {
   if (!match) {
     return {
       valid: false,
-      error: 'Invalid agent ID format. Expected: agent_<8-hex>_<timestamp>'
+      error: 'Invalid agent ID format. Expected: agent_<8-hex>_<timestamp>',
     };
   }
 
@@ -86,7 +86,7 @@ function verifyAgentIdentity(agentId, agentType, sessionId) {
   return {
     valid: true,
     agentType: agentType,
-    timestamp: timestamp
+    timestamp: timestamp,
   };
 }
 
@@ -122,12 +122,12 @@ function getAgentMetadata(agentId) {
   return {
     type: 'unknown', // Not stored in ID itself
     spawnedAt: spawnedAt,
-    sessionId: 'unknown' // Not stored in ID itself
+    sessionId: 'unknown', // Not stored in ID itself
   };
 }
 
 module.exports = {
   generateAgentId,
   verifyAgentIdentity,
-  getAgentMetadata
+  getAgentMetadata,
 };

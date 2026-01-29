@@ -27,7 +27,7 @@ function createRouter(sessionId) {
   return {
     sessionId,
     routes: new Map(),
-    messageQueue: []
+    messageQueue: [],
   };
 }
 
@@ -49,7 +49,7 @@ function registerAgent(router, agentId, agentType) {
   if (router.routes.has(agentId)) {
     return {
       success: false,
-      error: `Agent ${agentId} is already registered`
+      error: `Agent ${agentId} is already registered`,
     };
   }
 
@@ -61,12 +61,12 @@ function registerAgent(router, agentId, agentType) {
     agentId,
     agentType,
     routeId,
-    registeredAt: Date.now()
+    registeredAt: Date.now(),
   });
 
   return {
     success: true,
-    routeId
+    routeId,
   };
 }
 
@@ -90,7 +90,7 @@ function routeMessage(router, fromAgentId, toAgentId, message) {
   if (!router.routes.has(fromAgentId)) {
     return {
       delivered: false,
-      error: `Sender ${fromAgentId} not registered`
+      error: `Sender ${fromAgentId} not registered`,
     };
   }
 
@@ -98,13 +98,14 @@ function routeMessage(router, fromAgentId, toAgentId, message) {
   if (!router.routes.has(toAgentId)) {
     return {
       delivered: false,
-      error: `Recipient ${toAgentId} not registered`
+      error: `Recipient ${toAgentId} not registered`,
     };
   }
 
   // Create message entry
   const timestamp = Date.now();
-  const messageHash = crypto.createHash('sha256')
+  const messageHash = crypto
+    .createHash('sha256')
     .update(JSON.stringify({ fromAgentId, toAgentId, message, timestamp }))
     .digest('hex')
     .slice(0, 16);
@@ -115,7 +116,7 @@ function routeMessage(router, fromAgentId, toAgentId, message) {
     message,
     timestamp,
     messageHash,
-    type: 'unicast'
+    type: 'unicast',
   };
 
   // Add to message queue
@@ -124,7 +125,7 @@ function routeMessage(router, fromAgentId, toAgentId, message) {
   return {
     delivered: true,
     timestamp,
-    messageHash
+    messageHash,
   };
 }
 
@@ -160,7 +161,7 @@ function broadcastMessage(router, fromAgentId, message) {
 
   return {
     delivered: deliveredCount,
-    failedAgents
+    failedAgents,
   };
 }
 
@@ -174,8 +175,8 @@ function broadcastMessage(router, fromAgentId, message) {
  * @returns {Array<Object>} Array of messages (sent + received)
  */
 function getMessageHistory(router, agentId) {
-  return router.messageQueue.filter(msg =>
-    msg.fromAgentId === agentId || msg.toAgentId === agentId
+  return router.messageQueue.filter(
+    msg => msg.fromAgentId === agentId || msg.toAgentId === agentId
   );
 }
 
@@ -184,5 +185,5 @@ module.exports = {
   registerAgent,
   routeMessage,
   broadcastMessage,
-  getMessageHistory
+  getMessageHistory,
 };

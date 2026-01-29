@@ -175,10 +175,10 @@ function validateSkillMd(skillPath) {
 
   // POINTER VERIFICATION: Check for broken file references in content
   const fileRefPatterns = [
-    /\.claude\/tools\/[a-zA-Z0-9_\/-]+\.(js|mjs|cjs|py|sh)/g,
-    /\.claude\/skills\/[a-zA-Z0-9_\/-]+\/SKILL\.md/g,
-    /\.claude\/agents\/[a-zA-Z0-9_\/-]+\.md/g,
-    /\.claude\/schemas\/[a-zA-Z0-9_\/-]+\.json/g,
+    /\.claude\/tools\/[a-zA-Z0-9_/-]+\.(js|mjs|cjs|py|sh)/g,
+    /\.claude\/skills\/[a-zA-Z0-9_/-]+\/SKILL\.md/g,
+    /\.claude\/agents\/[a-zA-Z0-9_/-]+\.md/g,
+    /\.claude\/schemas\/[a-zA-Z0-9_/-]+\.json/g,
   ];
 
   const skillDir = path.dirname(skillPath);
@@ -263,7 +263,7 @@ function validateScript(scriptPath) {
 
   try {
     // Check syntax by attempting to parse
-    const content = fs.readFileSync(scriptPath, 'utf-8');
+    const _content = fs.readFileSync(scriptPath, 'utf-8');
 
     // SEC-009-VALIDATE FIX: Use spawnSync with shell:false instead of execSync
     const result = spawnSync('node', ['--check', scriptPath], { stdio: 'pipe', shell: false });

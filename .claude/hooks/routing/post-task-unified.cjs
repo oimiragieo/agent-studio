@@ -44,7 +44,7 @@ function getMemoryManager() {
   if (memoryManager === null) {
     try {
       memoryManager = require('../../lib/memory/memory-manager.cjs');
-    } catch (e) {
+    } catch (_e) {
       memoryManager = false; // Mark as unavailable
     }
   }
@@ -124,7 +124,7 @@ function runAgentContextTracker(toolInput) {
   // ROUTING-002 FIX: Exit agent mode after task completes
   // This allows Router-First Protocol enforcement to re-engage
   // while preserving plannerSpawned/securitySpawned tracking
-  const state = routerState.exitAgentMode();
+  const _state = routerState.exitAgentMode();
 
   // Detect and mark special agent spawns
   if (isPlannerSpawn(toolInput)) {

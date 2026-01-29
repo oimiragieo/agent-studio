@@ -34,7 +34,7 @@ const routerState = require('./router-state.cjs');
 // =============================================================================
 
 const AGENTS_DIR = path.join(PROJECT_ROOT, '.claude', 'agents');
-const MEMORY_DIR = path.join(PROJECT_ROOT, '.claude', 'context', 'memory');
+const _MEMORY_DIR = path.join(PROJECT_ROOT, '.claude', 'context', 'memory');
 const EVOLUTION_STATE_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
 
 // Agent cache (shared across calls within same process)
@@ -279,7 +279,7 @@ function loadAgents() {
               path: path.relative(PROJECT_ROOT, fullPath),
             });
           }
-        } catch (e) {
+        } catch (_e) {
           // Skip invalid files
         }
       }
@@ -372,7 +372,7 @@ function scoreAgents(prompt, agents) {
 
   // Detect intent from routing table
   let detectedIntent = 'general';
-  for (const [keyword, agent] of Object.entries(ROUTING_TABLE)) {
+  for (const [keyword, _agent] of Object.entries(ROUTING_TABLE)) {
     if (promptLower.includes(keyword)) {
       detectedIntent = keyword;
       break;
@@ -383,7 +383,7 @@ function scoreAgents(prompt, agents) {
   for (const agent of agents) {
     let score = 0;
     const agentDesc = (agent.description + ' ' + agent.name).toLowerCase();
-    const agentName = agent.name.toLowerCase();
+    const _agentName = agent.name.toLowerCase();
 
     // Match by description keywords
     const promptWords = promptLower.split(/\s+/);
@@ -526,7 +526,7 @@ function checkMemoryReminder(hookInput, projectRoot = PROJECT_ROOT) {
         lines: lineCount,
         modified: lastModified,
       });
-    } catch (error) {
+    } catch (_error) {
       result.files.push({
         ...file,
         exists: false,

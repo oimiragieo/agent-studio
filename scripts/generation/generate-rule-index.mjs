@@ -14,7 +14,7 @@ import crypto from 'crypto';
 let yaml;
 try {
   yaml = (await import('js-yaml')).default;
-} catch (error) {
+} catch (_error) {
   yaml = null;
   console.warn('⚠️  js-yaml not available, using simple YAML parsing');
 }
@@ -213,7 +213,7 @@ async function updateCacheEntry(filePath, cache, content) {
       hash: calculateHash(content),
       indexed_at: new Date().toISOString(),
     };
-  } catch (error) {
+  } catch (_error) {
     // Ignore cache update errors
   }
 }
@@ -350,7 +350,7 @@ async function loadPrebuiltIndex() {
     if (index.prebuilt === true) {
       return index;
     }
-  } catch (error) {
+  } catch (_error) {
     // Pre-built index doesn't exist or is invalid
   }
   return null;

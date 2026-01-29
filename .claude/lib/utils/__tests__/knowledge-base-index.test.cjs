@@ -47,11 +47,22 @@ describe('Knowledge Base Indexing', () => {
         assert.strictEqual(result.artifactsIndexed, 0);
         assert.strictEqual(result.success, true);
 
-        const indexPath = path.join(TEST_ROOT, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
+        const indexPath = path.join(
+          TEST_ROOT,
+          '.claude',
+          'context',
+          'artifacts',
+          'knowledge-base-index.csv'
+        );
         assert.strictEqual(fs.existsSync(indexPath), true);
 
         const content = fs.readFileSync(indexPath, 'utf-8');
-        assert.strictEqual(content.startsWith('name,path,description,domain,complexity,use_cases,tools,deprecated,alias,usage_count,last_used'), true);
+        assert.strictEqual(
+          content.startsWith(
+            'name,path,description,domain,complexity,use_cases,tools,deprecated,alias,usage_count,last_used'
+          ),
+          true
+        );
       } catch (error) {
         // Expected to fail in RED phase
         console.log('[RED] Test 1 failed as expected:', error.message);
@@ -63,13 +74,13 @@ describe('Knowledge Base Indexing', () => {
   describe('2. Build Index with 3 Skills (Mock Files)', () => {
     before(() => {
       // Create mock skill files
-      const tddSkill = {
+      const _tddSkill = {
         name: 'tdd',
         description: 'Test-Driven Development - RED GREEN REFACTOR cycle',
         domain: 'skill',
         complexity: 'LOW',
         tools: ['Read', 'Write', 'Edit', 'Bash'],
-        deprecated: false
+        deprecated: false,
       };
 
       fs.writeFileSync(
@@ -86,7 +97,13 @@ describe('Knowledge Base Indexing', () => {
 
         assert.strictEqual(result.artifactsIndexed >= 1, true);
 
-        const indexPath = path.join(TEST_ROOT, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
+        const indexPath = path.join(
+          TEST_ROOT,
+          '.claude',
+          'context',
+          'artifacts',
+          'knowledge-base-index.csv'
+        );
         const content = fs.readFileSync(indexPath, 'utf-8');
         const lines = content.trim().split('\n');
 
@@ -101,7 +118,13 @@ describe('Knowledge Base Indexing', () => {
   describe('3. CSV Schema Validation (11 Columns)', () => {
     it('should validate CSV has exactly 11 columns', () => {
       try {
-        const indexPath = path.join(TEST_ROOT, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
+        const indexPath = path.join(
+          TEST_ROOT,
+          '.claude',
+          'context',
+          'artifacts',
+          'knowledge-base-index.csv'
+        );
 
         if (!fs.existsSync(indexPath)) {
           throw new Error('Index file does not exist');
@@ -113,8 +136,17 @@ describe('Knowledge Base Indexing', () => {
 
         assert.strictEqual(headers.length, 11, 'CSV should have exactly 11 columns');
         assert.deepStrictEqual(headers, [
-          'name', 'path', 'description', 'domain', 'complexity',
-          'use_cases', 'tools', 'deprecated', 'alias', 'usage_count', 'last_used'
+          'name',
+          'path',
+          'description',
+          'domain',
+          'complexity',
+          'use_cases',
+          'tools',
+          'deprecated',
+          'alias',
+          'usage_count',
+          'last_used',
         ]);
       } catch (error) {
         console.log('[RED] Test 3 failed as expected:', error.message);
@@ -216,7 +248,11 @@ describe('Knowledge Base Indexing', () => {
         const testValue = '=1+1';
         const escaped = buildKnowledgeBaseIndex.escapeCSV(testValue);
 
-        assert.strictEqual(escaped.startsWith("'"), true, 'Formula should be prefixed with single quote');
+        assert.strictEqual(
+          escaped.startsWith("'"),
+          true,
+          'Formula should be prefixed with single quote'
+        );
       } catch (error) {
         console.log('[RED] Test 10 failed as expected:', error.message);
         throw error;

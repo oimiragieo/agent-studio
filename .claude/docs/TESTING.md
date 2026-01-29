@@ -5,6 +5,7 @@
 This project uses Node.js built-in test framework for all testing (unit, integration, E2E). Tests are co-located with source files where possible, with E2E tests in dedicated integration directories.
 
 **Test Statistics** (as of 2026-01-28):
+
 - **Total Tests**: 49 passing
 - **Unit Tests**: 29
 - **E2E Tests**: 20 (Phase 1A features)
@@ -33,12 +34,14 @@ project-root/
 ### Test Patterns
 
 #### Unit Tests
+
 - **Pattern**: `*.test.mjs` (ES modules)
 - **Location**: Co-located with source or `tests/` directory
 - **Purpose**: Test individual functions/modules in isolation
 - **Mocking**: Minimal, prefer real implementations
 
 #### E2E Tests
+
 - **Pattern**: `*-e2e.test.cjs` (CommonJS for compatibility)
 - **Location**: `.claude/tests/integration/e2e/`
 - **Purpose**: Test complete workflows with real files and commands
@@ -48,21 +51,25 @@ project-root/
 ## Running Tests
 
 ### All Tests
+
 ```bash
 npm test
 ```
 
 ### Specific Test File
+
 ```bash
 npm test -- tests/agent-context-tracker.test.mjs
 ```
 
 ### E2E Tests Only
+
 ```bash
 node --test .claude/tests/integration/e2e/phase1a-e2e.test.cjs --test-reporter=spec
 ```
 
 ### With Coverage (future)
+
 ```bash
 npm test -- --experimental-coverage
 ```
@@ -74,6 +81,7 @@ npm test -- --experimental-coverage
 **Workflow**: Create → Index → Search → Verify
 
 Tests:
+
 1. Create test skill and verify file exists
 2. Build KB index and verify updated
 3. Find skill in index via grep (direct file check)
@@ -82,6 +90,7 @@ Tests:
 6. Verify search performance (<50ms)
 
 **Key Validations**:
+
 - Real skill file created in `.claude/skills/`
 - Index builder executes successfully
 - CSV index updated with new skill
@@ -93,10 +102,12 @@ Tests:
 **Workflow**: Modify → Rebuild → Verify
 
 Tests:
+
 1. Modify skill content and rebuild index
 2. Verify updated description appears in search results
 
 **Key Validations**:
+
 - Index reflects latest content
 - No stale results
 
@@ -105,12 +116,14 @@ Tests:
 **Workflow**: Session → LLM Calls → Log → Verify
 
 Tests:
+
 1. Log cost entry with proper JSON format
 2. Verify hash chain integrity (3-entry chain)
 3. Calculate costs correctly for haiku/sonnet/opus
 4. Verify minimal overhead (<5ms)
 
 **Key Validations**:
+
 - JSON log format correct
 - Hash chain prevents tampering
 - Cost calculations match Anthropic pricing
@@ -121,11 +134,13 @@ Tests:
 **Workflow**: Invoke → Method Selection → Validation
 
 Tests:
+
 1. Handle feature flag disabled gracefully
 2. Validate method names against allowed list
 3. Enforce max 5 methods per invocation
 
 **Key Validations**:
+
 - Feature flag respected
 - Security controls enforced (path traversal, rate limiting)
 
@@ -134,10 +149,12 @@ Tests:
 **Workflow**: Enable/Disable → Graceful Handling
 
 Tests:
+
 1. Check feature flags from environment
 2. Handle missing config gracefully
 
 **Key Validations**:
+
 - Environment variables respected
 - Defaults applied when config missing
 
@@ -146,20 +163,24 @@ Tests:
 **Workflow**: Search KB → Track Cost → Verify All
 
 Tests:
+
 1. Integrate KB search with cost tracking
 2. Handle concurrent operations without conflicts
 
 **Key Validations**:
+
 - Multiple features work together
 - No interference between features
 
 ### Performance Assertions (2 tests)
 
 Tests:
+
 1. KB search in <50ms
 2. Cost tracking overhead <5ms
 
 **Key Validations**:
+
 - Phase 1A performance targets met
 
 ## Test Helpers
@@ -264,15 +285,16 @@ it('should verify hash chain integrity', async () => {
 
 ## Performance Targets
 
-| Feature | Target | Actual | Status |
-|---------|--------|--------|--------|
-| KB Search | <50ms | ~25ms | ✓ |
-| Cost Tracking Overhead | <5ms | ~2ms | ✓ |
-| Index Rebuild | <2s | ~700ms | ✓ |
+| Feature                | Target | Actual | Status |
+| ---------------------- | ------ | ------ | ------ |
+| KB Search              | <50ms  | ~25ms  | ✓      |
+| Cost Tracking Overhead | <5ms   | ~2ms   | ✓      |
+| Index Rebuild          | <2s    | ~700ms | ✓      |
 
 ## CI/CD Integration
 
 Tests run automatically on:
+
 - **Pre-commit**: Unit tests (fast feedback)
 - **Pre-push**: All tests (full validation)
 - **PR**: All tests + coverage report
@@ -297,16 +319,19 @@ jobs:
 ## Debugging Tests
 
 ### Run Single Test
+
 ```bash
 node --test tests/agent-context-tracker.test.mjs
 ```
 
 ### Run with Verbose Output
+
 ```bash
 node --test tests/*.test.mjs --test-reporter=spec
 ```
 
 ### Isolate Flaky Test
+
 ```bash
 for i in {1..100}; do
   node --test tests/flaky-test.mjs || echo "Failed on iteration $i"
@@ -316,18 +341,22 @@ done
 ## Common Issues
 
 ### Issue: "Test skill not found in index"
+
 **Cause**: Skill created in wrong directory
 **Fix**: Create skills in `.claude/skills/` (not `.tmp/`)
 
 ### Issue: "Hash chain broken"
+
 **Cause**: Log file corrupted or tampered
 **Fix**: Archive corrupted log, start fresh
 
 ### Issue: "Test artifacts not cleaned up"
+
 **Cause**: Missing or failing `after()` hook
 **Fix**: Always use `try/catch` in cleanup, ignore errors
 
 ### Issue: "Tests too slow"
+
 **Cause**: Real file I/O, index rebuilds
 **Fix**: This is intentional for E2E tests (validates production behavior)
 

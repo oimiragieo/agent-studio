@@ -25,9 +25,9 @@ const PRICING = {
   'claude-3-5-sonnet-20241022': { input: 0.003, output: 0.015 },
   'claude-3-opus-20240229': { input: 0.015, output: 0.075 },
   // Aliases
-  'haiku': { input: 0.00025, output: 0.00125 },
-  'sonnet': { input: 0.003, output: 0.015 },
-  'opus': { input: 0.015, output: 0.075 }
+  haiku: { input: 0.00025, output: 0.00125 },
+  sonnet: { input: 0.003, output: 0.015 },
+  opus: { input: 0.015, output: 0.075 },
 };
 
 const COST_LOG = '.claude/context/metrics/cost-log.jsonl';
@@ -38,15 +38,15 @@ let sessionCosts = {
   haiku: { input: 0, output: 0, cost: 0, calls: 0 },
   sonnet: { input: 0, output: 0, cost: 0, calls: 0 },
   opus: { input: 0, output: 0, cost: 0, calls: 0 },
-  total: { input: 0, output: 0, cost: 0, calls: 0 }
+  total: { input: 0, output: 0, cost: 0, calls: 0 },
 };
 
 let sessionStart = Date.now();
 
 // Rate limiting state: entries per hour
-let rateLimitState = {
+const rateLimitState = {
   hour: Math.floor(Date.now() / (60 * 60 * 1000)),
-  entries: 0
+  entries: 0,
 };
 
 const RATE_LIMIT_PER_HOUR = 1000;
@@ -190,7 +190,7 @@ function verifyLogIntegrity(logPath) {
         return {
           valid: false,
           brokenAt: i + 1,
-          reason: `SEC-CT-002: Hash chain broken at line ${i + 1}`
+          reason: `SEC-CT-002: Hash chain broken at line ${i + 1}`,
         };
       }
 
@@ -204,7 +204,7 @@ function verifyLogIntegrity(logPath) {
         return {
           valid: false,
           brokenAt: i + 1,
-          reason: `SEC-CT-002: Entry hash mismatch at line ${i + 1}. Possible tampering detected.`
+          reason: `SEC-CT-002: Entry hash mismatch at line ${i + 1}. Possible tampering detected.`,
         };
       }
 
@@ -213,7 +213,7 @@ function verifyLogIntegrity(logPath) {
       return {
         valid: false,
         brokenAt: i + 1,
-        reason: `SEC-CT-002: Invalid JSON at line ${i + 1}: ${e.message}`
+        reason: `SEC-CT-002: Invalid JSON at line ${i + 1}: ${e.message}`,
       };
     }
   }
@@ -274,7 +274,7 @@ function trackCall(params) {
     outputTokens: params.outputTokens,
     cost: cost.toFixed(6),
     taskId: params.taskId || null,
-    agent: params.agent || null
+    agent: params.agent || null,
   };
 
   // Validate entry (SEC-CT-001)
@@ -317,26 +317,26 @@ function getSessionSummary() {
       haiku: {
         calls: sessionCosts.haiku.calls,
         tokens: sessionCosts.haiku.input + sessionCosts.haiku.output,
-        cost: `$${sessionCosts.haiku.cost.toFixed(4)}`
+        cost: `$${sessionCosts.haiku.cost.toFixed(4)}`,
       },
       sonnet: {
         calls: sessionCosts.sonnet.calls,
         tokens: sessionCosts.sonnet.input + sessionCosts.sonnet.output,
-        cost: `$${sessionCosts.sonnet.cost.toFixed(4)}`
+        cost: `$${sessionCosts.sonnet.cost.toFixed(4)}`,
       },
       opus: {
         calls: sessionCosts.opus.calls,
         tokens: sessionCosts.opus.input + sessionCosts.opus.output,
-        cost: `$${sessionCosts.opus.cost.toFixed(4)}`
-      }
+        cost: `$${sessionCosts.opus.cost.toFixed(4)}`,
+      },
     },
     total: {
       calls: sessionCosts.total.calls,
       inputTokens: sessionCosts.total.input,
       outputTokens: sessionCosts.total.output,
       totalTokens: sessionCosts.total.input + sessionCosts.total.output,
-      cost: `$${sessionCosts.total.cost.toFixed(4)}`
-    }
+      cost: `$${sessionCosts.total.cost.toFixed(4)}`,
+    },
   };
 }
 
@@ -380,7 +380,7 @@ function loadRunningTotals() {
   } catch {
     return {
       allTime: { cost: 0, tokens: 0, sessions: 0 },
-      lastSession: null
+      lastSession: null,
     };
   }
 }
@@ -394,7 +394,7 @@ function saveSummary() {
   existing.lastSession = {
     timestamp: new Date().toISOString(),
     cost: sessionCosts.total.cost,
-    tokens: sessionCosts.total.input + sessionCosts.total.output
+    tokens: sessionCosts.total.input + sessionCosts.total.output,
   };
 
   existing.allTime.cost += sessionCosts.total.cost;
@@ -418,7 +418,7 @@ function resetSession() {
     haiku: { input: 0, output: 0, cost: 0, calls: 0 },
     sonnet: { input: 0, output: 0, cost: 0, calls: 0 },
     opus: { input: 0, output: 0, cost: 0, calls: 0 },
-    total: { input: 0, output: 0, cost: 0, calls: 0 }
+    total: { input: 0, output: 0, cost: 0, calls: 0 },
   };
   sessionStart = Date.now();
 }
@@ -483,5 +483,5 @@ module.exports = {
   calculateCost,
   modelToTier,
   onSessionStart,
-  onSessionEnd
+  onSessionEnd,
 };

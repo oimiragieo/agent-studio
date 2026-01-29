@@ -109,7 +109,7 @@ function testSecurityLintReturnsCorrectExitCodes() {
         cwd: PROJECT_ROOT,
       });
       // Exit 0 means no error thrown
-    } catch (err) {
+    } catch (_err) {
       assert.fail('Clean file should exit 0');
     }
 

@@ -18,14 +18,14 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
-import { resolve, dirname, join } from 'path';
+import { resolve, dirname, _join } from 'path';
 import { fileURLToPath } from 'url';
 
 // Import js-yaml
 let yaml;
 try {
   yaml = (await import('js-yaml')).default;
-} catch (error) {
+} catch (_error) {
   console.error('❌ Error: js-yaml package is required for validation.');
   console.error('   Please install it: pnpm add -D js-yaml');
   process.exit(2);
@@ -37,11 +37,11 @@ const rootDir = resolve(__dirname, '../..');
 
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
-const fixMode = args.includes('--fix');
+const _fixMode = args.includes('--fix');
 
 const errors = [];
 const warnings = [];
-const fixes = [];
+const _fixes = [];
 
 /**
  * Check if file exists
@@ -127,7 +127,7 @@ function validateConfigYAML() {
 
   // Validate agent routing
   if (config.agent_routing) {
-    const agentFiles = readdirSync(resolve(rootDir, '.claude/agents'))
+    const _agentFiles = readdirSync(resolve(rootDir, '.claude/agents'))
       .filter(f => f.endsWith('.md'))
       .map(f => f.replace('.md', ''));
 
@@ -384,7 +384,7 @@ function validateSchemas() {
 function validateWorkflowRunner() {
   console.log('\n📋 Validating workflow runner...');
 
-  const runnerPath = resolve(rootDir, '.claude/tools/workflow_runner.js');
+  const _runnerPath = resolve(rootDir, '.claude/tools/workflow_runner.js');
   if (!checkFile('.claude/tools/workflow_runner.js', 'Workflow runner', true)) {
     return;
   }

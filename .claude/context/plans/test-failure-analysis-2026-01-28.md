@@ -66,6 +66,7 @@ The `tests/party-mode-config-validation.test.mjs` test suite validates the Party
 ```
 
 **Verification Command**:
+
 ```bash
 npm test -- tests/party-mode-config-validation.test.mjs
 ```
@@ -79,6 +80,7 @@ npm test -- tests/party-mode-config-validation.test.mjs
 ### Why It's Passing
 
 1. **Config is Correct**: `.claude/config.yaml` has proper Party Mode configuration:
+
    ```yaml
    features:
      partyMode:
@@ -109,6 +111,7 @@ npm test -- tests/party-mode-config-validation.test.mjs
 4. **Stale Test Run**: Cached test result from before Party Mode implementation was complete.
 
 **Evidence Against Genuine Failure**:
+
 - All 6 tests pass when run now
 - All required files and config are present
 - No TODOs or FIXMEs in test code
@@ -143,11 +146,13 @@ The Party Mode configuration test suite is working correctly. No fixes needed.
 ### 2. 🔧 CLARIFY Error Message (Developer Agent)
 
 The developer agent should provide:
+
 - Full test output (not just exit code)
 - Specific failing test names
 - Test file path confirmation
 
 **Current Report**:
+
 ```
 developer agent error:
 "Exit code 1" from npm test
@@ -155,6 +160,7 @@ Command: npm test -- tests/party-mode-config-validation.test.mjs
 ```
 
 **Better Report Would Include**:
+
 ```
 developer agent error:
 "Exit code 1" from npm test
@@ -168,10 +174,12 @@ Failing tests:
 ### 3. 📊 SKIP Staging Tests in Development
 
 The actual failures are staging environment tests running in development mode. These should be:
+
 - Skipped when `NODE_ENV !== 'staging'`
 - Or moved to separate test file with conditional execution
 
 **Quick Fix**:
+
 ```javascript
 // tests/staging-smoke.test.mjs
 if (process.env.NODE_ENV !== 'staging') {
@@ -183,6 +191,7 @@ if (process.env.NODE_ENV !== 'staging') {
 ### 4. ✅ VERIFY Test Isolation
 
 Ensure developer agent runs ONLY the specified test file:
+
 ```bash
 # Current command (may run all tests)
 npm test
@@ -202,17 +211,18 @@ The Party Mode configuration test suite is **FULLY OPERATIONAL** and all tests a
 ### Root Cause: False Alarm
 
 The reported "Exit code 1" was likely from:
+
 1. Running the wrong test suite (staging tests instead of party mode tests)
 2. Running all tests together (which includes failing staging tests)
 3. Misinterpreting test output
 
 ### Action Items
 
-| Priority | Action                                           | Owner     | Effort |
-| -------- | ------------------------------------------------ | --------- | ------ |
-| LOW      | Improve developer agent error message clarity    | Router    | 1 hour |
-| LOW      | Skip staging tests when not in staging mode      | Developer | 30 min |
-| NONE     | Fix party-mode-config-validation.test.mjs        | N/A       | 0 min  |
+| Priority | Action                                        | Owner     | Effort |
+| -------- | --------------------------------------------- | --------- | ------ |
+| LOW      | Improve developer agent error message clarity | Router    | 1 hour |
+| LOW      | Skip staging tests when not in staging mode   | Developer | 30 min |
+| NONE     | Fix party-mode-config-validation.test.mjs     | N/A       | 0 min  |
 
 ### Evidence of Success
 

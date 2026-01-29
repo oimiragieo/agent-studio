@@ -26,14 +26,14 @@
  */
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
-import { resolve, dirname, join } from 'path';
+import { resolve, dirname, _join } from 'path';
 import { fileURLToPath } from 'url';
 
 // Import js-yaml
 let yaml;
 try {
   yaml = (await import('js-yaml')).default;
-} catch (error) {
+} catch (_error) {
   console.error('❌ Error: js-yaml package is required for workflow validation.');
   console.error('   Please install it: pnpm add -D js-yaml');
   process.exit(2);

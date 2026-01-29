@@ -159,8 +159,8 @@ const SECURITY_PATTERNS = {
  * From router-write-guard.cjs
  */
 const ALWAYS_ALLOWED_WRITE_PATTERNS = [
-  /\.claude[\/\\]context[\/\\]runtime[\/\\]/,
-  /\.claude[\/\\]context[\/\\]memory[\/\\]/,
+  /\.claude[/\\]context[/\\]runtime[/\\]/,
+  /\.claude[/\\]context[/\\]memory[/\\]/,
   /\.gitkeep$/,
 ];
 
@@ -604,7 +604,7 @@ function checkRouterWrite(toolName, toolInput) {
   }
 
   // Check if write is allowed (agent context)
-  const { allowed, reason } = routerState.checkWriteAllowed();
+  const { allowed, _reason } = routerState.checkWriteAllowed();
   if (allowed) {
     return { pass: true };
   }

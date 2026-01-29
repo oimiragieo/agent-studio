@@ -21,7 +21,7 @@ const os = require('os');
 let hookInput;
 try {
   hookInput = require('./hook-input.cjs');
-} catch (err) {
+} catch (_err) {
   // Module doesn't exist yet - expected in RED phase
   hookInput = null;
 }

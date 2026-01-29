@@ -54,15 +54,12 @@ class TaskToolMock {
 
     // Simulate spawn delay
     if (this.spawnDelay > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.spawnDelay));
+      await new Promise(resolve => setTimeout(resolve, this.spawnDelay));
     }
 
     // Simulate failure if configured
     const agentIndex = this.spawnedAgents.length - 1;
-    if (
-      this.failureMode &&
-      this.failureMode.agentIndex === agentIndex
-    ) {
+    if (this.failureMode && this.failureMode.agentIndex === agentIndex) {
       agent.status = 'failed';
       agent.error = this.failureMode.error;
       throw new Error(this.failureMode.error);
@@ -78,7 +75,7 @@ class TaskToolMock {
    * Mock TaskList
    */
   list() {
-    return Array.from(this.taskList.values()).map((task) => ({
+    return Array.from(this.taskList.values()).map(task => ({
       id: task.id,
       subject: task.description,
       status: task.status,
@@ -171,14 +168,14 @@ class TaskToolMock {
    * Count spawned agents by type
    */
   countByType(type) {
-    return this.spawnedAgents.filter((a) => a.type === type).length;
+    return this.spawnedAgents.filter(a => a.type === type).length;
   }
 
   /**
    * Get all failed agents
    */
   getFailedAgents() {
-    return this.spawnedAgents.filter((a) => a.status === 'failed');
+    return this.spawnedAgents.filter(a => a.status === 'failed');
   }
 }
 

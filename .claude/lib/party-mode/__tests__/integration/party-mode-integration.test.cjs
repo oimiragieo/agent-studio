@@ -17,15 +17,32 @@ const path = require('path');
 const fs = require('fs');
 
 // Import all Phase 1-4 components
-const { generateAgentId, setAgentContext, clearAgentContext } = require('../../security/agent-identity.cjs');
+const {
+  generateAgentId,
+  setAgentContext,
+  clearAgentContext,
+} = require('../../security/agent-identity.cjs');
 const { appendToChain, verifyChain } = require('../../security/response-integrity.cjs');
 const { logEvent, readAuditLog } = require('../../security/session-audit.cjs');
-const { createRouter, routeMessage, getMessages } = require('../../protocol/message-router.cjs');
-const { isolateContext, sanitizeResponse } = require('../../protocol/context-isolator.cjs');
-const { createSidecar, writeSidecar, readSidecar, validateSidecarAccess } = require('../../protocol/sidecar-manager.cjs');
-const { loadTeam, validateTeamMember } = require('../../orchestration/team-loader.cjs');
-const { spawnAgent, getAgentState, transitionState } = require('../../orchestration/lifecycle-manager.cjs');
-const { startRound, completeRound, enforceRateLimits } = require('../../orchestration/round-manager.cjs');
+const { createRouter, routeMessage, _getMessages } = require('../../protocol/message-router.cjs');
+const { isolateContext, _sanitizeResponse } = require('../../protocol/context-isolator.cjs');
+const {
+  createSidecar,
+  _writeSidecar,
+  _readSidecar,
+  validateSidecarAccess,
+} = require('../../protocol/sidecar-manager.cjs');
+const { loadTeam, _validateTeamMember } = require('../../orchestration/team-loader.cjs');
+const {
+  spawnAgent,
+  _getAgentState,
+  _transitionState,
+} = require('../../orchestration/lifecycle-manager.cjs');
+const {
+  startRound,
+  completeRound,
+  enforceRateLimits,
+} = require('../../orchestration/round-manager.cjs');
 
 const PROJECT_ROOT = path.dirname(path.dirname(path.dirname(path.dirname(__dirname))));
 const TEST_DIR = path.join(PROJECT_ROOT, '.tmp', 'party-mode-integration-tests');
@@ -123,7 +140,10 @@ security-architect,Security Architect,opus`;
       assert.strictEqual(verification.valid, true, 'Hash chain should be valid');
 
       // 6. Validate round completion
-      const round = startRound(sessionId, agents.map(a => a.agentId));
+      const round = startRound(
+        sessionId,
+        agents.map(a => a.agentId)
+      );
       const completed = completeRound(sessionId, round.roundId);
 
       assert.strictEqual(completed.status, 'completed', 'Round should be completed');
@@ -158,10 +178,13 @@ security-architect,Security Architect,opus`;
   describe('Integration 2: Multi-Round Scenario', () => {
     it('should handle 2 rounds with context threading', async () => {
       const team = await loadTeam(TEAM_CSV);
-      const router = createRouter(sessionId);
+      const _router = createRouter(sessionId);
 
       // Round 1: Initial analysis
-      const round1 = startRound(sessionId, team.map(m => m.agent_type));
+      const round1 = startRound(
+        sessionId,
+        team.map(m => m.agent_type)
+      );
       const round1Responses = [];
 
       for (let i = 0; i < 3; i++) {
@@ -179,7 +202,10 @@ security-architect,Security Architect,opus`;
       completeRound(sessionId, round1.roundId);
 
       // Round 2: Refinement based on Round 1
-      const round2 = startRound(sessionId, team.map(m => m.agent_type));
+      const round2 = startRound(
+        sessionId,
+        team.map(m => m.agent_type)
+      );
       const round2Context = {
         userMessage: 'Refine your analysis',
         previousResponses: round1Responses,
@@ -191,7 +217,11 @@ security-architect,Security Architect,opus`;
         const isolatedContext = isolateContext(round2Context, agentId);
 
         // Verify Round 1 responses are visible
-        assert.strictEqual(isolatedContext.previousResponses.length, 3, 'Should see Round 1 responses');
+        assert.strictEqual(
+          isolatedContext.previousResponses.length,
+          3,
+          'Should see Round 1 responses'
+        );
 
         const response = {
           agentId,
@@ -319,8 +349,16 @@ security-architect,Security Architect,opus`;
       const auditEntries = await readAuditLog(AUDIT_LOG);
 
       assert.ok(auditEntries.length >= 5, 'Should have at least 5 audit entries');
-      assert.strictEqual(auditEntries[0].eventType, 'SESSION_START', 'First entry should be SESSION_START');
-      assert.strictEqual(auditEntries[auditEntries.length - 1].eventType, 'SESSION_END', 'Last entry should be SESSION_END');
+      assert.strictEqual(
+        auditEntries[0].eventType,
+        'SESSION_START',
+        'First entry should be SESSION_START'
+      );
+      assert.strictEqual(
+        auditEntries[auditEntries.length - 1].eventType,
+        'SESSION_END',
+        'Last entry should be SESSION_END'
+      );
     });
 
     it('should enforce context isolation (SEC-PM-004)', async () => {
@@ -509,11 +547,13 @@ security-architect,Security Architect,opus`;
     it('should meet context isolation performance target (<10ms)', async () => {
       const sharedContext = {
         userMessage: 'Performance test',
-        previousResponses: Array(10).fill(null).map((_, i) => ({
-          agentId: `agent_${i}`,
-          content: `Response ${i}`,
-          timestamp: new Date().toISOString(),
-        })),
+        previousResponses: Array(10)
+          .fill(null)
+          .map((_, i) => ({
+            agentId: `agent_${i}`,
+            content: `Response ${i}`,
+            timestamp: new Date().toISOString(),
+          })),
       };
 
       const iterations = 100;

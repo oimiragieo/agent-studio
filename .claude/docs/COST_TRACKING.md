@@ -5,6 +5,7 @@
 The Cost Tracking Hook monitors LLM token usage across all agent interactions and provides visibility into API spending. It tracks costs by model tier (haiku, sonnet, opus), logs data with cryptographic integrity verification, and generates session summaries.
 
 **Key Features**:
+
 - Real-time token tracking per model tier
 - Accurate cost calculation using Anthropic pricing
 - Session summaries at end of execution
@@ -66,6 +67,7 @@ The Cost Tracking Hook monitors LLM token usage across all agent interactions an
 ### Session Start
 
 When a session starts, the hook:
+
 1. Initializes session state (zero costs)
 2. Resets counters
 3. Records start time
@@ -85,15 +87,16 @@ During execution, when an LLM call completes (with token metadata), call `trackC
 
 ```javascript
 trackCall({
-  model: 'claude-sonnet-4-5',      // Model identifier
-  inputTokens: 1500,                // Input token count
-  outputTokens: 800,                // Output token count
-  taskId: '123',                    // Optional task ID
-  agent: 'developer'                // Optional agent type
+  model: 'claude-sonnet-4-5', // Model identifier
+  inputTokens: 1500, // Input token count
+  outputTokens: 800, // Output token count
+  taskId: '123', // Optional task ID
+  agent: 'developer', // Optional agent type
 });
 ```
 
 The hook:
+
 1. **Normalizes model name** to tier (haiku/sonnet/opus)
 2. **Calculates cost** using pricing table
 3. **Updates session state** (accumulates tokens and costs)
@@ -121,6 +124,7 @@ The hook:
 ### Session End
 
 When session ends, the hook:
+
 1. **Formats session summary** (markdown table)
 2. **Prints to console** for user visibility
 3. **Saves running totals** to summary file
@@ -146,6 +150,7 @@ When session ends, the hook:
 **What**: Validates cost entry schema before logging
 
 **How**: Each entry must have:
+
 - `timestamp`: ISO 8601 format
 - `tier`: One of 'haiku', 'sonnet', 'opus'
 - `inputTokens`: Non-negative number
@@ -159,6 +164,7 @@ When session ends, the hook:
 **What**: Each log entry includes cryptographic hash of previous entry
 
 **How**:
+
 1. First entry has `_prevHash = "0"`
 2. Each subsequent entry:
    - Includes `_prevHash` (hash of previous entry)
@@ -166,11 +172,13 @@ When session ends, the hook:
 3. Tampering detection: Verify all hashes match expected values
 
 **Why**: Prevents tampering with logs. If any entry is modified:
+
 - Hash calculation will change
 - Hash chain will break at that point
 - Verification detects tampering immediately
 
 **Example Chain**:
+
 ```
 Entry 1: _hash = SHA256("0" + entry1_data) = "a1b2c3d4..."
 Entry 2: _prevHash = "a1b2c3d4...", _hash = SHA256("a1b2c3d4..." + entry2_data) = "e5f6g7h8..."
@@ -207,6 +215,7 @@ node .claude/tools/cli/cost-report.js --today
 ```
 
 Output:
+
 ```
 Cost Report (Today: 2026-01-28)
 ==================================================
@@ -233,6 +242,7 @@ node .claude/tools/cli/cost-report.js --by-model
 ```
 
 Output:
+
 ```
 | Tier   | Calls | Tokens | Cost     | % of Total |
 |--------|-------|--------|----------|------------|
@@ -250,11 +260,13 @@ node .claude/tools/cli/cost-report.js --verify
 ```
 
 Output:
+
 ```
 ✓ Log integrity verified - all hashes are valid
 ```
 
 If tampering detected:
+
 ```
 ERROR: Hash chain broken at entry 42
   Expected prevHash: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
@@ -268,6 +280,7 @@ ERROR: Hash chain broken at entry 42
 **Cause**: No LLM calls in session or hook not invoked
 
 **Solution**:
+
 1. Check that `trackCall()` is being called with token counts
 2. Verify hook is registered in hook system
 3. Check logs for validation errors
@@ -277,6 +290,7 @@ ERROR: Hash chain broken at entry 42
 **Cause**: More than 1000 cost entries logged in the same hour
 
 **Solution**:
+
 1. Reduce number of tracked calls
 2. Batch log entries (log aggregated costs instead of per-call)
 3. Wait for next hour
@@ -286,6 +300,7 @@ ERROR: Hash chain broken at entry 42
 **Cause**: Log file was tampered with or corrupted
 
 **Solution**:
+
 1. Do NOT continue using the log - it's compromised
 2. Archive the corrupted log: `mv cost-log.jsonl cost-log-backup-$(date +%s).jsonl`
 3. Start fresh with new log
@@ -296,18 +311,19 @@ ERROR: Hash chain broken at entry 42
 **Cause**: Pricing table may be outdated
 
 **Solution**:
+
 1. Check latest Anthropic pricing: https://www.anthropic.com/pricing
 2. Update `PRICING` table in `.claude/lib/utils/cost-calculator.cjs`
 3. Recalculate historical entries if needed
 
 ## Performance Characteristics
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Tracking overhead | < 5ms | ~2ms (JSON serialization + file append) |
-| Log file size | < 1MB/month | ~500KB/month (at 100 calls/day) |
-| Integrity verification | < 100ms for 1000 entries | ~45ms |
-| Report generation | < 500ms for 1000 entries | ~120ms |
+| Metric                 | Target                   | Actual                                  |
+| ---------------------- | ------------------------ | --------------------------------------- |
+| Tracking overhead      | < 5ms                    | ~2ms (JSON serialization + file append) |
+| Log file size          | < 1MB/month              | ~500KB/month (at 100 calls/day)         |
+| Integrity verification | < 100ms for 1000 entries | ~45ms                                   |
+| Report generation      | < 500ms for 1000 entries | ~120ms                                  |
 
 ## Integration with Agent Framework
 
@@ -317,17 +333,17 @@ When updating task status, include LLM usage in metadata:
 
 ```javascript
 TaskUpdate({
-  taskId: "4",
-  status: "completed",
+  taskId: '4',
+  status: 'completed',
   metadata: {
-    summary: "Implementation complete",
+    summary: 'Implementation complete',
     llmUsage: {
-      model: "claude-sonnet-4-5",
+      model: 'claude-sonnet-4-5',
       inputTokens: 15000,
       outputTokens: 3000,
-      estimatedCost: 0.090
-    }
-  }
+      estimatedCost: 0.09,
+    },
+  },
 });
 ```
 

@@ -1,6 +1,6 @@
-const { describe, it, before, after } = require('node:test');
+const { describe, it, _before, _after } = require('node:test');
 const assert = require('node:assert');
-const crypto = require('crypto');
+const _crypto = require('crypto');
 const path = require('path');
 
 // Module under test

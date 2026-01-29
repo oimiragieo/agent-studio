@@ -11,7 +11,7 @@
  * - CLAUDE.md references for core workflows
  */
 
-import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
+import { readFileSync, readdirSync, existsSync, _statSync } from 'fs';
 import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -19,7 +19,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..', '..');
 
 const WORKFLOWS_DIR = join(PROJECT_ROOT, '.claude', 'workflows');
-const AGENTS_DIR = join(PROJECT_ROOT, '.claude', 'agents');
+const _AGENTS_DIR = join(PROJECT_ROOT, '.claude', 'agents');
 const SKILLS_DIR = join(PROJECT_ROOT, '.claude', 'skills');
 const REGISTRY_PATH = join(
   PROJECT_ROOT,
@@ -30,9 +30,9 @@ const REGISTRY_PATH = join(
 );
 const CLAUDE_MD_PATH = join(PROJECT_ROOT, '.claude', 'CLAUDE.md');
 
-let errors = [];
-let warnings = [];
-let info = [];
+const errors = [];
+const warnings = [];
+const info = [];
 
 /**
  * Recursively find all workflow markdown files

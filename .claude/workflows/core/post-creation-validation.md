@@ -21,18 +21,18 @@ Every created artifact MUST pass all applicable items before the creator skill m
 
 ### Checklist
 
-| # | Item | Applies To | Validation Method |
-|---|------|------------|-------------------|
-| 1 | **CLAUDE.md Routing Entry** | Agents, Workflows | `grep "<artifact-name>" CLAUDE.md` |
-| 2 | **Skill Catalog Entry** | Skills | `grep "<skill-name>" skill-catalog.md` |
-| 3 | **Router Enforcer Keywords** | Agents | `grep "<keywords>" router-enforcer.cjs` |
-| 4 | **Agent Assignment** | Skills, Workflows | At least one agent references artifact |
-| 5 | **Memory File Updates** | All | learnings.md or decisions.md updated |
-| 6 | **Schema Validation** | All | Passes appropriate JSON schema |
-| 7 | **Tests Passing** | All with tests | `npm test` or equivalent passes |
-| 8 | **Documentation Complete** | All | No placeholder text (TBD, TODO, etc.) |
-| 9 | **Evolution State Updated** | All | evolution-state.json reflects completion |
-| 10 | **Router Discoverability** | Agents, Skills | Router can route requests to artifact |
+| #   | Item                         | Applies To        | Validation Method                        |
+| --- | ---------------------------- | ----------------- | ---------------------------------------- |
+| 1   | **CLAUDE.md Routing Entry**  | Agents, Workflows | `grep "<artifact-name>" CLAUDE.md`       |
+| 2   | **Skill Catalog Entry**      | Skills            | `grep "<skill-name>" skill-catalog.md`   |
+| 3   | **Router Enforcer Keywords** | Agents            | `grep "<keywords>" router-enforcer.cjs`  |
+| 4   | **Agent Assignment**         | Skills, Workflows | At least one agent references artifact   |
+| 5   | **Memory File Updates**      | All               | learnings.md or decisions.md updated     |
+| 6   | **Schema Validation**        | All               | Passes appropriate JSON schema           |
+| 7   | **Tests Passing**            | All with tests    | `npm test` or equivalent passes          |
+| 8   | **Documentation Complete**   | All               | No placeholder text (TBD, TODO, etc.)    |
+| 9   | **Evolution State Updated**  | All               | evolution-state.json reflects completion |
+| 10  | **Router Discoverability**   | Agents, Skills    | Router can route requests to artifact    |
 
 ### Detailed Validation Steps
 
@@ -43,6 +43,7 @@ Every created artifact MUST pass all applicable items before the creator skill m
 **Why:** Artifacts not in CLAUDE.md routing table are invisible to the Router.
 
 **How to validate:**
+
 ```bash
 # For agents
 grep -i "<agent-name>" .claude/CLAUDE.md | grep -i "routing table"
@@ -52,6 +53,7 @@ grep -i "<workflow-name>" .claude/CLAUDE.md | grep -i "workflow"
 ```
 
 **Common failures:**
+
 - Agent created but table not updated
 - Workflow created but not added to Enterprise Workflows section
 
@@ -62,11 +64,13 @@ grep -i "<workflow-name>" .claude/CLAUDE.md | grep -i "workflow"
 **Why:** Skills not in catalog are undiscoverable by agents.
 
 **How to validate:**
+
 ```bash
 grep -i "<skill-name>" .claude/context/artifacts/skill-catalog.md
 ```
 
 **Common failures:**
+
 - Skill SKILL.md created but catalog not updated
 - Skill category mismatch in catalog
 
@@ -77,6 +81,7 @@ grep -i "<skill-name>" .claude/context/artifacts/skill-catalog.md
 **Why:** Router uses keywords to match requests to agents.
 
 **How to validate:**
+
 ```bash
 # Check intentKeywords
 grep -i "<domain-keyword>" .claude/hooks/routing/router-enforcer.cjs
@@ -86,6 +91,7 @@ grep -i "<agent-name>" .claude/hooks/routing/router-enforcer.cjs
 ```
 
 **Common failures:**
+
 - No keywords added for new domain agent
 - Keywords added but not mapped to agent
 
@@ -96,12 +102,14 @@ grep -i "<agent-name>" .claude/hooks/routing/router-enforcer.cjs
 **Why:** Unassigned skills/workflows cannot be invoked through agent routing.
 
 **How to validate:**
+
 ```bash
 # Check if skill is assigned to any agent
 grep -r "<skill-name>" .claude/agents/
 ```
 
 **Common failures:**
+
 - Skill created but no agent lists it
 - Workflow created but no agent references it
 
@@ -112,6 +120,7 @@ grep -r "<skill-name>" .claude/agents/
 **Why:** Memory files capture learnings and decisions for future sessions.
 
 **How to validate:**
+
 ```bash
 # Check for recent updates mentioning artifact
 grep -i "<artifact-name>" .claude/context/memory/learnings.md
@@ -119,6 +128,7 @@ grep -i "<artifact-name>" .claude/context/memory/decisions.md
 ```
 
 **Common failures:**
+
 - No learning recorded from creation process
 - No decision record for design choices
 
@@ -129,12 +139,14 @@ grep -i "<artifact-name>" .claude/context/memory/decisions.md
 **Why:** Invalid schema = unpredictable behavior.
 
 **How to validate:**
+
 ```bash
 # Use ecosystem validator
 node .claude/tools/cli/validate-agents.mjs <artifact-path>
 ```
 
 **Common failures:**
+
 - Missing required YAML frontmatter fields
 - Invalid field values
 
@@ -145,12 +157,14 @@ node .claude/tools/cli/validate-agents.mjs <artifact-path>
 **Why:** Failing tests = broken functionality.
 
 **How to validate:**
+
 ```bash
 # Run tests for specific artifact
 npm test -- --grep "<artifact-name>"
 ```
 
 **Common failures:**
+
 - Tests written but not run before completion
 - Tests passing locally but not in CI
 
@@ -161,12 +175,14 @@ npm test -- --grep "<artifact-name>"
 **Why:** Incomplete docs = unusable artifact.
 
 **How to validate:**
+
 ```bash
 # Check for placeholder text
 grep -i "TODO\|TBD\|FIXME\|<fill" <artifact-path>
 ```
 
 **Common failures:**
+
 - Template placeholders not replaced
 - Sections left empty
 
@@ -177,12 +193,14 @@ grep -i "TODO\|TBD\|FIXME\|<fill" <artifact-path>
 **Why:** Evolution state is the audit trail.
 
 **How to validate:**
+
 ```bash
 # Check evolution-state.json
 grep -i "<artifact-name>" .claude/context/evolution-state.json
 ```
 
 **Common failures:**
+
 - Evolution started but not completed in state
 - Missing completion timestamp
 
@@ -193,6 +211,7 @@ grep -i "<artifact-name>" .claude/context/evolution-state.json
 **Why:** The ultimate test - can the Router actually use this artifact?
 
 **How to validate:**
+
 ```
 # Manual test
 Ask Router: "I need help with <artifact-domain>"
@@ -200,6 +219,7 @@ Ask Router: "I need help with <artifact-domain>"
 ```
 
 **Common failures:**
+
 - All registrations complete but Router logic has bug
 - Keywords conflict with another agent
 
@@ -255,6 +275,7 @@ A session hook reminds agents about recently created artifacts that may need int
 **Hook:** `.claude/hooks/session/post-creation-reminder.cjs`
 
 **Behavior:**
+
 - Checks evolution-state.json for completions in last 24 hours
 - Runs validation on those artifacts
 - Outputs reminder if any fail validation
@@ -283,12 +304,12 @@ A session hook reminds agents about recently created artifacts that may need int
 
 Track these metrics to measure workflow effectiveness:
 
-| Metric | Target | How to Measure |
-|--------|--------|----------------|
-| Integration completion rate | 100% | Artifacts passing all 10 items / Total artifacts |
-| Time to integration | < 5 min | Time from artifact creation to validation pass |
-| Invisible artifact incidents | 0 | Count of artifacts found without routing entry |
-| Validation failure rate | < 10% | Failed first validations / Total validations |
+| Metric                       | Target  | How to Measure                                   |
+| ---------------------------- | ------- | ------------------------------------------------ |
+| Integration completion rate  | 100%    | Artifacts passing all 10 items / Total artifacts |
+| Time to integration          | < 5 min | Time from artifact creation to validation pass   |
+| Invisible artifact incidents | 0       | Count of artifacts found without routing entry   |
+| Validation failure rate      | < 10%   | Failed first validations / Total validations     |
 
 ---
 
@@ -304,6 +325,6 @@ Track these metrics to measure workflow effectiveness:
 
 ## Version History
 
-| Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-01-28 | Initial release addressing Party Mode integration gap |
+| Version | Date       | Changes                                               |
+| ------- | ---------- | ----------------------------------------------------- |
+| 1.0.0   | 2026-01-28 | Initial release addressing Party Mode integration gap |

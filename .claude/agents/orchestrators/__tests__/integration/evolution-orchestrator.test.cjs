@@ -28,8 +28,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase E: Evaluating need for new agent',
-        prompt:
-          'You are EVOLUTION-ORCHESTRATOR. Phase E: Evaluate capability gap.',
+        prompt: 'You are EVOLUTION-ORCHESTRATOR. Phase E: Evaluate capability gap.',
       });
 
       // Phase V1: VALIDATE
@@ -37,8 +36,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase V1: Validating naming conflicts',
-        prompt:
-          'You are EVOLUTION-ORCHESTRATOR. Phase V1: Check naming.',
+        prompt: 'You are EVOLUTION-ORCHESTRATOR. Phase V1: Check naming.',
       });
 
       // Phase O: OBTAIN (Research)
@@ -46,8 +44,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase O: Research best practices',
-        prompt:
-          'You are EVOLUTION-ORCHESTRATOR. Phase O: Research (MANDATORY).',
+        prompt: 'You are EVOLUTION-ORCHESTRATOR. Phase O: Research (MANDATORY).',
       });
 
       // Phase L: LOCK (Create)
@@ -83,16 +80,10 @@ describe('Evolution Orchestrator Integration Tests', () => {
       );
 
       // Verify all orchestrator spawns tracked
-      assert.strictEqual(
-        taskTool.spawnedAgents.length,
-        6,
-        'Should have 6 phase spawns'
-      );
+      assert.strictEqual(taskTool.spawnedAgents.length, 6, 'Should have 6 phase spawns');
 
       // All agents should be evolution-orchestrator
-      const allEvolution = taskTool.spawnedAgents.every(
-        (a) => a.type === 'evolution-orchestrator'
-      );
+      const allEvolution = taskTool.spawnedAgents.every(a => a.type === 'evolution-orchestrator');
       assert.ok(allEvolution, 'All spawns should be evolution-orchestrator');
     });
 
@@ -105,11 +96,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       });
 
       const orchestrator = taskTool.getSpawnedAgent(0);
-      assert.strictEqual(
-        orchestrator.model,
-        'opus',
-        'Evolution orchestrator should use opus'
-      );
+      assert.strictEqual(orchestrator.model, 'opus', 'Evolution orchestrator should use opus');
     });
   });
 
@@ -119,8 +106,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase O: Research',
-        prompt:
-          'Phase O: OBTAIN (Research). Invoke Skill({ skill: "research-synthesis" })',
+        prompt: 'Phase O: OBTAIN (Research). Invoke Skill({ skill: "research-synthesis" })',
         allowed_tools: ['Skill', 'mcp__Exa__web_search_exa', 'TaskUpdate'],
       });
 
@@ -159,10 +145,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
 
       // Attempt to skip to Phase L without Phase O
       // In real implementation, this would be blocked by research-enforcement.cjs
-      taskTool.setFailureMode(
-        2,
-        'Phase O (Research) is MANDATORY and cannot be bypassed'
-      );
+      taskTool.setFailureMode(2, 'Phase O (Research) is MANDATORY and cannot be bypassed');
 
       try {
         await taskTool.spawn({
@@ -184,28 +167,18 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase L: Create agent',
-        prompt:
-          'Phase L: LOCK. Invoke Skill({ skill: "agent-creator" }) to create new agent.',
+        prompt: 'Phase L: LOCK. Invoke Skill({ skill: "agent-creator" }) to create new agent.',
         allowed_tools: ['Skill', 'Write', 'Edit', 'TaskUpdate'],
       });
 
       const phaseL = taskTool.getSpawnedAgent(0);
 
       // Verify creation tools available
-      assert.ok(
-        phaseL.allowed_tools.includes('Skill'),
-        'Should have Skill tool'
-      );
-      assert.ok(
-        phaseL.allowed_tools.includes('Write'),
-        'Should have Write tool'
-      );
+      assert.ok(phaseL.allowed_tools.includes('Skill'), 'Should have Skill tool');
+      assert.ok(phaseL.allowed_tools.includes('Write'), 'Should have Write tool');
 
       // Verify prompt invokes agent-creator
-      assert.ok(
-        phaseL.prompt.includes('agent-creator'),
-        'Should invoke agent-creator skill'
-      );
+      assert.ok(phaseL.prompt.includes('agent-creator'), 'Should invoke agent-creator skill');
     });
 
     it('should validate artifact against schema', async () => {
@@ -213,22 +186,15 @@ describe('Evolution Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'evolution-orchestrator',
         description: 'Phase V2: Verify artifact quality',
-        prompt:
-          'Phase V2: VERIFY. Check artifact against schema, ensure no placeholders.',
+        prompt: 'Phase V2: VERIFY. Check artifact against schema, ensure no placeholders.',
         allowed_tools: ['Read', 'Bash', 'TaskUpdate'],
       });
 
       const phaseV2 = taskTool.getSpawnedAgent(0);
 
       // Verify verification tools available
-      assert.ok(
-        phaseV2.allowed_tools.includes('Read'),
-        'Should have Read tool'
-      );
-      assert.ok(
-        phaseV2.allowed_tools.includes('Bash'),
-        'Should have Bash for validation'
-      );
+      assert.ok(phaseV2.allowed_tools.includes('Read'), 'Should have Read tool');
+      assert.ok(phaseV2.allowed_tools.includes('Bash'), 'Should have Bash for validation');
     });
   });
 
@@ -242,10 +208,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
       });
 
       // Phase V1: Validate (fail due to naming conflict)
-      taskTool.setFailureMode(
-        1,
-        'Naming conflict: agent "data-scientist" already exists'
-      );
+      taskTool.setFailureMode(1, 'Naming conflict: agent "data-scientist" already exists');
 
       try {
         await taskTool.spawn({
@@ -295,7 +258,7 @@ describe('Evolution Orchestrator Integration Tests', () => {
 
       // All 6 phases should complete
       const taskList = taskTool.list();
-      const completed = taskList.filter((t) => t.status === 'completed');
+      const completed = taskList.filter(t => t.status === 'completed');
 
       assert.strictEqual(completed.length, 6, 'All 6 phases should pass');
     });

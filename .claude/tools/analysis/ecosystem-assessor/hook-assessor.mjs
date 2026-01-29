@@ -30,7 +30,7 @@ function findProjectRoot() {
 }
 
 const ROOT = findProjectRoot();
-const HOOKS_DIR = join(ROOT, '.claude', 'hooks');
+const _HOOKS_DIR = join(ROOT, '.claude', 'hooks');
 const SETTINGS_PATH = join(ROOT, '.claude', 'settings.json');
 
 /**

@@ -33,7 +33,7 @@ function findProjectRoot() {
 const ROOT = findProjectRoot();
 const MCP_CONFIG_PATH = join(ROOT, '.claude', '.mcp.json');
 const SKILLS_DIR = join(ROOT, '.claude', 'skills');
-const MCP_CATALOG_PATH = join(ROOT, '.claude', 'tools', 'mcp-converter', 'mcp-catalog.yaml');
+const _MCP_CATALOG_PATH = join(ROOT, '.claude', 'tools', 'mcp-converter', 'mcp-catalog.yaml');
 
 /**
  * MCP Server to Skill/Agent mapping

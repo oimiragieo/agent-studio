@@ -153,7 +153,7 @@ function parseEntry(raw) {
   const trimmed = raw.trim();
 
   // Try standard header format: ## [CATEGORY] Title
-  let headerMatch = trimmed.match(HEADER_PATTERN);
+  const headerMatch = trimmed.match(HEADER_PATTERN);
   let category = 'UNKNOWN';
   let title = 'Untitled';
   let date = null;
@@ -532,7 +532,7 @@ function parseEntriesFromFile(filePath) {
 
     const content = fs.readFileSync(filePath, 'utf8');
     return parseEntries(content);
-  } catch (err) {
+  } catch (_err) {
     // Return empty array on any read error
     return [];
   }

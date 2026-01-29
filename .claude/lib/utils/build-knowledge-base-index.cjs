@@ -70,7 +70,10 @@ function parseFrontmatter(content) {
 
       // Handle arrays [item1, item2]
       if (value.startsWith('[') && value.endsWith(']')) {
-        value = value.slice(1, -1).split(',').map(v => v.trim());
+        value = value
+          .slice(1, -1)
+          .split(',')
+          .map(v => v.trim());
       }
 
       result[key] = value;
@@ -90,9 +93,21 @@ function extractUseCases(description) {
 
   // Common use case keywords
   const keywords = [
-    'testing', 'quality', 'development', 'security', 'planning',
-    'review', 'documentation', 'deployment', 'monitoring', 'debugging',
-    'refactoring', 'architecture', 'design', 'performance', 'optimization'
+    'testing',
+    'quality',
+    'development',
+    'security',
+    'planning',
+    'review',
+    'documentation',
+    'deployment',
+    'monitoring',
+    'debugging',
+    'refactoring',
+    'architecture',
+    'design',
+    'performance',
+    'optimization',
   ];
 
   const lowerDesc = description.toLowerCase();
@@ -166,8 +181,12 @@ function scanDirectory(dir, domain) {
           const relativePath = path.relative(projectRoot, fullPath).replace(/\\/g, '/');
 
           // Extract description
-          const description = frontmatter.description ||
-            content.split('\n').find(line => line.trim() && !line.startsWith('#') && !line.startsWith('---'))?.trim() ||
+          const description =
+            frontmatter.description ||
+            content
+              .split('\n')
+              .find(line => line.trim() && !line.startsWith('#') && !line.startsWith('---'))
+              ?.trim() ||
             'No description available';
 
           // Extract metadata
@@ -188,7 +207,7 @@ function scanDirectory(dir, domain) {
             deprecated: deprecated ? 'true' : 'false',
             alias: escapeCSV(alias),
             usage_count: '0',
-            last_used: ''
+            last_used: '',
           });
         } catch (error) {
           console.warn(`[kb-index] Skipping ${fullPath}: ${error.message}`);
@@ -207,7 +226,13 @@ function scanDirectory(dir, domain) {
  */
 function buildKnowledgeBaseIndex() {
   const projectRoot = getProjectRoot();
-  const outputPath = path.join(projectRoot, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
+  const outputPath = path.join(
+    projectRoot,
+    '.claude',
+    'context',
+    'artifacts',
+    'knowledge-base-index.csv'
+  );
   const tmpPath = outputPath + '.tmp';
 
   // Ensure output directory exists
@@ -224,7 +249,19 @@ function buildKnowledgeBaseIndex() {
   const allArtifacts = [...skills, ...agents, ...workflows];
 
   // Generate CSV content
-  const headers = ['name', 'path', 'description', 'domain', 'complexity', 'use_cases', 'tools', 'deprecated', 'alias', 'usage_count', 'last_used'];
+  const headers = [
+    'name',
+    'path',
+    'description',
+    'domain',
+    'complexity',
+    'use_cases',
+    'tools',
+    'deprecated',
+    'alias',
+    'usage_count',
+    'last_used',
+  ];
   const csvLines = [headers.join(',')];
 
   for (const artifact of allArtifacts) {
@@ -243,7 +280,7 @@ function buildKnowledgeBaseIndex() {
   return {
     success: true,
     artifactsIndexed: allArtifacts.length,
-    outputPath
+    outputPath,
   };
 }
 

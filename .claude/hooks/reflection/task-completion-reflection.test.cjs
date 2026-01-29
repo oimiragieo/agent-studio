@@ -63,7 +63,7 @@ function readTestQueue() {
 let hook;
 try {
   hook = require('./task-completion-reflection.cjs');
-} catch (e) {
+} catch (_e) {
   console.log('WARNING: Module not implemented yet. Tests will fail.\n');
   hook = {
     isEnabled: () => false,

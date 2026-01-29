@@ -42,8 +42,16 @@ describe('Response Integrity Validator', () => {
       const agentId = 'agent_abc12345_1706543210123';
       const previousHash = '0';
 
-      const result1 = responseIntegrity.appendResponse(agentId, { content: 'Response 1' }, previousHash);
-      const result2 = responseIntegrity.appendResponse(agentId, { content: 'Response 2' }, previousHash);
+      const result1 = responseIntegrity.appendResponse(
+        agentId,
+        { content: 'Response 1' },
+        previousHash
+      );
+      const result2 = responseIntegrity.appendResponse(
+        agentId,
+        { content: 'Response 2' },
+        previousHash
+      );
 
       assert.notStrictEqual(result1.responseHash, result2.responseHash);
     });
@@ -52,8 +60,16 @@ describe('Response Integrity Validator', () => {
       const agentId1 = 'agent_abc12345_1706543210123';
       const agentId2 = 'agent_def67890_1706543220456';
 
-      const response1 = responseIntegrity.appendResponse(agentId1, { content: 'First response' }, '0');
-      const response2 = responseIntegrity.appendResponse(agentId2, { content: 'Second response' }, response1.responseHash);
+      const response1 = responseIntegrity.appendResponse(
+        agentId1,
+        { content: 'First response' },
+        '0'
+      );
+      const response2 = responseIntegrity.appendResponse(
+        agentId2,
+        { content: 'Second response' },
+        response1.responseHash
+      );
 
       assert.strictEqual(response2.previousHash, response1.responseHash);
       assert.notStrictEqual(response2.responseHash, response1.responseHash);
@@ -62,26 +78,34 @@ describe('Response Integrity Validator', () => {
 
   describe('verifyChain', () => {
     it('should validate intact response chain', () => {
-      const chain = [
+      const _chain = [
         {
           agentId: 'agent_abc_123',
           content: 'Response 1',
           hash: 'abc123',
           previousHash: '0',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           agentId: 'agent_def_456',
           content: 'Response 2',
           hash: 'def456',
           previousHash: 'abc123',
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       // Build proper chain
-      const response1 = responseIntegrity.appendResponse('agent_abc_123', { content: 'Response 1' }, '0');
-      const response2 = responseIntegrity.appendResponse('agent_def_456', { content: 'Response 2' }, response1.responseHash);
+      const response1 = responseIntegrity.appendResponse(
+        'agent_abc_123',
+        { content: 'Response 1' },
+        '0'
+      );
+      const response2 = responseIntegrity.appendResponse(
+        'agent_def_456',
+        { content: 'Response 2' },
+        response1.responseHash
+      );
       const validChain = [response1, response2];
 
       const result = responseIntegrity.verifyChain(validChain);
@@ -92,13 +116,21 @@ describe('Response Integrity Validator', () => {
 
     it('should detect tampered response content', () => {
       // Build chain
-      const response1 = responseIntegrity.appendResponse('agent_abc_123', { content: 'Original response' }, '0');
-      const response2 = responseIntegrity.appendResponse('agent_def_456', { content: 'Second response' }, response1.responseHash);
+      const response1 = responseIntegrity.appendResponse(
+        'agent_abc_123',
+        { content: 'Original response' },
+        '0'
+      );
+      const response2 = responseIntegrity.appendResponse(
+        'agent_def_456',
+        { content: 'Second response' },
+        response1.responseHash
+      );
 
       // Tamper with first response
       const tamperedChain = [
         { ...response1, content: 'Tampered content' }, // Modified content but same hash
-        response2
+        response2,
       ];
 
       const result = responseIntegrity.verifyChain(tamperedChain);
@@ -108,9 +140,21 @@ describe('Response Integrity Validator', () => {
     });
 
     it('should detect broken chain links', () => {
-      const response1 = responseIntegrity.appendResponse('agent_abc_123', { content: 'Response 1' }, '0');
-      const response2 = responseIntegrity.appendResponse('agent_def_456', { content: 'Response 2' }, response1.responseHash);
-      const response3 = responseIntegrity.appendResponse('agent_ghi_789', { content: 'Response 3' }, response2.responseHash);
+      const response1 = responseIntegrity.appendResponse(
+        'agent_abc_123',
+        { content: 'Response 1' },
+        '0'
+      );
+      const response2 = responseIntegrity.appendResponse(
+        'agent_def_456',
+        { content: 'Response 2' },
+        response1.responseHash
+      );
+      const response3 = responseIntegrity.appendResponse(
+        'agent_ghi_789',
+        { content: 'Response 3' },
+        response2.responseHash
+      );
 
       // Break chain by skipping response2
       const brokenChain = [response1, response3];

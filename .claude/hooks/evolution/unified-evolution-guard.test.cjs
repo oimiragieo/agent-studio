@@ -23,13 +23,13 @@ const fs = require('fs');
 let unifiedGuard;
 try {
   unifiedGuard = require('./unified-evolution-guard.cjs');
-} catch (e) {
+} catch (_e) {
   console.log('Module not found - expected for RED phase');
   process.exit(1);
 }
 
 const PROJECT_ROOT = path.resolve(__dirname, '../../..');
-const EVOLUTION_STATE_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
+const _EVOLUTION_STATE_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
 
 // Test helpers
 function createMockHookInput(toolName, filePath, content = '') {

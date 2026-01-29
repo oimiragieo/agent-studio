@@ -80,7 +80,7 @@ function extractFrontmatter(filePath) {
     }
 
     return result;
-  } catch (error) {
+  } catch (_error) {
     return { name: '', description: '' };
   }
 }
@@ -104,7 +104,7 @@ function findSkillsInDir(dir, sourceType, maxDepth = 3) {
     let entries;
     try {
       entries = fs.readdirSync(currentDir, { withFileTypes: true });
-    } catch (error) {
+    } catch (_error) {
       // Skip directories we can't read
       return;
     }
@@ -225,7 +225,7 @@ function checkForUpdates(repoDir) {
       }
     }
     return false; // Up to date
-  } catch (error) {
+  } catch (_error) {
     // Network down, git error, timeout, etc. - don't block
     return false;
   }
@@ -277,7 +277,7 @@ function loadSkill(skillFile) {
       frontmatter,
       body,
     };
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }

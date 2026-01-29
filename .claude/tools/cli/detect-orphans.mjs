@@ -119,7 +119,7 @@ async function main() {
         agentSkillMap[agentName] = agentSkills;
         agentSkills.forEach(s => assignedSkills.add(s));
       }
-    } catch (e) {
+    } catch (_e) {
       // Skip files that can't be parsed
     }
   }

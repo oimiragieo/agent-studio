@@ -27,8 +27,12 @@ if (process.env.NODE_ENV !== 'staging' && process.env.NODE_ENV !== 'production')
 let getEnvironment, getEnvironmentPath;
 
 test('setup - load environment utilities', async () => {
-  const envModule = await import(`file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'environment.cjs')}`);
-  const configModule = await import(`file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`);
+  const envModule = await import(
+    `file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'environment.cjs')}`
+  );
+  const configModule = await import(
+    `file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`
+  );
 
   getEnvironment = envModule.getEnvironment;
   getEnvironmentPath = configModule.getEnvironmentPath;
@@ -48,14 +52,7 @@ test('smoke: staging configuration exists', async () => {
 
 test('smoke: staging directories exist', async () => {
   const stagingRoot = path.join(PROJECT_ROOT, '.claude', 'staging');
-  const requiredDirs = [
-    'knowledge',
-    'metrics',
-    'memory',
-    'agents',
-    'sessions',
-    'context',
-  ];
+  const requiredDirs = ['knowledge', 'metrics', 'memory', 'agents', 'sessions', 'context'];
 
   for (const dir of requiredDirs) {
     const dirPath = path.join(stagingRoot, dir);
@@ -77,7 +74,7 @@ test('smoke: staging log files initialized', async () => {
     try {
       const stats = await fs.stat(logFile);
       assert.ok(stats.isFile(), `${path.basename(logFile)} should exist`);
-    } catch (error) {
+    } catch (_error) {
       assert.fail(`Log file missing: ${logFile}`);
     }
   }
@@ -117,7 +114,9 @@ test('smoke: environment path resolution', () => {
 });
 
 test('smoke: config loader uses staging config', async () => {
-  const { loadConfig } = await import(`file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`);
+  const { loadConfig } = await import(
+    `file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`
+  );
   const config = loadConfig(false); // Don't use cache
 
   assert.equal(config.environment, 'staging', 'Config environment should be staging');
@@ -126,22 +125,42 @@ test('smoke: config loader uses staging config', async () => {
 });
 
 test('smoke: feature flags enabled in staging', async () => {
-  const { loadConfig } = await import(`file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`);
+  const { loadConfig } = await import(
+    `file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`
+  );
   const config = loadConfig(false);
 
   // All features should be enabled in staging for testing
   assert.equal(config.features.partyMode.enabled, true, 'Party Mode should be enabled in staging');
-  assert.equal(config.features.advancedElicitation.enabled, true, 'Advanced Elicitation should be enabled in staging');
-  assert.equal(config.features.knowledgeBase.enabled, true, 'Knowledge Base should be enabled in staging');
-  assert.equal(config.features.costTracking.enabled, true, 'Cost Tracking should be enabled in staging');
+  assert.equal(
+    config.features.advancedElicitation.enabled,
+    true,
+    'Advanced Elicitation should be enabled in staging'
+  );
+  assert.equal(
+    config.features.knowledgeBase.enabled,
+    true,
+    'Knowledge Base should be enabled in staging'
+  );
+  assert.equal(
+    config.features.costTracking.enabled,
+    true,
+    'Cost Tracking should be enabled in staging'
+  );
 });
 
 test('smoke: staging has relaxed monitoring thresholds', async () => {
-  const { loadConfig } = await import(`file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`);
+  const { loadConfig } = await import(
+    `file://${path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'config-loader.cjs')}`
+  );
   const config = loadConfig(false);
 
   // Staging thresholds should be 2x more lenient than production
-  assert.equal(config.monitoring.thresholds.hookExecutionTimeMs, 20, 'Hook execution threshold should be 20ms');
+  assert.equal(
+    config.monitoring.thresholds.hookExecutionTimeMs,
+    20,
+    'Hook execution threshold should be 20ms'
+  );
   assert.equal(config.monitoring.thresholds.agentFailureRate, 6, 'Agent failure rate should be 6%');
   assert.equal(config.monitoring.verboseLogging, true, 'Verbose logging should be enabled');
 });

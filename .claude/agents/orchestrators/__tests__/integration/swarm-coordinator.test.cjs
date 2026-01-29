@@ -11,9 +11,7 @@
 const { describe, it, beforeEach } = require('node:test');
 const assert = require('node:assert');
 const { TaskToolMock } = require('../mocks/task-tool-mock.cjs');
-const {
-  generateMockCompletion,
-} = require('../mocks/agent-response-mock.cjs');
+const { _generateMockCompletion } = require('../mocks/agent-response-mock.cjs');
 
 describe('Swarm Coordinator Integration Tests', () => {
   let taskTool;
@@ -56,29 +54,16 @@ describe('Swarm Coordinator Integration Tests', () => {
       });
 
       // Then: Verify 3 workers spawned
-      assert.strictEqual(
-        taskTool.spawnedAgents.length,
-        3,
-        'Should spawn 3 workers'
-      );
+      assert.strictEqual(taskTool.spawnedAgents.length, 3, 'Should spawn 3 workers');
 
       // Verify work distribution
       const worker1 = taskTool.getSpawnedAgent(0);
       const worker2 = taskTool.getSpawnedAgent(1);
       const worker3 = taskTool.getSpawnedAgent(2);
 
-      assert.ok(
-        worker1.prompt.includes('file1.ts'),
-        'Worker 1 should have file1'
-      );
-      assert.ok(
-        worker2.prompt.includes('file3.ts'),
-        'Worker 2 should have file3'
-      );
-      assert.ok(
-        worker3.prompt.includes('file5.ts'),
-        'Worker 3 should have file5'
-      );
+      assert.ok(worker1.prompt.includes('file1.ts'), 'Worker 1 should have file1');
+      assert.ok(worker2.prompt.includes('file3.ts'), 'Worker 2 should have file3');
+      assert.ok(worker3.prompt.includes('file5.ts'), 'Worker 3 should have file5');
     });
 
     it('should spawn workers in parallel for performance', async () => {
@@ -116,10 +101,7 @@ describe('Swarm Coordinator Integration Tests', () => {
       const duration = Date.now() - startTime;
 
       assert.strictEqual(taskTool.spawnedAgents.length, 5);
-      assert.ok(
-        duration < 100,
-        `Parallel spawn should be fast, took ${duration}ms`
-      );
+      assert.ok(duration < 100, `Parallel spawn should be fast, took ${duration}ms`);
     });
   });
 
@@ -221,7 +203,7 @@ describe('Swarm Coordinator Integration Tests', () => {
           description: 'Worker 2',
           prompt: 'You are WORKER 2.',
         });
-      } catch (err) {
+      } catch (_err) {
         // Expected
       }
 
@@ -243,13 +225,9 @@ describe('Swarm Coordinator Integration Tests', () => {
 
       // Check results
       const taskList = taskTool.list();
-      const completed = taskList.filter((t) => t.status === 'completed');
+      const completed = taskList.filter(t => t.status === 'completed');
 
-      assert.strictEqual(
-        completed.length,
-        2,
-        'Should have 2 completed tasks'
-      );
+      assert.strictEqual(completed.length, 2, 'Should have 2 completed tasks');
     });
   });
 
@@ -300,15 +278,12 @@ describe('Swarm Coordinator Integration Tests', () => {
         votes.push(task.metadata.vote);
       }
 
-      const approveCount = votes.filter((v) => v === 'approve').length;
-      const rejectCount = votes.filter((v) => v === 'reject').length;
+      const approveCount = votes.filter(v => v === 'approve').length;
+      const rejectCount = votes.filter(v => v === 'reject').length;
 
       assert.strictEqual(approveCount, 2, 'Should have 2 approve votes');
       assert.strictEqual(rejectCount, 1, 'Should have 1 reject vote');
-      assert.ok(
-        approveCount > rejectCount,
-        'Consensus should be to approve'
-      );
+      assert.ok(approveCount > rejectCount, 'Consensus should be to approve');
     });
   });
 });

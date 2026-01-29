@@ -188,7 +188,7 @@ function validateAgents() {
             log('yellow', `  ⚠ ${entry.name} (missing frontmatter)`);
             results.warnings++;
           }
-        } catch (e) {
+        } catch (_e) {
           log('red', `  ✗ ${entry.name} (read error)`);
           results.errors++;
         }
@@ -245,7 +245,7 @@ function validateSkills() {
           }
         }
       }
-    } catch (e) {
+    } catch (_e) {
       log('red', `  ✗ ${skill} (error reading)`);
       results.errors++;
     }
@@ -350,7 +350,7 @@ function validateDocPaths() {
 
   const docsToCheck = ['.claude/docs/ARCHITECTURE.md', '.claude/CLAUDE.md'];
 
-  const pathPattern = /\.claude\/[a-zA-Z0-9_\-\/\.]+/g;
+  const pathPattern = /\.claude\/[a-zA-Z0-9_\-/.]+/g;
   let driftCount = 0;
 
   for (const docPath of docsToCheck) {

@@ -97,7 +97,7 @@ function main() {
   if (fs.existsSync(memoryTiersPath)) {
     try {
       memoryTiers = require(memoryTiersPath);
-    } catch (e) {
+    } catch (_e) {
       // Memory tiers not available - continue without
     }
   }
@@ -107,7 +107,7 @@ function main() {
   if (fs.existsSync(smartPrunerPath)) {
     try {
       smartPruner = require(smartPrunerPath);
-    } catch (e) {
+    } catch (_e) {
       // Smart pruner not available - continue without
     }
   }
@@ -118,7 +118,7 @@ function main() {
   if (fs.existsSync(memoryDashboardPath)) {
     try {
       memoryDashboard = require(memoryDashboardPath);
-    } catch (e) {
+    } catch (_e) {
       // Memory dashboard not available - continue without
     }
   }
@@ -156,7 +156,7 @@ function main() {
   }
 
   // Auto-remediation if over hard thresholds
-  let autoActions = [];
+  const autoActions = [];
 
   // Check if learnings.md needs archival (over 40KB)
   if (health.learningsSizeKB > CONFIG.LEARNINGS_ARCHIVE_THRESHOLD_KB) {

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const _fs = require('fs');
 
 // Mock implementation
 console.log('Pruning context...');

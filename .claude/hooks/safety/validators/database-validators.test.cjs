@@ -187,7 +187,7 @@ describe('database-validators', () => {
       it('should allow DELETE with WHERE clause', () => {
         // Note: Current implementation doesn't distinguish DELETE with WHERE
         // This test documents current behavior - DELETE with WHERE still gets flagged
-        const result = dbValidators.containsDestructiveSql('DELETE FROM users WHERE id = 1;');
+        const _result = dbValidators.containsDestructiveSql('DELETE FROM users WHERE id = 1;');
         // The pattern matches DELETE FROM users without a WHERE check
         // Let's verify the current behavior - any DELETE FROM is treated as destructive
         // This is actually safer as it requires explicit approval

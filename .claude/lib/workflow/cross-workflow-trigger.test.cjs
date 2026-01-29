@@ -275,7 +275,7 @@ describe('CrossWorkflowTrigger', () => {
       const trigger = new CrossWorkflowTrigger(engine);
 
       let handlerCalled = false;
-      trigger.registerTriggerHandler('skill-creator', context => {
+      trigger.registerTriggerHandler('skill-creator', _context => {
         handlerCalled = true;
         return { handled: true };
       });

@@ -312,7 +312,8 @@ describe('Template System E2E Integration', () => {
 
       // This test documents expected behavior - actual schema validation
       // would be performed by template-renderer skill with Ajv
-      assert.ok(invalidTokens.VERSION !== /^\d+\.\d+\.\d+$/, 'Should detect invalid version');
+      const versionRegex = /^\d+\.\d+\.\d+$/;
+      assert.ok(!versionRegex.test(invalidTokens.VERSION), 'Should detect invalid version');
     });
 
     it('should detect missing required acceptance criteria', () => {

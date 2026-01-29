@@ -18,7 +18,7 @@ const {
   startRound,
   completeRound,
   getRoundStatus,
-  enforceRateLimits
+  enforceRateLimits,
 } = require('../round-manager.cjs');
 
 describe('Round Manager', () => {

@@ -189,7 +189,7 @@ function isCreatorActive(creatorName) {
     }
 
     return { active: false, elapsedMs };
-  } catch (err) {
+  } catch (_err) {
     return { active: false };
   }
 }
@@ -215,7 +215,7 @@ function markCreatorActive(creatorName, artifactName = null) {
     if (fs.existsSync(statePath)) {
       try {
         state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-      } catch (e) {
+      } catch (_e) {
         // Invalid state file, start fresh
         state = {};
       }
@@ -256,7 +256,7 @@ function clearCreatorActive(creatorName) {
 
     fs.writeFileSync(statePath, JSON.stringify(state, null, 2));
     return true;
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }

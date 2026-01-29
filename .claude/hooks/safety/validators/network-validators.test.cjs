@@ -12,7 +12,7 @@ const assert = require('node:assert');
 
 const {
   ALLOWED_DOWNLOAD_DOMAINS,
-  DANGEROUS_PIPE_PATTERNS,
+  _DANGEROUS_PIPE_PATTERNS,
   extractHostname,
   checkDangerousPipes,
   validateCurlCommand,

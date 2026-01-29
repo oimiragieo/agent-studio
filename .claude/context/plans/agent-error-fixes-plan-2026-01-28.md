@@ -6,14 +6,14 @@ This plan addresses 6 error patterns affecting agent operations, identified thro
 
 ## Executive Summary
 
-| Error | Root Cause | Fix Type | Risk | Priority |
-|-------|------------|----------|------|----------|
-| Error 1: Sequential Thinking Tool | MCP tool naming mismatch | Template update | LOW | P1 |
-| Error 2: File Size (41350 tokens) | Agent tried to WRITE large content | Prevention hook | MEDIUM | P2 |
-| Error 3: decisions.md (29184 tokens) | File growth without rotation | Archival process | LOW | P1 |
-| Error 4: issues.md (30002 tokens) | File growth without rotation | Archival process | LOW | P1 |
-| Error 5: Bash unavailable | Tool not in reflection-agent allowed_tools | Agent definition update | LOW | P1 |
-| Error 6: Test Failures | Staging environment tests running in dev | Test isolation fix | LOW | P3 |
+| Error                                | Root Cause                                 | Fix Type                | Risk   | Priority |
+| ------------------------------------ | ------------------------------------------ | ----------------------- | ------ | -------- |
+| Error 1: Sequential Thinking Tool    | MCP tool naming mismatch                   | Template update         | LOW    | P1       |
+| Error 2: File Size (41350 tokens)    | Agent tried to WRITE large content         | Prevention hook         | MEDIUM | P2       |
+| Error 3: decisions.md (29184 tokens) | File growth without rotation               | Archival process        | LOW    | P1       |
+| Error 4: issues.md (30002 tokens)    | File growth without rotation               | Archival process        | LOW    | P1       |
+| Error 5: Bash unavailable            | Tool not in reflection-agent allowed_tools | Agent definition update | LOW    | P1       |
+| Error 6: Test Failures               | Staging environment tests running in dev   | Test isolation fix      | LOW    | P3       |
 
 ---
 
@@ -22,11 +22,13 @@ This plan addresses 6 error patterns affecting agent operations, identified thro
 ### Error 1: Sequential Thinking Tool Not Available
 
 **Error Message:**
+
 ```
 "No such tool available: mcp__sequential-thinking__sequentialthinking"
 ```
 
 **Investigation Findings:**
+
 1. The planner agent definition (`.claude/agents/core/planner.md` line 12) lists `mcp__sequential-thinking__*` in tools
 2. The CLAUDE.md Section 2 spawn template (line 272) includes `mcp__sequential-thinking__sequentialthinking` in allowed_tools
 3. However, `settings.json` has `"mcpServers": {}` (line 6) - meaning NO MCP servers are configured
@@ -34,6 +36,7 @@ This plan addresses 6 error patterns affecting agent operations, identified thro
 **Root Cause:** The MCP sequential-thinking server is not configured in settings.json. The tool is referenced in spawn templates but the server isn't running/registered.
 
 **Fix Options:**
+
 - **Option A (RECOMMENDED):** Configure the MCP server in settings.json
 - **Option B:** Remove MCP tool references from spawn templates (use Skill instead)
 - **Option C:** Make MCP tools optional with fallback
@@ -43,12 +46,14 @@ This plan addresses 6 error patterns affecting agent operations, identified thro
 ### Error 2: File Size - Environment Utils (41350 tokens)
 
 **Error Message:**
+
 ```
 "File content (41350 tokens) exceeds maximum allowed tokens (25000)"
 File: .claude\lib\utils\environment.cjs
 ```
 
 **Investigation Findings:**
+
 1. The actual `environment.cjs` file is only 93 lines (~500 tokens)
 2. The error occurred during a WRITE operation, not READ
 3. The devops agent was likely trying to write NEW content that would be 41350 tokens
@@ -63,12 +68,14 @@ File: .claude\lib\utils\environment.cjs
 ### Error 3 & 4: Memory Files Too Large
 
 **Error Messages:**
+
 ```
 "File content (29184 tokens) exceeds maximum allowed tokens (25000)" - decisions.md
 "File content (30002 tokens) exceeds maximum allowed tokens (25000)" - issues.md
 ```
 
 **Investigation Findings:**
+
 1. `decisions.md` is 3096 lines (large, near limit)
 2. `issues.md` is 1973 lines (smaller but still significant)
 3. Token count > line count because ADR entries have code blocks and detailed content
@@ -83,12 +90,14 @@ File: .claude\lib\utils\environment.cjs
 ### Error 5: Bash Tool Not Available to Reflection-Agent
 
 **Error Message:**
+
 ```
 "No such tool available: Bash"
 Trying to run: validate-integration.cjs
 ```
 
 **Investigation Findings:**
+
 1. `reflection-agent.md` line 9 lists tools: `[Read, Write, Edit, Grep, Glob, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]`
 2. **Bash is NOT included** in the reflection-agent's tool list
 3. The agent tried to run `validate-integration.cjs` which requires Bash
@@ -97,6 +106,7 @@ Trying to run: validate-integration.cjs
 **Root Cause:** Design decision - reflection-agent intentionally lacks Bash to prevent code execution. However, the agent was assigned a task that required Bash.
 
 **Fix Options:**
+
 - **Option A (RECOMMENDED):** Do NOT add Bash to reflection-agent. Instead, ensure tasks requiring Bash are routed to agents with Bash access (developer, devops)
 - **Option B:** Add limited Bash for validation scripts only (security risk)
 - **Option C:** Create a separate validation-agent with Bash access
@@ -108,6 +118,7 @@ Trying to run: validate-integration.cjs
 ### Error 6: Test Failures (staging-smoke.test.mjs)
 
 **Investigation Findings:**
+
 1. 8 tests fail in `staging-smoke.test.mjs`
 2. All failures relate to environment detection - tests expect `staging` but get `development`
 3. Tests check for staging-specific files and configurations that don't exist in dev
@@ -116,6 +127,7 @@ Trying to run: validate-integration.cjs
 **Root Cause:** The staging smoke tests are designed to run IN a staging environment but are being run in development. These tests SHOULD fail in dev - they validate staging setup.
 
 **Fix Options:**
+
 - **Option A (RECOMMENDED):** Skip staging tests in non-staging environments
 - **Option B:** Mark tests as integration tests requiring specific setup
 - **Option C:** Create a staging environment for testing
@@ -173,11 +185,13 @@ Trying to run: validate-integration.cjs
 **Problem:** decisions.md and issues.md exceed token limits
 
 **Fix:**
+
 1. Archive resolved issues from issues.md older than 7 days to issues-archive.md
 2. Archive ADRs older than 60 days to decisions-archive.md
 3. Update summary tables in both files
 
 **Commands:**
+
 ```bash
 # Verify current sizes
 wc -l .claude/context/memory/decisions.md
@@ -185,6 +199,7 @@ wc -l .claude/context/memory/issues.md
 ```
 
 **Success Criteria:**
+
 - decisions.md < 1500 lines (~15000 tokens)
 - issues.md < 1000 lines (~10000 tokens)
 - Archive files contain moved content with timestamps
@@ -214,6 +229,7 @@ describe('Staging Environment Smoke Tests', () => {
 ```
 
 **Success Criteria:**
+
 - `npm test` passes with 0 failures in development
 - Tests run when `AGENT_STUDIO_ENV=staging`
 
@@ -231,10 +247,12 @@ describe('Staging Environment Smoke Tests', () => {
 ## Tool Limitations (IMPORTANT)
 
 **The reflection-agent intentionally LACKS these tools:**
+
 - `Bash` - Cannot execute shell commands (security boundary)
 - `mcp__*` - No MCP tool access
 
 **Tasks requiring these tools should be routed to:**
+
 - `developer` - for validation scripts, build commands
 - `devops` - for infrastructure validation
 - `qa` - for test execution
@@ -243,6 +261,7 @@ If you need to run `validate-integration.cjs` or similar scripts, spawn a develo
 ```
 
 **Success Criteria:**
+
 - Documentation updated
 - Router training examples updated
 
@@ -262,17 +281,20 @@ If you need to run `validate-integration.cjs` or similar scripts, spawn a develo
 **Problem:** MCP tools referenced but server not configured
 
 **Investigation:**
+
 1. Count references to `mcp__sequential-thinking` in codebase
 2. Determine if MCP server was ever configured
 3. Check if `Skill({ skill: 'sequential-thinking' })` works as alternative
 
 **Commands:**
+
 ```bash
 # Find all MCP references
 grep -r "mcp__sequential" .claude/ --include="*.md" --include="*.cjs" | wc -l
 ```
 
 **Decision Point:**
+
 - If < 5 references: Remove and use Skill() instead
 - If >= 5 references: Configure MCP server
 
@@ -283,6 +305,7 @@ grep -r "mcp__sequential" .claude/ --include="*.md" --include="*.cjs" | wc -l
 **Option A: Configure MCP Server**
 
 Add to settings.json:
+
 ```json
 {
   "mcpServers": {
@@ -297,6 +320,7 @@ Add to settings.json:
 **Option B: Replace with Skill (RECOMMENDED)**
 
 Update CLAUDE.md Section 2 spawn templates to use:
+
 ```javascript
 allowed_tools: [
   'Read','Write','Edit','Bash',
@@ -308,6 +332,7 @@ allowed_tools: [
 ```
 
 **Success Criteria:**
+
 - No "tool not available" errors for sequential thinking
 - Either MCP server configured OR all references use Skill()
 
@@ -357,21 +382,25 @@ async function main() {
   const filePath = tool_input.file_path || 'unknown';
 
   if (estimatedTokens > MAX_TOKENS) {
-    console.error(JSON.stringify({
-      decision: 'block',
-      reason: `Content too large: ~${estimatedTokens} tokens (max: ${MAX_TOKENS})`,
-      file: filePath,
-      suggestion: 'Split content into multiple smaller files'
-    }));
+    console.error(
+      JSON.stringify({
+        decision: 'block',
+        reason: `Content too large: ~${estimatedTokens} tokens (max: ${MAX_TOKENS})`,
+        file: filePath,
+        suggestion: 'Split content into multiple smaller files',
+      })
+    );
     process.exit(2); // Block
   }
 
   if (estimatedTokens > WARNING_THRESHOLD) {
-    console.error(JSON.stringify({
-      decision: 'warn',
-      reason: `Large content: ~${estimatedTokens} tokens (warning: ${WARNING_THRESHOLD})`,
-      file: filePath
-    }));
+    console.error(
+      JSON.stringify({
+        decision: 'warn',
+        reason: `Large content: ~${estimatedTokens} tokens (warning: ${WARNING_THRESHOLD})`,
+        file: filePath,
+      })
+    );
   }
 
   process.exit(0); // Allow
@@ -386,6 +415,7 @@ module.exports = { main, estimateTokens };
 ```
 
 **Registration in settings.json:**
+
 ```json
 {
   "matcher": "Edit|Write",
@@ -400,6 +430,7 @@ module.exports = { main, estimateTokens };
 ```
 
 **Success Criteria:**
+
 - Hook blocks writes > 25000 tokens
 - Hook warns at 20000 tokens
 - Existing tests pass
@@ -436,7 +467,7 @@ const MAX_LINES = 1000; // ~10000 tokens
 const ROTATION_CONFIG = {
   'issues.md': { archive: 'archive/issues-archive.md', keepDays: 7 },
   'decisions.md': { archive: 'archive/decisions-archive.md', keepDays: 60 },
-  'learnings.md': { archive: 'archive/learnings-archive.md', keepDays: 30 }
+  'learnings.md': { archive: 'archive/learnings-archive.md', keepDays: 30 },
 };
 
 function needsRotation(filePath, maxLines) {
@@ -456,6 +487,7 @@ module.exports = { needsRotation, rotateFile, ROTATION_CONFIG };
 **Trigger:** Add to SessionEnd hooks for automatic rotation check
 
 **Success Criteria:**
+
 - Memory files stay under 1000 lines
 - Archives contain older content with timestamps
 - No data loss during rotation
@@ -474,6 +506,7 @@ module.exports = { needsRotation, rotateFile, ROTATION_CONFIG };
 ### Task 5.1: Verify Error Resolution
 
 **Validation Commands:**
+
 ```bash
 # Test 1: Memory files readable
 node -e "require('fs').readFileSync('.claude/context/memory/decisions.md')"
@@ -493,6 +526,7 @@ echo '{"tool_input":{"content":"x".repeat(100000)}}' | node .claude/hooks/safety
 ### Task 5.2: Update Documentation
 
 Files to update:
+
 - [ ] CLAUDE.md - MCP tool notes (if changed)
 - [ ] MEMORY_SYSTEM.md - rotation documentation
 - [ ] HOOK_DEVELOPMENT_GUIDE.md - write-size-validator
@@ -504,11 +538,13 @@ Files to update:
 **Purpose:** Quality assessment and learning extraction
 
 **Tasks:**
+
 1. Spawn reflection-agent to analyze completed work
 2. Extract learnings and update memory files
 3. Check for evolution opportunities
 
 **Success Criteria:**
+
 - Reflection completed
 - Learnings documented
 - No new issues introduced
@@ -517,12 +553,12 @@ Files to update:
 
 ## Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Memory rotation loses data | Low | High | Test with copies first, maintain archives |
-| Write validator blocks legitimate writes | Medium | Medium | Set threshold at 25k (not 20k), fail-open on error |
-| MCP removal breaks workflows | Low | Medium | Keep Skill() as fallback |
-| Test changes mask real failures | Low | Low | Environment check is explicit, not silent |
+| Risk                                     | Likelihood | Impact | Mitigation                                         |
+| ---------------------------------------- | ---------- | ------ | -------------------------------------------------- |
+| Memory rotation loses data               | Low        | High   | Test with copies first, maintain archives          |
+| Write validator blocks legitimate writes | Medium     | Medium | Set threshold at 25k (not 20k), fail-open on error |
+| MCP removal breaks workflows             | Low        | Medium | Keep Skill() as fallback                           |
+| Test changes mask real failures          | Low        | Low    | Environment check is explicit, not silent          |
 
 ---
 
@@ -544,12 +580,14 @@ Files to update:
 **Context:** Agents encounter "tool not available" errors when spawn templates include tools the agent doesn't have access to.
 
 **Decision:**
+
 1. **Tool lists in spawn templates are SUGGESTIONS, not guarantees** - Claude runtime determines actual availability
 2. **Agent definitions (.md files) are authoritative** for agent capabilities
 3. **MCP tools require explicit server configuration** - prefer Skill() when possible
 4. **Security-limited agents (reflection-agent) intentionally lack tools** - route tasks appropriately
 
 **Consequences:**
+
 - Spawn templates should match agent definition tools
 - MCP tools should have Skill() fallbacks documented
 - Router must consider tool availability when routing
@@ -558,14 +596,14 @@ Files to update:
 
 ## Summary of Fixes
 
-| Error | Fix | Files Changed | Risk |
-|-------|-----|---------------|------|
-| 1: Sequential Thinking | Use Skill() or configure MCP | CLAUDE.md, settings.json | LOW |
-| 2: Write size 41k | Add write-size-validator.cjs hook | hooks/safety/, settings.json | LOW |
-| 3: decisions.md large | Archive old ADRs | context/memory/ | LOW |
-| 4: issues.md large | Archive resolved issues | context/memory/ | LOW |
-| 5: Bash unavailable | Document + routing guidance | reflection-agent.md | NONE |
-| 6: Test failures | Environment check in tests | tests/staging-smoke.test.mjs | LOW |
+| Error                  | Fix                               | Files Changed                | Risk |
+| ---------------------- | --------------------------------- | ---------------------------- | ---- |
+| 1: Sequential Thinking | Use Skill() or configure MCP      | CLAUDE.md, settings.json     | LOW  |
+| 2: Write size 41k      | Add write-size-validator.cjs hook | hooks/safety/, settings.json | LOW  |
+| 3: decisions.md large  | Archive old ADRs                  | context/memory/              | LOW  |
+| 4: issues.md large     | Archive resolved issues           | context/memory/              | LOW  |
+| 5: Bash unavailable    | Document + routing guidance       | reflection-agent.md          | NONE |
+| 6: Test failures       | Environment check in tests        | tests/staging-smoke.test.mjs | LOW  |
 
 ---
 

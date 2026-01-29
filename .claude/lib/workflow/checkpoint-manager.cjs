@@ -32,8 +32,8 @@ const path = require('path');
 const zlib = require('zlib');
 const { promisify } = require('util');
 
-const gzip = promisify(zlib.gzip);
-const gunzip = promisify(zlib.gunzip);
+const _gzip = promisify(zlib.gzip);
+const _gunzip = promisify(zlib.gunzip);
 
 // =============================================================================
 // Constants
@@ -184,7 +184,7 @@ class FileStorage {
           if (checkpoint) {
             checkpoints.push(checkpoint);
           }
-        } catch (e) {
+        } catch (_e) {
           // Skip corrupted files
           console.warn(`[checkpoint-manager] Skipping corrupted checkpoint: ${file}`);
         }
@@ -379,7 +379,7 @@ class CheckpointManager {
     try {
       const checkpoint = await this.storage.load(checkpointId);
       return checkpoint !== null && checkpoint.phase !== undefined;
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   }

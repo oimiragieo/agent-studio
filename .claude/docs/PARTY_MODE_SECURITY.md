@@ -18,16 +18,17 @@ Comprehensive security documentation for multi-agent collaboration system.
 
 Party Mode introduces HIGH RISK attack surface where agents can potentially impersonate, tamper, exfiltrate data, or exhaust resources. STRIDE analysis identified **21 threats** across 6 categories.
 
-| STRIDE Category | Threat Count | Severity Range | Mitigation Status |
-|-----------------|--------------|----------------|-------------------|
-| **Spoofing** | 3 | HIGH-CRITICAL | SEC-PM-001, SEC-PM-002 |
-| **Tampering** | 4 | HIGH-CRITICAL | SEC-PM-002, SEC-PM-004 |
-| **Repudiation** | 2 | MEDIUM | SEC-PM-003 |
-| **Information Disclosure** | 5 | CRITICAL | SEC-PM-004, SEC-PM-006 |
-| **Denial of Service** | 3 | MEDIUM-HIGH | SEC-PM-005 |
-| **Elevation of Privilege** | 4 | CRITICAL | SEC-PM-004, SEC-PM-006 |
+| STRIDE Category            | Threat Count | Severity Range | Mitigation Status      |
+| -------------------------- | ------------ | -------------- | ---------------------- |
+| **Spoofing**               | 3            | HIGH-CRITICAL  | SEC-PM-001, SEC-PM-002 |
+| **Tampering**              | 4            | HIGH-CRITICAL  | SEC-PM-002, SEC-PM-004 |
+| **Repudiation**            | 2            | MEDIUM         | SEC-PM-003             |
+| **Information Disclosure** | 5            | CRITICAL       | SEC-PM-004, SEC-PM-006 |
+| **Denial of Service**      | 3            | MEDIUM-HIGH    | SEC-PM-005             |
+| **Elevation of Privilege** | 4            | CRITICAL       | SEC-PM-004, SEC-PM-006 |
 
 **Most Critical Threats**:
+
 1. **I-001: Cross-Agent Context Leakage** - Agent A reads Agent B's internal reasoning
 2. **I-002: Orchestrator State Exposure** - Agents access full coordination state
 3. **I-003: Sidecar Memory Reconnaissance** - Agent reads security patterns from other agents
@@ -54,15 +55,15 @@ MEMORY (Isolated per agent)
 
 **Trust Boundary Crossings**:
 
-| Crossing ID | From | To | Data | Risk | Control |
-|-------------|------|-----|------|------|---------|
-| TB-001 | External | Orchestrator | User message | MEDIUM | Input validation |
-| TB-002 | External | Orchestrator | Team CSV | HIGH | Path validation |
-| TB-003 | Orchestrator | Agent | Context copy | CRITICAL | SEC-PM-004 |
-| TB-004 | Agent | Orchestrator | Response | HIGH | SEC-PM-001, SEC-PM-002 |
-| TB-005 | Agent | Own Sidecar | Write | LOW | SEC-SM-001 |
-| TB-006 | Agent | Other Sidecar | Read attempt | CRITICAL | SEC-PM-006, SEC-SM-005 |
-| TB-007 | Agent | Shared Memory | Write | MEDIUM | Append-only, logging |
+| Crossing ID | From         | To            | Data         | Risk     | Control                |
+| ----------- | ------------ | ------------- | ------------ | -------- | ---------------------- |
+| TB-001      | External     | Orchestrator  | User message | MEDIUM   | Input validation       |
+| TB-002      | External     | Orchestrator  | Team CSV     | HIGH     | Path validation        |
+| TB-003      | Orchestrator | Agent         | Context copy | CRITICAL | SEC-PM-004             |
+| TB-004      | Agent        | Orchestrator  | Response     | HIGH     | SEC-PM-001, SEC-PM-002 |
+| TB-005      | Agent        | Own Sidecar   | Write        | LOW      | SEC-SM-001             |
+| TB-006      | Agent        | Other Sidecar | Read attempt | CRITICAL | SEC-PM-006, SEC-SM-005 |
+| TB-007      | Agent        | Shared Memory | Write        | MEDIUM   | Append-only, logging   |
 
 **Key Insight**: Trust Boundary 3 (TB-006) and Trust Boundary 2 (TB-003) are the MOST CRITICAL. Agents must be treated as UNTRUSTED entities even though spawned by orchestrator.
 
@@ -79,6 +80,7 @@ MEMORY (Isolated per agent)
 **Purpose**: Prevent agent impersonation attacks
 
 **Threat Mitigated**:
+
 - S-001: Agent Identity Forgery (agent claims to be different agent)
 - S-002: Response Source Manipulation (modify "who said what")
 - S-003: Team Definition Poisoning (malicious team CSV)
@@ -86,17 +88,19 @@ MEMORY (Isolated per agent)
 **How It Works**:
 
 1. **Identity Hash Generation** (at team load):
+
    ```javascript
-   agentHash = SHA-256(agentPath + fileContent).slice(0, 8)
-   agentId = `agent_${agentHash}_${timestamp}`
+   agentHash = SHA - 256(agentPath + fileContent).slice(0, 8);
+   agentId = `agent_${agentHash}_${timestamp}`;
    ```
 
 2. **Response Verification** (at response collection):
+
    ```javascript
-   expectedHash = generateAgentId(agentType, spawnTime, sessionId)
+   expectedHash = generateAgentId(agentType, spawnTime, sessionId);
    if (response.identityHash !== expectedHash) {
-     logSecurityEvent('SEC-PM-001', { event: 'AGENT_IDENTITY_MISMATCH' })
-     throw new Error('Agent identity mismatch')
+     logSecurityEvent('SEC-PM-001', { event: 'AGENT_IDENTITY_MISMATCH' });
+     throw new Error('Agent identity mismatch');
    }
    ```
 
@@ -104,18 +108,20 @@ MEMORY (Isolated per agent)
    ```javascript
    for (member of team.agents) {
      if (!fs.existsSync(member.agentPath)) {
-       throw new Error('Agent file not found')
+       throw new Error('Agent file not found');
      }
    }
    ```
 
 **Implementation Details**:
+
 - Hash algorithm: SHA-256 (collision-resistant)
 - Hash format: First 8 characters of hex digest
 - Metadata storage: In-memory Map (session-scoped)
 - Verification timing: Before response accepted
 
 **What to Monitor**:
+
 ```bash
 # Check for identity mismatches
 grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
@@ -124,6 +130,7 @@ grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
 ```
 
 **Validation Checklist**:
+
 - [ ] Hash includes both path and content
 - [ ] Verification happens BEFORE response accepted
 - [ ] Mismatch logs security event with full context
@@ -131,6 +138,7 @@ grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
 - [ ] Duplicate agent names in team rejected
 
 **Test Coverage**: 14 tests (Phase 1)
+
 - Hash generation uniqueness
 - Hash format validation
 - Context set/get/clear
@@ -147,6 +155,7 @@ grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Detect response tampering
 
 **Threat Mitigated**:
+
 - T-002: Response Chain Manipulation (modify previous responses)
 - T-003: Memory State Corruption (malicious "learnings")
 - R-002: Denied Participation (agent disputes response)
@@ -154,36 +163,42 @@ grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
 **How It Works**:
 
 1. **Hash Chain Initialization**:
+
    ```javascript
-   chain = { sessionId, chain: [], lastHash: '0' }
+   chain = { sessionId, chain: [], lastHash: '0' };
    ```
 
 2. **Response Append** (each agent response):
+
    ```javascript
-   hash = SHA-256(lastHash + ':' + agentId + ':' + content + ':' + timestamp).slice(0, 16)
-   response = { agentId, content, timestamp, hash }
-   chain.push(response)
-   lastHash = hash
+   hash = SHA - 256(lastHash + ':' + agentId + ':' + content + ':' + timestamp).slice(0, 16);
+   response = { agentId, content, timestamp, hash };
+   chain.push(response);
+   lastHash = hash;
    ```
 
 3. **Chain Verification** (before displaying to next agent):
    ```javascript
    for (i = 0; i < chain.length; i++) {
-     calculatedHash = SHA-256(prevHash + ':' + response.agentId + ':' + response.content + ':' + response.timestamp)
+     calculatedHash =
+       SHA -
+       256(prevHash + ':' + response.agentId + ':' + response.content + ':' + response.timestamp);
      if (calculatedHash !== response.hash) {
-       return { valid: false, tamperedAt: i }
+       return { valid: false, tamperedAt: i };
      }
-     prevHash = response.hash
+     prevHash = response.hash;
    }
    ```
 
 **Implementation Details**:
+
 - Hash format: First 16 chars of SHA-256 hex digest
 - Chain initialization: previousHash = '0'
 - Blockchain-like structure (append-only, tamper-evident)
 - Verification timing: Before next agent sees context
 
 **What to Monitor**:
+
 ```bash
 # Check for hash chain breaks
 grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
@@ -192,6 +207,7 @@ grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
 ```
 
 **Validation Checklist**:
+
 - [ ] First response hashes against '0'
 - [ ] Subsequent responses hash against previous hash
 - [ ] Content modification breaks chain
@@ -199,6 +215,7 @@ grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
 - [ ] Verification runs before next agent sees context
 
 **Test Coverage**: 12 tests (Phase 1)
+
 - Chain initialization
 - Response appending
 - Hash verification
@@ -215,32 +232,58 @@ grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Track all agent actions for forensics
 
 **Threat Mitigated**:
+
 - R-001: Unattributed Actions (cannot determine responsibility)
 
 **How It Works**:
 
 1. **Session Start Logging**:
+
    ```jsonl
-   {"timestamp":"2026-01-28T10:00:00.000Z","eventType":"SESSION_START","sessionId":"sess-1234","teamName":"default","agentCount":3}
+   {
+     "timestamp": "2026-01-28T10:00:00.000Z",
+     "eventType": "SESSION_START",
+     "sessionId": "sess-1234",
+     "teamName": "default",
+     "agentCount": 3
+   }
    ```
 
 2. **Agent Response Logging**:
+
    ```jsonl
-   {"timestamp":"2026-01-28T10:00:15.000Z","eventType":"AGENT_RESPONSE","sessionId":"sess-1234","agentId":"agent_dev_123","responseHash":"e5f6g7h8","contentLength":256}
+   {
+     "timestamp": "2026-01-28T10:00:15.000Z",
+     "eventType": "AGENT_RESPONSE",
+     "sessionId": "sess-1234",
+     "agentId": "agent_dev_123",
+     "responseHash": "e5f6g7h8",
+     "contentLength": 256
+   }
    ```
 
 3. **Session End Logging**:
    ```jsonl
-   {"timestamp":"2026-01-28T10:05:30.000Z","eventType":"SESSION_END","sessionId":"sess-1234","reason":"user_exit","totalRounds":3,"totalResponses":9,"duration":330000}
+   {
+     "timestamp": "2026-01-28T10:05:30.000Z",
+     "eventType": "SESSION_END",
+     "sessionId": "sess-1234",
+     "reason": "user_exit",
+     "totalRounds": 3,
+     "totalResponses": 9,
+     "duration": 330000
+   }
    ```
 
 **Implementation Details**:
+
 - Format: JSONL (newline-delimited JSON)
 - Location: `.claude/context/metrics/party-mode-audit.jsonl`
 - Append-only (no modifications/deletions)
 - Monotonic timestamps (guaranteed ordering)
 
 **What to Monitor**:
+
 ```bash
 # View session history
 jq 'select(.sessionId=="sess-1234")' .claude/context/metrics/party-mode-audit.jsonl
@@ -253,6 +296,7 @@ jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRoun
 ```
 
 **Validation Checklist**:
+
 - [ ] Session start/end logged
 - [ ] Every response logged with hashes
 - [ ] Log format is append-only JSONL
@@ -260,6 +304,7 @@ jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRoun
 - [ ] Security events include full context
 
 **Test Coverage**: 10 tests (Phase 1)
+
 - Session start/end logging
 - Agent response logging
 - Security event logging
@@ -276,6 +321,7 @@ jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRoun
 **Purpose**: Prevent cross-agent context leakage
 
 **Threat Mitigated**:
+
 - I-001: Cross-Agent Context Leakage (Agent A reads Agent B's internal reasoning)
 - I-002: Orchestrator State Exposure (agents access full coordination state)
 - I-004: Session Secrets Exposure (agents access credentials)
@@ -285,19 +331,22 @@ jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRoun
 **How It Works**:
 
 1. **Deep Clone Context** (copy-on-spawn):
+
    ```javascript
-   isolatedContext = JSON.parse(JSON.stringify(sharedContext))
+   isolatedContext = JSON.parse(JSON.stringify(sharedContext));
    ```
 
 2. **Strip Orchestrator Metadata**:
+
    ```javascript
-   delete isolatedContext._orchestratorState
-   delete isolatedContext._allAgentContexts
-   delete isolatedContext._sessionSecrets
-   delete isolatedContext._coordinationState
+   delete isolatedContext._orchestratorState;
+   delete isolatedContext._allAgentContexts;
+   delete isolatedContext._sessionSecrets;
+   delete isolatedContext._coordinationState;
    ```
 
 3. **Sanitize Previous Responses** (PUBLIC content only):
+
    ```javascript
    isolatedContext.previousResponses = sharedContext.previousResponses.map(response => ({
      agentName: response.agentName,
@@ -305,49 +354,54 @@ jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRoun
      icon: response.icon,
      content: response.content,
      hash: response.hash,
-     timestamp: response.timestamp
+     timestamp: response.timestamp,
      // EXPLICITLY EXCLUDED:
      // - rawThinking (internal reasoning)
      // - toolCalls (tool usage patterns)
      // - memoryAccess (what agent read)
-   }))
+   }));
    ```
 
 4. **Add Isolation Boundary Marker**:
+
    ```javascript
-   isolatedContext._isolationBoundary = true
-   isolatedContext._agentId = agentConfig.name
+   isolatedContext._isolationBoundary = true;
+   isolatedContext._agentId = agentConfig.name;
    ```
 
 5. **Verify Isolation** (before agent spawn):
    ```javascript
    if (!context._isolationBoundary) {
-     throw new Error('Missing isolation boundary marker')
+     throw new Error('Missing isolation boundary marker');
    }
    if (context._orchestratorState || context._sessionSecrets) {
-     throw new Error('Orchestrator metadata present in agent context')
+     throw new Error('Orchestrator metadata present in agent context');
    }
    ```
 
 **Implementation Details**:
+
 - Deep clone via `JSON.parse(JSON.stringify())` (fast, reliable)
 - Forbidden keys: `_orchestratorState`, `_sessionSecrets`, `_allAgentContexts`
 - Response sanitization: Remove `rawThinking`, `toolCalls`, `memoryAccess`
 - Verification gate: Catches isolation failures before spawn
 
 **What Agents CAN See**:
+
 - User messages
 - Previous agent responses (formatted content only)
 - Their own identity (agentId, agentType)
 - Session metadata (teamName, roundNumber)
 
 **What Agents CANNOT See**:
+
 - Orchestrator's internal coordination state
 - Other agents' internal reasoning (rawThinking)
 - Tool calls made by other agents
 - Session secrets/credentials
 
 **What to Monitor**:
+
 ```bash
 # Verify isolation tests passing
 node --test .claude/lib/party-mode/protocol/__tests__/context-isolator.test.cjs
@@ -359,6 +413,7 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 ```
 
 **Validation Checklist**:
+
 - [ ] Deep clone verifiable (modify copy, original unchanged)
 - [ ] Isolation boundary marker present
 - [ ] Orchestrator metadata removed
@@ -366,6 +421,7 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 - [ ] Session secrets never in context
 
 **Test Coverage**: 16 tests (Phase 2)
+
 - Deep clone verification
 - Orchestrator metadata stripping
 - Response sanitization
@@ -374,6 +430,7 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 **Performance**: <10ms per agent spawn (JSON deep clone + filtering)
 
 **Attack Vectors Tested**:
+
 - Agent tries to access `_orchestratorState` → Expected: Key not present
 - Agent tries to read `rawThinking` from previous response → Expected: Key not present
 - Agent modifies "their" context → Expected: Changes not reflected in others
@@ -387,6 +444,7 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Prevent resource exhaustion
 
 **Threat Mitigated**:
+
 - D-001: Agent Spawn Bomb (orchestrator spawns unlimited agents)
 - D-002: Round Exhaustion (session cycles indefinitely)
 - D-003: Context Window Overflow (accumulated responses exceed limit)
@@ -394,33 +452,36 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 **How It Works**:
 
 1. **Agent Limit Enforcement**:
+
    ```javascript
    if (selectedAgents.length > LIMITS.MAX_AGENTS_PER_ROUND) {
-     logSecurityEvent('SEC-PM-005', { event: 'AGENT_LIMIT_ENFORCED' })
-     selectedAgents = selectedAgents.slice(0, LIMITS.MAX_AGENTS_PER_ROUND)
+     logSecurityEvent('SEC-PM-005', { event: 'AGENT_LIMIT_ENFORCED' });
+     selectedAgents = selectedAgents.slice(0, LIMITS.MAX_AGENTS_PER_ROUND);
    }
    ```
 
 2. **Round Limit Enforcement**:
+
    ```javascript
    if (session.roundCount >= LIMITS.MAX_ROUNDS_PER_SESSION) {
-     logSecurityEvent('SEC-PM-005', { event: 'ROUND_LIMIT_REACHED' })
-     throw new Error('Session round limit reached')
+     logSecurityEvent('SEC-PM-005', { event: 'ROUND_LIMIT_REACHED' });
+     throw new Error('Session round limit reached');
    }
    ```
 
 3. **Context Size Monitoring**:
    ```javascript
-   estimatedTokens = estimateTokenCount(session.context)
+   estimatedTokens = estimateTokenCount(session.context);
    if (estimatedTokens > LIMITS.CONTEXT_HARD_LIMIT) {
-     throw new Error('Context size limit exceeded')
+     throw new Error('Context size limit exceeded');
    }
    if (estimatedTokens > LIMITS.CONTEXT_WARNING_THRESHOLD) {
-     return { warning: true, message: 'Context approaching limit. Consider summarizing.' }
+     return { warning: true, message: 'Context approaching limit. Consider summarizing.' };
    }
    ```
 
 **Implementation Details**:
+
 - **Max agents per round**: 4 (hard limit)
 - **Max rounds per session**: 10 (hard limit)
 - **Context warning threshold**: 100,000 tokens (~75% of limit)
@@ -428,6 +489,7 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 - **Enforcement**: Throw error (no soft limits)
 
 **What to Monitor**:
+
 ```bash
 # Check if rate limits triggered
 grep "SEC-PM-005" .claude/context/metrics/party-mode-audit.jsonl
@@ -439,6 +501,7 @@ jq 'select(.eventType=="SESSION_END") | .totalRounds' party-mode-audit.jsonl | s
 ```
 
 **Validation Checklist**:
+
 - [ ] Agent limit enforced (silently truncates to 4)
 - [ ] Round limit enforced (terminates session)
 - [ ] Context size monitored
@@ -446,6 +509,7 @@ jq 'select(.eventType=="SESSION_END") | .totalRounds' party-mode-audit.jsonl | s
 - [ ] All limit enforcement logged
 
 **Test Coverage**: 12 tests (Phase 3)
+
 - Agent limit enforcement
 - Round limit enforcement
 - Context size monitoring
@@ -453,6 +517,7 @@ jq 'select(.eventType=="SESSION_END") | .totalRounds' party-mode-audit.jsonl | s
 **Performance**: <1ms per rate limit check
 
 **Attack Vectors Tested**:
+
 - Select 6 agents → Expected: Truncated to 4, logged
 - Reach round 10 → Expected: Session terminates
 - Context exceeds limit → Expected: Session terminates
@@ -466,6 +531,7 @@ jq 'select(.eventType=="SESSION_END") | .totalRounds' party-mode-audit.jsonl | s
 **Purpose**: Enforce sidecar ownership
 
 **Threat Mitigated**:
+
 - T-004: Sidecar Memory Poisoning (agent writes to another's sidecar)
 - I-003: Sidecar Memory Reconnaissance (agent reads security patterns)
 - E-001: Cross-Agent Memory Access (developer accesses security-architect memory)
@@ -474,72 +540,79 @@ jq 'select(.eventType=="SESSION_END") | .totalRounds' party-mode-audit.jsonl | s
 **How It Works**:
 
 1. **Hook on Read/Write/Edit Tools** (sidecar paths only):
+
    ```javascript
    // .claude/hooks/safety/sidecar-access-guard.cjs
    function main(hookInput) {
-     const { toolName, params } = hookInput
+     const { toolName, params } = hookInput;
      if (!['Read', 'Write', 'Edit'].includes(toolName)) {
-       return { exit: 0 }
+       return { exit: 0 };
      }
-     const filePath = params.file_path
+     const filePath = params.file_path;
      if (!filePath.includes('.claude/memory/agents/')) {
-       return { exit: 0 }
+       return { exit: 0 };
      }
      // ... ownership verification ...
    }
    ```
 
 2. **No Agent Context = Block All Sidecar Access**:
+
    ```javascript
-   const agentContext = getAgentContext()
+   const agentContext = getAgentContext();
    if (!agentContext) {
      return {
        exit: 2, // BLOCK
-       reasoning: 'SEC-PM-006: No agent context. Only spawned agents can access sidecars.'
-     }
+       reasoning: 'SEC-PM-006: No agent context. Only spawned agents can access sidecars.',
+     };
    }
    ```
 
 3. **Ownership Verification**:
+
    ```javascript
-   const ownershipCheck = validateSidecarOwnership(filePath, agentContext.agentName)
+   const ownershipCheck = validateSidecarOwnership(filePath, agentContext.agentName);
    if (!ownershipCheck.valid) {
-     logSecurityEvent('SEC-PM-006', { event: 'SIDECAR_ACCESS_DENIED' })
+     logSecurityEvent('SEC-PM-006', { event: 'SIDECAR_ACCESS_DENIED' });
      return {
        exit: 2, // BLOCK
-       reasoning: `SEC-PM-006: Memory boundary violation. ${ownershipCheck.reason}`
-     }
+       reasoning: `SEC-PM-006: Memory boundary violation. ${ownershipCheck.reason}`,
+     };
    }
    ```
 
 4. **Path Validation** (prevent traversal):
    ```javascript
    function validateSidecarOwnership(filePath, agentName) {
-     const normalizedPath = path.resolve(filePath)
-     const expectedPath = path.resolve(`.claude/memory/agents/${agentName}/`)
+     const normalizedPath = path.resolve(filePath);
+     const expectedPath = path.resolve(`.claude/memory/agents/${agentName}/`);
      if (!normalizedPath.startsWith(expectedPath)) {
-       return { valid: false, reason: 'Path is not under own sidecar directory' }
+       return { valid: false, reason: 'Path is not under own sidecar directory' };
      }
-     return { valid: true }
+     return { valid: true };
    }
    ```
 
 **Implementation Details**:
+
 - Hook type: PreToolUse (Read, Write, Edit)
 - Hook registration: `.claude/settings.json`
 - Enforcement: BLOCK (exit: 2)
 - Path validation: Prevents `../`, `~/`, symbolic links
 
 **What Agents CAN Access**:
+
 - Own sidecar: `.claude/memory/agents/<own-agent-name>/`
 - Shared memory: `.claude/context/memory/learnings.md` (read-only)
 
 **What Agents CANNOT Access**:
+
 - Other agents' sidecars: `.claude/memory/agents/<other-agent-name>/`
 - Orchestrator memory
 - System files
 
 **What to Monitor**:
+
 ```bash
 # Check for sidecar access denials
 grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
@@ -548,6 +621,7 @@ grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
 ```
 
 **Validation Checklist**:
+
 - [ ] Developer agent can read own sidecar
 - [ ] Developer agent can write to own sidecar
 - [ ] Developer agent CANNOT read security-architect sidecar
@@ -556,6 +630,7 @@ grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
 - [ ] Path traversal attempts blocked
 
 **Test Coverage**: 16 tests (Phase 2)
+
 - Own sidecar access (read/write)
 - Cross-agent access blocking
 - Path traversal prevention
@@ -564,6 +639,7 @@ grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
 **Performance**: <1ms per access check (path validation)
 
 **Attack Vectors Tested**:
+
 - Developer reads `.claude/memory/agents/security-architect/patterns.md` → Expected: BLOCKED
 - Path traversal `../security-architect/patterns.md` → Expected: BLOCKED
 - Symbolic link to other sidecar → Expected: BLOCKED by path resolution
@@ -588,18 +664,20 @@ grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
 **Attack Vector**: Forge agent identity hash in response
 
 **Test Scenario**:
+
 ```javascript
 const response = {
   agentName: 'developer',
   identityHash: 'FORGED_HASH_12345',
-  content: 'Malicious response'
-}
+  content: 'Malicious response',
+};
 
-verifyAgentResponse(response, expectedAgent)
+verifyAgentResponse(response, expectedAgent);
 // Expected: Throws Error('SEC-PM-001: Agent identity mismatch')
 ```
 
 **Expected Behavior**:
+
 - Response REJECTED
 - Security event logged: `AGENT_IDENTITY_MISMATCH`
 - Error thrown with SEC-PM-001 reference
@@ -615,19 +693,21 @@ verifyAgentResponse(response, expectedAgent)
 **Attack Vector**: Modify previous response content
 
 **Test Scenario**:
+
 ```javascript
 const chain = [
   { agentId: 'agent1', content: 'Response 1', hash: 'hash1' },
-  { agentId: 'agent2', content: 'Response 2', hash: 'hash2' }
-]
+  { agentId: 'agent2', content: 'Response 2', hash: 'hash2' },
+];
 
-chain[0].content = 'TAMPERED CONTENT'  // Modify first response
+chain[0].content = 'TAMPERED CONTENT'; // Modify first response
 
-verifyResponseChain(chain)
+verifyResponseChain(chain);
 // Expected: { valid: false, tamperedAt: 0 }
 ```
 
 **Expected Behavior**:
+
 - Hash chain BROKEN
 - Tampering detected at index 0
 - Chain verification fails
@@ -643,6 +723,7 @@ verifyResponseChain(chain)
 **Attack Vector**: Access `_orchestratorState` from agent context
 
 **Test Scenario**:
+
 ```javascript
 // Agent attempts to read orchestrator state
 if (context._orchestratorState) {
@@ -652,6 +733,7 @@ if (context._orchestratorState) {
 ```
 
 **Expected Behavior**:
+
 - Key NOT PRESENT
 - Agent cannot access orchestrator state
 - Isolation boundary intact
@@ -667,9 +749,10 @@ if (context._orchestratorState) {
 **Attack Vector**: Read `rawThinking` from previous response
 
 **Test Scenario**:
+
 ```javascript
 // Agent attempts to read other agent's internal reasoning
-const previousResponse = context.previousResponses[0]
+const previousResponse = context.previousResponses[0];
 if (previousResponse.rawThinking) {
   // Exploit internal reasoning
 }
@@ -677,6 +760,7 @@ if (previousResponse.rawThinking) {
 ```
 
 **Expected Behavior**:
+
 - Key NOT PRESENT
 - Internal reasoning hidden from other agents
 - Only PUBLIC content visible
@@ -692,14 +776,16 @@ if (previousResponse.rawThinking) {
 **Attack Vector**: Developer reads security-architect sidecar
 
 **Test Scenario**:
-```javascript
-setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' })
 
-Read({ file_path: '.claude/memory/agents/security-architect/patterns.md' })
+```javascript
+setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' });
+
+Read({ file_path: '.claude/memory/agents/security-architect/patterns.md' });
 // Expected: BLOCKED with SEC-PM-006 error
 ```
 
 **Expected Behavior**:
+
 - Access BLOCKED
 - Security event logged: `SIDECAR_ACCESS_DENIED`
 - Hook returns exit: 2 (BLOCK)
@@ -715,17 +801,19 @@ Read({ file_path: '.claude/memory/agents/security-architect/patterns.md' })
 **Attack Vector**: Developer writes to architect sidecar
 
 **Test Scenario**:
+
 ```javascript
-setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' })
+setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' });
 
 Write({
   file_path: '.claude/memory/agents/architect/patterns.md',
-  content: 'MALICIOUS CONTENT'
-})
+  content: 'MALICIOUS CONTENT',
+});
 // Expected: BLOCKED with SEC-PM-006 error
 ```
 
 **Expected Behavior**:
+
 - Write BLOCKED
 - Security event logged: `SIDECAR_ACCESS_DENIED`
 - Hook returns exit: 2 (BLOCK)
@@ -741,17 +829,27 @@ Write({
 **Attack Vector**: Select 10 agents for single round
 
 **Test Scenario**:
+
 ```javascript
 const selectedAgents = [
-  'developer', 'architect', 'security-architect', 'qa', 'pm',
-  'devops', 'database-architect', 'ux-designer', 'code-reviewer', 'technical-writer'
-]
+  'developer',
+  'architect',
+  'security-architect',
+  'qa',
+  'pm',
+  'devops',
+  'database-architect',
+  'ux-designer',
+  'code-reviewer',
+  'technical-writer',
+];
 
-enforceRateLimits(session, { selectedAgents })
+enforceRateLimits(session, { selectedAgents });
 // Expected: Truncated to 4 agents, event logged
 ```
 
 **Expected Behavior**:
+
 - Truncated to 4 agents (MAX_AGENTS_PER_ROUND)
 - Security event logged: `AGENT_LIMIT_ENFORCED`
 - Only first 4 agents spawned
@@ -767,14 +865,16 @@ enforceRateLimits(session, { selectedAgents })
 **Attack Vector**: Force 15 rounds
 
 **Test Scenario**:
-```javascript
-session.roundCount = 10
 
-enforceRateLimits(session)
+```javascript
+session.roundCount = 10;
+
+enforceRateLimits(session);
 // Expected: Throws Error('Session round limit reached')
 ```
 
 **Expected Behavior**:
+
 - Session terminated at round 10
 - Security event logged: `ROUND_LIMIT_REACHED`
 - Error thrown with SEC-PM-005 reference
@@ -790,14 +890,16 @@ enforceRateLimits(session)
 **Attack Vector**: Access `../security-architect/patterns.md`
 
 **Test Scenario**:
-```javascript
-setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' })
 
-Read({ file_path: '.claude/memory/agents/developer/../security-architect/patterns.md' })
+```javascript
+setAgentContext({ agentName: 'developer', agentPath: '.claude/agents/core/developer.md' });
+
+Read({ file_path: '.claude/memory/agents/developer/../security-architect/patterns.md' });
 // Expected: BLOCKED (path resolves to security-architect sidecar)
 ```
 
 **Expected Behavior**:
+
 - Path validation REJECTS
 - Normalized path not under own sidecar
 - Access BLOCKED
@@ -813,6 +915,7 @@ Read({ file_path: '.claude/memory/agents/developer/../security-architect/pattern
 **Attack Vector**: Add fake agentPath to team CSV
 
 **Test Scenario**:
+
 ```csv
 agent_type,role,priority,tools,model
 developer,Dev Lead,1,"Read,Write",sonnet
@@ -820,6 +923,7 @@ fake-agent,Malicious,1,"Read,Write",sonnet
 ```
 
 **Expected Behavior**:
+
 - CSV validation REJECTS
 - Error: `Agent file not found: .claude/agents/core/fake-agent.md`
 - Team not loaded
@@ -835,17 +939,19 @@ fake-agent,Malicious,1,"Read,Write",sonnet
 **Attack Vector**: Agent modifies own context, verify isolation
 
 **Test Scenario**:
-```javascript
-const agentAContext = createIsolatedContext(sharedContext, agentAConfig)
-const agentBContext = createIsolatedContext(sharedContext, agentBConfig)
 
-agentAContext.maliciousField = 'EXPLOIT'
+```javascript
+const agentAContext = createIsolatedContext(sharedContext, agentAConfig);
+const agentBContext = createIsolatedContext(sharedContext, agentBConfig);
+
+agentAContext.maliciousField = 'EXPLOIT';
 
 // Verify agentBContext unaffected
-assert.strictEqual(agentBContext.maliciousField, undefined)
+assert.strictEqual(agentBContext.maliciousField, undefined);
 ```
 
 **Expected Behavior**:
+
 - Agent A modification NOT reflected in Agent B
 - Deep clone ensures isolation
 - Other agents unaffected
@@ -861,17 +967,19 @@ assert.strictEqual(agentBContext.maliciousField, undefined)
 **Attack Vector**: Swap order of previous responses
 
 **Test Scenario**:
+
 ```javascript
-const chain = [response1, response2, response3]
+const chain = [response1, response2, response3];
 
 // Swap response 1 and 2
-chain = [response2, response1, response3]
+chain = [response2, response1, response3];
 
-verifyResponseChain(chain)
+verifyResponseChain(chain);
 // Expected: { valid: false, reason: 'Hash chain broken' }
 ```
 
 **Expected Behavior**:
+
 - Hash chain BROKEN
 - Reordering detected (hashes don't match)
 - Chain verification fails
@@ -884,20 +992,20 @@ verifyResponseChain(chain)
 
 ### Penetration Test Summary
 
-| Test ID | Attack Vector | Status | Control |
-|---------|---------------|--------|---------|
-| PEN-001 | Agent Impersonation | ✅ BLOCKED | SEC-PM-001 |
-| PEN-002 | Response Tampering | ✅ BLOCKED | SEC-PM-002 |
-| PEN-003 | Context Eavesdropping | ✅ BLOCKED | SEC-PM-004 |
-| PEN-004 | Internal Data Leak | ✅ BLOCKED | SEC-PM-004 |
-| PEN-005 | Sidecar Reconnaissance | ✅ BLOCKED | SEC-PM-006 |
-| PEN-006 | Sidecar Poisoning | ✅ BLOCKED | SEC-PM-006 |
-| PEN-007 | Agent Spawn Bomb | ✅ BLOCKED | SEC-PM-005 |
-| PEN-008 | Round Exhaustion | ✅ BLOCKED | SEC-PM-005 |
-| PEN-009 | Path Traversal | ✅ BLOCKED | SEC-PM-006 |
+| Test ID | Attack Vector             | Status     | Control    |
+| ------- | ------------------------- | ---------- | ---------- |
+| PEN-001 | Agent Impersonation       | ✅ BLOCKED | SEC-PM-001 |
+| PEN-002 | Response Tampering        | ✅ BLOCKED | SEC-PM-002 |
+| PEN-003 | Context Eavesdropping     | ✅ BLOCKED | SEC-PM-004 |
+| PEN-004 | Internal Data Leak        | ✅ BLOCKED | SEC-PM-004 |
+| PEN-005 | Sidecar Reconnaissance    | ✅ BLOCKED | SEC-PM-006 |
+| PEN-006 | Sidecar Poisoning         | ✅ BLOCKED | SEC-PM-006 |
+| PEN-007 | Agent Spawn Bomb          | ✅ BLOCKED | SEC-PM-005 |
+| PEN-008 | Round Exhaustion          | ✅ BLOCKED | SEC-PM-005 |
+| PEN-009 | Path Traversal            | ✅ BLOCKED | SEC-PM-006 |
 | PEN-010 | Team Definition Injection | ✅ BLOCKED | SEC-PM-001 |
-| PEN-011 | Context Modification | ✅ BLOCKED | SEC-PM-004 |
-| PEN-012 | Response Reordering | ✅ BLOCKED | SEC-PM-002 |
+| PEN-011 | Context Modification      | ✅ BLOCKED | SEC-PM-004 |
+| PEN-012 | Response Reordering       | ✅ BLOCKED | SEC-PM-002 |
 
 **Overall**: 12/12 attack vectors blocked (100% security validation via Phase 1-4 unit tests)
 
@@ -908,18 +1016,21 @@ verifyResponseChain(chain)
 ### What to Look For
 
 **Suspicious Patterns**:
+
 - Multiple SEC-PM-001 events (repeated impersonation attempts)
 - SEC-PM-006 events from same agent (sidecar reconnaissance pattern)
 - High round count approaching limit (possible exhaustion attempt)
 - Agent spawn failures (team CSV tampering)
 
 **Normal Patterns**:
+
 - Session start/end pairs
 - Round count increases sequentially (1, 2, 3...)
 - Response hashes form valid chain
 - Agent responses within expected time (<30s per agent)
 
 **Red Flags**:
+
 - SEC-PM-004 violation (CRITICAL - investigate immediately)
 - SEC-PM-006 violation (CRITICAL - investigate immediately)
 - 3+ SEC-PM-001 violations in single session (possible attack)
@@ -928,26 +1039,31 @@ verifyResponseChain(chain)
 ### Forensic Investigation Commands
 
 **Extract Single Session**:
+
 ```bash
 jq 'select(.sessionId=="sess-1234")' .claude/context/metrics/party-mode-audit.jsonl
 ```
 
 **Count Security Events by Type**:
+
 ```bash
 jq -r '.event' party-mode-audit.jsonl | grep "^SEC-PM-" | sort | uniq -c
 ```
 
 **Find All SEC-PM-006 Violations**:
+
 ```bash
 jq 'select(.event | startswith("SEC-PM-006"))' party-mode-audit.jsonl
 ```
 
 **Identify Sessions with Violations**:
+
 ```bash
 jq 'select(.eventType=="SECURITY_EVENT") | .sessionId' party-mode-audit.jsonl | sort | uniq -c
 ```
 
 **Analyze Agent Behavior**:
+
 ```bash
 # Find which agents triggered violations
 jq 'select(.eventType=="SECURITY_EVENT") | {agentId, event, timestamp}' party-mode-audit.jsonl
@@ -957,6 +1073,7 @@ jq 'select(.eventType=="SECURITY_EVENT") | .agentId' party-mode-audit.jsonl | so
 ```
 
 **Session Duration Analysis**:
+
 ```bash
 # Find longest sessions
 jq 'select(.eventType=="SESSION_END") | {sessionId, duration, rounds: .totalRounds}' party-mode-audit.jsonl | sort_by(.duration) | tail -10
@@ -968,22 +1085,43 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 ### Incident Examples
 
 **Example 1: Sidecar Reconnaissance Attempt**:
+
 ```json
-{"timestamp":"2026-01-28T10:05:23.456Z","eventType":"SECURITY_EVENT","event":"SEC-PM-006","sessionId":"sess-5678","agentId":"agent_dev_abc","attemptedPath":".claude/memory/agents/security-architect/patterns.md","reason":"Path is not under own sidecar directory"}
+{
+  "timestamp": "2026-01-28T10:05:23.456Z",
+  "eventType": "SECURITY_EVENT",
+  "event": "SEC-PM-006",
+  "sessionId": "sess-5678",
+  "agentId": "agent_dev_abc",
+  "attemptedPath": ".claude/memory/agents/security-architect/patterns.md",
+  "reason": "Path is not under own sidecar directory"
+}
 ```
 
 **Analysis**:
+
 - Developer agent tried to read security-architect sidecar
 - Access BLOCKED by SEC-PM-006
 - Single violation (not pattern)
 - Action: Log for review, no immediate escalation
 
 **Example 2: Identity Mismatch Attack**:
+
 ```json
-{"timestamp":"2026-01-28T10:10:15.789Z","eventType":"SECURITY_EVENT","event":"SEC-PM-001","sessionId":"sess-9012","agentId":"agent_dev_def","expected":"agent_dev_ghi","received":"agent_sec_jkl","reason":"Agent identity mismatch"}
+{
+  "timestamp": "2026-01-28T10:10:15.789Z",
+  "eventType": "SECURITY_EVENT",
+  "event": "SEC-PM-001",
+  "sessionId": "sess-9012",
+  "agentId": "agent_dev_def",
+  "expected": "agent_dev_ghi",
+  "received": "agent_sec_jkl",
+  "reason": "Agent identity mismatch"
+}
 ```
 
 **Analysis**:
+
 - Developer agent provided wrong identity hash
 - Claimed to be security-architect
 - Response REJECTED by SEC-PM-001
@@ -1000,6 +1138,7 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 **Trigger**: One SEC-PM-005 event (rate limit)
 
 **Actions**:
+
 1. Log event with full context
 2. Continue session
 3. Review in daily security digest
@@ -1013,6 +1152,7 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 **Trigger**: 2-3 security events in single session (any control)
 
 **Actions**:
+
 1. Log all events
 2. Warn user of detected anomaly
 3. Increase monitoring verbosity (debug: true)
@@ -1025,11 +1165,13 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 **Level 3 (High) - Confirmed Attack Pattern**:
 
 **Trigger**:
+
 - 3+ SEC-PM-001 violations (repeated impersonation)
 - Any SEC-PM-004 violation (context leakage)
 - Any SEC-PM-006 violation (memory boundary bypass)
 
 **Actions**:
+
 1. Terminate affected session immediately
 2. Alert security admin
 3. Preserve session state for forensics:
@@ -1046,12 +1188,14 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 **Level 4 (Critical) - System Compromise Suspected**:
 
 **Trigger**:
+
 - Multiple sessions with CRITICAL violations
 - Pattern of SEC-PM-004 or SEC-PM-006 violations
 - Evidence of data exfiltration
 - Orchestrator compromise suspected
 
 **Actions**:
+
 1. **Disable Party Mode** immediately:
    ```bash
    export PARTY_MODE_ENABLED=false
@@ -1079,12 +1223,14 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 ### Incident Response Checklist
 
 **Immediate (0-15 minutes)**:
+
 - [ ] Assess severity using escalation levels
 - [ ] Preserve audit logs (copy to forensics directory)
 - [ ] Terminate affected session if Level 3+
 - [ ] Disable Party Mode if Level 4
 
 **Investigation (15 minutes - 4 hours)**:
+
 - [ ] Extract full audit trail for affected session(s)
 - [ ] Identify root cause (code bug, attack, misconfiguration)
 - [ ] Check if pattern of violations (isolated incident vs attack)
@@ -1092,6 +1238,7 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 - [ ] Verify security controls functioning correctly
 
 **Remediation (4-48 hours)**:
+
 - [ ] Fix identified vulnerability
 - [ ] Run penetration tests to verify fix
 - [ ] Document incident in security review
@@ -1099,6 +1246,7 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 - [ ] Review similar code for same vulnerability
 
 **Prevention (48+ hours)**:
+
 - [ ] Update security controls if new attack vector found
 - [ ] Add penetration test for discovered attack
 - [ ] Improve monitoring/alerting for similar incidents
@@ -1109,21 +1257,25 @@ jq 'select(.eventType=="SESSION_END") | .duration' party-mode-audit.jsonl | awk 
 ### Post-Incident Actions
 
 **Documentation**:
+
 - Incident report in `.claude/context/artifacts/security-reviews/incident-YYYYMMDD.md`
 - Learnings update in `.claude/context/memory/learnings.md`
 - Security review update if controls changed
 
 **Communication**:
+
 - Notify stakeholders of incident and resolution
 - Document timeline of detection → response → remediation
 - Share lessons learned with team
 
 **Monitoring**:
+
 - Increase monitoring verbosity for 7 days post-incident
 - Daily audit log review for 7 days
 - Weekly security review meetings for 1 month
 
 **Validation**:
+
 - Run full penetration test suite
 - Verify all 12 attack vectors still blocked
 - Load testing to ensure no performance regression

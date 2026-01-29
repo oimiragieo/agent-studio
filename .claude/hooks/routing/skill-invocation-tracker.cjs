@@ -80,7 +80,7 @@ function markCreatorActive(creatorName) {
     if (fs.existsSync(statePath)) {
       try {
         state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
-      } catch (e) {
+      } catch (_e) {
         // Invalid state file, start fresh
         state = {};
       }

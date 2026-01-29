@@ -52,7 +52,7 @@ function assertEqual(actual, expected, message) {
   }
 }
 
-function assertDeepEqual(actual, expected, message) {
+function _assertDeepEqual(actual, expected, message) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
     throw new Error(
       message || `Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
@@ -66,7 +66,7 @@ function assertDeepEqual(actual, expected, message) {
 
 // Import the module under test
 let StepValidator, VALIDATOR_TYPES, validateGates, validateResearch;
-let validateClaudeMdRegistration, validateRouterEnforcerRegistration;
+let validateClaudeMdRegistration, _validateRouterEnforcerRegistration;
 let validateSettingsJsonRegistration, validateSkillCatalogRegistration;
 let validateFileExists, validateSchema;
 
@@ -77,12 +77,12 @@ try {
   validateGates = validators.validateGates;
   validateResearch = validators.validateResearch;
   validateClaudeMdRegistration = validators.validateClaudeMdRegistration;
-  validateRouterEnforcerRegistration = validators.validateRouterEnforcerRegistration;
+  _validateRouterEnforcerRegistration = validators.validateRouterEnforcerRegistration;
   validateSettingsJsonRegistration = validators.validateSettingsJsonRegistration;
   validateSkillCatalogRegistration = validators.validateSkillCatalogRegistration;
   validateFileExists = validators.validateFileExists;
   validateSchema = validators.validateSchema;
-} catch (e) {
+} catch (_e) {
   console.log('Module not found - tests will fail (expected before implementation)');
 }
 

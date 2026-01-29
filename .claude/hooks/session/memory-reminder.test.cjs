@@ -22,7 +22,7 @@ describe('memory-reminder', () => {
   let testDir;
   let memoryDir;
   let originalExit;
-  let exitCode;
+  let exitCode; // eslint-disable-line no-unused-vars
   let consoleOutput;
   let originalLog;
 
@@ -145,7 +145,7 @@ describe('memory-reminder', () => {
       const hookPath = path.join(__dirname, 'memory-reminder.cjs');
 
       try {
-        const output = execSync(`node "${hookPath}"`, {
+        const _output = execSync(`node "${hookPath}"`, {
           cwd: testDir,
           encoding: 'utf-8',
           timeout: 5000,
@@ -171,7 +171,7 @@ describe('memory-reminder', () => {
       const hookPath = path.join(__dirname, 'memory-reminder.cjs');
 
       try {
-        const output = execSync(`node "${hookPath}"`, {
+        const _output = execSync(`node "${hookPath}"`, {
           cwd: testDir,
           encoding: 'utf-8',
           timeout: 5000,

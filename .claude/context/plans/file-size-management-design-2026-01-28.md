@@ -30,18 +30,19 @@ This document proposes a systematic file size management strategy for the Claude
 
 ### 2.1 Actual File Sizes (as of 2026-01-28)
 
-| File                                 | Lines | Estimated Tokens | Status    |
-| ------------------------------------ | ----- | ---------------- | --------- |
-| `.claude/context/memory/decisions.md` | 3096  | ~12,400          | WATCH     |
-| `.claude/context/memory/issues.md`    | 1973  | ~7,900           | OK        |
-| `.claude/context/memory/learnings.md` | 262   | ~1,050           | OK        |
-| `.claude/lib/utils/environment.cjs`   | 93    | ~370             | OK        |
+| File                                  | Lines | Estimated Tokens | Status |
+| ------------------------------------- | ----- | ---------------- | ------ |
+| `.claude/context/memory/decisions.md` | 3096  | ~12,400          | WATCH  |
+| `.claude/context/memory/issues.md`    | 1973  | ~7,900           | OK     |
+| `.claude/context/memory/learnings.md` | 262   | ~1,050           | OK     |
+| `.claude/lib/utils/environment.cjs`   | 93    | ~370             | OK     |
 
 **Note**: Token estimates use 4 chars = 1 token approximation.
 
 ### 2.2 Error in Original Problem Statement
 
 The original problem statement claimed:
+
 - `decisions.md`: 29184 tokens
 - `issues.md`: 30002 tokens
 - `environment.cjs`: 41350 tokens
@@ -49,6 +50,7 @@ The original problem statement claimed:
 **Actual findings**: None of these files approach those sizes. The largest file (`decisions.md` at ~12,400 tokens) is well under the 25,000 token limit. The `environment.cjs` file is only 93 lines (not 41K tokens).
 
 **Possible explanations**:
+
 1. Token counts may have been from a different version
 2. Measurement method error
 3. Files may have been previously larger and were already pruned
@@ -60,11 +62,13 @@ The framework already has comprehensive memory management:
 #### Memory Scheduler (`.claude/lib/memory/memory-scheduler.cjs`)
 
 **Daily Tasks**:
+
 - `consolidation`: Move STM to MTM
 - `healthCheck`: Check tier health and log metrics
 - `metricsLog`: Save daily snapshot
 
 **Weekly Tasks**:
+
 - `summarization`: Compress old MTM sessions to LTM
 - `deduplication`: Remove duplicate patterns/gotchas
 - `pruning`: Archive learnings, prune codebase_map
@@ -80,6 +84,7 @@ The framework already has comprehensive memory management:
 
 Existing archive directory: `.claude/context/memory/archive/`
 Contains:
+
 - `learnings-archive-2026-01.md`
 - `learnings-archived-2026-01-26.md`
 - `learnings-2026-01.md`
@@ -154,13 +159,13 @@ flowchart TD
 
 ### 4.2 Component Overview
 
-| Component | Purpose | Status |
-|-----------|---------|--------|
-| **size-monitor-hook.cjs** | Pre-read/write size validation | NEW |
-| **memory-scheduler.cjs** | Automated maintenance | EXISTS (activate) |
-| **smart-pruner.cjs** | Utility-based pruning | EXISTS |
-| **archival-rotator.cjs** | Monthly file rotation | NEW |
-| **memory-dashboard.cjs** | Health metrics | EXISTS |
+| Component                 | Purpose                        | Status            |
+| ------------------------- | ------------------------------ | ----------------- |
+| **size-monitor-hook.cjs** | Pre-read/write size validation | NEW               |
+| **memory-scheduler.cjs**  | Automated maintenance          | EXISTS (activate) |
+| **smart-pruner.cjs**      | Utility-based pruning          | EXISTS            |
+| **archival-rotator.cjs**  | Monthly file rotation          | NEW               |
+| **memory-dashboard.cjs**  | Health metrics                 | EXISTS            |
 
 ---
 
@@ -171,7 +176,7 @@ flowchart TD
 ```javascript
 const FILE_THRESHOLDS = {
   // Warning threshold (80% of limit)
-  WARNING_TOKENS: 20000,  // ~80,000 characters
+  WARNING_TOKENS: 20000, // ~80,000 characters
   WARNING_LINES: 5000,
 
   // Critical threshold (95% of limit)
@@ -186,11 +191,11 @@ const FILE_THRESHOLDS = {
 
 ### 5.2 Rotation Policy
 
-| File Type | Trigger | Retention | Archive Location |
-|-----------|---------|-----------|------------------|
-| `learnings.md` | >5000 lines | Last 500 lines | `archive/learnings-YYYY-MM.md` |
-| `decisions.md` | >4000 lines | Last 1000 lines | `archive/decisions-YYYY-MM.md` |
-| `issues.md` | >3000 lines | OPEN issues only | `archive/issues-YYYY-MM.md` |
+| File Type      | Trigger     | Retention        | Archive Location               |
+| -------------- | ----------- | ---------------- | ------------------------------ |
+| `learnings.md` | >5000 lines | Last 500 lines   | `archive/learnings-YYYY-MM.md` |
+| `decisions.md` | >4000 lines | Last 1000 lines  | `archive/decisions-YYYY-MM.md` |
+| `issues.md`    | >3000 lines | OPEN issues only | `archive/issues-YYYY-MM.md`    |
 
 ### 5.3 Archive Format
 
@@ -216,15 +221,18 @@ const FILE_THRESHOLDS = {
 **Goal**: Enable existing memory scheduler for daily/weekly maintenance.
 
 **Steps**:
+
 1. Verify `maintenance-status.json` exists in memory directory
 2. Add scheduler invocation to session hooks (UserPromptSubmit or Stop)
 3. Document activation in operations guide
 
 **Files to Modify**:
+
 - `.claude/settings.json` (add scheduler trigger hook)
 - `.claude/docs/MONITORING.md` (document scheduler commands)
 
 **Verification**:
+
 ```bash
 node .claude/lib/memory/memory-scheduler.cjs status
 node .claude/lib/memory/memory-scheduler.cjs daily
@@ -235,12 +243,14 @@ node .claude/lib/memory/memory-scheduler.cjs daily
 **Goal**: Implement monthly rotation to keep decisions.md under threshold.
 
 **Steps**:
+
 1. Create `archival-rotator.cjs` in `.claude/lib/memory/`
 2. Add `monthlyArchival` task to memory-scheduler.cjs
 3. Create archive entry with summary metadata
 4. Update ADR format guidance for active vs archived status
 
 **Algorithm**:
+
 ```javascript
 function rotateDecisions(threshold = 4000) {
   const decisions = parseDecisionsFile();
@@ -258,6 +268,7 @@ function rotateDecisions(threshold = 4000) {
 ```
 
 **Files to Create**:
+
 - `.claude/lib/memory/archival-rotator.cjs`
 - `.claude/lib/memory/archival-rotator.test.cjs`
 
@@ -266,12 +277,14 @@ function rotateDecisions(threshold = 4000) {
 **Goal**: Proactive alerting when files approach size limits.
 
 **Steps**:
+
 1. Create `size-monitor-hook.cjs` in `.claude/hooks/memory/`
 2. Register as PreToolUse hook for Read/Write operations
 3. Emit warnings at threshold crossings
 4. Block writes that would exceed hard limit
 
 **Hook Logic**:
+
 ```javascript
 // PreToolUse(Read) - Check if file is approaching limit
 // PreToolUse(Write) - Check if write would exceed limit
@@ -284,7 +297,7 @@ function checkFileSize(filePath, operation) {
   if (estimatedTokens > CRITICAL_TOKENS) {
     return {
       decision: operation === 'read' ? 'allow' : 'block',
-      message: `File ${filePath} at ${Math.round(estimatedTokens)} tokens (critical threshold)`
+      message: `File ${filePath} at ${Math.round(estimatedTokens)} tokens (critical threshold)`,
     };
   }
 
@@ -297,6 +310,7 @@ function checkFileSize(filePath, operation) {
 ```
 
 **Files to Create**:
+
 - `.claude/hooks/memory/size-monitor-hook.cjs`
 - `.claude/hooks/memory/size-monitor-hook.test.cjs`
 - `.claude/settings.json` (register hook)
@@ -307,13 +321,13 @@ function checkFileSize(filePath, operation) {
 
 ### 7.1 Risks and Mitigations
 
-| Risk | Severity | Likelihood | Mitigation |
-|------|----------|------------|------------|
-| **Archival loses important ADRs** | HIGH | LOW | Archive preserves full content; cross-reference index maintained |
-| **Scheduler conflicts with active work** | MEDIUM | MEDIUM | Run during session end, not mid-work |
-| **Hook overhead impacts performance** | LOW | LOW | Simple stat() call, <1ms overhead |
-| **Archive files become inaccessible** | MEDIUM | LOW | Archive directory in same memory tree; glob patterns include |
-| **Breaking change to memory file format** | HIGH | LOW | Incremental changes only; backward compatible |
+| Risk                                      | Severity | Likelihood | Mitigation                                                       |
+| ----------------------------------------- | -------- | ---------- | ---------------------------------------------------------------- |
+| **Archival loses important ADRs**         | HIGH     | LOW        | Archive preserves full content; cross-reference index maintained |
+| **Scheduler conflicts with active work**  | MEDIUM   | MEDIUM     | Run during session end, not mid-work                             |
+| **Hook overhead impacts performance**     | LOW      | LOW        | Simple stat() call, <1ms overhead                                |
+| **Archive files become inaccessible**     | MEDIUM   | LOW        | Archive directory in same memory tree; glob patterns include     |
+| **Breaking change to memory file format** | HIGH     | LOW        | Incremental changes only; backward compatible                    |
 
 ### 7.2 Rollback Procedures
 
@@ -355,13 +369,13 @@ function checkFileSize(filePath, operation) {
 
 ## 9. Success Metrics
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
-| decisions.md line count | <4000 lines | `wc -l decisions.md` |
-| Memory scheduler uptime | Daily runs | `maintenance-status.json` timestamps |
-| Archive searchability | <500ms query | Time to grep archived content |
-| Hook overhead | <5ms per operation | Benchmark test |
-| Zero data loss | 100% content preserved | Archive completeness check |
+| Metric                  | Target                 | Measurement                          |
+| ----------------------- | ---------------------- | ------------------------------------ |
+| decisions.md line count | <4000 lines            | `wc -l decisions.md`                 |
+| Memory scheduler uptime | Daily runs             | `maintenance-status.json` timestamps |
+| Archive searchability   | <500ms query           | Time to grep archived content        |
+| Hook overhead           | <5ms per operation     | Benchmark test                       |
+| Zero data loss          | 100% content preserved | Archive completeness check           |
 
 ---
 
@@ -396,8 +410,10 @@ function checkFileSize(filePath, operation) {
 ### C. ADR Template Reference
 
 For archive-aware ADRs, include:
+
 ```markdown
 ## [ADR-XXX] Title
+
 - **Date**: YYYY-MM-DD
 - **Status**: Proposed | Accepted | Deprecated | Superseded | **Archived**
 - **Archive**: `archive/decisions-YYYY-MM.md` (if archived)

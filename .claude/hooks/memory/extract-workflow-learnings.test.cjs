@@ -40,7 +40,7 @@ function backupLearnings() {
     if (fs.existsSync(LEARNINGS_PATH)) {
       originalLearningsContent = fs.readFileSync(LEARNINGS_PATH, 'utf-8');
     }
-  } catch (e) {
+  } catch (_e) {
     originalLearningsContent = '';
   }
 }
@@ -53,7 +53,7 @@ function restoreLearnings() {
     if (originalLearningsContent) {
       fs.writeFileSync(LEARNINGS_PATH, originalLearningsContent);
     }
-  } catch (e) {
+  } catch (_e) {
     console.error('Warning: Could not restore learnings file');
   }
 }
@@ -61,7 +61,7 @@ function restoreLearnings() {
 /**
  * Run the hook with given context
  */
-async function runHook(context) {
+async function _runHook(context) {
   return new Promise((resolve, reject) => {
     const proc = spawn('node', [HOOK_PATH, JSON.stringify(context)], {
       cwd: PROJECT_ROOT,

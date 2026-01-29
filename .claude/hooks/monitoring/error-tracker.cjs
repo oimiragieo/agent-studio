@@ -24,7 +24,7 @@ const ERROR_METRICS_FILE = path.join(METRICS_DIR, 'error-metrics.jsonl');
 const RATE_LIMIT_PER_HOUR = 5000;
 const rateLimitState = {
   hour: new Date().getHours(),
-  count: 0
+  count: 0,
 };
 
 /**
@@ -122,7 +122,7 @@ function logError(errorEntry) {
 /**
  * Track errors in PostToolUse
  */
-function postToolUse(tool, params, result, context) {
+function postToolUse(tool, params, result, _context) {
   try {
     // Only track if there's an error
     if (!result.error) {
@@ -145,8 +145,8 @@ function postToolUse(tool, params, result, context) {
       metadata: {
         errorName: result.error.name,
         stack: result.error.stack?.split('\n').slice(0, 3).join('\n'), // First 3 lines only
-        params: Object.keys(params || {})
-      }
+        params: Object.keys(params || {}),
+      },
     };
 
     // Log error
@@ -161,7 +161,7 @@ function postToolUse(tool, params, result, context) {
 /**
  * Track pre-tool-use errors (validation failures)
  */
-function preToolUse(tool, params, context) {
+function preToolUse(tool, params, _context) {
   // No errors to track yet in preToolUse
   // Errors caught by validation hooks will be tracked in postToolUse
   return { tool, params };
@@ -169,5 +169,5 @@ function preToolUse(tool, params, context) {
 
 module.exports = {
   preToolUse,
-  postToolUse
+  postToolUse,
 };

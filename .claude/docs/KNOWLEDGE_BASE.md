@@ -35,19 +35,19 @@ The knowledge base index provides fast, cached access to all artifacts (skills, 
 
 **Fields** (11 columns):
 
-| Field        | Type    | Description                                 | Example                           |
-| ------------ | ------- | ------------------------------------------- | --------------------------------- |
-| name         | string  | Artifact identifier (kebab-case)            | `tdd`                             |
-| path         | string  | Relative path from PROJECT_ROOT             | `.claude/skills/tdd/SKILL.md`     |
-| description  | string  | Brief description (max 200 chars)           | `Test-Driven Development...`      |
-| domain       | enum    | `skill`, `agent`, `workflow`                | `skill`                           |
-| complexity   | enum    | `LOW`, `MEDIUM`, `HIGH`, `EPIC`             | `HIGH`                            |
-| use_cases    | string  | Comma-separated tags                        | `testing,quality,development`     |
-| tools        | string  | Comma-separated tool names                  | `Read,Write,Edit,Bash`            |
-| deprecated   | boolean | Is artifact deprecated                      | `false`                           |
-| alias        | string  | Replacement artifact if deprecated          | `writing-skills`                  |
-| usage_count  | integer | Invocation count                            | `0`                               |
-| last_used    | date    | ISO timestamp of last use                   | `2026-01-28T10:00:00Z` (or empty) |
+| Field       | Type    | Description                        | Example                           |
+| ----------- | ------- | ---------------------------------- | --------------------------------- |
+| name        | string  | Artifact identifier (kebab-case)   | `tdd`                             |
+| path        | string  | Relative path from PROJECT_ROOT    | `.claude/skills/tdd/SKILL.md`     |
+| description | string  | Brief description (max 200 chars)  | `Test-Driven Development...`      |
+| domain      | enum    | `skill`, `agent`, `workflow`       | `skill`                           |
+| complexity  | enum    | `LOW`, `MEDIUM`, `HIGH`, `EPIC`    | `HIGH`                            |
+| use_cases   | string  | Comma-separated tags               | `testing,quality,development`     |
+| tools       | string  | Comma-separated tool names         | `Read,Write,Edit,Bash`            |
+| deprecated  | boolean | Is artifact deprecated             | `false`                           |
+| alias       | string  | Replacement artifact if deprecated | `writing-skills`                  |
+| usage_count | integer | Invocation count                   | `0`                               |
+| last_used   | date    | ISO timestamp of last use          | `2026-01-28T10:00:00Z` (or empty) |
 
 **Example Row**:
 
@@ -154,13 +154,13 @@ logIndexQuery(query, agentContext, resultCount);
 
 ## Performance Benchmarks
 
-| Operation                 | Index (CSV)   | Directory Scan |
-| ------------------------- | ------------- | -------------- |
-| Search by keyword         | <50ms         | ~2s            |
-| Filter by domain          | <30ms         | ~2s            |
-| Get by name               | <20ms         | ~1s            |
-| Statistics                | <10ms         | ~3s            |
-| **Performance Gain**      | **10x+**      | -              |
+| Operation            | Index (CSV) | Directory Scan |
+| -------------------- | ----------- | -------------- |
+| Search by keyword    | <50ms       | ~2s            |
+| Filter by domain     | <30ms       | ~2s            |
+| Get by name          | <20ms       | ~1s            |
+| Statistics           | <10ms       | ~3s            |
+| **Performance Gain** | **10x+**    | -              |
 
 **Cache Strategy**: In-memory with timestamp-based invalidation (reload only if file modified).
 

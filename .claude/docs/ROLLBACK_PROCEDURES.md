@@ -24,12 +24,12 @@ This document outlines emergency rollback procedures for all Phase 1 features in
 
 ### Rollback Levels
 
-| Level | Method | Impact | Recovery Time |
-|-------|--------|--------|---------------|
-| **Level 1: Feature Flag** | Disable via environment variable | Immediate | < 1 minute |
-| **Level 2: Config Change** | Edit `.claude/config.yaml` | Requires restart | < 5 minutes |
-| **Level 3: Git Revert** | Revert commits | Code changes | < 30 minutes |
-| **Level 4: Full Restore** | Restore from backup | Complete rollback | < 2 hours |
+| Level                      | Method                           | Impact            | Recovery Time |
+| -------------------------- | -------------------------------- | ----------------- | ------------- |
+| **Level 1: Feature Flag**  | Disable via environment variable | Immediate         | < 1 minute    |
+| **Level 2: Config Change** | Edit `.claude/config.yaml`       | Requires restart  | < 5 minutes   |
+| **Level 3: Git Revert**    | Revert commits                   | Code changes      | < 30 minutes  |
+| **Level 4: Full Restore**  | Restore from backup              | Complete rollback | < 2 hours     |
 
 ### Pre-Rollback Checklist
 
@@ -70,6 +70,7 @@ export PARTY_MODE_ENABLED=false
 ```
 
 **Verification**:
+
 ```bash
 # Check logs for "[party-mode] Feature disabled via flag"
 tail -f .claude/logs/agent-studio.log | grep party-mode
@@ -89,6 +90,7 @@ tail -f .claude/logs/agent-studio.log | grep party-mode
 ```
 
 **Verification**:
+
 ```bash
 # Test feature flag
 node -e "const ff = require('./.claude/lib/utils/feature-flags.cjs'); console.log('Party Mode:', ff.isEnabled('features.partyMode.enabled'));"
@@ -147,10 +149,11 @@ git diff
 **Symptom**: "Context limit exceeded" error during multi-agent collaboration
 
 **Workaround**: Reduce `maxAgents` from 5 to 3
+
 ```yaml
 features:
   partyMode:
-    maxAgents: 3  # Reduced from 5
+    maxAgents: 3 # Reduced from 5
 ```
 
 #### Issue #2: Agent Response Conflicts
@@ -158,6 +161,7 @@ features:
 **Symptom**: Conflicting advice from multiple agents
 
 **Workaround**: Enable sequential execution (disable parallel)
+
 ```yaml
 features:
   partyMode:
@@ -169,6 +173,7 @@ features:
 **Symptom**: Session summary not written to memory
 
 **Workaround**: Manually save session
+
 ```bash
 # Export session to memory
 node .claude/tools/cli/export-session.js --session-id <id> --output .claude/context/memory/sessions/
@@ -191,6 +196,7 @@ export ELICITATION_ENABLED=false
 ```
 
 **Verification**:
+
 ```bash
 # Check elicitation is skipped
 grep "Elicitation skipped" .claude/logs/agent-studio.log
@@ -233,11 +239,12 @@ git revert <commit-hash>
 **Symptom**: LLM costs exceed budget (2x expected)
 
 **Workaround**: Reduce method count
+
 ```yaml
 features:
   advancedElicitation:
-    methods: ["first-principles", "pre-mortem"]  # Only 2 methods
-    costBudget: 5.0  # Reduced budget
+    methods: ['first-principles', 'pre-mortem'] # Only 2 methods
+    costBudget: 5.0 # Reduced budget
 ```
 
 #### Issue #2: Method Selection Irrelevant
@@ -245,10 +252,11 @@ features:
 **Symptom**: Suggested reasoning methods don't apply to task
 
 **Workaround**: Increase confidence threshold
+
 ```yaml
 features:
   advancedElicitation:
-    minConfidence: 0.8  # Skip unless 80%+ confidence
+    minConfidence: 0.8 # Skip unless 80%+ confidence
 ```
 
 ---
@@ -266,6 +274,7 @@ rm .claude/knowledge/agent-index.csv
 ```
 
 **Verification**:
+
 ```bash
 # Check logs for "Index not found, falling back to directory scan"
 tail -f .claude/logs/agent-studio.log | grep "Index not found"
@@ -295,6 +304,7 @@ git revert <commit-hash>
 **Symptom**: "Invalid CSV format" error
 
 **Workaround**: Rebuild index
+
 ```bash
 node .claude/tools/cli/rebuild-index.js --skills --agents
 ```
@@ -304,6 +314,7 @@ node .claude/tools/cli/rebuild-index.js --skills --agents
 **Symptom**: New skills/agents not discovered
 
 **Workaround**: Force rebuild
+
 ```bash
 node .claude/tools/cli/rebuild-index.js --force
 ```
@@ -322,6 +333,7 @@ mv .claude/memory/agents .claude/memory/agents.disabled
 ```
 
 **Verification**:
+
 ```bash
 # Check logs for "Sidecar not found, using shared memory"
 tail -f .claude/logs/agent-studio.log | grep "Sidecar not found"
@@ -351,6 +363,7 @@ git revert <commit-hash>
 **Symptom**: Agent standards differ from shared standards
 
 **Workaround**: Sync sidecar with shared
+
 ```bash
 # Copy shared standards to sidecar
 cp .claude/context/memory/learnings.md .claude/memory/agents/developer/standards.md
@@ -361,6 +374,7 @@ cp .claude/context/memory/learnings.md .claude/memory/agents/developer/standards
 **Symptom**: Sidecar files exceed 50KB limit
 
 **Workaround**: Archive old entries
+
 ```bash
 node .claude/tools/cli/archive-sidecar.js --agent developer --older-than 90d
 ```
@@ -379,6 +393,7 @@ node .claude/tools/cli/archive-sidecar.js --agent developer --older-than 90d
 ```
 
 **Verification**:
+
 ```bash
 # Check no cost logs generated
 ls .claude/context/metrics/cost-log.jsonl
@@ -408,6 +423,7 @@ git revert <commit-hash>
 **Symptom**: Cost calculations don't match actual usage
 
 **Workaround**: Update pricing data
+
 ```bash
 # Edit .claude/lib/utils/pricing.json with current Anthropic pricing
 ```
@@ -417,6 +433,7 @@ git revert <commit-hash>
 **Symptom**: cost-log.jsonl exceeds 100MB
 
 **Workaround**: Rotate logs
+
 ```bash
 node .claude/tools/cli/rotate-cost-logs.js --keep-last 30d
 ```
@@ -425,11 +442,11 @@ node .claude/tools/cli/rotate-cost-logs.js --keep-last 30d
 
 ## Emergency Contacts
 
-| Role | Contact | Availability |
-|------|---------|--------------|
-| **On-Call Engineer** | @devops-team | 24/7 |
-| **Security Team** | @security | Business hours |
-| **Architecture Team** | @architects | Business hours |
+| Role                  | Contact      | Availability   |
+| --------------------- | ------------ | -------------- |
+| **On-Call Engineer**  | @devops-team | 24/7           |
+| **Security Team**     | @security    | Business hours |
+| **Architecture Team** | @architects  | Business hours |
 
 ---
 
@@ -437,12 +454,12 @@ node .claude/tools/cli/rotate-cost-logs.js --keep-last 30d
 
 Use this matrix to decide rollback level:
 
-| Severity | Impact | Rollback Level | Approval Required |
-|----------|--------|----------------|-------------------|
-| **P0 (Critical)** | Production down, data loss | Level 1-2 | Any engineer |
-| **P1 (High)** | Major functionality broken | Level 1-2 | Team lead |
-| **P2 (Medium)** | Minor functionality broken | Level 1-2 | Team lead |
-| **P3 (Low)** | Cosmetic issues | None (fix forward) | None |
+| Severity          | Impact                     | Rollback Level     | Approval Required |
+| ----------------- | -------------------------- | ------------------ | ----------------- |
+| **P0 (Critical)** | Production down, data loss | Level 1-2          | Any engineer      |
+| **P1 (High)**     | Major functionality broken | Level 1-2          | Team lead         |
+| **P2 (Medium)**   | Minor functionality broken | Level 1-2          | Team lead         |
+| **P3 (Low)**      | Cosmetic issues            | None (fix forward) | None              |
 
 ---
 
@@ -459,28 +476,34 @@ After rollback, create post-mortem:
 **Rollback Level**: 1/2/3/4
 
 ### What Happened
+
 [Describe the incident]
 
 ### Root Cause
+
 [Why did it happen?]
 
 ### Timeline
+
 - HH:MM - Incident detected
 - HH:MM - Rollback initiated
 - HH:MM - System stable
 
 ### Impact
+
 - Users affected: N
 - Data loss: Yes/No
 - Downtime: HH:MM
 
 ### Prevention
+
 - [ ] Add monitoring
 - [ ] Update tests
 - [ ] Document edge case
 - [ ] Review design
 
 ### Follow-up Tasks
+
 - [ ] Fix root cause
 - [ ] Update runbook
 - [ ] Share learnings

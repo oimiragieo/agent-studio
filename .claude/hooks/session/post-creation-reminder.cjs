@@ -27,9 +27,26 @@ const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 // Paths
 const EVOLUTION_STATE = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
 const CLAUDE_MD = path.join(PROJECT_ROOT, '.claude', 'CLAUDE.md');
-const SKILL_CATALOG = path.join(PROJECT_ROOT, '.claude', 'context', 'artifacts', 'skill-catalog.md');
-const ROUTER_ENFORCER = path.join(PROJECT_ROOT, '.claude', 'hooks', 'routing', 'router-enforcer.cjs');
-const LAST_RUN_FILE = path.join(PROJECT_ROOT, '.claude', '.tmp', 'post-creation-reminder-last-run.txt');
+const SKILL_CATALOG = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'context',
+  'artifacts',
+  'skill-catalog.md'
+);
+const ROUTER_ENFORCER = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'hooks',
+  'routing',
+  'router-enforcer.cjs'
+);
+const LAST_RUN_FILE = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  '.tmp',
+  'post-creation-reminder-last-run.txt'
+);
 
 /**
  * Read file safely.
@@ -37,7 +54,7 @@ const LAST_RUN_FILE = path.join(PROJECT_ROOT, '.claude', '.tmp', 'post-creation-
 function readFileSafe(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf-8');
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 }
@@ -156,7 +173,7 @@ function getRecentEvolutions(hoursAgo = 24) {
     }
 
     return recent;
-  } catch (err) {
+  } catch (_err) {
     return [];
   }
 }
@@ -191,10 +208,10 @@ function hasRunRecently() {
     }
 
     const lastRunTime = parseInt(fs.readFileSync(LAST_RUN_FILE, 'utf-8').trim(), 10);
-    const fourHoursAgo = Date.now() - (4 * 60 * 60 * 1000);
+    const fourHoursAgo = Date.now() - 4 * 60 * 60 * 1000;
 
     return lastRunTime > fourHoursAgo;
-  } catch (err) {
+  } catch (_err) {
     return false; // If error, run the hook
   }
 }
@@ -209,7 +226,7 @@ function recordRun() {
       fs.mkdirSync(tmpDir, { recursive: true });
     }
     fs.writeFileSync(LAST_RUN_FILE, Date.now().toString(), 'utf-8');
-  } catch (err) {
+  } catch (_err) {
     // Ignore errors (don't block on timestamp write)
   }
 }

@@ -40,7 +40,7 @@ function backupState() {
     if (fs.existsSync(STATE_FILE)) {
       originalStateContent = fs.readFileSync(STATE_FILE, 'utf-8');
     }
-  } catch (e) {
+  } catch (_e) {
     originalStateContent = '';
   }
 }
@@ -55,7 +55,7 @@ function restoreState() {
     } else if (fs.existsSync(STATE_FILE)) {
       fs.unlinkSync(STATE_FILE);
     }
-  } catch (e) {
+  } catch (_e) {
     console.error('Warning: Could not restore state file');
   }
 }
@@ -97,7 +97,7 @@ function getState() {
     if (fs.existsSync(STATE_FILE)) {
       return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore
   }
   return null;
@@ -154,7 +154,7 @@ async function testSkipsResetForActiveAgentContext() {
   });
 
   const context = { prompt: 'User prompt during active task' };
-  const { code, stdout } = await runHook(context, { ROUTER_DEBUG: 'true' });
+  const { code, _stdout } = await runHook(context, { ROUTER_DEBUG: 'true' });
 
   assert(code === 0, `Hook should exit with code 0, got ${code}`);
 

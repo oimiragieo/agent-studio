@@ -44,8 +44,8 @@ const WRITE_TOOLS = ['Edit', 'Write', 'NotebookEdit'];
 
 // Files that are always allowed (framework internal operations)
 const ALWAYS_ALLOWED_PATTERNS = [
-  /\.claude[\/\\]context[\/\\]runtime[\/\\]/, // Runtime state files
-  /\.claude[\/\\]context[\/\\]memory[\/\\]/, // Memory files (learnings, etc.)
+  /\.claude[/\\]context[/\\]runtime[/\\]/, // Runtime state files
+  /\.claude[/\\]context[/\\]memory[/\\]/, // Memory files (learnings, etc.)
   /\.gitkeep$/, // Git keep files
 ];
 
@@ -61,7 +61,7 @@ function isAlwaysAllowed(filePath) {
 /**
  * Format blocked message box
  */
-function formatBlockedMessage(toolName, filePath, state) {
+function formatBlockedMessage(toolName, filePath, _state) {
   const fileName = filePath ? path.basename(filePath) : 'unknown';
   const lines = [
     '',
@@ -89,7 +89,7 @@ function formatBlockedMessage(toolName, filePath, state) {
 /**
  * Format warning message box
  */
-function formatWarningMessage(toolName, filePath, state) {
+function formatWarningMessage(toolName, filePath, _state) {
   const fileName = filePath ? path.basename(filePath) : 'unknown';
   const lines = [
     '',
@@ -222,4 +222,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { main, parseHookInput };
+module.exports = { main, parseHookInput: parseHookInputSync };

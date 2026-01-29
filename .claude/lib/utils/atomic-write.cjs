@@ -162,7 +162,7 @@ async function atomicWriteAsync(filePath, content, options = {}) {
     // Clean up temp file if it still exists (belt and suspenders)
     try {
       await fs.promises.unlink(tempFile);
-    } catch (e) {
+    } catch (_e) {
       // Ignore - either succeeded or rename moved it
     }
   }

@@ -149,7 +149,7 @@ class BackupManager {
       try {
         const data = JSON.parse(fs.readFileSync(this.indexFile, 'utf-8'));
         this.backups = new Map(Object.entries(data));
-      } catch (e) {
+      } catch (_e) {
         // Index corrupted, start fresh
         this.backups = new Map();
       }
@@ -311,7 +311,7 @@ class SagaCoordinator {
     if (this.persistLog && fs.existsSync(this.logFile)) {
       try {
         this.transactionLog = JSON.parse(fs.readFileSync(this.logFile, 'utf-8'));
-      } catch (e) {
+      } catch (_e) {
         this.transactionLog = [];
       }
     }

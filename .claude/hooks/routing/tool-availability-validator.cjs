@@ -29,10 +29,21 @@ const {
 
 // Core tools that are ALWAYS available
 const CORE_TOOLS = [
-  'Read', 'Write', 'Edit', 'Bash', 'Grep', 'Glob',
-  'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet',
-  'Skill', 'AskUserQuestion',
-  'NotebookEdit', 'WebSearch', 'WebFetch'
+  'Read',
+  'Write',
+  'Edit',
+  'Bash',
+  'Grep',
+  'Glob',
+  'TaskUpdate',
+  'TaskList',
+  'TaskCreate',
+  'TaskGet',
+  'Skill',
+  'AskUserQuestion',
+  'NotebookEdit',
+  'WebSearch',
+  'WebFetch',
 ];
 
 /**
@@ -47,7 +58,7 @@ function checkMCPServers() {
     }
     const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
     return settings.mcpServers || {};
-  } catch (e) {
+  } catch (_e) {
     return {};
   }
 }
@@ -85,7 +96,7 @@ function validateTools(allowedTools) {
   return {
     unavailableTools,
     mcpToolsWithoutServer,
-    allAvailable: unavailableTools.length === 0
+    allAvailable: unavailableTools.length === 0,
   };
 }
 

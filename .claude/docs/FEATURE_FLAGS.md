@@ -141,20 +141,20 @@ Default configuration for all features:
 # --- Feature Flags (Gradual Rollout System) ---
 features:
   partyMode:
-    enabled: false  # Multi-agent collaboration (default: off)
-    maxAgents: 5    # Maximum agents per round
-    turnLimit: 20   # Maximum turns per session
+    enabled: false # Multi-agent collaboration (default: off)
+    maxAgents: 5 # Maximum agents per round
+    turnLimit: 20 # Maximum turns per session
     costLimit: 50.0 # Cost limit per session (USD)
 
   advancedElicitation:
-    enabled: false  # Advanced meta-cognitive reasoning (default: off)
-    methods:        # Available reasoning methods
+    enabled: false # Advanced meta-cognitive reasoning (default: off)
+    methods: # Available reasoning methods
       - first-principles
       - pre-mortem
       - socratic
       - red-team-blue-team
-    costBudget: 10.0    # Budget for elicitation queries (USD)
-    minConfidence: 0.7  # Skip if confidence below threshold
+    costBudget: 10.0 # Budget for elicitation queries (USD)
+    minConfidence: 0.7 # Skip if confidence below threshold
 ```
 
 ---
@@ -168,6 +168,7 @@ features:
 **Flag**: `features.partyMode.enabled`
 
 **Configuration**:
+
 - `maxAgents` (default: 5) - Maximum agents per round
 - `turnLimit` (default: 20) - Maximum turns per session
 - `costLimit` (default: 50.0) - Cost limit per session (USD)
@@ -175,6 +176,7 @@ features:
 **Environment Variable**: `PARTY_MODE_ENABLED=true|false`
 
 **Usage**:
+
 ```javascript
 if (featureFlags.isEnabled('features.partyMode.enabled')) {
   const config = featureFlags.getConfig('partyMode');
@@ -183,11 +185,13 @@ if (featureFlags.isEnabled('features.partyMode.enabled')) {
 ```
 
 **Risks**:
+
 - Context overflow (multi-agent responses)
 - Cost scaling (N agents = N LLM calls)
 - Response conflicts
 
 **Mitigation**:
+
 - Context summarization after 10 turns
 - Agent limit enforced (4 max)
 - Cost tracking integration
@@ -201,6 +205,7 @@ if (featureFlags.isEnabled('features.partyMode.enabled')) {
 **Flag**: `features.advancedElicitation.enabled`
 
 **Configuration**:
+
 - `methods` (array) - Available reasoning methods
 - `costBudget` (default: 10.0) - Budget for queries (USD)
 - `minConfidence` (default: 0.7) - Skip if confidence < threshold
@@ -208,6 +213,7 @@ if (featureFlags.isEnabled('features.partyMode.enabled')) {
 **Environment Variable**: `ELICITATION_ENABLED=true|false`
 
 **Usage**:
+
 ```javascript
 if (featureFlags.isEnabled('features.advancedElicitation.enabled')) {
   const config = featureFlags.getConfig('advancedElicitation');
@@ -218,10 +224,12 @@ if (featureFlags.isEnabled('features.advancedElicitation.enabled')) {
 ```
 
 **Risks**:
+
 - 2x LLM cost (elicitation = second pass)
 - Method selection may be irrelevant
 
 **Mitigation**:
+
 - Cost tracking integration
 - Confidence threshold filtering
 - User opt-in required
@@ -234,14 +242,15 @@ Environment variables provide the **highest priority** override for emergency si
 
 ### Available Variables
 
-| Variable | Feature | Values | Priority |
-|----------|---------|--------|----------|
-| `PARTY_MODE_ENABLED` | Party Mode | `true`, `false`, `1`, `0` | Highest |
-| `ELICITATION_ENABLED` | Advanced Elicitation | `true`, `false`, `1`, `0` | Highest |
+| Variable              | Feature              | Values                    | Priority |
+| --------------------- | -------------------- | ------------------------- | -------- |
+| `PARTY_MODE_ENABLED`  | Party Mode           | `true`, `false`, `1`, `0` | Highest  |
+| `ELICITATION_ENABLED` | Advanced Elicitation | `true`, `false`, `1`, `0` | Highest  |
 
 ### Usage
 
 **Windows (PowerShell)**:
+
 ```powershell
 # Enable party mode
 $env:PARTY_MODE_ENABLED = "true"
@@ -253,6 +262,7 @@ $env:ELICITATION_ENABLED = "false"
 ```
 
 **Unix/Mac**:
+
 ```bash
 # Enable party mode
 export PARTY_MODE_ENABLED=true
@@ -264,6 +274,7 @@ export ELICITATION_ENABLED=false
 ```
 
 **Verification**:
+
 ```bash
 # Check environment variable
 echo $PARTY_MODE_ENABLED
@@ -339,7 +350,7 @@ All new features should be **disabled by default** in config.yaml:
 ```yaml
 features:
   newFeature:
-    enabled: false  # Always start disabled
+    enabled: false # Always start disabled
 ```
 
 ### 2. Environment Variables for Production
@@ -361,7 +372,7 @@ if (!config) {
   console.error('Party mode config not found');
   return;
 }
-const maxAgents = config.maxAgents || 5;  // Fallback to default
+const maxAgents = config.maxAgents || 5; // Fallback to default
 ```
 
 ### 4. Graceful Degradation
@@ -381,7 +392,10 @@ Log feature flag state at startup:
 
 ```javascript
 console.log('[feature-flags] Party Mode:', featureFlags.isEnabled('features.partyMode.enabled'));
-console.log('[feature-flags] Advanced Elicitation:', featureFlags.isEnabled('features.advancedElicitation.enabled'));
+console.log(
+  '[feature-flags] Advanced Elicitation:',
+  featureFlags.isEnabled('features.advancedElicitation.enabled')
+);
 ```
 
 ### 6. Testing
@@ -409,6 +423,7 @@ describe('Party Mode', () => {
 ### Issue: Feature is enabled but not working
 
 **Diagnosis**:
+
 ```javascript
 // Check flag state
 console.log('Enabled:', featureFlags.isEnabled('features.partyMode.enabled'));
@@ -418,11 +433,13 @@ console.log('Config:', featureFlags.getConfig('partyMode'));
 ```
 
 **Possible Causes**:
+
 1. Environment variable override
 2. Config file not loaded
 3. Code not checking flag
 
 **Fix**:
+
 ```bash
 # Clear environment variable
 unset PARTY_MODE_ENABLED
@@ -435,6 +452,7 @@ unset PARTY_MODE_ENABLED
 ### Issue: Environment variable not working
 
 **Diagnosis**:
+
 ```bash
 # Check environment variable is set
 echo $PARTY_MODE_ENABLED
@@ -444,11 +462,13 @@ node -e "console.log('Env:', process.env.PARTY_MODE_ENABLED)"
 ```
 
 **Possible Causes**:
+
 1. Variable not exported
 2. Session not restarted
 3. Typo in variable name
 
 **Fix**:
+
 ```bash
 # Export variable
 export PARTY_MODE_ENABLED=true
@@ -461,6 +481,7 @@ export PARTY_MODE_ENABLED=true
 ### Issue: Config file changes not reflecting
 
 **Diagnosis**:
+
 ```bash
 # Check config file
 cat .claude/config.yaml | grep -A 5 "features:"
@@ -470,11 +491,13 @@ node -e "const yaml = require('js-yaml'); const fs = require('fs'); const config
 ```
 
 **Possible Causes**:
+
 1. YAML syntax error
 2. Config not reloaded
 3. Environment variable override
 
 **Fix**:
+
 ```bash
 # Validate YAML
 node -e "const yaml = require('js-yaml'); yaml.load(require('fs').readFileSync('.claude/config.yaml', 'utf8'));"
@@ -491,18 +514,21 @@ unset ELICITATION_ENABLED
 ### Issue: Feature flag coercion not working
 
 **Diagnosis**:
+
 ```javascript
 // Check type
 const enabled = featureFlags.isEnabled('features.partyMode.enabled');
-console.log('Type:', typeof enabled);  // Should be 'boolean'
+console.log('Type:', typeof enabled); // Should be 'boolean'
 console.log('Value:', enabled);
 ```
 
 **Possible Causes**:
+
 1. String not coerced to boolean
 2. Invalid value (not 'true', 'false', '1', '0')
 
 **Fix**:
+
 ```bash
 # Use valid values
 export PARTY_MODE_ENABLED=true  # Not "yes" or "1"

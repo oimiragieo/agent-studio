@@ -217,7 +217,7 @@ function getLoopState() {
       _cachedLoopState = { ...defaultState, ...state };
       return _cachedLoopState;
     }
-  } catch (e) {
+  } catch (_e) {
     // File corrupted or locked
   }
 
@@ -719,7 +719,7 @@ function runAllChecks(hookInput) {
   const toolInput = getToolInput(hookInput);
 
   // Check 1: Agent Context Pre-Tracker (always passes, sets state)
-  const contextResult = checkAgentContextPreTracker(hookInput);
+  const _contextResult = checkAgentContextPreTracker(hookInput);
   // Note: This always passes, just sets mode
 
   // Check 2: Routing Guard

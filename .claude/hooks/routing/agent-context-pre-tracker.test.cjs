@@ -40,7 +40,7 @@ function backupState() {
     if (fs.existsSync(STATE_FILE)) {
       originalStateContent = fs.readFileSync(STATE_FILE, 'utf-8');
     }
-  } catch (e) {
+  } catch (_e) {
     originalStateContent = '';
   }
 }
@@ -55,7 +55,7 @@ function restoreState() {
     } else if (fs.existsSync(STATE_FILE)) {
       fs.unlinkSync(STATE_FILE);
     }
-  } catch (e) {
+  } catch (_e) {
     console.error('Warning: Could not restore state file');
   }
 }
@@ -119,7 +119,7 @@ function getState() {
     if (fs.existsSync(STATE_FILE)) {
       return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore
   }
   return null;
@@ -201,7 +201,7 @@ function testExtractTaskDescription() {
  * Note: This test may timeout because stdin-based hooks have timing issues in tests.
  * The hook behavior is verified by checking state after execution.
  */
-async function testSetsAgentMode() {
+async function _testSetsAgentMode() {
   console.log('\nTest 3: Hook sets agent mode');
 
   resetState();
@@ -233,7 +233,7 @@ async function testSetsAgentMode() {
 /**
  * Test that hook handles string tool_input
  */
-async function testStringToolInput() {
+async function _testStringToolInput() {
   console.log('\nTest 4: Hook handles string tool_input');
 
   resetState();
@@ -260,7 +260,7 @@ async function testStringToolInput() {
 /**
  * Test that hook handles empty input
  */
-async function testEmptyInput() {
+async function _testEmptyInput() {
   console.log('\nTest 5: Hook handles empty input');
 
   resetState();
@@ -279,7 +279,7 @@ async function testEmptyInput() {
 /**
  * Test that hook includes debug output when ROUTER_DEBUG is set
  */
-async function testDebugOutput() {
+async function _testDebugOutput() {
   console.log('\nTest 6: Debug output');
 
   resetState();
@@ -306,7 +306,7 @@ async function testDebugOutput() {
 /**
  * Test that hook handles malformed JSON gracefully
  */
-async function testMalformedJson() {
+async function _testMalformedJson() {
   console.log('\nTest 7: Handles malformed JSON gracefully');
 
   resetState();

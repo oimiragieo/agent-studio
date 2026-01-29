@@ -13,7 +13,7 @@
  */
 
 import { readFile, readdir, stat } from 'fs/promises';
-import { join, dirname, relative, extname, sep } from 'path';
+import { join, dirname, relative, extname, _sep } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -562,7 +562,7 @@ function rankResults(results, limit, threshold) {
 /**
  * Calculate summary statistics
  */
-function calculateSummary(results, files) {
+function calculateSummary(results, _files) {
   const topFiles = [...new Set(results.map(r => r.file))].slice(0, 5);
 
   const symbolTypes = new Set();
@@ -639,9 +639,9 @@ async function validateOutput(output, schemaPath) {
  * Format output according to schema
  */
 function formatOutput(query, files, searchResults, args) {
-  const { results, strategiesUsed, duration } = searchResults;
+  const { results, _strategiesUsed, duration } = searchResults;
   const rankedResults = rankResults(results, args.limit, args.threshold);
-  const summary = calculateSummary(rankedResults, files);
+  const _summary = calculateSummary(rankedResults, files);
 
   return {
     skill_name: 'repo-rag',

@@ -72,13 +72,13 @@ const DANGEROUS_PATTERNS = [
 const DANGEROUS_BUILTINS = [
   {
     // Match 'eval' as first command or after shell operators (;, &&, ||, |)
-    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)eval\s+/,
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|&&\s*)eval\s+/,
     name: 'eval builtin',
     reason: 'eval executes arbitrary shell code',
   },
   {
     // Match 'source' as first command or after shell operators
-    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)source\s+/,
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|&&\s*)source\s+/,
     name: 'source builtin',
     reason: 'source executes arbitrary shell scripts',
   },
@@ -86,7 +86,7 @@ const DANGEROUS_BUILTINS = [
     // Match '.' followed by space and path (the dot command)
     // Careful: must not match paths like ./script.sh or ../dir
     // Pattern: start of command or after operators, then "." followed by space and non-dot
-    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|\&\&\s*)\.\s+[^.]/,
+    pattern: /(?:^|\s*[;|&]\s*|\|\|\s*|&&\s*)\.\s+[^.]/,
     name: 'dot (.) builtin',
     reason: 'dot command sources arbitrary shell scripts',
   },

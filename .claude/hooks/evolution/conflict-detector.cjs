@@ -151,7 +151,7 @@ function collectArtifactNames(dir, names) {
         }
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore errors (permissions, etc.)
   }
 }

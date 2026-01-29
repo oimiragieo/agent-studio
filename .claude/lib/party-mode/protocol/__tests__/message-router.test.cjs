@@ -6,7 +6,7 @@
  * Security Controls: None directly (uses agent-identity for verification)
  */
 
-const { describe, it, before, after } = require('node:test');
+const { describe, it, before, _after } = require('node:test');
 const assert = require('node:assert');
 const path = require('path');
 
@@ -76,7 +76,9 @@ describe('Message Router', () => {
       const router = messageRouter.createRouter('session_006');
       messageRouter.registerAgent(router, 'agent_002', 'architect');
 
-      const result = messageRouter.routeMessage(router, 'agent_999', 'agent_002', { content: 'test' });
+      const result = messageRouter.routeMessage(router, 'agent_999', 'agent_002', {
+        content: 'test',
+      });
 
       assert.strictEqual(result.delivered, false);
       assert.match(result.error, /Sender .* not registered/);
@@ -86,7 +88,9 @@ describe('Message Router', () => {
       const router = messageRouter.createRouter('session_007');
       messageRouter.registerAgent(router, 'agent_001', 'developer');
 
-      const result = messageRouter.routeMessage(router, 'agent_001', 'agent_999', { content: 'test' });
+      const result = messageRouter.routeMessage(router, 'agent_001', 'agent_999', {
+        content: 'test',
+      });
 
       assert.strictEqual(result.delivered, false);
       assert.match(result.error, /Recipient .* not registered/);

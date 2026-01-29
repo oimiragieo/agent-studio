@@ -145,7 +145,7 @@ function extractHostname(url) {
     }
     const parsed = new URL(urlToParse);
     return parsed.hostname;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -331,7 +331,7 @@ function validateWgetCommand(commandString) {
  * @param {string} commandString - The full nc command string
  * @returns {{valid: boolean, error: string}} Validation result
  */
-function validateNcCommand(commandString) {
+function validateNcCommand(_commandString) {
   // netcat is too dangerous - can create reverse shells, exfiltrate data
   return {
     valid: false,
@@ -366,7 +366,7 @@ function validateSshCommand(commandString) {
  * @param {string} commandString - The full sudo command string
  * @returns {{valid: boolean, error: string}} Validation result
  */
-function validateSudoCommand(commandString) {
+function validateSudoCommand(_commandString) {
   // sudo allows privilege escalation - never allow in sandboxed environment
   return {
     valid: false,
@@ -380,7 +380,7 @@ function validateSudoCommand(commandString) {
  * @param {string} commandString - The full scp command string
  * @returns {{valid: boolean, error: string}} Validation result
  */
-function validateScpCommand(commandString) {
+function validateScpCommand(_commandString) {
   return {
     valid: false,
     error: 'scp is blocked for security. Use git or approved file transfer methods.',

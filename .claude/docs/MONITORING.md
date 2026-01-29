@@ -53,6 +53,7 @@ node .claude/lib/memory/memory-rotator.cjs rotate-issues
 ```
 
 **Rotation Policies:**
+
 - `decisions.md`: Archives ADRs older than 60 days when file > 1500 lines
 - `issues.md`: Archives RESOLVED issues older than 7 days when file > 1500 lines
 - **Archive Location**: `.claude/context/memory/archive/YYYY-MM/`
@@ -103,6 +104,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Purpose**: Tracks performance of all hook executions
 
 **Metrics Collected**:
+
 - Execution time (ms)
 - Success/failure status
 - Tool being hooked
@@ -112,11 +114,21 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Storage**: `.claude/context/metrics/hook-metrics.jsonl`
 
 **Format** (JSONL):
+
 ```json
-{"timestamp":"2026-01-28T10:00:00.123Z","hook":"routing-guard.cjs","event":"PostToolUse","tool":"Task","executionTimeMs":7.2,"status":"success","metadata":{"paramsSize":256,"resultSize":128}}
+{
+  "timestamp": "2026-01-28T10:00:00.123Z",
+  "hook": "routing-guard.cjs",
+  "event": "PostToolUse",
+  "tool": "Task",
+  "executionTimeMs": 7.2,
+  "status": "success",
+  "metadata": { "paramsSize": 256, "resultSize": 128 }
+}
 ```
 
 **Security**:
+
 - SEC-MON-001: Metrics schema validation
 - Rate limiting: 10,000 entries/hour
 - No sensitive data in metrics
@@ -128,6 +140,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Purpose**: Tracks and classifies all errors
 
 **Metrics Collected**:
+
 - Error type (ValidationError, RoutingError, SecurityViolation, SystemError)
 - Severity (CRITICAL, HIGH, MEDIUM, LOW)
 - Source (which hook/file)
@@ -137,8 +150,17 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Storage**: `.claude/context/metrics/error-metrics.jsonl`
 
 **Format** (JSONL):
+
 ```json
-{"timestamp":"2026-01-28T10:00:00.123Z","errorType":"ValidationError","source":"routing-guard.cjs","message":"Complexity gate triggered","severity":"HIGH","tool":"TaskCreate","metadata":{"errorName":"Error","stack":"..."}}
+{
+  "timestamp": "2026-01-28T10:00:00.123Z",
+  "errorType": "ValidationError",
+  "source": "routing-guard.cjs",
+  "message": "Complexity gate triggered",
+  "severity": "HIGH",
+  "tool": "TaskCreate",
+  "metadata": { "errorName": "Error", "stack": "..." }
+}
 ```
 
 **Error Classification**:
@@ -157,6 +179,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Purpose**: Parses JSONL files and calculates statistics
 
 **Functions**:
+
 - `readMetrics(file, options)` - Read and filter metrics by time
 - `calculateHookStats(metrics)` - Calculate hook performance statistics
 - `calculateErrorStats(metrics)` - Calculate error statistics
@@ -165,6 +188,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 - `detectAlerts(summary, thresholds)` - Detect threshold violations
 
 **Statistics Calculated**:
+
 - Average execution time
 - Percentiles (P50, P95, P99)
 - Success/failure rates
@@ -178,6 +202,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Purpose**: Renders metrics in ASCII format
 
 **Functions**:
+
 - `renderDashboard(summary, alerts)` - Full dashboard
 - `renderTable(headers, rows)` - Aligned tables
 - `renderBox(title, content)` - Bordered boxes
@@ -193,6 +218,7 @@ Last updated: 1/28/2026, 10:15:30 AM
 **Purpose**: Command-line interface for viewing metrics
 
 **Commands**:
+
 ```bash
 # Default: 24-hour summary
 node .claude/tools/cli/monitoring-dashboard.js
@@ -220,16 +246,16 @@ node .claude/tools/cli/monitoring-dashboard.js --hours=48
 monitoring:
   enabled: true
   thresholds:
-    hookExecutionTimeMs: 10      # Alert if hook > 10ms
-    hookFailureRate: 5           # Alert if failure rate > 5%
-    agentFailureRate: 3          # Alert if agent failure > 3%
-    errorRatePerHour: 10         # Alert if > 10 errors/hour
-    tokenBudgetPerDay: 100000    # Daily token budget
+    hookExecutionTimeMs: 10 # Alert if hook > 10ms
+    hookFailureRate: 5 # Alert if failure rate > 5%
+    agentFailureRate: 3 # Alert if agent failure > 3%
+    errorRatePerHour: 10 # Alert if > 10 errors/hour
+    tokenBudgetPerDay: 100000 # Daily token budget
   retention:
-    metricsDays: 30              # Keep metrics for 30 days
-    errorsDays: 90               # Keep errors for 90 days
+    metricsDays: 30 # Keep metrics for 30 days
+    errorsDays: 90 # Keep errors for 90 days
   dashboard:
-    refreshIntervalMs: 5000      # Live mode refresh interval
+    refreshIntervalMs: 5000 # Live mode refresh interval
 ```
 
 ### Environment Variables
@@ -247,24 +273,26 @@ ERROR_RATE_THRESHOLD=20
 
 ## Alert Severity Levels
 
-| Severity | Icon | Trigger | Action |
-|----------|------|---------|--------|
-| CRITICAL | 🔴 | Security violations | Immediate investigation |
-| HIGH | 🟡 | High error rate, validation failures | Review within 1 hour |
-| MEDIUM | 🟠 | Slow hooks, elevated errors | Review within 24 hours |
-| LOW | 🔵 | Minor issues | Review at convenience |
+| Severity | Icon | Trigger                              | Action                  |
+| -------- | ---- | ------------------------------------ | ----------------------- |
+| CRITICAL | 🔴   | Security violations                  | Immediate investigation |
+| HIGH     | 🟡   | High error rate, validation failures | Review within 1 hour    |
+| MEDIUM   | 🟠   | Slow hooks, elevated errors          | Review within 24 hours  |
+| LOW      | 🔵   | Minor issues                         | Review at convenience   |
 
 ## Metrics Storage
 
 ### File Format
 
 **JSONL** (JSON Lines) format:
+
 - One JSON object per line
 - Append-only (efficient for large files)
 - Easy to parse incrementally
 - No commas between entries
 
 **Example**:
+
 ```jsonl
 {"timestamp":"2026-01-28T10:00:00.123Z","hook":"routing-guard.cjs","executionTimeMs":7.2}
 {"timestamp":"2026-01-28T10:00:01.456Z","hook":"security-trigger.cjs","executionTimeMs":3.1}
@@ -289,6 +317,7 @@ ERROR_RATE_THRESHOLD=20
 - **Archive**: Move to `.claude/context/metrics/archive/YYYY-MM/`
 
 **Rotation Script** (manual, for now):
+
 ```bash
 # Archive last month's metrics
 mkdir -p .claude/context/metrics/archive/2026-01
@@ -297,12 +326,12 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 
 ## Performance Impact
 
-| Component | Overhead | Impact |
-|-----------|----------|--------|
-| Metrics collection | ~0.5ms per hook | Negligible |
-| Error tracking | ~0.3ms per error | Negligible |
-| File writes | ~1ms per entry | Async, non-blocking |
-| Dashboard rendering | ~50ms for 1000 entries | Only when viewing |
+| Component           | Overhead               | Impact              |
+| ------------------- | ---------------------- | ------------------- |
+| Metrics collection  | ~0.5ms per hook        | Negligible          |
+| Error tracking      | ~0.3ms per error       | Negligible          |
+| File writes         | ~1ms per entry         | Async, non-blocking |
+| Dashboard rendering | ~50ms for 1000 entries | Only when viewing   |
 
 **Total overhead**: <1ms per hook execution (within target)
 
@@ -313,7 +342,9 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 **Symptom**: Dashboard shows 0 calls or "No data"
 
 **Causes & Solutions**:
+
 1. **Metrics directory missing**
+
    ```bash
    mkdir -p .claude/context/metrics
    ```
@@ -331,6 +362,7 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 **Symptom**: Dashboard not updating with recent metrics
 
 **Solution**:
+
 - Check file timestamps: `ls -lt .claude/context/metrics/`
 - Verify hooks are executing: `tail -5 .claude/context/metrics/hook-metrics.jsonl`
 - Clear dashboard cache: `rm -rf /tmp/monitoring-cache-*`
@@ -340,6 +372,7 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 **Symptom**: Alert shows elevated error rate
 
 **Investigation**:
+
 1. View errors: `node .claude/tools/cli/monitoring-dashboard.js --alerts`
 2. Check error log: `tail -50 .claude/context/metrics/error-metrics.jsonl`
 3. Identify pattern: Which hook? Which error type?
@@ -350,6 +383,7 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 **Symptom**: Alert shows hook execution time exceeds threshold
 
 **Investigation**:
+
 1. Identify slow hook: Check dashboard "Top hooks by frequency"
 2. Check P95/P99 times: `grep "hook-name" .claude/context/metrics/hook-metrics.jsonl | jq '.executionTimeMs' | sort -n | tail -5`
 3. Profile hook: Add timing logs to hook code
@@ -360,11 +394,13 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 **Symptom**: Warning message "Rate limit exceeded (10000/hour)"
 
 **Causes**:
+
 - Extremely high hook execution frequency
 - Infinite loop triggering hooks
 - Malicious activity
 
 **Solutions**:
+
 1. Check for loops: Review recent hook calls
 2. Increase limit: Modify `RATE_LIMIT_PER_HOUR` in hook code
 3. Batch writes: Aggregate multiple metrics into single write
@@ -374,10 +410,12 @@ mv .claude/context/metrics/*-metrics.jsonl .claude/context/metrics/archive/2026-
 ### Cost Tracking Integration
 
 Monitoring complements cost tracking (`.claude/docs/COST_TRACKING.md`):
+
 - Cost tracking: LLM usage and billing
 - Monitoring: System performance and errors
 
 **Combined view**:
+
 ```bash
 # View both cost and performance
 node .claude/tools/cli/cost-report.js --today
@@ -387,18 +425,20 @@ node .claude/tools/cli/monitoring-dashboard.js --summary
 ### Task Management Integration
 
 Monitoring metrics can inform task management:
+
 - High error rate → Create task for investigation
 - Slow hook → Create optimization task
 - Agent failure → Create debugging task
 
 **Example**:
+
 ```javascript
 // In task-completion handler
 if (errorRate > threshold) {
   TaskCreate({
     subject: 'Investigate elevated error rate',
     description: `Error rate ${errorRate}/hour exceeds threshold`,
-    priority: 'HIGH'
+    priority: 'HIGH',
   });
 }
 ```
@@ -408,6 +448,7 @@ if (errorRate > threshold) {
 Log monitoring insights to memory:
 
 **learnings.md**:
+
 ```markdown
 ## Monitoring Patterns (2026-01-28)
 
@@ -418,6 +459,7 @@ Log monitoring insights to memory:
 ```
 
 **decisions.md**:
+
 ```markdown
 ## ADR-063: Increase Hook Execution Threshold
 
@@ -455,6 +497,7 @@ claude
 ### What Gets Logged
 
 Debug logs show:
+
 - Enforcement mode checks (block/warn/off)
 - Router state (mode, taskSpawned, lastReset)
 - Allow/block decisions with reasoning
@@ -474,6 +517,7 @@ Debug logs show:
 ### Log Format
 
 All debug logs use consistent format:
+
 - **Timestamp**: ISO 8601 format with milliseconds
 - **Source**: `[routing-guard]` for routing decisions
 - **Message**: Human-readable decision description
@@ -495,25 +539,31 @@ grep "BLOCK\|ALLOW" routing-debug.log | wc -l
 ### Common Patterns
 
 **Stale State Detection** (Problem that triggered PROC-007):
+
 ```
 [routing-guard] Router state check {"mode":"router","taskSpawned":true,...}
 [routing-guard] ALLOW: Agent mode or task spawned {"mode":"router","taskSpawned":true}
 ```
+
 ^ Shows state thinks task spawned even though mode is "router" (stale state bug)
 
 **Successful Reset** (After Option A fix):
+
 ```
 [routing-guard] Router state check {"mode":"router","taskSpawned":false,"lastReset":"2026-01-28T..."}
 [routing-guard] BLOCK: Router using blacklisted tool {"tool":"Edit",...}
 ```
+
 ^ Shows state correctly reset with taskSpawned: false
 
 **Whitelisted Tool**:
+
 ```
 [routing-guard] ALLOW: tool is whitelisted {"tool":"Task"}
 ```
 
 **Always-Allowed File Write**:
+
 ```
 [routing-guard] ALLOW: write to always-allowed file {"tool":"Edit","filePath":".claude/context/memory/learnings.md"}
 ```
@@ -523,6 +573,7 @@ grep "BLOCK\|ALLOW" routing-debug.log | wc -l
 **Symptom**: Routing guard blocks legitimate agent writes
 
 **Diagnosis**:
+
 1. Enable debug logging (already enabled by default)
 2. Run operation and check stderr logs
 3. Look for state check: Is `taskSpawned` true?
@@ -531,6 +582,7 @@ grep "BLOCK\|ALLOW" routing-debug.log | wc -l
 **Symptom**: Router bypassing enforcement
 
 **Diagnosis**:
+
 1. Check logs for "ALLOW" decisions
 2. Look for reason: "enforcement disabled"? "whitelisted"? "agent mode"?
 3. Check state file: `.claude/context/runtime/router-state.json`
@@ -546,10 +598,12 @@ grep "BLOCK\|ALLOW" routing-debug.log | wc -l
 ### Integration with Monitoring
 
 Debug logs complement monitoring metrics:
+
 - **Metrics**: What happened (counts, times, rates)
 - **Debug logs**: Why it happened (decisions, state, context)
 
 Combined view for investigations:
+
 1. Check metrics: "routing-guard.cjs blocked 15 operations"
 2. Check debug logs: "Why? State shows taskSpawned: false"
 3. Fix root cause: State-reset hook not registered

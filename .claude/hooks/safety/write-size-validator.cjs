@@ -31,7 +31,7 @@ const {
   parseHookInputAsync,
   getToolName,
   getToolInput,
-  formatResult,
+  _formatResult,
   auditLog,
 } = require('../../lib/utils/hook-input.cjs');
 
@@ -187,26 +187,30 @@ async function main() {
 
     // Handle blocking
     if (result.decision === 'block') {
-      console.error(JSON.stringify({
-        decision: result.decision,
-        reason: result.reason,
-        file: result.file,
-        suggestion: result.suggestion,
-        estimatedTokens: result.estimatedTokens,
-        maxTokens: result.maxTokens,
-      }));
+      console.error(
+        JSON.stringify({
+          decision: result.decision,
+          reason: result.reason,
+          file: result.file,
+          suggestion: result.suggestion,
+          estimatedTokens: result.estimatedTokens,
+          maxTokens: result.maxTokens,
+        })
+      );
       process.exit(2); // Block
     }
 
     // Handle warning
     if (result.decision === 'warn') {
-      console.error(JSON.stringify({
-        decision: result.decision,
-        reason: result.reason,
-        file: result.file,
-        estimatedTokens: result.estimatedTokens,
-        warningThreshold: result.warningThreshold,
-      }));
+      console.error(
+        JSON.stringify({
+          decision: result.decision,
+          reason: result.reason,
+          file: result.file,
+          estimatedTokens: result.estimatedTokens,
+          warningThreshold: result.warningThreshold,
+        })
+      );
     }
 
     // Allow

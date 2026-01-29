@@ -130,7 +130,7 @@ function readJSONL(filePath, schema = null) {
         return parsed && Object.keys(parsed).length > 0 ? parsed : null;
       })
       .filter(item => item !== null);
-  } catch (e) {
+  } catch (_e) {
     return [];
   }
 }
@@ -149,7 +149,7 @@ function readJSON(filePath, schema = null) {
     }
     // BUG-NEW-002 FIX: Use safeReadJSON instead of raw JSON.parse
     return safeReadJSON(filePath, schema) || {};
-  } catch (e) {
+  } catch (_e) {
     return {};
   }
 }

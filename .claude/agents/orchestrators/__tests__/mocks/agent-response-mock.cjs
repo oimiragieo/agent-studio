@@ -31,9 +31,7 @@ function generateMockResponse(agentType, scenario = 'success') {
     architect: {
       success: {
         output: 'System design complete',
-        diagrams: [
-          '.claude/context/artifacts/diagrams/feature-design.mermaid',
-        ],
+        diagrams: ['.claude/context/artifacts/diagrams/feature-design.mermaid'],
         decisions: ['Use REST API', 'PostgreSQL for persistence'],
       },
       failure: {

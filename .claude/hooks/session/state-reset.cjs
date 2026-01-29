@@ -38,7 +38,7 @@ function getCurrentSessionId() {
       const state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
       return state.sessionId || null;
     }
-  } catch (err) {
+  } catch (_err) {
     // Ignore errors
   }
   return null;

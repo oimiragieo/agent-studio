@@ -36,20 +36,15 @@ describe('FeatureFlagManager', () => {
           enabled: false,
           maxAgents: 5,
           turnLimit: 20,
-          costLimit: 50.0
+          costLimit: 50.0,
         },
         advancedElicitation: {
           enabled: false,
-          methods: [
-            'first-principles',
-            'pre-mortem',
-            'socratic',
-            'red-team-blue-team'
-          ],
+          methods: ['first-principles', 'pre-mortem', 'socratic', 'red-team-blue-team'],
           costBudget: 10.0,
-          minConfidence: 0.7
-        }
-      }
+          minConfidence: 0.7,
+        },
+      },
     };
 
     fs.writeFileSync(configPath, yaml.dump(testConfig), 'utf8');
@@ -170,6 +165,9 @@ describe('FeatureFlagManager', () => {
     FeatureFlagManager = require('../feature-flags.cjs');
 
     assert.strictEqual(FeatureFlagManager.isEnabled('features.advancedElicitation.enabled'), true);
-    assert.strictEqual(typeof FeatureFlagManager.isEnabled('features.advancedElicitation.enabled'), 'boolean');
+    assert.strictEqual(
+      typeof FeatureFlagManager.isEnabled('features.advancedElicitation.enabled'),
+      'boolean'
+    );
   });
 });

@@ -32,7 +32,7 @@ function cleanupTestDir() {
 }
 
 // Simple test runner
-let tests = [];
+const tests = [];
 let passed = 0;
 let failed = 0;
 

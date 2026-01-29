@@ -1,7 +1,7 @@
 # Staging Environment Configuration
 # This configuration is used when AGENT_STUDIO_ENV=staging
 
-version: "2.2.1"
+version: '2.2.1'
 environment: staging
 
 # --- Router Configuration (The Gatekeeper) ---
@@ -86,19 +86,19 @@ features:
 # --- Staging-Specific Paths ---
 # All staging data stored in .claude/staging/ to isolate from development/production
 paths:
-  knowledge: ".claude/staging/knowledge"
-  metrics: ".claude/staging/metrics"
-  memory: ".claude/staging/memory"
-  agents: ".claude/staging/agents"
-  sessions: ".claude/staging/sessions"
-  context: ".claude/staging/context"
+  knowledge: '.claude/staging/knowledge'
+  metrics: '.claude/staging/metrics'
+  memory: '.claude/staging/memory'
+  agents: '.claude/staging/agents'
+  sessions: '.claude/staging/sessions'
+  context: '.claude/staging/context'
 
 # --- Storage Configuration ---
 storage:
-  costLog: ".claude/staging/metrics/llm-usage.log"
-  sessionLog: ".claude/staging/sessions/session-log.jsonl"
-  evolutionState: ".claude/staging/context/evolution-state.json"
-  metricsDir: ".claude/staging/metrics"
+  costLog: '.claude/staging/metrics/llm-usage.log'
+  sessionLog: '.claude/staging/sessions/session-log.jsonl'
+  evolutionState: '.claude/staging/context/evolution-state.json'
+  metricsDir: '.claude/staging/metrics'
 
 # --- Test Data Configuration ---
 testData:

@@ -21,7 +21,7 @@ import { resolveConfigPath } from '../../.claude/tools/context-path-resolver.mjs
 let yaml;
 try {
   yaml = (await import('js-yaml')).default;
-} catch (error) {
+} catch (_error) {
   console.error('='.repeat(60));
   console.error('ERROR: js-yaml is required for config validation');
   console.error('='.repeat(60));
@@ -118,7 +118,7 @@ function validateYAML(path, description) {
 }
 
 // Validate JSON file
-function validateJSON(path, description) {
+function _validateJSON(path, description) {
   const fullPath = resolve(rootDir, path);
   if (!existsSync(fullPath)) {
     errors.push(`Missing ${description}: ${path}`);
@@ -301,7 +301,7 @@ function validateConfig() {
             }
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // Already reported as YAML error
       }
     } else {
@@ -315,7 +315,7 @@ function validateConfig() {
             referencedSchemas.add(schemaPath);
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // Skip if can't read
       }
     }
@@ -393,7 +393,7 @@ function validateConfig() {
             }
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // Already reported as YAML error
       }
     }
@@ -697,7 +697,7 @@ function validateConfig() {
               templateReferences.add(templateRef);
             });
           }
-        } catch (error) {
+        } catch (_error) {
           // Skip if can't read
         }
       }
@@ -707,7 +707,7 @@ function validateConfig() {
   }
 
   // Find template references in skill files
-  for (const { path: skillPath, name } of skillFiles) {
+  for (const { path: skillPath, _name } of skillFiles) {
     try {
       const content = readFileSync(skillPath, 'utf-8');
       const templateMatches = content.match(/\.claude\/templates\/[a-z0-9-]+\.md/g);
@@ -716,7 +716,7 @@ function validateConfig() {
           templateReferences.add(templateRef);
         });
       }
-    } catch (error) {
+    } catch (_error) {
       // Skip if can't read
     }
   }
@@ -878,7 +878,7 @@ function validateConfig() {
       }
 
       // Validate SDK-compatible structure (camelCase keys)
-      const validKeys = [
+      const _validKeys = [
         'agents',
         'allowedTools',
         'disallowedTools',

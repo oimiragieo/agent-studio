@@ -129,10 +129,40 @@ function identifyAgreements(responses) {
 function extractKeywords(content) {
   const keywords = [];
   const stopWords = new Set([
-    'a', 'an', 'the', 'is', 'are', 'was', 'were', 'be', 'been',
-    'for', 'to', 'of', 'in', 'on', 'at', 'by', 'with', 'from', 'as',
-    'and', 'or', 'but', 'if', 'we', 'i', 'you', 'they', 'this', 'that',
-    'it', 'should', 'will', 'can', 'would',
+    'a',
+    'an',
+    'the',
+    'is',
+    'are',
+    'was',
+    'were',
+    'be',
+    'been',
+    'for',
+    'to',
+    'of',
+    'in',
+    'on',
+    'at',
+    'by',
+    'with',
+    'from',
+    'as',
+    'and',
+    'or',
+    'but',
+    'if',
+    'we',
+    'i',
+    'you',
+    'they',
+    'this',
+    'that',
+    'it',
+    'should',
+    'will',
+    'can',
+    'would',
   ]);
 
   // Extract 2-3 word phrases
@@ -140,7 +170,7 @@ function extractKeywords(content) {
     .toLowerCase()
     .replace(/[^\w\s]/g, ' ')
     .split(/\s+/)
-    .filter((w) => w.length > 2 && !stopWords.has(w));
+    .filter(w => w.length > 2 && !stopWords.has(w));
 
   for (let i = 0; i < words.length - 1; i++) {
     const bigram = `${words[i]} ${words[i + 1]}`;
@@ -154,7 +184,9 @@ function extractKeywords(content) {
 
   // Also include significant single words
   const significantWords = words.filter(
-    (w) => w.length > 5 || /^(typescript|postgresql|mongodb|jwt|api|database|security|caching|test)$/.test(w)
+    w =>
+      w.length > 5 ||
+      /^(typescript|postgresql|mongodb|jwt|api|database|security|caching|test)$/.test(w)
   );
   keywords.push(...significantWords);
 
@@ -180,9 +212,9 @@ function identifyDisagreements(responses) {
     'rather than',
   ];
 
-  const responsesWithDisagreement = responses.filter((r) => {
+  const responsesWithDisagreement = responses.filter(r => {
     const content = (r.content || r.response || '').toLowerCase();
-    return disagreementMarkers.some((marker) => content.includes(marker));
+    return disagreementMarkers.some(marker => content.includes(marker));
   });
 
   if (responsesWithDisagreement.length === 0) {
@@ -222,7 +254,7 @@ function identifyDisagreements(responses) {
 
     // Extract stance (main recommendation)
     const stanceMatch = content.match(
-      /\b(?:recommend|prefer|suggest|choose|use)\s+([A-Za-z0-9\s]+?)(?:\s+for|\s+because|\.|\,)/i
+      /\b(?:recommend|prefer|suggest|choose|use)\s+([A-Za-z0-9\s]+?)(?:\s+for|\s+because|\.|,)/i
     );
     const stance = stanceMatch ? stanceMatch[1].trim() : content.substring(0, 100);
 
@@ -241,9 +273,7 @@ function identifyDisagreements(responses) {
   for (const [topic, positions] of topics.entries()) {
     if (positions.length >= 2) {
       // Check if stances are different
-      const uniqueStances = new Set(
-        positions.map((p) => p.stance.toLowerCase().substring(0, 20))
-      );
+      const uniqueStances = new Set(positions.map(p => p.stance.toLowerCase().substring(0, 20)));
       if (uniqueStances.size >= 2) {
         disagreements.push({
           topic,
@@ -287,18 +317,9 @@ function aggregateResponses(sessionId, round, agentResponses) {
   }
 
   // Count total decisions and action items
-  const totalDecisions = allKeyPoints.reduce(
-    (sum, kp) => sum + kp.decisions.length,
-    0
-  );
-  const totalActions = allKeyPoints.reduce(
-    (sum, kp) => sum + kp.actionItems.length,
-    0
-  );
-  const totalConcerns = allKeyPoints.reduce(
-    (sum, kp) => sum + kp.concerns.length,
-    0
-  );
+  const totalDecisions = allKeyPoints.reduce((sum, kp) => sum + kp.decisions.length, 0);
+  const totalActions = allKeyPoints.reduce((sum, kp) => sum + kp.actionItems.length, 0);
+  const totalConcerns = allKeyPoints.reduce((sum, kp) => sum + kp.concerns.length, 0);
 
   summary += `- ${totalDecisions} decision(s), ${totalActions} action item(s), ${totalConcerns} concern(s) raised`;
 

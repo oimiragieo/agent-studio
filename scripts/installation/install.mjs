@@ -16,7 +16,7 @@
  * If target-directory is not provided, uses current directory.
  */
 
-import { copyFileSync, mkdirSync, readdirSync, statSync, existsSync, rmSync } from 'fs';
+import { copyFileSync, mkdirSync, readdirSync, _statSync, existsSync, rmSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
@@ -172,7 +172,7 @@ function main() {
         cwd: targetDir,
       });
       console.log('\n+ Dependencies installed successfully');
-    } catch (error) {
+    } catch (_error) {
       console.warn('\n+ Warning: Dependency installation failed');
       console.warn('   Run manually: cd ' + targetDir + ' && pnpm install');
     }
@@ -192,7 +192,7 @@ function main() {
         console.warn('+ Validation script not found, skipping validation');
         console.warn('   Run manually: node scripts/validate-config.mjs');
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('\n+ Configuration validation found issues (see above)');
       console.warn('   You may need to fix these before using the agents');
     }

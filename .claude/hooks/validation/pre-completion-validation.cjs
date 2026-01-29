@@ -27,7 +27,13 @@ const { execSync } = require('child_process');
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
 // Paths
-const VALIDATION_SCRIPT = path.join(PROJECT_ROOT, '.claude', 'tools', 'cli', 'validate-integration.cjs');
+const VALIDATION_SCRIPT = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'tools',
+  'cli',
+  'validate-integration.cjs'
+);
 
 /**
  * Extract task metadata from TaskUpdate parameters.
@@ -40,7 +46,7 @@ function extractTaskMetadata(params) {
       summary: metadata.summary || '',
       taskId: params.taskId,
     };
-  } catch (err) {
+  } catch (_err) {
     return { filesModified: [], summary: '', taskId: null };
   }
 }
@@ -65,10 +71,10 @@ function detectArtifacts(filesModified) {
       const type = normalizedPath.includes('/agents/')
         ? 'agent'
         : normalizedPath.includes('/skills/')
-        ? 'skill'
-        : normalizedPath.includes('/workflows/')
-        ? 'workflow'
-        : 'hook';
+          ? 'skill'
+          : normalizedPath.includes('/workflows/')
+            ? 'workflow'
+            : 'hook';
 
       artifacts.push({
         path: filePath,
@@ -222,7 +228,7 @@ function main(hookInput) {
 // Read hook input from stdin
 let hookInput = '';
 process.stdin.setEncoding('utf-8');
-process.stdin.on('data', (chunk) => {
+process.stdin.on('data', chunk => {
   hookInput += chunk;
 });
 process.stdin.on('end', () => {

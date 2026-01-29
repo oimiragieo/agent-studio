@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.join(__dirname, '../..');
 
 const RULE_INDEX_PATH = resolveConfigPath('rule-index.json', { read: true });
-const PACKAGE_JSON_PATH = path.join(ROOT, 'package.json');
+const _PACKAGE_JSON_PATH = path.join(ROOT, 'package.json');
 
 // Expected rule index version (increment when index structure changes)
 const EXPECTED_INDEX_VERSION = '1.1.0';
@@ -32,7 +32,7 @@ const EXPECTED_INDEX_VERSION = '1.1.0';
 /**
  * Check if file exists
  */
-async function fileExists(filePath) {
+async function _fileExists(filePath) {
   try {
     await fs.access(filePath);
     return true;
@@ -134,7 +134,7 @@ async function validateRuleIndexPaths(fix = false, skipVersionCheck = false) {
     // Version check (unless skipped)
     if (!skipVersionCheck) {
       const versionResult = await validateVersion();
-      const exitCode = displayVersionCheck(versionResult, false);
+      const _exitCode = displayVersionCheck(versionResult, false);
 
       if (!versionResult.valid) {
         console.log('⚠️  Warning: Version check failed. Continuing with path validation...\n');

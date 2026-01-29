@@ -27,7 +27,7 @@ const {
 } = require('../../lib/utils/hook-input.cjs');
 
 // SEC-SF-001 FIX: Import safe JSON parser
-const { safeParseJSON, SCHEMAS } = require('../../lib/utils/safe-json.cjs');
+const { _safeParseJSON, _SCHEMAS } = require('../../lib/utils/safe-json.cjs');
 
 // PERF-004 FIX: Import state cache for TTL-based caching of evolution-state.json
 const { getCachedState } = require('../../lib/utils/state-cache.cjs');
@@ -38,85 +38,84 @@ const WRITE_TOOLS = ['Edit', 'Write', 'NotebookEdit'];
 // Valid path patterns for each directory category
 const VALID_PATHS = {
   // Agent definitions
-  agents:
-    /^\.claude[\/\\]agents[\/\\](core|domain|specialized|orchestrators)[\/\\][a-z0-9-]+\.md$/i,
+  agents: /^\.claude[/\\]agents[/\\](core|domain|specialized|orchestrators)[/\\][a-z0-9-]+\.md$/i,
 
   // Skill definitions (must be SKILL.md in skill folder, or metadata/tests/examples)
   skills:
-    /^\.claude[\/\\]skills[\/\\][a-z0-9-]+[\/\\](SKILL\.md|metadata\.json|examples[\/\\]|tests[\/\\])/i,
+    /^\.claude[/\\]skills[/\\][a-z0-9-]+[/\\](SKILL\.md|metadata\.json|examples[/\\]|tests[/\\])/i,
 
   // Hooks (categorized by function)
   hooks:
-    /^\.claude[\/\\]hooks[\/\\](routing|safety|memory|evolution|session|validation|reflection|self-healing)[\/\\][a-z0-9-]+\.(cjs|test\.cjs)$/i,
+    /^\.claude[/\\]hooks[/\\](routing|safety|memory|evolution|session|validation|reflection|self-healing)[/\\][a-z0-9-]+\.(cjs|test\.cjs)$/i,
 
   // Workflows (categorized)
   workflows:
-    /^\.claude[\/\\]workflows[\/\\](core|enterprise|operations|rapid)[\/\\][a-z0-9-]+\.(md|yaml)$/i,
+    /^\.claude[/\\]workflows[/\\](core|enterprise|operations|rapid)[/\\][a-z0-9-]+\.(md|yaml)$/i,
 
   // Context artifacts - plans
-  context_plans: /^\.claude[\/\\]context[\/\\]artifacts[\/\\]plans[\/\\]/i,
+  context_plans: /^\.claude[/\\]context[/\\]artifacts[/\\]plans[/\\]/i,
 
   // Context artifacts - reports
-  context_reports: /^\.claude[\/\\]context[\/\\]artifacts[\/\\]reports[\/\\]/i,
+  context_reports: /^\.claude[/\\]context[/\\]artifacts[/\\]reports[/\\]/i,
 
   // Context artifacts - research reports
-  context_research: /^\.claude[\/\\]context[\/\\]artifacts[\/\\]research-reports[\/\\]/i,
+  context_research: /^\.claude[/\\]context[/\\]artifacts[/\\]research-reports[/\\]/i,
 
   // Context artifacts - diagrams
-  context_diagrams: /^\.claude[\/\\]context[\/\\]artifacts[\/\\]diagrams[\/\\]/i,
+  context_diagrams: /^\.claude[/\\]context[/\\]artifacts[/\\]diagrams[/\\]/i,
 
   // Context memory
-  context_memory: /^\.claude[\/\\]context[\/\\]memory[\/\\]/i,
+  context_memory: /^\.claude[/\\]context[/\\]memory[/\\]/i,
 
   // Context config
-  context_config: /^\.claude[\/\\]context[\/\\]config[\/\\]/i,
+  context_config: /^\.claude[/\\]context[/\\]config[/\\]/i,
 
   // Context runtime (temporary state)
-  context_runtime: /^\.claude[\/\\]context[\/\\]runtime[\/\\]/i,
+  context_runtime: /^\.claude[/\\]context[/\\]runtime[/\\]/i,
 
   // Context checkpoints
-  context_checkpoints: /^\.claude[\/\\]context[\/\\]checkpoints[\/\\]/i,
+  context_checkpoints: /^\.claude[/\\]context[/\\]checkpoints[/\\]/i,
 
   // Context sessions
-  context_sessions: /^\.claude[\/\\]context[\/\\]sessions[\/\\]/i,
+  context_sessions: /^\.claude[/\\]context[/\\]sessions[/\\]/i,
 
   // Context tmp (auto-cleaned)
-  context_tmp: /^\.claude[\/\\]context[\/\\]tmp[\/\\]/i,
+  context_tmp: /^\.claude[/\\]context[/\\]tmp[/\\]/i,
 
   // Context backups
-  context_backups: /^\.claude[\/\\]context[\/\\]backups[\/\\]/i,
+  context_backups: /^\.claude[/\\]context[/\\]backups[/\\]/i,
 
   // Templates
-  templates: /^\.claude[\/\\]templates[\/\\]/i,
+  templates: /^\.claude[/\\]templates[/\\]/i,
 
   // Schemas
-  schemas: /^\.claude[\/\\]schemas[\/\\][a-z0-9-]+\.schema\.json$/i,
+  schemas: /^\.claude[/\\]schemas[/\\][a-z0-9-]+\.schema\.json$/i,
 
   // Documentation
-  docs: /^\.claude[\/\\]docs[\/\\][a-zA-Z0-9_-]+\.md$/i,
+  docs: /^\.claude[/\\]docs[/\\][a-zA-Z0-9_-]+\.md$/i,
 
   // Root-level CLAUDE.md
-  claude_md: /^\.claude[\/\\]CLAUDE\.md$/i,
+  claude_md: /^\.claude[/\\]CLAUDE\.md$/i,
 
   // Config files at root
-  config_yaml: /^\.claude[\/\\]config\.yaml$/i,
-  settings_json: /^\.claude[\/\\]settings(\.local)?\.json$/i,
-  mcp_json: /^\.claude[\/\\]\.mcp\.json$/i,
+  config_yaml: /^\.claude[/\\]config\.yaml$/i,
+  settings_json: /^\.claude[/\\]settings(\.local)?\.json$/i,
+  mcp_json: /^\.claude[/\\]\.mcp\.json$/i,
 
   // Gitkeep files anywhere in .claude
-  gitkeep: /^\.claude[\/\\].*[\/\\]?\.gitkeep$/i,
+  gitkeep: /^\.claude[/\\].*[/\\]?\.gitkeep$/i,
 };
 
 // Forbidden paths - always blocked (framework internals)
 const FORBIDDEN_PATHS = [
-  /^\.claude[\/\\]lib[\/\\]/i, // Internal libraries - framework only
-  /^\.claude[\/\\]tools[\/\\]/i, // CLI tools - should not be auto-generated
+  /^\.claude[/\\]lib[/\\]/i, // Internal libraries - framework only
+  /^\.claude[/\\]tools[/\\]/i, // CLI tools - should not be auto-generated
 ];
 
 // Files that are always allowed (framework internal operations)
 const ALWAYS_ALLOWED_PATTERNS = [
-  /\.claude[\/\\]context[\/\\]runtime[\/\\]/, // Runtime state files
-  /\.claude[\/\\]context[\/\\]tmp[\/\\]/, // Temporary files
+  /\.claude[/\\]context[/\\]runtime[/\\]/, // Runtime state files
+  /\.claude[/\\]context[/\\]tmp[/\\]/, // Temporary files
   /\.gitkeep$/, // Git keep files
 ];
 
@@ -128,8 +127,8 @@ const SENSITIVE_PATH_PATTERNS = [
   /password/i,
   /\.pem$/i,
   /\.key$/i,
-  /\.claude[\/\\]hooks[\/\\]safety[\/\\]/i, // Block auto-evolving safety hooks
-  /\.claude[\/\\]hooks[\/\\]routing[\/\\]/i, // Block auto-evolving routing hooks
+  /\.claude[/\\]hooks[/\\]safety[/\\]/i, // Block auto-evolving safety hooks
+  /\.claude[/\\]hooks[/\\]routing[/\\]/i, // Block auto-evolving routing hooks
 ];
 
 // SEC-IV-001 FIX: Dangerous characters that must be stripped from paths in prompts
@@ -213,7 +212,7 @@ const CREATION_ALLOWED_STATES = ['lock', 'verify', 'enable'];
  * @deprecated HOOK-002 FIX: Use PROJECT_ROOT from shared utility instead.
  *             This function is kept for backward compatibility with module.exports.
  */
-function findProjectRoot(startPath) {
+function findProjectRoot(_startPath) {
   // HOOK-002 FIX: Simply return the pre-computed PROJECT_ROOT from shared utility
   // The shared utility already handles finding project root correctly.
   // startPath parameter is ignored - the shared utility computes root at module load time.
@@ -273,7 +272,7 @@ function isPathSafe(filePath, projectRoot) {
 
   // Normalize both paths for comparison
   const normalizedFilePath = filePath.replace(/\\/g, '/');
-  const normalizedRoot = projectRoot.replace(/\\/g, '/');
+  const _normalizedRoot = projectRoot.replace(/\\/g, '/');
 
   // Check for path traversal patterns BEFORE resolution
   for (const pattern of PATH_TRAVERSAL_PATTERNS) {
@@ -286,7 +285,7 @@ function isPathSafe(filePath, projectRoot) {
   let resolvedPath;
   try {
     resolvedPath = path.resolve(projectRoot, filePath);
-  } catch (e) {
+  } catch (_e) {
     return { safe: false, reason: 'Failed to resolve path' };
   }
 
@@ -541,7 +540,7 @@ function validateHookInput(content) {
         if (value !== null && typeof value === 'object') {
           try {
             validated[key] = JSON.parse(JSON.stringify(value));
-          } catch (e) {
+          } catch (_e) {
             validated[key] = null;
           }
         } else {
@@ -551,7 +550,7 @@ function validateHookInput(content) {
     }
 
     return Object.assign({}, validated);
-  } catch (e) {
+  } catch (_e) {
     // JSON parse failed
     return null;
   }
@@ -564,7 +563,7 @@ function validateHookInput(content) {
 /**
  * Extract file path from tool input
  */
-function getFilePath(toolInput) {
+function _getFilePath(toolInput) {
   if (!toolInput) return null;
 
   // Try common parameter names
@@ -645,7 +644,7 @@ function isValidPath(filePath) {
   }
 
   // Special case: root level files that aren't in our allow list
-  const rootLevelMatch = /^\.claude[\/\\]([^\/\\]+)$/.exec(relativePath);
+  const rootLevelMatch = /^\.claude[/\\]([^/\\]+)$/.exec(relativePath);
   if (rootLevelMatch) {
     const fileName = rootLevelMatch[1];
     return {
@@ -655,7 +654,7 @@ function isValidPath(filePath) {
   }
 
   // Check for direct writes to context/ without proper subdirectory
-  if (/^\.claude[\/\\]context[\/\\][^\/\\]+$/.test(relativePath)) {
+  if (/^\.claude[/\\]context[/\\][^/\\]+$/.test(relativePath)) {
     return {
       valid: false,
       reason: 'Files must be in context subdirectories (artifacts/, memory/, config/, etc.)',
@@ -663,8 +662,8 @@ function isValidPath(filePath) {
   }
 
   // Check for direct writes to artifacts/ without category subdirectory
-  if (/^\.claude[\/\\]context[\/\\]artifacts[\/\\][^\/\\]+$/.test(relativePath)) {
-    const match = /^\.claude[\/\\]context[\/\\]artifacts[\/\\]([^\/\\]+)$/.exec(relativePath);
+  if (/^\.claude[/\\]context[/\\]artifacts[/\\][^/\\]+$/.test(relativePath)) {
+    const match = /^\.claude[/\\]context[/\\]artifacts[/\\]([^/\\]+)$/.exec(relativePath);
     const fileName = match ? match[1] : 'file';
     // Allow .gitkeep
     if (fileName === '.gitkeep') {
@@ -771,7 +770,7 @@ function formatEvolveBlockedMessage(toolName, filePath, evolveResult) {
 /**
  * Format EVOLVE warning message box
  */
-function formatEvolveWarningMessage(toolName, filePath, evolveResult) {
+function formatEvolveWarningMessage(toolName, filePath, _evolveResult) {
   const fileName = filePath ? path.basename(filePath) : 'unknown';
 
   const lines = [

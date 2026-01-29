@@ -88,7 +88,7 @@ function getEvolutionState() {
     }
     // Fallback to safeReadJSON for validation if cache returned null (new file)
     return safeReadJSON(EVOLUTION_STATE_PATH, 'evolution-state');
-  } catch (e) {
+  } catch (_e) {
     // File might be corrupted or locked
     return null;
   }

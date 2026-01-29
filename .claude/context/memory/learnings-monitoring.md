@@ -37,6 +37,7 @@
 ### Storage Format
 
 **JSONL** (JSON Lines) chosen for:
+
 - Append-only efficiency (no parsing entire file for writes)
 - Streaming reads (process line-by-line)
 - Easy grep/search
@@ -47,6 +48,7 @@
 ### Configuration
 
 Added to `.claude/config.yaml`:
+
 ```yaml
 monitoring:
   enabled: true
@@ -68,6 +70,7 @@ monitoring:
 ### 1. Hook Integration Pattern
 
 Monitoring hooks follow standard hook protocol:
+
 - `preToolUse`: Store start time in context
 - `postToolUse`: Calculate duration, log metric
 - `sessionStart/sessionEnd`: Log session boundaries
@@ -77,10 +80,11 @@ Monitoring hooks follow standard hook protocol:
 ### 2. Rate Limiting Strategy
 
 Simple hour-based rate limiting:
+
 ```javascript
 const rateLimitState = {
   hour: new Date().getHours(),
-  count: 0
+  count: 0,
 };
 ```
 
@@ -89,6 +93,7 @@ Resets automatically when hour changes. No complex windowing needed.
 ### 3. Error Classification
 
 Automatic severity assignment based on source:
+
 - Security violations → CRITICAL
 - Validation/routing errors → HIGH
 - Hook failures → MEDIUM
@@ -99,6 +104,7 @@ No manual severity assignment needed at error site.
 ### 4. Metric Validation (SEC-MON-001)
 
 Every metric validated before logging:
+
 - Timestamp must be ISO 8601 string
 - Numeric values must be non-negative
 - Status must be 'success' or 'failure'
@@ -109,6 +115,7 @@ Prevents invalid data from corrupting aggregations.
 ### 5. Dashboard Rendering
 
 ASCII box drawing characters for professional look:
+
 ```
 ╔═══╗  Top border
 ║   ║  Sides
@@ -122,12 +129,12 @@ Table alignment: Calculate column widths, pad strings.
 
 ## Performance Characteristics
 
-| Component | Overhead | Actual |
-|-----------|----------|--------|
-| Metrics collection | <1ms target | ~0.5ms measured |
-| Error tracking | <1ms target | ~0.3ms measured |
-| File write (append) | ~1ms | Non-blocking async |
-| Dashboard render | <100ms for 1000 entries | ~50ms measured |
+| Component           | Overhead                | Actual             |
+| ------------------- | ----------------------- | ------------------ |
+| Metrics collection  | <1ms target             | ~0.5ms measured    |
+| Error tracking      | <1ms target             | ~0.3ms measured    |
+| File write (append) | ~1ms                    | Non-blocking async |
+| Dashboard render    | <100ms for 1000 entries | ~50ms measured     |
 
 **Total overhead**: <1ms per hook execution (within target)
 
@@ -136,16 +143,19 @@ Table alignment: Calculate column widths, pad strings.
 ## Security Controls
 
 ### SEC-MON-001: Metrics Validation
+
 - Schema validation before logging
 - Prevents invalid data injection
 - No sensitive data in metrics
 
 ### SEC-MON-002: Rate Limiting
+
 - 10,000 hook metrics/hour
 - 5,000 error metrics/hour
 - Prevents log flooding attacks
 
 ### SEC-MON-003: Access Control
+
 - Only monitoring hooks can write to metrics files
 - Regular code cannot directly manipulate metrics
 - Metrics directory: `.claude/context/metrics/`
@@ -159,6 +169,7 @@ Table alignment: Calculate column widths, pad strings.
 Created test file: `.claude/hooks/monitoring/metrics-collector.test.cjs`
 
 Tests:
+
 1. preToolUse stores start time in context
 2. postToolUse logs metric on success
 3. postToolUse logs metric on failure
@@ -169,11 +180,13 @@ All tests passing (4/4).
 ### Integration Testing
 
 Tested dashboard with real metrics from test runs:
+
 ```bash
 node .claude/tools/cli/monitoring-dashboard.cjs --summary
 ```
 
 Output verified:
+
 - Hook performance section rendering correctly
 - Error statistics displaying
 - Alerts triggering on threshold violations
@@ -186,13 +199,15 @@ Output verified:
 ### Issue 1: Path Resolution in CLI Tool
 
 **Problem**: Relative require paths failed in CLI tool
+
 ```javascript
-require('../../.claude/lib/monitoring/metrics-reader.cjs')
+require('../../.claude/lib/monitoring/metrics-reader.cjs');
 ```
 
 **Solution**: Use absolute paths from process.cwd()
+
 ```javascript
-path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'metrics-reader.cjs')
+path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'metrics-reader.cjs');
 ```
 
 ### Issue 2: ES Module vs CommonJS
@@ -214,6 +229,7 @@ path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'metrics-reader.cjs')
 ### With Cost Tracking
 
 Monitoring complements cost tracking:
+
 - Cost tracking: LLM token usage → billing
 - Monitoring: System performance → operations
 
@@ -222,6 +238,7 @@ Both use JSONL format, similar storage patterns.
 ### With Task Management
 
 High error rates can trigger task creation:
+
 ```javascript
 if (errorRate > threshold) {
   TaskCreate({ subject: 'Investigate errors', ... });
@@ -231,6 +248,7 @@ if (errorRate > threshold) {
 ### With Memory Protocol
 
 Monitoring insights recorded in learnings.md:
+
 - Performance patterns
 - Error trends
 - Optimization opportunities
@@ -240,22 +258,26 @@ Monitoring insights recorded in learnings.md:
 ## Future Enhancements
 
 ### Phase 2: Agent Performance Tracking
+
 - Track agent spawn time
 - Monitor task completion duration
 - Token usage per agent
 - Agent failure rates
 
 ### Phase 3: Alert Integration
+
 - Email/Slack notifications
 - Webhook support
 - Alert escalation rules
 
 ### Phase 4: Historical Analytics
+
 - Trend analysis over time
 - Anomaly detection
 - Capacity planning
 
 ### Phase 5: Distributed Tracing
+
 - Trace requests across hook chains
 - Visualize execution flows
 - Identify cascading failures
@@ -267,6 +289,7 @@ Monitoring insights recorded in learnings.md:
 Created comprehensive guide: `.claude/docs/MONITORING.md`
 
 Sections:
+
 - Quick start commands
 - Component descriptions
 - Configuration reference
@@ -279,6 +302,7 @@ Sections:
 ## Metrics After Implementation
 
 **Files Created**: 7 files
+
 - 2 hooks (metrics-collector, error-tracker)
 - 2 lib files (metrics-reader, dashboard-renderer)
 - 1 CLI tool (monitoring-dashboard)
@@ -286,6 +310,7 @@ Sections:
 - 1 documentation file (MONITORING.md)
 
 **Lines of Code**: ~600 lines
+
 - metrics-collector.cjs: ~200 lines
 - error-tracker.cjs: ~150 lines
 - metrics-reader.cjs: ~200 lines

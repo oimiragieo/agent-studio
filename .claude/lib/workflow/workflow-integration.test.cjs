@@ -161,34 +161,34 @@ describe('Full Workflow Execution', () => {
     await engine.load();
 
     // Register handlers for each step
-    let executionOrder = [];
+    const executionOrder = [];
 
-    engine.registerHandler('evalHandler', async ctx => {
+    engine.registerHandler('evalHandler', async _ctx => {
       executionOrder.push('evaluate');
       return { output: { confirmed: true } };
     });
 
-    engine.registerHandler('validateHandler', async ctx => {
+    engine.registerHandler('validateHandler', async _ctx => {
       executionOrder.push('validate');
       return { output: { valid: true } };
     });
 
-    engine.registerHandler('obtainHandler', async ctx => {
+    engine.registerHandler('obtainHandler', async _ctx => {
       executionOrder.push('obtain');
       return { output: { researched: true } };
     });
 
-    engine.registerHandler('lockHandler', async ctx => {
+    engine.registerHandler('lockHandler', async _ctx => {
       executionOrder.push('lock');
       return { output: { created: true } };
     });
 
-    engine.registerHandler('verifyHandler', async ctx => {
+    engine.registerHandler('verifyHandler', async _ctx => {
       executionOrder.push('verify');
       return { output: { verified: true } };
     });
 
-    engine.registerHandler('enableHandler', async ctx => {
+    engine.registerHandler('enableHandler', async _ctx => {
       executionOrder.push('enable');
       return { output: { enabled: true } };
     });
@@ -296,7 +296,7 @@ describe('Cross-Workflow Triggering', () => {
     const trigger = new CrossWorkflowTrigger(null); // No engine, use handlers
 
     // Register handlers for workflows
-    let executionLog = [];
+    const executionLog = [];
 
     trigger.registerTriggerHandler('workflow-a', async ctx => {
       executionLog.push('workflow-a');
@@ -349,7 +349,7 @@ describe('Cross-Workflow Triggering', () => {
     const { CrossWorkflowTrigger } = require('./cross-workflow-trigger.cjs');
 
     const trigger = new CrossWorkflowTrigger(null);
-    let completionTimes = {};
+    const completionTimes = {};
 
     trigger.registerTriggerHandler('fast', async () => {
       completionTimes.fast = Date.now();
@@ -457,7 +457,7 @@ describe('Checkpoint and Resume', () => {
     await manager.save('workflow-cleanup', { phase: 'lock', stepIndex: 3 });
 
     // Cleanup
-    const result = await manager.cleanup(Infinity, 2);
+    const _result = await manager.cleanup(Infinity, 2);
 
     const remaining = await manager.list('workflow-cleanup');
     assertEqual(remaining.length, 2, 'Should have only 2 checkpoints after cleanup');
@@ -480,7 +480,7 @@ describe('Rollback Scenarios', () => {
     // Begin transaction
     await saga.begin('test-workflow');
 
-    let compensationsCalled = [];
+    const compensationsCalled = [];
 
     // Record actions
     saga.record({
@@ -549,7 +549,7 @@ describe('Rollback Scenarios', () => {
 
     await saga.begin('test-workflow');
 
-    let compensationsCalled = [];
+    const compensationsCalled = [];
 
     saga.record({
       stepId: 'step1',

@@ -102,7 +102,7 @@ let originalQueueFile;
 try {
   originalQueueFile = hook.QUEUE_FILE;
   hook.QUEUE_FILE = TEST_QUEUE_FILE;
-} catch (e) {
+} catch (_e) {
   // Ignore if not settable
 }
 
@@ -621,7 +621,7 @@ console.log('========================================\n');
 cleanupTestQueue();
 try {
   hook.QUEUE_FILE = originalQueueFile;
-} catch (e) {
+} catch (_e) {
   // Ignore
 }
 

@@ -21,12 +21,14 @@ Party Mode supports 4 rollback levels with increasing scope and duration.
 **Scope**: Disable Party Mode, all other features continue
 
 **Impact**:
+
 - Party Mode unavailable for all users
 - Active sessions terminate gracefully
 - Router falls back to single-agent spawning
 - Zero data loss (audit logs preserved)
 
 **When to Use**:
+
 - CRITICAL security incident (SEC-PM-004 or SEC-PM-006 violation)
 - Session success rate <80%
 - Immediate emergency disable needed
@@ -40,12 +42,14 @@ Party Mode supports 4 rollback levels with increasing scope and duration.
 **Scope**: Restore previous config.yaml state
 
 **Impact**:
+
 - Party Mode configuration reverted to previous version
 - Rate limits, team definitions restored to last known good
 - Active sessions may terminate (config change)
 - Minimal data loss (in-flight sessions only)
 
 **When to Use**:
+
 - Bad configuration deployed (wrong rate limits, invalid team CSV)
 - Performance degradation after config change
 - Feature flag disable insufficient (config issue)
@@ -59,12 +63,14 @@ Party Mode supports 4 rollback levels with increasing scope and duration.
 **Scope**: Revert Party Mode code to previous git commit
 
 **Impact**:
+
 - All Party Mode Phase 1-4 code reverted
 - Security controls restored to previous version
 - All active sessions terminate
 - Audit logs preserved (data safe)
 
 **When to Use**:
+
 - Critical bug in Phase 1-4 implementation
 - Security vulnerability discovered in code
 - Performance regression after code deploy
@@ -79,12 +85,14 @@ Party Mode supports 4 rollback levels with increasing scope and duration.
 **Scope**: Restore entire agent-studio codebase to pre-Party Mode state
 
 **Impact**:
+
 - Party Mode completely removed
 - All Party Mode files deleted
 - Codebase restored to Phase 0 (before Party Mode implementation)
 - All audit logs archived (not deleted)
 
 **When to Use**:
+
 - System compromise suspected (orchestrator breach)
 - Multiple CRITICAL violations across sessions
 - Data exfiltration detected
@@ -98,38 +106,40 @@ Party Mode supports 4 rollback levels with increasing scope and duration.
 
 ### Rollback Decision Matrix
 
-| Condition | Level | Urgency | Authority Required |
-|-----------|-------|---------|-------------------|
-| **SEC-PM-004 violation** (context leakage) | Level 1 | Immediate | On-call engineer |
-| **SEC-PM-006 violation** (memory boundary) | Level 1 | Immediate | On-call engineer |
-| **Session success rate <80%** | Level 1 | Within 15 min | On-call engineer |
-| **Agent spawn failure rate >10%** | Level 1 | Within 15 min | On-call engineer |
-| **Bad configuration deployed** | Level 2 | Within 30 min | DevOps engineer |
-| **Performance degradation >2x** | Level 2 | Within 1 hour | DevOps engineer |
-| **Critical bug in code** | Level 3 | Within 2 hours | Engineering lead |
-| **Security vulnerability in code** | Level 3 | Within 1 hour | Security architect |
-| **System compromise suspected** | Level 4 | Immediate | CTO + Security architect |
-| **Multiple CRITICAL violations** | Level 4 | Within 4 hours | CTO + Security architect |
+| Condition                                  | Level   | Urgency        | Authority Required       |
+| ------------------------------------------ | ------- | -------------- | ------------------------ |
+| **SEC-PM-004 violation** (context leakage) | Level 1 | Immediate      | On-call engineer         |
+| **SEC-PM-006 violation** (memory boundary) | Level 1 | Immediate      | On-call engineer         |
+| **Session success rate <80%**              | Level 1 | Within 15 min  | On-call engineer         |
+| **Agent spawn failure rate >10%**          | Level 1 | Within 15 min  | On-call engineer         |
+| **Bad configuration deployed**             | Level 2 | Within 30 min  | DevOps engineer          |
+| **Performance degradation >2x**            | Level 2 | Within 1 hour  | DevOps engineer          |
+| **Critical bug in code**                   | Level 3 | Within 2 hours | Engineering lead         |
+| **Security vulnerability in code**         | Level 3 | Within 1 hour  | Security architect       |
+| **System compromise suspected**            | Level 4 | Immediate      | CTO + Security architect |
+| **Multiple CRITICAL violations**           | Level 4 | Within 4 hours | CTO + Security architect |
 
 ### Automatic Rollback Triggers
 
 **Circuit Breaker** (automatic Level 1 rollback):
 
 Trigger if ALL of:
+
 - SEC-PM-004 or SEC-PM-006 violation count >0 in last hour
 - Session success rate <70% over last 100 sessions
 - No manual intervention within 15 minutes of first alert
 
 **Implementation** (monitoring system):
+
 ```yaml
 circuit_breaker:
   enabled: true
   conditions:
-    - security_violations: [ 'SEC-PM-004', 'SEC-PM-006' ]
+    - security_violations: ['SEC-PM-004', 'SEC-PM-006']
     - session_success_rate: <70%
   duration: 15 minutes
   action: disable_party_mode
-  notify: [ 'on-call-engineer', 'security-team' ]
+  notify: ['on-call-engineer', 'security-team']
 ```
 
 ---
@@ -145,17 +155,20 @@ circuit_breaker:
 **Steps**:
 
 1. **Set environment variable** (highest priority):
+
    ```bash
    export PARTY_MODE_ENABLED=false
    ```
 
 2. **Verify disabled**:
+
    ```bash
    node -e "const config = require('./.claude/lib/utils/feature-flags.cjs'); console.log('Party Mode:', config.isEnabled('partyMode'))"
    # Expected output: Party Mode: false
    ```
 
 3. **Check active sessions**:
+
    ```bash
    # Extract sessions that started but did not end
    jq 'select(.eventType=="SESSION_START")' .claude/context/metrics/party-mode-audit.jsonl | \
@@ -171,12 +184,14 @@ circuit_breaker:
    - Audit log records termination reason: "feature_disabled"
 
 5. **Notify users**:
+
    ```
    NOTICE: Party Mode temporarily disabled for maintenance.
    Using single-agent mode for now. Apologies for disruption.
    ```
 
 6. **Verify rollback**:
+
    ```bash
    # Attempt to activate Party Mode
    User: "Start Party Mode session"
@@ -188,6 +203,7 @@ circuit_breaker:
    ```
 
 **Rollback Confirmation Checklist**:
+
 - [ ] Environment variable set: `PARTY_MODE_ENABLED=false`
 - [ ] Verification command confirms disabled
 - [ ] Active sessions terminated gracefully
@@ -197,6 +213,7 @@ circuit_breaker:
 **Alternative Method** (if environment variable fails):
 
 **Config file edit**:
+
 ```bash
 # Edit config
 sed -i 's/enabled: true/enabled: false/' .claude/config.yaml
@@ -213,12 +230,14 @@ touch .claude/config.yaml  # Trigger file watcher
 **Duration**: 5-10 minutes
 
 **Prerequisites**:
+
 - Git repository with version control
 - Previous config.yaml committed
 
 **Steps**:
 
 1. **Identify last known good config** (git):
+
    ```bash
    # Show recent config changes
    git log --oneline -10 .claude/config.yaml
@@ -228,6 +247,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 2. **Restore previous config**:
+
    ```bash
    # Checkout previous version
    git checkout <commit-hash> .claude/config.yaml
@@ -237,6 +257,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 3. **Validate restored config**:
+
    ```bash
    # Check YAML syntax
    node -e "const yaml = require('yaml'); const fs = require('fs'); yaml.parse(fs.readFileSync('.claude/config.yaml', 'utf-8'))"
@@ -246,6 +267,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 4. **Test configuration** (staging):
+
    ```bash
    # Set staging environment
    export AGENT_STUDIO_ENV=staging
@@ -255,6 +277,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 5. **Apply to production**:
+
    ```bash
    # Unset environment variable (use config file)
    unset PARTY_MODE_ENABLED
@@ -271,6 +294,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 **Rollback Confirmation Checklist**:
+
 - [ ] Last known good commit identified
 - [ ] Config file restored from git
 - [ ] YAML syntax validated
@@ -280,6 +304,7 @@ touch .claude/config.yaml  # Trigger file watcher
 - [ ] Monitoring shows expected behavior
 
 **If Rollback Fails**:
+
 - Escalate to Level 3 (Code Rollback)
 - Investigate why config rollback insufficient
 - Check for code changes requiring config changes
@@ -291,6 +316,7 @@ touch .claude/config.yaml  # Trigger file watcher
 **Duration**: 30-60 minutes
 
 **Prerequisites**:
+
 - Git repository with Party Mode code
 - Pre-deployment git tag (e.g., `pre-party-mode-v1.0.0`)
 - Test suite available
@@ -298,6 +324,7 @@ touch .claude/config.yaml  # Trigger file watcher
 **Steps**:
 
 1. **Identify rollback target**:
+
    ```bash
    # Find last commit before Party Mode deployment
    git log --oneline --all --grep="Party Mode Phase 6"
@@ -307,6 +334,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 2. **Create rollback branch**:
+
    ```bash
    git checkout -b rollback-party-mode-$(date +%Y%m%d)
    ```
@@ -314,6 +342,7 @@ touch .claude/config.yaml  # Trigger file watcher
 3. **Revert Party Mode code**:
 
    **Option A: Revert specific commits** (preserves other changes):
+
    ```bash
    # Revert Phase 6, 5, 4, 3, 2, 1 in reverse order
    git revert <phase-6-commit>
@@ -325,12 +354,14 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
    **Option B: Reset to pre-Party Mode state** (discards other changes):
+
    ```bash
    # Hard reset to pre-Party Mode tag
    git reset --hard pre-party-mode-v1.0.0
    ```
 
 4. **Remove Party Mode files**:
+
    ```bash
    # Delete Party Mode directories
    rm -rf .claude/lib/party-mode/
@@ -343,6 +374,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 5. **Run test suite**:
+
    ```bash
    # Verify zero regressions
    npm test
@@ -352,6 +384,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 6. **Deploy to staging**:
+
    ```bash
    export AGENT_STUDIO_ENV=staging
    npm run deploy:staging
@@ -362,6 +395,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 7. **Deploy to production**:
+
    ```bash
    npm run deploy:production
 
@@ -370,6 +404,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 8. **Verify rollback**:
+
    ```bash
    # Check no Party Mode files present
    ls .claude/lib/party-mode/  # Should not exist
@@ -382,6 +417,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 **Rollback Confirmation Checklist**:
+
 - [ ] Rollback target identified (commit/tag)
 - [ ] Rollback branch created
 - [ ] Party Mode code reverted
@@ -393,6 +429,7 @@ touch .claude/config.yaml  # Trigger file watcher
 - [ ] Monitoring shows stable behavior
 
 **If Rollback Fails**:
+
 - Check for dependencies on Party Mode code in other features
 - Review CLAUDE.md for Party Mode references (remove)
 - Escalate to Level 4 if code issues persist
@@ -404,6 +441,7 @@ touch .claude/config.yaml  # Trigger file watcher
 **Duration**: 2-4 hours
 
 **Prerequisites**:
+
 - Full system backup (git snapshot)
 - Pre-Party Mode baseline tag (`baseline-before-party-mode`)
 - Communication plan (users, stakeholders)
@@ -417,6 +455,7 @@ touch .claude/config.yaml  # Trigger file watcher
    - Notify all stakeholders
 
 2. **Create system snapshot** (current state):
+
    ```bash
    # Tag current state for investigation
    git tag rollback-snapshot-$(date +%Y%m%d-%H%M%S)
@@ -431,6 +470,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 3. **Disable ALL Party Mode systems**:
+
    ```bash
    # Set feature flag
    export PARTY_MODE_ENABLED=false
@@ -448,6 +488,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 4. **Restore codebase to baseline**:
+
    ```bash
    # Hard reset to pre-Party Mode baseline
    git reset --hard baseline-before-party-mode
@@ -458,6 +499,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 5. **Remove ALL Party Mode artifacts**:
+
    ```bash
    # Delete directories
    rm -rf .claude/lib/party-mode/
@@ -476,6 +518,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 6. **Restore configuration**:
+
    ```bash
    # Restore config.yaml to baseline
    git checkout baseline-before-party-mode -- .claude/config.yaml
@@ -485,6 +528,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 7. **Full test suite**:
+
    ```bash
    # Run ALL tests (expect 74 baseline tests)
    npm test
@@ -494,6 +538,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 8. **Deploy to production** (coordinated):
+
    ```bash
    # Staging first (1 hour validation)
    export AGENT_STUDIO_ENV=staging
@@ -506,6 +551,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 9. **Archive investigation materials**:
+
    ```bash
    # Create investigation package
    mkdir -p .claude/context/archives/party-mode-incident-$(date +%Y%m%d)/
@@ -518,6 +564,7 @@ touch .claude/config.yaml  # Trigger file watcher
    ```
 
 **Rollback Confirmation Checklist**:
+
 - [ ] CTO + Security Architect approval obtained
 - [ ] Current state snapshot created
 - [ ] Audit logs archived
@@ -541,6 +588,7 @@ touch .claude/config.yaml  # Trigger file watcher
 ### Level 1: Feature Flag Disable
 
 **Internal Communication** (Slack/Teams):
+
 ```
 ALERT: Party Mode disabled (Level 1 Rollback)
 Reason: [CRITICAL security incident | Session success rate <80% | Other]
@@ -551,6 +599,7 @@ Next Update: [HH:MM]
 ```
 
 **User-Facing Message**:
+
 ```
 Party Mode temporarily unavailable for maintenance.
 You can still use single-agent mode as usual.
@@ -563,6 +612,7 @@ Apologies for the disruption.
 ### Level 2: Configuration Rollback
 
 **Internal Communication**:
+
 ```
 INFO: Party Mode config rollback (Level 2)
 Reason: [Bad configuration | Performance degradation after config change]
@@ -573,6 +623,7 @@ Status: [In Progress | Complete]
 ```
 
 **User-Facing Message**:
+
 ```
 Party Mode configuration updated.
 You may experience brief session terminations.
@@ -584,6 +635,7 @@ New sessions will work normally.
 ### Level 3: Code Rollback
 
 **Internal Communication**:
+
 ```
 WARNING: Party Mode code rollback (Level 3)
 Reason: [Critical bug | Security vulnerability | Performance regression]
@@ -595,6 +647,7 @@ Status: [In Progress | Testing | Deploying | Complete]
 ```
 
 **User-Facing Message**:
+
 ```
 Party Mode undergoing maintenance (30-60 minutes).
 Temporarily unavailable during this window.
@@ -607,6 +660,7 @@ We'll notify you when complete.
 ### Level 4: Full System Restore
 
 **Internal Communication**:
+
 ```
 CRITICAL: Full system restore (Level 4 Rollback)
 Reason: [System compromise suspected | Multiple CRITICAL violations]
@@ -620,6 +674,7 @@ Status: [In Progress | Investigating | Deploying | Complete]
 ```
 
 **User-Facing Message**:
+
 ```
 NOTICE: Agent Studio maintenance in progress (2-4 hours)
 
@@ -644,6 +699,7 @@ Thank you for your patience.
 ### Immediate Post-Rollback (< 4 hours)
 
 **Verification Tasks**:
+
 1. **System Stability**:
    - [ ] Session success rate >95%
    - [ ] Error rate <1%
@@ -661,6 +717,7 @@ Thank you for your patience.
    - [ ] Archived materials verified
 
 **Status Report Template**:
+
 ```
 Post-Rollback Status Report
 Rollback Level: [1/2/3/4]
@@ -701,6 +758,7 @@ Investigation Status: [Not Started | In Progress | Complete]
    - Code changes (git diff)
 
 3. **Root Cause Identification** (5 Whys):
+
    ```
    Why did [issue] occur?
      Because [reason 1]
@@ -721,6 +779,7 @@ Investigation Status: [Not Started | In Progress | Complete]
    - Were rollback procedures effective?
 
 **Root Cause Analysis Template**:
+
 ```markdown
 # Root Cause Analysis: Party Mode Rollback
 
@@ -730,6 +789,7 @@ Investigation Status: [Not Started | In Progress | Complete]
 **Duration**: [HH:MM]
 
 ## Timeline
+
 - [HH:MM] - Issue first occurred
 - [HH:MM] - Issue detected
 - [HH:MM] - Rollback initiated
@@ -737,9 +797,11 @@ Investigation Status: [Not Started | In Progress | Complete]
 - [HH:MM] - System stable
 
 ## Root Cause
+
 [One-sentence summary of root cause]
 
 ### 5 Whys Analysis
+
 1. Why did [issue] occur? [Answer]
 2. Why [answer 1]? [Answer]
 3. Why [answer 2]? [Answer]
@@ -747,17 +809,20 @@ Investigation Status: [Not Started | In Progress | Complete]
 5. Why [answer 4]? **[ROOT CAUSE]**
 
 ## Contributing Factors
+
 1. [Factor 1]
 2. [Factor 2]
 3. [Factor 3]
 
 ## Preventability Assessment
+
 - [ ] Issue was preventable with existing processes
 - [ ] Issue was detectable with existing monitoring
 - [ ] Response time was adequate
 - [ ] Rollback procedures were effective
 
 ## Lessons Learned
+
 1. [Lesson 1]
 2. [Lesson 2]
 3. [Lesson 3]
@@ -785,6 +850,7 @@ Investigation Status: [Not Started | In Progress | Complete]
    - Documentation updates
 
 **Remediation Plan Template**:
+
 ```markdown
 # Remediation Plan: Party Mode Rollback
 
@@ -793,24 +859,29 @@ Investigation Status: [Not Started | In Progress | Complete]
 **Target Completion**: [YYYY-MM-DD]
 
 ## Immediate Fixes (< 24 hours)
+
 - [ ] Fix 1: [Description] (Owner: [Name], Due: [Date])
 - [ ] Fix 2: [Description] (Owner: [Name], Due: [Date])
 
 ## Short-Term Fixes (1-7 days)
+
 - [ ] Fix 1: [Description] (Owner: [Name], Due: [Date])
 - [ ] Fix 2: [Description] (Owner: [Name], Due: [Date])
 
 ## Long-Term Fixes (1-4 weeks)
+
 - [ ] Fix 1: [Description] (Owner: [Name], Due: [Date])
 - [ ] Fix 2: [Description] (Owner: [Name], Due: [Date])
 
 ## Process Improvements
+
 - [ ] Monitoring: [Improvement]
 - [ ] Testing: [Improvement]
 - [ ] Deployment: [Improvement]
 - [ ] Documentation: [Improvement]
 
 ## Verification
+
 - [ ] All fixes tested in staging
 - [ ] Penetration tests updated
 - [ ] Monitoring alerts updated
@@ -825,6 +896,7 @@ Investigation Status: [Not Started | In Progress | Complete]
 **Criteria for Re-Deployment**:
 
 Must satisfy ALL of:
+
 - [ ] Root cause identified and documented
 - [ ] All immediate fixes implemented and tested
 - [ ] All penetration tests passing
@@ -834,12 +906,14 @@ Must satisfy ALL of:
 - [ ] CTO approval (if Level 4 rollback)
 
 **Re-Deployment Plan**:
+
 1. **Staging Re-Deploy** (48 hours validation)
 2. **Production Canary** (10%, 48 hours monitoring)
 3. **Production Expanded** (50%, 7 days monitoring)
 4. **Production Full** (100%, continuous monitoring)
 
 **Do NOT re-deploy until**:
+
 - All criteria met
 - Stakeholder approval obtained
 - Communication plan ready

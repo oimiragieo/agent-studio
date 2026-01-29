@@ -93,7 +93,7 @@ async function loadRuleIndex() {
     const indexPath = join(PROJECT_ROOT, '.claude/context/rule-index.json');
     const content = await readFile(indexPath, 'utf-8');
     return JSON.parse(content);
-  } catch (error) {
+  } catch (_error) {
     console.warn('Warning: Failed to load rule index. Run: pnpm index-rules');
     return { rules: [], technology_map: {} };
   }
@@ -229,7 +229,7 @@ async function analyzeSourceFile(sourcePath) {
 function generateTestContent(framework, sourcePath, analysis, options = {}) {
   const { coverage = 80 } = options;
   const componentName = basename(sourcePath, extname(sourcePath));
-  const ext = extname(sourcePath);
+  const _ext = extname(sourcePath);
 
   const generators = {
     jest: generateJestTest,
@@ -250,7 +250,7 @@ function generateTestContent(framework, sourcePath, analysis, options = {}) {
 /**
  * Generate Jest test
  */
-function generateJestTest(componentName, sourcePath, analysis, options) {
+function generateJestTest(componentName, sourcePath, analysis, _options) {
   const isReactComponent = sourcePath.includes('component') || sourcePath.match(/\.(tsx|jsx)$/);
   const importPath = './' + basename(sourcePath, extname(sourcePath));
 
@@ -375,7 +375,7 @@ function generateVitestTest(componentName, sourcePath, analysis, options) {
 /**
  * Generate Cypress test
  */
-function generateCypressTest(componentName, sourcePath, analysis, options) {
+function generateCypressTest(componentName, _sourcePath, _analysis, _options) {
   const testCases = [];
   let content = `describe('${componentName} E2E Tests', () => {\n`;
   content += `  beforeEach(() => {\n`;
@@ -427,7 +427,7 @@ function generateCypressTest(componentName, sourcePath, analysis, options) {
 /**
  * Generate Playwright test
  */
-function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
+function generatePlaywrightTest(componentName, _sourcePath, _analysis, _options) {
   const testCases = [];
   let content = `import { test, expect } from '@playwright/test'\n\n`;
   content += `test.describe('${componentName}', () => {\n`;
@@ -478,7 +478,7 @@ function generatePlaywrightTest(componentName, sourcePath, analysis, options) {
 /**
  * Generate Pytest test
  */
-function generatePytestTest(componentName, sourcePath, analysis, options) {
+function generatePytestTest(componentName, sourcePath, analysis, _options) {
   const testCases = [];
   const importPath = relative(dirname(sourcePath), sourcePath)
     .replace(/\.py$/, '')

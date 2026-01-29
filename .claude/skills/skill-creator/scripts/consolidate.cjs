@@ -649,7 +649,7 @@ cat .claude/context/memory/learnings.md
  * Execute consolidation
  */
 function executeConsolidation() {
-  const { bucketAssignments, unassigned, activeBuckets } = analyzeBuckets();
+  const { _bucketAssignments, unassigned, activeBuckets } = analyzeBuckets();
 
   if (!options.execute) {
     return;

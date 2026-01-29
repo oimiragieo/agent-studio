@@ -22,13 +22,27 @@ const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.dirname(path.dirname(__dirname));
 
 // Import Party Mode components
-const { generateAgentId, setAgentContext, clearAgentContext } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'security', 'agent-identity.cjs'));
-const { appendToChain, verifyChain } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'security', 'response-integrity.cjs'));
-const { isolateContext } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'protocol', 'context-isolator.cjs'));
-const { createSidecar, writeSidecar, readSidecar } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'protocol', 'sidecar-manager.cjs'));
-const { spawnAgent, transitionState } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'orchestration', 'lifecycle-manager.cjs'));
-const { startRound, completeRound } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'orchestration', 'round-manager.cjs'));
-const { aggregateResponses, buildConsensus } = await import(path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'consensus', 'response-aggregator.cjs'));
+const { generateAgentId, _setAgentContext, clearAgentContext } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'security', 'agent-identity.cjs')
+);
+const { _appendToChain, _verifyChain } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'security', 'response-integrity.cjs')
+);
+const { isolateContext } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'protocol', 'context-isolator.cjs')
+);
+const { _createSidecar, _writeSidecar, _readSidecar } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'protocol', 'sidecar-manager.cjs')
+);
+const { spawnAgent, _transitionState } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'orchestration', 'lifecycle-manager.cjs')
+);
+const { startRound, completeRound } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'orchestration', 'round-manager.cjs')
+);
+const { _aggregateResponses, buildConsensus } = await import(
+  path.join(PROJECT_ROOT, '.claude', 'lib', 'party-mode', 'consensus', 'response-aggregator.cjs')
+);
 
 const TEST_DIR = path.join(PROJECT_ROOT, '.tmp', 'party-mode-e2e-tests');
 const TEAM_DIR = path.join(PROJECT_ROOT, '.claude', 'teams');
@@ -73,13 +87,16 @@ architect,System Architect,sonnet`;
 
       // 1. Developer implements feature
       const developerId = generateAgentId('developer', Date.now(), sessionId);
-      const developerContext = isolateContext({
-        userMessage: scenario.userMessage,
-        codeSnippet: scenario.codeSnippet,
-        previousResponses: [],
-      }, developerId);
+      const developerContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          codeSnippet: scenario.codeSnippet,
+          previousResponses: [],
+        },
+        developerId
+      );
 
-      const developer = spawnAgent({
+      const _developer = spawnAgent({
         agentId: developerId,
         agentType: 'developer',
         model: 'sonnet',
@@ -90,7 +107,8 @@ architect,System Architect,sonnet`;
       const developerResponse = {
         agentId: developerId,
         agentType: 'developer',
-        content: 'Implementation looks solid. Uses JWT tokens, validates input, includes rate limiting.',
+        content:
+          'Implementation looks solid. Uses JWT tokens, validates input, includes rate limiting.',
         analysis: {
           strengths: ['JWT tokens', 'Input validation', 'Rate limiting'],
           concerns: ['Password hashing algorithm not specified'],
@@ -100,13 +118,16 @@ architect,System Architect,sonnet`;
 
       // 2. Reviewer provides feedback
       const reviewerId = generateAgentId('code-reviewer', Date.now() + 1, sessionId);
-      const reviewerContext = isolateContext({
-        userMessage: scenario.userMessage,
-        codeSnippet: scenario.codeSnippet,
-        previousResponses: [developerResponse],
-      }, reviewerId);
+      const reviewerContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          codeSnippet: scenario.codeSnippet,
+          previousResponses: [developerResponse],
+        },
+        reviewerId
+      );
 
-      const reviewer = spawnAgent({
+      const _reviewer = spawnAgent({
         agentId: reviewerId,
         agentType: 'code-reviewer',
         model: 'sonnet',
@@ -117,7 +138,8 @@ architect,System Architect,sonnet`;
       const reviewerResponse = {
         agentId: reviewerId,
         agentType: 'code-reviewer',
-        content: 'Agree with developer assessment. Recommend bcrypt for password hashing. Also suggest adding 2FA support.',
+        content:
+          'Agree with developer assessment. Recommend bcrypt for password hashing. Also suggest adding 2FA support.',
         analysis: {
           agreesWithDeveloper: true,
           additionalRecommendations: ['Use bcrypt', 'Add 2FA'],
@@ -133,7 +155,10 @@ architect,System Architect,sonnet`;
 
       // Verify consensus reached
       assert.ok(consensus.agreement, 'Should reach consensus');
-      assert.ok(consensus.recommendations.includes('bcrypt'), 'Should include bcrypt recommendation');
+      assert.ok(
+        consensus.recommendations.includes('bcrypt'),
+        'Should include bcrypt recommendation'
+      );
       assert.strictEqual(consensus.confidence, 0.9, 'Confidence should be high (0.9)');
     });
   });
@@ -149,22 +174,28 @@ architect,System Architect,sonnet`;
 
       // 1. Developer implements
       const developerId = generateAgentId('developer', Date.now(), sessionId);
-      const developerContext = isolateContext({
-        userMessage: scenario.userMessage,
-        previousResponses: [],
-      }, developerId);
+      const developerContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          previousResponses: [],
+        },
+        developerId
+      );
 
-      agents.push(spawnAgent({
-        agentId: developerId,
-        agentType: 'developer',
-        model: 'sonnet',
-        context: developerContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: developerId,
+          agentType: 'developer',
+          model: 'sonnet',
+          context: developerContext,
+        })
+      );
 
       responses.push({
         agentId: developerId,
         agentType: 'developer',
-        content: 'Implemented registration with email verification. Uses SMTP for email, JWT for verification tokens.',
+        content:
+          'Implemented registration with email verification. Uses SMTP for email, JWT for verification tokens.',
         implementation: {
           endpoints: ['/register', '/verify-email'],
           security: ['JWT tokens', 'Email verification'],
@@ -174,22 +205,28 @@ architect,System Architect,sonnet`;
 
       // 2. Security reviews
       const securityId = generateAgentId('security-architect', Date.now() + 1, sessionId);
-      const securityContext = isolateContext({
-        userMessage: scenario.userMessage,
-        previousResponses: responses,
-      }, securityId);
+      const securityContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          previousResponses: responses,
+        },
+        securityId
+      );
 
-      agents.push(spawnAgent({
-        agentId: securityId,
-        agentType: 'security-architect',
-        model: 'opus',
-        context: securityContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: securityId,
+          agentType: 'security-architect',
+          model: 'opus',
+          context: securityContext,
+        })
+      );
 
       responses.push({
         agentId: securityId,
         agentType: 'security-architect',
-        content: 'Security review: APPROVE with conditions. Must add rate limiting on /register to prevent spam. JWT expiry should be 15 minutes max.',
+        content:
+          'Security review: APPROVE with conditions. Must add rate limiting on /register to prevent spam. JWT expiry should be 15 minutes max.',
         securityAnalysis: {
           verdict: 'APPROVE_WITH_CONDITIONS',
           required: ['Rate limiting on /register', 'JWT expiry <= 15min'],
@@ -200,22 +237,28 @@ architect,System Architect,sonnet`;
 
       // 3. QA validates
       const qaId = generateAgentId('qa', Date.now() + 2, sessionId);
-      const qaContext = isolateContext({
-        userMessage: scenario.userMessage,
-        previousResponses: responses,
-      }, qaId);
+      const qaContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          previousResponses: responses,
+        },
+        qaId
+      );
 
-      agents.push(spawnAgent({
-        agentId: qaId,
-        agentType: 'qa',
-        model: 'sonnet',
-        context: qaContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: qaId,
+          agentType: 'qa',
+          model: 'sonnet',
+          context: qaContext,
+        })
+      );
 
       responses.push({
         agentId: qaId,
         agentType: 'qa',
-        content: 'QA perspective: Need integration tests for email flow and unit tests for token generation. Edge cases: expired tokens, malformed emails, duplicate registrations.',
+        content:
+          'QA perspective: Need integration tests for email flow and unit tests for token generation. Edge cases: expired tokens, malformed emails, duplicate registrations.',
         testPlan: {
           required: ['Email flow integration tests', 'Token generation unit tests'],
           edgeCases: ['Expired tokens', 'Malformed emails', 'Duplicates'],
@@ -254,23 +297,29 @@ architect,System Architect,sonnet`;
 
       // 1. Architect designs approach
       const architectId = generateAgentId('architect', Date.now(), sessionId);
-      const architectContext = isolateContext({
-        userMessage: scenario.userMessage,
-        context: scenario.context,
-        previousResponses: [],
-      }, architectId);
+      const architectContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          context: scenario.context,
+          previousResponses: [],
+        },
+        architectId
+      );
 
-      agents.push(spawnAgent({
-        agentId: architectId,
-        agentType: 'architect',
-        model: 'sonnet',
-        context: architectContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: architectId,
+          agentType: 'architect',
+          model: 'sonnet',
+          context: architectContext,
+        })
+      );
 
       responses.push({
         agentId: architectId,
         agentType: 'architect',
-        content: 'Architectural perspective: Recommend phased migration. Start with extracting user service, then payment service. Gradual approach reduces risk.',
+        content:
+          'Architectural perspective: Recommend phased migration. Start with extracting user service, then payment service. Gradual approach reduces risk.',
         recommendation: 'PHASED_MIGRATION',
         phases: ['Extract user service', 'Extract payment service', 'Extract catalog service'],
         rationale: 'Gradual migration reduces risk while improving scalability',
@@ -279,23 +328,29 @@ architect,System Architect,sonnet`;
 
       // 2. Developer assesses feasibility
       const developerId = generateAgentId('developer', Date.now() + 1, sessionId);
-      const developerContext = isolateContext({
-        userMessage: scenario.userMessage,
-        context: scenario.context,
-        previousResponses: responses,
-      }, developerId);
+      const developerContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          context: scenario.context,
+          previousResponses: responses,
+        },
+        developerId
+      );
 
-      agents.push(spawnAgent({
-        agentId: developerId,
-        agentType: 'developer',
-        model: 'sonnet',
-        context: developerContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: developerId,
+          agentType: 'developer',
+          model: 'sonnet',
+          context: developerContext,
+        })
+      );
 
       responses.push({
         agentId: developerId,
         agentType: 'developer',
-        content: 'Development perspective: Phased approach is feasible. Team needs microservices training. Estimate 3 months per service extraction.',
+        content:
+          'Development perspective: Phased approach is feasible. Team needs microservices training. Estimate 3 months per service extraction.',
         feasibility: 'FEASIBLE_WITH_TRAINING',
         requirements: ['Team training', 'Service mesh setup', 'CI/CD pipeline updates'],
         timeline: '9 months for 3 services',
@@ -304,47 +359,64 @@ architect,System Architect,sonnet`;
 
       // 3. Security evaluates risks
       const securityId = generateAgentId('security-architect', Date.now() + 2, sessionId);
-      const securityContext = isolateContext({
-        userMessage: scenario.userMessage,
-        context: scenario.context,
-        previousResponses: responses,
-      }, securityId);
+      const securityContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          context: scenario.context,
+          previousResponses: responses,
+        },
+        securityId
+      );
 
-      agents.push(spawnAgent({
-        agentId: securityId,
-        agentType: 'security-architect',
-        model: 'opus',
-        context: securityContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: securityId,
+          agentType: 'security-architect',
+          model: 'opus',
+          context: securityContext,
+        })
+      );
 
       responses.push({
         agentId: securityId,
         agentType: 'security-architect',
-        content: 'Security perspective: Microservices increase attack surface. MUST implement: API gateway, service mesh with mTLS, centralized auth. Risk is MANAGEABLE with proper controls.',
+        content:
+          'Security perspective: Microservices increase attack surface. MUST implement: API gateway, service mesh with mTLS, centralized auth. Risk is MANAGEABLE with proper controls.',
         riskAssessment: 'MANAGEABLE',
-        requiredControls: ['API Gateway', 'Service mesh with mTLS', 'Centralized auth', 'Network segmentation'],
+        requiredControls: [
+          'API Gateway',
+          'Service mesh with mTLS',
+          'Centralized auth',
+          'Network segmentation',
+        ],
         timestamp: new Date().toISOString(),
       });
 
       // 4. QA plans testing strategy
       const qaId = generateAgentId('qa', Date.now() + 3, sessionId);
-      const qaContext = isolateContext({
-        userMessage: scenario.userMessage,
-        context: scenario.context,
-        previousResponses: responses,
-      }, qaId);
+      const qaContext = isolateContext(
+        {
+          userMessage: scenario.userMessage,
+          context: scenario.context,
+          previousResponses: responses,
+        },
+        qaId
+      );
 
-      agents.push(spawnAgent({
-        agentId: qaId,
-        agentType: 'qa',
-        model: 'sonnet',
-        context: qaContext,
-      }));
+      agents.push(
+        spawnAgent({
+          agentId: qaId,
+          agentType: 'qa',
+          model: 'sonnet',
+          context: qaContext,
+        })
+      );
 
       responses.push({
         agentId: qaId,
         agentType: 'qa',
-        content: 'QA perspective: Testing complexity increases significantly. Need contract testing, integration tests for each service, E2E tests for critical flows. Recommend test-first approach.',
+        content:
+          'QA perspective: Testing complexity increases significantly. Need contract testing, integration tests for each service, E2E tests for critical flows. Recommend test-first approach.',
         testingStrategy: {
           required: ['Contract testing', 'Integration tests per service', 'E2E for critical flows'],
           approach: 'Test-first with high automation',
@@ -369,14 +441,17 @@ architect,System Architect,sonnet`;
 
       // Verify weighted consensus
       assert.ok(consensus.agreement, 'Should reach consensus');
-      assert.ok(consensus.recommendation === 'PHASED_MIGRATION', 'Should recommend phased migration');
+      assert.ok(
+        consensus.recommendation === 'PHASED_MIGRATION',
+        'Should recommend phased migration'
+      );
       assert.ok(consensus.confidence >= 0.8, 'Confidence should be high with 4 agents');
     });
   });
 
   describe('E2E-04: Disagreement Resolution', () => {
     it('should resolve disagreement via weighted voting', async () => {
-      const scenario = {
+      const _scenario = {
         userMessage: 'Should we use REST or GraphQL for our API?',
       };
 
@@ -409,7 +484,8 @@ architect,System Architect,sonnet`;
       responses.push({
         agentId: qaId,
         agentType: 'qa',
-        content: 'From testing perspective, REST is easier to test. GraphQL requires more complex query testing.',
+        content:
+          'From testing perspective, REST is easier to test. GraphQL requires more complex query testing.',
         vote: 'REST',
         confidence: 0.6,
         timestamp: new Date().toISOString(),
@@ -440,7 +516,7 @@ architect,System Architect,sonnet`;
 
       // === ROUND 1: Broad exploration ===
       const round1Id = 'round-1';
-      const round1 = startRound(sessionId, ['developer', 'architect']);
+      const _round1 = startRound(sessionId, ['developer', 'architect']);
 
       const round1Responses = [];
 
@@ -460,7 +536,8 @@ architect,System Architect,sonnet`;
       round1Responses.push({
         agentId: arch1Id,
         agentType: 'architect',
-        content: 'Suggest multi-layer: in-memory (application), Redis (distributed), CDN (static assets).',
+        content:
+          'Suggest multi-layer: in-memory (application), Redis (distributed), CDN (static assets).',
         recommendation: 'Multi-layer caching',
         confidence: 0.7,
         timestamp: new Date().toISOString(),
@@ -473,11 +550,14 @@ architect,System Architect,sonnet`;
       completeRound(sessionId, round1Id);
 
       // Verify Round 1 has moderate confidence
-      assert.ok(round1Consensus.confidence < 0.9, 'Round 1 should have moderate confidence (needs refinement)');
+      assert.ok(
+        round1Consensus.confidence < 0.9,
+        'Round 1 should have moderate confidence (needs refinement)'
+      );
 
       // === ROUND 2: Focused refinement ===
       const round2Id = 'round-2';
-      const round2 = startRound(sessionId, ['developer', 'architect', 'devops']);
+      const _round2 = startRound(sessionId, ['developer', 'architect', 'devops']);
 
       const round2Context = {
         userMessage: scenario.userMessage,
@@ -489,15 +569,19 @@ architect,System Architect,sonnet`;
 
       // Developer: refines Redis proposal
       const dev2Id = generateAgentId('developer', Date.now() + 100, sessionId);
-      const dev2Context = isolateContext({
-        ...round2Context,
-        previousResponses: round1Responses,
-      }, dev2Id);
+      const _dev2Context = isolateContext(
+        {
+          ...round2Context,
+          previousResponses: round1Responses,
+        },
+        dev2Id
+      );
 
       round2Responses.push({
         agentId: dev2Id,
         agentType: 'developer',
-        content: 'Based on Round 1, proposing Redis Cluster with 3 master nodes, automatic failover, eviction policy: allkeys-lru.',
+        content:
+          'Based on Round 1, proposing Redis Cluster with 3 master nodes, automatic failover, eviction policy: allkeys-lru.',
         refinedRecommendation: {
           technology: 'Redis Cluster',
           configuration: '3 master nodes',
@@ -514,7 +598,8 @@ architect,System Architect,sonnet`;
       round2Responses.push({
         agentId: arch2Id,
         agentType: 'architect',
-        content: 'Agree with refined Redis approach. Also add application-level caching (15-second TTL) for hot data.',
+        content:
+          'Agree with refined Redis approach. Also add application-level caching (15-second TTL) for hot data.',
         refinedRecommendation: {
           layer1: 'Application cache (15s TTL)',
           layer2: 'Redis Cluster',
@@ -529,8 +614,13 @@ architect,System Architect,sonnet`;
       round2Responses.push({
         agentId: devops2Id,
         agentType: 'devops',
-        content: 'From ops perspective: Redis Cluster is solid. Add monitoring (Prometheus), alerting on cache hit rate < 80%, backup strategy.',
-        operationalRequirements: ['Prometheus monitoring', 'Alerting (hit rate < 80%)', 'Daily backups'],
+        content:
+          'From ops perspective: Redis Cluster is solid. Add monitoring (Prometheus), alerting on cache hit rate < 80%, backup strategy.',
+        operationalRequirements: [
+          'Prometheus monitoring',
+          'Alerting (hit rate < 80%)',
+          'Daily backups',
+        ],
         confidence: 0.85,
         timestamp: new Date().toISOString(),
       });
@@ -542,12 +632,21 @@ architect,System Architect,sonnet`;
       completeRound(sessionId, round2Id);
 
       // Verify Round 2 has higher confidence
-      assert.ok(round2Consensus.confidence > round1Consensus.confidence, 'Round 2 confidence should be higher than Round 1');
-      assert.ok(round2Consensus.confidence >= 0.9, 'Round 2 should have high confidence (refined solution)');
+      assert.ok(
+        round2Consensus.confidence > round1Consensus.confidence,
+        'Round 2 confidence should be higher than Round 1'
+      );
+      assert.ok(
+        round2Consensus.confidence >= 0.9,
+        'Round 2 should have high confidence (refined solution)'
+      );
 
       // Verify context threading
       assert.ok(round2Responses[0].basedOnRound1, 'Round 2 should reference Round 1');
-      assert.ok(round2Consensus.refinedFrom === round1Consensus || true, 'Should track refinement lineage');
+      assert.ok(
+        round2Consensus.refinedFrom === round1Consensus || true,
+        'Should track refinement lineage'
+      );
     });
   });
 
@@ -565,7 +664,11 @@ architect,System Architect,sonnet`;
 
       // Round 1
       const round1 = startRound(sessionId, ['developer', 'architect', 'qa']);
-      sessionAudit.push({ event: 'ROUND_START', roundId: round1.roundId, timestamp: new Date().toISOString() });
+      sessionAudit.push({
+        event: 'ROUND_START',
+        roundId: round1.roundId,
+        timestamp: new Date().toISOString(),
+      });
 
       // Simulate agent responses
       for (let i = 0; i < 3; i++) {
@@ -577,11 +680,19 @@ architect,System Architect,sonnet`;
       }
 
       completeRound(sessionId, round1.roundId);
-      sessionAudit.push({ event: 'ROUND_COMPLETE', roundId: round1.roundId, timestamp: new Date().toISOString() });
+      sessionAudit.push({
+        event: 'ROUND_COMPLETE',
+        roundId: round1.roundId,
+        timestamp: new Date().toISOString(),
+      });
 
       // Round 2
       const round2 = startRound(sessionId, ['developer', 'architect']);
-      sessionAudit.push({ event: 'ROUND_START', roundId: round2.roundId, timestamp: new Date().toISOString() });
+      sessionAudit.push({
+        event: 'ROUND_START',
+        roundId: round2.roundId,
+        timestamp: new Date().toISOString(),
+      });
 
       for (let i = 0; i < 2; i++) {
         sessionAudit.push({
@@ -592,7 +703,11 @@ architect,System Architect,sonnet`;
       }
 
       completeRound(sessionId, round2.roundId);
-      sessionAudit.push({ event: 'ROUND_COMPLETE', roundId: round2.roundId, timestamp: new Date().toISOString() });
+      sessionAudit.push({
+        event: 'ROUND_COMPLETE',
+        roundId: round2.roundId,
+        timestamp: new Date().toISOString(),
+      });
 
       // Session end
       sessionAudit.push({
@@ -606,7 +721,11 @@ architect,System Architect,sonnet`;
       // Verify audit trail completeness
       assert.ok(sessionAudit.length >= 9, 'Should have complete audit trail');
       assert.strictEqual(sessionAudit[0].event, 'SESSION_START', 'Should start with SESSION_START');
-      assert.strictEqual(sessionAudit[sessionAudit.length - 1].event, 'SESSION_END', 'Should end with SESSION_END');
+      assert.strictEqual(
+        sessionAudit[sessionAudit.length - 1].event,
+        'SESSION_END',
+        'Should end with SESSION_END'
+      );
 
       // Verify 2 rounds recorded
       const roundStarts = sessionAudit.filter(e => e.event === 'ROUND_START');

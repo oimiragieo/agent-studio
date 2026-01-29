@@ -24,7 +24,7 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
     // Clean up test sidecars
     try {
       await fs.rm(path.join(STAGING_PATH, TEST_SESSION_ID), { recursive: true, force: true });
-    } catch (err) {
+    } catch (_err) {
       // Ignore cleanup errors
     }
   });
@@ -51,9 +51,18 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
       const keyFilesPath = path.join(result.sidecarPath, 'keyFiles.json');
       const notesPath = path.join(result.sidecarPath, 'notes.txt');
 
-      const discoveryExists = await fs.access(discoveryPath).then(() => true).catch(() => false);
-      const keyFilesExists = await fs.access(keyFilesPath).then(() => true).catch(() => false);
-      const notesExists = await fs.access(notesPath).then(() => true).catch(() => false);
+      const discoveryExists = await fs
+        .access(discoveryPath)
+        .then(() => true)
+        .catch(() => false);
+      const keyFilesExists = await fs
+        .access(keyFilesPath)
+        .then(() => true)
+        .catch(() => false);
+      const notesExists = await fs
+        .access(notesPath)
+        .then(() => true)
+        .catch(() => false);
 
       assert.ok(discoveryExists, 'discoveries.json should exist');
       assert.ok(keyFilesExists, 'keyFiles.json should exist');
@@ -66,7 +75,10 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
       const end = process.hrtime.bigint();
 
       const durationMs = Number(end - start) / 1_000_000;
-      assert.ok(durationMs < 50, `Sidecar creation took ${durationMs.toFixed(2)}ms (target: <50ms)`);
+      assert.ok(
+        durationMs < 50,
+        `Sidecar creation took ${durationMs.toFixed(2)}ms (target: <50ms)`
+      );
     });
   });
 
@@ -75,7 +87,12 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
       const sessionId = 'write_test_session';
       await sidecarManager.createSidecar(sessionId, 'agent_003', 'developer');
 
-      const result = await sidecarManager.writeSidecar(sessionId, 'agent_003', 'testKey', 'testValue');
+      const result = await sidecarManager.writeSidecar(
+        sessionId,
+        'agent_003',
+        'testKey',
+        'testValue'
+      );
 
       assert.strictEqual(result.written, true);
       assert.ok(result.path);
@@ -181,7 +198,12 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
     it('PEN-005: Should prevent sidecar reconnaissance (agent reads another sidecar)', async () => {
       const sessionId = 'pen_005_session';
       await sidecarManager.createSidecar(sessionId, 'agent_security', 'security-architect');
-      await sidecarManager.writeSidecar(sessionId, 'agent_security', 'threatModel', 'CONFIDENTIAL DATA');
+      await sidecarManager.writeSidecar(
+        sessionId,
+        'agent_security',
+        'threatModel',
+        'CONFIDENTIAL DATA'
+      );
 
       // Developer agent tries to read security-architect's sidecar
       const result = await sidecarManager.readSidecar(sessionId, 'agent_developer', 'threatModel');
@@ -195,7 +217,12 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
       await sidecarManager.createSidecar(sessionId, 'agent_target', 'architect');
 
       // Malicious agent tries to write to target's sidecar
-      const result = await sidecarManager.writeSidecar(sessionId, 'agent_malicious', 'poisonKey', 'MALICIOUS DATA');
+      const result = await sidecarManager.writeSidecar(
+        sessionId,
+        'agent_malicious',
+        'poisonKey',
+        'MALICIOUS DATA'
+      );
 
       // Should fail (write to non-existent sidecar)
       assert.strictEqual(result.written, false);
@@ -206,7 +233,12 @@ describe('Sidecar Manager (SEC-PM-006)', () => {
       await sidecarManager.createSidecar(sessionId, 'agent_attacker', 'developer');
 
       // Try path traversal attack
-      const result = await sidecarManager.writeSidecar(sessionId, 'agent_attacker', '../../../etc/passwd', 'attack');
+      const result = await sidecarManager.writeSidecar(
+        sessionId,
+        'agent_attacker',
+        '../../../etc/passwd',
+        'attack'
+      );
 
       // Should fail (path validation)
       assert.strictEqual(result.written, false);

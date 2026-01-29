@@ -12,7 +12,7 @@ let validSchemas = 0;
 let invalidSchemas = 0;
 let schemasWithoutRequired = 0;
 let schemasWithoutDescriptions = 0;
-let schemasWithIssues = [];
+const schemasWithIssues = [];
 
 // Check main schemas
 const mainSchemas = fs.readdirSync(schemaDir).filter(f => f.endsWith('.json'));
@@ -33,7 +33,7 @@ for (const schema of mainSchemas) {
 
     // Check properties have descriptions
     if (content.properties) {
-      for (const [propName, propSchema] of Object.entries(content.properties)) {
+      for (const [_propName, propSchema] of Object.entries(content.properties)) {
         if (propSchema && typeof propSchema === 'object' && !propSchema.description) {
           schemasWithoutDescriptions++;
         }
@@ -61,9 +61,9 @@ console.log('\n=== SKILL SCHEMAS ===\n');
 let skillSchemasTotal = 0;
 let skillSchemasValid = 0;
 let skillSchemasInvalid = 0;
-let skillSchemaIssues = [];
+const skillSchemaIssues = [];
 
-function walkSkillSchemas(dir, baseSkillName = '') {
+function walkSkillSchemas(dir, _baseSkillName = '') {
   const items = fs.readdirSync(dir);
   for (const item of items) {
     const fullPath = path.join(dir, item);
@@ -86,7 +86,7 @@ function walkSkillSchemas(dir, baseSkillName = '') {
           if (!content.title) skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing title`);
           if (!content.description)
             skillSchemaIssues.push(`${skillName}/${schemaFile}: Missing description`);
-        } catch (e) {
+        } catch (_e) {
           skillSchemasInvalid++;
           skillSchemaIssues.push(`${skillName}/${schemaFile}: Invalid JSON`);
         }

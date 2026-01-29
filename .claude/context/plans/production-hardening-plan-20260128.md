@@ -20,6 +20,7 @@ Phase 1A delivered 3 production-ready features with 42 passing unit tests. Howev
 This plan addresses these gaps through 5 production hardening tasks spanning integration testing, end-to-end validation, monitoring infrastructure, performance optimization, and staging environment setup.
 
 **Success Criteria**:
+
 - 10+ integration tests passing
 - 5+ E2E tests passing
 - Monitoring dashboard functional
@@ -40,13 +41,13 @@ This plan addresses these gaps through 5 production hardening tasks spanning int
 
 ### What's Missing
 
-| Gap | Risk | Impact on Party Mode |
-|-----|------|---------------------|
-| No integration tests | MEDIUM-HIGH | Multi-agent coordination untested |
-| No monitoring | MEDIUM | Cannot detect performance degradation |
-| No performance baselines | MEDIUM | Unknown scalability limits |
-| No staging environment | HIGH | Cannot validate before production |
-| Index invalidation hook | LOW | Stale KB index after skill changes |
+| Gap                      | Risk        | Impact on Party Mode                  |
+| ------------------------ | ----------- | ------------------------------------- |
+| No integration tests     | MEDIUM-HIGH | Multi-agent coordination untested     |
+| No monitoring            | MEDIUM      | Cannot detect performance degradation |
+| No performance baselines | MEDIUM      | Unknown scalability limits            |
+| No staging environment   | HIGH        | Cannot validate before production     |
+| Index invalidation hook  | LOW         | Stale KB index after skill changes    |
 
 ### Risks Without Hardening
 
@@ -81,23 +82,25 @@ Test multi-agent coordination at system level. Current unit tests validate indiv
 ### Test Scenarios (Minimum 10 Required)
 
 #### 1. master-orchestrator spawns 3 agents in parallel
+
 **Given**: User request requires architect, developer, qa
 **When**: master-orchestrator receives request
 **Then**: 3 agents spawn with proper task IDs, all complete, TaskList shows success
 
 **Test Setup**:
+
 ```javascript
 // Mock Task tool to capture spawned agents
 const spawnedAgents = [];
-const mockTask = (config) => {
+const mockTask = config => {
   spawnedAgents.push(config);
   return { taskId: `task-${spawnedAgents.length}` };
 };
 
 // Run orchestrator with mocked Task
 const result = await masterOrchestrator({
-  request: "Design and implement user authentication",
-  taskTool: mockTask
+  request: 'Design and implement user authentication',
+  taskTool: mockTask,
 });
 
 // Verify 3 agents spawned
@@ -108,36 +111,42 @@ assert.equal(spawnedAgents[2].subagent_type, 'qa');
 ```
 
 #### 2. swarm-coordinator distributes work to worker agents
+
 **Given**: Large task requiring parallelization
 **When**: swarm-coordinator receives task
 **Then**: Work split across N workers, all complete, results aggregated
 
 **Test Setup**:
+
 - Mock 5-file codebase refactoring task
 - Verify swarm-coordinator spawns 5 workers (1 per file)
 - Verify each worker receives unique file
 - Verify aggregation of results
 
 #### 3. evolution-orchestrator executes EVOLVE workflow
+
 **Given**: Request to create new skill (requires research → creation)
 **When**: evolution-orchestrator invoked
 **Then**: Phase transitions E→V→O→L→V→E, all checkpoints pass
 
 **Test Setup**:
+
 - Mock research-synthesis skill (returns 3 sources)
 - Mock skill-creator skill (creates artifact)
 - Verify state transitions in evolution-state.json
 - Verify artifact created at expected path
 
 #### 4. Orchestrator error handling (agent failure)
+
 **Given**: Orchestrator spawns 3 agents, Agent 2 fails
 **When**: Agent 2 returns error
 **Then**: Orchestrator detects failure, logs error, continues with Agents 1 and 3
 
 **Test Setup**:
+
 ```javascript
 // Mock Agent 2 failure
-const mockTask = (config) => {
+const mockTask = config => {
   if (config.subagent_type === 'developer') {
     throw new Error('Agent 2 failed: syntax error');
   }
@@ -151,21 +160,25 @@ assert.equal(result.completedAgents, 2); // Agents 1 and 3
 ```
 
 #### 5. Orchestrator timeout handling
+
 **Given**: Agent exceeds 10-minute timeout
 **When**: Agent does not complete
 **Then**: Orchestrator terminates agent, logs timeout, continues
 
 **Test Setup**:
+
 - Mock slow agent (never completes)
 - Verify timeout after 10 minutes
 - Verify TaskUpdate({ status: 'timeout' })
 
 #### 6. Task dependency resolution across agents
+
 **Given**: Task B depends on Task A (addBlockedBy: ['A'])
 **When**: Orchestrator schedules tasks
 **Then**: Task A completes before Task B starts
 
 **Test Setup**:
+
 ```javascript
 TaskCreate({ subject: 'Task A', taskId: 'A' });
 TaskCreate({ subject: 'Task B', taskId: 'B' });
@@ -180,20 +193,24 @@ await TaskUpdate({ taskId: 'A', status: 'completed' });
 ```
 
 #### 7. Context sharing between coordinated agents
+
 **Given**: Agent 2 needs Agent 1's output
 **When**: Orchestrator passes context
 **Then**: Agent 2 receives Agent 1's response in prompt
 
 **Test Setup**:
+
 - Agent 1 outputs: "Database schema designed"
 - Verify Agent 2 prompt includes: "Agent 1 said: Database schema designed"
 
 #### 8. Orchestrator with blocking dependencies
+
 **Given**: 3 tasks with chain dependency (A → B → C)
 **When**: Orchestrator schedules tasks
 **Then**: Sequential execution in correct order
 
 **Test Setup**:
+
 ```javascript
 // A → B → C chain
 TaskCreate({ taskId: 'A' });
@@ -209,22 +226,26 @@ const executionOrder = [];
 ```
 
 #### 9. Concurrent orchestrator execution
+
 **Given**: 2 orchestrators running simultaneously
 **When**: Both create tasks
 **Then**: No task ID collisions, both complete successfully
 
 **Test Setup**:
+
 - Spawn orchestrator 1 (creates tasks T1, T2, T3)
 - Spawn orchestrator 2 (creates tasks T4, T5, T6)
 - Verify 6 unique task IDs
 - Verify no interference between orchestrators
 
 #### 10. Orchestrator rollback on failure
+
 **Given**: Multi-step workflow, step 3 fails
 **When**: Orchestrator detects failure
 **Then**: Rollback steps 2 and 1 in reverse order
 
 **Test Setup**:
+
 ```javascript
 // 3-step workflow: CreateSchema → SeedData → VerifyData
 // Mock SeedData failure
@@ -238,6 +259,7 @@ const executionOrder = [];
 **Location**: `.claude/agents/orchestrators/__tests__/integration/`
 
 **File Organization**:
+
 ```
 __tests__/
   integration/
@@ -251,11 +273,13 @@ __tests__/
 **Test Framework**: Node.js native test API (existing pattern from Phase 1A)
 
 **Mock Strategy**:
+
 - Mock `Task` tool to capture spawned agents (no actual agent execution)
 - Mock `TaskList`, `TaskUpdate`, `TaskGet` to simulate task system
 - Mock agent responses (predefined outputs)
 
 **Assertions**:
+
 - Task state transitions (pending → in_progress → completed)
 - Agent spawn parameters (subagent_type, allowed_tools, prompt)
 - Context passed between agents
@@ -292,12 +316,12 @@ __tests__/
 
 ### Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Tests too slow | Mock all external calls, no real agent spawns |
-| Flaky tests | Deterministic mocks, no timeouts in tests |
-| Hard to debug | Clear assertions, helpful error messages |
-| Coupling to implementation | Test orchestrator contract, not internals |
+| Risk                       | Mitigation                                    |
+| -------------------------- | --------------------------------------------- |
+| Tests too slow             | Mock all external calls, no real agent spawns |
+| Flaky tests                | Deterministic mocks, no timeouts in tests     |
+| Hard to debug              | Clear assertions, helpful error messages      |
+| Coupling to implementation | Test orchestrator contract, not internals     |
 
 ---
 
@@ -326,6 +350,7 @@ Verify Phase 1A features work end-to-end in realistic scenarios. Current unit te
 **Scenario**: User creates new skill, verifies it appears in search results
 
 **Steps**:
+
 1. Create test skill: `.claude/skills/test-skill-${timestamp}/SKILL.md`
 2. Run index builder: `node .claude/lib/workflow/build-knowledge-base-index.cjs`
 3. Verify index updated: `grep "test-skill" .claude/knowledge/knowledge-base-index.csv`
@@ -333,12 +358,14 @@ Verify Phase 1A features work end-to-end in realistic scenarios. Current unit te
 5. Verify result includes test skill
 
 **Expected Output**:
+
 ```
 Found 1 result:
 - test-skill-20260128 | Test skill for E2E testing | .claude/skills/test-skill-20260128
 ```
 
 **Test Code**:
+
 ```javascript
 import { test } from 'node:test';
 import { exec } from 'node:child_process';
@@ -352,12 +379,15 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 
   // Step 1: Create skill
   await fs.mkdir(skillPath, { recursive: true });
-  await fs.writeFile(skillFile, `
+  await fs.writeFile(
+    skillFile,
+    `
 # Test Skill ${timestamp}
 
 <identity>Test skill for E2E testing</identity>
 <capabilities>Testing knowledge base indexing</capabilities>
-  `);
+  `
+  );
 
   // Step 2: Build index
   await exec('node .claude/lib/workflow/build-knowledge-base-index.cjs');
@@ -380,6 +410,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Scenario**: User modifies skill, index automatically rebuilds, search reflects changes
 
 **Steps**:
+
 1. Create skill with description "Old description"
 2. Build index
 3. Verify search returns "Old description"
@@ -389,6 +420,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 7. Verify search returns "New description"
 
 **Validation**:
+
 - Index reflects latest content
 - <5 second rebuild time (1,133 artifacts)
 - No stale results
@@ -398,6 +430,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Scenario**: Full session lifecycle with cost tracking and integrity verification
 
 **Steps**:
+
 1. Start session: `cost-tracker.start()`
 2. Mock LLM calls:
    - Call 1: haiku, 100 tokens in, 200 tokens out
@@ -414,6 +447,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 7. Verify report matches: `node .claude/tools/cli/cost-report.js --today`
 
 **Validation**:
+
 - Log entry has all fields (timestamp, model, tokens, cost, hash)
 - Hash chain integrity passes
 - Cost calculation accurate to $0.01
@@ -424,6 +458,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Scenario**: User invokes elicitation, verifies quality improvement
 
 **Steps**:
+
 1. Create baseline response: "User authentication should use JWT"
 2. Invoke elicitation: `Skill({ skill: 'advanced-elicitation', args: 'auto' })`
 3. Verify method selection (e.g., "First Principles" for architectural decision)
@@ -436,6 +471,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 6. Verify +30% quality improvement (measurable via word count, specificity score)
 
 **Validation**:
+
 - Method auto-selection works
 - Elicited response is longer and more detailed
 - Reasoning trail is coherent
@@ -446,6 +482,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Scenario**: Feature flag disabled, feature gracefully skips
 
 **Steps**:
+
 1. Disable Advanced Elicitation: `ELICITATION_ENABLED=false`
 2. Invoke elicitation: `Skill({ skill: 'advanced-elicitation' })`
 3. Verify graceful skip (no error, returns original content)
@@ -455,6 +492,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 7. Verify elicitation runs
 
 **Validation**:
+
 - No errors when feature disabled
 - Clear log message about skip reason
 - Re-enabling works without restart
@@ -464,6 +502,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Scenario**: Multi-feature integration test (KB + Cost + Skill)
 
 **Steps**:
+
 1. Start cost tracking session
 2. Search KB for "debugging" skill
 3. Invoke debugging skill (track LLM calls)
@@ -475,6 +514,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
    - Integrity hash valid
 
 **Validation**:
+
 - All 3 features working together
 - No interference between features
 - Performance targets met
@@ -484,6 +524,7 @@ test('Knowledge Base E2E: Create → Index → Search', async () => {
 **Location**: `.claude/tests/integration/`
 
 **File Organization**:
+
 ```
 tests/
   integration/
@@ -495,11 +536,13 @@ tests/
 ```
 
 **Test Environment**:
+
 - Use real files (not mocked) in test environment
 - Test directory: `.claude/tests/fixtures/`
 - Cleanup after tests (delete test artifacts)
 
 **Assertions**:
+
 - File existence checks
 - Content validation (grep, file reads)
 - Performance assertions (<50ms search, <5ms overhead)
@@ -540,12 +583,12 @@ tests/
 
 ### Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Tests leave artifacts | Automated cleanup in afterEach() |
-| Tests too slow | Run in parallel, optimize file I/O |
-| Flaky tests | Deterministic timestamps, unique IDs |
-| Hard to debug | Verbose logging, helpful error messages |
+| Risk                  | Mitigation                              |
+| --------------------- | --------------------------------------- |
+| Tests leave artifacts | Automated cleanup in afterEach()        |
+| Tests too slow        | Run in parallel, optimize file I/O      |
+| Flaky tests           | Deterministic timestamps, unique IDs    |
+| Hard to debug         | Verbose logging, helpful error messages |
 
 ---
 
@@ -572,12 +615,14 @@ Implement production-grade metrics collection and monitoring infrastructure. Cur
 #### 1. Hook Execution Metrics
 
 **What to Track**:
+
 - Execution time per hook (PreToolUse, PostToolUse, SessionStart, SessionEnd)
 - Success/failure rates per hook
 - Hook chain performance (total time through all hooks)
 - Bottleneck detection (which hooks are slow)
 
 **Data Structure**:
+
 ```json
 {
   "timestamp": "2026-01-28T10:00:00Z",
@@ -591,10 +636,12 @@ Implement production-grade metrics collection and monitoring infrastructure. Cur
 ```
 
 **Collection Point**:
+
 - Wrap hook execution in `.claude/lib/workflow/hook-executor.cjs`
 - Log to `.claude/context/metrics/hooks.jsonl`
 
 **Implementation**:
+
 ```javascript
 // In hook-executor.cjs
 async function executeHook(hookPath, event, input) {
@@ -621,13 +668,14 @@ async function executeHook(hookPath, event, input) {
       status,
       error,
       tool: input.tool,
-      metadata: input.metadata
+      metadata: input.metadata,
     });
   }
 }
 ```
 
 **Metrics to Calculate**:
+
 - Average execution time per hook
 - 95th percentile (p95) execution time
 - Error rate (failures / total executions)
@@ -636,12 +684,14 @@ async function executeHook(hookPath, event, input) {
 #### 2. Agent Performance Tracking
 
 **What to Track**:
+
 - Agent spawn time (router → agent ready)
 - Task completion time (agent start → TaskUpdate completed)
 - Token usage per agent (from cost tracking)
 - Agent failure rate (errors / total spawns)
 
 **Data Structure**:
+
 ```json
 {
   "timestamp": "2026-01-28T10:00:00Z",
@@ -656,11 +706,13 @@ async function executeHook(hookPath, event, input) {
 ```
 
 **Collection Point**:
+
 - Hook into Task tool spawning (capture spawn time)
 - Hook into TaskUpdate (capture completion time)
 - Integrate with cost tracking (token usage)
 
 **Metrics to Calculate**:
+
 - Average spawn time (target: <200ms)
 - Average completion time per agent type
 - Token usage per agent (haiku vs sonnet vs opus)
@@ -669,12 +721,14 @@ async function executeHook(hookPath, event, input) {
 #### 3. Error Rate Monitoring
 
 **What to Track**:
+
 - Hook failures (which hooks, why)
 - Validation errors (routing-guard, security-guard, etc.)
-- Security control violations (SEC-* controls)
+- Security control violations (SEC-\* controls)
 - System errors (file I/O, parsing, etc.)
 
 **Data Structure**:
+
 ```json
 {
   "timestamp": "2026-01-28T10:00:00Z",
@@ -688,11 +742,13 @@ async function executeHook(hookPath, event, input) {
 ```
 
 **Collection Point**:
+
 - Wrap all hook executions (capture exceptions)
 - Add error tracking to validation guards
 - Log security control violations
 
 **Metrics to Calculate**:
+
 - Error rate by type (validation, security, system)
 - Most frequent errors (top 5)
 - Error rate trend (increasing/decreasing)
@@ -701,12 +757,14 @@ async function executeHook(hookPath, event, input) {
 #### 4. Monitoring Dashboard (CLI-Based)
 
 **Dashboard Features**:
+
 - Real-time metrics display
 - Historical trends (last 24 hours, last 7 days)
 - Alert thresholds (configurable)
 - Performance graphs (ASCII charts)
 
 **Dashboard Output**:
+
 ```
 ╔════════════════════════════════════════════════════════════════╗
 ║            Agent-Studio Monitoring Dashboard                   ║
@@ -752,6 +810,7 @@ ALERTS:
 ```
 
 **Implementation**:
+
 ```javascript
 // .claude/tools/cli/monitor-dashboard.js
 import { readMetrics } from '.claude/lib/monitoring/metrics-reader.cjs';
@@ -767,6 +826,7 @@ console.log(dashboard);
 **Storage Format**: JSONL (JSON Lines) for append-only, efficient parsing
 
 **File Structure**:
+
 ```
 .claude/context/metrics/
   hooks.jsonl          # Hook execution metrics
@@ -776,20 +836,22 @@ console.log(dashboard);
 ```
 
 **Retention Policy**:
+
 - Keep last 30 days of metrics
 - Archive older metrics to `.claude/context/metrics/archive/`
 - Rotate monthly
 
 ### Alert Thresholds (Configurable)
 
-| Metric | Threshold | Severity | Action |
-|--------|-----------|----------|--------|
-| Hook execution time > 10ms | Average over 1 hour | MEDIUM | Log warning |
-| Agent failure rate > 5% | Any agent type | HIGH | Log alert |
-| Error rate > 10/hour | System-wide | HIGH | Log alert |
-| Security violation | Any SEC-* control | CRITICAL | Log alert + notify |
+| Metric                     | Threshold           | Severity | Action             |
+| -------------------------- | ------------------- | -------- | ------------------ |
+| Hook execution time > 10ms | Average over 1 hour | MEDIUM   | Log warning        |
+| Agent failure rate > 5%    | Any agent type      | HIGH     | Log alert          |
+| Error rate > 10/hour       | System-wide         | HIGH     | Log alert          |
+| Security violation         | Any SEC-\* control  | CRITICAL | Log alert + notify |
 
 **Alert Configuration**: `.claude/config.yaml`
+
 ```yaml
 monitoring:
   alerts:
@@ -841,12 +903,12 @@ monitoring:
 
 ### Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Metrics overhead | Async logging, <1ms per metric |
-| Disk space usage | 30-day retention, monthly rotation |
+| Risk             | Mitigation                                 |
+| ---------------- | ------------------------------------------ |
+| Metrics overhead | Async logging, <1ms per metric             |
+| Disk space usage | 30-day retention, monthly rotation         |
 | Privacy concerns | No user data in metrics (only system data) |
-| Alert fatigue | Configurable thresholds, rate limiting |
+| Alert fatigue    | Configurable thresholds, rate limiting     |
 
 ---
 
@@ -875,12 +937,14 @@ Profile and optimize critical paths to establish performance baselines before Pa
 **Current Performance**: <50ms for 1,133 artifacts
 
 **Profiling Goals**:
+
 - Measure performance at 10,000 artifacts (scale test)
 - Identify bottlenecks (CSV parsing? File I/O? String matching?)
 - Measure memory footprint
 - Test concurrent searches (10 simultaneous searches)
 
 **Profiling Approach**:
+
 ```javascript
 // Profile KB search
 import { performance } from 'node:perf_hooks';
@@ -910,19 +974,23 @@ console.log(`Memory increase: ${(memAfter - memBefore).toFixed(2)}MB`);
 const concurrentSearches = 10;
 const startConcurrent = performance.now();
 await Promise.all(
-  Array(concurrentSearches).fill().map(() => searchKnowledgeBase({ query: 'testing' }))
+  Array(concurrentSearches)
+    .fill()
+    .map(() => searchKnowledgeBase({ query: 'testing' }))
 );
 const durationConcurrent = performance.now() - startConcurrent;
 console.log(`${concurrentSearches} concurrent searches: ${durationConcurrent.toFixed(2)}ms`);
 ```
 
 **Optimization Opportunities**:
+
 - Cache parsed CSV in memory (avoid re-parsing)
 - Index-based search (skip linear scan)
 - Lazy loading (load only needed fields)
 - Fuzzy matching optimization (faster algorithm)
 
 **Performance Targets**:
+
 - <50ms for 1,133 artifacts (current, maintain)
 - <100ms for 10,000 artifacts (scale target)
 - <50MB memory footprint
@@ -933,12 +1001,14 @@ console.log(`${concurrentSearches} concurrent searches: ${durationConcurrent.toF
 **Current Performance**: <2ms overhead per call
 
 **Profiling Goals**:
+
 - Measure overhead at 10,000 log entries
 - Identify bottlenecks (hash calculation? File append? JSON stringify?)
 - Test concurrent writes (10 agents writing simultaneously)
 - Measure file I/O impact
 
 **Profiling Approach**:
+
 ```javascript
 // Profile cost tracking
 import { LLMUsageTracker } from '.claude/lib/cost-tracking/llm-usage-tracker.cjs';
@@ -968,21 +1038,23 @@ console.log(`Hash calculation: ${duration3.toFixed(2)}ms`);
 const concurrentWrites = 10;
 const startConcurrent = performance.now();
 await Promise.all(
-  Array(concurrentWrites).fill().map(() =>
-    tracker.logUsage({ model: 'sonnet', tokensIn: 500, tokensOut: 1000 })
-  )
+  Array(concurrentWrites)
+    .fill()
+    .map(() => tracker.logUsage({ model: 'sonnet', tokensIn: 500, tokensOut: 1000 }))
 );
 const durationConcurrent = performance.now() - startConcurrent;
 console.log(`${concurrentWrites} concurrent writes: ${durationConcurrent.toFixed(2)}ms`);
 ```
 
 **Optimization Opportunities**:
+
 - Batch writes (append multiple entries at once)
 - Async file I/O (non-blocking writes)
 - Hash caching (reuse previous hash for chain)
 - Write buffering (flush every N entries)
 
 **Performance Targets**:
+
 - <5ms overhead per call (current: <2ms, maintain)
 - <10ms with 10,000 log entries
 - <50ms for 10 concurrent writes
@@ -991,12 +1063,14 @@ console.log(`${concurrentWrites} concurrent writes: ${durationConcurrent.toFixed
 #### 3. Memory Usage Analysis
 
 **Profiling Goals**:
+
 - Profile agent memory usage (baseline, peak)
 - Identify memory leaks (long-running sessions)
 - Test Party Mode memory overhead (4 agents simultaneously)
 - Optimize context caching
 
 **Profiling Approach**:
+
 ```javascript
 // Profile memory usage
 import { spawnAgent } from '.claude/lib/agent-spawner.cjs';
@@ -1013,7 +1087,7 @@ await Promise.all([
   spawnAgent({ type: 'developer' }),
   spawnAgent({ type: 'architect' }),
   spawnAgent({ type: 'qa' }),
-  spawnAgent({ type: 'security-architect' })
+  spawnAgent({ type: 'security-architect' }),
 ]);
 const memAfterParty = process.memoryUsage().heapUsed / 1024 / 1024;
 console.log(`Party Mode (4 agents): ${(memAfterParty - memBeforeParty).toFixed(2)}MB`);
@@ -1029,12 +1103,14 @@ console.log(`Memory per spawn: ${((memEnd - memStart) / 100).toFixed(2)}MB`);
 ```
 
 **Optimization Opportunities**:
+
 - Garbage collection tuning (force GC after agent completion)
 - Context caching limits (LRU eviction)
 - Memory pooling (reuse agent contexts)
 - Leak detection (heap snapshots)
 
 **Performance Targets**:
+
 - <100MB baseline memory
 - <500MB for Party Mode (4 agents)
 - <1GB for long-running sessions (100+ spawns)
@@ -1045,6 +1121,7 @@ console.log(`Memory per spawn: ${((memEnd - memStart) / 100).toFixed(2)}MB`);
 **Benchmark Suite**: `.claude/tests/benchmarks/`
 
 **File Organization**:
+
 ```
 benchmarks/
   knowledge-base-search.bench.cjs
@@ -1054,6 +1131,7 @@ benchmarks/
 ```
 
 **Benchmark Runner**:
+
 ```bash
 # Run all benchmarks
 node .claude/tests/benchmarks/run-all.cjs
@@ -1085,6 +1163,7 @@ node .claude/tests/benchmarks/run-all.cjs
 **Report Location**: `.claude/context/artifacts/performance-baseline-20260128.md`
 
 **Report Structure**:
+
 ```markdown
 # Performance Baseline Report
 
@@ -1099,23 +1178,27 @@ All performance targets met. Recommended optimizations identified for 10x scale.
 ## Knowledge Base Search
 
 ### Current Performance
+
 - 1,133 artifacts: 48ms (target: <50ms) ✓
 - 10,000 artifacts: 92ms (target: <100ms) ✓
 
 ### Bottleneck Analysis
+
 1. CSV parsing: 60% of time
 2. String matching: 30% of time
 3. File I/O: 10% of time
 
 ### Optimizations Applied
+
 - Cached parsed CSV (25ms → 12ms)
 - Indexed search (92ms → 45ms at 10K scale)
 
 ### Before/After
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| 1,133 artifacts | 48ms | 25ms | 48% faster |
-| 10,000 artifacts | 92ms | 45ms | 51% faster |
+
+| Metric           | Before | After | Improvement |
+| ---------------- | ------ | ----- | ----------- |
+| 1,133 artifacts  | 48ms   | 25ms  | 48% faster  |
+| 10,000 artifacts | 92ms   | 45ms  | 51% faster  |
 
 [... same structure for Cost Tracking, Memory Usage ...]
 
@@ -1173,12 +1256,12 @@ All optimizations validated with regression tests (no functionality changes).
 
 ### Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
-| Optimizations break functionality | Regression tests, unit tests |
-| Premature optimization | Profile first, optimize second |
-| Optimization complexity | Measure impact, revert if <10% gain |
-| Performance degradation over time | Benchmark suite in CI/CD |
+| Risk                              | Mitigation                          |
+| --------------------------------- | ----------------------------------- |
+| Optimizations break functionality | Regression tests, unit tests        |
+| Premature optimization            | Profile first, optimize second      |
+| Optimization complexity           | Measure impact, revert if <10% gain |
+| Performance degradation over time | Benchmark suite in CI/CD            |
 
 ---
 
@@ -1205,6 +1288,7 @@ Create separate staging environment for production-like testing before deploying
 #### 1. Environment Detection
 
 **Detection Mechanism**:
+
 ```javascript
 // .claude/lib/utils/environment.cjs
 export function getEnvironment() {
@@ -1235,6 +1319,7 @@ export function isDevelopment() {
 ```
 
 **Environment Variables**:
+
 ```bash
 # Development (default)
 AGENT_STUDIO_ENV=development
@@ -1251,7 +1336,7 @@ AGENT_STUDIO_ENV=production
 **Configuration File**: `.claude/config.staging.yaml`
 
 ```yaml
-version: "2.2.1"
+version: '2.2.1'
 environment: staging
 
 # Feature flags (all enabled in staging for testing)
@@ -1259,26 +1344,26 @@ features:
   knowledgeBase: true
   costTracking: true
   advancedElicitation: true
-  partyMode: true          # Enable for staging testing
-  sidecarMemory: true      # Enable for staging testing
+  partyMode: true # Enable for staging testing
+  sidecarMemory: true # Enable for staging testing
 
 # Staging-specific paths
 paths:
-  knowledge: ".claude/staging/knowledge"
-  metrics: ".claude/staging/metrics"
-  memory: ".claude/staging/memory"
-  agents: ".claude/staging/agents"
+  knowledge: '.claude/staging/knowledge'
+  metrics: '.claude/staging/metrics'
+  memory: '.claude/staging/memory'
+  agents: '.claude/staging/agents'
 
 # Staging database/logs (separate from dev/prod)
 storage:
-  costLog: ".claude/staging/metrics/llm-usage.log"
-  sessionLog: ".claude/staging/sessions/session-log.jsonl"
-  evolutionState: ".claude/staging/context/evolution-state.json"
+  costLog: '.claude/staging/metrics/llm-usage.log'
+  sessionLog: '.claude/staging/sessions/session-log.jsonl'
+  evolutionState: '.claude/staging/context/evolution-state.json'
 
 # Test data isolation
 testData:
   enabled: true
-  seedData: true  # Auto-populate with test data
+  seedData: true # Auto-populate with test data
 
 # Monitoring (verbose in staging)
 monitoring:
@@ -1288,12 +1373,13 @@ monitoring:
 
 # Alerts (relaxed thresholds in staging)
 alerts:
-  hookExecutionTimeMs: 20       # More lenient than prod (10ms)
-  agentFailureRatePercent: 10   # More lenient than prod (5%)
-  errorRatePerHour: 20          # More lenient than prod (10%)
+  hookExecutionTimeMs: 20 # More lenient than prod (10ms)
+  agentFailureRatePercent: 10 # More lenient than prod (5%)
+  errorRatePerHour: 20 # More lenient than prod (10%)
 ```
 
 **Configuration Loader**:
+
 ```javascript
 // .claude/lib/utils/config-loader.cjs
 import { getEnvironment } from './environment.cjs';
@@ -1302,9 +1388,7 @@ import { parse } from 'yaml';
 
 export function loadConfig() {
   const env = getEnvironment();
-  const configFile = env === 'staging'
-    ? '.claude/config.staging.yaml'
-    : '.claude/config.yaml';
+  const configFile = env === 'staging' ? '.claude/config.staging.yaml' : '.claude/config.yaml';
 
   const configContent = readFileSync(configFile, 'utf8');
   return parse(configContent);
@@ -1314,6 +1398,7 @@ export function loadConfig() {
 #### 3. Staging-Specific Directories
 
 **Directory Structure**:
+
 ```
 .claude/staging/
   knowledge/
@@ -1339,6 +1424,7 @@ export function loadConfig() {
 ```
 
 **Directory Initialization**:
+
 ```bash
 # Initialize staging directories
 node .claude/tools/cli/init-staging.cjs
@@ -1363,10 +1449,12 @@ node .claude/tools/cli/init-staging.cjs
 #### 4. Deployment Procedures
 
 **Deployment Checklist**:
+
 ```markdown
 # Staging Deployment Checklist
 
 ## Pre-Deployment
+
 - [ ] All tests passing (unit, integration, E2E)
 - [ ] Performance benchmarks passing
 - [ ] No open CRITICAL/HIGH issues
@@ -1374,6 +1462,7 @@ node .claude/tools/cli/init-staging.cjs
 - [ ] Documentation updated
 
 ## Deployment
+
 - [ ] Set AGENT_STUDIO_ENV=staging
 - [ ] Initialize staging directories
 - [ ] Seed test data
@@ -1381,6 +1470,7 @@ node .claude/tools/cli/init-staging.cjs
 - [ ] Run smoke tests
 
 ## Post-Deployment
+
 - [ ] Verify all features working
 - [ ] Check monitoring dashboard
 - [ ] Review error logs (should be empty)
@@ -1388,6 +1478,7 @@ node .claude/tools/cli/init-staging.cjs
 - [ ] Sign-off by QA + Security
 
 ## Promotion to Production
+
 - [ ] Staging validation complete (24h minimum)
 - [ ] No critical issues in staging
 - [ ] User acceptance testing complete
@@ -1396,6 +1487,7 @@ node .claude/tools/cli/init-staging.cjs
 ```
 
 **Smoke Tests** (Quick validation after deployment):
+
 ```bash
 # Smoke test script: .claude/tests/smoke/staging-smoke-test.sh
 
@@ -1434,21 +1526,25 @@ echo "✓ All smoke tests passed!"
 ```
 
 **Rollback Procedures** (If staging deployment fails):
+
 ```markdown
 # Staging Rollback Procedure
 
 ## Level 1: Restart
+
 1. Stop all staging processes
 2. Delete .claude/staging/ directory
 3. Re-run init-staging.cjs
 4. Re-run smoke tests
 
 ## Level 2: Revert Code
+
 1. Git revert to last known good commit
 2. Run Level 1 rollback
 3. Verify tests passing
 
 ## Level 3: Nuclear Option
+
 1. Delete .claude/staging/ directory
 2. Restore from backup (if exists)
 3. Switch to development environment
@@ -1459,7 +1555,7 @@ echo "✓ All smoke tests passed!"
 
 **Documentation File**: `.claude/docs/STAGING_ENVIRONMENT.md`
 
-```markdown
+````markdown
 # Staging Environment Guide
 
 ## Overview
@@ -1478,30 +1574,34 @@ node .claude/tools/cli/init-staging.cjs
 # Verify setup
 node .claude/tests/smoke/staging-smoke-test.sh
 ```
+````
 
 ## Environment Differences
 
-| Feature | Development | Staging | Production |
-|---------|-------------|---------|------------|
-| Feature flags | Some enabled | All enabled | Selective |
-| Test data | Minimal | Full seed data | Real data |
-| Logging | Standard | Verbose | Standard |
-| Alerts | Disabled | Relaxed thresholds | Strict thresholds |
-| Data paths | `.claude/` | `.claude/staging/` | `.claude/` |
+| Feature       | Development  | Staging            | Production        |
+| ------------- | ------------ | ------------------ | ----------------- |
+| Feature flags | Some enabled | All enabled        | Selective         |
+| Test data     | Minimal      | Full seed data     | Real data         |
+| Logging       | Standard     | Verbose            | Standard          |
+| Alerts        | Disabled     | Relaxed thresholds | Strict thresholds |
+| Data paths    | `.claude/`   | `.claude/staging/` | `.claude/`        |
 
 ## Testing Procedures
 
 ### Smoke Tests (2 minutes)
+
 ```bash
 bash .claude/tests/smoke/staging-smoke-test.sh
 ```
 
 ### Full Test Suite (10 minutes)
+
 ```bash
 AGENT_STUDIO_ENV=staging npm test
 ```
 
 ### Manual Testing
+
 1. Search Knowledge Base (KB search)
 2. Track costs (session lifecycle)
 3. Invoke Advanced Elicitation
@@ -1510,12 +1610,14 @@ AGENT_STUDIO_ENV=staging npm test
 ## Promotion to Production
 
 **Criteria**:
+
 - All tests passing in staging
 - 24 hours minimum in staging
 - No critical issues
 - QA + Security sign-off
 
 **Process**:
+
 1. Deploy to staging (this guide)
 2. Validate for 24 hours
 3. Create production deployment plan
@@ -1524,20 +1626,25 @@ AGENT_STUDIO_ENV=staging npm test
 ## Troubleshooting
 
 ### Environment not detected
+
 - Check: `echo $AGENT_STUDIO_ENV` (should be "staging")
 - Fix: `export AGENT_STUDIO_ENV=staging`
 
 ### Config not loaded
+
 - Check: `.claude/config.staging.yaml` exists
 - Fix: Copy `.claude/config.yaml` and modify for staging
 
 ### Staging directories missing
+
 - Check: `.claude/staging/` exists
 - Fix: Run `node .claude/tools/cli/init-staging.cjs`
 
 ### Tests failing in staging
+
 - Check: Run tests with `AGENT_STUDIO_ENV=staging npm test`
 - Fix: Verify test data seeded correctly
+
 ```
 
 ### Implementation Steps
@@ -1595,9 +1702,11 @@ AGENT_STUDIO_ENV=staging npm test
 ## Dependencies Graph
 
 ```
+
 Task #16 (Integration Tests) ─┐
-Task #17 (E2E Tests)          ├─> Task #19 (Performance) ─> Task #20 (Staging)
-Task #18 (Monitoring)        ─┘
+Task #17 (E2E Tests) ├─> Task #19 (Performance) ─> Task #20 (Staging)
+Task #18 (Monitoring) ─┘
+
 ```
 
 **Critical Path**: Tasks #16/17/18 → #19 → #20
@@ -1745,3 +1854,4 @@ Task #18 (Monitoring)        ─┘
 **Created By**: Planner Agent (Task #16)
 **Date**: 2026-01-28
 **Location**: `.claude/context/plans/production-hardening-plan-20260128.md`
+```

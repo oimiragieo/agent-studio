@@ -135,7 +135,7 @@ function formatFile(filePath) {
 
     // Prettier also failed, skip formatting
     return false;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }

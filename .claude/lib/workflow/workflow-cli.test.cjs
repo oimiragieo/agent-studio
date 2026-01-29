@@ -11,7 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { _execSync } = require('child_process');
 
 // Test framework
 const tests = [];
@@ -55,8 +55,8 @@ function assertEqual(actual, expected, message) {
 
 // Setup
 const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
-const CLI_PATH = path.join(__dirname, 'workflow-cli.cjs');
-const TEST_WORKFLOW_PATH = path.join(
+const _CLI_PATH = path.join(__dirname, 'workflow-cli.cjs');
+const _TEST_WORKFLOW_PATH = path.join(
   PROJECT_ROOT,
   '.claude',
   'workflows',

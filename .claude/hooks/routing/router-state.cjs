@@ -63,7 +63,7 @@ function safeJSONParse(content) {
     }
 
     return parsed;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -147,7 +147,7 @@ function getState() {
         return { ...getDefaultState(), ...state };
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // File might be corrupted or locked, return default
   }
   return getDefaultState();
@@ -232,7 +232,7 @@ function loadStateFromFile() {
     if (parsed) {
       return { ...getDefaultState(), ...parsed };
     }
-  } catch (e) {
+  } catch (_e) {
     // On any error, return default
   }
   return getDefaultState();
@@ -256,7 +256,7 @@ function syncSleep(ms) {
       // Atomics.wait blocks the thread without CPU spin
       Atomics.wait(int32, 0, 0, ms);
       return;
-    } catch (e) {
+    } catch (_e) {
       // Fall through to busy-wait if Atomics.wait fails
     }
   }
@@ -327,7 +327,7 @@ function saveStateWithRetry(updates, retries = MAX_RETRIES) {
       atomicWriteJSONSync(STATE_FILE, merged);
       invalidateCache(STATE_FILE);
       return merged;
-    } catch (e) {
+    } catch (_e) {
       // Write failed, retry
       continue;
     }

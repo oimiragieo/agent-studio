@@ -39,7 +39,7 @@ const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 const {
   parseHookInputAsync,
   getToolName,
-  getToolOutput,
+  _getToolOutput,
 } = require('../../lib/utils/hook-input.cjs');
 
 // Configurable paths (can be overridden for testing)

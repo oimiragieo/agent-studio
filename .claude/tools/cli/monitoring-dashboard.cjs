@@ -15,8 +15,12 @@
  */
 
 const path = require('path');
-const { getMetricsSummary, findSlowHooks, detectAlerts } = require(path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'metrics-reader.cjs'));
-const { renderDashboard, renderCompactSummary } = require(path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'dashboard-renderer.cjs'));
+const { getMetricsSummary, _findSlowHooks, detectAlerts } = require(
+  path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'metrics-reader.cjs')
+);
+const { renderDashboard, _renderCompactSummary } = require(
+  path.join(process.cwd(), '.claude', 'lib', 'monitoring', 'dashboard-renderer.cjs')
+);
 
 /**
  * Parse command-line arguments
@@ -29,7 +33,7 @@ function parseArgs() {
     summary: args.includes('--summary') || args.length === 0,
     trends: args.includes('--trends'),
     alerts: args.includes('--alerts'),
-    hours: parseInt(args.find((arg) => arg.startsWith('--hours='))?.split('=')[1] || '24', 10)
+    hours: parseInt(args.find(arg => arg.startsWith('--hours='))?.split('=')[1] || '24', 10),
   };
 }
 
@@ -89,7 +93,7 @@ async function displayAlerts(options = {}) {
     }
 
     console.log(`\nCurrent Alerts (Last ${hours}h):\n`);
-    alerts.forEach((alert) => {
+    alerts.forEach(alert => {
       console.log(`  [${alert.severity}] ${alert.type}: ${alert.message}`);
     });
     console.log('');
@@ -115,14 +119,14 @@ async function displayTrends() {
         date: new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString().split('T')[0],
         hookCalls: summary.hooks.total,
         avgTime: summary.hooks.avgTime,
-        errors: summary.errors.total
+        errors: summary.errors.total,
       });
     }
 
     // Display trends table
     console.log('Date       | Hook Calls | Avg Time | Errors');
     console.log('-----------|------------|----------|-------');
-    days.reverse().forEach((day) => {
+    days.reverse().forEach(day => {
       console.log(
         `${day.date} | ${String(day.hookCalls).padStart(10)} | ${day.avgTime.toFixed(2)}ms   | ${day.errors}`
       );
@@ -165,7 +169,7 @@ async function main() {
 
 // Run if called directly
 if (require.main === module) {
-  main().catch((error) => {
+  main().catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);
   });
@@ -174,5 +178,5 @@ if (require.main === module) {
 module.exports = {
   displayDashboard,
   displayAlerts,
-  displayTrends
+  displayTrends,
 };

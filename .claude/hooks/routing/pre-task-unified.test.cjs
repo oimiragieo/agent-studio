@@ -20,7 +20,7 @@ const fs = require('fs');
 
 // Prevent process.exit from actually exiting during tests
 const originalExit = process.exit;
-let lastExitCode = null;
+let lastExitCode = null; // eslint-disable-line no-unused-vars
 process.exit = code => {
   lastExitCode = code;
 };

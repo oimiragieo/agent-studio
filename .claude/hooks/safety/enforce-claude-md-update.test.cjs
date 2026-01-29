@@ -22,7 +22,7 @@ const os = require('os');
 let enforceClaudeMdUpdate;
 try {
   enforceClaudeMdUpdate = require('./enforce-claude-md-update.cjs');
-} catch (err) {
+} catch (_err) {
   enforceClaudeMdUpdate = null;
 }
 
@@ -30,7 +30,7 @@ describe('enforce-claude-md-update', () => {
   let originalEnv;
   let testDir;
   let claudeMdPath;
-  let originalSessionTimestamp;
+  let originalSessionTimestamp; // eslint-disable-line no-unused-vars
 
   beforeEach(() => {
     // Save original environment

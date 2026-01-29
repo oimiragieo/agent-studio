@@ -76,7 +76,7 @@ describe('Party Mode Performance Benchmarks', () => {
         previousResponses: [],
       };
 
-      const stats = benchmark((i) => {
+      const stats = benchmark(i => {
         const agentId = generateAgentId('developer', Date.now() + i, sessionId);
         spawnAgent({
           agentId,
@@ -101,7 +101,7 @@ describe('Party Mode Performance Benchmarks', () => {
     it('should route message in <5ms (target)', () => {
       const router = createRouter(sessionId);
 
-      const stats = benchmark((i) => {
+      const stats = benchmark(i => {
         routeMessage(router, `agent_${i}`, 'orchestrator', {
           content: `Message ${i}`,
           timestamp: new Date().toISOString(),
@@ -125,16 +125,18 @@ describe('Party Mode Performance Benchmarks', () => {
         userMessage: 'Performance test',
         _orchestratorState: { internal: 'data' },
         _sessionSecrets: { apiKey: 'secret' },
-        previousResponses: Array(10).fill(null).map((_, i) => ({
-          agentId: `agent_${i}`,
-          content: `Response ${i}`,
-          _rawThinking: 'Internal reasoning',
-          _toolCalls: ['tool1', 'tool2'],
-          timestamp: new Date().toISOString(),
-        })),
+        previousResponses: Array(10)
+          .fill(null)
+          .map((_, i) => ({
+            agentId: `agent_${i}`,
+            content: `Response ${i}`,
+            _rawThinking: 'Internal reasoning',
+            _toolCalls: ['tool1', 'tool2'],
+            timestamp: new Date().toISOString(),
+          })),
       };
 
-      const stats = benchmark((i) => {
+      const stats = benchmark(i => {
         const agentId = generateAgentId('developer', Date.now() + i, sessionId);
         isolateContext(sharedContext, agentId);
       }, 100);
@@ -145,7 +147,10 @@ describe('Party Mode Performance Benchmarks', () => {
       console.log(`  Max: ${stats.max.toFixed(2)}ms`);
       console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
 
-      assert.ok(stats.avg < 10, `Average isolation time (${stats.avg.toFixed(2)}ms) should be <10ms`);
+      assert.ok(
+        stats.avg < 10,
+        `Average isolation time (${stats.avg.toFixed(2)}ms) should be <10ms`
+      );
       assert.ok(stats.p95 < 10, `P95 isolation time (${stats.p95.toFixed(2)}ms) should be <10ms`);
     });
   });
@@ -153,10 +158,30 @@ describe('Party Mode Performance Benchmarks', () => {
   describe('Benchmark 4: Response Aggregation', () => {
     it('should aggregate 4 agent responses in <20ms (target)', () => {
       const responses = [
-        { agentId: 'agent_1', agentType: 'developer', content: 'Developer perspective', timestamp: new Date().toISOString() },
-        { agentId: 'agent_2', agentType: 'architect', content: 'Architect perspective', timestamp: new Date().toISOString() },
-        { agentId: 'agent_3', agentType: 'security-architect', content: 'Security perspective', timestamp: new Date().toISOString() },
-        { agentId: 'agent_4', agentType: 'qa', content: 'QA perspective', timestamp: new Date().toISOString() },
+        {
+          agentId: 'agent_1',
+          agentType: 'developer',
+          content: 'Developer perspective',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          agentId: 'agent_2',
+          agentType: 'architect',
+          content: 'Architect perspective',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          agentId: 'agent_3',
+          agentType: 'security-architect',
+          content: 'Security perspective',
+          timestamp: new Date().toISOString(),
+        },
+        {
+          agentId: 'agent_4',
+          agentType: 'qa',
+          content: 'QA perspective',
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       const stats = benchmark(() => {
@@ -169,7 +194,10 @@ describe('Party Mode Performance Benchmarks', () => {
       console.log(`  Max: ${stats.max.toFixed(2)}ms`);
       console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
 
-      assert.ok(stats.avg < 20, `Average aggregation time (${stats.avg.toFixed(2)}ms) should be <20ms`);
+      assert.ok(
+        stats.avg < 20,
+        `Average aggregation time (${stats.avg.toFixed(2)}ms) should be <20ms`
+      );
       assert.ok(stats.p95 < 20, `P95 aggregation time (${stats.p95.toFixed(2)}ms) should be <20ms`);
     });
   });
@@ -219,7 +247,10 @@ describe('Party Mode Performance Benchmarks', () => {
       console.log(`  Max: ${stats.max.toFixed(2)}ms`);
       console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
 
-      assert.ok(stats.avg < 10, `Average consensus time (${stats.avg.toFixed(2)}ms) should be <10ms`);
+      assert.ok(
+        stats.avg < 10,
+        `Average consensus time (${stats.avg.toFixed(2)}ms) should be <10ms`
+      );
       assert.ok(stats.p95 < 10, `P95 consensus time (${stats.p95.toFixed(2)}ms) should be <10ms`);
     });
   });
@@ -231,7 +262,7 @@ describe('Party Mode Performance Benchmarks', () => {
         agentIds.push(generateAgentId(`agent_${i}`, Date.now() + i, sessionId));
       }
 
-      const stats = benchmark((iteration) => {
+      const stats = benchmark(iteration => {
         // Simulate full round workflow (fast version for benchmark)
         const round = startRound(`${sessionId}-${iteration}`, agentIds);
 
@@ -278,13 +309,16 @@ describe('Party Mode Performance Benchmarks', () => {
       console.log('  Target: <90s total (orchestration + LLM inference)');
 
       // Orchestration overhead should be minimal (<1s)
-      assert.ok(stats.avg < 1000, `Average round overhead (${stats.avg.toFixed(2)}ms) should be <1000ms`);
+      assert.ok(
+        stats.avg < 1000,
+        `Average round overhead (${stats.avg.toFixed(2)}ms) should be <1000ms`
+      );
     });
   });
 
   describe('Benchmark 7: Multi-Round (2 rounds, 4 agents)', () => {
     it('should complete 2 rounds in <180s (target) - simulated', () => {
-      const stats = benchmark((iteration) => {
+      const stats = benchmark(iteration => {
         const sessionIdLocal = `${sessionId}-multi-${iteration}`;
         const agentIds = [];
         for (let i = 0; i < 4; i++) {
@@ -342,11 +376,16 @@ describe('Party Mode Performance Benchmarks', () => {
       console.log(`  Max: ${stats.max.toFixed(2)}ms`);
       console.log(`  P95: ${stats.p95.toFixed(2)}ms`);
       console.log('\n  Note: This measures orchestration overhead only.');
-      console.log('  Real 2-round time includes LLM inference (~120-160s for 4 agents * 2 rounds).');
+      console.log(
+        '  Real 2-round time includes LLM inference (~120-160s for 4 agents * 2 rounds).'
+      );
       console.log('  Target: <180s total (orchestration + LLM inference)');
 
       // Orchestration overhead should be minimal (<2s for 2 rounds)
-      assert.ok(stats.avg < 2000, `Average 2-round overhead (${stats.avg.toFixed(2)}ms) should be <2000ms`);
+      assert.ok(
+        stats.avg < 2000,
+        `Average 2-round overhead (${stats.avg.toFixed(2)}ms) should be <2000ms`
+      );
     });
   });
 

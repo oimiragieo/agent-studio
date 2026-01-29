@@ -42,7 +42,7 @@ async function loadTeam(teamName) {
   // Check if team file exists
   try {
     await fs.access(teamPath);
-  } catch (err) {
+  } catch (_err) {
     throw new Error(`Team "${teamName}" not found at ${teamPath}`);
   }
 
@@ -90,7 +90,7 @@ async function loadTeam(teamName) {
 
   return {
     teamName,
-    agents
+    agents,
   };
 }
 
@@ -174,12 +174,16 @@ function validateTeamDefinition(team) {
 
     // Validate role
     if (agent.role && !VALID_ROLES.includes(agent.role)) {
-      errors.push(`Agent ${index + 1} has invalid role: ${agent.role} (valid: ${VALID_ROLES.join(', ')})`);
+      errors.push(
+        `Agent ${index + 1} has invalid role: ${agent.role} (valid: ${VALID_ROLES.join(', ')})`
+      );
     }
 
     // Validate model
     if (agent.model && !VALID_MODELS.includes(agent.model)) {
-      errors.push(`Agent ${index + 1} has invalid model: ${agent.model} (valid: ${VALID_MODELS.join(', ')})`);
+      errors.push(
+        `Agent ${index + 1} has invalid model: ${agent.model} (valid: ${VALID_MODELS.join(', ')})`
+      );
     }
 
     // Validate tools array
@@ -195,7 +199,7 @@ function validateTeamDefinition(team) {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -211,12 +215,10 @@ async function getTeamList() {
     const files = await fs.readdir(TEAMS_DIR);
 
     // Filter for .csv files and remove extension
-    const teams = files
-      .filter(file => file.endsWith('.csv'))
-      .map(file => file.replace('.csv', ''));
+    const teams = files.filter(file => file.endsWith('.csv')).map(file => file.replace('.csv', ''));
 
     return teams;
-  } catch (err) {
+  } catch (_err) {
     // Directory doesn't exist or can't be read
     return [];
   }
@@ -225,5 +227,5 @@ async function getTeamList() {
 module.exports = {
   loadTeam,
   validateTeamDefinition,
-  getTeamList
+  getTeamList,
 };

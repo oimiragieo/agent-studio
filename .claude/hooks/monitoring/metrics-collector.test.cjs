@@ -9,7 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const { preToolUse, postToolUse } = require('./metrics-collector.cjs');
 
-const METRICS_FILE = path.join(process.cwd(), '.claude', 'context', 'metrics', 'hook-metrics.jsonl');
+const METRICS_FILE = path.join(
+  process.cwd(),
+  '.claude',
+  'context',
+  'metrics',
+  'hook-metrics.jsonl'
+);
 
 test('metrics-collector: preToolUse stores start time', () => {
   const context = {};
@@ -27,7 +33,7 @@ test('metrics-collector: postToolUse logs metric on success', () => {
   }
 
   const context = { _metricsStartTime: Date.now() - 5 };
-  const result = postToolUse('Task', { foo: 'bar' }, { success: true }, context);
+  const _result = postToolUse('Task', { foo: 'bar' }, { success: true }, context);
 
   // Verify metric was logged
   assert.ok(fs.existsSync(METRICS_FILE), 'Metrics file should exist');
@@ -45,7 +51,7 @@ test('metrics-collector: postToolUse logs metric on success', () => {
 test('metrics-collector: postToolUse logs metric on failure', () => {
   const context = { _metricsStartTime: Date.now() - 10 };
   const error = new Error('Test error');
-  const result = postToolUse('Task', {}, { error }, context);
+  const _result = postToolUse('Task', {}, { error }, context);
 
   const content = fs.readFileSync(METRICS_FILE, 'utf8');
   const lines = content.trim().split('\n');

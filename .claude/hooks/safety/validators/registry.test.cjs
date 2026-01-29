@@ -130,7 +130,7 @@ describe('registry', () => {
 
   describe('registerValidator', () => {
     test('registers a new validator', () => {
-      const customValidator = cmd => ({ valid: true, error: '' });
+      const customValidator = _cmd => ({ valid: true, error: '' });
       registerValidator('test-cmd', customValidator);
       assert.ok(hasValidator('test-cmd'));
       VALIDATOR_REGISTRY.delete('test-cmd');

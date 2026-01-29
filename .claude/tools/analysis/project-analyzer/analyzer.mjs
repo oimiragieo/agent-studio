@@ -53,7 +53,7 @@ const LANGUAGE_MAP = {
 /**
  * Main analysis function
  */
-async function analyzeProject(projectRoot, options = {}) {
+async function analyzeProject(projectRoot, _options = {}) {
   const startTime = Date.now();
   const errors = [];
 
@@ -184,7 +184,7 @@ async function detectManifests(projectRoot) {
           manifests[file] = content;
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Skip files that can't be read
     }
   }
@@ -441,7 +441,7 @@ async function generateFileStats(projectRoot) {
 
       // Track file sizes
       fileSizes.push({ path: file, lines });
-    } catch (error) {
+    } catch (_error) {
       stats.files_skipped++;
     }
   }
@@ -687,7 +687,7 @@ async function detectPatterns(projectRoot, stats) {
 /**
  * Calculate technical debt score
  */
-function calculateTechDebt(stats, dependencies, codeQuality, patterns) {
+function calculateTechDebt(stats, dependencies, codeQuality, _patterns) {
   const indicators = [];
   let score = 0;
 

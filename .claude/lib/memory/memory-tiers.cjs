@@ -312,7 +312,7 @@ function findMTMSession(sessionId, projectRoot = PROJECT_ROOT) {
  * }
  */
 function promoteToLTM(sessionId, projectRoot = PROJECT_ROOT) {
-  const mtmDir = getTierPath('MTM', projectRoot);
+  const _mtmDir = getTierPath('MTM', projectRoot);
   const ltmDir = getTierPath('LTM', projectRoot);
   ensureDir(ltmDir);
 

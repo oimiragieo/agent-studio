@@ -14,7 +14,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 
 const COST_LOG = '.claude/context/metrics/cost-log.jsonl';
 const COST_SUMMARY = '.claude/context/metrics/cost-summary.json';
@@ -128,9 +128,7 @@ function verifyIntegrity(entries) {
 function reportToday(entries) {
   const today = new Date().toISOString().split('T')[0];
 
-  const todayEntries = entries.filter(e =>
-    e.timestamp.startsWith(today)
-  );
+  const todayEntries = entries.filter(e => e.timestamp.startsWith(today));
 
   console.log(`\nCost Report (Today: ${today})`);
   console.log('='.repeat(50));
@@ -151,9 +149,7 @@ function reportDays(entries, days) {
   const daysMs = days * 24 * 60 * 60 * 1000;
   const cutoff = new Date(Date.now() - daysMs);
 
-  const filteredEntries = entries.filter(e =>
-    new Date(e.timestamp) >= cutoff
-  );
+  const filteredEntries = entries.filter(e => new Date(e.timestamp) >= cutoff);
 
   console.log(`\nCost Report (Last ${days} Days)`);
   console.log('='.repeat(50));
@@ -228,8 +224,12 @@ function reportSession(entries, sessionId) {
  */
 function aggregateEntries(entries) {
   const summary = {
-    byTier: { haiku: { calls: 0, tokens: 0, cost: 0 }, sonnet: { calls: 0, tokens: 0, cost: 0 }, opus: { calls: 0, tokens: 0, cost: 0 } },
-    total: { calls: 0, tokens: 0, cost: 0 }
+    byTier: {
+      haiku: { calls: 0, tokens: 0, cost: 0 },
+      sonnet: { calls: 0, tokens: 0, cost: 0 },
+      opus: { calls: 0, tokens: 0, cost: 0 },
+    },
+    total: { calls: 0, tokens: 0, cost: 0 },
   };
 
   for (const entry of entries) {

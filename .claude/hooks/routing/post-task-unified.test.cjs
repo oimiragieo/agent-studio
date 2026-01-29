@@ -12,7 +12,7 @@
 
 'use strict';
 
-const { describe, it, beforeEach, afterEach, mock } = require('node:test');
+const { describe, it, beforeEach, afterEach, _mock } = require('node:test');
 const assert = require('node:assert');
 const path = require('path');
 const fs = require('fs');
@@ -22,7 +22,7 @@ const originalExit = process.exit;
 const originalArgv = [...process.argv];
 
 // Mock process.exit to prevent test termination
-let exitCode = null;
+let exitCode = null; // eslint-disable-line no-unused-vars
 process.exit = code => {
   exitCode = code;
 };

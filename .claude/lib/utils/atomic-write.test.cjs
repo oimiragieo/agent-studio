@@ -294,7 +294,9 @@ describe('atomic-write', () => {
 
         // Slight delay to ensure different timestamp
         const start = Date.now();
-        while (Date.now() - start < 5) {}
+        while (Date.now() - start < 5) {
+          /* busy wait for 5ms */
+        }
 
         fs.writeFileSync(filePath, 'content2');
         const backupPath2 = atomicWrite.createBackup(filePath, { keepMultiple: true });

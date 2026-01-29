@@ -18,7 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const { spawnSync, execSync } = require('child_process');
 
 // SEC-009-CONVERT FIX: Path validation to prevent command injection
 const DANGEROUS_CHARS = [
@@ -49,7 +49,7 @@ function isPathSafe(filePath) {
 }
 
 // Cross-platform null device
-const NULL_DEVICE = process.platform === 'win32' ? 'NUL' : '/dev/null';
+const _NULL_DEVICE = process.platform === 'win32' ? 'NUL' : '/dev/null';
 
 // Find project root
 function findProjectRoot() {
@@ -188,7 +188,7 @@ function formatFile(filePath) {
       shell: false,
     });
     if (result.status === 0) return true;
-  } catch (error) {
+  } catch (_error) {
     // Fall through to prettier
   }
   try {
@@ -198,7 +198,7 @@ function formatFile(filePath) {
       shell: false,
     });
     return result.status === 0;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }
@@ -278,7 +278,7 @@ function verifyPackage(server, source) {
       default:
         return false;
     }
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -622,7 +622,7 @@ function convertServer(server, source) {
       const executorPath = path.join(skillDir, 'scripts', 'executor.cjs');
       execSync(`node "${executorPath}" --help`, { stdio: 'inherit', timeout: 5000 });
       console.log('   ✅ Test passed');
-    } catch (error) {
+    } catch (_error) {
       console.log('   ⚠️  Test inconclusive (server may need configuration)');
     }
   }

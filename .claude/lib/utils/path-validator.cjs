@@ -17,24 +17,24 @@ function getProjectRoot() {
 const PATH_CONTEXTS = {
   SIDECAR: {
     allowedPrefixes: ['.claude/memory/agents/'],
-    description: 'Agent sidecar memory'
+    description: 'Agent sidecar memory',
   },
   SHARED_MEMORY: {
     allowedPrefixes: ['.claude/context/memory/'],
-    description: 'Shared memory files'
+    description: 'Shared memory files',
   },
   KNOWLEDGE_BASE: {
     allowedPrefixes: ['.claude/context/artifacts/'],
-    description: 'Knowledge base index'
+    description: 'Knowledge base index',
   },
   COST_TRACKING: {
     allowedPrefixes: ['.claude/context/metrics/'],
-    description: 'Cost tracking logs'
+    description: 'Cost tracking logs',
   },
   SKILL_PATHS: {
     allowedPrefixes: ['.claude/skills/', '.claude/agents/', '.claude/workflows/'],
-    description: 'Skill and agent definitions'
-  }
+    description: 'Skill and agent definitions',
+  },
 };
 
 /**
@@ -53,14 +53,14 @@ function validatePathSafety(filePath) {
 
   // Check for path traversal patterns
   const dangerousPatterns = [
-    /\.\.\//,                    // Unix path traversal
-    /\.\.\\/,                    // Windows path traversal
-    /^~\//,                      // Home directory reference
-    /^\/(?!\.)/,                 // Absolute Unix path (allow ./ prefix)
-    /^[A-Z]:\\/i,                // Absolute Windows path
-    /\$\{.*\}/,                  // Template injection
-    /%[0-9a-f]{2}/i,             // URL encoding in path
-    /\0/,                        // Null byte injection
+    /\.\.\//, // Unix path traversal
+    /\.\.\\/, // Windows path traversal
+    /^~\//, // Home directory reference
+    /^\/(?!\.)/, // Absolute Unix path (allow ./ prefix)
+    /^[A-Z]:\\/i, // Absolute Windows path
+    /\$\{.*\}/, // Template injection
+    /%[0-9a-f]{2}/i, // URL encoding in path
+    /\0/, // Null byte injection
   ];
 
   for (const pattern of dangerousPatterns) {
@@ -103,14 +103,14 @@ function validatePathContext(filePath, contextName) {
   const normalizedPath = path.normalize(filePath).replace(/\\/g, '/');
 
   // Check against allowed prefixes
-  const isAllowed = context.allowedPrefixes.some(prefix =>
-    normalizedPath.startsWith(prefix) || normalizedPath.startsWith('./' + prefix)
+  const isAllowed = context.allowedPrefixes.some(
+    prefix => normalizedPath.startsWith(prefix) || normalizedPath.startsWith('./' + prefix)
   );
 
   if (!isAllowed) {
     return {
       valid: false,
-      reason: `SEC-PATH-005: Path not in allowed prefixes for ${contextName}. Allowed: ${context.allowedPrefixes.join(', ')}`
+      reason: `SEC-PATH-005: Path not in allowed prefixes for ${contextName}. Allowed: ${context.allowedPrefixes.join(', ')}`,
     };
   }
 
@@ -131,7 +131,7 @@ function validateSidecarOwnership(filePath, agentName) {
 
   // Extract agent name from path
   const normalizedPath = path.normalize(filePath).replace(/\\/g, '/');
-  const match = normalizedPath.match(/\.claude\/memory\/agents\/([^\/]+)/);
+  const match = normalizedPath.match(/\.claude\/memory\/agents\/([^/]+)/);
 
   if (!match) {
     return { valid: false, reason: 'SEC-PATH-006: Could not extract agent name from sidecar path' };
@@ -142,7 +142,7 @@ function validateSidecarOwnership(filePath, agentName) {
   if (pathAgentName !== agentName) {
     return {
       valid: false,
-      reason: `SEC-PATH-007: Sidecar path agent "${pathAgentName}" does not match current agent "${agentName}"`
+      reason: `SEC-PATH-007: Sidecar path agent "${pathAgentName}" does not match current agent "${agentName}"`,
     };
   }
 
@@ -154,5 +154,5 @@ module.exports = {
   validatePathContext,
   validateSidecarOwnership,
   PATH_CONTEXTS,
-  getProjectRoot
+  getProjectRoot,
 };

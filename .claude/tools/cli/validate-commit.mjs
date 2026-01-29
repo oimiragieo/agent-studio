@@ -40,7 +40,7 @@ function validateCommitMessage(message) {
   if (!CONVENTIONAL_COMMIT_REGEX.test(header)) {
     const match = header.match(/^(\w+)(\(.+\))?:?\s*(.*)/);
 
-    let suggestions = [];
+    const suggestions = [];
     if (!match) {
       suggestions.push('Use format: <type>(<scope>): <subject>');
     } else {

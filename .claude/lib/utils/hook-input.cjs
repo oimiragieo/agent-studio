@@ -114,7 +114,7 @@ function parseHookInputSync() {
   try {
     const parsed = JSON.parse(process.argv[2]);
     return sanitizeObject(parsed);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -135,7 +135,7 @@ async function parseHookInputAsync(options = {}) {
     try {
       const parsed = JSON.parse(process.argv[2]);
       return sanitizeObject(parsed);
-    } catch (e) {
+    } catch (_e) {
       // Not valid JSON, try stdin
     }
   }
@@ -173,7 +173,7 @@ async function parseHookInputAsync(options = {}) {
       try {
         const parsed = JSON.parse(input);
         resolveOnce(sanitizeObject(parsed));
-      } catch (e) {
+      } catch (_e) {
         // Invalid JSON
         resolveOnce(allowEmpty ? null : undefined);
       }
@@ -228,7 +228,7 @@ function validateHookInput(jsonString) {
 
     // Filter by allowed keys at top level for security
     return sanitizeObject(parsed, true);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -439,7 +439,7 @@ function securityAuditLog(hookName, action, details = {}) {
         fs.mkdirSync(dir, { recursive: true });
       }
       fs.appendFileSync(auditFile, JSON.stringify(entry) + '\n');
-    } catch (e) {
+    } catch (_e) {
       // Best effort - don't fail the hook if audit logging fails
     }
   }

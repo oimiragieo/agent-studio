@@ -88,7 +88,7 @@ const CLAUDE_DIR = path.join(PROJECT_ROOT, '.claude');
 const SKILLS_DIR = path.join(CLAUDE_DIR, 'skills');
 const AGENTS_DIR = path.join(CLAUDE_DIR, 'agents');
 const TOOLS_DIR = path.join(CLAUDE_DIR, 'tools');
-const SCHEMA_PATH = path.join(CLAUDE_DIR, 'schemas', 'skill-definition.schema.json');
+const _SCHEMA_PATH = path.join(CLAUDE_DIR, 'schemas', 'skill-definition.schema.json');
 const STRUCTURE_PATH = path.join(
   CLAUDE_DIR,
   'skills',
@@ -132,7 +132,7 @@ function formatFile(filePath) {
       return true;
     }
     throw new Error('pnpm format failed');
-  } catch (error) {
+  } catch (_error) {
     try {
       // SEC-009: Use spawnSync with array args and shell:false
       const result = spawnSync('npx', ['prettier', '--write', filePath], {
@@ -146,7 +146,7 @@ function formatFile(filePath) {
         return true;
       }
       throw new Error('prettier failed');
-    } catch (e) {
+    } catch (_e) {
       console.log('⚠️  Could not format file (no formatter available)');
       return false;
     }
@@ -178,7 +178,7 @@ function formatDirectory(dirPath) {
     }
     console.log('⚠️  Could not format directory');
     return false;
-  } catch (error) {
+  } catch (_error) {
     console.log('⚠️  Could not format directory');
     return false;
   }
@@ -187,7 +187,7 @@ function formatDirectory(dirPath) {
 /**
  * Standard skill structure
  */
-const SKILL_STRUCTURE = {
+const _SKILL_STRUCTURE = {
   requiredFiles: ['SKILL.md'],
   optionalDirs: ['scripts', 'hooks', 'schemas', 'references', 'templates', 'tests'],
   requiredSections: ['identity', 'capabilities', 'instructions', 'examples'],
@@ -363,7 +363,7 @@ function generateSkillContent(config) {
     bestPractices = [],
     capabilities = [],
     steps = [],
-    examples = [],
+    _examples = [],
   } = config;
 
   const toolsArray = Array.isArray(tools) ? tools : tools.split(',').map(t => t.trim());
@@ -563,7 +563,7 @@ main();
 /**
  * Generate pre-execute hook template
  */
-function generatePreHookContent(name, description) {
+function generatePreHookContent(name, _description) {
   const titleCase = name
     .split('-')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -618,7 +618,7 @@ process.exit(0);
 /**
  * Generate post-execute hook template
  */
-function generatePostHookContent(name, description) {
+function generatePostHookContent(name, _description) {
   const titleCase = name
     .split('-')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -671,7 +671,7 @@ if (outcome.success) {
 /**
  * Generate input schema template
  */
-function generateInputSchema(name, description) {
+function generateInputSchema(name, _description) {
   return JSON.stringify(
     {
       $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -696,7 +696,7 @@ function generateInputSchema(name, description) {
 /**
  * Generate output schema template
  */
-function generateOutputSchema(name, description) {
+function generateOutputSchema(name, _description) {
   return JSON.stringify(
     {
       $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -736,7 +736,7 @@ function registerHooks(skillName, hookType) {
   if (fs.existsSync(SETTINGS_PATH)) {
     try {
       settings = JSON.parse(fs.readFileSync(SETTINGS_PATH, 'utf-8'));
-    } catch (e) {
+    } catch (_e) {
       console.log('   ⚠️  Could not parse settings.json, creating new');
     }
   }
@@ -1242,7 +1242,7 @@ node .claude/tools/${name}/${name}.cjs run --verbose
  * @param {string} skillDir - Skill directory path
  * @returns {string} - Tool directory path
  */
-function createCompanionTool(name, description, skillDir) {
+function createCompanionTool(name, description, _skillDir) {
   const toolDir = path.join(TOOLS_DIR, name);
 
   // Create tool directory
@@ -1849,7 +1849,7 @@ function convertCodebase(codebasePath, skillName) {
       const pkg = JSON.parse(fs.readFileSync(path.join(codebasePath, 'package.json'), 'utf-8'));
       analysis.description = pkg.description || '';
       console.log(`   Extracted description from package.json`);
-    } catch (e) {
+    } catch (_e) {
       // Ignore
     }
   }
@@ -1863,7 +1863,7 @@ function convertCodebase(codebasePath, skillName) {
         analysis.description = match[1].trim().slice(0, 200);
         console.log(`   Extracted description from README`);
       }
-    } catch (e) {
+    } catch (_e) {
       // Ignore
     }
   }
@@ -3119,7 +3119,7 @@ function convertRulesDirectory(rulesDir, options = {}) {
 /**
  * Create workflow example for the skill
  */
-function createWorkflowExample(name, description, skillDir) {
+function createWorkflowExample(name, _description, _skillDir) {
   const workflowsDir = path.join(CLAUDE_DIR, 'workflows');
   if (!fs.existsSync(workflowsDir)) {
     fs.mkdirSync(workflowsDir, { recursive: true });
@@ -3232,7 +3232,7 @@ function updateMemory(name, description, tools) {
 /**
  * Generate test command output for the skill
  */
-function generateTestCommand(name, description) {
+function generateTestCommand(name, _description) {
   return `
 --- TEST COMMAND ---
 To test this skill, run:

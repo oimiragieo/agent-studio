@@ -305,7 +305,7 @@ test('findTestFile returns null for file without test', () => {
 // Cleanup temp directory
 try {
   fs.rmSync(tempDir, { recursive: true, force: true });
-} catch (e) {
+} catch (_e) {
   // Ignore cleanup errors
 }
 

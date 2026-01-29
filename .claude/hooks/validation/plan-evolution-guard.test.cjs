@@ -48,7 +48,7 @@ function assertMatch(str, regex, message = '') {
   }
 }
 
-function assertNotEqual(actual, expected, message = '') {
+function _assertNotEqual(actual, expected, message = '') {
   if (actual === expected) {
     throw new Error(`${message}\nExpected NOT to equal: ${expected}`);
   }

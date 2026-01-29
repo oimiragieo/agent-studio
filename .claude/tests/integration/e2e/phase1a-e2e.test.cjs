@@ -22,8 +22,20 @@ const { execSync } = require('child_process');
 const PROJECT_ROOT = path.resolve(__dirname, '../../../..');
 const TEST_DIR = path.join(PROJECT_ROOT, '.claude', 'tests', 'integration', 'e2e', '.tmp');
 const SKILLS_DIR = path.join(PROJECT_ROOT, '.claude', 'skills');
-const KB_INDEX_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
-const KB_READER_PATH = path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'knowledge-base-reader.cjs');
+const KB_INDEX_PATH = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'context',
+  'artifacts',
+  'knowledge-base-index.csv'
+);
+const KB_READER_PATH = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'lib',
+  'utils',
+  'knowledge-base-reader.cjs'
+);
 const COST_LOG_PATH = path.join(PROJECT_ROOT, '.claude', 'context', 'metrics', 'llm-usage.log');
 
 /**
@@ -35,11 +47,15 @@ function exec(command, options = {}) {
       cwd: options.cwd || PROJECT_ROOT,
       encoding: 'utf8',
       stdio: options.silent ? 'pipe' : 'inherit',
-      ...options
+      ...options,
     }).toString();
   } catch (error) {
     if (options.allowFailure) {
-      return { stdout: error.stdout?.toString() || '', stderr: error.stderr?.toString() || '', failed: true };
+      return {
+        stdout: error.stdout?.toString() || '',
+        stderr: error.stderr?.toString() || '',
+        failed: true,
+      };
     }
     throw error;
   }
@@ -51,7 +67,7 @@ function exec(command, options = {}) {
 async function readFile(filePath) {
   try {
     return await fs.readFile(filePath, 'utf8');
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }
@@ -67,7 +83,7 @@ async function countLines(filePath) {
 /**
  * Helper: Wait for file to be modified
  */
-async function waitForFileModification(filePath, maxWaitMs = 5000) {
+async function _waitForFileModification(filePath, maxWaitMs = 5000) {
   const startTime = Date.now();
   const initialMtime = (await fs.stat(filePath).catch(() => ({ mtime: 0 }))).mtime;
 
@@ -99,7 +115,7 @@ describe('Phase 1A E2E Tests', () => {
     // Cleanup test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (error) {
+    } catch (_error) {
       // Ignore cleanup errors
     }
   });
@@ -115,7 +131,7 @@ describe('Phase 1A E2E Tests', () => {
       // Cleanup: Remove test skill
       try {
         await fs.rm(testSkillPath, { recursive: true, force: true });
-      } catch (error) {
+      } catch (_error) {
         // Ignore cleanup errors
       }
     });
@@ -158,7 +174,13 @@ This is a test skill created for E2E testing. It should be indexed and searchabl
 
     it('should build knowledge base index', async () => {
       // Step 2: Build index
-      const indexBuilder = path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'build-knowledge-base-index.cjs');
+      const indexBuilder = path.join(
+        PROJECT_ROOT,
+        '.claude',
+        'lib',
+        'utils',
+        'build-knowledge-base-index.cjs'
+      );
 
       // Get initial index line count
       const initialLines = await countLines(KB_INDEX_PATH);
@@ -200,7 +222,10 @@ This is a test skill created for E2E testing. It should be indexed and searchabl
       const ourSkill = results.find(r => r.name === testSkillName);
       assert.ok(ourSkill, `Should find our test skill "${testSkillName}" in search results`);
       assert.strictEqual(ourSkill.domain, 'skill', 'Domain should be "skill"');
-      assert.ok(ourSkill.description.includes('Test skill'), 'Description should contain "Test skill"');
+      assert.ok(
+        ourSkill.description.includes('Test skill'),
+        'Description should contain "Test skill"'
+      );
     });
 
     it('should get skill by exact name', async () => {
@@ -253,7 +278,13 @@ Old content`;
       await fs.writeFile(testSkillFile, initialContent);
 
       // Build index
-      const indexBuilder = path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'build-knowledge-base-index.cjs');
+      const indexBuilder = path.join(
+        PROJECT_ROOT,
+        '.claude',
+        'lib',
+        'utils',
+        'build-knowledge-base-index.cjs'
+      );
       exec(`node "${indexBuilder}"`, { silent: true });
     });
 
@@ -272,7 +303,13 @@ New content`;
       await fs.writeFile(testSkillFile, newContent);
 
       // Rebuild index
-      const indexBuilder = path.join(PROJECT_ROOT, '.claude', 'lib', 'utils', 'build-knowledge-base-index.cjs');
+      const indexBuilder = path.join(
+        PROJECT_ROOT,
+        '.claude',
+        'lib',
+        'utils',
+        'build-knowledge-base-index.cjs'
+      );
       exec(`node "${indexBuilder}"`, { silent: true });
 
       // Verify new description in index
@@ -287,7 +324,7 @@ New content`;
 
   describe('Scenario 3: Cost Tracking E2E (Session → LLM Calls → Log → Verify)', () => {
     let testLogPath;
-    let initialLogSize = 0;
+    let initialLogSize = 0; // eslint-disable-line no-unused-vars
 
     before(async () => {
       // Use separate test log to avoid interfering with production
@@ -297,7 +334,7 @@ New content`;
       try {
         const stats = await fs.stat(COST_LOG_PATH);
         initialLogSize = stats.size;
-      } catch (error) {
+      } catch (_error) {
         initialLogSize = 0;
       }
     });
@@ -313,13 +350,16 @@ New content`;
         taskId: 'test-task-123',
         agent: 'test-agent',
         _prevHash: '0', // First entry
-        _hash: calculateHash('0' + JSON.stringify({
-          timestamp: new Date().toISOString(),
-          tier: 'sonnet',
-          inputTokens: 1500,
-          outputTokens: 800,
-          cost: '0.016500'
-        }))
+        _hash: calculateHash(
+          '0' +
+            JSON.stringify({
+              timestamp: new Date().toISOString(),
+              tier: 'sonnet',
+              inputTokens: 1500,
+              outputTokens: 800,
+              cost: '0.016500',
+            })
+        ),
       };
 
       // Write to test log
@@ -349,7 +389,7 @@ New content`;
           outputTokens: 200 * (i + 1),
           cost: (0.001 * (i + 1)).toFixed(6),
           taskId: `task-${i}`,
-          agent: 'test-agent'
+          agent: 'test-agent',
         };
 
         const hash = calculateHash(prevHash + JSON.stringify(entryData));
@@ -357,7 +397,7 @@ New content`;
         entries.push({
           ...entryData,
           _prevHash: prevHash,
-          _hash: hash
+          _hash: hash,
         });
 
         prevHash = hash;
@@ -386,7 +426,7 @@ New content`;
       const testCases = [
         { tier: 'haiku', input: 1000, output: 2000, expectedMin: 0.002, expectedMax: 0.003 },
         { tier: 'sonnet', input: 1000, output: 2000, expectedMin: 0.015, expectedMax: 0.035 },
-        { tier: 'opus', input: 1000, output: 2000, expectedMin: 0.150, expectedMax: 0.200 }
+        { tier: 'opus', input: 1000, output: 2000, expectedMin: 0.15, expectedMax: 0.2 },
       ];
 
       for (const tc of testCases) {
@@ -403,8 +443,10 @@ New content`;
           expectedCost = (tc.input / 1000) * 0.015 + (tc.output / 1000) * 0.075;
         }
 
-        assert.ok(expectedCost >= tc.expectedMin && expectedCost <= tc.expectedMax,
-          `${tc.tier} cost should be between ${tc.expectedMin} and ${tc.expectedMax}, got ${expectedCost}`);
+        assert.ok(
+          expectedCost >= tc.expectedMin && expectedCost <= tc.expectedMax,
+          `${tc.tier} cost should be between ${tc.expectedMin} and ${tc.expectedMax}, got ${expectedCost}`
+        );
       }
     });
 
@@ -421,7 +463,7 @@ New content`;
           outputTokens: 200,
           cost: '0.000350',
           _prevHash: '0',
-          _hash: 'test'
+          _hash: 'test',
         };
 
         const start = Date.now();
@@ -457,7 +499,7 @@ New content`;
         'pre-mortem',
         'socratic-questioning',
         'red-team-blue-team',
-        'inversion'
+        'inversion',
       ];
 
       const methodNameRegex = /^[a-z][a-z0-9-]*$/;
@@ -470,14 +512,23 @@ New content`;
       const invalidMethods = ['First-Principles', 'pre_mortem', '../etc/passwd', '../../secret'];
 
       for (const method of invalidMethods) {
-        assert.ok(!methodNameRegex.test(method) || method.includes('..'),
-          `${method} should be invalid method name`);
+        assert.ok(
+          !methodNameRegex.test(method) || method.includes('..'),
+          `${method} should be invalid method name`
+        );
       }
     });
 
     it('should enforce max 5 methods per invocation', () => {
       const maxMethods = 5;
-      const requestedMethods = ['first-principles', 'pre-mortem', 'socratic', 'red-team', 'inversion', 'swot'];
+      const requestedMethods = [
+        'first-principles',
+        'pre-mortem',
+        'socratic',
+        'red-team',
+        'inversion',
+        'swot',
+      ];
 
       assert.ok(requestedMethods.length > maxMethods, 'Test case should exceed limit');
 
@@ -493,8 +544,10 @@ New content`;
       const envFlag = process.env.ELICITATION_ENABLED;
 
       // Should be undefined or 'false' by default
-      assert.ok(envFlag === undefined || envFlag === 'false',
-        'Elicitation should be disabled by default');
+      assert.ok(
+        envFlag === undefined || envFlag === 'false',
+        'Elicitation should be disabled by default'
+      );
     });
 
     it('should handle missing config gracefully', async () => {
@@ -505,7 +558,7 @@ New content`;
         await fs.access(configPath);
         // Config exists
         assert.ok(true, 'Config file exists');
-      } catch (error) {
+      } catch (_error) {
         // Config missing - should not crash
         assert.ok(true, 'Missing config handled gracefully');
       }
@@ -537,7 +590,7 @@ New content`;
         cost: '0.000375',
         operation: 'kb-search',
         _prevHash: '0',
-        _hash: 'test-hash'
+        _hash: 'test-hash',
       };
 
       // Write to test log
@@ -559,11 +612,7 @@ New content`;
       const kb = require(KB_READER_PATH);
 
       // Concurrent searches
-      const searches = [
-        kb.search('testing'),
-        kb.search('validation'),
-        kb.search('e2e')
-      ];
+      const searches = [kb.search('testing'), kb.search('validation'), kb.search('e2e')];
 
       const results = await Promise.all(searches);
 
@@ -595,7 +644,7 @@ New content`;
         tier: 'haiku',
         inputTokens: 100,
         outputTokens: 200,
-        cost: '0.000350'
+        cost: '0.000350',
       };
 
       const start = Date.now();
@@ -612,7 +661,7 @@ module.exports = {
   exec,
   readFile,
   countLines,
-  calculateHash
+  calculateHash,
 };
 
 // Run tests if executed directly

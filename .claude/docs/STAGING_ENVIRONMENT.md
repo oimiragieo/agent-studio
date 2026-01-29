@@ -41,6 +41,7 @@ node .claude/tools/cli/init-staging.cjs
 ```
 
 **Output:**
+
 ```
 ╔════════════════════════════════════════════════════════════════╗
 ║       Agent-Studio Staging Environment Initialization          ║
@@ -101,16 +102,16 @@ AGENT_STUDIO_ENV=staging npm test
 
 ## Environment Differences
 
-| Feature | Development | Staging | Production |
-|---------|-------------|---------|------------|
-| **Feature Flags** | Selective | All enabled | Selective |
-| **Test Data** | Minimal | Full seed data | Real data |
-| **Logging** | Standard | Verbose | Standard |
-| **Alerts** | Disabled | Relaxed thresholds | Strict thresholds |
-| **Data Paths** | `.claude/` | `.claude/staging/` | `.claude/` |
-| **Hook Execution Time** | Unlimited | 20ms | 10ms |
-| **Agent Failure Rate** | Unlimited | 6% | 3% |
-| **Error Rate/Hour** | Unlimited | 20 | 10 |
+| Feature                 | Development | Staging            | Production        |
+| ----------------------- | ----------- | ------------------ | ----------------- |
+| **Feature Flags**       | Selective   | All enabled        | Selective         |
+| **Test Data**           | Minimal     | Full seed data     | Real data         |
+| **Logging**             | Standard    | Verbose            | Standard          |
+| **Alerts**              | Disabled    | Relaxed thresholds | Strict thresholds |
+| **Data Paths**          | `.claude/`  | `.claude/staging/` | `.claude/`        |
+| **Hook Execution Time** | Unlimited   | 20ms               | 10ms              |
+| **Agent Failure Rate**  | Unlimited   | 6%                 | 3%                |
+| **Error Rate/Hour**     | Unlimited   | 20                 | 10                |
 
 ## Directory Structure
 
@@ -174,6 +175,7 @@ AGENT_STUDIO_ENV=staging node --test tests/staging-smoke.test.mjs
 ```
 
 **Tests**:
+
 1. Environment detection (AGENT_STUDIO_ENV=staging)
 2. Staging configuration exists
 3. Staging directories exist
@@ -198,11 +200,13 @@ AGENT_STUDIO_ENV=staging npm test
 ### Manual Testing
 
 1. **Knowledge Base Search**:
+
    ```bash
    AGENT_STUDIO_ENV=staging node .claude/tools/cli/kb-search.cjs --query "testing"
    ```
 
 2. **Cost Tracking**:
+
    ```bash
    # Check that staging log file is used
    cat .claude/staging/metrics/llm-usage.log
@@ -216,6 +220,7 @@ AGENT_STUDIO_ENV=staging npm test
 ## Deployment Checklist
 
 ### Pre-Deployment
+
 - [ ] All tests passing (unit, integration, E2E)
 - [ ] Performance benchmarks passing
 - [ ] No open CRITICAL/HIGH issues
@@ -223,6 +228,7 @@ AGENT_STUDIO_ENV=staging npm test
 - [ ] Documentation updated
 
 ### Deployment
+
 - [ ] Set AGENT_STUDIO_ENV=staging
 - [ ] Run `node .claude/tools/cli/init-staging.cjs`
 - [ ] Verify `config.staging.yaml` loaded
@@ -230,6 +236,7 @@ AGENT_STUDIO_ENV=staging npm test
 - [ ] Run full test suite
 
 ### Post-Deployment
+
 - [ ] All features working
 - [ ] Check monitoring dashboard
 - [ ] Review error logs (should be empty)
@@ -237,6 +244,7 @@ AGENT_STUDIO_ENV=staging npm test
 - [ ] Sign-off by QA + Security
 
 ### Promotion to Production
+
 - [ ] Staging validation complete (24h minimum)
 - [ ] No critical issues in staging
 - [ ] User acceptance testing complete
@@ -289,11 +297,13 @@ export AGENT_STUDIO_ENV=development
 **Symptom**: Scripts/tests don't recognize staging environment
 
 **Check**:
+
 ```bash
 echo $AGENT_STUDIO_ENV  # Should output: staging
 ```
 
 **Fix**:
+
 ```bash
 export AGENT_STUDIO_ENV=staging  # Linux/macOS
 $env:AGENT_STUDIO_ENV = "staging"  # Windows PowerShell
@@ -304,11 +314,13 @@ $env:AGENT_STUDIO_ENV = "staging"  # Windows PowerShell
 **Symptom**: Application uses default config instead of staging config
 
 **Check**:
+
 ```bash
 ls -la .claude/config.staging.yaml  # Should exist
 ```
 
 **Fix**:
+
 ```bash
 # Copy default config as template
 cp .claude/config.yaml .claude/config.staging.yaml
@@ -321,11 +333,13 @@ cp .claude/config.yaml .claude/config.staging.yaml
 **Symptom**: `ENOENT` errors when accessing staging files
 
 **Check**:
+
 ```bash
 ls -la .claude/staging/  # Should exist with subdirectories
 ```
 
 **Fix**:
+
 ```bash
 AGENT_STUDIO_ENV=staging node .claude/tools/cli/init-staging.cjs
 ```
@@ -335,6 +349,7 @@ AGENT_STUDIO_ENV=staging node .claude/tools/cli/init-staging.cjs
 **Symptom**: Tests pass in development but fail in staging
 
 **Check**:
+
 ```bash
 # Verify environment variable is set
 echo $AGENT_STUDIO_ENV
@@ -344,6 +359,7 @@ AGENT_STUDIO_ENV=staging npm test
 ```
 
 **Fix**:
+
 - Verify test data seeded correctly
 - Check staging paths are used (not development paths)
 - Review error logs: `.claude/staging/metrics/errors.jsonl`
@@ -353,25 +369,27 @@ AGENT_STUDIO_ENV=staging npm test
 **Symptom**: Feature works in development but not in staging
 
 **Check**:
+
 ```bash
 # Verify feature flag enabled in staging config
 grep "partyMode:" .claude/config.staging.yaml
 ```
 
 **Fix**:
+
 - Check `.claude/config.staging.yaml` has feature enabled
 - Verify environment-specific paths correct
 - Review verbose logs for clues
 
 ## Performance Expectations
 
-| Metric | Development | Staging | Production |
-|--------|-------------|---------|------------|
-| **KB Search** | <50ms | <50ms | <50ms |
-| **Cost Tracking Overhead** | <5ms | <5ms | <2ms |
-| **Hook Execution** | Unlimited | <20ms | <10ms |
-| **Test Suite Execution** | <5s | <5s | <5s |
-| **Staging Initialization** | N/A | <10s | N/A |
+| Metric                     | Development | Staging | Production |
+| -------------------------- | ----------- | ------- | ---------- |
+| **KB Search**              | <50ms       | <50ms   | <50ms      |
+| **Cost Tracking Overhead** | <5ms        | <5ms    | <2ms       |
+| **Hook Execution**         | Unlimited   | <20ms   | <10ms      |
+| **Test Suite Execution**   | <5s         | <5s     | <5s        |
+| **Staging Initialization** | N/A         | <10s    | N/A        |
 
 ## Security Considerations
 

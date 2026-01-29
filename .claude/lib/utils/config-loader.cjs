@@ -61,7 +61,9 @@ function loadConfig(useCache = true) {
 
     // Fall back to default if staging config doesn't exist
     if (!fs.existsSync(configPath)) {
-      console.warn(`[config-loader] Staging config not found at ${configPath}, using default config.yaml`);
+      console.warn(
+        `[config-loader] Staging config not found at ${configPath}, using default config.yaml`
+      );
       configFile = 'config.yaml';
       configPath = path.join(projectRoot, '.claude', configFile);
     }

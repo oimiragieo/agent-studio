@@ -16,7 +16,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
+const _crypto = require('crypto');
 
 // Metrics file location
 const METRICS_DIR = path.join(process.cwd(), '.claude', 'context', 'metrics');
@@ -26,7 +26,7 @@ const HOOKS_METRICS_FILE = path.join(METRICS_DIR, 'hook-metrics.jsonl');
 const RATE_LIMIT_PER_HOUR = 10000;
 const rateLimitState = {
   hour: new Date().getHours(),
-  count: 0
+  count: 0,
 };
 
 /**
@@ -150,8 +150,8 @@ function postToolUse(tool, params, result, context) {
       error: result.error ? result.error.message : undefined,
       metadata: {
         paramsSize: JSON.stringify(params).length,
-        resultSize: JSON.stringify(result).length
-      }
+        resultSize: JSON.stringify(result).length,
+      },
     };
 
     // Log metric
@@ -176,8 +176,8 @@ function sessionStart(context) {
     executionTimeMs: 0,
     status: 'success',
     metadata: {
-      sessionId: context.sessionId || 'unknown'
-    }
+      sessionId: context.sessionId || 'unknown',
+    },
   };
 
   logMetric(metric);
@@ -198,8 +198,8 @@ function sessionEnd(context) {
     status: 'success',
     metadata: {
       sessionId: context.sessionId || 'unknown',
-      duration: context.sessionDuration || 'unknown'
-    }
+      duration: context.sessionDuration || 'unknown',
+    },
   };
 
   logMetric(metric);
@@ -211,5 +211,5 @@ module.exports = {
   preToolUse,
   postToolUse,
   sessionStart,
-  sessionEnd
+  sessionEnd,
 };

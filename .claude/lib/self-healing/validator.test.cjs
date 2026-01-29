@@ -109,7 +109,7 @@ function cleanup() {
     if (fs.existsSync(TEMP_DIR)) {
       fs.rmSync(TEMP_DIR, { recursive: true, force: true });
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore cleanup errors
   }
 }
@@ -121,7 +121,7 @@ function cleanup() {
 let validator;
 try {
   validator = require('./validator.cjs');
-} catch (e) {
+} catch (_e) {
   console.error('Cannot load validator.cjs - this is expected during RED phase');
   console.error('Create the module to continue testing.');
   process.exit(1);

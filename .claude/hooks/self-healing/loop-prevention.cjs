@@ -46,7 +46,7 @@ const {
 } = require('../../lib/utils/hook-input.cjs');
 
 // SEC-007 FIX: Import safe JSON parser to prevent prototype pollution
-const { safeParseJSON } = require('../../lib/utils/safe-json.cjs');
+const { _safeParseJSON } = require('../../lib/utils/safe-json.cjs');
 // NEW-HIGH-003 FIX: Use atomic writes to prevent state file corruption
 const { atomicWriteJSONSync } = require('../../lib/utils/atomic-write.cjs');
 // PERF-005 FIX: Import state cache for TTL-based caching of loop-state.json
@@ -192,7 +192,7 @@ function syncSleepInternal(ms) {
       // Atomics.wait blocks the thread without CPU spin
       Atomics.wait(int32, 0, 0, ms);
       return;
-    } catch (e) {
+    } catch (_e) {
       // Fall through to busy-wait if Atomics.wait fails
     }
   }
@@ -213,7 +213,7 @@ function isProcessAlive(pid) {
     // Signal 0 doesn't send a signal, just checks if process exists
     process.kill(pid, 0);
     return true;
-  } catch (err) {
+  } catch (_err) {
     // ESRCH: No such process
     return false;
   }
@@ -255,7 +255,7 @@ function tryClaimStaleLock(lockFile) {
         // but we handle it for safety
         try {
           fs.renameSync(claimingFile, lockFile);
-        } catch (restoreErr) {
+        } catch (_restoreErr) {
           // If restore fails, delete claiming file to avoid orphans
           try {
             fs.unlinkSync(claimingFile);
@@ -265,7 +265,7 @@ function tryClaimStaleLock(lockFile) {
         }
         return false;
       }
-    } catch (readErr) {
+    } catch (_readErr) {
       // Couldn't read/parse claiming file - delete it and claim success
       try {
         fs.unlinkSync(claimingFile);
@@ -274,7 +274,7 @@ function tryClaimStaleLock(lockFile) {
       }
       return true;
     }
-  } catch (renameErr) {
+  } catch (_renameErr) {
     // Rename failed - either lock doesn't exist (ENOENT) or another process claimed it
     // Either way, we didn't claim it
     return false;
@@ -428,7 +428,7 @@ function getState(stateFile = DEFAULT_STATE_FILE) {
 
       return result;
     }
-  } catch (e) {
+  } catch (_e) {
     // File might be corrupted or locked, return default
   }
   return defaults;
@@ -638,7 +638,7 @@ function checkPatternDetection(action, stateFile = DEFAULT_STATE_FILE) {
  */
 function recordAction(action, stateFile = DEFAULT_STATE_FILE) {
   const state = getState(stateFile);
-  let entry = state.actionHistory.find(a => a.action === action);
+  const entry = state.actionHistory.find(a => a.action === action);
 
   if (entry) {
     entry.count++;

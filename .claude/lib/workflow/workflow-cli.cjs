@@ -514,7 +514,7 @@ class WorkflowCLI {
    * Execute list command
    * @private
    */
-  async _executeList(args) {
+  async _executeList(_args) {
     const workflows = await this.listWorkflows();
 
     // Group by type
@@ -563,7 +563,7 @@ class WorkflowCLI {
           createdAt: c.createdAt,
         })),
       };
-    } catch (e) {
+    } catch (_e) {
       return {
         success: false,
         error: `Workflow not found: ${args.workflowId}`,

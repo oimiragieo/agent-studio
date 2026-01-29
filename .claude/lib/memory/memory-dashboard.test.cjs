@@ -576,7 +576,7 @@ if (require.main === module) {
           if (args[0] && typeof args[0] === 'string') {
             try {
               errors.push(JSON.parse(args[0]));
-            } catch (e) {
+            } catch (_e) {
               errors.push(args[0]);
             }
           }

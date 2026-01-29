@@ -9,7 +9,7 @@
  *   node .claude/tools/tool_search.mjs --query "github pull request" [--limit 5]
  */
 
-import { readFile, readdir } from 'fs/promises';
+import { readFile, _readdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -42,7 +42,7 @@ async function loadToolDefinitions() {
     }
 
     return tools;
-  } catch (error) {
+  } catch (_error) {
     // Config file doesn't exist or is invalid
     return [];
   }

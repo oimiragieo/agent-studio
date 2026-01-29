@@ -20,7 +20,7 @@
  */
 
 import { readFile, writeFile, mkdir, readdir, stat } from 'fs/promises';
-import { join, dirname, resolve, extname, basename } from 'path';
+import { join, dirname, resolve, extname, _basename } from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -350,7 +350,7 @@ function parseERSchema(content) {
 /**
  * Generate architecture diagram from description
  */
-function generateArchitectureDiagram(description, title) {
+function generateArchitectureDiagram(description, _title) {
   const nodes = new Set();
   const edges = [];
 
@@ -400,7 +400,7 @@ function generateArchitectureDiagram(description, title) {
 /**
  * Generate sequence diagram from description
  */
-function generateSequenceDiagram(description, title) {
+function generateSequenceDiagram(description, _title) {
   const participants = new Set();
   const interactions = [];
 
@@ -529,7 +529,7 @@ function generateERDiagram(entities) {
 /**
  * Generate flowchart from description
  */
-function generateFlowchart(description, title) {
+function generateFlowchart(description, _title) {
   const nodes = [];
   const edges = [];
   let nodeId = 0;
@@ -588,7 +588,7 @@ function generateFlowchart(description, title) {
 /**
  * Generate state diagram from description
  */
-function generateStateDiagram(description, title) {
+function generateStateDiagram(description, _title) {
   const states = new Set();
   const transitions = [];
 
@@ -779,7 +779,7 @@ async function renderDiagram(mermaidFile) {
     const svgFile = mermaidFile.replace(/\.md$/, '.svg');
     await execAsync(`npx -y @mermaid-js/mermaid-cli -i "${mermaidFile}" -o "${svgFile}"`);
     return svgFile;
-  } catch (error) {
+  } catch (_error) {
     console.warn(
       'Warning: Failed to render SVG. Install @mermaid-js/mermaid-cli for rendering support.'
     );
@@ -797,7 +797,7 @@ async function main() {
     validateArgs(args);
 
     // Generate diagram
-    const { diagram, sourceFiles, metadata, duration } = await generateDiagram(args);
+    const { diagram, sourceFiles, metadata, _duration } = await generateDiagram(args);
 
     // Determine output path
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];

@@ -18,6 +18,7 @@ Both issues are **documentation mismatches** - no actual MCP tool failure (tool 
 ### Issue 1: Sequential Thinking Tool in Spawn Templates
 
 **Error Message (from reflection-queue.jsonl)**:
+
 ```
 "No such tool available: mcp__sequential-thinking__sequentialthinking"
 ```
@@ -29,12 +30,14 @@ Both issues are **documentation mismatches** - no actual MCP tool failure (tool 
 - **Agent Definitions**: Use wildcard `mcp__sequential-thinking__*` (11 agents)
 
 **History** (from reflection-queue.jsonl):
+
 1. Task #2 (2026-01-28 05:29): Added tool to spawn templates
 2. Task #1 (2026-01-28 05:42): Removed tool from spawn templates (marked as "invalid MCP tool")
 
 **Current State**: Tool removed from spawn templates but STILL present in agent definitions.
 
 **Why This Happened**:
+
 - Sequential thinking was added speculatively (anticipating MCP server installation)
 - No MCP server was ever configured in settings.json
 - Tool removal from CLAUDE.md left agent definitions unchanged
@@ -43,6 +46,7 @@ Both issues are **documentation mismatches** - no actual MCP tool failure (tool 
 ### Issue 2: Bash Tool for reflection-agent
 
 **Error Message (user report)**:
+
 ```
 reflection-agent:
 "No such tool available: Bash"
@@ -56,6 +60,7 @@ Trying to run: validate-integration.cjs
 - **Spawn Template**: Would include Bash if using Universal Spawn Template (line 269)
 
 **Why This Happened**:
+
 - reflection-agent definition includes Bash in tools array (line 9)
 - Agent workflow section (lines 110-126) explicitly prohibits Bash for reflection-agent
 - Contradiction between frontmatter and agent instructions
@@ -66,13 +71,13 @@ Trying to run: validate-integration.cjs
 
 ### Current State (2026-01-28)
 
-| Agent              | Sequential Thinking (MCP) | Bash       | Notes                                |
-| ------------------ | ------------------------- | ---------- | ------------------------------------ |
-| planner            | `*` (wildcard)            | ✅ Allowed | Wildcard fails if MCP not configured |
-| reflection-agent   | ❌ Not listed             | ❌ Listed but PROHIBITED | Contradiction in definition |
-| developer          | ❌ Not listed             | ✅ Allowed | No mismatch                          |
-| Universal Template | ❌ Removed                | ✅ Included | Template correct (no MCP)           |
-| Orchestrator Template | ❌ Removed             | ✅ Included | Template correct (no MCP)           |
+| Agent                 | Sequential Thinking (MCP) | Bash                     | Notes                                |
+| --------------------- | ------------------------- | ------------------------ | ------------------------------------ |
+| planner               | `*` (wildcard)            | ✅ Allowed               | Wildcard fails if MCP not configured |
+| reflection-agent      | ❌ Not listed             | ❌ Listed but PROHIBITED | Contradiction in definition          |
+| developer             | ❌ Not listed             | ✅ Allowed               | No mismatch                          |
+| Universal Template    | ❌ Removed                | ✅ Included              | Template correct (no MCP)            |
+| Orchestrator Template | ❌ Removed                | ✅ Included              | Template correct (no MCP)            |
 
 ### Sequential Thinking Tool (11 agents affected)
 
@@ -104,22 +109,22 @@ Trying to run: validate-integration.cjs
 
 ### Mismatch 1: Sequential Thinking Documentation Drift
 
-| Component         | State                                        | Correct? |
-| ----------------- | -------------------------------------------- | -------- |
-| CLAUDE.md         | ❌ Removed (was line 272, 351)              | ✅ YES   |
-| Agent definitions | ✅ Still present (wildcard in 11 agents)    | ❌ NO    |
-| MCP config        | ❌ Not configured (`mcpServers: {}`)        | N/A      |
-| Skill definitions | ✅ Present (advanced-elicitation SKILL.md)  | ❌ NO    |
+| Component         | State                                      | Correct? |
+| ----------------- | ------------------------------------------ | -------- |
+| CLAUDE.md         | ❌ Removed (was line 272, 351)             | ✅ YES   |
+| Agent definitions | ✅ Still present (wildcard in 11 agents)   | ❌ NO    |
+| MCP config        | ❌ Not configured (`mcpServers: {}`)       | N/A      |
+| Skill definitions | ✅ Present (advanced-elicitation SKILL.md) | ❌ NO    |
 
 **Verdict**: Agent definitions and skill definitions are STALE (referencing non-existent MCP tool).
 
 ### Mismatch 2: reflection-agent Tool Permissions
 
-| Component         | State                              | Correct? |
-| ----------------- | ---------------------------------- | -------- |
-| Frontmatter tools | ✅ Includes Bash (line 9)         | ❌ NO    |
-| Workflow section  | ❌ Prohibits Bash (line 122)      | ✅ YES   |
-| Actual usage      | ❌ Tried to use Bash (validate-integration.cjs) | ❌ NO |
+| Component         | State                                           | Correct? |
+| ----------------- | ----------------------------------------------- | -------- |
+| Frontmatter tools | ✅ Includes Bash (line 9)                       | ❌ NO    |
+| Workflow section  | ❌ Prohibits Bash (line 122)                    | ✅ YES   |
+| Actual usage      | ❌ Tried to use Bash (validate-integration.cjs) | ❌ NO    |
 
 **Verdict**: Frontmatter is WRONG (should not include Bash). Workflow section is CORRECT.
 
@@ -142,6 +147,7 @@ Trying to run: validate-integration.cjs
 ```
 
 **Alternative**: Keep wildcard IF planning to install MCP server, but add graceful fallback:
+
 - Check if MCP server is configured before spawning agents with MCP tools
 - Use `optional: true` flag for MCP tools in agent definitions
 
@@ -175,7 +181,7 @@ Trying to run: validate-integration.cjs
 
 **Enhancement to CLAUDE.md Section 2:**
 
-```diff
+````diff
 ### Universal Spawn Template (use for ALL agents)
 
 +**MCP Tool Validation**:
@@ -195,7 +201,7 @@ Trying to run: validate-integration.cjs
 +  allowedTools.push('mcp__sequential-thinking__sequentialthinking');
 +}
 +```
-```
+````
 
 ### Fix 5: Update Agent Routing Table Documentation
 
@@ -203,29 +209,32 @@ Trying to run: validate-integration.cjs
 
 Add column indicating which agents require MCP tools:
 
-| Agent | File | **MCP Required?** |
-|-------|------|-------------------|
-| planner | `.claude/agents/core/planner.md` | ⚠️ YES (sequential-thinking) |
-| developer | `.claude/agents/core/developer.md` | ❌ NO |
-| ... | ... | ... |
+| Agent     | File                               | **MCP Required?**            |
+| --------- | ---------------------------------- | ---------------------------- |
+| planner   | `.claude/agents/core/planner.md`   | ⚠️ YES (sequential-thinking) |
+| developer | `.claude/agents/core/developer.md` | ❌ NO                        |
+| ...       | ...                                | ...                          |
 
 ## Validation Steps
 
 After applying fixes:
 
 1. **Grep Check**: Verify `mcp__sequential-thinking` removed from agent definitions
+
    ```bash
    grep -r "mcp__sequential-thinking" .claude/agents/
    # Expected: Only comments or removal notes
    ```
 
 2. **Spawn Template Validation**: Confirm Bash not in reflection-agent spawn
+
    ```bash
    # Check routing-guard.cjs or spawn template generation logic
    # Ensure reflection-agent spawned without Bash
    ```
 
 3. **MCP Configuration Check**: Document MCP server installation steps if tool is desired
+
    ```bash
    # Add to settings.json if sequential-thinking MCP server installed
    {
@@ -241,8 +250,8 @@ After applying fixes:
 4. **Agent Spawn Test**: Spawn planner and reflection-agent, verify no tool errors
    ```javascript
    // Test spawn (after fixes)
-   Task({ subagent_type: "planner", prompt: "Test spawn" });
-   Task({ subagent_type: "reflection-agent", prompt: "Test spawn" });
+   Task({ subagent_type: 'planner', prompt: 'Test spawn' });
+   Task({ subagent_type: 'reflection-agent', prompt: 'Test spawn' });
    // Expected: No "No such tool available" errors
    ```
 
@@ -261,7 +270,19 @@ Create pre-spawn hook that validates tool availability:
 
 function validateToolAvailability(input) {
   const { allowed_tools } = input;
-  const availableTools = ['Read', 'Write', 'Edit', 'Bash', 'Grep', 'Glob', 'TaskUpdate', 'TaskList', 'TaskCreate', 'TaskGet', 'Skill'];
+  const availableTools = [
+    'Read',
+    'Write',
+    'Edit',
+    'Bash',
+    'Grep',
+    'Glob',
+    'TaskUpdate',
+    'TaskList',
+    'TaskCreate',
+    'TaskGet',
+    'Skill',
+  ];
 
   // Check MCP tools
   const mcpTools = allowed_tools.filter(t => t.startsWith('mcp__'));
@@ -270,7 +291,7 @@ function validateToolAvailability(input) {
     if (Object.keys(mcpConfig.mcpServers || {}).length === 0) {
       return {
         status: 'block',
-        message: `MCP tools requested but no MCP servers configured: ${mcpTools.join(', ')}`
+        message: `MCP tools requested but no MCP servers configured: ${mcpTools.join(', ')}`,
       };
     }
   }
@@ -280,6 +301,7 @@ function validateToolAvailability(input) {
 ```
 
 **Register in settings.json**:
+
 ```json
 {
   "hooks": {
@@ -287,7 +309,10 @@ function validateToolAvailability(input) {
       {
         "matcher": "Task",
         "hooks": [
-          { "type": "command", "command": "node .claude/hooks/routing/tool-availability-validator.cjs" }
+          {
+            "type": "command",
+            "command": "node .claude/hooks/routing/tool-availability-validator.cjs"
+          }
         ]
       }
     ]
@@ -318,6 +343,7 @@ Add JSON schema validation for agent frontmatter:
 **Validation Tool**: `.claude/tools/cli/validate-agents.js` (already exists)
 
 Update to check for:
+
 - MCP tools without MCP server configured
 - Tool contradictions (frontmatter vs workflow section)
 
@@ -345,7 +371,7 @@ function checkDocSync() {
       mismatches.push({
         type: 'mcp_without_config',
         agent: agent.name,
-        tools: mcpTools
+        tools: mcpTools,
       });
     }
   });
@@ -361,18 +387,22 @@ function checkDocSync() {
 Add self-documentation section to agent definitions:
 
 **Template**:
+
 ```markdown
 ## Tool Requirements
 
 ### Required Tools
+
 - Read (file access)
 - Write (memory updates)
 - TaskUpdate (task tracking)
 
 ### Optional Tools
-- mcp__sequential-thinking__sequentialthinking (requires MCP server)
+
+- mcp**sequential-thinking**sequentialthinking (requires MCP server)
 
 ### Prohibited Tools
+
 - Bash (reflection-agent cannot execute commands)
 ```
 
@@ -382,21 +412,21 @@ Add self-documentation section to agent definitions:
 
 ### Immediate Fixes (11 files)
 
-1. `.claude/agents/core/planner.md` - Remove mcp__ wildcard (line 12)
-2. `.claude/agents/core/pm.md` - Remove mcp__ wildcard (line 17)
-3. `.claude/agents/specialized/database-architect.md` - Remove mcp__ wildcard (line 18)
-4. `.claude/agents/domain/sveltekit-expert.md` - Remove mcp__ wildcard (line 20)
-5. `.claude/agents/domain/php-pro.md` - Remove mcp__ wildcard (line 20)
-6. `.claude/agents/domain/nodejs-pro.md` - Remove mcp__ wildcard (line 20)
-7. `.claude/agents/domain/nextjs-pro.md` - Remove mcp__ wildcard (line 19)
-8. `.claude/agents/domain/java-pro.md` - Remove mcp__ wildcard (line 19)
-9. `.claude/agents/domain/ios-pro.md` - Remove mcp__ wildcard (line 19)
-10. `.claude/agents/domain/frontend-pro.md` - Remove mcp__ wildcard (line 18)
-11. `.claude/agents/orchestrators/evolution-orchestrator.md` - Remove mcp__ specific (line 26)
+1. `.claude/agents/core/planner.md` - Remove mcp\_\_ wildcard (line 12)
+2. `.claude/agents/core/pm.md` - Remove mcp\_\_ wildcard (line 17)
+3. `.claude/agents/specialized/database-architect.md` - Remove mcp\_\_ wildcard (line 18)
+4. `.claude/agents/domain/sveltekit-expert.md` - Remove mcp\_\_ wildcard (line 20)
+5. `.claude/agents/domain/php-pro.md` - Remove mcp\_\_ wildcard (line 20)
+6. `.claude/agents/domain/nodejs-pro.md` - Remove mcp\_\_ wildcard (line 20)
+7. `.claude/agents/domain/nextjs-pro.md` - Remove mcp\_\_ wildcard (line 19)
+8. `.claude/agents/domain/java-pro.md` - Remove mcp\_\_ wildcard (line 19)
+9. `.claude/agents/domain/ios-pro.md` - Remove mcp\_\_ wildcard (line 19)
+10. `.claude/agents/domain/frontend-pro.md` - Remove mcp\_\_ wildcard (line 18)
+11. `.claude/agents/orchestrators/evolution-orchestrator.md` - Remove mcp\_\_ specific (line 26)
 
 ### Skill Fix (1 file)
 
-12. `.claude/skills/advanced-elicitation/SKILL.md` - Remove mcp__ tool (line 8)
+12. `.claude/skills/advanced-elicitation/SKILL.md` - Remove mcp\_\_ tool (line 8)
 
 ### Documentation Update (1 file)
 
@@ -413,6 +443,7 @@ Add self-documentation section to agent definitions:
 ## Cost of Violation
 
 **Past Issues**:
+
 - Task #1, #2 (2026-01-28): Conflicting updates to CLAUDE.md spawn templates
 - reflection-agent: Failed to run validate-integration.cjs (Bash not available)
 - planner agent: MCP tool error (tool never existed)

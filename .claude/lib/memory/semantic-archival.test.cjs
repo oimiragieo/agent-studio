@@ -80,7 +80,7 @@ Defaults to LOW, should be archivable.
 let semanticArchival;
 try {
   semanticArchival = require('./semantic-archival.cjs');
-} catch (e) {
+} catch (_e) {
   // Expected to fail initially - TDD red phase
   semanticArchival = null;
 }
@@ -206,7 +206,7 @@ describe('semantic-archival.cjs', () => {
     const entries = parser.parseEntries(SAMPLE_LEARNINGS);
 
     const referenceDate = new Date('2026-01-26');
-    const { toKeep, toArchive } = semanticArchival.selectForArchival(entries, referenceDate);
+    const { toKeep, _toArchive } = semanticArchival.selectForArchival(entries, referenceDate);
 
     // Recent MEDIUM (2026-01-20) should be kept (within 30 days of 2026-01-26)
     const recentMedium = toKeep.find(e => e.importance === 'MEDIUM' && e.date === '2026-01-20');

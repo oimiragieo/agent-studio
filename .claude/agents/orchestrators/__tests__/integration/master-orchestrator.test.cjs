@@ -12,9 +12,7 @@
 const { describe, it, beforeEach } = require('node:test');
 const assert = require('node:assert');
 const { TaskToolMock } = require('../mocks/task-tool-mock.cjs');
-const {
-  generateMockCompletion,
-} = require('../mocks/agent-response-mock.cjs');
+const { generateMockCompletion } = require('../mocks/agent-response-mock.cjs');
 
 describe('Master Orchestrator Integration Tests', () => {
   let taskTool;
@@ -26,7 +24,7 @@ describe('Master Orchestrator Integration Tests', () => {
   describe('Scenario 1: Parallel Agent Spawn', () => {
     it('should spawn 3 agents (architect, developer, qa) in parallel', async () => {
       // Given: User request requires architect, developer, qa
-      const request = {
+      const _request = {
         type: 'feature',
         description: 'Design and implement user authentication',
         complexity: 'HIGH',
@@ -36,8 +34,7 @@ describe('Master Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'architect',
         description: 'Architect designing auth system',
-        prompt:
-          'You are ARCHITECT. Design authentication system using best practices.',
+        prompt: 'You are ARCHITECT. Design authentication system using best practices.',
         allowed_tools: ['Read', 'Write', 'TaskUpdate'],
         model: 'sonnet',
       });
@@ -53,47 +50,29 @@ describe('Master Orchestrator Integration Tests', () => {
       await taskTool.spawn({
         subagent_type: 'qa',
         description: 'QA testing auth',
-        prompt:
-          'You are QA. Write comprehensive tests for authentication.',
+        prompt: 'You are QA. Write comprehensive tests for authentication.',
         allowed_tools: ['Read', 'Write', 'Bash', 'TaskUpdate'],
         model: 'opus',
       });
 
       // Then: Verify 3 agents spawned
-      assert.strictEqual(
-        taskTool.spawnedAgents.length,
-        3,
-        'Should spawn exactly 3 agents'
-      );
+      assert.strictEqual(taskTool.spawnedAgents.length, 3, 'Should spawn exactly 3 agents');
 
       // Verify agent types
-      const types = taskTool.spawnedAgents.map((a) => a.type);
-      assert.ok(
-        types.includes('architect'),
-        'Should spawn architect'
-      );
-      assert.ok(
-        types.includes('developer'),
-        'Should spawn developer'
-      );
+      const types = taskTool.spawnedAgents.map(a => a.type);
+      assert.ok(types.includes('architect'), 'Should spawn architect');
+      assert.ok(types.includes('developer'), 'Should spawn developer');
       assert.ok(types.includes('qa'), 'Should spawn qa');
 
       // Verify all agents have task IDs
-      taskTool.spawnedAgents.forEach((agent) => {
+      taskTool.spawnedAgents.forEach(agent => {
         assert.ok(agent.id, 'Agent should have task ID');
-        assert.ok(
-          agent.id.startsWith('task-'),
-          'Task ID should have correct format'
-        );
+        assert.ok(agent.id.startsWith('task-'), 'Task ID should have correct format');
       });
 
       // Verify all agents are tracked in task list
       const taskList = taskTool.list();
-      assert.strictEqual(
-        taskList.length,
-        3,
-        'Task list should have 3 entries'
-      );
+      assert.strictEqual(taskList.length, 3, 'Task list should have 3 entries');
     });
 
     it('should assign appropriate models to each agent', async () => {
@@ -124,16 +103,8 @@ describe('Master Orchestrator Integration Tests', () => {
       const developer = taskTool.getSpawnedAgent(1);
       const qa = taskTool.getSpawnedAgent(2);
 
-      assert.strictEqual(
-        architect.model,
-        'sonnet',
-        'Architect should use sonnet'
-      );
-      assert.strictEqual(
-        developer.model,
-        'sonnet',
-        'Developer should use sonnet'
-      );
+      assert.strictEqual(architect.model, 'sonnet', 'Architect should use sonnet');
+      assert.strictEqual(developer.model, 'sonnet', 'Developer should use sonnet');
       assert.strictEqual(qa.model, 'opus', 'QA should use opus');
     });
 
@@ -149,18 +120,12 @@ describe('Master Orchestrator Integration Tests', () => {
 
       const orchestrator = taskTool.getSpawnedAgent(0);
 
-      assert.ok(
-        orchestrator.allowed_tools.includes('Task'),
-        'Orchestrator must have Task tool'
-      );
+      assert.ok(orchestrator.allowed_tools.includes('Task'), 'Orchestrator must have Task tool');
       assert.ok(
         orchestrator.allowed_tools.includes('TaskUpdate'),
         'Orchestrator must have TaskUpdate'
       );
-      assert.ok(
-        orchestrator.allowed_tools.includes('TaskList'),
-        'Orchestrator must have TaskList'
-      );
+      assert.ok(orchestrator.allowed_tools.includes('TaskList'), 'Orchestrator must have TaskList');
     });
   });
 
@@ -197,10 +162,7 @@ describe('Master Orchestrator Integration Tests', () => {
       task = taskTool.get(taskId);
       assert.strictEqual(task.status, 'completed');
       assert.ok(task.completedAt, 'Should have completion timestamp');
-      assert.strictEqual(
-        task.metadata.summary,
-        'Feature implemented'
-      );
+      assert.strictEqual(task.metadata.summary, 'Feature implemented');
     });
 
     it('should track TaskList after completion', async () => {
@@ -235,7 +197,7 @@ describe('Master Orchestrator Integration Tests', () => {
       assert.strictEqual(taskList.length, 3);
 
       // Verify task 1 is completed
-      const completedTask = taskList.find((t) => t.id === task1);
+      const completedTask = taskList.find(t => t.id === task1);
       assert.strictEqual(completedTask.status, 'completed');
     });
   });
@@ -249,10 +211,7 @@ describe('Master Orchestrator Integration Tests', () => {
         prompt: 'You are ARCHITECT. Design authentication.',
       });
 
-      const architectOutput = generateMockCompletion(
-        'architect',
-        'success'
-      );
+      const architectOutput = generateMockCompletion('architect', 'success');
 
       taskTool.update(architectTaskId, {
         status: 'completed',
@@ -315,10 +274,7 @@ Please implement according to this design.`;
         });
         assert.fail('Should have thrown error');
       } catch (err) {
-        assert.ok(
-          err.message.includes('syntax error'),
-          'Error should contain failure message'
-        );
+        assert.ok(err.message.includes('syntax error'), 'Error should contain failure message');
       }
 
       // Third agent should still spawn
@@ -329,16 +285,8 @@ Please implement according to this design.`;
       });
 
       // Verify: 2 agents spawned successfully, 1 failed
-      assert.strictEqual(
-        taskTool.spawnedAgents.length,
-        3,
-        'Should have 3 spawn attempts'
-      );
-      assert.strictEqual(
-        taskTool.getFailedAgents().length,
-        1,
-        'Should have 1 failed agent'
-      );
+      assert.strictEqual(taskTool.spawnedAgents.length, 3, 'Should have 3 spawn attempts');
+      assert.strictEqual(taskTool.getFailedAgents().length, 1, 'Should have 1 failed agent');
 
       const failedAgent = taskTool.getFailedAgents()[0];
       assert.strictEqual(failedAgent.type, 'developer');
@@ -376,10 +324,7 @@ Please implement according to this design.`;
       assert.strictEqual(taskTool.spawnedAgents.length, 3);
 
       // Parallel execution should be fast (<100ms for mocks)
-      assert.ok(
-        duration < 100,
-        `Parallel spawn should be fast, took ${duration}ms`
-      );
+      assert.ok(duration < 100, `Parallel spawn should be fast, took ${duration}ms`);
     });
 
     it('should respect task dependencies (blockedBy)', async () => {
@@ -443,15 +388,9 @@ Please implement according to this design.`;
 
       // Verify all completed
       const taskList = taskTool.list();
-      const completedTasks = taskList.filter(
-        (t) => t.status === 'completed'
-      );
+      const completedTasks = taskList.filter(t => t.status === 'completed');
 
-      assert.strictEqual(
-        completedTasks.length,
-        3,
-        'All 3 agents should be completed'
-      );
+      assert.strictEqual(completedTasks.length, 3, 'All 3 agents should be completed');
 
       // Orchestrator would aggregate results
       const results = [];

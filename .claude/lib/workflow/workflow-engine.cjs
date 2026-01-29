@@ -121,7 +121,7 @@ function parseYamlLines(lines, startIndent) {
   const result = {};
   let i = 0;
   let isArray = false;
-  let arrayResult = [];
+  const arrayResult = [];
 
   while (i < lines.length) {
     const line = lines[i];

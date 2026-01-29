@@ -29,7 +29,7 @@ describe('memory-health-check', () => {
 
   describe('main function', () => {
     let testDir;
-    let originalCwd;
+    let originalCwd; // eslint-disable-line no-unused-vars
     let originalExit;
     let exitCode;
 

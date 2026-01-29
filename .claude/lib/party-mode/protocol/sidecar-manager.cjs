@@ -30,7 +30,7 @@ const SIDECAR_BASE_PATH = path.join(process.cwd(), '.claude', 'staging', 'agents
  * @returns {string} result.sidecarPath - Path to sidecar directory
  * @returns {boolean} result.initialized - Whether initialization succeeded
  */
-async function createSidecar(sessionId, agentId, agentType) {
+async function createSidecar(sessionId, agentId, _agentType) {
   const sidecarPath = path.join(SIDECAR_BASE_PATH, sessionId, agentId);
 
   // Create directory
@@ -47,7 +47,7 @@ async function createSidecar(sessionId, agentId, agentType) {
 
   return {
     sidecarPath,
-    initialized: true
+    initialized: true,
   };
 }
 
@@ -71,7 +71,7 @@ async function writeSidecar(sessionId, agentId, key, value) {
   if (!pathCheck.valid) {
     return {
       written: false,
-      error: `Invalid key path: ${pathCheck.reason}`
+      error: `Invalid key path: ${pathCheck.reason}`,
     };
   }
 
@@ -81,10 +81,10 @@ async function writeSidecar(sessionId, agentId, key, value) {
   // Verify sidecar exists
   try {
     await fs.access(sidecarPath);
-  } catch (err) {
+  } catch (_err) {
     return {
       written: false,
-      error: `Sidecar does not exist for agent ${agentId}`
+      error: `Sidecar does not exist for agent ${agentId}`,
     };
   }
 
@@ -94,12 +94,12 @@ async function writeSidecar(sessionId, agentId, key, value) {
 
     return {
       written: true,
-      path: keyPath
+      path: keyPath,
     };
   } catch (err) {
     return {
       written: false,
-      error: err.message
+      error: err.message,
     };
   }
 }
@@ -126,13 +126,13 @@ async function readSidecar(sessionId, agentId, key) {
 
     return {
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-  } catch (err) {
+  } catch (_err) {
     // File doesn't exist or parse error
     return {
       value: null,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }
@@ -159,7 +159,7 @@ async function listSidecarKeys(sessionId, agentId) {
       .map(file => file.replace('.json', ''));
 
     return keys;
-  } catch (err) {
+  } catch (_err) {
     // Directory doesn't exist
     return [];
   }
@@ -179,13 +179,13 @@ async function listSidecarKeys(sessionId, agentId) {
 function validateSidecarAccess(requestingAgentId, targetAgentId) {
   if (requestingAgentId === targetAgentId) {
     return {
-      allowed: true
+      allowed: true,
     };
   }
 
   return {
     allowed: false,
-    reason: `Agent ${requestingAgentId} is not allowed to access sidecar of ${targetAgentId}`
+    reason: `Agent ${requestingAgentId} is not allowed to access sidecar of ${targetAgentId}`,
   };
 }
 
@@ -194,5 +194,5 @@ module.exports = {
   writeSidecar,
   readSidecar,
   listSidecarKeys,
-  validateSidecarAccess
+  validateSidecarAccess,
 };

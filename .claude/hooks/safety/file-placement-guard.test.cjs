@@ -14,7 +14,7 @@ const fs = require('fs');
 const os = require('os');
 
 // PERF-004 FIX: Import state cache utilities for test cleanup
-const { invalidateCache, clearAllCache } = require('../../lib/utils/state-cache.cjs');
+const { invalidateCache, _clearAllCache } = require('../../lib/utils/state-cache.cjs');
 
 // We'll test the module by importing it after mocking dependencies
 let guardModule;

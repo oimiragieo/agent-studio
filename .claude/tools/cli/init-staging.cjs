@@ -61,7 +61,7 @@ async function countFiles(dirPath) {
         count++;
       }
     }
-  } catch (error) {
+  } catch (_error) {
     // Directory doesn't exist or not accessible
     return 0;
   }
@@ -226,10 +226,10 @@ if (require.main === module) {
   const args = process.argv.slice(2);
   const force = args.includes('--force') || args.includes('-f');
 
-  initStaging({ force }).catch((error) => {
+  initStaging({ force }).catch(error => {
     console.error(`\n❌ Error: ${error.message}`);
     process.exit(1);
   });
 }
 
-module.exports = { initStaging };
+module.exports = { initStaging, copyDir };

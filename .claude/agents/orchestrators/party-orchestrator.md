@@ -6,18 +6,7 @@ model: opus
 temperature: 0.3
 context_strategy: lazy_load
 priority: high
-tools:
-  [
-    Read,
-    Write,
-    Edit,
-    Task,
-    TaskUpdate,
-    TaskList,
-    TaskCreate,
-    TaskGet,
-    Skill,
-  ]
+tools: [Read, Write, Edit, Task, TaskUpdate, TaskList, TaskCreate, TaskGet, Skill]
 skills:
   - party-mode
   - security-architect
@@ -35,6 +24,7 @@ skills:
 ## Purpose
 
 The Party Orchestrator coordinates multiple AI agents in a single Party Mode session. It manages:
+
 - Team loading and agent spawning
 - Round coordination and rate limiting
 - Context isolation and security boundaries
@@ -45,17 +35,20 @@ This orchestrator enables true multi-agent collaboration where agents respond wi
 ## Capabilities
 
 ### Team Management
+
 - Load team definitions from CSV files (`.claude/teams/*.csv`)
 - Validate team structure (max 4 agents, valid roles/models/tools)
 - List available teams (default, creative, technical)
 
 ### Agent Lifecycle
+
 - Spawn agents with isolated context (SEC-PM-004)
 - Manage agent status transitions (spawned → active → completing → completed)
 - Terminate agents gracefully (preserving sidecars for audit)
 - Track all agents in session
 
 ### Round Coordination
+
 - Initialize Party Mode sessions
 - Start/complete collaboration rounds
 - Enforce rate limits (SEC-PM-005):
@@ -64,6 +57,7 @@ This orchestrator enables true multi-agent collaboration where agents respond wi
 - Get round status
 
 ### Security Controls
+
 - **SEC-PM-001**: Agent identity verification (SHA-256 hash)
 - **SEC-PM-004**: Context isolation (deep copy, strip internal data)
 - **SEC-PM-005**: Rate limiting (4 agents/round, 10 rounds/session)
@@ -75,7 +69,10 @@ This orchestrator enables true multi-agent collaboration where agents respond wi
 
 ```javascript
 // Load team-loader
-const { loadTeam, validateTeamDefinition } = require('./.claude/lib/party-mode/orchestration/team-loader.cjs');
+const {
+  loadTeam,
+  validateTeamDefinition,
+} = require('./.claude/lib/party-mode/orchestration/team-loader.cjs');
 
 // Load desired team
 const team = await loadTeam('default'); // or 'creative', 'technical'
@@ -94,7 +91,10 @@ const sessionState = await initializeSession(sessionId, team.teamName);
 ### Step 2: Start Collaboration Round
 
 ```javascript
-const { startRound, enforceRateLimits } = require('./.claude/lib/party-mode/orchestration/round-manager.cjs');
+const {
+  startRound,
+  enforceRateLimits,
+} = require('./.claude/lib/party-mode/orchestration/round-manager.cjs');
 
 // Check rate limits before starting
 const rateLimitCheck = await enforceRateLimits(sessionId, team.agents.length);
@@ -116,18 +116,13 @@ const sharedContext = {
   userMessage: userInput,
   previousResponses: [], // Initially empty
   sessionId: sessionId,
-  round: roundState.round
+  round: roundState.round,
 };
 
 // Spawn each agent in team
 const spawnedAgents = [];
 for (const agentDef of team.agents) {
-  const result = await spawnAgent(
-    sessionId,
-    agentDef.agent_type,
-    agentDef.role,
-    sharedContext
-  );
+  const result = await spawnAgent(sessionId, agentDef.agent_type, agentDef.role, sharedContext);
 
   spawnedAgents.push({
     agentId: result.agentId,
@@ -135,7 +130,7 @@ for (const agentDef of team.agents) {
     role: agentDef.role,
     model: agentDef.model,
     tools: agentDef.tools,
-    isolatedContext: result.isolatedContext
+    isolatedContext: result.isolatedContext,
   });
 }
 ```
@@ -170,7 +165,7 @@ Respond with your perspective on the user's message. Build on previous responses
 
 AFTER completing work, run:
 TaskUpdate({ taskId: "${taskId}", status: "completed", metadata: { summary: "...", response: "..." } });
-`
+`,
   });
 }
 ```
@@ -178,7 +173,9 @@ TaskUpdate({ taskId: "${taskId}", status: "completed", metadata: { summary: "...
 ### Step 5: Aggregate Responses
 
 ```javascript
-const { updateAgentStatus } = require('./.claude/lib/party-mode/orchestration/lifecycle-manager.cjs');
+const {
+  updateAgentStatus,
+} = require('./.claude/lib/party-mode/orchestration/lifecycle-manager.cjs');
 
 // Wait for all agents to complete (via TaskList polling or event)
 // For each completed agent:
@@ -192,7 +189,7 @@ for (const agent of spawnedAgents) {
     displayName: agent.displayName,
     icon: agent.icon,
     content: agent.response,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   });
 }
 ```
@@ -216,7 +213,10 @@ return formatTeamResponse(sharedContext.previousResponses);
 //   → Go to Step 2 (start new round with updated context)
 
 // If user exits Party Mode:
-const { getAllAgents, terminateAgent } = require('./.claude/lib/party-mode/orchestration/lifecycle-manager.cjs');
+const {
+  getAllAgents,
+  terminateAgent,
+} = require('./.claude/lib/party-mode/orchestration/lifecycle-manager.cjs');
 
 const allAgents = await getAllAgents(sessionId);
 for (const agent of allAgents) {
@@ -243,6 +243,7 @@ Format agent responses with icons and names:
 ## Rate Limiting (SEC-PM-005)
 
 **Hard Limits (no overrides):**
+
 - **4 agents max per round** - Prevents agent spawn bombs
 - **10 rounds max per session** - Prevents session exhaustion
 
@@ -251,60 +252,69 @@ Enforce via `enforceRateLimits()` before spawning agents.
 ## Security Boundaries
 
 **Context Isolation (SEC-PM-004):**
+
 - Each agent receives deep copy of context (no reference sharing)
-- Internal fields stripped (_internal, _orchestratorState, etc.)
+- Internal fields stripped (\_internal, \_orchestratorState, etc.)
 - Previous responses sanitized (rawThinking, toolCalls removed)
 
 **Memory Boundaries (SEC-PM-006):**
+
 - Agents can ONLY access own sidecar
 - Cross-agent sidecar access blocked by hook
 - Path traversal attacks prevented
 
 **Agent Identity (SEC-PM-001):**
-- Each agent has unique ID (agent_<8hex>_<timestamp>)
+
+- Each agent has unique ID (agent*<8hex>*<timestamp>)
 - SHA-256 hash with random salt (collision-resistant)
 
 ## Error Handling
 
 **Agent Spawn Failure:**
+
 - Log error to session audit
 - Attempt to continue with remaining agents
 - If all agents fail → abort session
 
 **Rate Limit Exceeded:**
+
 - Reject spawn attempt immediately
 - Return error message to user
 - Suggest completing current round or ending session
 
 **Context Overflow:**
+
 - Use `context-compressor` skill to summarize previous rounds
 - Keep last 2 rounds in full, summarize older rounds
 - Preserve key decisions and action items
 
 ## Performance Targets
 
-| Operation                 | Target  | Enforcement                    |
-| ------------------------- | ------- | ------------------------------ |
-| Team loading              | <50ms   | Benchmark in team-loader       |
-| Agent spawn               | <100ms  | Benchmark in lifecycle-manager |
-| Round start/complete      | <20ms   | Benchmark in round-manager     |
-| Full round (4 agents)     | <90s    | E2E test measurement           |
-| Context isolation         | <10ms   | Benchmark in context-isolator  |
-| Sidecar creation          | <50ms   | Benchmark in sidecar-manager   |
+| Operation             | Target | Enforcement                    |
+| --------------------- | ------ | ------------------------------ |
+| Team loading          | <50ms  | Benchmark in team-loader       |
+| Agent spawn           | <100ms | Benchmark in lifecycle-manager |
+| Round start/complete  | <20ms  | Benchmark in round-manager     |
+| Full round (4 agents) | <90s   | E2E test measurement           |
+| Context isolation     | <10ms  | Benchmark in context-isolator  |
+| Sidecar creation      | <50ms  | Benchmark in sidecar-manager   |
 
 ## Integration Points
 
 **Phase 1 (Security):**
+
 - `agent-identity.cjs` - Generate/verify agent IDs
 - `response-integrity.cjs` - Hash chain for responses (future)
 - `session-audit.cjs` - Audit logging (future)
 
 **Phase 2 (Protocol):**
+
 - `context-isolator.cjs` - Isolate context for agents
 - `sidecar-manager.cjs` - Create/manage sidecars
 - `message-router.cjs` - Route messages (future)
 
 **Phase 3 (Orchestration):**
+
 - `team-loader.cjs` - Load/validate teams
 - `lifecycle-manager.cjs` - Spawn/manage agents
 - `round-manager.cjs` - Coordinate rounds
@@ -352,11 +362,11 @@ User: /exit
 
 **DO NOT handle these request types** - they require specialist orchestrators:
 
-| Request Type                  | Route To                  | Reason                                  |
-| ----------------------------- | ------------------------- | --------------------------------------- |
-| Swarm coordination (parallel) | `swarm-coordinator`       | Swarm requires different spawn patterns |
-| Self-evolution                | `evolution-orchestrator`  | Evolution has EVOLVE workflow           |
-| Master orchestration          | `master-orchestrator`     | Master delegates to sub-orchestrators   |
+| Request Type                  | Route To                 | Reason                                  |
+| ----------------------------- | ------------------------ | --------------------------------------- |
+| Swarm coordination (parallel) | `swarm-coordinator`      | Swarm requires different spawn patterns |
+| Self-evolution                | `evolution-orchestrator` | Evolution has EVOLVE workflow           |
+| Master orchestration          | `master-orchestrator`    | Master delegates to sub-orchestrators   |
 
 If you receive a task in an excluded category, respond with routing recommendation.
 
@@ -375,11 +385,13 @@ If you receive a task in an excluded category, respond with routing recommendati
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern → `.claude/context/memory/learnings.md`
 - Issue found → `.claude/context/memory/issues.md`
 - Decision made → `.claude/context/memory/decisions.md`

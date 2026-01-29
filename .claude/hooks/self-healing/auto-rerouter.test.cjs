@@ -67,7 +67,7 @@ function assertEqual(actual, expected, message) {
   }
 }
 
-function assertDeepEqual(actual, expected, message) {
+function _assertDeepEqual(actual, expected, message) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
     throw new Error(
       message || `Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`
@@ -164,7 +164,7 @@ describe('State Management', () => {
   });
 
   it('should save and load state correctly', () => {
-    const { rerouter, testStateFile } = setup();
+    const { rerouter, _testStateFile } = setup();
 
     const testState = {
       agentFailures: { architect: 2 },

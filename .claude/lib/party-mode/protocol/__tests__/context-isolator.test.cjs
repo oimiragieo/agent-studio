@@ -20,9 +20,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('should create isolated COPY (not reference) of context', () => {
       const originalContext = {
         userMessage: 'What do you think about microservices?',
-        previousResponses: [
-          { agentName: 'developer', content: 'I prefer modular monoliths' }
-        ]
+        previousResponses: [{ agentName: 'developer', content: 'I prefer modular monoliths' }],
       };
 
       const isolated = contextIsolator.isolateContext(originalContext, 'agent_001', 'architect');
@@ -33,14 +31,17 @@ describe('Context Isolator (SEC-PM-004)', () => {
 
       // Original should be UNCHANGED (deep copy)
       assert.strictEqual(originalContext.userMessage, 'What do you think about microservices?');
-      assert.strictEqual(originalContext.previousResponses[0].content, 'I prefer modular monoliths');
+      assert.strictEqual(
+        originalContext.previousResponses[0].content,
+        'I prefer modular monoliths'
+      );
     });
 
     it('should strip _internal fields from context', () => {
       const originalContext = {
         userMessage: 'Test',
         _internal: { secretData: 'should be removed' },
-        _systemPrompts: ['prompt1', 'prompt2']
+        _systemPrompts: ['prompt1', 'prompt2'],
       };
 
       const isolated = contextIsolator.isolateContext(originalContext, 'agent_001', 'developer');
@@ -66,9 +67,9 @@ describe('Context Isolator (SEC-PM-004)', () => {
           {
             agentName: 'developer',
             content: 'Public content',
-            rawThinking: 'Internal reasoning that should be removed'
-          }
-        ]
+            rawThinking: 'Internal reasoning that should be removed',
+          },
+        ],
       };
 
       const isolated = contextIsolator.isolateContext(originalContext, 'agent_002', 'architect');
@@ -84,9 +85,9 @@ describe('Context Isolator (SEC-PM-004)', () => {
           {
             agentName: 'developer',
             content: 'Public content',
-            toolCalls: [{ tool: 'Read', args: ['secret-file.txt'] }]
-          }
-        ]
+            toolCalls: [{ tool: 'Read', args: ['secret-file.txt'] }],
+          },
+        ],
       };
 
       const isolated = contextIsolator.isolateContext(originalContext, 'agent_003', 'security');
@@ -97,7 +98,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('should complete isolation in <10ms (performance)', () => {
       const originalContext = {
         userMessage: 'Test',
-        previousResponses: Array(10).fill({ agentName: 'test', content: 'Test response' })
+        previousResponses: Array(10).fill({ agentName: 'test', content: 'Test response' }),
       };
 
       const start = process.hrtime.bigint();
@@ -115,7 +116,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
         apiKey: 'sk-abc123',
         token: 'Bearer xyz',
         filePath: '/secret/path',
-        publicData: 'This should remain'
+        publicData: 'This should remain',
       };
 
       const sanitized = contextIsolator.sanitizeSharedContext(context);
@@ -129,7 +130,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('should remove session IDs', () => {
       const context = {
         sessionId: 'session_secret_123',
-        data: 'public'
+        data: 'public',
       };
 
       const sanitized = contextIsolator.sanitizeSharedContext(context);
@@ -145,7 +146,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
         agentId: 'agent_001',
         agentType: 'developer',
         timestamp: Date.now(),
-        userMessage: 'Test'
+        userMessage: 'Test',
       };
 
       const result = contextIsolator.validateContextBoundary(validContext, 'agent_001');
@@ -158,7 +159,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
       const invalidContext = {
         agentId: 'agent_001',
         agentType: 'developer',
-        _internal: { secret: 'data' }
+        _internal: { secret: 'data' },
       };
 
       const result = contextIsolator.validateContextBoundary(invalidContext, 'agent_001');
@@ -172,7 +173,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
       const context = {
         agentId: 'agent_999', // Different agent!
         agentType: 'developer',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       const result = contextIsolator.validateContextBoundary(context, 'agent_001');
@@ -186,12 +187,12 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('should safely merge agent response to shared context', () => {
       const sharedContext = {
         userMessage: 'Test',
-        previousResponses: []
+        previousResponses: [],
       };
 
       const agentContribution = {
         agentName: 'developer',
-        content: 'My response'
+        content: 'My response',
       };
 
       const updated = contextIsolator.mergeAgentContributions(sharedContext, agentContribution);
@@ -204,14 +205,14 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('should strip internal data during merge', () => {
       const sharedContext = {
         userMessage: 'Test',
-        previousResponses: []
+        previousResponses: [],
       };
 
       const agentContribution = {
         agentName: 'developer',
         content: 'My response',
         rawThinking: 'Internal reasoning',
-        toolCalls: [{ tool: 'Read' }]
+        toolCalls: [{ tool: 'Read' }],
       };
 
       const updated = contextIsolator.mergeAgentContributions(sharedContext, agentContribution);
@@ -230,9 +231,9 @@ describe('Context Isolator (SEC-PM-004)', () => {
           {
             agentName: 'security-architect',
             content: 'Public response',
-            rawThinking: 'SECRET: Threat model analysis'
-          }
-        ]
+            rawThinking: 'SECRET: Threat model analysis',
+          },
+        ],
       };
 
       // Agent A tries to access Agent B's context
@@ -246,10 +247,14 @@ describe('Context Isolator (SEC-PM-004)', () => {
       const contextWithInternals = {
         userMessage: 'Test',
         _internal: { secretKeys: ['key1', 'key2'] },
-        _orchestratorState: { activeAgents: ['agent_001'] }
+        _orchestratorState: { activeAgents: ['agent_001'] },
       };
 
-      const isolated = contextIsolator.isolateContext(contextWithInternals, 'agent_malicious', 'developer');
+      const isolated = contextIsolator.isolateContext(
+        contextWithInternals,
+        'agent_malicious',
+        'developer'
+      );
 
       // Internal fields should be STRIPPED
       assert.strictEqual(isolated._internal, undefined);
@@ -259,7 +264,7 @@ describe('Context Isolator (SEC-PM-004)', () => {
     it('PEN-011: Should prevent context modification affecting other agents', () => {
       const sharedContext = {
         userMessage: 'Original message',
-        previousResponses: [{ agentName: 'dev', content: 'Original' }]
+        previousResponses: [{ agentName: 'dev', content: 'Original' }],
       };
 
       // Agent A modifies their isolated context

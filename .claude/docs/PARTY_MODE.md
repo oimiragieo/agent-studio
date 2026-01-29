@@ -23,12 +23,14 @@ Multi-agent collaboration for complex decision-making, architectural design, and
 Party Mode enables multiple specialized AI agents to collaborate in a single conversation session. Instead of consulting agents sequentially, you bring 2-4 agents together to debate, challenge assumptions, and build consensus in real-time.
 
 **Traditional approach**:
+
 1. Ask developer agent for implementation plan
 2. Switch context, ask security agent for review
 3. Switch again, ask architect for design feedback
 4. Manually synthesize 3 separate conversations
 
 **Party Mode approach**:
+
 1. Activate Party Mode with 3 agents (developer, security, architect)
 2. Ask your question once
 3. Watch agents collaborate, challenge each other, reach consensus
@@ -37,6 +39,7 @@ Party Mode enables multiple specialized AI agents to collaborate in a single con
 ### When to Use Party Mode
 
 **Use Party Mode for**:
+
 - Architecture decisions requiring multiple perspectives
 - Security-critical features needing developer + security review
 - Complex feature design with cross-functional concerns
@@ -44,6 +47,7 @@ Party Mode enables multiple specialized AI agents to collaborate in a single con
 - Brainstorming sessions with diverse viewpoints
 
 **Do NOT use Party Mode for**:
+
 - Simple bug fixes (single developer agent sufficient)
 - Routine code review (use code-reviewer agent)
 - Documentation updates (use technical-writer agent)
@@ -52,17 +56,20 @@ Party Mode enables multiple specialized AI agents to collaborate in a single con
 ### Key Benefits
 
 **Multi-Perspective Analysis**: Catch blind spots through diverse viewpoints
+
 - Developer focuses on implementation feasibility
 - Security architect identifies vulnerabilities
 - QA considers edge cases and testability
 - Architect ensures system-level coherence
 
 **Consensus Building**: Resolve disagreements through structured debate
+
 - Weighted voting based on agent expertise
 - Explicit agreement/disagreement tracking
 - Round-based refinement until consensus emerges
 
 **Real-Time Collaboration**: Natural team discussion vs agent-hopping
+
 - Agents reference and challenge each other's responses
 - Build collaboratively on ideas
 - Faster than sequential consultation (3 sessions → 1 session)
@@ -74,6 +81,7 @@ Party Mode enables multiple specialized AI agents to collaborate in a single con
 ### Prerequisites
 
 1. **Feature Flag Enabled**: Party Mode must be enabled in config
+
    ```yaml
    features:
      partyMode:
@@ -132,6 +140,7 @@ Orchestrator generates session summary with key decisions, participants, next st
 Agents are specialized AI instances with distinct roles, expertise, and communication styles.
 
 **Agent Identity**:
+
 - **name**: Unique identifier (e.g., `developer`)
 - **displayName**: Human-friendly label (e.g., "Dev Lead")
 - **icon**: Emoji for visual distinction (🔧)
@@ -139,14 +148,17 @@ Agents are specialized AI instances with distinct roles, expertise, and communic
 - **agentPath**: Path to agent definition file
 
 **Agent Selection**:
+
 - Orchestrator classifies user message by topic (architecture, security, testing, etc.)
 - Selects 2-4 most relevant agents from active team
 - User can direct questions to specific agent using `@agent-name`
 
 **Example**:
+
 ```
 User: @security What are the authentication risks?
 ```
+
 Routes message ONLY to security-architect agent.
 
 ### Rounds
@@ -154,6 +166,7 @@ Routes message ONLY to security-architect agent.
 Rounds are collaboration cycles where agents respond to a shared prompt.
 
 **Round Lifecycle**:
+
 1. **Prompt Building**: Orchestrator builds agent-specific prompts with user message + previous responses
 2. **Agent Execution**: Agents work in parallel (isolated contexts)
 3. **Response Collection**: Orchestrator verifies agent identity + response integrity
@@ -161,6 +174,7 @@ Rounds are collaboration cycles where agents respond to a shared prompt.
 5. **Display**: Format and show multi-agent response to user
 
 **Round Limits**:
+
 - **Max agents per round**: 4 (SEC-PM-005 rate limiting)
 - **Max rounds per session**: 10 (prevents session exhaustion)
 - **Context size monitoring**: Warning at 100k tokens, hard limit at 150k tokens
@@ -170,6 +184,7 @@ Rounds are collaboration cycles where agents respond to a shared prompt.
 Consensus is structured agreement-building through multi-round collaboration.
 
 **Consensus Mechanism**:
+
 - **Agreements**: Points where 2+ agents align
 - **Disagreements**: Points where agents conflict
 - **Weighted Voting**: Agent expertise influences decision weight
@@ -178,11 +193,13 @@ Consensus is structured agreement-building through multi-round collaboration.
   - Developer: 1.0x weight (baseline)
 
 **Consensus States**:
+
 - **Strong Consensus**: 80%+ agents agree (weighted)
 - **Weak Consensus**: 60-79% agents agree
 - **No Consensus**: <60% agreement (requires more rounds)
 
 **Example**:
+
 ```
 Round 1:
   Developer: "Use REST API"
@@ -200,22 +217,26 @@ Round 2:
 Context is the shared conversation state that agents receive.
 
 **Context Isolation (SEC-PM-004)**:
+
 - **Deep Clone**: Each agent gets a copy, not a reference
 - **Metadata Stripping**: Orchestrator state removed before agent spawn
 - **Response Sanitization**: Internal data (rawThinking, toolCalls) excluded from public responses
 
 **Context Contents**:
+
 - User message
 - Previous agent responses (PUBLIC content only)
 - Agent-specific metadata (agentId, timestamp, isolation boundary marker)
 - Session configuration (team name, round number)
 
 **What agents CAN see**:
+
 - User messages from all rounds
 - Other agents' responses (formatted content only)
 - Their own identity and role
 
 **What agents CANNOT see**:
+
 - Orchestrator's internal coordination state
 - Other agents' internal reasoning (rawThinking)
 - Tool calls made by other agents
@@ -227,14 +248,14 @@ Security controls protect agent boundaries and prevent cross-contamination.
 
 **6 CRITICAL Security Controls**:
 
-| Control ID | Name | Purpose | Severity |
-|------------|------|---------|----------|
-| SEC-PM-001 | Agent Identity Verification | Prevent agent impersonation | HIGH |
-| SEC-PM-002 | Response Integrity | Detect response tampering | HIGH |
-| SEC-PM-003 | Session Audit Logging | Track all agent actions | MEDIUM |
-| SEC-PM-004 | Context Isolation | Prevent context leakage | CRITICAL |
-| SEC-PM-005 | Rate Limiting | Prevent resource exhaustion | MEDIUM |
-| SEC-PM-006 | Memory Boundaries | Enforce sidecar ownership | CRITICAL |
+| Control ID | Name                        | Purpose                     | Severity |
+| ---------- | --------------------------- | --------------------------- | -------- |
+| SEC-PM-001 | Agent Identity Verification | Prevent agent impersonation | HIGH     |
+| SEC-PM-002 | Response Integrity          | Detect response tampering   | HIGH     |
+| SEC-PM-003 | Session Audit Logging       | Track all agent actions     | MEDIUM   |
+| SEC-PM-004 | Context Isolation           | Prevent context leakage     | CRITICAL |
+| SEC-PM-005 | Rate Limiting               | Prevent resource exhaustion | MEDIUM   |
+| SEC-PM-006 | Memory Boundaries           | Enforce sidecar ownership   | CRITICAL |
 
 See [Security Considerations](#security-considerations) for details.
 
@@ -256,15 +277,16 @@ qa,QA Lead,3,"Read,Write,Edit,Bash",sonnet
 
 **Field Descriptions**:
 
-| Field | Type | Description | Example |
-|-------|------|-------------|---------|
-| agent_type | string | Agent name (must match file in `.claude/agents/`) | `developer` |
-| role | string | Human-friendly role label | `Dev Lead` |
-| priority | integer | Selection priority (1=highest, used when >4 agents relevant) | `1` |
-| tools | string | Comma-separated tool list (quoted string) | `"Read,Write,Edit"` |
-| model | string | LLM model to use (`haiku`, `sonnet`, `opus`) | `sonnet` |
+| Field      | Type    | Description                                                  | Example             |
+| ---------- | ------- | ------------------------------------------------------------ | ------------------- |
+| agent_type | string  | Agent name (must match file in `.claude/agents/`)            | `developer`         |
+| role       | string  | Human-friendly role label                                    | `Dev Lead`          |
+| priority   | integer | Selection priority (1=highest, used when >4 agents relevant) | `1`                 |
+| tools      | string  | Comma-separated tool list (quoted string)                    | `"Read,Write,Edit"` |
+| model      | string  | LLM model to use (`haiku`, `sonnet`, `opus`)                 | `sonnet`            |
 
 **Validation Rules**:
+
 - Maximum 4 agents per team (enforced at load time)
 - agent_type must reference existing agent file
 - tools must be valid tool names
@@ -276,6 +298,7 @@ qa,QA Lead,3,"Read,Write,Edit,Bash",sonnet
 #### default.csv (General Purpose)
 
 Balanced team for most scenarios:
+
 - Developer (implementation)
 - Architect (design)
 - Security Architect (security)
@@ -287,6 +310,7 @@ Balanced team for most scenarios:
 #### creative.csv (Innovation)
 
 Design and user experience focus:
+
 - UX Designer (user needs)
 - Technical Writer (clarity)
 - PM (product vision)
@@ -297,6 +321,7 @@ Design and user experience focus:
 #### technical.csv (Implementation)
 
 Deep technical collaboration:
+
 - Architect (system design)
 - DevOps (infrastructure)
 - Database Architect (data modeling)
@@ -497,11 +522,11 @@ Control Party Mode availability via config file or environment variable.
 ```yaml
 features:
   partyMode:
-    enabled: true          # Enable/disable Party Mode
-    maxAgents: 4           # Max agents per round (hard limit)
-    maxRounds: 10          # Max rounds per session (hard limit)
+    enabled: true # Enable/disable Party Mode
+    maxAgents: 4 # Max agents per round (hard limit)
+    maxRounds: 10 # Max rounds per session (hard limit)
     contextWarning: 100000 # Token count warning threshold
-    contextLimit: 150000   # Token count hard limit
+    contextLimit: 150000 # Token count hard limit
 ```
 
 **Environment Variable** (overrides config):
@@ -517,10 +542,10 @@ export PARTY_MODE_ENABLED=false
 **Environment-Specific Settings**:
 
 | Environment | enabled | maxAgents | maxRounds | contextLimit |
-|-------------|---------|-----------|-----------|--------------|
-| Development | true | 4 | 10 | 150000 |
-| Staging | true | 4 | 10 | 150000 |
-| Production | false | 4 | 10 | 150000 |
+| ----------- | ------- | --------- | --------- | ------------ |
+| Development | true    | 4         | 10        | 150000       |
+| Staging     | true    | 4         | 10        | 150000       |
+| Production  | false   | 4         | 10        | 150000       |
 
 Default: OFF in production (gradual rollout required)
 
@@ -531,8 +556,8 @@ Default: OFF in production (gradual rollout required)
 ```yaml
 features:
   partyMode:
-    maxAgents: 4    # Reduce to 3 if spawning >100ms per agent
-    maxRounds: 10   # Reduce to 5 for cost control
+    maxAgents: 4 # Reduce to 3 if spawning >100ms per agent
+    maxRounds: 10 # Reduce to 5 for cost control
 ```
 
 **Context Management**:
@@ -540,8 +565,8 @@ features:
 ```yaml
 features:
   partyMode:
-    contextWarning: 100000  # Warn at 100k tokens (~75% of limit)
-    contextLimit: 150000    # Hard stop at 150k tokens
+    contextWarning: 100000 # Warn at 100k tokens (~75% of limit)
+    contextLimit: 150000 # Hard stop at 150k tokens
 ```
 
 When context approaches warning threshold, orchestrator suggests summarization.
@@ -551,8 +576,8 @@ When context approaches warning threshold, orchestrator suggests summarization.
 ```yaml
 features:
   partyMode:
-    agentTimeout: 60000     # 60 seconds per agent response
-    roundTimeout: 300000    # 5 minutes total per round
+    agentTimeout: 60000 # 60 seconds per agent response
+    roundTimeout: 300000 # 5 minutes total per round
 ```
 
 ---
@@ -566,11 +591,13 @@ features:
 **Symptoms**: User mentions "party mode" but router spawns single agent instead
 
 **Diagnosis**:
+
 1. Check feature flag: `grep partyMode .claude/config.yaml`
 2. Check environment override: `echo $PARTY_MODE_ENABLED`
 3. Check team file exists: `ls .claude/teams/default.csv`
 
 **Solution**:
+
 ```bash
 # Enable in config
 sed -i 's/enabled: false/enabled: true/' .claude/config.yaml
@@ -584,11 +611,13 @@ export PARTY_MODE_ENABLED=true
 **Symptoms**: "Agent spawn failed" error, round terminates early
 
 **Diagnosis**:
+
 1. Check agent file exists: `ls .claude/agents/core/developer.md`
 2. Check team CSV format: `cat .claude/teams/default.csv`
 3. Check audit log: `tail -20 .claude/context/metrics/party-mode-audit.jsonl`
 
 **Solution**:
+
 ```bash
 # Validate team definition
 node .claude/tools/cli/validate-team.js default
@@ -601,11 +630,13 @@ node .claude/tools/cli/validate-team.js default
 **Symptoms**: Session ends abruptly with "max rounds exceeded"
 
 **Diagnosis**:
+
 1. Check round count in audit log
 2. Check if agents reaching consensus
 3. Check context size growth
 
 **Solution**:
+
 - **No consensus**: Rephrase question to be more specific
 - **Context overflow**: Summarize conversation manually, restart session
 - **Legitimate need**: Increase maxRounds in config (temporarily)
@@ -615,11 +646,13 @@ node .claude/tools/cli/validate-team.js default
 **Symptoms**: Agent references another agent's internal reasoning
 
 **Diagnosis**:
+
 1. Check audit log for isolation boundary violations
 2. Verify context-isolator.cjs is working
 3. Check if agent responses contain rawThinking or toolCalls
 
 **Solution**:
+
 ```bash
 # Verify isolation tests passing
 node --test .claude/lib/party-mode/protocol/__tests__/context-isolator.test.cjs
@@ -633,11 +666,13 @@ grep "SEC-PM-004" .claude/context/metrics/party-mode-audit.jsonl
 **Symptoms**: Agent reads another agent's sidecar memory
 
 **Diagnosis**:
+
 1. Check audit log for sidecar access denials
 2. Verify sidecar-access-guard.cjs hook is registered
 3. Check settings.json for hook registration
 
 **Solution**:
+
 ```bash
 # Verify hook is registered
 grep "sidecar-access-guard" .claude/settings.json
@@ -653,11 +688,12 @@ Enable verbose logging for troubleshooting:
 ```yaml
 features:
   partyMode:
-    debug: true        # Enables verbose orchestrator logs
-    auditLevel: DEBUG  # Logs all agent interactions
+    debug: true # Enables verbose orchestrator logs
+    auditLevel: DEBUG # Logs all agent interactions
 ```
 
 **Debug Output Includes**:
+
 - Agent selection reasoning
 - Context isolation verification
 - Response hash chain validation
@@ -665,6 +701,7 @@ features:
 - Session state transitions
 
 **Log Locations**:
+
 - Session audit: `.claude/context/metrics/party-mode-audit.jsonl`
 - Security events: `.claude/context/metrics/party-mode-security-events.jsonl`
 - Orchestrator logs: stdout (when debug: true)
@@ -674,12 +711,14 @@ features:
 **Symptom**: Party Mode sessions slow (>5 minutes per round)
 
 **Optimizations**:
+
 1. **Reduce agents**: Use 2-3 agents instead of 4
 2. **Shorter prompts**: Be concise in questions
 3. **Faster models**: Use sonnet instead of opus (where appropriate)
 4. **Parallel spawning**: Verify agents spawn in parallel (not sequential)
 
 **Measure performance**:
+
 ```bash
 # Check round duration in audit log
 jq 'select(.eventType=="ROUND_COMPLETE") | .duration' .claude/context/metrics/party-mode-audit.jsonl
@@ -694,17 +733,21 @@ jq 'select(.eventType=="ROUND_COMPLETE") | .duration' .claude/context/metrics/pa
 Load team definition from CSV file.
 
 **Parameters**:
+
 - `teamName` (string): Name of team file (without .csv extension)
 
 **Returns**:
+
 - `Team` object with agents array
 
 **Throws**:
+
 - Error if team file not found
 - Error if team has >4 agents
 - Error if agent file referenced in CSV does not exist
 
 **Example**:
+
 ```javascript
 const team = loadTeam('default');
 // Returns: { name: 'default', agents: [ ... ] }
@@ -715,18 +758,22 @@ const team = loadTeam('default');
 Initialize new Party Mode session.
 
 **Parameters**:
+
 - `sessionId` (string): Unique session identifier (UUID)
 - `teamName` (string): Team to load
 
 **Returns**:
+
 - `Session` object with initialized state
 
 **Side Effects**:
+
 - Creates session audit log entry
 - Initializes agent identity hashes
 - Creates isolated context for each agent
 
 **Example**:
+
 ```javascript
 const session = initializeSession('sess-uuid-1234', 'default');
 // Session state initialized, audit log entry created
@@ -737,15 +784,18 @@ const session = initializeSession('sess-uuid-1234', 'default');
 Coordinate single collaboration round.
 
 **Parameters**:
+
 - `sessionId` (string): Session ID
 - `round` (integer): Round number (1-indexed)
 - `team` (Team): Loaded team object
 - `context` (Context): Shared conversation context
 
 **Returns**:
+
 - `RoundResult` object with agent responses and consensus
 
 **Workflow**:
+
 1. Enforce rate limits (max 4 agents, max 10 rounds)
 2. Select relevant agents based on message classification
 3. Build isolated context for each agent
@@ -755,6 +805,7 @@ Coordinate single collaboration round.
 7. Log round completion
 
 **Example**:
+
 ```javascript
 const result = coordinateRound('sess-1234', 1, team, context);
 // Returns: { responses: [...], agreements: [...], disagreements: [...] }
@@ -830,16 +881,19 @@ validateSidecarOwnership(filePath: string, agentName: string): { valid: boolean,
 **Purpose**: Prevent agent impersonation
 
 **How it works**:
+
 - Agent identity = SHA-256 hash of (agentPath + file content)
 - Hash generated at team load, verified at response collection
 - Mismatch triggers response rejection + security event log
 
 **What it protects against**:
+
 - Malicious agent claiming to be security-architect
 - Forged responses with fake attribution
 - Team definition poisoning (CSV includes fake agents)
 
 **What to monitor**:
+
 ```bash
 # Check for identity mismatches
 grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
@@ -850,16 +904,19 @@ grep "SEC-PM-001" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Detect response tampering
 
 **How it works**:
+
 - Each response includes hash of (previousHash + content + timestamp)
 - Creates blockchain-like hash chain
 - Content modification breaks chain verification
 
 **What it protects against**:
+
 - Agent modifying previous responses before next agent sees them
 - Malicious reordering of responses
 - Response deletion attacks
 
 **What to monitor**:
+
 ```bash
 # Check for hash chain breaks
 grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
@@ -870,15 +927,18 @@ grep "SEC-PM-002" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Track all agent actions for forensics
 
 **How it works**:
+
 - Append-only JSONL log
 - Logs: session start/end, agent spawns, responses, errors
 - Includes agent hashes, response hashes, timestamps
 
 **What it protects against**:
+
 - Unattributed actions (who did what)
 - Repudiation attacks (agent claims they didn't respond)
 
 **What to monitor**:
+
 ```bash
 # View session history
 jq 'select(.sessionId=="sess-1234")' .claude/context/metrics/party-mode-audit.jsonl
@@ -889,16 +949,19 @@ jq 'select(.sessionId=="sess-1234")' .claude/context/metrics/party-mode-audit.js
 **Purpose**: Prevent cross-agent context leakage
 
 **How it works**:
+
 - Deep clone context (JSON.parse(JSON.stringify))
-- Strip orchestrator metadata (_orchestratorState, _sessionSecrets)
+- Strip orchestrator metadata (\_orchestratorState, \_sessionSecrets)
 - Sanitize previous responses (remove rawThinking, toolCalls)
 
 **What it protects against**:
+
 - Agent A reading Agent B's internal reasoning
 - Agents accessing orchestrator's full coordination state
 - Session secrets leaking to agents
 
 **What to monitor**:
+
 ```bash
 # Verify isolation tests passing
 node --test .claude/lib/party-mode/protocol/__tests__/context-isolator.test.cjs
@@ -909,16 +972,19 @@ node --test .claude/lib/party-mode/protocol/__tests__/context-isolator.test.cjs
 **Purpose**: Prevent resource exhaustion
 
 **How it works**:
+
 - Hard limit: Max 4 agents per round
 - Hard limit: Max 10 rounds per session
 - Context size monitoring with warning threshold
 
 **What it protects against**:
+
 - Agent spawn bombs (unlimited agent spawns)
 - Round exhaustion (infinite loop of rounds)
 - Context window overflow (accumulated responses exceed limit)
 
 **What to monitor**:
+
 ```bash
 # Check if rate limits triggered
 grep "SEC-PM-005" .claude/context/metrics/party-mode-audit.jsonl
@@ -929,16 +995,19 @@ grep "SEC-PM-005" .claude/context/metrics/party-mode-audit.jsonl
 **Purpose**: Enforce sidecar ownership
 
 **How it works**:
+
 - Hook on Read/Write/Edit tools for sidecar paths
 - Ownership verification: Agent can only access own sidecar
 - No agent context = all sidecar access blocked
 
 **What it protects against**:
+
 - Developer agent reading security-architect's patterns
 - Agent writing to another agent's sidecar
 - Path traversal attacks (../other-agent/)
 
 **What to monitor**:
+
 ```bash
 # Check for sidecar access denials
 grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
@@ -948,22 +1017,23 @@ grep "SEC-PM-006" .claude/context/metrics/party-mode-audit.jsonl
 
 12 penetration tests validate security controls:
 
-| Test ID | Attack Vector | Expected Behavior | Control |
-|---------|---------------|-------------------|---------|
-| PEN-001 | Agent impersonation | Response REJECTED | SEC-PM-001 |
-| PEN-002 | Response tampering | Hash chain BROKEN | SEC-PM-002 |
-| PEN-003 | Context eavesdropping | Key NOT PRESENT | SEC-PM-004 |
-| PEN-004 | Internal data leak | Key NOT PRESENT | SEC-PM-004 |
-| PEN-005 | Sidecar reconnaissance | Access BLOCKED | SEC-PM-006 |
-| PEN-006 | Sidecar poisoning | Write BLOCKED | SEC-PM-006 |
-| PEN-007 | Agent spawn bomb | Truncated to 4 | SEC-PM-005 |
-| PEN-008 | Round exhaustion | Terminated at 10 | SEC-PM-005 |
-| PEN-009 | Path traversal | Path REJECTED | SEC-PM-006 |
-| PEN-010 | Team definition injection | CSV validation REJECTS | SEC-PM-001 |
-| PEN-011 | Context modification | Other agents NOT affected | SEC-PM-004 |
-| PEN-012 | Response reordering | Hash chain BROKEN | SEC-PM-002 |
+| Test ID | Attack Vector             | Expected Behavior         | Control    |
+| ------- | ------------------------- | ------------------------- | ---------- |
+| PEN-001 | Agent impersonation       | Response REJECTED         | SEC-PM-001 |
+| PEN-002 | Response tampering        | Hash chain BROKEN         | SEC-PM-002 |
+| PEN-003 | Context eavesdropping     | Key NOT PRESENT           | SEC-PM-004 |
+| PEN-004 | Internal data leak        | Key NOT PRESENT           | SEC-PM-004 |
+| PEN-005 | Sidecar reconnaissance    | Access BLOCKED            | SEC-PM-006 |
+| PEN-006 | Sidecar poisoning         | Write BLOCKED             | SEC-PM-006 |
+| PEN-007 | Agent spawn bomb          | Truncated to 4            | SEC-PM-005 |
+| PEN-008 | Round exhaustion          | Terminated at 10          | SEC-PM-005 |
+| PEN-009 | Path traversal            | Path REJECTED             | SEC-PM-006 |
+| PEN-010 | Team definition injection | CSV validation REJECTS    | SEC-PM-001 |
+| PEN-011 | Context modification      | Other agents NOT affected | SEC-PM-004 |
+| PEN-012 | Response reordering       | Hash chain BROKEN         | SEC-PM-002 |
 
 **Run penetration tests**:
+
 ```bash
 node --test .claude/lib/party-mode/__tests__/security/penetration-tests.test.cjs
 ```
@@ -973,16 +1043,19 @@ node --test .claude/lib/party-mode/__tests__/security/penetration-tests.test.cjs
 **What to look for in logs**:
 
 **Suspicious Patterns**:
+
 - Multiple SEC-PM-001 events (repeated impersonation attempts)
 - SEC-PM-006 events from same agent (sidecar reconnaissance)
 - High round count approaching limit (possible exhaustion attempt)
 
 **Normal Patterns**:
+
 - Session start/end pairs
 - Round count increases sequentially
 - Response hashes form valid chain
 
 **Forensic Investigation**:
+
 ```bash
 # Extract single session
 jq 'select(.sessionId=="sess-1234")' .claude/context/metrics/party-mode-audit.jsonl

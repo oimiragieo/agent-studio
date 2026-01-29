@@ -23,8 +23,8 @@ try {
   // Can't execute hook directly (uses process.exit), so we'll test the functions
   agentContextTracker = require('./agent-context-tracker.cjs');
   routerState = require('./router-state.cjs');
-} catch (err) {
-  agentContextTracker = null;
+} catch (_err) {
+  agentContextTracker = null; // eslint-disable-line no-unused-vars
   routerState = null;
 }
 

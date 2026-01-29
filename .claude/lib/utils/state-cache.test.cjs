@@ -19,7 +19,7 @@ const os = require('os');
 let stateCache;
 try {
   stateCache = require('./state-cache.cjs');
-} catch (err) {
+} catch (_err) {
   // Module doesn't exist yet - expected in RED phase
   stateCache = null;
 }

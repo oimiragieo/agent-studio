@@ -61,7 +61,7 @@ function cleanupState() {
     if (fs.existsSync(STATE_FILE_PATH)) {
       fs.unlinkSync(STATE_FILE_PATH);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore cleanup errors
   }
 }

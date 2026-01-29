@@ -33,7 +33,7 @@ function assertEqual(actual, expected, message) {
   }
 }
 
-function assertDeepEqual(actual, expected, message) {
+function _assertDeepEqual(actual, expected, message) {
   const actualStr = JSON.stringify(actual);
   const expectedStr = JSON.stringify(expected);
   if (actualStr !== expectedStr) {

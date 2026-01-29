@@ -261,7 +261,7 @@ function validateInputs() {
         console.error('❌ Validation failed');
         process.exit(1);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Validation failed');
       process.exit(1);
     }

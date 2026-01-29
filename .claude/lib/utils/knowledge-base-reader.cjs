@@ -27,7 +27,13 @@ let cacheTimestamp = null;
  */
 function loadIndex() {
   const projectRoot = getProjectRoot();
-  const indexPath = path.join(projectRoot, '.claude', 'context', 'artifacts', 'knowledge-base-index.csv');
+  const indexPath = path.join(
+    projectRoot,
+    '.claude',
+    'context',
+    'artifacts',
+    'knowledge-base-index.csv'
+  );
 
   if (!fs.existsSync(indexPath)) {
     console.warn('[kb-reader] Index file not found. Run build-knowledge-base-index.cjs first.');
@@ -148,7 +154,10 @@ function filterByTags(tags) {
   const lowerTags = tags.map(t => t.toLowerCase());
 
   return artifacts.filter(artifact => {
-    const artifactTags = artifact.use_cases.toLowerCase().split(',').map(t => t.trim());
+    const artifactTags = artifact.use_cases
+      .toLowerCase()
+      .split(',')
+      .map(t => t.trim());
 
     // AND logic: all tags must be present
     return lowerTags.every(tag => artifactTags.some(at => at.includes(tag)));
@@ -200,7 +209,7 @@ function stats() {
   return {
     total: artifacts.length,
     byDomain,
-    byComplexity
+    byComplexity,
   };
 }
 
@@ -219,5 +228,5 @@ module.exports = {
   get,
   listAll,
   stats,
-  clearCache
+  clearCache,
 };

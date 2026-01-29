@@ -49,7 +49,7 @@ describe('SessionEnd Hook', () => {
     };
 
     // Act
-    const result = execSync(`node "${HOOK_PATH}"`, {
+    const _result = execSync(`node "${HOOK_PATH}"`, {
       input: JSON.stringify(sessionContext),
       cwd: PROJECT_ROOT,
       encoding: 'utf8',
@@ -72,7 +72,7 @@ describe('SessionEnd Hook', () => {
 
   it('should handle empty input gracefully', () => {
     // Act - no input
-    const result = execSync(`node "${HOOK_PATH}"`, {
+    const _result = execSync(`node "${HOOK_PATH}"`, {
       input: '',
       cwd: PROJECT_ROOT,
       encoding: 'utf8',

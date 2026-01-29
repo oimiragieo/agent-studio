@@ -26,8 +26,20 @@ const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
 // Paths relative to project root
 const CLAUDE_MD = path.join(PROJECT_ROOT, '.claude', 'CLAUDE.md');
-const SKILL_CATALOG = path.join(PROJECT_ROOT, '.claude', 'context', 'artifacts', 'skill-catalog.md');
-const ROUTER_ENFORCER = path.join(PROJECT_ROOT, '.claude', 'hooks', 'routing', 'router-enforcer.cjs');
+const SKILL_CATALOG = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'context',
+  'artifacts',
+  'skill-catalog.md'
+);
+const ROUTER_ENFORCER = path.join(
+  PROJECT_ROOT,
+  '.claude',
+  'hooks',
+  'routing',
+  'router-enforcer.cjs'
+);
 const EVOLUTION_STATE = path.join(PROJECT_ROOT, '.claude', 'context', 'evolution-state.json');
 const LEARNINGS_MD = path.join(PROJECT_ROOT, '.claude', 'context', 'memory', 'learnings.md');
 const DECISIONS_MD = path.join(PROJECT_ROOT, '.claude', 'context', 'memory', 'decisions.md');
@@ -67,7 +79,7 @@ function getArtifactName(artifactPath) {
 function readFileSafe(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf-8');
-  } catch (err) {
+  } catch (_err) {
     return null;
   }
 }
@@ -141,7 +153,11 @@ function checkRouterEnforcer(artifactPath, artifactType, artifactName) {
   const hasEntry = enforcer.toLowerCase().includes(artifactName.toLowerCase());
 
   if (hasEntry) {
-    return { applicable: true, passed: true, message: `Found "${artifactName}" in router-enforcer.cjs` };
+    return {
+      applicable: true,
+      passed: true,
+      message: `Found "${artifactName}" in router-enforcer.cjs`,
+    };
   }
 
   return {
@@ -177,7 +193,7 @@ function checkAgentAssignment(artifactPath, artifactType, artifactName) {
           }
         }
       }
-    } catch (err) {
+    } catch (_err) {
       // Ignore errors
     }
     return null;
@@ -224,7 +240,7 @@ function checkMemoryFiles(artifactPath, artifactType, artifactName) {
 /**
  * Check 6: Schema Validation (simplified - checks structure)
  */
-function checkSchemaValidation(artifactPath, artifactType, artifactName) {
+function checkSchemaValidation(artifactPath, artifactType, _artifactName) {
   const content = readFileSafe(artifactPath);
   if (!content) {
     return { applicable: true, passed: false, message: 'Could not read artifact file' };
@@ -258,7 +274,7 @@ function checkSchemaValidation(artifactPath, artifactType, artifactName) {
 /**
  * Check 7: Tests Passing (checks if test file exists)
  */
-function checkTestsExist(artifactPath, artifactType, artifactName) {
+function checkTestsExist(artifactPath, artifactType, _artifactName) {
   // Only applicable for hooks and tools
   if (!['hook', 'tool'].includes(artifactType) && !artifactPath.includes('/tools/')) {
     return { applicable: false, passed: true, message: 'Not applicable for this artifact type' };
@@ -293,7 +309,7 @@ function checkTestsExist(artifactPath, artifactType, artifactName) {
 /**
  * Check 8: Documentation Complete
  */
-function checkDocumentationComplete(artifactPath, artifactType, artifactName) {
+function checkDocumentationComplete(artifactPath, _artifactType, _artifactName) {
   const content = readFileSafe(artifactPath);
   if (!content) {
     return { applicable: true, passed: false, message: 'Could not read artifact file' };

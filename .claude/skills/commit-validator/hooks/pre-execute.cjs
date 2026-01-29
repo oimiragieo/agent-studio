@@ -16,7 +16,7 @@ console.log('🔍 [COMMIT-VALIDATOR] Pre-execute validation...');
 /**
  * Validate input before execution
  */
-function validateInput(input) {
+function validateInput(_input) {
   const errors = [];
 
   // TODO: Add your validation logic here

@@ -37,7 +37,11 @@ test('validateTools: MCP tools without server should warn', () => {
   assert.strictEqual(result.allAvailable, true, 'Should allow (core tools available)');
   assert.strictEqual(result.unavailableTools.length, 0, 'No unavailable tools');
   assert.strictEqual(result.mcpToolsWithoutServer.length, 1, 'One MCP tool without server');
-  assert.strictEqual(result.mcpToolsWithoutServer[0].server, 'sequential-thinking', 'Correct server name');
+  assert.strictEqual(
+    result.mcpToolsWithoutServer[0].server,
+    'sequential-thinking',
+    'Correct server name'
+  );
 });
 
 // Test 4: Unknown tools should block
@@ -92,7 +96,7 @@ test('validateTools: mixed core, MCP, and unknown tools', () => {
     'Read',
     'Write',
     'mcp__sequential-thinking__sequentialthinking',
-    'UnknownTool'
+    'UnknownTool',
   ]);
   assert.strictEqual(result.allAvailable, false, 'Should block (unknown tool)');
   assert.strictEqual(result.unavailableTools.length, 1, 'One unavailable tool');

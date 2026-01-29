@@ -166,7 +166,7 @@ function safeParseJSON(content, schemaName) {
   if (!schemaName || !SCHEMAS[schemaName]) {
     try {
       return JSON.parse(content);
-    } catch (e) {
+    } catch (_e) {
       return {};
     }
   }
@@ -177,7 +177,7 @@ function safeParseJSON(content, schemaName) {
   let parsed;
   try {
     parsed = JSON.parse(content);
-  } catch (e) {
+  } catch (_e) {
     // Return defaults on parse error
     return { ...schema.defaults };
   }
@@ -205,7 +205,7 @@ function safeParseJSON(content, schemaName) {
           // Deep copy arrays with all nested content
           try {
             validated[key] = JSON.parse(JSON.stringify(value));
-          } catch (e) {
+          } catch (_e) {
             // If deep copy fails, use default
             validated[key] = schema.defaults[key];
           }
@@ -213,7 +213,7 @@ function safeParseJSON(content, schemaName) {
           // Deep copy nested objects
           try {
             validated[key] = JSON.parse(JSON.stringify(value));
-          } catch (e) {
+          } catch (_e) {
             // If deep copy fails, use default
             validated[key] = schema.defaults[key];
           }
@@ -250,7 +250,7 @@ function safeReadJSON(filePath, schemaName) {
   let content;
   try {
     content = fs.readFileSync(filePath, 'utf-8');
-  } catch (e) {
+  } catch (_e) {
     // Return defaults on read error
     if (schemaName && SCHEMAS[schemaName]) {
       return { ...SCHEMAS[schemaName].defaults };

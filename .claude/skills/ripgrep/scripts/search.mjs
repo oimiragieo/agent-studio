@@ -42,7 +42,7 @@ const RIPGREPRC = path.join(BIN_DIR, '.ripgreprc');
 
 // Detect platform and architecture
 const platform = os.platform();
-const arch = os.arch();
+const _arch = os.arch();
 
 // Determine binary name
 let binaryName = 'rg';

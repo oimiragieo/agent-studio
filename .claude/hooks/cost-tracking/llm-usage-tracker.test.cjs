@@ -29,9 +29,9 @@ const TEST_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'cost-tracking-'));
 
 // Mock implementations (stubs for actual implementations)
 const PRICING = {
-  'haiku': { input: 0.00025, output: 0.00125 },
-  'sonnet': { input: 0.003, output: 0.015 },
-  'opus': { input: 0.015, output: 0.075 }
+  haiku: { input: 0.00025, output: 0.00125 },
+  sonnet: { input: 0.003, output: 0.015 },
+  opus: { input: 0.015, output: 0.075 },
 };
 
 function calculateCost(tier, inputTokens, outputTokens) {
@@ -93,7 +93,7 @@ function verifyLogIntegrity(logPath) {
         return {
           valid: false,
           brokenAt: i + 1,
-          reason: `Hash chain broken at line ${i + 1}`
+          reason: `Hash chain broken at line ${i + 1}`,
         };
       }
 
@@ -106,16 +106,16 @@ function verifyLogIntegrity(logPath) {
         return {
           valid: false,
           brokenAt: i + 1,
-          reason: `Entry hash mismatch at line ${i + 1}`
+          reason: `Entry hash mismatch at line ${i + 1}`,
         };
       }
 
       previousHash = entry._hash;
-    } catch (e) {
+    } catch (_e) {
       return {
         valid: false,
         brokenAt: i + 1,
-        reason: `Invalid JSON at line ${i + 1}`
+        reason: `Invalid JSON at line ${i + 1}`,
       };
     }
   }
@@ -128,19 +128,31 @@ function verifyLogIntegrity(logPath) {
 test('Test 1: Calculate cost for sonnet model', () => {
   const cost = calculateCost('sonnet', 1500, 300);
   assert.strictEqual(cost > 0, true, 'Cost should be positive');
-  assert.strictEqual(cost, (1500 / 1000) * 0.003 + (300 / 1000) * 0.015, 'Cost calculation should be accurate');
+  assert.strictEqual(
+    cost,
+    (1500 / 1000) * 0.003 + (300 / 1000) * 0.015,
+    'Cost calculation should be accurate'
+  );
 });
 
 test('Test 2: Calculate cost for opus model', () => {
   const cost = calculateCost('opus', 3000, 1500);
   assert.strictEqual(cost > 0, true, 'Cost should be positive');
-  assert.strictEqual(cost, (3000 / 1000) * 0.015 + (1500 / 1000) * 0.075, 'Cost calculation should be accurate');
+  assert.strictEqual(
+    cost,
+    (3000 / 1000) * 0.015 + (1500 / 1000) * 0.075,
+    'Cost calculation should be accurate'
+  );
 });
 
 test('Test 3: Calculate cost for haiku model', () => {
   const cost = calculateCost('haiku', 500, 200);
   assert.strictEqual(cost > 0, true, 'Cost should be positive');
-  assert.strictEqual(cost, (500 / 1000) * 0.00025 + (200 / 1000) * 0.00125, 'Cost calculation should be accurate');
+  assert.strictEqual(
+    cost,
+    (500 / 1000) * 0.00025 + (200 / 1000) * 0.00125,
+    'Cost calculation should be accurate'
+  );
 });
 
 test('Test 4: Hash generation is deterministic', () => {
@@ -158,7 +170,7 @@ test('Test 5: Append entry with integrity hash', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   };
 
   const result = appendWithIntegrity(logPath, entry);
@@ -180,7 +192,7 @@ test('Test 6: Hash chain integrity with 3 entries', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   });
 
   appendWithIntegrity(logPath, {
@@ -188,7 +200,7 @@ test('Test 6: Hash chain integrity with 3 entries', () => {
     tier: 'haiku',
     inputTokens: 500,
     outputTokens: 200,
-    cost: '0.000375'
+    cost: '0.000375',
   });
 
   appendWithIntegrity(logPath, {
@@ -196,7 +208,7 @@ test('Test 6: Hash chain integrity with 3 entries', () => {
     tier: 'opus',
     inputTokens: 3000,
     outputTokens: 1500,
-    cost: '0.157500'
+    cost: '0.157500',
   });
 
   const verification = verifyLogIntegrity(logPath);
@@ -215,7 +227,7 @@ test('Test 7: Detect tampering - modified middle entry', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   });
 
   appendWithIntegrity(logPath, {
@@ -223,7 +235,7 @@ test('Test 7: Detect tampering - modified middle entry', () => {
     tier: 'haiku',
     inputTokens: 500,
     outputTokens: 200,
-    cost: '0.000375'
+    cost: '0.000375',
   });
 
   appendWithIntegrity(logPath, {
@@ -231,7 +243,7 @@ test('Test 7: Detect tampering - modified middle entry', () => {
     tier: 'opus',
     inputTokens: 3000,
     outputTokens: 1500,
-    cost: '0.157500'
+    cost: '0.157500',
   });
 
   // Now tamper with the middle entry
@@ -256,13 +268,19 @@ test('Test 8: Append-only - cannot overwrite', () => {
   appendWithIntegrity(logPath, entry2);
 
   // Try to write a new file (this would overwrite)
-  const lines = fs.readFileSync(logPath, 'utf-8').split('\n').filter(l => l);
+  const lines = fs
+    .readFileSync(logPath, 'utf-8')
+    .split('\n')
+    .filter(l => l);
   assert.strictEqual(lines.length, 2, 'Should have 2 entries');
 
   // Append another entry (verify append works)
   appendWithIntegrity(logPath, { timestamp: '2026-01-28T10:02:00Z', tier: 'opus', cost: '0.157' });
 
-  const updatedLines = fs.readFileSync(logPath, 'utf-8').split('\n').filter(l => l);
+  const updatedLines = fs
+    .readFileSync(logPath, 'utf-8')
+    .split('\n')
+    .filter(l => l);
   assert.strictEqual(updatedLines.length, 3, 'Should have 3 entries after append');
 });
 
@@ -277,7 +295,7 @@ test('Test 9: Cost report aggregation', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   });
 
   appendWithIntegrity(logPath, {
@@ -285,11 +303,14 @@ test('Test 9: Cost report aggregation', () => {
     tier: 'sonnet',
     inputTokens: 1000,
     outputTokens: 500,
-    cost: '0.010500'
+    cost: '0.010500',
   });
 
   // Aggregate costs
-  const lines = fs.readFileSync(logPath, 'utf-8').split('\n').filter(l => l);
+  const lines = fs
+    .readFileSync(logPath, 'utf-8')
+    .split('\n')
+    .filter(l => l);
   let totalCost = 0;
   let sonnetCalls = 0;
 
@@ -314,7 +335,7 @@ test('Test 10: Filter by date range', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   });
 
   appendWithIntegrity(logPath, {
@@ -322,7 +343,7 @@ test('Test 10: Filter by date range', () => {
     tier: 'haiku',
     inputTokens: 500,
     outputTokens: 200,
-    cost: '0.000375'
+    cost: '0.000375',
   });
 
   appendWithIntegrity(logPath, {
@@ -330,11 +351,14 @@ test('Test 10: Filter by date range', () => {
     tier: 'opus',
     inputTokens: 3000,
     outputTokens: 1500,
-    cost: '0.157500'
+    cost: '0.157500',
   });
 
   // Filter by date range
-  const lines = fs.readFileSync(logPath, 'utf-8').split('\n').filter(l => l);
+  const lines = fs
+    .readFileSync(logPath, 'utf-8')
+    .split('\n')
+    .filter(l => l);
   const jan28Entries = lines.filter(l => {
     const entry = JSON.parse(l);
     return entry.timestamp.startsWith('2026-01-28');
@@ -354,7 +378,7 @@ test('Test 11: Verify integrity command detects all tampering', () => {
     tier: 'sonnet',
     inputTokens: 1500,
     outputTokens: 800,
-    cost: '0.016500'
+    cost: '0.016500',
   });
 
   appendWithIntegrity(logPath, {
@@ -362,7 +386,7 @@ test('Test 11: Verify integrity command detects all tampering', () => {
     tier: 'haiku',
     inputTokens: 500,
     outputTokens: 200,
-    cost: '0.000375'
+    cost: '0.000375',
   });
 
   // Verify clean log
@@ -397,11 +421,14 @@ test('Test 12: Rate limiting - track entries per hour', () => {
       tier: 'sonnet',
       inputTokens: 1000 + i * 100,
       outputTokens: 500 + i * 50,
-      cost: (0.01 + i * 0.001).toString()
+      cost: (0.01 + i * 0.001).toString(),
     });
   }
 
-  const lines = fs.readFileSync(logPath, 'utf-8').split('\n').filter(l => l);
+  const lines = fs
+    .readFileSync(logPath, 'utf-8')
+    .split('\n')
+    .filter(l => l);
 
   // Count entries in last hour
   const entriesInLastHour = lines.filter(l => {

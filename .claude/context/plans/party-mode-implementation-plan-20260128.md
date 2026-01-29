@@ -14,6 +14,7 @@
 Party Mode enables multiple AI agents to collaborate in a single conversation, transforming agent-studio from sequential agent spawning to true multi-agent debate and collaboration. This is the #1 priority feature from BMAD-METHOD analysis with breakthrough value for complex decision-making, brainstorming, and multi-perspective analysis.
 
 **Key Deliverables:**
+
 - Multi-agent conversation protocol supporting 2-4 agents per round
 - 3 predefined teams (default, creative, technical)
 - Context isolation preventing cross-agent interference
@@ -22,6 +23,7 @@ Party Mode enables multiple AI agents to collaborate in a single conversation, t
 - TDD implementation with 35+ tests
 
 **Success Criteria:**
+
 - Party Mode conversation with 3+ agents completing successfully
 - All 6 CRITICAL security controls validated via penetration tests
 - Zero regressions in existing 74 tests
@@ -34,6 +36,7 @@ Party Mode enables multiple AI agents to collaborate in a single conversation, t
 ### What This Plan Accomplishes
 
 Party Mode brings multiple specialized agents into ONE conversation where they can:
+
 - Respond to user messages in character with distinct perspectives
 - Reference and challenge each other's responses
 - Build collaboratively on ideas
@@ -49,6 +52,7 @@ Party Mode brings multiple specialized agents into ONE conversation where they c
 ### Strategic Context
 
 **Completed Foundation (Phase 1A/1B):**
+
 - Knowledge Base: 1,133 artifacts indexed, <50ms search
 - Cost Tracking: Hash-chain integrity, <2ms overhead
 - Advanced Elicitation: 15 reasoning methods
@@ -57,6 +61,7 @@ Party Mode brings multiple specialized agents into ONE conversation where they c
 - Staging Environment: Complete isolation, monitoring
 
 **This Feature Enables:**
+
 - True multi-agent collaboration (vs sequential spawning)
 - Complex decision-making with team debate
 - Real-time consensus building
@@ -75,6 +80,7 @@ Party Mode brings multiple specialized agents into ONE conversation where they c
 #### Research Requirements (MANDATORY)
 
 Research has been completed via:
+
 - [x] BMAD-METHOD analysis (bmad-method-analysis-20260128-104050.md)
 - [x] Security review (security-mitigation-design-20260128.md)
 - [x] Architecture review (architecture-review-upgrade-roadmap-20260128.md)
@@ -184,6 +190,7 @@ node --test .claude/lib/__tests__/security/access-control.test.cjs
 ```
 
 **Success Criteria**:
+
 - 30 tests passing (8 + 12 + 10)
 - Agent identity hash generates consistently
 - Path validation blocks all dangerous patterns
@@ -253,6 +260,7 @@ node --test .claude/hooks/__tests__/security/party-mode-security.test.cjs
 ```
 
 **Success Criteria**:
+
 - 22 tests passing (8 + 6 + 8)
 - Context isolation prevents cross-contamination
 - Memory boundaries block unauthorized access
@@ -325,6 +333,7 @@ node -e "const tl = require('./.claude/skills/party-mode/team-loader.cjs'); cons
 ```
 
 **Success Criteria**:
+
 - 3 team CSV files created (default, creative, technical)
 - Team schema documented with 7 fields
 - team-loader.cjs parses all teams successfully
@@ -400,6 +409,7 @@ node -e "const orc = require('./.claude/skills/party-mode/orchestrator.cjs'); co
 ```
 
 **Success Criteria**:
+
 - 23 tests passing (8 + 9 + 4 + 2)
 - Message classification covers all 8 topics
 - Agent selection returns 2-4 agents for any message
@@ -490,6 +500,7 @@ grep -c "SEC-PM-003\|SEC-PM-005" .claude/skills/party-mode/orchestrator.cjs
 ```
 
 **Success Criteria**:
+
 - 14 tests passing (4 + 2 + 3 + 2 + 3)
 - SKILL.md complete with examples
 - Direct addressing (@name) routes to specific agent
@@ -565,6 +576,7 @@ node --test .claude/__tests__/performance/party-mode-perf.test.mjs
 ```
 
 **Success Criteria**:
+
 - 109 total tests passing (74 existing + 35 new)
 - All E2E scenarios complete successfully
 - All penetration tests block attacks as expected
@@ -634,6 +646,7 @@ grep "partyMode.enabled" .claude/config.yaml .claude/config.staging.yaml
 ```
 
 **Success Criteria**:
+
 - User guide complete with examples and troubleshooting
 - CLAUDE.md updated with party-mode routing
 - Feature flag configured (false in production, true in staging)
@@ -652,12 +665,14 @@ grep "partyMode.enabled" .claude/config.yaml .claude/config.staging.yaml
 3. Check for evolution opportunities (new agents/skills needed)
 
 **Spawn Command**:
+
 ```javascript
 Task({
-  subagent_type: "reflection-agent",
-  description: "Session reflection and learning extraction",
-  prompt: "You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed Party Mode implementation, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created)."
-})
+  subagent_type: 'reflection-agent',
+  description: 'Session reflection and learning extraction',
+  prompt:
+    'You are REFLECTION-AGENT. Read .claude/agents/core/reflection-agent.md. Analyze the completed Party Mode implementation, extract learnings to memory files, and check for evolution opportunities (patterns that suggest new agents or skills should be created).',
+});
 ```
 
 **Success Criteria**:
@@ -672,22 +687,22 @@ Task({
 
 ### 6 CRITICAL Controls Implemented
 
-| Control ID | Severity | Phase | Description |
-|------------|----------|-------|-------------|
-| SEC-PM-004 | CRITICAL | Phase 2 | Context Isolation (copy-on-spawn, no shared references) |
-| SEC-PM-006 | CRITICAL | Phase 2 | Memory Boundaries (sidecar ownership enforcement) |
-| SEC-PM-001 | HIGH | Phase 1 | Agent Identity Verification (hash-based) |
-| SEC-PM-002 | HIGH | Phase 4 | Response Integrity (hash-chain) |
-| SEC-PM-003 | MEDIUM | Phase 5 | Session Audit Log (all responses logged) |
-| SEC-PM-005 | MEDIUM | Phase 5 | Agent Rate Limiting (max 4 agents/round, 10 rounds/session) |
+| Control ID | Severity | Phase   | Description                                                 |
+| ---------- | -------- | ------- | ----------------------------------------------------------- |
+| SEC-PM-004 | CRITICAL | Phase 2 | Context Isolation (copy-on-spawn, no shared references)     |
+| SEC-PM-006 | CRITICAL | Phase 2 | Memory Boundaries (sidecar ownership enforcement)           |
+| SEC-PM-001 | HIGH     | Phase 1 | Agent Identity Verification (hash-based)                    |
+| SEC-PM-002 | HIGH     | Phase 4 | Response Integrity (hash-chain)                             |
+| SEC-PM-003 | MEDIUM   | Phase 5 | Session Audit Log (all responses logged)                    |
+| SEC-PM-005 | MEDIUM   | Phase 5 | Agent Rate Limiting (max 4 agents/round, 10 rounds/session) |
 
 ### 3 Cross-Cutting Patterns
 
-| Pattern | Phase | Purpose |
-|---------|-------|---------|
-| Agent Identity Management | Phase 1 | Hash-based agent identity for all controls |
-| Path Validation Utility | Phase 1 | Validate all file paths (sidecar, knowledge base, cost tracking) |
-| Access Control Framework | Phase 1 | Unified read/write permissions for all agents |
+| Pattern                   | Phase   | Purpose                                                          |
+| ------------------------- | ------- | ---------------------------------------------------------------- |
+| Agent Identity Management | Phase 1 | Hash-based agent identity for all controls                       |
+| Path Validation Utility   | Phase 1 | Validate all file paths (sidecar, knowledge base, cost tracking) |
+| Access Control Framework  | Phase 1 | Unified read/write permissions for all agents                    |
 
 ---
 
@@ -695,44 +710,44 @@ Task({
 
 ### Test Coverage Targets
 
-| Component | Target | Tests | Phase |
-|-----------|--------|-------|-------|
-| Agent Identity | 90% | 8 | Phase 1 |
-| Path Validation | 100% | 12 | Phase 1 |
-| Access Control | 95% | 10 | Phase 1 |
-| Context Isolation | 90% | 8 | Phase 2 |
-| Memory Boundaries | 90% | 6 | Phase 2 |
-| Team Infrastructure | 80% | 5 | Phase 3 |
-| Orchestrator Core | 85% | 23 | Phase 4 |
-| Skill Integration | 80% | 14 | Phase 5 |
-| E2E Tests | N/A | 5 | Phase 6 |
-| Penetration Tests | N/A | 5 | Phase 6 |
-| Performance Tests | N/A | 4 | Phase 6 |
+| Component           | Target | Tests | Phase   |
+| ------------------- | ------ | ----- | ------- |
+| Agent Identity      | 90%    | 8     | Phase 1 |
+| Path Validation     | 100%   | 12    | Phase 1 |
+| Access Control      | 95%    | 10    | Phase 1 |
+| Context Isolation   | 90%    | 8     | Phase 2 |
+| Memory Boundaries   | 90%    | 6     | Phase 2 |
+| Team Infrastructure | 80%    | 5     | Phase 3 |
+| Orchestrator Core   | 85%    | 23    | Phase 4 |
+| Skill Integration   | 80%    | 14    | Phase 5 |
+| E2E Tests           | N/A    | 5     | Phase 6 |
+| Penetration Tests   | N/A    | 5     | Phase 6 |
+| Performance Tests   | N/A    | 4     | Phase 6 |
 
 **Total Tests**: 109 (74 existing + 35 new)
 
 ### Penetration Testing Scenarios
 
-| ID | Scenario | Attack Vector | Expected Mitigation | Phase |
-|----|----------|---------------|---------------------|-------|
-| PEN-001 | Agent Impersonation | Fake agent identity | SEC-PM-001 identity hash verification → Response rejected | Phase 6 |
-| PEN-002 | Sidecar Privilege Escalation | Read other agent's patterns | SEC-SM-005 read restrictions → Access denied | Phase 6 |
-| PEN-005 | Context Leakage | Agent A reads Agent B's context | SEC-PM-004 isolation → Keys not present | Phase 6 |
-| PEN-007 | Response Tampering | Modify previous response | SEC-PM-002 hash chain → Chain broken, detected | Phase 6 |
-| PEN-008 | Memory Boundary Bypass | Write to other sidecar | SEC-PM-006 hook → Write blocked | Phase 6 |
+| ID      | Scenario                     | Attack Vector                   | Expected Mitigation                                       | Phase   |
+| ------- | ---------------------------- | ------------------------------- | --------------------------------------------------------- | ------- |
+| PEN-001 | Agent Impersonation          | Fake agent identity             | SEC-PM-001 identity hash verification → Response rejected | Phase 6 |
+| PEN-002 | Sidecar Privilege Escalation | Read other agent's patterns     | SEC-SM-005 read restrictions → Access denied              | Phase 6 |
+| PEN-005 | Context Leakage              | Agent A reads Agent B's context | SEC-PM-004 isolation → Keys not present                   | Phase 6 |
+| PEN-007 | Response Tampering           | Modify previous response        | SEC-PM-002 hash chain → Chain broken, detected            | Phase 6 |
+| PEN-008 | Memory Boundary Bypass       | Write to other sidecar          | SEC-PM-006 hook → Write blocked                           | Phase 6 |
 
 ---
 
 ## Performance Targets
 
-| Metric | Target | Phase | Measurement Method |
-|--------|--------|-------|--------------------|
-| Agent Selection Time | < 2s | Phase 4 | Benchmark in orchestrator.cjs |
-| Agent Spawn Time | < 100ms | Phase 5 | Benchmark Task tool spawn |
-| Message Routing | < 5ms | Phase 5 | Benchmark orchestrator routing |
-| Full Round (4 agents) | < 90s | Phase 5 | E2E test measurement |
-| Context Isolation Overhead | < 10ms | Phase 2 | Benchmark createIsolatedContext |
-| Memory Boundary Check | < 1ms | Phase 2 | Benchmark canRead/canWrite |
+| Metric                     | Target  | Phase   | Measurement Method              |
+| -------------------------- | ------- | ------- | ------------------------------- |
+| Agent Selection Time       | < 2s    | Phase 4 | Benchmark in orchestrator.cjs   |
+| Agent Spawn Time           | < 100ms | Phase 5 | Benchmark Task tool spawn       |
+| Message Routing            | < 5ms   | Phase 5 | Benchmark orchestrator routing  |
+| Full Round (4 agents)      | < 90s   | Phase 5 | E2E test measurement            |
+| Context Isolation Overhead | < 10ms  | Phase 2 | Benchmark createIsolatedContext |
+| Memory Boundary Check      | < 1ms   | Phase 2 | Benchmark canRead/canWrite      |
 
 ---
 
@@ -740,15 +755,15 @@ Task({
 
 ### Per-Phase Rollback
 
-| Phase | Rollback Command | Data Loss Risk | Recovery Time |
-|-------|------------------|----------------|---------------|
-| Phase 1 | `rm .claude/lib/security/*.cjs .claude/lib/utils/path-validator.cjs` | None | Immediate |
-| Phase 2 | `rm .claude/lib/security/context-isolator.cjs .claude/hooks/safety/sidecar-access-guard.cjs` + remove hook from settings.json | None | Immediate |
-| Phase 3 | `rm -rf .claude/teams .claude/skills/party-mode/team-loader.cjs` | None | Immediate |
-| Phase 4 | `rm .claude/skills/party-mode/orchestrator.cjs` | None | Immediate |
-| Phase 5 | `rm -rf .claude/skills/party-mode` + remove from CLAUDE.md | None | 5 minutes |
-| Phase 6 | N/A (tests only) | None | N/A |
-| Phase 7 | Revert documentation changes, disable feature flag | None | 2 minutes |
+| Phase   | Rollback Command                                                                                                              | Data Loss Risk | Recovery Time |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
+| Phase 1 | `rm .claude/lib/security/*.cjs .claude/lib/utils/path-validator.cjs`                                                          | None           | Immediate     |
+| Phase 2 | `rm .claude/lib/security/context-isolator.cjs .claude/hooks/safety/sidecar-access-guard.cjs` + remove hook from settings.json | None           | Immediate     |
+| Phase 3 | `rm -rf .claude/teams .claude/skills/party-mode/team-loader.cjs`                                                              | None           | Immediate     |
+| Phase 4 | `rm .claude/skills/party-mode/orchestrator.cjs`                                                                               | None           | Immediate     |
+| Phase 5 | `rm -rf .claude/skills/party-mode` + remove from CLAUDE.md                                                                    | None           | 5 minutes     |
+| Phase 6 | N/A (tests only)                                                                                                              | None           | N/A           |
+| Phase 7 | Revert documentation changes, disable feature flag                                                                            | None           | 2 minutes     |
 
 ### Complete Rollback
 
@@ -807,6 +822,7 @@ npm test
 ### New Files (25+)
 
 **Phase 1 (Foundations):**
+
 - `.claude/lib/security/agent-identity.cjs` (150 lines)
 - `.claude/lib/utils/path-validator.cjs` (300 lines)
 - `.claude/lib/security/access-control.cjs` (250 lines)
@@ -815,12 +831,14 @@ npm test
 - `.claude/lib/__tests__/security/access-control.test.cjs` (250 lines)
 
 **Phase 2 (Security):**
+
 - `.claude/lib/security/context-isolator.cjs` (250 lines)
 - `.claude/hooks/safety/sidecar-access-guard.cjs` (100 lines)
 - `.claude/hooks/__tests__/security/party-mode-security.test.cjs` (300 lines)
 - `.claude/lib/__tests__/security/context-isolator.test.cjs` (200 lines)
 
 **Phase 3 (Teams):**
+
 - `.claude/teams/default.csv` (6 lines)
 - `.claude/teams/creative.csv` (5 lines)
 - `.claude/teams/technical.csv` (5 lines)
@@ -829,20 +847,24 @@ npm test
 - `.claude/docs/PARTY_MODE_TEAMS.md` (100 lines)
 
 **Phase 4 (Orchestrator):**
+
 - `.claude/skills/party-mode/orchestrator.cjs` (500 lines)
 - `.claude/skills/party-mode/__tests__/orchestrator.test.cjs` (500 lines)
 
 **Phase 5 (Integration):**
+
 - `.claude/skills/party-mode/SKILL.md` (300 lines)
 - `.claude/hooks/session/party-mode-audit.cjs` (100 lines)
 - `.claude/skills/party-mode/__tests__/integration.test.cjs` (300 lines)
 
 **Phase 6 (Testing):**
+
 - `.claude/__tests__/e2e/party-mode-e2e.test.mjs` (400 lines)
 - `.claude/hooks/__tests__/security/penetration-tests.test.cjs` (400 lines)
 - `.claude/__tests__/performance/party-mode-perf.test.mjs` (200 lines)
 
 **Phase 7 (Documentation):**
+
 - `.claude/docs/PARTY_MODE.md` (500 lines)
 - `.claude/docs/examples/party-mode-examples.md` (400 lines)
 
@@ -862,6 +884,7 @@ npm test
 ### External Dependencies
 
 **NONE** - Party Mode uses only Node.js built-in modules:
+
 - `fs` (file operations)
 - `path` (path manipulation)
 - `crypto` (hash generation)
@@ -871,43 +894,43 @@ npm test
 
 ## Success Metrics
 
-| Metric | Baseline | Target | Measurement Period |
-|--------|----------|--------|-------------------|
-| Decision Quality | - | +40% improvement | 30 days post-launch |
-| Time to Decision | ~3 sessions | 1 session | 30 days post-launch |
-| User Engagement | - | 80% repeat usage | 90 days post-launch |
-| Agent Coherence | - | 90% in-character | Manual review (20 sessions) |
-| Security Incidents | 0 | 0 | Continuous monitoring |
-| Performance SLA | - | 95% meet targets | Continuous monitoring |
+| Metric             | Baseline    | Target           | Measurement Period          |
+| ------------------ | ----------- | ---------------- | --------------------------- |
+| Decision Quality   | -           | +40% improvement | 30 days post-launch         |
+| Time to Decision   | ~3 sessions | 1 session        | 30 days post-launch         |
+| User Engagement    | -           | 80% repeat usage | 90 days post-launch         |
+| Agent Coherence    | -           | 90% in-character | Manual review (20 sessions) |
+| Security Incidents | 0           | 0                | Continuous monitoring       |
+| Performance SLA    | -           | 95% meet targets | Continuous monitoring       |
 
 ---
 
 ## Timeline Summary
 
-| Phase | Duration | Dependencies | Parallel? | Checkpoint |
-|-------|----------|--------------|-----------|------------|
-| Phase 0 | COMPLETE | None | No | ✅ All gates passed |
-| Phase 1 | 8 hours | Phase 0 | No | 30 tests passing |
-| Phase 2 | 10 hours | Phase 1 | Partial | 22 tests passing, penetration tests pass |
-| Phase 3 | 6 hours | Phase 2 | Yes | 3 CSVs created, 5 tests passing |
-| Phase 4 | 10 hours | Phase 3 | No | 23 tests passing |
-| Phase 5 | 8 hours | Phase 4 | Partial | 14 tests passing, feature integrated |
-| Phase 6 | 6 hours | Phase 5 | Yes | 109 total tests passing, zero regressions |
-| Phase 7 | 3 hours | Phase 6 | Yes | Documentation complete, feature flag enabled in staging |
-| **Total** | **49 hours** | | | **~6-7 weeks** |
+| Phase     | Duration     | Dependencies | Parallel? | Checkpoint                                              |
+| --------- | ------------ | ------------ | --------- | ------------------------------------------------------- |
+| Phase 0   | COMPLETE     | None         | No        | ✅ All gates passed                                     |
+| Phase 1   | 8 hours      | Phase 0      | No        | 30 tests passing                                        |
+| Phase 2   | 10 hours     | Phase 1      | Partial   | 22 tests passing, penetration tests pass                |
+| Phase 3   | 6 hours      | Phase 2      | Yes       | 3 CSVs created, 5 tests passing                         |
+| Phase 4   | 10 hours     | Phase 3      | No        | 23 tests passing                                        |
+| Phase 5   | 8 hours      | Phase 4      | Partial   | 14 tests passing, feature integrated                    |
+| Phase 6   | 6 hours      | Phase 5      | Yes       | 109 total tests passing, zero regressions               |
+| Phase 7   | 3 hours      | Phase 6      | Yes       | Documentation complete, feature flag enabled in staging |
+| **Total** | **49 hours** |              |           | **~6-7 weeks**                                          |
 
 ---
 
 ## Risk Assessment
 
-| Risk | Impact | Probability | Mitigation | Owner |
-|------|--------|-------------|------------|-------|
-| Context window overflow in long sessions | HIGH | MEDIUM | Implement session history summarization after 5 rounds | Phase 5 |
-| Agent responses inconsistent | MEDIUM | MEDIUM | Strict prompt templates + identity definitions in CSV | Phase 3, 4 |
-| Performance degradation with 4 agents | MEDIUM | MEDIUM | Benchmark early (Phase 6), optimize orchestrator if needed | Phase 6 |
-| Security control bypass | CRITICAL | LOW | Comprehensive penetration testing (Phase 6) | Phase 6 |
-| Feature flag misconfiguration | MEDIUM | LOW | Default to false, document clearly | Phase 7 |
-| Team CSV format errors | LOW | MEDIUM | Validation in team-loader.cjs | Phase 3 |
+| Risk                                     | Impact   | Probability | Mitigation                                                 | Owner      |
+| ---------------------------------------- | -------- | ----------- | ---------------------------------------------------------- | ---------- |
+| Context window overflow in long sessions | HIGH     | MEDIUM      | Implement session history summarization after 5 rounds     | Phase 5    |
+| Agent responses inconsistent             | MEDIUM   | MEDIUM      | Strict prompt templates + identity definitions in CSV      | Phase 3, 4 |
+| Performance degradation with 4 agents    | MEDIUM   | MEDIUM      | Benchmark early (Phase 6), optimize orchestrator if needed | Phase 6    |
+| Security control bypass                  | CRITICAL | LOW         | Comprehensive penetration testing (Phase 6)                | Phase 6    |
+| Feature flag misconfiguration            | MEDIUM   | LOW         | Default to false, document clearly                         | Phase 7    |
+| Team CSV format errors                   | LOW      | MEDIUM      | Validation in team-loader.cjs                              | Phase 3    |
 
 ---
 

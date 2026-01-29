@@ -127,7 +127,9 @@ if (command === '--stats') {
   const results = kb.search(keyword);
   console.log(`\n=== Found ${results.length} matches for "${keyword}" ===\n`);
   results.slice(0, 10).forEach(artifact => {
-    console.log(`${artifact.name} (${artifact.domain}): ${artifact.description.substring(0, 80)}...`);
+    console.log(
+      `${artifact.name} (${artifact.domain}): ${artifact.description.substring(0, 80)}...`
+    );
   });
   if (results.length > 10) {
     console.log(`\n... and ${results.length - 10} more`);

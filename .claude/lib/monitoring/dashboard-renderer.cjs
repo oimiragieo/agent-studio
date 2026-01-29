@@ -41,18 +41,18 @@ function formatPercent(percent) {
 function renderTable(headers, rows) {
   // Calculate column widths
   const widths = headers.map((header, i) => {
-    const maxRowWidth = Math.max(...rows.map((row) => String(row[i] || '').length));
+    const maxRowWidth = Math.max(...rows.map(row => String(row[i] || '').length));
     return Math.max(header.length, maxRowWidth);
   });
 
   // Render header
   const headerLine = headers.map((h, i) => h.padEnd(widths[i])).join('  ');
-  const separator = widths.map((w) => '-'.repeat(w)).join('  ');
+  const separator = widths.map(w => '-'.repeat(w)).join('  ');
 
   const lines = [headerLine, separator];
 
   // Render rows
-  rows.forEach((row) => {
+  rows.forEach(row => {
     const line = row.map((cell, i) => String(cell || '').padEnd(widths[i])).join('  ');
     lines.push(line);
   });
@@ -69,7 +69,7 @@ function renderBox(title, content, width = 70) {
   const separator = '╠' + '═'.repeat(width - 2) + '╣';
   const bottom = '╚' + '═'.repeat(width - 2) + '╝';
 
-  const contentLines = content.split('\n').map((line) => '║ ' + line.padEnd(width - 4) + ' ║');
+  const contentLines = content.split('\n').map(line => '║ ' + line.padEnd(width - 4) + ' ║');
 
   return [top, titleLine, separator, ...contentLines, bottom].join('\n');
 }
@@ -82,7 +82,7 @@ function renderAlert(alert) {
     CRITICAL: '🔴',
     HIGH: '🟡',
     MEDIUM: '🟠',
-    LOW: '🔵'
+    LOW: '🔵',
   };
 
   const icon = icons[alert.severity] || '⚪';
@@ -96,15 +96,9 @@ function renderHookPerformance(summary) {
   const lines = [];
 
   lines.push('HOOK PERFORMANCE:');
-  lines.push(
-    `  Total calls:      ${formatNumber(summary.hooks.total)}`
-  );
-  lines.push(
-    `  Avg execution:    ${formatTime(summary.hooks.avgTime)}`
-  );
-  lines.push(
-    `  Failure rate:     ${formatPercent(summary.hooks.failureRate)}`
-  );
+  lines.push(`  Total calls:      ${formatNumber(summary.hooks.total)}`);
+  lines.push(`  Avg execution:    ${formatTime(summary.hooks.avgTime)}`);
+  lines.push(`  Failure rate:     ${formatPercent(summary.hooks.failureRate)}`);
   lines.push('');
 
   // Top hooks by count
@@ -146,10 +140,8 @@ function renderErrorStats(summary) {
   // Top error types
   if (summary.errors.topErrors && summary.errors.topErrors.length > 0) {
     lines.push('  Top error types:');
-    summary.errors.topErrors.forEach((error) => {
-      lines.push(
-        `    ${error.type.padEnd(25)} ${formatNumber(error.count)} occurrences`
-      );
+    summary.errors.topErrors.forEach(error => {
+      lines.push(`    ${error.type.padEnd(25)} ${formatNumber(error.count)} occurrences`);
     });
   }
 
@@ -165,7 +157,7 @@ function renderAlerts(alerts) {
   }
 
   const lines = ['ALERTS:'];
-  alerts.forEach((alert) => {
+  alerts.forEach(alert => {
     lines.push(`  ${renderAlert(alert)}`);
   });
 
@@ -185,7 +177,7 @@ function renderDashboard(summary, alerts = []) {
     renderErrorStats(summary),
     '',
     renderAlerts(alerts),
-    ''
+    '',
   ];
 
   const content = sections.join('\n');
@@ -201,7 +193,7 @@ function renderCompactSummary(summary) {
     `Hooks: ${summary.hooks.total} calls`,
     `${formatTime(summary.hooks.avgTime)} avg`,
     `${formatPercent(summary.hooks.failureRate)} fail rate`,
-    `| Errors: ${summary.errors.total}`
+    `| Errors: ${summary.errors.total}`,
   ].join(' | ');
 }
 
@@ -216,5 +208,5 @@ module.exports = {
   renderCompactSummary,
   formatNumber,
   formatTime,
-  formatPercent
+  formatPercent,
 };

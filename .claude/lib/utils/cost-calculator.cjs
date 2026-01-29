@@ -9,29 +9,29 @@
 const PRICING = {
   'claude-3-haiku-20240307': {
     input: 0.00025,
-    output: 0.00125
+    output: 0.00125,
   },
   'claude-3-5-sonnet-20241022': {
     input: 0.003,
-    output: 0.015
+    output: 0.015,
   },
   'claude-3-opus-20240229': {
     input: 0.015,
-    output: 0.075
+    output: 0.075,
   },
   // Aliases for convenience
-  'haiku': {
+  haiku: {
     input: 0.00025,
-    output: 0.00125
+    output: 0.00125,
   },
-  'sonnet': {
+  sonnet: {
     input: 0.003,
-    output: 0.015
+    output: 0.015,
   },
-  'opus': {
+  opus: {
     input: 0.015,
-    output: 0.075
-  }
+    output: 0.075,
+  },
 };
 
 /**
@@ -131,7 +131,7 @@ function aggregateCosts(calls) {
     haiku: { cost: 0, calls: 0, tokens: 0 },
     sonnet: { cost: 0, calls: 0, tokens: 0 },
     opus: { cost: 0, calls: 0, tokens: 0 },
-    total: { cost: 0, calls: 0, tokens: 0 }
+    total: { cost: 0, calls: 0, tokens: 0 },
   };
 
   for (const call of calls) {
@@ -159,5 +159,5 @@ module.exports = {
   getAvailableModels,
   formatCost,
   formatTokens,
-  aggregateCosts
+  aggregateCosts,
 };

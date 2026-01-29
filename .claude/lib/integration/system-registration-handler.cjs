@@ -180,7 +180,7 @@ class SystemRegistrationHandler {
    * @param {Object} options - Registration options
    * @returns {Promise<{success: boolean, backupCreated: boolean, registrations: string[]}>}
    */
-  async registerAgent(agentDef, options = {}) {
+  async registerAgent(agentDef, _options = {}) {
     const { name, requestType, filePath } = agentDef;
     const registrations = [];
 
@@ -247,7 +247,7 @@ class SystemRegistrationHandler {
    * @param {Object} options - Registration options
    * @returns {Promise<{success: boolean, backupCreated: boolean, registrations: string[]}>}
    */
-  async registerSkill(skillDef, options = {}) {
+  async registerSkill(skillDef, _options = {}) {
     const { name, description, category, registerInClaudeMd = false } = skillDef;
     const registrations = [];
 
@@ -283,7 +283,7 @@ class SystemRegistrationHandler {
 
       // Optionally register in CLAUDE.md
       if (registerInClaudeMd) {
-        const claudeBackup = await this._createBackup(this.options.claudeMdPath);
+        const _claudeBackup = await this._createBackup(this.options.claudeMdPath);
         let claudeContent = fs.readFileSync(this.options.claudeMdPath, 'utf-8');
 
         const skillSectionMarker = CLAUDE_MD_SECTIONS.skills;
@@ -333,8 +333,8 @@ class SystemRegistrationHandler {
    * @param {Object} options - Registration options
    * @returns {Promise<{success: boolean, backupCreated: boolean, registrations: string[]}>}
    */
-  async registerHook(hookDef, options = {}) {
-    const { name, matcher, toolFilter, path: hookPath } = hookDef;
+  async registerHook(hookDef, _options = {}) {
+    const { _name, matcher, toolFilter, path: hookPath } = hookDef;
     const registrations = [];
 
     // Create backup
@@ -344,7 +344,7 @@ class SystemRegistrationHandler {
     try {
       // Read settings.json
       // BUG-NEW-001 FIX: Use safeReadJSON for SEC-007 compliance
-      let settings = safeReadJSON(this.options.settingsJsonPath, 'settings-json');
+      const settings = safeReadJSON(this.options.settingsJsonPath, 'settings-json');
 
       // Ensure hooks array exists
       if (!settings.hooks) {
@@ -397,7 +397,7 @@ class SystemRegistrationHandler {
    * @param {Object} options - Registration options
    * @returns {Promise<{success: boolean, backupCreated: boolean, registrations: string[]}>}
    */
-  async registerWorkflow(workflowDef, options = {}) {
+  async registerWorkflow(workflowDef, _options = {}) {
     const { name, path: workflowPath, purpose } = workflowDef;
     const registrations = [];
 
@@ -471,7 +471,7 @@ class SystemRegistrationHandler {
    * Remove registration from CLAUDE.md
    * @private
    */
-  async _deregisterFromClaudeMd(artifactId, section) {
+  async _deregisterFromClaudeMd(artifactId, _section) {
     const backupPath = await this._createBackup(this.options.claudeMdPath);
 
     try {
@@ -531,7 +531,7 @@ class SystemRegistrationHandler {
 
     try {
       // BUG-NEW-001 FIX: Use safeReadJSON for SEC-007 compliance
-      let settings = safeReadJSON(this.options.settingsJsonPath, 'settings-json');
+      const settings = safeReadJSON(this.options.settingsJsonPath, 'settings-json');
 
       if (settings.hooks) {
         settings.hooks = settings.hooks.filter(h => !h.path || !h.path.includes(hookId));

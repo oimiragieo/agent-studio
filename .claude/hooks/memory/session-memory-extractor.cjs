@@ -25,7 +25,7 @@ const {
   parseHookInputAsync,
   getToolName,
   getToolOutput,
-  auditLog,
+  _auditLog,
   debugLog,
 } = require('../../lib/utils/hook-input.cjs');
 
@@ -33,7 +33,7 @@ const {
 let memoryManager;
 try {
   memoryManager = require('../../lib/memory/memory-manager.cjs');
-} catch (e) {
+} catch (_e) {
   // Fallback path resolution
   const libPath = path.join(__dirname, '..', '..', 'lib', 'memory', 'memory-manager.cjs');
   memoryManager = require(libPath);

@@ -108,7 +108,7 @@ function parseFrontmatter(content) {
 /**
  * Validate a single agent file
  */
-function validateAgent(filePath, relativePath) {
+function validateAgent(filePath, _relativePath) {
   const errors = [];
   const warnings = [];
 

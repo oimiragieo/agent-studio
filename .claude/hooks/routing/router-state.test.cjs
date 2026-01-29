@@ -54,7 +54,7 @@ function cleanupState() {
     if (fs.existsSync(STATE_FILE_PATH)) {
       fs.unlinkSync(STATE_FILE_PATH);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ignore cleanup errors
   }
 }
@@ -321,7 +321,7 @@ function testInvalidComplexityValues() {
       validValues.includes(complexity),
       `Complexity should remain valid after invalid input (got: ${complexity})`
     );
-  } catch (e) {
+  } catch (_e) {
     // Throwing is also acceptable behavior
     assert(true, 'Throwing on invalid input is acceptable');
   }
@@ -349,7 +349,7 @@ function testStateCaching() {
 
   // Get initial file mtime for comparison
   const initialStat = fs.statSync(STATE_FILE_PATH);
-  const initialMtime = initialStat.mtimeMs;
+  const _initialMtime = initialStat.mtimeMs;
 
   // Make multiple getState() calls - should use cache
   const state1 = mod.getState();
@@ -515,7 +515,7 @@ function testVersionValidation() {
           Number.isFinite(result.version),
         `Version should be normalized to valid positive integer (was: ${corrupted.version})`
       );
-    } catch (e) {
+    } catch (_e) {
       // Throwing is also acceptable - but it should not crash
       assert(true, `Graceful handling of corrupted version: ${corrupted.version}`);
     }
@@ -541,14 +541,13 @@ function testMaxRetries() {
   // but we can verify the function exists and accepts a retries parameter
 
   // Call with explicit retry count of 1
-  let threw = false;
   try {
     // Create artificial conflict by changing version mid-operation
     // This is hard to test deterministically, so we just verify the interface
     const result = mod.saveStateWithRetry({ complexity: 'high' }, 1);
     assert(result !== undefined, 'saveStateWithRetry should return merged state');
   } catch (e) {
-    threw = true;
+    // threw = true; // Intentionally unused - we just verify behavior
     assert(e.message.includes('retries'), 'Error message should mention retries');
   }
 

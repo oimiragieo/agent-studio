@@ -18,7 +18,7 @@ const path = require('path');
 let parser;
 try {
   parser = require('./learnings-parser.cjs');
-} catch (e) {
+} catch (_e) {
   // Expected to fail initially - TDD red phase
   parser = null;
 }

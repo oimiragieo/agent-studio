@@ -34,7 +34,7 @@ function initializeChain(sessionId) {
   return {
     sessionId,
     genesisHash,
-    timestamp
+    timestamp,
   };
 }
 
@@ -66,7 +66,7 @@ function appendResponse(agentId, response, previousHash) {
     agentId,
     timestamp,
     previousHash,
-    content
+    content,
   };
 }
 
@@ -94,7 +94,7 @@ function verifyChain(responseChain) {
     if (response.previousHash !== expectedPreviousHash) {
       return {
         valid: false,
-        brokenAtIndex: i
+        brokenAtIndex: i,
       };
     }
 
@@ -106,7 +106,7 @@ function verifyChain(responseChain) {
     if (calculatedHash !== response.responseHash) {
       return {
         valid: false,
-        brokenAtIndex: i
+        brokenAtIndex: i,
       };
     }
 
@@ -143,7 +143,7 @@ function detectTampering(expectedHash, actualResponse) {
     return {
       tampered: expectedHash !== actualHash,
       expectedHash,
-      actualHash
+      actualHash,
     };
   }
 
@@ -153,7 +153,7 @@ function detectTampering(expectedHash, actualResponse) {
   return {
     tampered: expectedHash !== simpleHash,
     expectedHash,
-    actualHash: simpleHash
+    actualHash: simpleHash,
   };
 }
 
@@ -161,5 +161,5 @@ module.exports = {
   initializeChain,
   appendResponse,
   verifyChain,
-  detectTampering
+  detectTampering,
 };

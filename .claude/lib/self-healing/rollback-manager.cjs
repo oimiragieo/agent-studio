@@ -249,7 +249,7 @@ class RollbackManager {
           backupName,
           hash,
         });
-      } catch (error) {
+      } catch (_error) {
         skippedFiles.push(filePath);
       }
     }
@@ -356,7 +356,7 @@ class RollbackManager {
         } else {
           failed.push(fileEntry.path);
         }
-      } catch (error) {
+      } catch (_error) {
         failed.push(fileEntry.path);
       }
     }
@@ -427,7 +427,7 @@ class RollbackManager {
         } else {
           skipped.push(filePath);
         }
-      } catch (error) {
+      } catch (_error) {
         skipped.push(filePath);
       }
     }

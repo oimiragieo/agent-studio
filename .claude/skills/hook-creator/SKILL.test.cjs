@@ -54,7 +54,7 @@ console.log('\n=== hook-creator SKILL.md v2.1.0 Tests ===\n');
 let skillContent;
 try {
   skillContent = fs.readFileSync(SKILL_PATH, 'utf8');
-} catch (error) {
+} catch (_error) {
   console.error('FATAL: Cannot read SKILL.md file');
   process.exit(1);
 }

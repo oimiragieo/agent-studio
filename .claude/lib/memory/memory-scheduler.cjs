@@ -87,7 +87,7 @@ function safeRequire(modulePath) {
     // Clear cache to get fresh module
     delete require.cache[require.resolve(modulePath)];
     return require(modulePath);
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }

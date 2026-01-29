@@ -33,7 +33,7 @@
 const path = require('path');
 
 // PERF-006/PERF-007: Use shared utilities instead of duplicated code
-const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
+const { _PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 const {
   parseHookInputAsync,
   extractFilePath: sharedExtractFilePath,
@@ -46,11 +46,11 @@ const {
  * These patterns are case-insensitive
  */
 const EVOLUTION_PATTERNS = [
-  /Phase\s*\[?\s*FINAL\s*\]?\s*[:\-]?\s*Evolution/i, // Phase [FINAL]: Evolution
+  /Phase\s*\[?\s*FINAL\s*\]?\s*[:-]?\s*Evolution/i, // Phase [FINAL]: Evolution
   /Evolution\s*[&]?\s*Reflection\s*(Check)?/i, // Evolution & Reflection Check
   /###?\s*Phase.*Evolution/i, // ### Phase X: Evolution
   /reflection[_-]?agent/i, // reflection-agent or reflection_agent
-  /subagent_type\s*[:\"]?\s*[\"']?reflection/i, // subagent_type: "reflection
+  /subagent_type\s*[:"]?\s*["']?reflection/i, // subagent_type: "reflection
 ];
 
 /**
@@ -140,7 +140,7 @@ function extractContent(hookInput) {
 
 // PERF-006: getToolName is imported as sharedGetToolName
 // Alias for backward compatibility with exports
-const getToolName = sharedGetToolName;
+const _getToolName = sharedGetToolName;
 
 /**
  * Main execution function (async for proper stdin handling)

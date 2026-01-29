@@ -26,12 +26,14 @@ Meta-cognitive reasoning applied to AI outputs. Makes AI reconsider its own work
 ## When to Use
 
 **Use when:**
+
 - Making important decisions (architecture, security, major features)
 - Solving complex problems (multiple stakeholders, unclear requirements)
 - Producing critical outputs (specs, plans, designs)
 - Quality matters more than speed
 
 **Don't use when:**
+
 - Simple queries ("What is X?")
 - Routine tasks (formatting, simple refactoring)
 - Time-sensitive (emergency fixes)
@@ -51,11 +53,13 @@ Meta-cognitive reasoning applied to AI outputs. Makes AI reconsider its own work
 **Description**: Break down to fundamental truths, rebuild reasoning from ground up
 
 **When to Use**:
+
 - Complex system design
 - Architecture decisions
 - Innovation challenges
 
 **Prompt Template**:
+
 ```
 You are applying First Principles Thinking to:
 
@@ -93,11 +97,13 @@ Output:
 **Description**: Imagine the solution failed. Work backward to identify causes.
 
 **When to Use**:
+
 - Planning major changes
 - Risk mitigation
 - Launch preparations
 
 **Prompt Template**:
+
 ```
 You are applying Pre-Mortem Analysis to:
 
@@ -135,11 +141,13 @@ Output:
 **Description**: Challenge every assumption with "why?" until reaching bedrock.
 
 **When to Use**:
+
 - Requirements analysis
 - Specification review
 - Clarifying ambiguity
 
 **Prompt Template**:
+
 ```
 You are applying Socratic Questioning to:
 
@@ -176,11 +184,13 @@ Output:
 **Description**: Attack the solution (Red Team), defend it (Blue Team), synthesize improvements.
 
 **When to Use**:
+
 - Security reviews
 - Risk assessment
 - Adversarial testing
 
 **Prompt Template**:
+
 ```
 You are applying Red Team vs Blue Team to:
 
@@ -216,11 +226,13 @@ Output:
 **Description**: Instead of "How to succeed?", ask "How to fail?" and avoid those.
 
 **When to Use**:
+
 - Risk identification
 - Avoiding common pitfalls
 - Negative space analysis
 
 **Prompt Template**:
+
 ```
 You are applying Inversion to:
 
@@ -258,11 +270,13 @@ Output:
 **Description**: Consider consequences of consequences. Long-term effects.
 
 **When to Use**:
+
 - Strategic decisions
 - Long-term planning
 - Trade-off analysis
 
 **Prompt Template**:
+
 ```
 You are applying Second-Order Thinking to:
 
@@ -300,11 +314,13 @@ Output:
 **Description**: Strengths, Weaknesses, Opportunities, Threats.
 
 **When to Use**:
+
 - Strategic planning
 - Competitive analysis
 - Decision-making
 
 **Prompt Template**:
+
 ```
 You are applying SWOT Analysis to:
 
@@ -347,11 +363,13 @@ Output:
 **Description**: What are we NOT doing? What are we giving up?
 
 **When to Use**:
+
 - Prioritization
 - Resource allocation
 - Trade-off decisions
 
 **Prompt Template**:
+
 ```
 You are applying Opportunity Cost to:
 
@@ -392,11 +410,13 @@ Output:
 **Description**: How have others solved similar problems? Learn from analogies.
 
 **When to Use**:
+
 - Innovation
 - Learning from history
 - Cross-domain insights
 
 **Prompt Template**:
+
 ```
 You are applying Analogical Reasoning to:
 
@@ -433,11 +453,13 @@ Output:
 **Description**: What if constraint X didn't exist? How would that change the solution?
 
 **When to Use**:
+
 - Innovation
 - Breaking assumptions
 - Finding creative solutions
 
 **Prompt Template**:
+
 ```
 You are applying Constraint Relaxation to:
 
@@ -472,11 +494,13 @@ Output:
 **Description**: What could go wrong? How likely? How bad? Prioritize fixes.
 
 **When to Use**:
+
 - Engineering design
 - Risk assessment
 - Safety-critical systems
 
 **Prompt Template**:
+
 ```
 You are applying FMEA to:
 
@@ -513,11 +537,13 @@ Output:
 **Description**: What cognitive biases might affect this? Correct for them.
 
 **When to Use**:
+
 - Decision-making
 - Review processes
 - Self-critique
 
 **Prompt Template**:
+
 ```
 You are applying Bias Check to:
 
@@ -552,11 +578,13 @@ Output:
 **Description**: What usually happens in similar situations? Are we being overconfident?
 
 **When to Use**:
+
 - Estimation
 - Risk assessment
 - Reality-checking optimism
 
 **Prompt Template**:
+
 ```
 You are applying Base Rate Thinking to:
 
@@ -592,11 +620,13 @@ Output:
 **Description**: What's the strongest version of an opposing view? Address that, not a strawman.
 
 **When to Use**:
+
 - Proposal review
 - Debate preparation
 - Intellectual honesty
 
 **Prompt Template**:
+
 ```
 You are applying Steelmanning to:
 
@@ -632,11 +662,13 @@ Output:
 **Description**: How does this look in 1 hour? 1 day? 1 month? 1 year? 5 years?
 
 **When to Use**:
+
 - Long-term planning
 - Trade-off analysis
 - Strategy evaluation
 
 **Prompt Template**:
+
 ```
 You are applying Time Horizon Shift to:
 
@@ -676,16 +708,19 @@ Output:
 ## Usage Patterns
 
 ### Pattern 1: Single Method (Quick)
+
 ```javascript
 Skill({ skill: 'advanced-elicitation', args: 'first-principles' });
 ```
 
 ### Pattern 2: Multiple Methods (Thorough)
+
 ```javascript
 Skill({ skill: 'advanced-elicitation', args: 'first-principles,pre-mortem,red-team-blue-team' });
 ```
 
 ### Pattern 3: Auto-Select (Recommended)
+
 ```javascript
 Skill({ skill: 'advanced-elicitation', args: 'auto' });
 // Automatically picks 2-3 methods based on content analysis
@@ -708,29 +743,33 @@ Skill({ skill: 'spec-critique', args: 'with-elicitation' });
 - **Cost tracking**: Integrates with cost-tracking hook
 
 **Config**:
+
 ```yaml
 features:
   advancedElicitation:
     enabled: true
-    costBudget: 10.0  # USD per session
-    minConfidence: 0.7  # Skip if confidence high
-    maxMethodsPerInvocation: 5  # SEC-AE-001
-    maxInvocationsPerSession: 10  # SEC-AE-003
+    costBudget: 10.0 # USD per session
+    minConfidence: 0.7 # Skip if confidence high
+    maxMethodsPerInvocation: 5 # SEC-AE-001
+    maxInvocationsPerSession: 10 # SEC-AE-003
 ```
 
 ## Security Controls
 
 **SEC-AE-001: Input Validation**
+
 - Method names must match `/^[a-z][a-z0-9-]*$/`
 - Max 5 methods per invocation
 - Invalid methods rejected with error
 
 **SEC-AE-002: Cost Budget Enforcement**
+
 - Check session budget before elicitation
 - Track cumulative cost
 - Fail gracefully if budget exceeded
 
 **SEC-AE-003: Rate Limiting**
+
 - Max 10 elicitations per session
 - Prevent runaway elicitation loops
 - Clear error message on limit
@@ -740,11 +779,13 @@ features:
 ### Example 1: Architecture Decision
 
 **Before Elicitation:**
+
 ```
 We should use microservices with 12 services communicating via REST.
 ```
 
 **After First Principles:**
+
 ```
 Fundamental truths: Services must communicate, data must be consistent.
 Challenged assumption: "12 services" - is this the right granularity?
@@ -757,11 +798,13 @@ Use gRPC internally (40% latency reduction vs REST).
 ### Example 2: Security Review
 
 **Before Elicitation:**
+
 ```
 JWT tokens for authentication across services.
 ```
 
 **After Red Team/Blue Team:**
+
 ```
 Red Team Attack: Token theft via XSS, JWT validation on every call (latency).
 Blue Team Defense: HttpOnly cookies, service mesh mTLS instead of JWT propagation.
@@ -772,11 +815,13 @@ Improvement: Use service mesh (Istio) for security instead of JWT propagation.
 ### Example 3: Spec Validation
 
 **Before Elicitation:**
+
 ```
 Feature: User can delete their account.
 ```
 
 **After Pre-Mortem:**
+
 ```
 Failure Scenario: 6 months later, GDPR compliance audit fails.
 Cause: Deletion didn't cascade to all systems (analytics, backups).
@@ -794,11 +839,13 @@ Specify cascade delete to all systems within 30 days.
 ## Memory Protocol (MANDATORY)
 
 **Before starting:**
+
 ```bash
 cat .claude/context/memory/learnings.md
 ```
 
 **After completing:**
+
 - New pattern → `.claude/context/memory/learnings.md`
 - Issue found → `.claude/context/memory/issues.md`
 - Decision made → `.claude/context/memory/decisions.md`
@@ -814,6 +861,7 @@ cat .claude/context/memory/learnings.md
 ## Assigned Agents
 
 This skill can be used by:
+
 - `planner` - For strategic decisions
 - `architect` - For architecture review
 - `security-architect` - For threat modeling

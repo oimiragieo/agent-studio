@@ -39,7 +39,7 @@ describe('skill-invocation-tracker.cjs', () => {
       } else if (fs.existsSync(testStateFile)) {
         fs.unlinkSync(testStateFile);
       }
-    } catch (e) {
+    } catch (_e) {
       // Ignore
     }
     originalState = null;

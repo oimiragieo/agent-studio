@@ -16,7 +16,13 @@ const crypto = require('crypto');
 const path = require('path');
 
 // Default audit log path
-const DEFAULT_AUDIT_LOG_PATH = path.join(process.cwd(), '.claude', 'context', 'metrics', 'party-mode-audit.jsonl');
+const DEFAULT_AUDIT_LOG_PATH = path.join(
+  process.cwd(),
+  '.claude',
+  'context',
+  'metrics',
+  'party-mode-audit.jsonl'
+);
 
 /**
  * Log agent spawn event
@@ -29,9 +35,16 @@ const DEFAULT_AUDIT_LOG_PATH = path.join(process.cwd(), '.claude', 'context', 'm
  * @param {Object} context - Context object (will be hashed)
  * @param {string} [logPath] - Optional log file path (defaults to DEFAULT_AUDIT_LOG_PATH)
  */
-async function logAgentSpawn(sessionId, agentId, agentType, context, logPath = DEFAULT_AUDIT_LOG_PATH) {
+async function logAgentSpawn(
+  sessionId,
+  agentId,
+  agentType,
+  context,
+  logPath = DEFAULT_AUDIT_LOG_PATH
+) {
   // Hash context to avoid storing full context in log
-  const contextHash = crypto.createHash('sha256')
+  const contextHash = crypto
+    .createHash('sha256')
     .update(JSON.stringify(context))
     .digest('hex')
     .slice(0, 16);
@@ -42,7 +55,7 @@ async function logAgentSpawn(sessionId, agentId, agentType, context, logPath = D
     event: 'SPAWN',
     agentId,
     agentType,
-    contextHash
+    contextHash,
   };
 
   await appendToLog(entry, logPath);
@@ -58,13 +71,18 @@ async function logAgentSpawn(sessionId, agentId, agentType, context, logPath = D
  * @param {string} responseHash - Hash of the response
  * @param {string} [logPath] - Optional log file path
  */
-async function logAgentResponse(sessionId, agentId, responseHash, logPath = DEFAULT_AUDIT_LOG_PATH) {
+async function logAgentResponse(
+  sessionId,
+  agentId,
+  responseHash,
+  logPath = DEFAULT_AUDIT_LOG_PATH
+) {
   const entry = {
     timestamp: new Date().toISOString(),
     sessionId,
     event: 'RESPONSE',
     agentId,
-    responseHash
+    responseHash,
   };
 
   await appendToLog(entry, logPath);
@@ -86,7 +104,7 @@ async function logAgentComplete(sessionId, agentId, status, logPath = DEFAULT_AU
     sessionId,
     event: 'COMPLETE',
     agentId,
-    status
+    status,
   };
 
   await appendToLog(entry, logPath);
@@ -104,7 +122,10 @@ async function logAgentComplete(sessionId, agentId, status, logPath = DEFAULT_AU
 async function getSessionAudit(sessionId, logPath = DEFAULT_AUDIT_LOG_PATH) {
   try {
     const logContent = await fs.readFile(logPath, 'utf-8');
-    const lines = logContent.trim().split('\n').filter(line => line.length > 0);
+    const lines = logContent
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0);
 
     const sessionEntries = [];
     for (const line of lines) {
@@ -150,7 +171,9 @@ async function verifyAuditIntegrity(sessionId, logPath = DEFAULT_AUDIT_LOG_PATH)
     const currTime = new Date(audit[i].timestamp).getTime();
 
     if (currTime < prevTime) {
-      issues.push(`Timestamp out of order at entry ${i}: ${audit[i].timestamp} < ${audit[i - 1].timestamp}`);
+      issues.push(
+        `Timestamp out of order at entry ${i}: ${audit[i].timestamp} < ${audit[i - 1].timestamp}`
+      );
     }
   }
 
@@ -164,7 +187,7 @@ async function verifyAuditIntegrity(sessionId, logPath = DEFAULT_AUDIT_LOG_PATH)
 
   return {
     intact: issues.length === 0,
-    issues
+    issues,
   };
 }
 
@@ -192,5 +215,5 @@ module.exports = {
   logAgentResponse,
   logAgentComplete,
   getSessionAudit,
-  verifyAuditIntegrity
+  verifyAuditIntegrity,
 };

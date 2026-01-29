@@ -52,7 +52,7 @@ const KNOWN_VALID_MODELS = [
   'claude-3-5-haiku-20241022',
 ];
 
-function validateModelName(modelName, context = '') {
+function validateModelName(modelName, _context = '') {
   const issues = [];
 
   // Check if it's a known valid model

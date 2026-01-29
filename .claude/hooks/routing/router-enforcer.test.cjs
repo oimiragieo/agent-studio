@@ -12,7 +12,7 @@ const path = require('path');
 
 // HOOK-002 FIX: Use shared project-root utility instead of duplicated function
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
-const STATE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'runtime', 'router-state.json');
+const _STATE_FILE = path.join(PROJECT_ROOT, '.claude', 'context', 'runtime', 'router-state.json');
 
 // Import the router-state module to check state
 const routerState = require('./router-state.cjs');
@@ -43,7 +43,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 
@@ -63,7 +63,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 
@@ -83,7 +83,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 
@@ -108,7 +108,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 
@@ -131,7 +131,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 
@@ -155,7 +155,7 @@ describe('router-enforcer complexity classification', () => {
             stdio: ['pipe', 'pipe', 'pipe'],
           }
         );
-      } catch (e) {
+      } catch (_e) {
         // Hook may exit with code 0 anyway
       }
 

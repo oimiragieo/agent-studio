@@ -13,7 +13,7 @@ describe('Session Audit Logger', () => {
     // Clean up any existing test log
     try {
       await fs.unlink(TEST_LOG_PATH);
-    } catch (err) {
+    } catch (_err) {
       // Ignore if file doesn't exist
     }
   });
@@ -22,7 +22,7 @@ describe('Session Audit Logger', () => {
     // Clean up test log
     try {
       await fs.unlink(TEST_LOG_PATH);
-    } catch (err) {
+    } catch (_err) {
       // Ignore cleanup errors
     }
   });

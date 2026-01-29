@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 
 // Path to skill directory
 const SKILL_DIR = path.resolve(__dirname, '..');
-const PROJECT_ROOT = path.resolve(SKILL_DIR, '../../..');
+const _PROJECT_ROOT = path.resolve(SKILL_DIR, '../../..');
 
 describe('Advanced Elicitation Skill', () => {
   test('Test Scenario 1: Feature flag disabled returns original response', () => {
@@ -33,7 +33,7 @@ describe('Advanced Elicitation Skill', () => {
 
   test('Test Scenario 2: Single method applied (first-principles)', () => {
     // Expected behavior: Content analyzed with first-principles reasoning
-    const content = 'We should build a microservices architecture with 12 services.';
+    const _content = 'We should build a microservices architecture with 12 services.';
     const method = 'first-principles';
 
     // Should challenge assumptions and rebuild from fundamentals
@@ -41,7 +41,7 @@ describe('Advanced Elicitation Skill', () => {
       'fundamentalTruths',
       'assumptionsChallenged',
       'improvements',
-      'confidenceLevel'
+      'confidenceLevel',
     ];
 
     // This test validates spec FR-3: Method application with prompt template
@@ -49,7 +49,7 @@ describe('Advanced Elicitation Skill', () => {
   });
 
   test('Test Scenario 3: Multiple methods applied (3 methods)', () => {
-    const content = 'User authentication using JWT tokens.';
+    const _content = 'User authentication using JWT tokens.';
     const methods = ['first-principles', 'pre-mortem', 'red-team-blue-team'];
 
     // Expected behavior: All 3 methods applied, results synthesized
@@ -70,7 +70,7 @@ describe('Advanced Elicitation Skill', () => {
 
   test('Test Scenario 5: Cost budget enforcement (exceeds limit)', () => {
     const budget = 10.0; // USD
-    const sessionCost = 10.50;
+    const sessionCost = 10.5;
     const budgetExceeded = sessionCost > budget;
 
     // Expected behavior: Elicitation blocked, error returned
@@ -108,7 +108,7 @@ describe('Advanced Elicitation Skill', () => {
     // spec-critique generates critique → offers elicitation
     const specCritique = {
       gaps: ['Missing error handling', 'No performance considerations'],
-      recommendations: ['Add error scenarios', 'Define SLAs']
+      recommendations: ['Add error scenarios', 'Define SLAs'],
     };
 
     // Expected behavior: spec-critique can invoke elicitation via `args: 'with-elicitation'`
@@ -124,7 +124,7 @@ describe('Advanced Elicitation Skill', () => {
     // Expected behavior: sequential-thinking MCP called with method-specific prompt
     const mcpExpected = {
       tool: 'mcp__sequential-thinking__sequentialthinking',
-      totalThoughts: 5 // 5-step reasoning for each method
+      totalThoughts: 5, // 5-step reasoning for each method
     };
 
     assert.ok(mcpExpected.tool.includes('sequential-thinking'));
@@ -135,13 +135,13 @@ describe('Advanced Elicitation Skill', () => {
     const reflections = [
       { method: 'first-principles', findings: ['Assumption A invalid'] },
       { method: 'pre-mortem', findings: ['Failure mode: scaling'] },
-      { method: 'red-team', findings: ['Security gap: auth bypass'] }
+      { method: 'red-team', findings: ['Security gap: auth bypass'] },
     ];
 
     // Expected behavior: Synthesis combines findings
     const synthesized = {
       keyFindings: reflections.flatMap(r => r.findings),
-      improvements: ['Fix assumption A', 'Add scaling plan', 'Patch auth gap']
+      improvements: ['Fix assumption A', 'Add scaling plan', 'Patch auth gap'],
     };
 
     assert.strictEqual(synthesized.keyFindings.length, 3);
@@ -191,7 +191,7 @@ describe('Method Selection Logic', () => {
       'opportunity-cost',
       'failure-modes',
       'bias-check',
-      'constraint-relaxation'
+      'constraint-relaxation',
     ];
 
     assert.ok(methods.length >= expectedMethodCount);
@@ -204,7 +204,7 @@ describe('Method Selection Logic', () => {
       { method: 'pre-mortem', score: 7 },
       { method: 'failure-modes', score: 7 },
       { method: 'swot-analysis', score: 5 },
-      { method: 'opportunity-cost', score: 3 }
+      { method: 'opportunity-cost', score: 3 },
     ];
 
     const topMethod = methodScores.sort((a, b) => b.score - a.score)[0];
@@ -223,7 +223,7 @@ describe('Security Controls', () => {
       { input: 'red-team-blue-team', valid: true },
       { input: '../../../etc/passwd', valid: false },
       { input: 'method; rm -rf /', valid: false },
-      { input: 'method<script>', valid: false }
+      { input: 'method<script>', valid: false },
     ];
 
     testCases.forEach(({ input, valid }) => {
@@ -257,7 +257,9 @@ describe('Security Controls', () => {
     const sessionInvocations = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     // Expected: 11th invocation blocked
-    const allowedInvocations = sessionInvocations.filter((_, index) => index < maxInvocationsPerSession);
+    const allowedInvocations = sessionInvocations.filter(
+      (_, index) => index < maxInvocationsPerSession
+    );
 
     assert.strictEqual(allowedInvocations.length, 10);
     assert.strictEqual(sessionInvocations.length, 11);

@@ -21,7 +21,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { _execSync } = require('child_process');
 
 // Import memory manager and memory tiers
 const PROJECT_ROOT = process.env.PROJECT_ROOT || process.cwd();
@@ -34,7 +34,7 @@ const memoryManager = require(
 let memoryTiers = null;
 try {
   memoryTiers = require(path.join(PROJECT_ROOT, '.claude', 'lib', 'memory', 'memory-tiers.cjs'));
-} catch (e) {
+} catch (_e) {
   // Memory tiers not available - continue with legacy behavior
 }
 
@@ -42,7 +42,7 @@ try {
  * Validation function (required for hook interface)
  * SessionEnd always triggers session save
  */
-function validate(input) {
+function validate(_input) {
   return { valid: true };
 }
 
@@ -69,7 +69,7 @@ async function parseStdin() {
 
       try {
         resolve(JSON.parse(input));
-      } catch (e) {
+      } catch (_e) {
         // Not JSON, treat as plain text summary
         resolve({ summary: input.trim() });
       }
@@ -149,7 +149,7 @@ async function gatherSessionInsights() {
       }
 
       return insights;
-    } catch (err) {
+    } catch (_err) {
       // Fall through to default
     }
   }

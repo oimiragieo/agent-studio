@@ -12,10 +12,26 @@ describe('Party Mode Configuration', () => {
     const config = yaml.load(fs.readFileSync(configPath, 'utf-8'));
 
     assert.strictEqual(config.features.partyMode.enabled, true, 'Party Mode should be enabled');
-    assert.strictEqual(config.features.partyMode.maxAgents, 4, 'maxAgents should be 4 (SEC-PM-005)');
-    assert.strictEqual(config.features.partyMode.maxRounds, 10, 'maxRounds should be 10 (SEC-PM-005)');
-    assert.strictEqual(config.features.partyMode.contextWarning, 100000, 'contextWarning should be 100000');
-    assert.strictEqual(config.features.partyMode.contextLimit, 150000, 'contextLimit should be 150000');
+    assert.strictEqual(
+      config.features.partyMode.maxAgents,
+      4,
+      'maxAgents should be 4 (SEC-PM-005)'
+    );
+    assert.strictEqual(
+      config.features.partyMode.maxRounds,
+      10,
+      'maxRounds should be 10 (SEC-PM-005)'
+    );
+    assert.strictEqual(
+      config.features.partyMode.contextWarning,
+      100000,
+      'contextWarning should be 100000'
+    );
+    assert.strictEqual(
+      config.features.partyMode.contextLimit,
+      150000,
+      'contextLimit should be 150000'
+    );
   });
 
   it('should have all 3 default teams', () => {
@@ -27,9 +43,15 @@ describe('Party Mode Configuration', () => {
       assert.ok(fs.existsSync(teamPath), `Team ${team} should exist`);
 
       const content = fs.readFileSync(teamPath, 'utf-8');
-      assert.ok(content.includes('agent_type,role,priority,tools,model'), `Team ${team} should have header`);
+      assert.ok(
+        content.includes('agent_type,role,priority,tools,model'),
+        `Team ${team} should have header`
+      );
       const lines = content.trim().split('\n');
-      assert.ok(lines.length >= 2 && lines.length <= 5, `Team ${team} should have 1-4 agents (has ${lines.length - 1})`);
+      assert.ok(
+        lines.length >= 2 && lines.length <= 5,
+        `Team ${team} should have 1-4 agents (has ${lines.length - 1})`
+      );
     }
   });
 
@@ -72,7 +94,11 @@ describe('Party Mode Configuration', () => {
       // Check each agent row has 5 fields
       for (let i = 1; i < lines.length; i++) {
         const fields = parseCSVLine(lines[i]);
-        assert.strictEqual(fields.length, 5, `Team ${team} line ${i + 1} should have 5 fields (has ${fields.length})`);
+        assert.strictEqual(
+          fields.length,
+          5,
+          `Team ${team} line ${i + 1} should have 5 fields (has ${fields.length})`
+        );
       }
     }
   });
@@ -111,7 +137,10 @@ describe('Party Mode Configuration', () => {
       for (let i = 1; i < lines.length; i++) {
         const fields = parseCSVLine(lines[i]);
         const agentType = fields[0];
-        assert.ok(validAgents.includes(agentType), `Team ${team} line ${i + 1}: invalid agent_type "${agentType}"`);
+        assert.ok(
+          validAgents.includes(agentType),
+          `Team ${team} line ${i + 1}: invalid agent_type "${agentType}"`
+        );
       }
     }
   });
@@ -189,7 +218,10 @@ describe('Party Mode Configuration', () => {
       for (let i = 1; i < lines.length; i++) {
         const fields = parseCSVLine(lines[i]);
         const model = fields[4];
-        assert.ok(validModels.includes(model), `Team ${team} line ${i + 1}: invalid model "${model}"`);
+        assert.ok(
+          validModels.includes(model),
+          `Team ${team} line ${i + 1}: invalid model "${model}"`
+        );
       }
     }
   });

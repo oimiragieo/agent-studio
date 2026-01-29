@@ -39,6 +39,7 @@ node .claude/agents/orchestrators/__tests__/run-all-tests.cjs
 ```
 
 **Expected Output**:
+
 ```
 ╔════════════════════════════════════════════════════════════════╗
 ║       Orchestrator Integration Tests - Test Runner            ║
@@ -80,16 +81,17 @@ node .claude/agents/orchestrators/__tests__/integration/evolution-orchestrator.t
 
 ### Master Orchestrator (10 tests)
 
-| Scenario | Tests | Description |
-|----------|-------|-------------|
-| **Parallel Agent Spawn** | 3 | Spawning 3 agents (architect, developer, qa) in parallel with correct models and tools |
-| **Agent Task Tracking** | 2 | Status transitions (pending → running → completed) and TaskList synchronization |
-| **Context Passing** | 1 | Passing architect output to developer in prompt |
-| **Error Handling** | 1 | Handling agent failure gracefully |
-| **Sequential vs Parallel** | 2 | Parallel execution speed and task dependency respect |
-| **Result Aggregation** | 1 | Aggregating results from all agents |
+| Scenario                   | Tests | Description                                                                            |
+| -------------------------- | ----- | -------------------------------------------------------------------------------------- |
+| **Parallel Agent Spawn**   | 3     | Spawning 3 agents (architect, developer, qa) in parallel with correct models and tools |
+| **Agent Task Tracking**    | 2     | Status transitions (pending → running → completed) and TaskList synchronization        |
+| **Context Passing**        | 1     | Passing architect output to developer in prompt                                        |
+| **Error Handling**         | 1     | Handling agent failure gracefully                                                      |
+| **Sequential vs Parallel** | 2     | Parallel execution speed and task dependency respect                                   |
+| **Result Aggregation**     | 1     | Aggregating results from all agents                                                    |
 
 **Key Validations**:
+
 - ✓ Spawns exactly 3 agents for multi-agent workflows
 - ✓ Assigns appropriate models (sonnet for standard, opus for QA)
 - ✓ Tracks task status transitions
@@ -98,14 +100,15 @@ node .claude/agents/orchestrators/__tests__/integration/evolution-orchestrator.t
 
 ### Swarm Coordinator (6 tests)
 
-| Scenario | Tests | Description |
-|----------|-------|-------------|
-| **Work Distribution** | 2 | Distributing 5 tasks to 3 workers in parallel |
-| **Result Aggregation** | 1 | Aggregating results from all workers |
-| **Worker Failure** | 2 | Continuing when one worker fails, providing partial results |
-| **Consensus Voting** | 1 | Collecting votes from workers for decision-making |
+| Scenario               | Tests | Description                                                 |
+| ---------------------- | ----- | ----------------------------------------------------------- |
+| **Work Distribution**  | 2     | Distributing 5 tasks to 3 workers in parallel               |
+| **Result Aggregation** | 1     | Aggregating results from all workers                        |
+| **Worker Failure**     | 2     | Continuing when one worker fails, providing partial results |
+| **Consensus Voting**   | 1     | Collecting votes from workers for decision-making           |
 
 **Key Validations**:
+
 - ✓ Distributes work evenly across workers
 - ✓ Spawns workers in parallel for performance
 - ✓ Handles worker failures gracefully
@@ -114,15 +117,16 @@ node .claude/agents/orchestrators/__tests__/integration/evolution-orchestrator.t
 
 ### Evolution Orchestrator (9 tests)
 
-| Scenario | Tests | Description |
-|----------|-------|-------------|
-| **EVOLVE Workflow** | 2 | All 6 phases (E→V→O→L→V→E) in order with opus model |
-| **Research Mandatory** | 2 | Phase O research-synthesis invocation and blocking on skip |
-| **Artifact Creation** | 2 | Invoking correct creator skill in Phase L and schema validation |
-| **Gate Failures** | 2 | Blocking on naming conflicts and requiring all gates to pass |
-| **State Management** | 1 | Updating evolution-state.json at each phase transition |
+| Scenario               | Tests | Description                                                     |
+| ---------------------- | ----- | --------------------------------------------------------------- |
+| **EVOLVE Workflow**    | 2     | All 6 phases (E→V→O→L→V→E) in order with opus model             |
+| **Research Mandatory** | 2     | Phase O research-synthesis invocation and blocking on skip      |
+| **Artifact Creation**  | 2     | Invoking correct creator skill in Phase L and schema validation |
+| **Gate Failures**      | 2     | Blocking on naming conflicts and requiring all gates to pass    |
+| **State Management**   | 1     | Updating evolution-state.json at each phase transition          |
 
 **Key Validations**:
+
 - ✓ Executes all 6 EVOLVE phases in order
 - ✓ Phase O (Research) is mandatory and cannot be bypassed
 - ✓ Invokes appropriate creator skills (agent-creator, skill-creator)
@@ -137,6 +141,7 @@ node .claude/agents/orchestrators/__tests__/integration/evolution-orchestrator.t
 Simulates the Task tool for orchestrator testing.
 
 **Features**:
+
 - Spawn agents without executing them
 - Track agent status transitions
 - Simulate agent failures
@@ -144,6 +149,7 @@ Simulates the Task tool for orchestrator testing.
 - Query task list and task details
 
 **Usage**:
+
 ```javascript
 const taskTool = new TaskToolMock();
 
@@ -169,12 +175,14 @@ taskTool.setFailureMode(1, 'Agent 2 failed');
 Generates realistic agent responses for different scenarios.
 
 **Features**:
+
 - Success responses (developer, architect, qa, planner, security-architect)
 - Failure responses with error messages
 - Timeout responses (never completes)
 - Partial responses (in-progress)
 
 **Usage**:
+
 ```javascript
 const { generateMockCompletion } = require('./agent-response-mock.cjs');
 

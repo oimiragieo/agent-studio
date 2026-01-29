@@ -204,7 +204,7 @@ describe('EvolutionStateSync', () => {
       const sync = new EvolutionStateSync({ statePath: TEST_STATE_PATH });
 
       const oldState = await sync.loadState();
-      const oldTimestamp = oldState.lastUpdated;
+      const _oldTimestamp = oldState.lastUpdated;
 
       await new Promise(r => setTimeout(r, 10));
 

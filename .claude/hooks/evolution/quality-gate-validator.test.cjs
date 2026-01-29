@@ -14,8 +14,8 @@ const {
   findPlaceholders,
   findMissingSections,
   validateQuality,
-  PLACEHOLDER_PATTERNS,
-  REQUIRED_AGENT_SECTIONS,
+  _PLACEHOLDER_PATTERNS,
+  _REQUIRED_AGENT_SECTIONS,
 } = require('./quality-gate-validator.cjs');
 
 // Store original env

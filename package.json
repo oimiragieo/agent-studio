@@ -68,7 +68,10 @@
     "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage tests/*.test.mjs",
     "test:a2a": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'",
     "test:a2a:verbose": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'",
-    "test:a2a:ci": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'"
+    "test:a2a:ci": "echo 'A2A tests archived - see .claude.archive/.claude.old/tests/a2a-framework/'",
+    "lint": "eslint . --ext .js,.cjs,.mjs --max-warnings 0",
+    "lint:fix": "eslint . --ext .js,.cjs,.mjs --fix",
+    "lint:staged": "eslint --ext .js,.cjs,.mjs"
   },
   "keywords": [
     "claude",

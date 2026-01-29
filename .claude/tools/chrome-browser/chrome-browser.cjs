@@ -271,7 +271,7 @@ function validateInputs() {
         throw new Error('Hook returned non-zero exit code');
       }
       console.log('✅ Validation passed');
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Validation failed');
       process.exit(1);
     }

@@ -60,7 +60,7 @@ function markCreatorActive() {
     if (fs.existsSync(STATE_FILE)) {
       try {
         state = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
-      } catch (e) {
+      } catch (_e) {
         // If file is corrupted, start fresh
         state = {};
       }
@@ -86,7 +86,7 @@ function markCreatorActive() {
 /**
  * Validate input before execution
  */
-function validateInput(input) {
+function validateInput(_input) {
   const errors = [];
 
   // Basic validation - skill-creator can work with minimal input

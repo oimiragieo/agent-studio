@@ -37,13 +37,13 @@ const { PROJECT_ROOT, validatePathWithinProject } = require('../utils/project-ro
 
 const CONFIG = {
   // File size thresholds (lines)
-  WARNING_LINES: 1200,    // 80% of 1500 line target
+  WARNING_LINES: 1200, // 80% of 1500 line target
   ROTATION_TRIGGER: 1500, // Start rotation at this size
-  TARGET_SIZE: 1000,      // Target size after rotation
+  TARGET_SIZE: 1000, // Target size after rotation
 
   // Age thresholds (days)
-  ADR_AGE_THRESHOLD: 60,     // Archive ADRs older than 60 days
-  ISSUE_AGE_THRESHOLD: 7,    // Archive RESOLVED issues older than 7 days
+  ADR_AGE_THRESHOLD: 60, // Archive ADRs older than 60 days
+  ISSUE_AGE_THRESHOLD: 7, // Archive RESOLVED issues older than 7 days
 
   // Archive configuration
   ARCHIVE_BASE_DIR: 'archive',
@@ -634,7 +634,9 @@ if (require.main === module) {
       console.log(JSON.stringify(checkResult, null, 2));
 
       if (checkResult.needsRotation) {
-        console.log('\n⚠️  Rotation recommended. Run "node memory-rotator.cjs rotate --dry-run" to preview.');
+        console.log(
+          '\n⚠️  Rotation recommended. Run "node memory-rotator.cjs rotate --dry-run" to preview.'
+        );
       } else {
         console.log('\n✅ All files under rotation threshold.');
       }

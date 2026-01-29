@@ -156,7 +156,7 @@ phases:
         action: validate
 `;
 
-const INVALID_WORKFLOW_MISSING_OBTAIN = `
+const _INVALID_WORKFLOW_MISSING_OBTAIN = `
 name: test
 version: 1.0.0
 phases:

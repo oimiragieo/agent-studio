@@ -59,7 +59,7 @@ function setup() {
 function cleanup() {
   try {
     fs.rmSync(TEMP_DIR, { recursive: true, force: true });
-  } catch (e) {
+  } catch (_e) {
     // Ignore cleanup errors
   }
 }

@@ -78,7 +78,7 @@ const SECURITY_RULES = [
     id: 'SEC-001',
     name: 'Hardcoded API Key',
     severity: 'critical',
-    pattern: /(?:api[-_]?key|apikey)\s*[:=]\s*['"`]([A-Za-z0-9_\-]{20,})['"`]/gi,
+    pattern: /(?:api[-_]?key|apikey)\s*[:=]\s*['"`]([A-Za-z0-9_-]{20,})['"`]/gi,
     description: 'Hardcoded API key detected',
     fix: 'Use environment variables: process.env.API_KEY',
   },
@@ -290,7 +290,7 @@ function walkDirectory(dir) {
         files.push(fullPath);
       }
     }
-  } catch (err) {
+  } catch (_err) {
     // Skip directories we can't read
   }
 
@@ -316,7 +316,7 @@ function shouldScanFile(filePath) {
     if (stats.size > CONFIG.maxFileSize) {
       return false;
     }
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 
@@ -370,7 +370,7 @@ function scanFile(filePath) {
   let content;
   try {
     content = fs.readFileSync(filePath, 'utf8');
-  } catch (err) {
+  } catch (_err) {
     return findings;
   }
 

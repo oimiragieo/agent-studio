@@ -26,7 +26,7 @@ let routerState;
 try {
   routingGuard = require('./routing-guard.cjs');
   routerState = require('./router-state.cjs');
-} catch (err) {
+} catch (_err) {
   routingGuard = null;
   routerState = null;
 }
@@ -875,7 +875,7 @@ describe('routing-guard', () => {
   // Verifies that the hook actually exits with code 2 when blocking
   // ============================================================================
   describe('ENFORCEMENT-003: End-to-end blocking behavior', () => {
-    const { execSync, spawnSync } = require('child_process');
+    const { _execSync, spawnSync } = require('child_process');
     const runtimeDir = path.join(os.tmpdir(), 'routing-guard-test-' + Date.now());
     const stateFile = path.join(runtimeDir, 'router-state.json');
 
@@ -901,7 +901,7 @@ describe('routing-guard', () => {
         if (fs.existsSync(runtimeDir)) {
           fs.rmSync(runtimeDir, { recursive: true });
         }
-      } catch (e) {
+      } catch (_e) {
         // Ignore cleanup errors
       }
     });

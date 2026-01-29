@@ -64,7 +64,7 @@ function bashPath(windowsPath) {
   }
   // SEC-REMEDIATION-002: Sanitize null bytes (command injection prevention)
   // Null bytes can truncate paths or bypass validation
-  let sanitized = windowsPath.replace(/\0/g, '');
+  const sanitized = windowsPath.replace(/\0/g, '');
   // Warn on shell metacharacters that could be dangerous
   const shellMetachars = /[$`!]/;
   if (shellMetachars.test(sanitized) && process.env.PLATFORM_DEBUG === 'true') {
