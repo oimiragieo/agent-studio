@@ -59,7 +59,9 @@ function parseEslintOutput() {
       if (!currentFile) continue;
 
       // Match useless escape: "Unnecessary escape character: \X"
-      const escapeMatch = line.match(/^\s*(\d+):(\d+)\s+error\s+Unnecessary escape character: \\(.)/);
+      const escapeMatch = line.match(
+        /^\s*(\d+):(\d+)\s+error\s+Unnecessary escape character: \\(.)/
+      );
       if (escapeMatch) {
         fixes.push({
           file: currentFile,

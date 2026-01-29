@@ -43,6 +43,15 @@ const {
 // MED-001 FIX: Use shared PROJECT_ROOT utility instead of duplicating
 const { PROJECT_ROOT } = require('../../lib/utils/project-root.cjs');
 
+// Event Bus integration (P1-6.4)
+let eventBus;
+try {
+  eventBus = require('../../lib/events/event-bus.cjs');
+} catch (_err) {
+  // Graceful degradation: EventBus unavailable, continue without events
+  eventBus = null;
+}
+
 // =============================================================================
 // CONFIGURATION
 // =============================================================================
@@ -401,6 +410,31 @@ async function main() {
     // Skip if not a watched tool
     if (!toolName || !WATCHED_TOOLS.includes(toolName)) {
       process.exit(0);
+    }
+
+    // Emit TOOL_INVOKED event (P1-6.4 - async, non-blocking)
+    if (eventBus) {
+      try {
+        const filePath = extractFilePath(toolInput);
+        const required = findRequiredCreator(filePath);
+
+        eventBus.emit('TOOL_INVOKED', {
+          type: 'TOOL_INVOKED',
+          toolName,
+          input: toolInput,
+          agentId: process.env.CLAUDE_AGENT_ID || 'router',
+          taskId: process.env.CLAUDE_TASK_ID || 'unknown',
+          timestamp: new Date().toISOString(),
+          metadata: {
+            hook: 'unified-creator-guard',
+            artifactType: required?.artifactType || 'unknown',
+            requiredCreator: required?.creator || null,
+          },
+        });
+      } catch (err) {
+        // Graceful degradation: event emission failed, continue
+        console.error('[unified-creator-guard] Event emission failed:', err.message);
+      }
     }
 
     // Validate creator workflow

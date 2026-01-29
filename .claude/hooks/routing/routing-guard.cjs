@@ -45,6 +45,15 @@ const {
 } = require('../../lib/utils/hook-input.cjs');
 const routerState = require('./router-state.cjs');
 
+// Event Bus integration (P1-6.4)
+let eventBus;
+try {
+  eventBus = require('../../lib/events/event-bus.cjs');
+} catch (_err) {
+  // Graceful degradation: EventBus unavailable, continue without events
+  eventBus = null;
+}
+
 // =============================================================================
 // INTRA-HOOK STATE CACHING (PERF-001)
 // =============================================================================
@@ -242,6 +251,20 @@ function isWhitelistedBashCommand(command) {
   }
   const trimmed = command.trim();
   return ROUTER_BASH_WHITELIST.some(pattern => pattern.test(trimmed));
+}
+
+/**
+ * Extract task ID from agent prompt
+ * @param {string} prompt - Agent prompt text
+ * @returns {string|null} Extracted task ID or null
+ */
+function extractTaskIdFromPrompt(prompt) {
+  if (!prompt || typeof prompt !== 'string') {
+    return null;
+  }
+  // Pattern: "Task ID: task-123" or "Your Task ID: task-456"
+  const match = prompt.match(/Task ID:\s*([a-zA-Z0-9-]+)/i);
+  return match ? match[1] : null;
 }
 
 // =============================================================================
@@ -742,6 +765,44 @@ async function main() {
       process.exit(0);
     }
 
+    // Emit TOOL_INVOKED event (P1-6.4 - async, non-blocking)
+    if (eventBus) {
+      try {
+        eventBus.emit('TOOL_INVOKED', {
+          type: 'TOOL_INVOKED',
+          toolName,
+          input: toolInput,
+          agentId: process.env.CLAUDE_AGENT_ID || 'router',
+          taskId: process.env.CLAUDE_TASK_ID || 'unknown',
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        // Graceful degradation: event emission failed, continue
+        console.error('[routing-guard] Event emission failed:', err.message);
+      }
+    }
+
+    // Emit AGENT_STARTED event if spawning agent (P1-6.4)
+    if (toolName === 'Task' && eventBus) {
+      try {
+        // Extract agent type from toolInput
+        const agentType = toolInput?.subagent_type || 'general-purpose';
+        const taskId = extractTaskIdFromPrompt(toolInput?.prompt) || 'unknown';
+        const agentId = `${agentType}-${Date.now()}`;
+
+        eventBus.emit('AGENT_STARTED', {
+          type: 'AGENT_STARTED',
+          agentId,
+          agentType,
+          taskId,
+          timestamp: new Date().toISOString(),
+        });
+      } catch (err) {
+        // Graceful degradation
+        console.error('[routing-guard] AGENT_STARTED event emission failed:', err.message);
+      }
+    }
+
     // Run all checks
     const result = runAllChecks(toolName, toolInput);
 
@@ -822,6 +883,7 @@ module.exports = {
   isImplementationAgentSpawn,
   isAlwaysAllowedWrite,
   isWhitelistedBashCommand,
+  extractTaskIdFromPrompt,
   // PERF-001: Cache management
   getCachedRouterState,
   invalidateCachedState,

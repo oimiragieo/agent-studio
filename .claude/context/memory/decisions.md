@@ -188,3 +188,255 @@
   - **Related Files**:
     - `.claude/CLAUDE.md` (spawn templates updated)
     - `.claude/context/plans/agent-error-fixes-plan-2026-01-28.md` (implementation plan)
+
+---
+
+## [ADR-054] Memory System Enhancement Strategy
+
+- **Date**: 2026-01-28
+- **Status**: Proposed → **SPECIFICATION COMPLETE** (2026-01-28)
+- **Context**: Research shows graph-based and hybrid memory approaches outperform monolithic RAG by 45%. Current file-based system lacks semantic search and entity tracking. Multi-agent systems require relationship-aware memory (e.g., "What tasks is developer agent working on?") which file-based grep cannot provide. Industry analysis of MAGMA, Mem0, H-MEM, and CrewAI memory systems reveals hybrid architectures as optimal balance.
+- **Decision**: Adopt hybrid ChromaDB (vector) + SQLite (entities) + files (structured) approach for $0/mo with ~84-89% accuracy. Implementation phases:
+  1. **Phase 1 (Hybrid Memory):** Add ChromaDB embeddings for learnings.md (semantic search), create SQLite schema for entities (agents, tasks, skills) + relationships, migrate existing task tracking to entity memory. Backward compatible - keep files as source of truth, add indexes.
+  2. **Phase 2 (Semantic Cache):** Add GPTCache or in-memory semantic cache to reduce LLM costs by 40-60%.
+  3. **Phase 3 (Memory Tiers):** Define STM (session context), LTM (persistent files), episodic (task traces), create ContextualMemory aggregation layer.
+- **Consequences**:
+  - **Benefits**:
+    - **+10-15% accuracy improvement** (file-only 74% → hybrid 84-89%) [Validated - adjusted from +15-20%]
+    - Zero operational cost (self-hosted ChromaDB + SQLite)
+    - Semantic search capabilities ("find similar past issues")
+    - Entity relationship queries ("What tasks are blocked?")
+    - Backward compatible (existing files remain, new capabilities added)
+    - **<10ms query latency** (SQLite + ChromaDB in-process) [Validated - better than initial <100ms]
+  - **Trade-offs**:
+    - ⚠️ **4-5 weeks implementation effort** for Phase 1 [Validated - adjusted from 2-3 weeks]
+    - ⚠️ New dependencies: ChromaDB (~5MB), better-sqlite3 (~2MB)
+    - ⚠️ Complexity increase (3 storage layers vs 1)
+    - ⚠️ Embedding generation cost (one-time, **$0.01** for existing corpus) [Validated]
+- **Alternatives Considered**:
+  - **Pinecone ($250/mo):** Rejected due to cost (prohibitive for open-source project)
+  - **Pure file-based:** Insufficient for semantic search and relationship queries
+  - **Graph DB (Neo4j):** Too complex for MVP, save for Phase 3 (MAGMA-style multi-graph)
+  - **Weaviate:** Good alternative to ChromaDB but similar complexity, no clear advantage
+- **Research Sources**: 11 sources including MAGMA (arXiv:2410.10425), ChromaDB/Pinecone benchmarks, CrewAI memory system, Mem0, H-MEM, SEDM
+- **Related Files**:
+  - `.claude/context/artifacts/research-reports/memory-patterns-research-2026-01-28.md` (full research)
+  - `.claude/context/plans/crewai-analysis-integration-plan.md` (implementation plan)
+  - **`.claude/context/artifacts/specs/memory-system-enhancement-spec.md`** (comprehensive specification)
+
+---
+
+## [ADR-055] Event-Driven Orchestration Adoption
+
+- **Date**: 2026-01-28
+- **Status**: Proposed → **SPECIFICATION COMPLETE** (2026-01-28)
+- **Context**: 72% of enterprise AI projects use event-driven multi-agent systems (Gartner 2026). Current hook system is synchronous/blocking, limiting scalability and observability. Research shows hybrid approach (imperative router + event-driven agents) offers best trade-offs for governance + scalability. OpenTelemetry is industry standard for observability (95% adoption in surveyed systems).
+- **Decision**: Implement centralized EventBus as optional add-on, preserving current hook system. Adopt OpenTelemetry for observability. Implementation phases:
+  1. **Phase 1 (EventBus Foundation):** Create EventBus class (centralized EventEmitter), define event schema (AgentEvent, TaskEvent, ToolEvent, MemoryEvent, LLMEvent, MCPEvent), add unit tests.
+  2. **Phase 2 (OpenTelemetry Integration):** Add OpenTelemetry JavaScript SDK, create spans for agent execution/task execution/tool calls, add span context propagation (parent → child agents), export traces to Arize Phoenix (Docker deployment).
+  3. **Phase 3 (Event-Aware Tasks):** Modify TaskUpdate to emit TASK_COMPLETED event, add event subscriptions for dependent task unblocking. Backward compatible.
+- **Consequences**:
+  - **Benefits**:
+    - ✅ Non-breaking (additive only, existing hooks/tasks continue to work)
+    - ✅ Enables async agent communication (10x throughput vs synchronous blocking)
+    - ✅ Industry-standard observability (OpenTelemetry compatible with all tools)
+    - ✅ End-to-end tracing across multi-agent workflows (correlation by trace ID)
+    - ✅ Zero cloud costs (self-hosted EventBus + Arize Phoenix)
+    - ✅ Event stream = audit log (debugging, compliance)
+  - **Trade-offs (VALIDATED)**:
+    - ⚠️ Medium complexity (EventBus ~200 LOC, OpenTelemetry SDK ~5MB)
+    - ⚠️ **5-35% latency overhead** (config-dependent, target 5-10% with 1-10% sampling)
+    - ⚠️ **$50-500/mo infrastructure costs** (Docker $0, Kubernetes $200-500)
+    - ⚠️ Learning curve for event-driven patterns
+    - ⚠️ Race conditions possible (event ordering, async coordination)
+- **Alternatives Considered**:
+  - **Distributed event mesh (Kafka):** Overkill for current scale, high operational complexity
+  - **Replace hooks entirely:** Too risky, breaking changes for existing system
+  - **Continue hook-only approach:** Limits scalability, poor observability
+  - **LangFuse:** Good but less OpenTelemetry-native than Arize Phoenix
+  - **Datadog:** Excellent features but enterprise pricing ($$$)
+- **Architectural Pattern**: Hybrid orchestration - Router uses imperative spawning (governance), agents communicate via events (scalability). This combines control flow (Router explicit Task() calls) with data flow (agents publish/subscribe to events).
+- **Research Sources**: 24 sources including CrewAI Flow framework, OpenTelemetry docs, Arize Phoenix, LangFuse, Datadog APM, XState, Martin Fowler's event-driven architecture patterns, IEEE Intelligent Systems multi-agent observability survey
+- **Specification**: `.claude/context/artifacts/specs/event-bus-integration-spec.md` (v1.0, READY FOR IMPLEMENTATION)
+- **Related Files**:
+  - `.claude/context/artifacts/research-reports/event-orchestration-research-2026-01-28.md` (full research)
+  - `.claude/context/artifacts/research-reports/hook-event-comparison-analysis-2026-01-28.md` (hooks + events coexistence)
+  - `.claude/context/plans/crewai-analysis-integration-plan.md` (implementation plan)
+
+---
+
+## [ADR-056] Production Observability Tool Selection
+
+- **Date**: 2026-01-28
+- **Status**: Proposed → **SPECIFICATION COMPLETE** (2026-01-28)
+- **Context**: Production systems require tracing/monitoring for debugging multi-agent workflows, LLM cost tracking, and performance analysis. Research compared LangFuse (open-source, LLM-focused), Datadog (enterprise, full-stack), and Arize Phoenix (open-source, OpenTelemetry-native). OpenTelemetry is industry standard for vendor-agnostic observability.
+- **Decision**: Recommend Arize Phoenix (self-hosted) for OpenTelemetry-first approach. Implementation via Docker deployment (development) and Kubernetes (production) with OpenTelemetry JavaScript SDK exporter.
+- **Consequences**:
+  - **Benefits**:
+    - ✅ Free software (self-hosted, open-source under Apache 2.0)
+    - ✅ Vendor-agnostic (OpenTelemetry-native, can switch to Datadog/Jaeger later)
+    - ✅ Full control over data (no cloud vendor access)
+    - ✅ LLM-specific features (prompt analysis, embeddings visualization, cost tracking)
+    - ✅ Docker-based deployment (single command: `docker run`)
+    - ✅ Trace visualization for multi-agent workflows
+  - **Trade-offs (VALIDATED)**:
+    - ⚠️ Self-hosting operational burden (Docker container management, updates)
+    - ⚠️ **5-10% latency overhead** (with 1-10% sampling, batch processing)
+    - ⚠️ **$50-500/mo infrastructure** (Docker $0, shared node $80-150, dedicated $200-500)
+    - ⚠️ No enterprise support (community-driven, GitHub issues only)
+    - ⚠️ Requires storage for trace data (50GB for 7-day retention)
+- **Alternatives Considered**:
+  - **LangFuse:** Good LLM features but less OpenTelemetry-native (custom SDK), cloud tier has usage limits. Alternative if LLM focus > vendor-agnostic priority.
+  - **Datadog:** Excellent UI/UX and enterprise support, but expensive ($15-$23/host/month + $0.10/GB logs). Rejected due to cost for open-source project.
+  - **Jaeger:** OpenTelemetry-native, free, but lacks LLM-specific features (no prompt analysis, embeddings). Alternative for generic tracing.
+  - **Grafana Cloud:** Good for metrics/logs, but weak on LLM tracing. Alternative for infra monitoring.
+  - **No observability:** Unacceptable for production multi-agent systems (debugging impossible).
+- **Deployment Options**:
+  - **Development:** Docker Compose (`docker-compose up -d`) - $0/mo
+  - **Staging:** Shared Kubernetes node - $80-150/mo
+  - **Production:** Dedicated Kubernetes node (2 cores, 4GB RAM, 50GB storage) - $200-500/mo
+- **Vendor Lock-In Mitigation**: OpenTelemetry standard means traces can be exported to any OTLP-compatible backend (Jaeger, Datadog, Grafana, Honeycomb) without code changes. Phoenix is swappable.
+- **Research Sources**: Arize Phoenix documentation, OpenTelemetry JavaScript SDK, LangFuse docs, Datadog APM, Jaeger, observability tool comparison matrix (cost/latency/complexity)
+- **Specification**: `.claude/context/artifacts/specs/event-bus-integration-spec.md` (Section 10: Arize Phoenix Deployment)
+- **Related ADRs**: ADR-055 (Event-Driven Orchestration Adoption) - Phoenix visualizes event-driven workflows
+- **Related Files**:
+  - `.claude/context/artifacts/research-reports/event-orchestration-research-2026-01-28.md` (Section 5: Production Observability Tools)
+  - `.claude/context/plans/crewai-analysis-integration-plan.md` (Phase 3.2: Research validation for event system enhancements)
+
+---
+
+## [ADR-057] Agent Enhancement Strategy (crewAI Patterns)
+
+- **Date**: 2026-01-28
+- **Status**: Proposed
+- **Context**: Comparative analysis of crewAI (Python) vs Agent-Studio (JavaScript) agent systems revealed 6 HIGH priority gaps in Agent-Studio. crewAI has richer agent identity (Role/Goal/Backstory), dual LLM architecture (60-70% cost savings), built-in execution limits (runaway prevention), and delegation tools. Agent-Studio has more specialized agents (45 vs ~5), Router governance (security), and Party Mode (unique collaboration feature).
+- **Decision**: Adopt P1 enhancements from crewAI patterns while preserving Agent-Studio's core strengths:
+  1. **P1.1 Structured Identity Pattern**: Add optional `role`, `goal`, `backstory` fields to agent YAML frontmatter
+  2. **P1.2 Execution Limits**: Add `execution_limits` block with `max_iter`, `max_execution_time`, `max_retry`
+  3. **P1.3 Dual LLM Support**: Add `execution_model` field for tool-call LLM (separate from planning)
+- **Consequences**:
+  - **Benefits**:
+    - Consistent agent personality (structured identity)
+    - 60-70% cost reduction on tool-heavy workflows (dual LLM)
+    - Runaway prevention (execution limits)
+    - All backward compatible (optional fields, default to current behavior)
+  - **Trade-offs**:
+    - Additional YAML fields increase agent definition complexity
+    - Dual LLM requires model selection logic in Task spawn
+    - Execution limits require monitoring hook for enforcement
+  - **Preserved Strengths**:
+    - 45+ specialized agents (NOT generalizing to crewAI-style few agents)
+    - Router governance (NOT adopting full agent autonomy)
+    - Skill composition (unique to Agent-Studio)
+    - Party Mode (unique multi-agent collaboration)
+    - File-based agents (human-readable, git-tracked)
+  - **Not Adopting (Trade-off Against Governance)**:
+    - Full agent delegation (DelegateWorkTool) - conflicts with Router-first
+    - Agent-to-agent questions (AskQuestionTool) - Router should mediate
+- **Implementation Path**:
+  - Phase 1: P1.1 + P1.2 + P1.3 (~10 days total)
+  - Phase 2: Consider hybrid delegation for specific use cases (future ADR)
+- **Related Files**:
+  - `.claude/context/artifacts/research-reports/agent-comparison-analysis-2026-01-28.md` (full comparison)
+  - `.claude/context/plans/crewai-analysis-integration-plan.md` (implementation plan)
+
+---
+
+## [ADR-058] Enhancement Prioritization Strategy (P1/P2/P3)
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: Comprehensive analysis of crewAI vs Agent-Studio (Tasks #11-#18) identified 17 potential enhancements across Memory, Events, Agents, and Workflows. Need prioritization framework to allocate resources effectively.
+- **Decision**: Adopt 3-tier prioritization with parallel implementation strategy:
+  - **P1 (Must Have - 6 features):** ChromaDB, SQLite Entities, EventBus, OpenTelemetry, Structured Identity, Execution Limits
+  - **P2 (Should Have - 7 features):** Dual LLM, Workflow Persistence, Context Chaining, Routing DSL, Delegation Tool, MCP Discovery, Phoenix Production
+  - **P3 (Nice to Have - 4 features):** TypeScript Decorators, Process Types, Personality Profiles, Visual Editor
+- **Consequences**:
+  - **Benefits**:
+    - Clear implementation order based on validated research (35+ sources)
+    - Parallel development possible (Memory + Events independent)
+    - 8-10 weeks for P1 (2 developers), 8-12 weeks for P2
+    - Total operational cost: $0-150/mo (P1), $200-500/mo (P2)
+    - User-facing improvement (+10-15% accuracy) in P1
+    - Observability foundation established in P1
+  - **Trade-offs**:
+    - P2/P3 features delayed (Dual LLM cost savings deferred)
+    - Parallel development requires 2+ developers
+    - Phoenix hosting adds operational cost
+  - **Key Decision Points**:
+    - Memory vs Events first: PARALLEL (both foundational, no dependency)
+    - Arize Phoenix vs alternatives: Phoenix (OpenTelemetry-native, $0-500/mo)
+    - Agent delegation: P2 with guardrails (preserve Router governance)
+- **Implementation Strategy**: Scenario C (Parallel) - Memory and Events developed concurrently
+- **Timeline**:
+  - Q1 (Weeks 1-12): P1 implementation + phased rollout
+  - Q2 (Weeks 13-24): P2 implementation + production Phoenix
+  - Q3+: P3 based on user demand
+- **Related Files**:
+  - `.claude/context/artifacts/plans/enhancement-prioritization-matrix.md` (detailed matrix)
+  - `.claude/context/artifacts/specs/memory-system-enhancement-spec.md`
+  - `.claude/context/artifacts/specs/event-bus-integration-spec.md`
+  - ADR-054, ADR-055, ADR-056, ADR-057 (foundational decisions)
+
+## [ADR-059] P1 Implementation Timeline Strategy
+
+- **Date**: 2026-01-28
+- **Status**: Accepted
+- **Context**: 32 P1 implementation tasks (Tasks #22-#53) across 3 systems (Memory, Events, Agents) require detailed scheduling, resource allocation, milestone definitions, and go/no-go checkpoints for successful execution. Need to decide timeline (sequential vs parallel), rollout strategy (big bang vs phased), and contingency plans.
+- **Decision**: Adopt 10-week parallel development timeline with 4 milestones, 4 go/no-go checkpoints, phased rollout (10% → 50% → 100%), and 4 contingency scenarios:
+  1. **Timeline:** 10 weeks (Jan 29 - Apr 8, 2026)
+     - Weeks 1-2: Foundation (ChromaDB + EventBus in parallel)
+     - Weeks 3-4: Core features (Entity extraction + OpenTelemetry)
+     - Weeks 5-6: Integration (Sync layer + Agent enhancements)
+     - Weeks 7-8: Testing + Documentation + 10% rollout
+     - Weeks 9-10: Phased rollout (50% → 100%) + Stabilization
+  2. **Resource Allocation:** 2 developers in parallel (Developer 1 = Memory, Developer 2 = Events) + part-time QA/DevOps
+  3. **Milestones:**
+     - M1 (Week 2): Foundation Complete (ChromaDB + EventBus operational)
+     - M2 (Week 4): Core Features Complete (Memory 70% + OpenTelemetry integrated)
+     - M3 (Week 6): Agent Enhancements Complete (Identity + Execution limits)
+     - M4 (Week 8): Production Ready (All tests pass + 10% rollout stable)
+  4. **Go/No-Go Checkpoints:**
+     - Week 2: Continue with Memory System? (latency <10ms or evaluate alternative)
+     - Week 4: Continue with Event System? (overhead <15% or optimize/defer Phoenix)
+     - Week 6: Proceed to Integration? (all features functional, <10 P1 bugs)
+     - Week 8: Deploy to Production (10% rollout)? (all success criteria met, executive approval)
+  5. **Rollout Strategy:** Phased rollout with 48-hour stability checkpoints
+     - Week 8: 10% rollout (select agents)
+     - Week 9 (Mon): 50% rollout (if 10% stable for 48 hours)
+     - Week 9 (Fri): 100% rollout (if 50% stable for 48 hours)
+     - Rollback: Feature flags (<1 minute), not git revert
+  6. **Contingency Plans:**
+     - Scenario A: Memory behind schedule (Week 3) → Defer entity memory to P2
+     - Scenario B: Event overhead too high (Week 4) → Reduce sampling to 1%, defer Phoenix to P2
+     - Scenario C: Major bug discovered (Week 7+) → Pause rollout, allocate both developers to fix, extend 1 week
+     - Scenario D: Rollout issues (Week 9) → Immediate rollback, investigate, retry at 10%
+- **Consequences**:
+  - **Benefits**:
+    - Parallel development (2 developers) = 5-6 weeks vs 10-12 weeks sequential (halves timeline)
+    - Phased rollout reduces risk (10% → 50% → 100% with stability checkpoints)
+    - Go/No-Go checkpoints with specific no-go actions prevent "sunk cost fallacy"
+    - Contingency plans reduce panic during incidents (pre-defined responses)
+    - 4 milestones with acceptance + exit criteria enable progress tracking
+    - Risk monitoring matrix (8 high-priority risks) with weekly reviews
+    - Communication plan (4 levels: daily standups, weekly status, bi-weekly stakeholder, ad-hoc incidents)
+  - **Trade-offs**:
+    - Parallel development requires coordination overhead (sync points at Week 3-4)
+    - Phased rollout extends timeline by 2 weeks (vs big bang deployment)
+    - Go/No-Go checkpoints may delay timeline if no-go triggered (acceptable - prevents larger failures)
+    - Resource requirements: 2 developers minimum (not 1 developer sequential)
+  - **Key Decisions**:
+    - **Parallel vs Sequential:** PARALLEL (halves timeline, minimal coordination overhead)
+    - **Rollout Strategy:** PHASED (10% → 50% → 100%) vs big bang (too risky)
+    - **Rollback Mechanism:** Feature flags (<1 minute) vs git revert (too slow for production)
+    - **Milestone Structure:** Acceptance criteria (functional) + Exit criteria (quality) vs just "done" (insufficient)
+    - **Go/No-Go Actions:** Specific responses ("defer X to P2") vs generic ("re-evaluate") - specific is actionable
+- **Alternatives Considered**:
+  - **Sequential Development:** 10-12 weeks (rejected - too slow)
+  - **Big Bang Deployment:** All agents at once (rejected - too risky, no rollback option)
+  - **Git Revert Rollback:** Revert commits on failure (rejected - takes >5 minutes, unacceptable for production)
+  - **No Go/No-Go Checkpoints:** Trust developers to self-assess (rejected - sunk cost fallacy risk)
+- **Implementation**: `.claude/context/artifacts/plans/p1-detailed-implementation-plan.md` (comprehensive 10-week plan with all details)
+- **Related ADRs**: ADR-058 (Prioritization Strategy), ADR-054-057 (P1 feature decisions)
+
+---

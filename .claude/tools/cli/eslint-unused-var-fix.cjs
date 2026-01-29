@@ -20,7 +20,7 @@ const { execSync } = require('child_process');
 // Configuration
 const PROJECT_ROOT = path.resolve(__dirname, '../../..');
 const DRY_RUN = process.argv.includes('--dry-run');
-const PATTERN = process.argv.find((arg) => arg.startsWith('--pattern='))?.split('=')[1] || 'prefix';
+const PATTERN = process.argv.find(arg => arg.startsWith('--pattern='))?.split('=')[1] || 'prefix';
 
 // Stats
 const stats = {
@@ -36,65 +36,194 @@ const stats = {
 // These are typically unused but kept for API compatibility or future use
 const SAFE_TO_PREFIX = [
   // Common patterns
-  'result', 'res', 'response', 'ret',
-  'err', 'error', 'e',
-  'ctx', 'context',
-  'state', 'data', 'info',
-  'options', 'opts', 'config', 'cfg',
-  'input', 'output',
-  'args', 'params',
-  'callback', 'cb',
-  'index', 'idx', 'i', 'j', 'k',
-  'key', 'val', 'value',
-  'item', 'elem', 'element',
+  'result',
+  'res',
+  'response',
+  'ret',
+  'err',
+  'error',
+  'e',
+  'ctx',
+  'context',
+  'state',
+  'data',
+  'info',
+  'options',
+  'opts',
+  'config',
+  'cfg',
+  'input',
+  'output',
+  'args',
+  'params',
+  'callback',
+  'cb',
+  'index',
+  'idx',
+  'i',
+  'j',
+  'k',
+  'key',
+  'val',
+  'value',
+  'item',
+  'elem',
+  'element',
   // Specific to this codebase
-  'execSync', 'crypto', 'auditLog',
-  'trigger', 'reason', 'agent', 'agentName',
-  'MEMORY_DIR', 'HOOKS_DIR', 'MCP_CATALOG_PATH',
-  'contextResult', 'evolveResult', 'formatResult',
-  'getPreferredAgent', 'getToolOutput', 'getFilePath',
-  'startPath', 'normalizedRoot', 'commandString',
-  'baseSkillName', 'propName', 'artifactName', 'artifactType',
-  'title', 'duration', 'basename', 'sep',
-  'strategiesUsed', 'summary', 'files',
-  'exitCode', 'stdout', 'stderr',
-  'initialMtime', 'initialLogSize', 'threw',
-  'validateJSON', 'fileExists', 'copyDir',
-  'findSlowHooks', 'renderCompactSummary',
-  'join', 'readdir', 'statSync', 'fixMode', 'fixes',
-  'agentFiles', 'runnerPath', 'validKeys', 'name',
-  'ext', 'sourcePath', 'analysis', 'patterns',
+  'execSync',
+  'crypto',
+  'auditLog',
+  'trigger',
+  'reason',
+  'agent',
+  'agentName',
+  'MEMORY_DIR',
+  'HOOKS_DIR',
+  'MCP_CATALOG_PATH',
+  'contextResult',
+  'evolveResult',
+  'formatResult',
+  'getPreferredAgent',
+  'getToolOutput',
+  'getFilePath',
+  'startPath',
+  'normalizedRoot',
+  'commandString',
+  'baseSkillName',
+  'propName',
+  'artifactName',
+  'artifactType',
+  'title',
+  'duration',
+  'basename',
+  'sep',
+  'strategiesUsed',
+  'summary',
+  'files',
+  'exitCode',
+  'stdout',
+  'stderr',
+  'initialMtime',
+  'initialLogSize',
+  'threw',
+  'validateJSON',
+  'fileExists',
+  'copyDir',
+  'findSlowHooks',
+  'renderCompactSummary',
+  'join',
+  'readdir',
+  'statSync',
+  'fixMode',
+  'fixes',
+  'agentFiles',
+  'runnerPath',
+  'validKeys',
+  'name',
+  'ext',
+  'sourcePath',
+  'analysis',
+  'patterns',
   // Test-specific
-  'request', 'generateMockCompletion', 'currentFile',
-  'PLACEHOLDER_PATTERNS', 'REQUIRED_AGENT_SECTIONS',
-  'assertDeepEqual', 'assertFalse', 'assert', 'assertNotEqual',
-  'EVOLUTION_STATE_PATH', 'runHook',
-  'originalCwd', 'mock', 'beforeEach', 'afterEach', 'before', 'after',
-  'STATE_FILE', 'TEST_ROUTER_STATE', 'TEST_EVOLUTION_STATE',
-  'lastExitCode', 'originalSessionTimestamp',
-  'DANGEROUS_PIPE_PATTERNS', 'clearAllCache',
-  'safeParseJSON', 'SCHEMAS',
-  'developer', 'reviewer', 'scenario', 'round1', 'round2',
-  'dev2Context', 'setAgentContext', 'appendToChain', 'verifyChain',
-  'createSidecar', 'writeSidecar', 'readSidecar',
-  'transitionState', 'aggregateResponses',
-  'testSetsAgentMode', 'testStringToolInput', 'testEmptyInput',
-  'testDebugOutput', 'testMalformedJson',
-  'agentContextTracker', 'waitForFileModification',
-  'relativePath', 'cmd', 'schemasWithIssues', 'skillSchemaIssues',
+  'request',
+  'generateMockCompletion',
+  'currentFile',
+  'PLACEHOLDER_PATTERNS',
+  'REQUIRED_AGENT_SECTIONS',
+  'assertDeepEqual',
+  'assertFalse',
+  'assert',
+  'assertNotEqual',
+  'EVOLUTION_STATE_PATH',
+  'runHook',
+  'originalCwd',
+  'mock',
+  'beforeEach',
+  'afterEach',
+  'before',
+  'after',
+  'STATE_FILE',
+  'TEST_ROUTER_STATE',
+  'TEST_EVOLUTION_STATE',
+  'lastExitCode',
+  'originalSessionTimestamp',
+  'DANGEROUS_PIPE_PATTERNS',
+  'clearAllCache',
+  'safeParseJSON',
+  'SCHEMAS',
+  'developer',
+  'reviewer',
+  'scenario',
+  'round1',
+  'round2',
+  'dev2Context',
+  'setAgentContext',
+  'appendToChain',
+  'verifyChain',
+  'createSidecar',
+  'writeSidecar',
+  'readSidecar',
+  'transitionState',
+  'aggregateResponses',
+  'testSetsAgentMode',
+  'testStringToolInput',
+  'testEmptyInput',
+  'testDebugOutput',
+  'testMalformedJson',
+  'agentContextTracker',
+  'waitForFileModification',
+  'relativePath',
+  'cmd',
+  'schemasWithIssues',
+  'skillSchemaIssues',
   'jest',
   // Additional from lint report
-  'testStateFile', 'errorCount', 'PROJECT_ROOT', 'getToolName',
-  'oldTimestamp', 'claudeBackup', 'section', 'accessDate', 'mtmDir',
-  'toArchive', 'getMessages', 'sanitizeResponse', 'validateTeamMember',
-  'getAgentState', 'router', 'agentId', 'testAgentId', 'agentType',
-  'chain', 'sessionId', 'tddSkill', 'gzip', 'gunzip', 'checkpointId',
-  'id2', 'validateRouterEnforcerRegistration', 'AGENTS_DIR',
-  'CLI_PATH', 'TEST_WORKFLOW_PATH', 'GATE_REQUIRED_FIELDS',
-  'INVALID_WORKFLOW_MISSING_OBTAIN', 'CLAUDE_DIR', 'arch', 'sharp',
-  'tmpDir', 'bucketAssignments', 'NULL_DEVICE', 'SCHEMA_PATH',
-  'SKILL_STRUCTURE', 'examples', 'description', 'skillDir', 'content',
-  'PACKAGE_JSON_PATH', 'fs', 'path',
+  'testStateFile',
+  'errorCount',
+  'PROJECT_ROOT',
+  'getToolName',
+  'oldTimestamp',
+  'claudeBackup',
+  'section',
+  'accessDate',
+  'mtmDir',
+  'toArchive',
+  'getMessages',
+  'sanitizeResponse',
+  'validateTeamMember',
+  'getAgentState',
+  'router',
+  'agentId',
+  'testAgentId',
+  'agentType',
+  'chain',
+  'sessionId',
+  'tddSkill',
+  'gzip',
+  'gunzip',
+  'checkpointId',
+  'id2',
+  'validateRouterEnforcerRegistration',
+  'AGENTS_DIR',
+  'CLI_PATH',
+  'TEST_WORKFLOW_PATH',
+  'GATE_REQUIRED_FIELDS',
+  'INVALID_WORKFLOW_MISSING_OBTAIN',
+  'CLAUDE_DIR',
+  'arch',
+  'sharp',
+  'tmpDir',
+  'bucketAssignments',
+  'NULL_DEVICE',
+  'SCHEMA_PATH',
+  'SKILL_STRUCTURE',
+  'examples',
+  'description',
+  'skillDir',
+  'content',
+  'PACKAGE_JSON_PATH',
+  'fs',
+  'path',
 ];
 
 // Variables that should NOT be prefixed (removing them might be better)
@@ -128,7 +257,9 @@ function parseEslintOutput() {
       if (!currentFile) continue;
 
       // Match unused variable: "'varName' is assigned a value but never used"
-      const assignedMatch = line.match(/^\s*(\d+):(\d+)\s+(?:error|warning)\s+'([^']+)' is assigned a value but never used/);
+      const assignedMatch = line.match(
+        /^\s*(\d+):(\d+)\s+(?:error|warning)\s+'([^']+)' is assigned a value but never used/
+      );
       if (assignedMatch) {
         fixes.push({
           file: currentFile,
@@ -141,7 +272,9 @@ function parseEslintOutput() {
       }
 
       // Match unused function parameter: "'paramName' is defined but never used"
-      const definedMatch = line.match(/^\s*(\d+):(\d+)\s+(?:error|warning)\s+'([^']+)' is defined but never used/);
+      const definedMatch = line.match(
+        /^\s*(\d+):(\d+)\s+(?:error|warning)\s+'([^']+)' is defined but never used/
+      );
       if (definedMatch) {
         fixes.push({
           file: currentFile,
@@ -207,7 +340,8 @@ function fixUnusedVar(content, lineNum, column, varName) {
     }
 
     // Replace at the found position
-    const newLine = line.slice(0, nearbyIdx) + '_' + varName + line.slice(nearbyIdx + varName.length);
+    const newLine =
+      line.slice(0, nearbyIdx) + '_' + varName + line.slice(nearbyIdx + varName.length);
     lines[lineIdx] = newLine;
     return { content: lines.join('\n'), fixed: true };
   }
@@ -264,7 +398,9 @@ function processFixes(fixes) {
             stats.argsFixed++;
           }
         } else if (result.skipped) {
-          stats.skipped.push(`${path.relative(PROJECT_ROOT, filePath)}:${fix.line} - ${fix.varName}`);
+          stats.skipped.push(
+            `${path.relative(PROJECT_ROOT, filePath)}:${fix.line} - ${fix.varName}`
+          );
         }
       }
 
@@ -295,8 +431,8 @@ function main() {
   console.log('Parsing ESLint output for unused variable errors...');
   const fixes = parseEslintOutput();
   console.log(`Found ${fixes.length} unused variable errors`);
-  console.log(`  - Assigned vars: ${fixes.filter((f) => f.type === 'assigned').length}`);
-  console.log(`  - Function params: ${fixes.filter((f) => f.type === 'defined').length}`);
+  console.log(`  - Assigned vars: ${fixes.filter(f => f.type === 'assigned').length}`);
+  console.log(`  - Function params: ${fixes.filter(f => f.type === 'defined').length}`);
   console.log('');
 
   if (fixes.length === 0) {

@@ -17,7 +17,7 @@ const { execSync } = require('child_process');
 // Configuration
 const PROJECT_ROOT = path.resolve(__dirname, '../../..');
 const DRY_RUN = process.argv.includes('--dry-run');
-const PATTERN = process.argv.find((arg) => arg.startsWith('--pattern='))?.split('=')[1] || 'all';
+const PATTERN = process.argv.find(arg => arg.startsWith('--pattern='))?.split('=')[1] || 'all';
 
 // Stats
 const stats = {
@@ -54,7 +54,9 @@ function parseEslintOutput() {
       if (!currentFile) continue;
 
       // Match caught error: "'e' is defined but never used. Allowed unused caught errors must match /^_/u"
-      const caughtMatch = line.match(/^\s*(\d+):(\d+)\s+error\s+'(\w+)' is defined but never used.*caught errors/);
+      const caughtMatch = line.match(
+        /^\s*(\d+):(\d+)\s+error\s+'(\w+)' is defined but never used.*caught errors/
+      );
       if (caughtMatch && (PATTERN === 'all' || PATTERN === 'caught')) {
         fixes.push({
           file: currentFile,
@@ -67,7 +69,9 @@ function parseEslintOutput() {
       }
 
       // Match hasOwnProperty: "Do not access Object.prototype method 'hasOwnProperty'"
-      const hasOwnMatch = line.match(/^\s*(\d+):(\d+)\s+error\s+Do not access Object.prototype method 'hasOwnProperty'/);
+      const hasOwnMatch = line.match(
+        /^\s*(\d+):(\d+)\s+error\s+Do not access Object.prototype method 'hasOwnProperty'/
+      );
       if (hasOwnMatch && (PATTERN === 'all' || PATTERN === 'hasown')) {
         fixes.push({
           file: currentFile,
@@ -213,8 +217,8 @@ function main() {
   console.log('Parsing ESLint output for specific errors...');
   const fixes = parseEslintOutput();
   console.log(`Found ${fixes.length} fixable errors`);
-  console.log(`  - Caught errors: ${fixes.filter((f) => f.type === 'caught').length}`);
-  console.log(`  - hasOwnProperty: ${fixes.filter((f) => f.type === 'hasown').length}`);
+  console.log(`  - Caught errors: ${fixes.filter(f => f.type === 'caught').length}`);
+  console.log(`  - hasOwnProperty: ${fixes.filter(f => f.type === 'hasown').length}`);
   console.log('');
 
   if (fixes.length === 0) {

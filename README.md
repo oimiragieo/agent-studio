@@ -41,6 +41,48 @@ If you also want the repo’s CLI validation utilities (recommended), install de
 pnpm install
 ```
 
+## Environment Configuration
+
+All environment-specific settings are managed through the `.env` file. This file is **not committed to version control** (see `.gitignore`) to protect sensitive data.
+
+### Setup
+
+1. **Copy the example file**:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Customize for your environment**:
+   ```bash
+   # Edit .env and adjust variables for your setup
+   # (see .env.example for full documentation)
+   ```
+
+### Common Variables
+
+| Variable              | Purpose                   | Default       | Options                                |
+| --------------------- | ------------------------- | ------------- | -------------------------------------- |
+| `AGENT_STUDIO_ENV`    | Environment selection     | `development` | `development`, `staging`, `production` |
+| `PARTY_MODE_ENABLED`  | Multi-agent collaboration | `false`       | `true`, `false`                        |
+| `ELICITATION_ENABLED` | Requirements gathering    | `false`       | `true`, `false`                        |
+| `REFLECTION_ENABLED`  | Quality & learning hooks  | `true`        | `true`, `false`                        |
+| `DEBUG_HOOKS`         | Verbose hook logging      | `false`       | `true`, `false`                        |
+
+### Staging Environment
+
+For testing configurations in isolation, use the staging environment:
+
+1. Set `AGENT_STUDIO_ENV=staging` in `.env`
+2. Initialize: `node .claude/tools/cli/init-staging.cjs`
+3. Verify: `node --test tests/staging-smoke.test.mjs`
+
+**See also**: `.claude/docs/STAGING_ENVIRONMENT.md` for complete staging setup.
+
+### Reference
+
+**Full documentation**: `.env.example` (contains all available variables with descriptions)
+
 ## Production Validation (Headless, Auditable)
 
 These are the recommended “ship it” checks. They write reports/results under `.claude/context/` (which is gitignored).

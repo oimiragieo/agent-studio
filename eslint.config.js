@@ -139,7 +139,8 @@ export default [
         'warn', // Downgrade to warning for tests
         {
           argsIgnorePattern: '^_',
-          varsIgnorePattern: '^(_|fs|path|mock|beforeEach|afterEach|before|after|jest|assert|result|exitCode|stdout|stderr)',
+          varsIgnorePattern:
+            '^(_|fs|path|mock|beforeEach|afterEach|before|after|jest|assert|result|exitCode|stdout|stderr)',
           caughtErrorsIgnorePattern: '^_',
         },
       ],

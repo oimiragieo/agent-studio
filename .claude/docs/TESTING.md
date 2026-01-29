@@ -21,14 +21,15 @@ project-root/
 │   ├── agent-context-tracker.test.mjs
 │   ├── routing-guard.test.mjs
 │   └── workflow-validator.test.mjs
+├── tests/
+│   ├── integration/
+│   │   ├── e2e/
+│   │   │   ├── phase1a-e2e.test.cjs     # Phase 1A E2E tests (20 tests)
+│   │   │   └── .tmp/                     # Test artifacts (auto-cleaned)
+│   │   ├── template-system-e2e.test.cjs
+│   │   ├── template-system-e2e-happy.test.cjs
+│   │   └── output/                       # Integration test artifacts
 └── .claude/
-    └── tests/
-        └── integration/
-            ├── e2e/
-            │   ├── phase1a-e2e.test.cjs     # Phase 1A E2E tests (20 tests)
-            │   └── .tmp/                     # Test artifacts (auto-cleaned)
-            ├── template-system-e2e.test.cjs
-            └── template-system-e2e-happy.test.cjs
 ```
 
 ### Test Patterns
@@ -43,7 +44,7 @@ project-root/
 #### E2E Tests
 
 - **Pattern**: `*-e2e.test.cjs` (CommonJS for compatibility)
-- **Location**: `.claude/tests/integration/e2e/`
+- **Location**: `tests/integration/e2e/`
 - **Purpose**: Test complete workflows with real files and commands
 - **Mocking**: NONE - uses real files, real commands, real data
 - **Cleanup**: Automatic cleanup in `after()` hooks
@@ -65,7 +66,7 @@ npm test -- tests/agent-context-tracker.test.mjs
 ### E2E Tests Only
 
 ```bash
-node --test .claude/tests/integration/e2e/phase1a-e2e.test.cjs --test-reporter=spec
+node --test tests/integration/e2e/phase1a-e2e.test.cjs --test-reporter=spec
 ```
 
 ### With Coverage (future)

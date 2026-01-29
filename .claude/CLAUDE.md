@@ -329,6 +329,120 @@ Subject: <SUBJECT>
 });
 ```
 
+### Identity Integration (Optional Enhancement)
+
+When spawning agents with identity fields (see `.claude/docs/AGENT_IDENTITY.md`), you can enhance prompts with structured personality:
+
+**Pattern:**
+```javascript
+// 1. Read and parse agent file
+const fs = require('fs');
+const { AgentParser } = require('./.claude/lib/agents/agent-parser.cjs');
+
+const agentFilePath = '.claude/agents/core/developer.md';
+const parser = new AgentParser();
+const agentData = parser.parseAgentFile(agentFilePath);
+
+// 2. Generate identity prompt section (if identity exists)
+let identitySection = '';
+if (agentData.identity) {
+  identitySection = `
+## Your Identity
+**Role**: ${agentData.identity.role}
+**Goal**: ${agentData.identity.goal}
+**Backstory**: ${agentData.identity.backstory}
+${agentData.identity.motto ? `**Motto**: "${agentData.identity.motto}"` : ''}
+
+You embody this identity in all your actions and communications.
+`;
+
+  // Add personality guidance if present
+  if (agentData.identity.personality) {
+    const p = agentData.identity.personality;
+    identitySection += `
+## Decision-Making Style
+- **Traits**: ${p.traits?.join(', ') || 'N/A'}
+- **Communication**: ${p.communication_style || 'N/A'}
+- **Risk Tolerance**: ${p.risk_tolerance || 'N/A'}
+- **Decision Making**: ${p.decision_making || 'N/A'}
+
+Apply these traits when evaluating options and communicating results.
+`;
+  }
+}
+
+// 3. Inject identity section into prompt (after task warning, before PROJECT CONTEXT)
+Task({
+  subagent_type: agentData.name,
+  model: agentData.model,
+  description: `${agentData.identity?.role || agentData.name} doing <TASK>`,
+  allowed_tools: agentData.tools || ['Read','Write','Edit','Bash','TaskUpdate','TaskList','TaskCreate','TaskGet','Skill'],
+  prompt: `You are the ${agentData.name} agent.
+
++======================================================================+
+|  WARNING: TASK TRACKING REQUIRED - READ THIS FIRST                   |
++======================================================================+
+|  Your Task ID: <ID>                                                  |
+|  BEFORE doing ANY work, run:                                         |
+|  TaskUpdate({ taskId: "<ID>", status: "in_progress" });              |
+|  AFTER completing work, run:                                         |
+|  TaskUpdate({ taskId: "<ID>", status: "completed", ... });           |
+|  THEN check for more work: TaskList();                               |
+|  FAILURE TO UPDATE TASK STATUS BREAKS THE ENTIRE SYSTEM              |
++======================================================================+
+${identitySection}
+## PROJECT CONTEXT (CRITICAL)
+PROJECT_ROOT: <absolute-path-to-project>
+...
+`,
+});
+```
+
+**Benefits:**
+- **Consistent personality** - Identity fields reduce agent drift across invocations (+20-30% consistency)
+- **LLM expertise alignment** - Backstory establishes credibility and decision-making context
+- **Trait-based decisions** - Risk tolerance and personality influence recommendations
+- **Clear communication** - Communication style matches agent's defined personality
+
+**Example Output (Developer with Identity):**
+```
+You are the developer agent.
+
++======================================================================+
+|  WARNING: TASK TRACKING REQUIRED - READ THIS FIRST                   |
++======================================================================+
+...
+
+## Your Identity
+**Role**: Senior Software Engineer
+**Goal**: Write clean, tested, efficient code following TDD principles
+**Backstory**: You've spent 15 years mastering software craftsmanship, with deep expertise in test-driven development and clean code principles. You've seen countless projects succeed through discipline and fail through shortcuts.
+**Motto**: "No code without a failing test"
+
+You embody this identity in all your actions and communications.
+
+## Decision-Making Style
+- **Traits**: thorough, pragmatic, quality-focused
+- **Communication**: direct
+- **Risk Tolerance**: low
+- **Decision Making**: data-driven
+
+Apply these traits when evaluating options and communicating results.
+
+## PROJECT CONTEXT (CRITICAL)
+...
+```
+
+**Backward Compatibility:**
+- Agents without `identity` fields work unchanged (identitySection = '')
+- Identity is optional - no breaking changes to existing spawns
+- Validation via AgentParser ensures identity fields are schema-compliant
+
+**See also:**
+- `.claude/docs/AGENT_IDENTITY.md` - Full design specification
+- `.claude/schemas/agent-identity.json` - JSON Schema for identity validation
+- `.claude/lib/agents/agent-parser.cjs` - Parser with identity validation
+
 ### Orchestrator Spawn Template (for master-orchestrator, swarm-coordinator, evolution-orchestrator)
 
 Orchestrators need `Task` tool to spawn subagents:
@@ -806,6 +920,53 @@ All spawned agents:
 
 ---
 
+## 8.7 CONFIGURATION (ENVIRONMENT VARIABLES)
+
+All environment-specific settings are managed through the `.env` file located at the project root. This file is **never committed** (see `.gitignore`) to protect sensitive data and allow per-developer customization.
+
+### Environment Variables Reference
+
+**File:** `.env.example` (template with all available variables and descriptions)
+
+**Setup:**
+
+1. Copy template: `cp .env.example .env`
+2. Customize: Edit `.env` for your local environment
+3. Use: Environment variables are automatically loaded
+
+### Key Configuration Categories
+
+| Category        | Variables                                           | Purpose                                      |
+| --------------- | --------------------------------------------------- | -------------------------------------------- |
+| **Environment** | `AGENT_STUDIO_ENV` (development/staging/production) | Selects configuration profile and data paths |
+| **Features**    | `PARTY_MODE_ENABLED`, `ELICITATION_ENABLED`         | Control feature availability                 |
+| **Hooks**       | `REFLECTION_ENABLED`, `REFLECTION_HOOK_MODE`        | Quality and learning controls                |
+| **Safety**      | `LOOP_PREVENTION_MODE`, `ANOMALY_DETECTION_ENABLED` | Loop/anomaly thresholds                      |
+| **Routing**     | `REROUTER_MODE`, `PLAN_EVOLUTION_GUARD`             | Orchestration behavior                       |
+| **Debug**       | `DEBUG_HOOKS`, `CLAUDE_SESSION_ID`                  | Troubleshooting aids                         |
+| **Integration** | `WEBHOOK_SECRET`, `API_URL`                         | External service integration                 |
+
+### Staging Environment
+
+For isolated testing, use `AGENT_STUDIO_ENV=staging`:
+
+- Configuration: `.claude/config.staging.yaml` (separate from production)
+- Data paths: `.claude/staging/*` (isolated workspace)
+- Features: All enabled by default (for testing)
+- Documentation: See `.claude/docs/STAGING_ENVIRONMENT.md`
+
+**Initialization:**
+
+```bash
+# Initialize staging environment
+node .claude/tools/cli/init-staging.cjs
+
+# Verify setup
+node --test tests/staging-smoke.test.mjs
+```
+
+---
+
 ## 9) DIRECTORY STRUCTURE (REFERENCE)
 
 ### 9.1 Top-Level
@@ -957,12 +1118,12 @@ workflows/
 
 ### 9.9 Deleted/Deprecated Directories
 
-| Old Path            | Status                                    |
-| ------------------- | ----------------------------------------- |
-| `.claude/commands/` | Deleted (was empty)                       |
-| `.claude/temp/`     | Deleted (was empty)                       |
-| `.claude/tests/`    | Moved to co-locate with source files      |
-| `.claude/scripts/`  | Consolidated into `.claude/lib/workflow/` |
+| Old Path            | Status                                        |
+| ------------------- | --------------------------------------------- |
+| `.claude/commands/` | Deleted (was empty)                           |
+| `.claude/temp/`     | Deleted (was empty)                           |
+| `.claude/tests/`    | Moved to root `tests/` directory (2026-01-28) |
+| `.claude/scripts/`  | Consolidated into `.claude/lib/workflow/`     |
 
 ### 9.10 File Placement Enforcement
 

@@ -1,233 +1,208 @@
 /**
- * Feature Flag Management System
+ * Feature Flags System - Phased Rollout
  *
- * Supports environment variables, config file, and runtime toggling
- * for safe, gradual rollout of new features.
+ * Supports gradual rollout (10% → 50% → 100%) with consistent hashing
+ * for stable user assignment. Includes rollback procedure for emergency
+ * disabling.
  *
- * Priority order (highest to lowest):
- * 1. Environment variables (e.g., PARTY_MODE_ENABLED=true)
- * 2. Config file (.claude/config.yaml)
- * 3. Runtime API (enable/disable methods)
- *
- * @example
- * const featureFlags = require('./.claude/lib/utils/feature-flags.cjs');
- *
- * // Check if feature is enabled
- * if (featureFlags.isEnabled('features.partyMode.enabled')) {
- *   // Feature is enabled
- * }
- *
- * // Get full config for feature
- * const config = featureFlags.getConfig('partyMode');
- * console.log(config.maxAgents); // 5
- *
- * // Runtime toggle (in-memory only)
- * featureFlags.enable('features.partyMode.enabled');
- * featureFlags.disable('features.partyMode.enabled');
+ * Environment Variables:
+ * - MEMORY_SYSTEM_ENABLED: true/false
+ * - MEMORY_ROLLOUT_PERCENTAGE: 0-100
+ * - PARTY_MODE_ENABLED: true/false
+ * - PARTY_ROLLOUT_PERCENTAGE: 0-100
  */
 
-const fs = require('fs');
-const path = require('path');
-const yaml = require('js-yaml');
-const { PROJECT_ROOT } = require('./project-root.cjs');
+const crypto = require('crypto');
 
-class FeatureFlagManager {
+class FeatureFlags {
   constructor() {
-    this.flags = {};
-    this.runtimeOverrides = {};
-    this.loadFromConfig();
-    this.loadFromEnvironment();
+    this.flags = new Map();
+    this.rolloutPercentages = new Map();
+    this.rollbackHistory = new Map();
+
+    // Initialize from environment variables
+    this._initializeFromEnv();
   }
 
   /**
-   * Load feature flags from .claude/config.yaml
+   * Initialize feature flags from environment variables
    * @private
    */
-  loadFromConfig() {
-    try {
-      const configPath = path.join(PROJECT_ROOT, '.claude', 'config.yaml');
-      if (!fs.existsSync(configPath)) {
-        console.warn('[feature-flags] Config file not found:', configPath);
-        return;
-      }
+  _initializeFromEnv() {
+    // Memory System feature
+    this._registerFeature(
+      'memory_system',
+      process.env.MEMORY_SYSTEM_ENABLED === 'true',
+      this._parsePercentage(process.env.MEMORY_ROLLOUT_PERCENTAGE, 0)
+    );
 
-      const configContent = fs.readFileSync(configPath, 'utf8');
-      const config = yaml.load(configContent);
-
-      if (config && config.features) {
-        this.flags = { features: config.features };
-      }
-    } catch (error) {
-      console.error('[feature-flags] Error loading config:', error.message);
-    }
+    // Party Mode feature
+    this._registerFeature(
+      'party_mode',
+      process.env.PARTY_MODE_ENABLED === 'true',
+      this._parsePercentage(process.env.PARTY_ROLLOUT_PERCENTAGE, 0)
+    );
   }
 
   /**
-   * Load feature flag overrides from environment variables
-   * Priority: Environment > Config
+   * Register a feature flag
    * @private
+   * @param {string} name - Feature name
+   * @param {boolean} enabled - Whether feature is enabled
+   * @param {number} rolloutPercentage - Rollout percentage (0-100)
    */
-  loadFromEnvironment() {
-    // PARTY_MODE_ENABLED -> features.partyMode.enabled
-    if (process.env.PARTY_MODE_ENABLED !== undefined) {
-      const value = this.coerceBoolean(process.env.PARTY_MODE_ENABLED);
-      this.setNested(this.flags, 'features.partyMode.enabled', value);
+  _registerFeature(name, enabled, rolloutPercentage) {
+    if (rolloutPercentage < 0 || rolloutPercentage > 100) {
+      throw new Error(
+        `Rollout percentage must be between 0 and 100, got ${rolloutPercentage}`
+      );
     }
 
-    // ELICITATION_ENABLED -> features.advancedElicitation.enabled
-    if (process.env.ELICITATION_ENABLED !== undefined) {
-      const value = this.coerceBoolean(process.env.ELICITATION_ENABLED);
-      this.setNested(this.flags, 'features.advancedElicitation.enabled', value);
-    }
+    this.flags.set(name, enabled);
+    this.rolloutPercentages.set(name, rolloutPercentage);
+    this.rollbackHistory.set(name, []);
   }
 
   /**
-   * Coerce string values to boolean
-   * @param {string|boolean} value - Value to coerce
-   * @returns {boolean}
+   * Parse percentage from string, with validation
    * @private
+   * @param {string} value - Percentage value as string
+   * @param {number} defaultValue - Default if invalid
+   * @returns {number} - Parsed percentage
    */
-  coerceBoolean(value) {
-    if (typeof value === 'boolean') {
-      return value;
+  _parsePercentage(value, defaultValue) {
+    if (!value) return defaultValue;
+
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) {
+      console.warn(
+        `Invalid percentage value "${value}", defaulting to ${defaultValue}`
+      );
+      return defaultValue;
     }
-    return value === 'true' || value === '1';
+
+    return parsed;
   }
 
   /**
-   * Get nested value using dot notation
-   * @param {Object} obj - Object to traverse
-   * @param {string} path - Dot-separated path (e.g., "features.partyMode.enabled")
-   * @returns {*} Value at path, or undefined
-   * @private
+   * Check if a feature is globally enabled
+   * @param {string} featureName - Feature to check
+   * @returns {boolean} - True if enabled
    */
-  getNested(obj, path) {
-    if (!obj || !path) return undefined;
-    const keys = path.split('.');
-    let current = obj;
-
-    for (const key of keys) {
-      if (current === null || current === undefined) {
-        return undefined;
-      }
-      current = current[key];
-    }
-
-    return current;
+  isEnabled(featureName) {
+    return this.flags.get(featureName) || false;
   }
 
   /**
-   * Set nested value using dot notation
-   * @param {Object} obj - Object to modify
-   * @param {string} path - Dot-separated path
-   * @param {*} value - Value to set
-   * @private
+   * Get rollout percentage for a feature
+   * @param {string} featureName - Feature to check
+   * @returns {number} - Rollout percentage (0-100)
    */
-  setNested(obj, path, value) {
-    const keys = path.split('.');
-    const lastKey = keys.pop();
-    let current = obj;
-
-    for (const key of keys) {
-      if (!current[key]) {
-        current[key] = {};
-      }
-      current = current[key];
-    }
-
-    current[lastKey] = value;
+  getRolloutPercentage(featureName) {
+    return this.rolloutPercentages.get(featureName) || 0;
   }
 
   /**
-   * Check if a feature flag is enabled
-   * @param {string} flagName - Dot-separated flag name (e.g., "features.partyMode.enabled")
-   * @returns {boolean} True if enabled, false otherwise
+   * Determine if feature should be used for this session
+   * Uses consistent hashing for stable assignment
    *
-   * @example
-   * if (featureFlags.isEnabled('features.partyMode.enabled')) {
-   *   // Party mode is enabled
-   * }
+   * @param {string} featureName - Feature to check
+   * @param {string} sessionId - Session/user identifier
+   * @returns {boolean} - True if feature should be used
    */
-  isEnabled(flagName) {
-    // Check runtime overrides first
-    const runtimeValue = this.getNested(this.runtimeOverrides, flagName);
-    if (runtimeValue !== undefined) {
-      return Boolean(runtimeValue);
+  shouldUse(featureName, sessionId) {
+    // If feature disabled globally, return false
+    if (!this.isEnabled(featureName)) {
+      return false;
     }
 
-    // Check flags (environment + config)
-    const value = this.getNested(this.flags, flagName);
-    return Boolean(value);
-  }
+    const percentage = this.getRolloutPercentage(featureName);
 
-  /**
-   * Get full configuration object for a feature
-   * @param {string} featureName - Feature name (e.g., "partyMode")
-   * @returns {Object|null} Configuration object, or null if not found
-   *
-   * @example
-   * const config = featureFlags.getConfig('partyMode');
-   * console.log(config.maxAgents); // 5
-   * console.log(config.turnLimit); // 20
-   */
-  getConfig(featureName) {
-    if (!this.flags.features) {
-      return null;
+    // 0% rollout = disabled for everyone
+    if (percentage === 0) {
+      return false;
     }
-    return this.flags.features[featureName] || null;
-  }
 
-  /**
-   * Enable a feature flag at runtime (in-memory only)
-   * @param {string} flagName - Dot-separated flag name
-   *
-   * @example
-   * featureFlags.enable('features.partyMode.enabled');
-   */
-  enable(flagName) {
-    this.setNested(this.runtimeOverrides, flagName, true);
-  }
-
-  /**
-   * Disable a feature flag at runtime (in-memory only)
-   * @param {string} flagName - Dot-separated flag name
-   *
-   * @example
-   * featureFlags.disable('features.partyMode.enabled');
-   */
-  disable(flagName) {
-    this.setNested(this.runtimeOverrides, flagName, false);
-  }
-
-  /**
-   * Persist current flags back to config.yaml (optional)
-   * Warning: This modifies the config file on disk
-   */
-  persist() {
-    try {
-      const configPath = path.join(PROJECT_ROOT, '.claude', 'config.yaml');
-      const configContent = fs.readFileSync(configPath, 'utf8');
-      const config = yaml.load(configContent);
-
-      // Merge runtime overrides into flags
-      for (const [key, value] of Object.entries(this.runtimeOverrides.features || {})) {
-        if (!config.features) {
-          config.features = {};
-        }
-        if (typeof value === 'object') {
-          config.features[key] = { ...config.features[key], ...value };
-        } else {
-          config.features[key] = value;
-        }
-      }
-
-      fs.writeFileSync(configPath, yaml.dump(config), 'utf8');
-    } catch (error) {
-      console.error('[feature-flags] Error persisting flags:', error.message);
-      throw error;
+    // 100% rollout = enabled for everyone
+    if (percentage === 100) {
+      return true;
     }
+
+    // Gradual rollout: use consistent hashing
+    return this._hashToPercentage(featureName, sessionId) < percentage;
+  }
+
+  /**
+   * Hash session ID to percentage for consistent assignment
+   * @private
+   * @param {string} featureName - Feature name
+   * @param {string} sessionId - Session identifier
+   * @returns {number} - Hash percentage (0-99)
+   */
+  _hashToPercentage(featureName, sessionId) {
+    // Fallback for empty/null IDs
+    const id = sessionId || 'default-session';
+
+    // Combine feature name + session ID for namespacing
+    const input = `${featureName}:${id}`;
+
+    // SHA-256 hash
+    const hash = crypto.createHash('sha256').update(input).digest('hex');
+
+    // Use first 8 hex chars for percentage (0-99)
+    const intValue = parseInt(hash.substring(0, 8), 16);
+    return intValue % 100;
+  }
+
+  /**
+   * Rollback a feature (emergency disable)
+   * @param {string} featureName - Feature to rollback
+   * @param {string} reason - Reason for rollback
+   */
+  rollback(featureName, reason) {
+    console.warn(
+      `[ROLLBACK] Disabling feature "${featureName}": ${reason}`
+    );
+
+    // Disable feature
+    this.flags.set(featureName, false);
+
+    // Reset rollout to 0%
+    this.rolloutPercentages.set(featureName, 0);
+
+    // Record rollback
+    const history = this.rollbackHistory.get(featureName) || [];
+    history.push({
+      timestamp: new Date().toISOString(),
+      reason,
+    });
+    this.rollbackHistory.set(featureName, history);
+  }
+
+  /**
+   * Get status of a feature
+   * @param {string} featureName - Feature to check
+   * @returns {object} - Status object
+   */
+  getStatus(featureName) {
+    return {
+      enabled: this.isEnabled(featureName),
+      rolloutPercentage: this.getRolloutPercentage(featureName),
+      rollbackHistory: this.rollbackHistory.get(featureName) || [],
+    };
+  }
+
+  /**
+   * Get status of all features
+   * @returns {object} - All feature statuses
+   */
+  getAllStatus() {
+    const status = {};
+    for (const featureName of this.flags.keys()) {
+      status[featureName] = this.getStatus(featureName);
+    }
+    return status;
   }
 }
 
-// Singleton instance
-module.exports = new FeatureFlagManager();
+module.exports = { FeatureFlags };
